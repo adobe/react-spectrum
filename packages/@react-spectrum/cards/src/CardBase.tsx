@@ -72,7 +72,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
     footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer'), isHidden: isQuiet},
     divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
-  }), [titleProps, contentProps]);
+  }), [titleProps, contentProps, isQuiet, orientation]);
 
   // this is for horizontal cards
   let [height, setHeight] = useState(NaN);
@@ -82,8 +82,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     }
     let cardHeight = gridRef.current.getBoundingClientRect().height;
     setHeight(cardHeight);
-  }, [gridRef, setHeight]);
-
+  }, [gridRef, setHeight, orientation]);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

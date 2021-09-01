@@ -125,7 +125,7 @@ export function DynamicCardView(props) {
   let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
     layout = gridLayout,
-    selectionMode = "multiple",
+    selectionMode = 'multiple',
     ...otherProps
   } = props;
 
@@ -169,7 +169,7 @@ export function ControlledCardView(props) {
   let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
     layout = gridLayout,
-    selectionMode = "multiple",
+    selectionMode = 'multiple',
     ...otherProps
   } = props;
 
@@ -189,7 +189,7 @@ export function ControlledCardView(props) {
         <TextField value={value} onChange={setValue} label="Nth item to remove" />
         <ActionButton onPress={removeItem}>Remove</ActionButton>
       </Flex>
-      <CardView  {...actions} {...otherProps} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
+      <CardView  {...actions} {...otherProps} selectionMode={selectionMode} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
         {(item: any) => (
           <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
             <Image src={item.src} />
@@ -222,20 +222,20 @@ export function NoItemCardView(props) {
       <ActionButton onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
       <CardView {...props} items={show ? items : []} layout={layout} UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
         {(item: any) => (
-            <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
-              <Image src={item.src} />
-              <Heading>{item.title}</Heading>
-              <Text slot="detail">PNG</Text>
-              <Content>Very very very very very very very very very very very very very long description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="primary">Something</Button>
-              </Footer>
-            </Card>
-          )}
+          <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
+            <Image src={item.src} />
+            <Heading>{item.title}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Very very very very very very very very very very very very very long description</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+            <Footer>
+              <Button variant="primary">Something</Button>
+            </Footer>
+          </Card>
+        )}
       </CardView>
     </>
   );
@@ -338,14 +338,10 @@ export function AsyncLoadingCardView(props) {
       }
       let items = [];
       await new Promise(resolve => setTimeout(resolve, 1500));
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search`, {signal});
+      let res = await fetch(cursor || 'https://swapi.dev/api/people/?search', {signal});
       let json = await res.json();
-      items = json.results.map((element, index) => {
-        return {
-          ...getImageFullData(index),
-          title: element.name
-        }
-      })
+      items = json.results.map((element, index) => ({...getImageFullData(index), title: element.name}));
+
       return {
         items: items,
         cursor: json.next

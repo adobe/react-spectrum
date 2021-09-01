@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, LoadingState, MultipleSelection, Node, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, Collection, CollectionBase, Direction, DOMProps, KeyboardDelegate, LoadingState, MultipleSelection, Node, StyleProps} from '@react-types/shared';
 import {Layout} from '@react-stately/virtualizer';
 import {ReactNode} from 'react';
 
@@ -31,13 +31,22 @@ interface LayoutOptions {
   collator?: Intl.Collator
 }
 
-export interface LayoutConstructor<T> {
-  new (options?: LayoutOptions): Layout<Node<T>>
+// TODO: double check if this is the best way to type the layout provided to the CardView
+interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate {
+  collection: Collection<Node<T>>,
+  disabledKeys: any,
+  isLoading: boolean,
+  direction: Direction
+}
+
+export interface CardViewLayoutConstructor<T> {
+  new (options?: LayoutOptions): CardViewLayout<T>
 }
 
 interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, Omit<AsyncLoadable, 'isLoading'> {
   // TODO: Does LayoutContructor and Layout give enough info for a user to know what to put in their own custom layout?
-  layout: LayoutConstructor<T> | Layout<Node<T>>,
+  // Replaced with CardViewLayout so that they know they need to have keyboardDelegate stuff as well as collection, disabledKeys, etc
+  layout: CardViewLayoutConstructor<T> | CardViewLayout<T>,
   cardSize?: 'S' | 'M' | 'L',
   cardOrientation?: 'horizontal' | 'vertical',
   isQuiet?: boolean,
