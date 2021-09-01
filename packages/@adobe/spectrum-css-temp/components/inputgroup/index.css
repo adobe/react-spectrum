@@ -44,7 +44,8 @@ governing permissions and limitations under the License.
     flex-shrink: 0;
   }
 
-  &.is-disabled {
+  /* Quiet or invalid inputgroup field button should always have a border width. */
+  &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) {
     .spectrum-FieldButton {
       border-width: 0;
     }
@@ -160,7 +161,7 @@ governing permissions and limitations under the License.
     }
   }
   .spectrum-Datepicker-endField {
-    .spectrum-InputGroup-field {
+    .spectrum-InputGroup-input {
       flex: 1;
       border-inline-start: 0;
       border-radius: 0;

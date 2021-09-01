@@ -12,7 +12,7 @@
 
 import {FocusableDOMProps, FocusableProps} from '@react-types/shared';
 import {mergeProps, useSyncRef} from '@react-aria/utils';
-import React, {HTMLAttributes, MutableRefObject, ReactNode, RefObject, useContext, useEffect, useMemo} from 'react';
+import React, {HTMLAttributes, MutableRefObject, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
 interface FocusableOptions extends FocusableProps, FocusableDOMProps {
@@ -36,7 +36,9 @@ function useFocusableContext(ref: RefObject<HTMLElement>): FocusableContextValue
   context = useMemo(() => context || {}, [context]);
   useSyncRef(context, ref);
 
-  return context;
+  // eslint-disable-next-line
+  let {ref: _, ...otherProps} = context;
+  return otherProps;
 }
 
 /**
@@ -68,12 +70,14 @@ export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElem
   let interactions = mergeProps(focusProps, keyboardProps);
   let domProps = useFocusableContext(domRef);
   let interactionProps = props.isDisabled ? {} : domProps;
+  let autoFocusRef = useRef(props.autoFocus);
 
   useEffect(() => {
-    if (props.autoFocus && domRef.current) {
+    if (autoFocusRef.current && domRef.current) {
       domRef.current.focus();
     }
-  }, [props.autoFocus, domRef]);
+    autoFocusRef.current = false;
+  }, [autoFocusRef, domRef]);
 
   return {
     focusableProps: mergeProps(

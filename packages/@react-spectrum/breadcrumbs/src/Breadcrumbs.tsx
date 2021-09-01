@@ -56,8 +56,14 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   let updateOverflow = useCallback(() => {
     let computeVisibleItems = (visibleItems: number) => {
-      let listItems = Array.from(listRef.current.children) as HTMLLIElement[];
-      let containerWidth = listRef.current.offsetWidth;
+      // Refs can be null at runtime.
+      let currListRef: HTMLUListElement | null = listRef.current;
+      if (!currListRef) {
+        return;
+      }
+
+      let listItems = Array.from(currListRef.children) as HTMLLIElement[];
+      let containerWidth = currListRef.offsetWidth;
       let isShowingMenu = childArray.length > visibleItems;
       let calculatedWidth = 0;
       let newVisibleItems = 0;

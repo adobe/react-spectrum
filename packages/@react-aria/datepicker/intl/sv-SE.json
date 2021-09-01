@@ -1,10 +1,13 @@
 {
   "calendar": "Kalender",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} till {end, date, long}",
   "date": "Datum",
   "dateRange": "Datumintervall",
   "day": "Dag",
   "dayPeriod": "Dagsperiod",
   "endDate": "Slutdatum",
+  "era": "Era",
   "hour": "Timme",
   "minute": "Minut",
   "month": "Månad",

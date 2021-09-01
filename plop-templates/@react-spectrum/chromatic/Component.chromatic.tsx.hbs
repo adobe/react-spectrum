@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright {{currentYear}} Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,26 +11,28 @@
  */
 
 import { {{~componentName~}} } from '../';
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
 {{#if (includes scopes "@react-types")}}
 import {Spectrum{{componentName}}Props} from '@react-types/{{packageName}}';
 {{/if}}
-import {storiesOf} from '@storybook/react';
-
 {{#unless (includes scopes "@react-types")}}
+
 interface Spectrum{{componentName}}Props {
 
 }
 {{/unless}}
 
-storiesOf('{{componentName}}', module)
-  .add(
-    'name me',
-    () => render({})
-  );
+const meta: Meta<Spectrum{{componentName}}Props> = {
+  title: '{{componentName}}',
+  component: {{componentName}}
+};
 
-function render(props: Spectrum{{componentName}}Props = {}) {
-  return (
-    <{{componentName}} {...props} />
-  );
-}
+export default meta;
+
+const Template = (): Story<Spectrum{{componentName}}Props> => (args) => (
+  <{{componentName}} {...args}>This is a React Spectrum {{componentName}}</{{componentName}}>
+);
+
+export const Default = Template().bind({});
+Default.args = {};

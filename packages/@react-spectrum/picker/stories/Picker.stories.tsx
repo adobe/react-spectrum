@@ -57,9 +57,9 @@ storiesOf('Picker', module)
     'default',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-        <Item key="One">One</Item>
-        <Item key="Two">Two</Item>
-        <Item key="Three">Three</Item>
+        <Item key="rarely">Short</Item>
+        <Item key="sometimes">Normal</Item>
+        <Item key="always">This item is very long and word wraps poorly</Item>
       </Picker>
     )
   )
@@ -305,6 +305,7 @@ storiesOf('Picker', module)
         <Item key="underscores">your_text_here_long_long_long_long</Item>
         <Item key="hyphens">your-text-here-long-long-long-long</Item>
         <Item key="singleWord">supercalifragilisticexpialidocious</Item>
+        <Item key="always">This item is very long and word wraps poorly</Item>
       </Picker>
     )
   )
@@ -323,6 +324,26 @@ storiesOf('Picker', module)
     'no visible label',
     () => (
       <Picker aria-label="Test" onSelectionChange={action('selectionChange')}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'with description',
+    () => (
+      <Picker label="Test" description="Please select an item." onSelectionChange={action('selectionChange')}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'with error message',
+    () => (
+      <Picker label="Test" errorMessage="Please select a valid item." validationState="invalid" onSelectionChange={action('selectionChange')}>
         <Item>One</Item>
         <Item>Two</Item>
         <Item>Three</Item>

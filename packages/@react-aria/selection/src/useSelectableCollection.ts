@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect} from 'react';
+import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {focusWithoutScrolling, isMac, mergeProps} from '@react-aria/utils';
@@ -76,7 +76,16 @@ interface SelectableCollectionOptions {
   /**
    * Whether navigation through tab key is enabled.
    */
-  allowsTabNavigation?: boolean
+  allowsTabNavigation?: boolean,
+  /**
+   * Whether the collection items are contained in a virtual scroller.
+   */
+  isVirtualized?: boolean,
+  /**
+   * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
+   * If not provided, defaults to the collection ref.
+   */
+  scrollRef?: RefObject<HTMLElement>
 }
 
 interface SelectableCollectionAria {
@@ -99,11 +108,19 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     selectOnFocus = false,
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
-    allowsTabNavigation = false
+    allowsTabNavigation = false,
+    isVirtualized,
+    // If no scrollRef is provided, assume the collection ref is the scrollable region
+    scrollRef = ref
   } = options;
   let {direction} = useLocale();
 
   let onKeyDown = (e: KeyboardEvent) => {
+    // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
+    if (e.altKey && e.key === 'Tab') {
+      e.preventDefault();
+    }
+
     // Let child element (e.g. menu button) handle the event if the Alt key is pressed.
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
@@ -284,8 +301,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   };
 
+  const autoFocusRef = useRef(autoFocus);
   useEffect(() => {
-    if (autoFocus) {
+    if (autoFocusRef.current) {
       let focusedKey = null;
 
       // Check focus strategy to determine which item to focus
@@ -309,8 +327,20 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         focusSafely(ref.current);
       }
     }
+    autoFocusRef.current = false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // If not virtualized, scroll the focused element into view when the focusedKey changes.
+  // When virtualized, Virtualizer handles this internally.
+  useEffect(() => {
+    if (!isVirtualized && manager.focusedKey && scrollRef?.current) {
+      let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+      if (element) {
+        scrollIntoView(scrollRef.current, element);
+      }
+    }
+  }, [isVirtualized, scrollRef, manager.focusedKey]);
 
   let handlers = {
     onKeyDown,
@@ -349,4 +379,58 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       tabIndex
     }
   };
+}
+
+/**
+ * Scrolls `scrollView` so that `element` is visible.
+ * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
+ * but doesn't affect parents above `scrollView`.
+ */
+function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
+  let offsetX = relativeOffset(scrollView, element, 'left');
+  let offsetY = relativeOffset(scrollView, element, 'top');
+  let width = element.offsetWidth;
+  let height = element.offsetHeight;
+  let x = scrollView.scrollLeft;
+  let y = scrollView.scrollTop;
+  let maxX = x + scrollView.offsetWidth;
+  let maxY = y + scrollView.offsetHeight;
+
+  if (offsetX <= x) {
+    x = offsetX;
+  } else if (offsetX + width > maxX) {
+    x += offsetX + width - maxX;
+  }
+  if (offsetY <= y) {
+    y = offsetY;
+  } else if (offsetY + height > maxY) {
+    y += offsetY + height - maxY;
+  }
+
+  scrollView.scrollLeft = x;
+  scrollView.scrollTop = y;
+}
+
+/**
+ * Computes the offset left or top from child to ancestor by accumulating
+ * offsetLeft or offsetTop through intervening offsetParents.
+ */
+function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
+  const prop = axis === 'left' ? 'offsetLeft' : 'offsetTop';
+  let sum = 0;
+  while (child.offsetParent) {
+    sum += child[prop];
+    if (child.offsetParent === ancestor) {
+      // Stop once we have found the ancestor we are interested in.
+      break;
+    } else if (child.offsetParent.contains(ancestor)) {
+      // If the ancestor is not `position:relative`, then we stop at
+      // _its_ offset parent, and we subtract off _its_ offset, so that
+      // we end up with the proper offset from child to ancestor.
+      sum -= ancestor[prop];
+      break;
+    }
+    child = child.offsetParent as HTMLElement;
+  }
+  return sum;
 }

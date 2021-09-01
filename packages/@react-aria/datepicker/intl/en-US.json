@@ -1,4 +1,5 @@
 {
+  "era": "Era",
   "year": "Year",
   "month": "Month",
   "day": "Day",
@@ -10,5 +11,7 @@
   "date": "Date",
   "dateRange": "Date Range",
   "startDate": "Start Date",
-  "endDate": "End Date"
+  "endDate": "End Date",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} to {end, date, long}"
 }
