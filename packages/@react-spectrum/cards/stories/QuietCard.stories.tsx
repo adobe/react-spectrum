@@ -76,12 +76,12 @@ let SelectableCard = (props) => {
     }
   });
   let {pressProps} = usePress({onPress: () => setState(prev => ({
-      ...prev,
-      selectionManager: {
-        ...prev.selectionManager,
-        isSelected: () => !prev.selectionManager.isSelected()
-      }
-    }))});
+    ...prev,
+    selectionManager: {
+      ...prev.selectionManager,
+      isSelected: () => !prev.selectionManager.isSelected()
+    }
+  }))});
   return (
     <div style={{width: '208px'}} {...pressProps}>
       <CardViewContext.Provider value={{state}}>
