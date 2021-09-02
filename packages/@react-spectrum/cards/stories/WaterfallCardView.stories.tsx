@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadingCardView, ControlledCardView, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
+import {AsyncLoadingCardView, ControlledCardView, CustomLayout, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
+import {Size} from '@react-stately/virtualizer';
+import {useCollator} from '@react-aria/i18n';
+import {useMemo} from 'react';
 import {WaterfallLayout} from '../';
 
 let itemsNoSize = [
@@ -86,3 +89,13 @@ emptyWithHeightWaterfall.storyName = 'empty, set height';
 
 export const AsyncLoading = () => AsyncLoadingCardView({layout: WaterfallLayout, width: '800px', height: '800px'});
 AsyncLoading.storyName = 'Async loading';
+
+export const CustomLayoutOptions = () => CustomGalleryLayout({items}, {minSpace: new Size(50, 50), maxColumns: 2, itemPadding: 400});
+CustomGalleryLayout.storyName = 'Custom layout options';
+
+function CustomGalleryLayout(props, layoutOptions) {
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let galleryLayout = useMemo(() => new WaterfallLayout({collator, ...layoutOptions}), [collator, layoutOptions]);
+
+  return CustomLayout({...props, layout: galleryLayout}, {});
+}

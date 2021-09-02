@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadingCardView, ControlledCardView, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
+import {AsyncLoadingCardView, ControlledCardView, CustomLayout, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
 import {GalleryLayout} from '../';
+import {Size} from '@react-stately/virtualizer';
+import {useCollator} from '@react-aria/i18n';
+import {useMemo} from 'react';
 
 let itemsLowVariance = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 1, title: 'Bob 1'},
@@ -80,3 +83,13 @@ emptyWithHeightGallery.storyName = 'empty, set height';
 
 export const AsyncLoading = () => AsyncLoadingCardView({layout: GalleryLayout, width: '800px', height: '800px'});
 AsyncLoading.storyName = 'Async loading';
+
+export const CustomLayoutOptions = () => CustomGalleryLayout({items: itemsLowVariance}, {idealRowHeight: 270, itemSpacing: new Size(10, 10), itemPadding: 114});
+CustomGalleryLayout.storyName = 'Custom layout options';
+
+function CustomGalleryLayout(props, layoutOptions) {
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let galleryLayout = useMemo(() => new GalleryLayout({collator, ...layoutOptions}), [collator, layoutOptions]);
+
+  return CustomLayout({...props, layout: galleryLayout}, {});
+}
