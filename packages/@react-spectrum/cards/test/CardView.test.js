@@ -262,7 +262,7 @@ describe('CardView', function () {
     }
   });
 
-  describe.skip('Grid layout and some shared gallery layout behavior', function () {
+  describe('Grid layout and some shared gallery layout behavior', function () {
     it('renders each card with the same height and width', function () {
       let tree = render(<DynamicCardView />);
       act(() => {
@@ -490,7 +490,7 @@ describe('CardView', function () {
   });
 
   describe('Gallery layout', function () {
-    it.skip('renders cards in rows with constrained heights and variable widths', function () {
+    it('renders cards in rows with constrained heights and variable widths', function () {
       let tree = render(<DynamicCardView layout={GalleryLayout} />);
       act(() => {
         jest.runAllTimers();

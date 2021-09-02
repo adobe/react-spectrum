@@ -243,10 +243,10 @@ export class GridLayout<T> extends BaseLayout<T> {
   buildChild(node: Node<T>, y: number, index: number): LayoutInfo {
     let row = Math.floor(index / this.numColumns);
     let column = index % this.numColumns;
-    let x = this.margin + column * (this.itemSize.width + this.horizontalSpacing) - 6;
-    y = this.margin + row * (this.itemSize.height + this.minSpace.height) - 6;
+    let x = this.margin + column * (this.itemSize.width + this.horizontalSpacing);
+    y = this.margin + row * (this.itemSize.height + this.minSpace.height);
 
-    let rect = new Rect(x, y, this.itemSize.width + 12, this.itemSize.height + 12);
+    let rect = new Rect(x, y, this.itemSize.width, this.itemSize.height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     this.layoutInfos.set(node.key, layoutInfo);
     return layoutInfo;
