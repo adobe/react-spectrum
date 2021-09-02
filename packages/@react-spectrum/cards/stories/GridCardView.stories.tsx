@@ -69,10 +69,8 @@ export default {
 };
 
 let onSelectionChange = action('onSelectionChange');
-let onLoadMore = action('onLoadMore');
 let actions = {
-  onSelectionChange: s => onSelectionChange([...s]),
-  onLoadMore: onLoadMore
+  onSelectionChange: s => onSelectionChange([...s])
 };
 
 // TODO add stories for Layouts with non-default options passed in
