@@ -33,8 +33,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@internationalized/date": "3.0.0-alpha.1",
-    "@react-aria/cards": "3.0.0-alpha.1",
     "@react-aria/focus": "^3.4.0",
     "@react-aria/interactions": "^3.5.0",
     "@react-aria/utils": "^3.0.0",

@@ -10,16 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaCardProps, SpectrumCardProps} from '@react-types/cards';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {HTMLAttributes, useMemo, useRef, useState} from 'react';
-import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
-import {useCard} from '@react-aria/cards';
 import {useCardViewContext} from './CardViewContext';
 import {useFocusWithin, useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -35,7 +34,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   let context = useCardViewContext() || {}; // we can call again here, won't change from Card.tsx
   let {state} = context;
   let manager = state?.selectionManager;
-  // let [isSelected, setIsSelected] = useControlledState(context.isSelected, undefined, context.onSelectionChange);
   let {
     isQuiet,
     orientation = 'vertical',
@@ -168,7 +166,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
                 aria-label="select" />
             </div>
           )}
-          {/* This is to workaround the FF bug mentioned in the CSS, it maintains a 1:1 aspect-ratio grid area */
+          {/* This is to workaround the Safari not supporting aspect-ratio */
             orientation === 'horizontal' && !isNaN(height) && (
             <img className={classNames(styles, 'spectrum-Card-sizeHelper')} style={{width: `${height}px`, height: `${height}px`}} aria-hidden alt="" width="1" height="1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" />
           )}
@@ -181,6 +179,37 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
       </article>
     </FocusRing>
   );
+}
+
+interface AriaCardOptions extends AriaCardProps {
+}
+
+interface CardAria {
+  cardProps: HTMLAttributes<HTMLDivElement>,
+  titleProps: HTMLAttributes<HTMLDivElement>,
+  contentProps: HTMLAttributes<HTMLDivElement>
+}
+
+function useCard(props: AriaCardOptions): CardAria {
+  let titleId = useSlotId();
+  let descriptionId = useSlotId();
+  let titleProps = useMemo(() => ({
+    id: titleId
+  }), [titleId]);
+  let contentProps = useMemo(() => ({
+    id: descriptionId
+  }), [descriptionId]);
+
+  return {
+    cardProps: {
+      ...filterDOMProps(props),
+      'aria-labelledby': titleId,
+      'aria-describedby': descriptionId,
+      tabIndex: 0
+    },
+    titleProps,
+    contentProps
+  };
 }
 
 /**
