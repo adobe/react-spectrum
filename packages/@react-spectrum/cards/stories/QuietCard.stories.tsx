@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Card} from '../';
@@ -34,9 +33,10 @@ import {getDescription, getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
-import React from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
+import {usePress} from '@react-aria/interactions';
 
 
 const meta: Meta<SpectrumCardProps> = {
@@ -52,22 +52,47 @@ const Template = (): Story<SpectrumCardProps> => (args) => (
   </div>
 );
 
-
 /* This is a bit of a funny template, we can't get selected on a Card through context because
 * if there's context it assumes it's being rendered in a collection. It's just here for a quick check of styles. */
-let manager = {
-  isSelected: () => true,
-  select: action('select')
-};
-let state = {
-  disabledKeys: new Set(),
-  selectionManager: manager
+interface ISelectableCard {
+  disabledKeys: Set<any>,
+  selectionManager: {
+    isSelected: () => boolean,
+    select: () => Dispatch<SetStateAction<ISelectableCard>>
+  }
+}
+let SelectableCard = (props) => {
+  let [state, setState] = useState<ISelectableCard>({
+    disabledKeys: new Set(),
+    selectionManager: {
+      isSelected: () => true,
+      select: () => setState(prev => ({
+        ...prev,
+        selectionManager: {
+          ...prev.selectionManager,
+          isSelected: () => !prev.selectionManager.isSelected()
+        }
+      }))
+    }
+  });
+  let {pressProps} = usePress({onPress: () => setState(prev => ({
+      ...prev,
+      selectionManager: {
+        ...prev.selectionManager,
+        isSelected: () => !prev.selectionManager.isSelected()
+      }
+    }))});
+  return (
+    <div style={{width: '208px'}} {...pressProps}>
+      <CardViewContext.Provider value={{state}}>
+        <CardBase {...props} />
+      </CardViewContext.Provider>
+    </div>
+  );
 };
 const TemplateSelected = (): Story<SpectrumCardProps> => (args) => (
   <div style={{width: '208px'}}>
-    <CardViewContext.Provider value={{state}}>
-      <CardBase {...args} />
-    </CardViewContext.Provider>
+    <SelectableCard {...args} />
   </div>
 );
 
