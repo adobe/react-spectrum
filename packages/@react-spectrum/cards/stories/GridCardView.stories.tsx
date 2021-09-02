@@ -21,6 +21,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import React, {Key, useMemo, useState} from 'react';
+import {Size} from '@react-stately/virtualizer';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
 import {useCollator} from '@react-aria/i18n';
@@ -64,7 +65,7 @@ export function renderEmptyState() {
 
 export default {
   title: 'CardView/Grid layout',
-  excludeStories: ['items', 'renderEmptyState', 'DynamicCardView', 'NoItemCardView', 'StaticCardView', 'ControlledCardView', 'AsyncLoadingCardView']
+  excludeStories: ['items', 'renderEmptyState', 'DynamicCardView', 'NoItemCardView', 'StaticCardView', 'ControlledCardView', 'AsyncLoadingCardView', 'CustomLayout']
 };
 
 let onSelectionChange = action('onSelectionChange');
@@ -114,6 +115,9 @@ emptyWithHeightGrid.storyName = 'empty, set height';
 
 export const AsyncLoading = () => AsyncLoadingCardView({width: '800px', height: '800px'});
 AsyncLoading.storyName = 'Async loading';
+
+export const CustomLayoutOptions = () => CustomLayout({items}, {maxColumns: 2, margin: 150, minSpace: new Size(10, 10), itemPadding: 400});
+CustomLayoutOptions.storyName = 'Custom layout options';
 
 export function DynamicCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -249,7 +253,7 @@ export function StaticCardView(props) {
         <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
         <Heading>Bob 1</Heading>
         <Text slot="detail">PNG</Text>
-        <Content>Description</Content>
+        <Content>Very very very very very very very very very very very very very long description</Content>
         <ActionMenu>
           <Item>Action 1</Item>
           <Item>Action 2</Item>
@@ -262,24 +266,16 @@ export function StaticCardView(props) {
         <Image src="https://i.imgur.com/DhygPot.jpg" />
         <Heading>Joe 1</Heading>
         <Text slot="detail">PNG</Text>
-        <Content>Description</Content>
         <ActionMenu>
           <Item>Action 1</Item>
           <Item>Action 2</Item>
         </ActionMenu>
-        <Footer>
-          <Button variant="primary">Something</Button>
-        </Footer>
       </Card>
       <Card key="Jane 1" width={182} height={1009} textValue="Jane 1">
         <Image src="https://i.imgur.com/L7RTlvI.png" />
         <Heading>Jane 1</Heading>
         <Text slot="detail">PNG</Text>
         <Content>Description</Content>
-        <ActionMenu>
-          <Item>Action 1</Item>
-          <Item>Action 2</Item>
-        </ActionMenu>
         <Footer>
           <Button variant="primary">Something</Button>
         </Footer>
@@ -288,14 +284,11 @@ export function StaticCardView(props) {
         <Image src="https://i.imgur.com/1nScMIH.jpg" />
         <Heading>Bob 2</Heading>
         <Text slot="detail">PNG</Text>
-        <Content>Description</Content>
+        <Content>Very very very very very very very very very very very very very long description</Content>
         <ActionMenu>
           <Item>Action 1</Item>
           <Item>Action 2</Item>
         </ActionMenu>
-        <Footer>
-          <Button variant="primary">Something</Button>
-        </Footer>
       </Card>
       <Card key="Joe 2" width={640} height={640} textValue="Joe 2">
         <Image src="https://i.imgur.com/DhygPot.jpg" />
@@ -362,5 +355,49 @@ export function AsyncLoadingCardView(props) {
         </Card>
       )}
     </CardView>
+  );
+}
+
+export function CustomLayout(props, layoutOptions) {
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let gridLayout = useMemo(() => new GridLayout({collator, ...layoutOptions}), [collator, layoutOptions]);
+  let {
+    layout = gridLayout,
+    selectionMode = 'multiple',
+    ...otherProps
+  } = props;
+
+  let [value, setValue] = useState('');
+  let [items, setItems] = useState(props.items);
+  let removeItem = () => {
+    let val = parseInt(value, 10);
+    let newItems = items.slice(0, val).concat(items.slice(val + 1, items.length));
+    setItems(newItems);
+  };
+
+  return (
+    <Flex direction="column" maxWidth="800px" width="100%" height="800px">
+      <Flex direction="row" maxWidth="500px" alignItems="end">
+        <TextField value={value} onChange={setValue} label="Nth item to remove" />
+        <ActionButton onPress={removeItem}>Remove</ActionButton>
+      </Flex>
+      <CardView {...actions} {...otherProps} selectionMode={selectionMode} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'white'}} aria-label="Test CardView">
+        {(item: any) => (
+          <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
+            <Image src={item.src} />
+            <Heading>{item.title}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Very very very very very very very very very very very very very long description</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+            <Footer>
+              <Button variant="primary">Something</Button>
+            </Footer>
+          </Card>
+        )}
+      </CardView>
+    </Flex>
   );
 }
