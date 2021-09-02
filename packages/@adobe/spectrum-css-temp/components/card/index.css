@@ -274,7 +274,7 @@ user-provided
   .spectrum-Card-avatar {
     grid-area: preview;
     position: absolute;
-    inset-block-end: -15px;
+    inset-block-end: -10px;
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
@@ -393,7 +393,7 @@ user-provided
   .spectrum-Card-avatar {
     grid-area: preview;
     position: absolute;
-    inset-block-end: -15px;
+    inset-block-end: -10px;
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
@@ -515,7 +515,7 @@ user-provided
   .spectrum-Card-avatar {
     grid-area: preview;
     position: absolute;
-    inset-block-end: -15px;
+    inset-block-end: -10px;
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
