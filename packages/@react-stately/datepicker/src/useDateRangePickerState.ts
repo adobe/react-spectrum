@@ -12,7 +12,7 @@
 
 import {DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, isInvalid} from './utils';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid} from './utils';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
@@ -116,7 +116,19 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     setDateRange,
     setTimeRange,
     isOpen,
-    setOpen,
+    setOpen(isOpen) {
+      // Commit the selected date range when the calendar is closed. Use a placeholder time if one wasn't set.
+      // If only the time range was set and not the date range, don't commit. The state will be preserved until
+      // the user opens the popover again.
+      if (!isOpen && !(value?.start && value?.end) && dateRange?.start && dateRange?.end && hasTime) {
+        commitValue(dateRange, {
+          start: timeRange?.start || getPlaceholderTime(props.placeholderValue),
+          end: timeRange?.end || getPlaceholderTime(props.placeholderValue)
+        });
+      }
+
+      setOpen(isOpen);
+    },
     validationState,
     formatValue(locale, fieldOptions) {
       if (!value || !value.start || !value.end) {

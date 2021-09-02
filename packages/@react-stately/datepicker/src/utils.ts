@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerProps, DateValue} from '@react-types/datepicker';
+import {DatePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
+import {Time} from '@internationalized/date';
 
 export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
   return value != null && (
@@ -75,4 +76,12 @@ export function getFormatOptions(
   }
 
   return opts;
+}
+
+export function getPlaceholderTime(placeholderValue: DateValue): TimeValue {
+  if (placeholderValue && 'hour' in placeholderValue) {
+    return placeholderValue;
+  }
+
+  return new Time();
 }

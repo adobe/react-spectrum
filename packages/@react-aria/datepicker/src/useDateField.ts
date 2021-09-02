@@ -17,7 +17,7 @@ import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {mergeProps, useDescription} from '@react-aria/utils';
 import {useDateFormatter} from '@react-aria/i18n';
 import {useField} from '@react-aria/label';
-import {usePress} from '@react-aria/interactions';
+import {useFocusWithin, usePress} from '@react-aria/interactions';
 
 interface DateFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
@@ -52,6 +52,12 @@ export function useDateField<T extends DateValue>(props: AriaDatePickerProps<T>,
     }
   });
 
+  let {focusWithinProps} = useFocusWithin({
+    onBlurWithin() {
+      state.confirmPlaceholder();
+    }
+  });
+
   let formatter = useDateFormatter(state.getFormatOptions({month: 'long'}));
   let descProps = useDescription(state.value ? formatter.format(state.dateValue) : null);
 
@@ -65,7 +71,7 @@ export function useDateField<T extends DateValue>(props: AriaDatePickerProps<T>,
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(fieldProps, descProps, pressProps, {
+    fieldProps: mergeProps(fieldProps, descProps, pressProps, focusWithinProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || undefined,
       'aria-describedby': [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined

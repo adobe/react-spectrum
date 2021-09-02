@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, CalendarDateTime, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, now, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {Calendar, CalendarDateTime, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar, toCalendarDate, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
@@ -38,7 +38,7 @@ export interface DatePickerFieldState {
   incrementPage: (type: Intl.DateTimeFormatPartTypes) => void,
   decrementPage: (type: Intl.DateTimeFormatPartTypes) => void,
   setSegment: (type: Intl.DateTimeFormatPartTypes, value: number) => void,
-  confirmPlaceholder: (type: Intl.DateTimeFormatPartTypes) => void,
+  confirmPlaceholder: (type?: Intl.DateTimeFormatPartTypes) => void,
   getFormatOptions(fieldOptions: FieldOptions): Intl.DateTimeFormatOptions
 }
 
@@ -117,7 +117,8 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
 
   // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
   if (props.value && Object.keys(validSegments).length < numSegments) {
-    setValidSegments({...EDITABLE_SEGMENTS});
+    validSegments = {...EDITABLE_SEGMENTS};
+    setValidSegments(validSegments);
   }
 
   // We keep track of the placeholder date separately in state so that onChange is not called
@@ -221,8 +222,22 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
       setValue(setSegment(displayValue, part, v, resolvedOptions));
     },
     confirmPlaceholder(part) {
-      markValid(part);
-      setValue(displayValue.copy());
+      if (props.isDisabled || props.isReadOnly) {
+        return;
+      }
+
+      if (!part) {
+        // Confirm the rest of the placeholder if any of the segments are valid.
+        let numValid = Object.keys(validSegments).length;
+        if (numValid > 0 && numValid < numSegments) {
+          validSegments = {...EDITABLE_SEGMENTS};
+          setValidSegments(validSegments);
+          setValue(displayValue.copy());
+        }
+      } else if (!validSegments[part]) {
+        markValid(part);
+        setValue(displayValue.copy());
+      }
     },
     getFormatOptions(fieldOptions: FieldOptions) {
       return getFormatOptions(fieldOptions, formatOpts);
@@ -380,12 +395,7 @@ function convertValue(value: DateValue, calendar: Calendar): DateValue {
 }
 
 function createPlaceholderDate(granularity, calendar, timeZone) {
-  let date = toCalendar(now(timeZone), calendar).set({
-    hour: 12,
-    minute: 0,
-    second: 0,
-    millisecond: 0
-  });
+  let date = toCalendar(today(timeZone), calendar);
 
   if (granularity === 'year' || granularity === 'month' || granularity === 'day') {
     return toCalendarDate(date);

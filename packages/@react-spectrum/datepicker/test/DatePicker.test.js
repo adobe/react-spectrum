@@ -17,6 +17,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 function beforeInput(target, key) {
   // JSDOM doesn't support the beforeinput event
@@ -246,7 +247,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
-      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).set({hour: 12, minute: 0}).toDate(getLocalTimeZone()));
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
       expect(combobox).toHaveTextContent(placeholder);
 
       let button = getByRole('button');
@@ -260,7 +261,7 @@ describe('DatePicker', function () {
       expect(selected).toBeUndefined();
 
       let timeField = getAllByLabelText('Time')[0];
-      expect(timeField).toHaveTextContent('12:00 PM');
+      expect(timeField).toHaveTextContent('12:00 AM');
 
       // selecting a date should not close the popover
       let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
@@ -274,13 +275,13 @@ describe('DatePicker', function () {
 
       let hour = within(timeField).getByLabelText('hour');
       expect(hour).toHaveAttribute('role', 'spinbutton');
-      expect(hour).toHaveAttribute('aria-valuetext', '12 PM');
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
 
       act(() => hour.focus());
       fireEvent.keyDown(hour, {key: 'ArrowUp'});
       fireEvent.keyUp(hour, {key: 'ArrowUp'});
 
-      expect(hour).toHaveAttribute('aria-valuetext', '1 PM');
+      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
 
       expect(onChange).not.toHaveBeenCalled();
       expect(combobox).toHaveTextContent(placeholder);
@@ -302,16 +303,93 @@ describe('DatePicker', function () {
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM');
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 PM');
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 AM');
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
-      let value = toCalendarDateTime(today(getLocalTimeZone())).set({hour: 13, minute: 1});
+      let value = toCalendarDateTime(today(getLocalTimeZone())).set({hour: 1, minute: 1});
       expect(onChange).toHaveBeenCalledWith(value);
       expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+    });
+
+    it('should confirm time placeholder on blur if date is selected', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme}>
+          <DatePicker label="Date" granularity="minute" onChange={onChange} />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
+      expect(combobox).toHaveTextContent(placeholder);
+
+      let button = getByRole('button');
+      triggerPress(button);
+      act(() => jest.runAllTimers());
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      triggerPress(todayCell.firstChild);
+      expect(todayCell).toHaveAttribute('aria-selected', 'true');
+      expect(onChange).not.toHaveBeenCalled();
+
+      userEvent.click(document.body);
+      act(() => jest.runAllTimers());
+
+      expect(dialog).not.toBeInTheDocument();
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      let value = toCalendarDateTime(today(getLocalTimeZone()));
+      expect(onChange).toHaveBeenCalledWith(value);
+      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+    });
+
+    it('should not confirm on blur if date is not selected', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <DatePicker label="Date" granularity="minute" onChange={onChange} />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
+      expect(combobox).toHaveTextContent(placeholder);
+
+      let button = getByRole('button');
+      triggerPress(button);
+      act(() => jest.runAllTimers());
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let timeField = getAllByLabelText('Time')[0];
+      expect(timeField).toHaveTextContent('12:00 AM');
+
+      let hour = within(timeField).getByLabelText('hour');
+      expect(hour).toHaveAttribute('role', 'spinbutton');
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
+
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+
+      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
+
+      userEvent.click(document.body);
+      act(() => jest.runAllTimers());
+
+      expect(dialog).not.toBeInTheDocument();
+      expect(onChange).not.toHaveBeenCalled();
     });
   });
 
@@ -1138,6 +1216,30 @@ describe('DatePicker', function () {
       value = new CalendarDate(2020, 4, 5);
       rerender(<DatePicker label="Date" onChange={onChange} value={value} />);
       expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+    });
+
+    it('should confirm the placeholder on blur', function () {
+      let onChange = jest.fn();
+      let {getAllByRole} = render(<DatePicker label="Date" onChange={onChange} />);
+
+      let combobox = getAllByRole('group')[0];
+      let todayStr = new Intl.DateTimeFormat('en-US').format(new Date());
+      expect(combobox).toHaveTextContent(todayStr);
+
+      let segments = getAllByRole('spinbutton');
+      act(() => {segments[0].focus();});
+
+      // Should not emit onChange if no segments are set
+      act(() => {segments[0].blur();});
+      expect(onChange).not.toHaveBeenCalled();
+
+      act(() => {segments[0].focus();});
+      beforeInput(document.activeElement, '4');
+      expect(onChange).not.toHaveBeenCalled();
+
+      expect(segments[1]).toHaveFocus();
+      act(() => {segments[1].blur();});
+      expect(onChange).toHaveBeenCalledWith(today(getLocalTimeZone()).set({month: 4}));
     });
   });
 });

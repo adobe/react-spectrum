@@ -17,6 +17,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -320,7 +321,7 @@ describe('DateRangePicker', function () {
       );
 
       let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
-      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).set({hour: 12, minute: 0}).toDate(getLocalTimeZone()));
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
       expect(startDate).toHaveTextContent(placeholder);
@@ -337,10 +338,10 @@ describe('DateRangePicker', function () {
       expect(selected).toBeUndefined();
 
       let startTimeField = getAllByLabelText('Start time')[0];
-      expect(startTimeField).toHaveTextContent('12:00 PM');
+      expect(startTimeField).toHaveTextContent('12:00 AM');
 
       let endTimeField = getAllByLabelText('End time')[0];
-      expect(endTimeField).toHaveTextContent('12:00 PM');
+      expect(endTimeField).toHaveTextContent('12:00 AM');
 
       // selecting a date should not close the popover
       let enabledCells = cells.filter(cell => !cell.hasAttribute('aria-disabled'));
@@ -355,13 +356,13 @@ describe('DateRangePicker', function () {
       for (let timeField of [startTimeField, endTimeField]) {
         let hour = within(timeField).getByLabelText('hour');
         expect(hour).toHaveAttribute('role', 'spinbutton');
-        expect(hour).toHaveAttribute('aria-valuetext', '12 PM');
+        expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
 
         act(() => hour.focus());
         fireEvent.keyDown(hour, {key: 'ArrowUp'});
         fireEvent.keyUp(hour, {key: 'ArrowUp'});
 
-        expect(hour).toHaveAttribute('aria-valuetext', '1 PM');
+        expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
 
         expect(onChange).not.toHaveBeenCalled();
         expect(startDate).toHaveTextContent(placeholder);
@@ -385,7 +386,7 @@ describe('DateRangePicker', function () {
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM');
-        expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 PM');
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 AM');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
@@ -393,11 +394,94 @@ describe('DateRangePicker', function () {
 
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
-      let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1, hour: 13, minute: 1});
-      let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2, hour: 13, minute: 1});
+      let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1, hour: 1, minute: 1});
+      let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2, hour: 1, minute: 1});
       expect(onChange).toHaveBeenCalledWith({start: startValue, end: endValue});
       expect(startDate).toHaveTextContent(formatter.format(startValue.toDate(getLocalTimeZone())));
       expect(endDate).toHaveTextContent(formatter.format(endValue.toDate(getLocalTimeZone())));
+    });
+
+    it('should confirm time placeholders on blur if date range is selected', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <DateRangePicker label="Date" granularity="minute" onChange={onChange} />
+        </Provider>
+      );
+
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
+      let startDate = getByLabelText('Start Date');
+      let endDate = getByLabelText('End Date');
+      expect(startDate).toHaveTextContent(placeholder);
+      expect(endDate).toHaveTextContent(placeholder);
+
+      let button = getByRole('button');
+      triggerPress(button);
+      act(() => jest.runAllTimers());
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let enabledCells = cells.filter(cell => !cell.hasAttribute('aria-disabled'));
+      triggerPress(enabledCells[0].firstChild);
+      triggerPress(enabledCells[1].firstChild);
+      expect(onChange).not.toHaveBeenCalled();
+
+      userEvent.click(document.body);
+      act(() => jest.runAllTimers());
+
+      expect(dialog).not.toBeInTheDocument();
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1});
+      let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2});
+      expect(onChange).toHaveBeenCalledWith({start: startValue, end: endValue});
+      expect(startDate).toHaveTextContent(formatter.format(startValue.toDate(getLocalTimeZone())));
+      expect(endDate).toHaveTextContent(formatter.format(endValue.toDate(getLocalTimeZone())));
+    });
+
+    it('should not confirm on blur if date range is not selected', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByLabelText, getByLabelText} = render(
+        <Provider theme={theme}>
+          <DateRangePicker label="Date" granularity="minute" onChange={onChange} />
+        </Provider>
+      );
+
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
+      let startDate = getByLabelText('Start Date');
+      let endDate = getByLabelText('End Date');
+      expect(startDate).toHaveTextContent(placeholder);
+      expect(endDate).toHaveTextContent(placeholder);
+
+      let button = getByRole('button');
+      triggerPress(button);
+      act(() => jest.runAllTimers());
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let timeField = getAllByLabelText('Start time')[0];
+      expect(timeField).toHaveTextContent('12:00 AM');
+
+      let hour = within(timeField).getByLabelText('hour');
+      expect(hour).toHaveAttribute('role', 'spinbutton');
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
+
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+
+      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
+
+      userEvent.click(document.body);
+      act(() => jest.runAllTimers());
+
+      expect(dialog).not.toBeInTheDocument();
+      expect(onChange).not.toHaveBeenCalled();
     });
   });
 
