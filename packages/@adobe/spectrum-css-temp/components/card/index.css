@@ -261,8 +261,8 @@ user-provided
 
     border-block-end-width: var(--spectrum-card-border-size);
     border-block-end-style: solid;
-
-    clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-border-radius) var(--spectrum-card-border-radius) 0 0);
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-start-end-radius: var(--spectrum-card-border-radius);
   }
   .spectrum-Card-image {
   }
@@ -380,8 +380,8 @@ user-provided
 
     border-block-end-width: var(--spectrum-card-border-size);
     border-block-end-style: solid;
-
-    clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-border-radius) var(--spectrum-card-border-radius) 0 0);
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-start-end-radius: var(--spectrum-card-border-radius);
   }
   .spectrum-Card-image {
   }
@@ -500,8 +500,8 @@ user-provided
 
     border-block-end-width: var(--spectrum-card-border-size);
     border-block-end-style: solid;
-
-    clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-border-radius) var(--spectrum-card-border-radius) 0 0);
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-start-end-radius: var(--spectrum-card-border-radius);
   }
   .spectrum-Card-image {
   }
