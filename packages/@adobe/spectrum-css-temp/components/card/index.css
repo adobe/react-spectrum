@@ -999,11 +999,11 @@ user-provided
 /** END Quiet Vertical **/
 
 /** Standard Horizontal **/
-/** Tile **/
 /**
-Broken as a CSS only solution in FF until aspect-ratio is supported or this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1436180
+Broken as a CSS only solution in Safari until aspect-ratio is supported https://caniuse.com/?search=aspect-ratio
 For now working around it with a useLayoutEffect in CardBase.
 **/
+/** Tile **/
 .spectrum-Card--grid.spectrum-Card--horizontal {
   .spectrum-Card-grid:after {
     z-index: 2;
@@ -1111,12 +1111,6 @@ For now working around it with a useLayoutEffect in CardBase.
 }
 
 /** Standalone **/
-/**
- Horizontal standalone css only cannot be supported until aspect-ratio is supported
- probably due to https://stackoverflow.com/questions/44770074/css-grid-row-height-safari-bug but
- was unable to get the workaround to work.
- For now working around it with a useLayoutEffect in CardBase.
- **/
 .spectrum-Card--noLayout.spectrum-Card--horizontal {
   .spectrum-Card-grid:after {
     z-index: 2;
