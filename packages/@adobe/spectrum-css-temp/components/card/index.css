@@ -198,6 +198,7 @@ user-provided
   }
   &:after {
     z-index: 2;
+    pointer-events: none;
   }
   position: relative;
   border-width: var(--spectrum-card-border-size);
@@ -314,6 +315,7 @@ user-provided
   }
   &:after {
     z-index: 2;
+    pointer-events: none;
   }
   position: relative;
   border-width: var(--spectrum-card-border-size);
@@ -434,6 +436,7 @@ user-provided
   }
   &:after {
     z-index: 2;
+    pointer-events: none;
   }
   position: relative;
   border-width: var(--spectrum-card-border-size);
