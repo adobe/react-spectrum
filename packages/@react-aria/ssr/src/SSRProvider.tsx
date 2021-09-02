@@ -19,7 +19,7 @@ import React, {ReactNode, useContext, useLayoutEffect, useMemo, useState} from '
 // and resets the current id counter. This ensures that async loaded components have
 // consistent ids regardless  of the loading order.
 interface SSRContextValue {
-  prefix: number,
+  prefix: string,
   current: number
 }
 
@@ -29,7 +29,7 @@ interface SSRContextValue {
 // will reset this to zero for consistency between server and client, so in the
 // SSR case multiple copies of React Aria is not supported.
 const defaultContext: SSRContextValue = {
-  prefix: Math.round(Math.random() * 10000000000),
+  prefix: String(Math.round(Math.random() * 10000000000)),
   current: 0
 };
 
@@ -47,8 +47,9 @@ interface SSRProviderProps {
 export function SSRProvider(props: SSRProviderProps): JSX.Element {
   let cur = useContext(SSRContext);
   let value: SSRContextValue = useMemo(() => ({
-    // If this is the first SSRProvider, set to zero, otherwise increment.
-    prefix: cur === defaultContext ? 0 : ++cur.prefix,
+    // If this is the first SSRProvider, start with an empty string prefix, otherwise
+    // append and increment the counter.
+    prefix: cur === defaultContext ? '' : `${cur.prefix}-${++cur.current}`,
     current: 0
   }), [cur]);
 
@@ -75,7 +76,7 @@ export function useSSRSafeId(defaultId?: string): string {
     console.warn('When server rendering, you must wrap your application in an <SSRProvider> to ensure consistent ids are generated between the client and server.');
   }
 
-  return useMemo(() => defaultId || `react-aria-${ctx.prefix}-${++ctx.current}`, [defaultId]);
+  return useMemo(() => defaultId || `react-aria${ctx.prefix}-${++ctx.current}`, [defaultId]);
 }
 
 /**
