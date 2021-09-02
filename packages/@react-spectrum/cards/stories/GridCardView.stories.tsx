@@ -253,7 +253,7 @@ export function StaticCardView(props) {
         <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
         <Heading>Bob 1</Heading>
         <Text slot="detail">PNG</Text>
-        <Content>Description</Content>
+        <Content>Very very very very very very very very very very very very very long description</Content>
         <ActionMenu>
           <Item>Action 1</Item>
           <Item>Action 2</Item>
@@ -266,24 +266,16 @@ export function StaticCardView(props) {
         <Image src="https://i.imgur.com/DhygPot.jpg" />
         <Heading>Joe 1</Heading>
         <Text slot="detail">PNG</Text>
-        <Content>Description</Content>
         <ActionMenu>
           <Item>Action 1</Item>
           <Item>Action 2</Item>
         </ActionMenu>
-        <Footer>
-          <Button variant="primary">Something</Button>
-        </Footer>
       </Card>
       <Card key="Jane 1" width={182} height={1009} textValue="Jane 1">
         <Image src="https://i.imgur.com/L7RTlvI.png" />
         <Heading>Jane 1</Heading>
         <Text slot="detail">PNG</Text>
         <Content>Description</Content>
-        <ActionMenu>
-          <Item>Action 1</Item>
-          <Item>Action 2</Item>
-        </ActionMenu>
         <Footer>
           <Button variant="primary">Something</Button>
         </Footer>
@@ -292,14 +284,11 @@ export function StaticCardView(props) {
         <Image src="https://i.imgur.com/1nScMIH.jpg" />
         <Heading>Bob 2</Heading>
         <Text slot="detail">PNG</Text>
-        <Content>Description</Content>
+        <Content>Very very very very very very very very very very very very very long description</Content>
         <ActionMenu>
           <Item>Action 1</Item>
           <Item>Action 2</Item>
         </ActionMenu>
-        <Footer>
-          <Button variant="primary">Something</Button>
-        </Footer>
       </Card>
       <Card key="Joe 2" width={640} height={640} textValue="Joe 2">
         <Image src="https://i.imgur.com/DhygPot.jpg" />
