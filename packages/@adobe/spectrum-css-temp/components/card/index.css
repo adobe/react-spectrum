@@ -198,6 +198,7 @@ user-provided
   }
   &:after {
     z-index: 2;
+    pointer-events: none;
   }
   position: relative;
   border-width: var(--spectrum-card-border-size);
@@ -260,8 +261,8 @@ user-provided
 
     border-block-end-width: var(--spectrum-card-border-size);
     border-block-end-style: solid;
-
-    clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-border-radius) var(--spectrum-card-border-radius) 0 0);
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-start-end-radius: var(--spectrum-card-border-radius);
   }
   .spectrum-Card-image {
   }
@@ -273,7 +274,7 @@ user-provided
   .spectrum-Card-avatar {
     grid-area: preview;
     position: absolute;
-    inset-block-end: -15px;
+    inset-block-end: -10px;
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
@@ -314,6 +315,7 @@ user-provided
   }
   &:after {
     z-index: 2;
+    pointer-events: none;
   }
   position: relative;
   border-width: var(--spectrum-card-border-size);
@@ -378,8 +380,8 @@ user-provided
 
     border-block-end-width: var(--spectrum-card-border-size);
     border-block-end-style: solid;
-
-    clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-border-radius) var(--spectrum-card-border-radius) 0 0);
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-start-end-radius: var(--spectrum-card-border-radius);
   }
   .spectrum-Card-image {
   }
@@ -391,7 +393,7 @@ user-provided
   .spectrum-Card-avatar {
     grid-area: preview;
     position: absolute;
-    inset-block-end: -15px;
+    inset-block-end: -10px;
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
@@ -434,6 +436,7 @@ user-provided
   }
   &:after {
     z-index: 2;
+    pointer-events: none;
   }
   position: relative;
   border-width: var(--spectrum-card-border-size);
@@ -497,8 +500,8 @@ user-provided
 
     border-block-end-width: var(--spectrum-card-border-size);
     border-block-end-style: solid;
-
-    clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-border-radius) var(--spectrum-card-border-radius) 0 0);
+    border-start-start-radius: var(--spectrum-card-border-radius);
+    border-start-end-radius: var(--spectrum-card-border-radius);
   }
   .spectrum-Card-image {
   }
@@ -512,7 +515,7 @@ user-provided
   .spectrum-Card-avatar {
     grid-area: preview;
     position: absolute;
-    inset-block-end: -15px;
+    inset-block-end: -10px;
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
@@ -996,11 +999,11 @@ user-provided
 /** END Quiet Vertical **/
 
 /** Standard Horizontal **/
-/** Tile **/
 /**
-Broken as a CSS only solution in FF until aspect-ratio is supported or this is resolved https://bugzilla.mozilla.org/show_bug.cgi?id=1436180
+Broken as a CSS only solution in Safari until aspect-ratio is supported https://caniuse.com/?search=aspect-ratio
 For now working around it with a useLayoutEffect in CardBase.
 **/
+/** Tile **/
 .spectrum-Card--grid.spectrum-Card--horizontal {
   .spectrum-Card-grid:after {
     z-index: 2;
@@ -1108,12 +1111,6 @@ For now working around it with a useLayoutEffect in CardBase.
 }
 
 /** Standalone **/
-/**
- Horizontal standalone css only cannot be supported until aspect-ratio is supported
- probably due to https://stackoverflow.com/questions/44770074/css-grid-row-height-safari-bug but
- was unable to get the workaround to work.
- For now working around it with a useLayoutEffect in CardBase.
- **/
 .spectrum-Card--noLayout.spectrum-Card--horizontal {
   .spectrum-Card-grid:after {
     z-index: 2;

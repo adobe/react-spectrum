@@ -396,6 +396,12 @@ WithColorfulIllustration.args = {children: (
     </ActionMenu>
   </>
 )};
+WithColorfulIllustration.decorators = [(Story) => (
+  <div>
+    <div>{'ignore the no white background, the svg just has a transparent background'}</div>
+    <Story />
+  </div>
+)];
 
 // doesn't work right now, Illustrated Message messes with the styles and has some other interference
 export const WithColorfulIllustratedMessage = Template().bind({});
@@ -410,6 +416,12 @@ WithColorfulIllustratedMessage.args = {children: (
     </ActionMenu>
   </>
 )};
+WithColorfulIllustratedMessage.decorators = [(Story) => (
+  <div>
+    <div>{'does not work right now, Illustrated Message messes with the styles and has some other interference. We may not even want to support it this way.'}</div>
+    <Story />
+  </div>
+)];
 
 export const LongTitle = Template().bind({});
 LongTitle.args = {children: (
@@ -431,6 +443,7 @@ LongTitle.args = {children: (
 export const LongDescription = Template().bind({});
 LongDescription.args = {children: (
   <>
+    {/* TODO: what to do about image requiring an alt in TS, Card provides an empty alt so this is fine */}
     <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
