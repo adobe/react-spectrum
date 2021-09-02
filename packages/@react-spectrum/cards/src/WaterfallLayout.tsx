@@ -26,11 +26,11 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
    * @default Infinity
    */
   maxItemSize?: Size,
-  /**
-   * The margin around the grid view between the edges and the items.
-   * @default 24
-   */
-  margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
+  // /**
+  //  * The margin around the grid view between the edges and the items.
+  //  * @default 24
+  //  */
+  // margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
   /**
    * The minimum space required between items.
    * @default 24 x 24
@@ -66,9 +66,11 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     super(options);
     this.minItemSize = options.minItemSize || new Size(240, 136);
     this.maxItemSize = options.maxItemSize || new Size(Infinity, Infinity);
+    // TODO: V2 hard coded the margin to 24, current layout calculation breaks if changed from this value
     this.margin = 24;
     this.minSpace = options.minSpace || new Size(24, 24);
     this.maxColumns = options.maxColumns || Infinity;
+    // TODO: not entirely sure what this is for since the layout will automatically shift itself to the correct vertical space for the card
     this.itemPadding = options.itemPadding != null ? options.itemPadding : 56;
 
     this.itemWidth = 0;
