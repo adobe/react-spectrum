@@ -134,7 +134,7 @@ user-provided
 
   &.is-focused,
   &.is-selected,
-  &:focus,
+  &.focus-ring, /* only for visible focus */
   &:hover {
     .spectrum-Card-checkboxWrapper {
       /* Ideally, this would simply apply is-open to the QuickActions component */
