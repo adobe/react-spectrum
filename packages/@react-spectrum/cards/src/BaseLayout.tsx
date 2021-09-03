@@ -153,9 +153,16 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     if (layoutInfo) {
       let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
-      while (layoutInfo && layoutInfo.rect.y > pageY) {
-        let keyAbove = this.getKeyAbove(layoutInfo.key);
-        layoutInfo = this.getLayoutInfo(keyAbove);
+      // If the node is so large that it spans multiple page heights, return the key of the item immediately above
+      // Otherwise keep going up until we exceed a single page height worth of nodes
+      let keyAbove = this.getKeyAbove(layoutInfo.key);
+      layoutInfo = this.getLayoutInfo(keyAbove);
+
+      if (layoutInfo && layoutInfo.rect.y > pageY) {
+        while (layoutInfo && layoutInfo.rect.y > pageY) {
+          let keyAbove = this.getKeyAbove(layoutInfo.key);
+          layoutInfo = this.getLayoutInfo(keyAbove);
+        }
       }
 
       if (layoutInfo) {
@@ -171,9 +178,16 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     if (layoutInfo) {
       let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
-      while (layoutInfo && layoutInfo.rect.y < pageY) {
-        let keyBelow = this.getKeyBelow(layoutInfo.key);
-        layoutInfo = this.getLayoutInfo(keyBelow);
+      // If the node is so large that it spans multiple page heights, return the key of the item immediately below
+      // Otherwise keep going up until we exceed a single page height worth of nodes
+      let keyBelow = this.getKeyBelow(layoutInfo.key);
+      layoutInfo = this.getLayoutInfo(keyBelow);
+
+      if (layoutInfo && layoutInfo.rect.y < pageY) {
+        while (layoutInfo && layoutInfo.rect.y < pageY) {
+          let keyBelow = this.getKeyBelow(layoutInfo.key);
+          layoutInfo = this.getLayoutInfo(keyBelow);
+        }
       }
 
       if (layoutInfo) {
