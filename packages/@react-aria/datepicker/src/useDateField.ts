@@ -36,18 +36,29 @@ export function useDateField<T extends DateValue>(props: AriaDatePickerProps<T>,
     labelElementType: 'span'
   });
 
-  // Focus the last segment on mouse down/touch up in the field.
+  // Focus the first placeholder segment from the end on mouse down/touch up in the field.
+  let focusLast = () => {
+    let segments = state.segments.filter(s => s.isEditable);
+    let index = segments.length - 1;
+    while (index >= 0 && segments[index].isPlaceholder) {
+      index--;
+    }
+    index = Math.min(index + 1, segments.length - 1);
+    let element = ref.current.querySelectorAll('[role="spinbutton"]')[index] as HTMLElement;
+    if (element) {
+      element.focus();
+    }
+  };
+
   let {pressProps} = usePress({
     onPressStart(e) {
       if (e.pointerType === 'mouse') {
-        let focusManager = createFocusManager(ref);
-        focusManager.focusLast();
+        focusLast();
       }
     },
     onPress(e) {
       if (e.pointerType !== 'mouse') {
-        let focusManager = createFocusManager(ref);
-        focusManager.focusLast();
+        focusLast();
       }
     }
   });

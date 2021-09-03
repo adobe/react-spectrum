@@ -23,7 +23,8 @@ export interface DateSegment {
   value?: number,
   minValue?: number,
   maxValue?: number,
-  isPlaceholder: boolean
+  isPlaceholder: boolean,
+  isEditable: boolean
 }
 
 export interface DatePickerFieldState {
@@ -176,7 +177,8 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
         type: TYPE_MAPPING[segment.type] || segment.type,
         text: segment.value,
         ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
-        isPlaceholder: !validSegments[segment.type]
+        isPlaceholder: !validSegments[segment.type],
+        isEditable: EDITABLE_SEGMENTS[segment.type]
       } as DateSegment))
   , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue]);
 

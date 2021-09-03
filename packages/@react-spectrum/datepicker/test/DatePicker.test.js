@@ -543,13 +543,36 @@ describe('DatePicker', function () {
   });
 
   describe('focus management', function () {
-    it('should focus the last segment on mouse down in the field', function () {
+    it('should focus the first segment on mouse down in the field', function () {
       let {getAllByRole} = render(<DatePicker label="Date" />);
       let field = getAllByRole('group')[1];
       let segments = getAllByRole('spinbutton');
 
       triggerPress(field);
-      expect(segments[segments.length - 1]).toHaveFocus();
+      expect(segments[0]).toHaveFocus();
+    });
+
+    it('should focus the first unfilled segment on mouse down in the field', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" />);
+      let field = getAllByRole('group')[1];
+      let segments = getAllByRole('spinbutton');
+
+      act(() => segments[0].focus());
+      fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      expect(segments[0]).toHaveFocus();
+
+      triggerPress(field);
+      expect(segments[1]).toHaveFocus();
+    });
+
+    it('should focus the last segment on mouse down in the field with a value', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" value={new CalendarDate(2020, 2, 3)} />);
+      let field = getAllByRole('group')[1];
+      let segments = getAllByRole('spinbutton');
+
+      triggerPress(field);
+      expect(segments[2]).toHaveFocus();
     });
   });
 
