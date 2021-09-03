@@ -86,8 +86,9 @@ function EditableSegment({segment, state, ...otherProps}: DatePickerSegmentProps
         minWidth: !isNumeric ? null : String(segment.maxValue).length + 'ch'
       }}
       data-testid={segment.type}
+      data-placeholder={segment.isPlaceholder ? segment.text : ''}
       {...segmentProps}>
-      {segment.text}
+      {segment.isPlaceholder ? '' : segment.text}
     </div>
   );
 }

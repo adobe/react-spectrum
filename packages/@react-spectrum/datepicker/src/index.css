@@ -74,6 +74,10 @@
 
 .react-spectrum-DatePicker-cell.is-placeholder {
   color: var(--spectrum-textfield-placeholder-text-color, var(--spectrum-global-color-gray-600));
+
+  &:before {
+    content: attr(data-placeholder);
+  }
 }
 
 .react-spectrum-DatePicker-cell.is-placeholder ~ .react-spectrum-Datepicker-literal {

@@ -37,6 +37,19 @@ function beforeInput(target, key) {
   fireEvent(target, e);
 }
 
+function getTextValue(el) {
+  let placeholder = el.getAttribute('data-placeholder');
+  if (placeholder) {
+    return placeholder;
+  }
+
+  return [...el.childNodes].map(el => el.nodeType === 3 ? el.textContent : getTextValue(el)).join('');
+}
+
+function expectPlaceholder(el, placeholder) {
+  expect(getTextValue(el)).toBe(placeholder);
+}
+
 describe('DateRangePicker', function () {
   // there are live announcers, we need to be able to get rid of them after each test or get a warning in the console about act()
   beforeAll(() => jest.useFakeTimers());
@@ -324,8 +337,8 @@ describe('DateRangePicker', function () {
       let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
-      expect(startDate).toHaveTextContent(placeholder);
-      expect(endDate).toHaveTextContent(placeholder);
+      expectPlaceholder(startDate, placeholder);
+      expectPlaceholder(endDate, placeholder);
 
       let button = getByRole('button');
       triggerPress(button);
@@ -338,10 +351,10 @@ describe('DateRangePicker', function () {
       expect(selected).toBeUndefined();
 
       let startTimeField = getAllByLabelText('Start time')[0];
-      expect(startTimeField).toHaveTextContent('12:00 AM');
+      expectPlaceholder(startTimeField, '12:00 AM');
 
       let endTimeField = getAllByLabelText('End time')[0];
-      expect(endTimeField).toHaveTextContent('12:00 AM');
+      expectPlaceholder(endTimeField, '12:00 AM');
 
       // selecting a date should not close the popover
       let enabledCells = cells.filter(cell => !cell.hasAttribute('aria-disabled'));
@@ -350,8 +363,8 @@ describe('DateRangePicker', function () {
 
       expect(dialog).toBeVisible();
       expect(onChange).not.toHaveBeenCalled();
-      expect(startDate).toHaveTextContent(placeholder);
-      expect(endDate).toHaveTextContent(placeholder);
+      expectPlaceholder(startDate, placeholder);
+      expectPlaceholder(endDate, placeholder);
 
       for (let timeField of [startTimeField, endTimeField]) {
         let hour = within(timeField).getByLabelText('hour');
@@ -365,8 +378,8 @@ describe('DateRangePicker', function () {
         expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
 
         expect(onChange).not.toHaveBeenCalled();
-        expect(startDate).toHaveTextContent(placeholder);
-        expect(endDate).toHaveTextContent(placeholder);
+        expectPlaceholder(startDate, placeholder);
+        expectPlaceholder(endDate, placeholder);
 
         fireEvent.keyDown(hour, {key: 'ArrowRight'});
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
@@ -379,8 +392,8 @@ describe('DateRangePicker', function () {
         expect(document.activeElement).toHaveAttribute('aria-valuetext', '01');
 
         expect(onChange).not.toHaveBeenCalled();
-        expect(startDate).toHaveTextContent(placeholder);
-        expect(endDate).toHaveTextContent(placeholder);
+        expectPlaceholder(startDate, placeholder);
+        expectPlaceholder(endDate, placeholder);
 
         fireEvent.keyDown(hour, {key: 'ArrowRight'});
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
@@ -413,8 +426,8 @@ describe('DateRangePicker', function () {
       let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
-      expect(startDate).toHaveTextContent(placeholder);
-      expect(endDate).toHaveTextContent(placeholder);
+      expectPlaceholder(startDate, placeholder);
+      expectPlaceholder(endDate, placeholder);
 
       let button = getByRole('button');
       triggerPress(button);
@@ -454,8 +467,8 @@ describe('DateRangePicker', function () {
       let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
-      expect(startDate).toHaveTextContent(placeholder);
-      expect(endDate).toHaveTextContent(placeholder);
+      expectPlaceholder(startDate, placeholder);
+      expectPlaceholder(endDate, placeholder);
 
       let button = getByRole('button');
       triggerPress(button);
@@ -465,7 +478,7 @@ describe('DateRangePicker', function () {
       expect(dialog).toBeVisible();
 
       let timeField = getAllByLabelText('Start time')[0];
-      expect(timeField).toHaveTextContent('12:00 AM');
+      expectPlaceholder(timeField, '12:00 AM');
 
       let hour = within(timeField).getByLabelText('hour');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -970,8 +983,8 @@ describe('DateRangePicker', function () {
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
       let today = new Intl.DateTimeFormat('en-US').format(new Date());
-      expect(startDate).toHaveTextContent(today);
-      expect(endDate).toHaveTextContent(today);
+      expectPlaceholder(startDate, today);
+      expectPlaceholder(endDate, today);
     });
 
     it('should display a placeholder date if the value prop is null', function () {
@@ -981,8 +994,8 @@ describe('DateRangePicker', function () {
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
       let today = new Intl.DateTimeFormat('en-US').format(new Date());
-      expect(startDate).toHaveTextContent(today);
-      expect(endDate).toHaveTextContent(today);
+      expectPlaceholder(startDate, today);
+      expectPlaceholder(endDate, today);
     });
 
     it('should use the placeholderValue prop if provided', function () {
@@ -991,8 +1004,8 @@ describe('DateRangePicker', function () {
 
       let startDate = getByLabelText('Start Date');
       let endDate = getByLabelText('End Date');
-      expect(startDate).toHaveTextContent('1/1/1980');
-      expect(endDate).toHaveTextContent('1/1/1980');
+      expectPlaceholder(startDate, '1/1/1980');
+      expectPlaceholder(endDate, '1/1/1980');
     });
 
     it('should not fire onChange until both start and end dates have been entered', function () {
@@ -1003,21 +1016,21 @@ describe('DateRangePicker', function () {
       let endDate = getByLabelText('End Date');
 
       let formatter = new Intl.DateTimeFormat('en-US');
-      expect(startDate).toHaveTextContent(formatter.format(new Date()));
-      expect(endDate).toHaveTextContent(formatter.format(new Date()));
+      expectPlaceholder(startDate, formatter.format(new Date()));
+      expectPlaceholder(endDate, formatter.format(new Date()));
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
 
       beforeInput(document.activeElement, '2');
       let value = today(getLocalTimeZone()).set({month: 2});
-      expect(startDate).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(startDate, formatter.format(value.toDate(getLocalTimeZone())));
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
       beforeInput(document.activeElement, '3');
       value = today(getLocalTimeZone()).set({month: 2, day: 3});
-      expect(startDate).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(startDate, formatter.format(value.toDate(getLocalTimeZone())));
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
@@ -1025,19 +1038,19 @@ describe('DateRangePicker', function () {
       beforeInput(document.activeElement, '0');
       beforeInput(document.activeElement, '2');
       beforeInput(document.activeElement, '0');
-      expect(startDate).toHaveTextContent('2/3/2020');
+      expectPlaceholder(startDate, '2/3/2020');
       expect(segments[3]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
       beforeInput(document.activeElement, '4');
       value = today(getLocalTimeZone()).set({month: 4});
-      expect(endDate).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(endDate, formatter.format(value.toDate(getLocalTimeZone())));
       expect(segments[4]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
       beforeInput(document.activeElement, '8');
       value = today(getLocalTimeZone()).set({month: 4, day: 8});
-      expect(endDate).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(endDate, formatter.format(value.toDate(getLocalTimeZone())));
       expect(segments[5]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 

@@ -26,6 +26,19 @@ function beforeInput(target, key) {
   fireEvent(target, e);
 }
 
+function getTextValue(el) {
+  let placeholder = el.getAttribute('data-placeholder');
+  if (placeholder) {
+    return placeholder;
+  }
+
+  return [...el.childNodes].map(el => el.nodeType === 3 ? el.textContent : getTextValue(el)).join('');
+}
+
+function expectPlaceholder(el, placeholder) {
+  expect(getTextValue(el)).toBe(placeholder);
+}
+
 describe('DatePicker', function () {
   beforeAll(() => {
     jest.useFakeTimers();
@@ -248,7 +261,7 @@ describe('DatePicker', function () {
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
       let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
-      expect(combobox).toHaveTextContent(placeholder);
+      expectPlaceholder(combobox, placeholder);
 
       let button = getByRole('button');
       triggerPress(button);
@@ -261,7 +274,7 @@ describe('DatePicker', function () {
       expect(selected).toBeUndefined();
 
       let timeField = getAllByLabelText('Time')[0];
-      expect(timeField).toHaveTextContent('12:00 AM');
+      expectPlaceholder(timeField, '12:00 AM');
 
       // selecting a date should not close the popover
       let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
@@ -271,7 +284,7 @@ describe('DatePicker', function () {
 
       expect(dialog).toBeVisible();
       expect(onChange).not.toHaveBeenCalled();
-      expect(combobox).toHaveTextContent(placeholder);
+      expectPlaceholder(combobox, placeholder);
 
       let hour = within(timeField).getByLabelText('hour');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -284,7 +297,7 @@ describe('DatePicker', function () {
       expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
 
       expect(onChange).not.toHaveBeenCalled();
-      expect(combobox).toHaveTextContent(placeholder);
+      expectPlaceholder(combobox, placeholder);
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
@@ -297,7 +310,7 @@ describe('DatePicker', function () {
       expect(document.activeElement).toHaveAttribute('aria-valuetext', '01');
 
       expect(onChange).not.toHaveBeenCalled();
-      expect(combobox).toHaveTextContent(placeholder);
+      expectPlaceholder(combobox, placeholder);
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
@@ -312,7 +325,7 @@ describe('DatePicker', function () {
       expect(onChange).toHaveBeenCalledTimes(1);
       let value = toCalendarDateTime(today(getLocalTimeZone())).set({hour: 1, minute: 1});
       expect(onChange).toHaveBeenCalledWith(value);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
     it('should confirm time placeholder on blur if date is selected', function () {
@@ -326,7 +339,7 @@ describe('DatePicker', function () {
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
       let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
-      expect(combobox).toHaveTextContent(placeholder);
+      expectPlaceholder(combobox, placeholder);
 
       let button = getByRole('button');
       triggerPress(button);
@@ -349,7 +362,7 @@ describe('DatePicker', function () {
       expect(onChange).toHaveBeenCalledTimes(1);
       let value = toCalendarDateTime(today(getLocalTimeZone()));
       expect(onChange).toHaveBeenCalledWith(value);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
     it('should not confirm on blur if date is not selected', function () {
@@ -363,7 +376,7 @@ describe('DatePicker', function () {
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
       let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
-      expect(combobox).toHaveTextContent(placeholder);
+      expectPlaceholder(combobox, placeholder);
 
       let button = getByRole('button');
       triggerPress(button);
@@ -373,7 +386,7 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
 
       let timeField = getAllByLabelText('Time')[0];
-      expect(timeField).toHaveTextContent('12:00 AM');
+      expectPlaceholder(timeField, '12:00 AM');
 
       let hour = within(timeField).getByLabelText('hour');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -1030,7 +1043,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let today = new Intl.DateTimeFormat('en-US').format(new Date());
-      expect(combobox).toHaveTextContent(today);
+      expectPlaceholder(combobox, today);
     });
 
     it('should display a placeholder date if the value prop is null', function () {
@@ -1039,7 +1052,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let today = new Intl.DateTimeFormat('en-US').format(new Date());
-      expect(combobox).toHaveTextContent(today);
+      expectPlaceholder(combobox, today);
     });
 
     it('should use the placeholderValue prop if provided', function () {
@@ -1047,7 +1060,7 @@ describe('DatePicker', function () {
       let {getAllByRole} = render(<DatePicker label="Date" onChange={onChange} placeholderValue={new CalendarDate(1980, 1, 1)} />);
 
       let combobox = getAllByRole('group')[0];
-      expect(combobox).toHaveTextContent('1/1/1980');
+      expectPlaceholder(combobox, '1/1/1980');
     });
 
     it('should confirm placeholder value with the enter key', function () {
@@ -1056,7 +1069,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let todayStr = new Intl.DateTimeFormat('en-US').format(new Date());
-      expect(combobox).toHaveTextContent(todayStr);
+      expectPlaceholder(combobox, todayStr);
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1073,7 +1086,7 @@ describe('DatePicker', function () {
       expect(segments[2]).toHaveFocus();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(today(getLocalTimeZone()));
-      expect(combobox).toHaveTextContent(todayStr);
+      expectPlaceholder(combobox, todayStr);
     });
 
     it('should use arrow keys to modify placeholder (uncontrolled)', function () {
@@ -1082,7 +1095,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expect(combobox).toHaveTextContent(formatter.format(new Date()));
+      expectPlaceholder(combobox, formatter.format(new Date()));
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1092,20 +1105,20 @@ describe('DatePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       let value = today(getLocalTimeZone()).cycle('month', 1);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       value = value.cycle('day', 1);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       expect(onChange).toHaveBeenCalledTimes(1);
       value = value.cycle('year', 1);
       expect(onChange).toHaveBeenCalledWith(value);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
     it('should use arrow keys to modify placeholder (controlled)', function () {
@@ -1114,7 +1127,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expect(combobox).toHaveTextContent(formatter.format(new Date()));
+      expectPlaceholder(combobox, formatter.format(new Date()));
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1124,23 +1137,23 @@ describe('DatePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       let value = today(getLocalTimeZone()).cycle('month', 1);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       value = value.cycle('day', 1);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(value.cycle('year', 1));
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone()))); // controlled
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone()))); // controlled
 
       value = value.cycle('year', 1);
       rerender(<DatePicker label="Date" onChange={onChange} value={value} />);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
     it('should enter a date to modify placeholder (uncontrolled)', function () {
@@ -1149,7 +1162,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expect(combobox).toHaveTextContent(formatter.format(new Date()));
+      expectPlaceholder(combobox, formatter.format(new Date()));
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1158,13 +1171,13 @@ describe('DatePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       let value = today(getLocalTimeZone()).set({month: 4});
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       beforeInput(document.activeElement, '5');
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       value = today(getLocalTimeZone()).set({month: 4, day: 5});
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -1177,7 +1190,7 @@ describe('DatePicker', function () {
       expect(onChange).toHaveBeenCalledTimes(4);
       value = new CalendarDate(2020, 4, 5);
       expect(onChange).toHaveBeenCalledWith(value);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
     it('should enter a date to modify placeholder (controlled)', function () {
@@ -1186,7 +1199,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expect(combobox).toHaveTextContent(formatter.format(new Date()));
+      expectPlaceholder(combobox, formatter.format(new Date()));
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1195,13 +1208,13 @@ describe('DatePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       let value = today(getLocalTimeZone()).set({month: 4});
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       beforeInput(document.activeElement, '5');
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       value = today(getLocalTimeZone()).set({month: 4, day: 5});
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -1211,11 +1224,11 @@ describe('DatePicker', function () {
       expect(segments[2]).toHaveFocus();
       expect(onChange).toHaveBeenCalledTimes(4);
       expect(onChange).toHaveBeenCalledWith(new CalendarDate(2020, 4, 5));
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone()))); // controlled
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone()))); // controlled
 
       value = new CalendarDate(2020, 4, 5);
       rerender(<DatePicker label="Date" onChange={onChange} value={value} />);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
     it('should confirm the placeholder on blur', function () {
@@ -1224,7 +1237,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let todayStr = new Intl.DateTimeFormat('en-US').format(new Date());
-      expect(combobox).toHaveTextContent(todayStr);
+      expectPlaceholder(combobox, todayStr);
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
