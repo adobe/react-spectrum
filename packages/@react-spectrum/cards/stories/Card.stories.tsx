@@ -396,6 +396,79 @@ export const CardFloat = (props: SpectrumCardProps) => (
     }
   </div>
 );
+export const CardGridMessyText = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: 'auto',
+      justifyContent: 'center',
+      justifyItems: 'center',
+      alignItems: 'start'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', height: '293px'}}>
+            <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+              <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+              <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+              <Footer>
+                <Button variant="primary">Something</Button>
+              </Footer>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardWaterfallMessyText = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      height: '150vh',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'column',
+      flexWrap: 'wrap',
+      alignItems: 'start'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', margin: '10px'}}>
+            <Card {...Default.args} {...props} layout="waterfall" key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+              <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+              <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+              <Footer>
+                <Button variant="primary">Something</Button>
+              </Footer>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
 
 export const WithIllustration = Template().bind({});
 WithIllustration.args = {children: (
@@ -491,6 +564,23 @@ LongDetail.args = {children: (
     <Heading>Title</Heading>
     <Text slot="detail">Stats: Genus: Pterodactylus; Rafinesque, 1815 Order: Pterosauria Kingdom: Animalia Phylum: Chordata</Text>
     <Content>Description</Content>
+    <ActionMenu>
+      <Item>Action 1</Item>
+      <Item>Action 2</Item>
+    </ActionMenu>
+    <Footer>
+      <Button variant="primary">Something</Button>
+    </Footer>
+  </>
+)};
+
+export const LongEverything = Template().bind({});
+LongEverything.args = {children: (
+  <>
+    <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
+    <Heading>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+    <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+    <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
     <ActionMenu>
       <Item>Action 1</Item>
       <Item>Action 2</Item>

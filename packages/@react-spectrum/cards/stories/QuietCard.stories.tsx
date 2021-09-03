@@ -20,9 +20,11 @@ import {Content} from '@react-spectrum/view';
 import {
   Default,
   DefaultSquare,
-  DefaultTall, LongContentPoorWordSize,
+  DefaultTall,
+  LongContentPoorWordSize,
   LongDescription,
   LongDetail,
+  LongEverything,
   LongTitle,
   NoActionMenu,
   NoDescription,
@@ -128,6 +130,9 @@ QuietLongContentPoorWordSize.args = {...Quiet.args, ...LongContentPoorWordSize.a
 
 export const QuietLongDetail = Template().bind({});
 QuietLongDetail.args = {...Quiet.args, ...LongDetail.args};
+
+export const QuietLongEverything = Template().bind({});
+QuietLongEverything.args = {...Quiet.args, ...LongEverything.args};
 
 export const CardGrid = (props: SpectrumCardProps) => (
   <div
@@ -374,6 +379,106 @@ export const CardGridTallRows = (props: SpectrumCardProps) => (
     }
   </div>
 );
+
+export const CardGridMessyText = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: '305px'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Card {...Quiet.args} {...props} layout="grid" key={`${index}${url}`}>
+            <Image src={url} />
+            <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+            <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+            <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+          </Card>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardWaterfallMessyText = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      height: '150vh',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'column',
+      flexWrap: 'wrap',
+      alignItems: 'start'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', margin: '10px'}}>
+            <Card {...Quiet.args} {...props} layout="waterfall" key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+              <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+              <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardGalleryMessyText = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{height: '339px', margin: '10px'}}>
+            <Card {...Quiet.args} {...props} layout="gallery" key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+              <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+              <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+CardGalleryMessyText.decorators = [(Story) => (
+  <>
+    <div style={{position: 'absolute', top: '5px'}}>{'ignore extra horizontal space, it will not do this in a real gallery layout'}</div>
+    <Story />
+  </>
+)];
 
 export const Selected = TemplateSelected().bind({});
 Selected.args = {...Quiet.args};
