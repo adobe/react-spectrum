@@ -107,44 +107,36 @@ export function getLocalTimeZone(): string {
   return localTimeZone;
 }
 
-/* eslint-disable no-redeclare */
 export function startOfMonth(date: ZonedDateTime): ZonedDateTime;
 export function startOfMonth(date: CalendarDateTime): CalendarDateTime;
 export function startOfMonth(date: CalendarDate): CalendarDate;
 export function startOfMonth(date: DateValue): DateValue;
 export function startOfMonth(date: DateValue) {
-/* eslint-enable no-redeclare */
   // Use `subtract` instead of `set` so we don't get constrained in an era.
   return date.subtract({days: date.day - 1});
 }
 
-/* eslint-disable no-redeclare */
 export function endOfMonth(date: ZonedDateTime): ZonedDateTime;
 export function endOfMonth(date: CalendarDateTime): CalendarDateTime;
 export function endOfMonth(date: CalendarDate): CalendarDate;
 export function endOfMonth(date: DateValue): DateValue;
 export function endOfMonth(date: DateValue) {
-/* eslint-enable no-redeclare */
   return date.add({days: date.calendar.getDaysInMonth(date) - date.day});
 }
 
-/* eslint-disable no-redeclare */
 export function startOfYear(date: ZonedDateTime): ZonedDateTime;
 export function startOfYear(date: CalendarDateTime): CalendarDateTime;
 export function startOfYear(date: CalendarDate): CalendarDate;
 export function startOfYear(date: DateValue): DateValue;
 export function startOfYear(date: DateValue) {
-/* eslint-enable no-redeclare */
   return startOfMonth(date.subtract({months: date.month - 1}));
 }
 
-/* eslint-disable no-redeclare */
 export function endOfYear(date: ZonedDateTime): ZonedDateTime;
 export function endOfYear(date: CalendarDateTime): CalendarDateTime;
 export function endOfYear(date: CalendarDate): CalendarDate;
 export function endOfYear(date: DateValue): DateValue;
 export function endOfYear(date: DateValue) {
-/* eslint-enable no-redeclare */
   return endOfMonth(date.add({months: date.calendar.getMonthsInYear(date) - date.month}));
 }
 
@@ -164,23 +156,19 @@ export function getMinimumDayInMonth(date: AnyCalendarDate) {
   return 1;
 }
 
-/* eslint-disable no-redeclare */
 export function startOfWeek(date: ZonedDateTime, locale: string): ZonedDateTime;
 export function startOfWeek(date: CalendarDateTime, locale: string): CalendarDateTime;
 export function startOfWeek(date: CalendarDate, locale: string): CalendarDate;
 export function startOfWeek(date: DateValue, locale: string): DateValue;
 export function startOfWeek(date: DateValue, locale: string) {
-/* eslint-enable no-redeclare */
   let dayOfWeek = getDayOfWeek(date, locale);
   return date.subtract({days: dayOfWeek});
 }
 
-/* eslint-disable no-redeclare */
 export function endOfWeek(date: ZonedDateTime, locale: string): ZonedDateTime;
 export function endOfWeek(date: CalendarDateTime, locale: string): CalendarDateTime;
 export function endOfWeek(date: CalendarDate, locale: string): CalendarDate;
 export function endOfWeek(date: DateValue, locale: string) {
-/* eslint-enable no-redeclare */
   return startOfWeek(date, locale).add({days: 6});
 }
 
