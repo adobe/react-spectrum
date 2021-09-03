@@ -103,7 +103,7 @@ describe('SearchWithin', function () {
 
     let listbox = getByRole('listbox');
     let label = getAllByText('Test')[0];
-    expect(listbox).toHaveAttribute('aria-labelledby', label.id);
+    expect(listbox).toHaveAttribute('aria-labelledby', `${group.id} ${picker.id}`);
     expect(searchfield).toHaveAttribute('aria-labelledby', label.id);
     expect(group).toHaveAttribute('aria-labelledby', label.id);
   });
@@ -166,6 +166,6 @@ describe('SearchWithin', function () {
     let group = getByRole('group');
 
     expect(searchfield).toHaveAttribute('aria-label', 'Aria Label');
-    expect(group).toHaveAttribute('aria-labelledby', 'Aria Label');
+    expect(group).toHaveAttribute('aria-labelledby', searchfield.id);
   });
 });
