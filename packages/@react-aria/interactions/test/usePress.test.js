@@ -345,6 +345,54 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should cancel press when moving outside and the shouldCancelOnPointerExit option is set', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          shouldCancelOnPointerExit
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
+
     it('should handle modifier keys', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
@@ -761,6 +809,54 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should cancel press when moving outside and the shouldCancelOnPointerExit option is set', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          shouldCancelOnPointerExit
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.mouseDown(el, {detail: 1});
+      fireEvent.mouseLeave(el);
+      fireEvent.mouseEnter(el);
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
+
     it('should handle modifier keys', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
@@ -1128,6 +1224,54 @@ describe('usePress', function () {
           metaKey: false,
           shiftKey: false,
           altKey: false
+        }
+      ]);
+    });
+
+    it('should cancel press when moving outside and the shouldCancelOnPointerExit option is set', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          shouldCancelOnPointerExit
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
         }
       ]);
     });

@@ -10,11 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {useLocale} from '@react-aria/i18n';
-
 // Data from https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/weekData.json
 // Locales starting on Sunday have been removed for compression.
-const data = {
+export const weekStartData = {
   '001': 1,
   AD: 1,
   AE: 6,
@@ -108,26 +106,3 @@ const data = {
   VN: 1,
   XK: 1
 };
-
-export function useWeekStart() {
-  let region = useRegion();
-  return data[region] || 0;
-}
-
-function useRegion() {
-  let {locale} = useLocale();
-
-  // If the Intl.Locale API is available, use it to get the region for the locale.
-  // @ts-ignore
-  if (Intl.Locale) {
-    // @ts-ignore
-    return new Intl.Locale(locale).maximize().region;
-  }
-
-  // If not, just try splitting the string.
-  // If the second part of the locale string is 'u',
-  // then this is a unicode extension, so ignore it.
-  // Otherwise, it should be the region.
-  let part = locale.split('-')[1];
-  return part === 'u' ? null : part;
-}

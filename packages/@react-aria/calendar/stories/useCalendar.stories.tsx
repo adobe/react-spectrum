@@ -10,11 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarAria} from './types';
-import {CalendarProps, DateValue} from '@react-types/calendar';
-import {CalendarState} from '@react-stately/calendar';
-import {useCalendarBase} from './useCalendarBase';
+import {Example} from './Example';
+import React from 'react';
+import {storiesOf} from '@storybook/react';
 
-export function useCalendar<T extends DateValue>(props: CalendarProps<T>, state: CalendarState): CalendarAria {
-  return useCalendarBase(props, state);
-}
+storiesOf('Date and Time/useCalendar', module)
+  .add(
+    'days: 3',
+    () => <Example visibleDuration={{days: 3}} />
+  )
+  .add(
+    'weeks: 1',
+    () => <Example visibleDuration={{weeks: 1}} />
+  )
+  .add(
+    'weeks: 2',
+    () => <Example visibleDuration={{weeks: 2}} />
+  )
+  .add(
+    'months: 1',
+    () => <Example visibleDuration={{months: 1}} />
+  );
