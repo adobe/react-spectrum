@@ -292,7 +292,8 @@ describe('CardView', function () {
           expect(div.style.width).toEqual(expectedWidth);
           expect(div.style.height).toEqual(expectedHeight);
           if (currentTop === div.style.top) {
-            currentLeft = `${parseInt(currentLeft, 10) + parseInt(expectedWidth, 10) + 24}px`;
+            // 25px due to how horizontal spacing is calculated in the layout
+            currentLeft = `${parseInt(currentLeft, 10) + parseInt(expectedWidth, 10) + 25}px`;
           } else {
             // default space between the two cards vertically is 48px
             currentTop = `${parseInt(currentTop, 10) + parseInt(expectedHeight, 10) + 48}px`;
@@ -357,7 +358,7 @@ describe('CardView', function () {
         Name                  | layout
         ${'Grid layout'}      | ${GridLayout}
         ${'Gallery layout'}   | ${GalleryLayout}
-      `('$Name CardView should move focus via Arrow Left', function ({layout}) {
+      `('$Name CardView should move focus via Arrow Left', function ({Name, layout}) {
         let tree = render(<DynamicCardView layout={layout} />);
         act(() => {
           jest.runAllTimers();
@@ -379,7 +380,9 @@ describe('CardView', function () {
 
         expect(document.activeElement).toBe(cards[0]);
         cardStyles = getCardStyles(document.activeElement);
-        expectedLeft = `${parseInt(expectedLeft, 10) - parseInt(cardStyles.width, 10) - 24}px`;
+        // horizontal spacing in grid is minimum 24px, but in this specific setup the calculated horizontal spacing is 25px due to margins
+        let horizontalSpacing = Name === 'Grid layout' ? 25 : 24;
+        expectedLeft = `${parseInt(expectedLeft, 10) - parseInt(cardStyles.width, 10) - horizontalSpacing}px`;
         expect(cardStyles.top).toEqual(expectedTop);
         expect(cardStyles.left).toEqual(expectedLeft);
       });
@@ -397,7 +400,7 @@ describe('CardView', function () {
         Name                  | layout
         ${'Grid layout'}      | ${GridLayout}
         ${'Gallery layout'}   | ${GalleryLayout}
-      `('$Name CardView should move focus via Arrow Right (RTL)', function ({layout}) {
+      `('$Name CardView should move focus via Arrow Right (RTL)', function ({Name, layout}) {
         let tree = render(<DynamicCardView locale="ar-AE" layout={layout} />);
         act(() => {
           jest.runAllTimers();
@@ -421,7 +424,9 @@ describe('CardView', function () {
 
         expect(document.activeElement).toBe(cards[0]);
         cardStyles = getCardStyles(document.activeElement);
-        expectedRight = `${parseInt(expectedRight, 10) - parseInt(cardStyles.width, 10) - 24}px`;
+        // horizontal spacing in grid is minimum 24px, but in this specific setup the calculated horizontal spacing is 25px due to margins
+        let horizontalSpacing = Name === 'Grid layout' ? 25 : 24;
+        expectedRight = `${parseInt(expectedRight, 10) - parseInt(cardStyles.width, 10) - horizontalSpacing}px`;
         expect(cardStyles.top).toEqual(expectedTop);
         expect(cardStyles.right).toEqual(expectedRight);
       });
