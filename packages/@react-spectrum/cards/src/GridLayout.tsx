@@ -115,7 +115,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     let itemWidth = this.itemSize.width + this.horizontalSpacing;
     return Math.max(0,
       Math.min(
-        this.collection.size + (allowInsertingAtEnd ? 1 : 0),
+        this.collection.size - (allowInsertingAtEnd ? 0 : 1),
         Math.floor(y / itemHeight) * this.numColumns + Math.floor((x - this.horizontalSpacing) / itemWidth)
       )
     );
@@ -139,7 +139,7 @@ export class GridLayout<T> extends BaseLayout<T> {
       let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
       let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
 
-      for (let index = firstVisibleItem; index < lastVisibleItem; index++) {
+      for (let index = firstVisibleItem; index <= lastVisibleItem; index++) {
         let keyFromIndex = this.collection.at(index).key;
         let layoutInfo = this.layoutInfos.get(keyFromIndex);
         if (this.isVisible(layoutInfo, rect)) {
@@ -206,7 +206,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     this.itemSize = new Size(itemWidth, itemHeight);
 
     // Compute the horizontal spacing and content height
-    this.horizontalSpacing = Math.floor((visibleWidth - this.numColumns * this.itemSize.width) / (this.numColumns + 1));
+    this.horizontalSpacing = this.numColumns < 2 ? 0 : Math.floor((availableWidth - this.numColumns * this.itemSize.width) / (this.numColumns - 1));
 
     let y = this.margin;
     let index = 0;
