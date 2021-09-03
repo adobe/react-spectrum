@@ -124,13 +124,13 @@ storiesOf('TextArea', module)
     () => render({errorMessage: 'Enter at least 250 characters.', validationState: 'invalid'})
   )
   .add('custom width',
-    () => render({icon: <Info />, validationState: 'invalid', width: '300px'})
+    () => render({width: '300px'})
   )
   .add('custom width small',
-    () => render({icon: <Info />, validationState: 'invalid', width: '30px'})
+    () => render({width: '30px'})
   )
   .add('custom width, quiet',
-    () => render({icon: <Info />, validationState: 'invalid', width: '300px', isQuiet: true})
+    () => render({width: '300px', isQuiet: true})
   )
   .add(
     'custom height with label',
