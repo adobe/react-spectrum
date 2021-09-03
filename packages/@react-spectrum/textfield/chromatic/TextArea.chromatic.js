@@ -93,7 +93,7 @@ storiesOf('TextArea', module)
 // allow some stories where disabled styles probably won't affect anything to turn that off, mostly to reduce clutter
 function render(props = {}, disabled = true) {
   return (
-    <Flex gap="size-100">
+    <Flex gap="size-100" wrap>
       <TextArea
         label="Default"
         placeholder="React"
