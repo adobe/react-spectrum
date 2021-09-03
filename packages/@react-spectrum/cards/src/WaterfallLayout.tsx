@@ -99,6 +99,10 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       if (!this.isLoading) {
         this.layoutInfos.delete('loader');
       }
+
+      if (this.collection.size > 0) {
+        this.layoutInfos.delete('placeholder');
+      }
     }
 
     this.lastCollection = this.collection;

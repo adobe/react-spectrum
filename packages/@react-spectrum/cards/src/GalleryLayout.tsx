@@ -90,6 +90,10 @@ export class GalleryLayout<T> extends BaseLayout<T> {
       if (!this.isLoading) {
         this.layoutInfos.delete('loader');
       }
+
+      if (this.collection.size > 0) {
+        this.layoutInfos.delete('placeholder');
+      }
     }
 
     this.lastCollection = this.collection;

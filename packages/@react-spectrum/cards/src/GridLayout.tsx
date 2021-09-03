@@ -169,10 +169,12 @@ export class GridLayout<T> extends BaseLayout<T> {
         }
       }
 
-      // TODO: dunno why I had to add this but it gets rid of the loading spinner, otherwise it remains on initial async load
-      // Can't figure out why ListLayout didn't need that
       if (!this.isLoading) {
         this.layoutInfos.delete('loader');
+      }
+
+      if (this.collection.size > 0) {
+        this.layoutInfos.delete('placeholder');
       }
     }
 
