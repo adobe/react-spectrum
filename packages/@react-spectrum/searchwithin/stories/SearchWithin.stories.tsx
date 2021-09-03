@@ -116,7 +116,7 @@ CustomWidth30.storyName = 'Custom width: 30';
 export const LabelPositionSide = () => render({labelPosition: 'side'});
 LabelPositionSide.storyName = 'labelPosition: side';
 
-export const NoLabel = () => render({label: undefined, 'aria-label': 'Aria Label'});
+export const NoVisibleLabel = () => render({label: undefined, 'aria-label': 'Search'});
 
 export const AutoFocusSearchField = () => render({}, {autoFocus: true});
 AutoFocusSearchField.storyName = 'autoFocus: true on SearchField';
