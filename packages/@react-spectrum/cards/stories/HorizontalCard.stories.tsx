@@ -32,10 +32,13 @@ import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 
+// see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
+const StoryFn = ({storyFn}) => storyFn();
 
 const meta: Meta<SpectrumCardProps> = {
   title: 'Card/horizontal',
-  component: Card
+  component: Card,
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 export default meta;
