@@ -134,7 +134,7 @@ user-provided
 
   &.is-focused,
   &.is-selected,
-  &:focus,
+  &.focus-ring, /* only for visible focus */
   &:hover {
     .spectrum-Card-checkboxWrapper {
       /* Ideally, this would simply apply is-open to the QuickActions component */
@@ -168,12 +168,17 @@ user-provided
 }
 .spectrum-Card-heading {
   grid-area: title;
+  align-self: baseline;
+  word-break: break-word;
 }
 .spectrum-Card-detail {
   grid-area: detail;
+  align-self: baseline;
+  word-break: break-word;
 }
 .spectrum-Card-actions {
   grid-area: actionmenu;
+  align-self: start;
 }
 .spectrum-Card-content {
   grid-area: content;
@@ -251,6 +256,25 @@ user-provided
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
+
+  &.spectrum-Card--noPreview .spectrum-Card-grid {
+    display: grid;
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr auto auto var(--spectrum-card-body-padding-bottom);
+    /* absolutely position avatar relative to the preview */
+    grid-template-areas:
+      ".       .       .       .          ."
+      ".       title   detail  actionmenu ."
+      ".       content content content    ."
+      ".       divider divider divider    ."
+      ".       footer  footer  footer     ."
+      ".       .       .       .          .";
+
+    .spectrum-Card-avatar {
+      display: none;
+    }
+  }
+
   .spectrum-Card-image,
   .spectrum-Card-illustration {
     inline-size: 100%;
@@ -278,20 +302,17 @@ user-provided
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .spectrum-Card-actions {
-    align-self: center;
   }
   .spectrum-Card-content {
     margin-block-start: 5px;
@@ -344,7 +365,7 @@ user-provided
     transition: background-color var(--spectrum-global-animation-duration-100);
   }
 
-  .spectrum-Card-grid {
+  &:not(.spectrum-Card--noPreview) .spectrum-Card-grid {
     display: grid;
     block-size: 100%;
     grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
@@ -367,6 +388,25 @@ user-provided
       border-start-start-radius: var(--spectrum-card-border-radius);
       border-start-end-radius: var(--spectrum-card-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+  }
+
+  &.spectrum-Card--noPreview .spectrum-Card-grid {
+    display: grid;
+    block-size: 100%;
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr auto auto var(--spectrum-card-body-padding-bottom);
+    /* absolutely position avatar relative to the preview */
+    grid-template-areas:
+      ".       .       .       .          ."
+      ".       title   detail  actionmenu ."
+      ".       content content content    ."
+      ".       divider divider divider    ."
+      ".       footer  footer  footer     ."
+      ".       .       .       .          .";
+
+    .spectrum-Card-avatar {
+      display: none;
     }
   }
   .spectrum-Card-image,
@@ -397,20 +437,17 @@ user-provided
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .spectrum-Card-actions {
-    align-self: center;
   }
   .spectrum-Card-content {
     margin-block-start: 5px;
@@ -465,7 +502,7 @@ user-provided
     transition: background-color var(--spectrum-global-animation-duration-100);
   }
 
-  .spectrum-Card-grid {
+  &:not(.spectrum-Card--noPreview) .spectrum-Card-grid {
     display: grid;
     grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
     grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-global-dimension-size-300) auto 1fr auto auto var(--spectrum-card-body-padding-bottom);
@@ -487,6 +524,27 @@ user-provided
       border-start-start-radius: var(--spectrum-card-border-radius);
       border-start-end-radius: var(--spectrum-card-border-radius);
       transition: background-color var(--spectrum-global-animation-duration-100);
+    }
+  }
+
+  &.spectrum-Card--noPreview .spectrum-Card-grid {
+    display: grid;
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr auto auto var(--spectrum-card-body-padding-bottom);
+    /* absolutely position avatar relative to the preview */
+    grid-template-areas:
+      ".       .       .       .          ."
+      ".       title   detail  actionmenu ."
+      ".       content content content    ."
+      ".       divider divider divider    ."
+      ".       footer  footer  footer     ."
+      ".       .       .       .          .";
+
+    /* TODO: is this accurate? if we don't want to enforce it, then we can
+        give min-height to spectrum-Card-image/illustration
+        and it would no longer be a card state, we could simplify */
+    .spectrum-Card-avatar {
+      display: none;
     }
   }
   .spectrum-Card-image,
@@ -519,20 +577,17 @@ user-provided
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .spectrum-Card-actions {
-    align-self: center;
   }
   .spectrum-Card-content {
     margin-block-start: 5px;
@@ -568,7 +623,7 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
+    grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
     grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
@@ -625,23 +680,18 @@ user-provided
     display: none;
   }
   .spectrum-Card-heading {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
-    /* prevent from collapsing completely when there is a long title */
-    min-inline-size: min-content;
   }
   .spectrum-Card-actions {
-    align-self: center;
   }
   .spectrum-Card-content {
     margin-block-start: 5px;
@@ -672,7 +722,7 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
+    grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
     grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) auto minmax(auto, var(--spectrum-global-dimension-size-600)) var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
@@ -734,23 +784,18 @@ user-provided
     display: none;
   }
   .spectrum-Card-heading {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
-    /* prevent from collapsing completely when there is a long title */
-    min-inline-size: min-content;
   }
   .spectrum-Card-actions {
-    align-self: center;
   }
   .spectrum-Card-content {
     margin-block-start: 5px;
@@ -782,7 +827,7 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
+    grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
@@ -862,23 +907,18 @@ user-provided
     display: none;
   }
   .spectrum-Card-heading {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
-    /* prevent from collapsing completely when there is a long title */
-    min-inline-size: min-content;
   }
   .spectrum-Card-actions {
-    align-self: center;
   }
   .spectrum-Card-content {
     margin-block-start: 5px;
@@ -910,7 +950,7 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
+    grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(30px, auto) auto var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
@@ -972,18 +1012,15 @@ user-provided
     display: none;
   }
   .spectrum-Card-heading {
-    align-self: center;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-actions {
-    align-self: start;
   }
   .spectrum-Card-content {
     margin-block-start: 5px;
@@ -1080,7 +1117,6 @@ For now working around it with a useLayoutEffect in CardBase.
     display: none;
   }
   .spectrum-Card-heading {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1090,7 +1126,6 @@ For now working around it with a useLayoutEffect in CardBase.
     display: none;
   }
   .spectrum-Card-actions {
-    align-self: center;
   }
   /* how to handle long description?? */
   .spectrum-Card-content {
@@ -1200,7 +1235,6 @@ For now working around it with a useLayoutEffect in CardBase.
     display: none;
   }
   .spectrum-Card-heading {
-    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1210,7 +1244,6 @@ For now working around it with a useLayoutEffect in CardBase.
     display: none;
   }
   .spectrum-Card-actions {
-    align-self: center;
   }
   /* how to handle long description?? */
   .spectrum-Card-content {

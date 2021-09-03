@@ -52,11 +52,7 @@ governing permissions and limitations under the License.
 .spectrum-Card--default {
   border-color: var(--spectrum-card-border-color);
   background-color: var(--spectrum-card-background-color);
-  .spectrum-Card-grid {
-    &:before {
-      background-color: var(--spectrum-card-quiet-preview-background-color);
-    }
-  }
+
   &:hover {
     border-color: var(--spectrum-card-border-color-hover);
     &:before {
@@ -110,6 +106,14 @@ governing permissions and limitations under the License.
         background-color: var(--spectrum-global-color-blue-400);
         opacity: 0.25;
       }
+    }
+  }
+  &:after {
+    opacity: 0;
+  }
+  .spectrum-Card-grid {
+    &:before {
+      background-color: var(--spectrum-card-quiet-preview-background-color);
     }
   }
 
@@ -305,6 +309,11 @@ governing permissions and limitations under the License.
     }
   }
 
+  .spectrum-Card-grid {
+    &:after {
+      opacity: 0;
+    }
+  }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
     border-inline-end-color: var(--spectrum-card-coverphoto-border-color);

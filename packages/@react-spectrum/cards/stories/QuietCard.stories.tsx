@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Card} from '../';
@@ -21,9 +20,11 @@ import {Content} from '@react-spectrum/view';
 import {
   Default,
   DefaultSquare,
-  DefaultTall, LongContentPoorWordSize,
+  DefaultTall,
+  LongContentPoorWordSize,
   LongDescription,
   LongDetail,
+  LongEverything,
   LongTitle,
   NoActionMenu,
   NoDescription,
@@ -34,14 +35,18 @@ import {getDescription, getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
-import React from 'react';
+import React, {Dispatch, SetStateAction, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
+import {usePress} from '@react-aria/interactions';
 
+// see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
+const StoryFn = ({storyFn}) => storyFn();
 
 const meta: Meta<SpectrumCardProps> = {
   title: 'Card/quiet',
-  component: Card
+  component: Card,
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 export default meta;
@@ -52,22 +57,47 @@ const Template = (): Story<SpectrumCardProps> => (args) => (
   </div>
 );
 
-
 /* This is a bit of a funny template, we can't get selected on a Card through context because
 * if there's context it assumes it's being rendered in a collection. It's just here for a quick check of styles. */
-let manager = {
-  isSelected: () => true,
-  select: action('select')
-};
-let state = {
-  disabledKeys: new Set(),
-  selectionManager: manager
+interface ISelectableCard {
+  disabledKeys: Set<any>,
+  selectionManager: {
+    isSelected: () => boolean,
+    select: () => Dispatch<SetStateAction<ISelectableCard>>
+  }
+}
+let SelectableCard = (props) => {
+  let [state, setState] = useState<ISelectableCard>({
+    disabledKeys: new Set(),
+    selectionManager: {
+      isSelected: () => true,
+      select: () => setState(prev => ({
+        ...prev,
+        selectionManager: {
+          ...prev.selectionManager,
+          isSelected: () => !prev.selectionManager.isSelected()
+        }
+      }))
+    }
+  });
+  let {pressProps} = usePress({onPress: () => setState(prev => ({
+    ...prev,
+    selectionManager: {
+      ...prev.selectionManager,
+      isSelected: () => !prev.selectionManager.isSelected()
+    }
+  }))});
+  return (
+    <div style={{width: '208px'}} {...pressProps}>
+      <CardViewContext.Provider value={{state}}>
+        <CardBase {...props} />
+      </CardViewContext.Provider>
+    </div>
+  );
 };
 const TemplateSelected = (): Story<SpectrumCardProps> => (args) => (
   <div style={{width: '208px'}}>
-    <CardViewContext.Provider value={{state}}>
-      <CardBase {...args} />
-    </CardViewContext.Provider>
+    <SelectableCard {...args} />
   </div>
 );
 
@@ -103,6 +133,9 @@ QuietLongContentPoorWordSize.args = {...Quiet.args, ...LongContentPoorWordSize.a
 
 export const QuietLongDetail = Template().bind({});
 QuietLongDetail.args = {...Quiet.args, ...LongDetail.args};
+
+export const QuietLongEverything = Template().bind({});
+QuietLongEverything.args = {...Quiet.args, ...LongEverything.args};
 
 export const CardGrid = (props: SpectrumCardProps) => (
   <div
@@ -349,6 +382,106 @@ export const CardGridTallRows = (props: SpectrumCardProps) => (
     }
   </div>
 );
+
+export const CardGridMessyText = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: '305px'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <Card {...Quiet.args} {...props} layout="grid" key={`${index}${url}`}>
+            <Image src={url} />
+            <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+            <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+            <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+            <ActionMenu>
+              <Item>Action 1</Item>
+              <Item>Action 2</Item>
+            </ActionMenu>
+          </Card>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardWaterfallMessyText = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      height: '150vh',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'column',
+      flexWrap: 'wrap',
+      alignItems: 'start'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', margin: '10px'}}>
+            <Card {...Quiet.args} {...props} layout="waterfall" key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+              <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+              <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardGalleryMessyText = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{height: '339px', margin: '10px'}}>
+            <Card {...Quiet.args} {...props} layout="gallery" key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+              <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+              <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+CardGalleryMessyText.decorators = [(Story) => (
+  <>
+    <div style={{position: 'absolute', top: '5px'}}>{'ignore extra horizontal space, it will not do this in a real gallery layout'}</div>
+    <Story />
+  </>
+)];
 
 export const Selected = TemplateSelected().bind({});
 Selected.args = {...Quiet.args};
