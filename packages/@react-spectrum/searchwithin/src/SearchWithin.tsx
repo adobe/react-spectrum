@@ -16,23 +16,25 @@ import {FocusableRef} from '@react-types/shared';
 import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
+import {useField} from '@react-aria/label';
 import {useFormProps} from '@react-spectrum/form';
-import {useLabel} from '@react-aria/label';
+import {useId, useLabels} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let {styleProps} = useStyleProps(props);
-  let {labelProps, fieldProps} = useLabel(props);
   let {
     children,
     isDisabled,
     isRequired,
-    label,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby
+    label
   } = props;
+  let {styleProps} = useStyleProps(props);
+  let labels = useLabels(props, 'Search');
+  let {labelProps, fieldProps} = useField(props);
+  let labelledBy = labels['aria-labelledby'] || labels.id;
+  let pickerId = useId();
 
   let domRef = useFocusableRef(ref);
   let groupRef = useRef<HTMLDivElement>();
@@ -62,19 +64,29 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     isRequired,
     label: null,
     isQuiet: false,
-    'aria-labelledby': labelProps.id || ariaLabel,
     validationState: null
   };
+
   let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
   let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
-  let slots = {
-    searchfield: {UNSAFE_className: searchFieldClassName, ...fieldProps, ...defaultSlotValues},
-    picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', ...defaultSlotValues}
-  };
 
-  if (!label && !ariaLabel && !ariaLabelledby) {
-    console.warn('If you do not provide a `label` prop, you must specify an aria-label or aria-labelledby attribute for accessibility');
-  }
+  let slots = {
+    searchfield: {
+      ...defaultSlotValues,
+      UNSAFE_className: searchFieldClassName,
+      'aria-labelledby': labelledBy,
+      ...fieldProps
+    },
+    picker: {
+      ...defaultSlotValues,
+      id: pickerId,
+      UNSAFE_className: pickerClassName,
+      menuWidth,
+      align: 'end',
+      'aria-label': 'Search within',
+      'aria-labelledby': `${labelledBy} ${pickerId}`
+    }
+  };
 
   return (
     <Field
@@ -86,8 +98,9 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
         'spectrum-SearchWithin-container'
       )}>
       <div
+        {...labels}
+        aria-labelledby={labelProps.id || fieldProps.id}
         role="group"
-        aria-labelledby={labelProps.id || ariaLabel}
         className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
         ref={groupRef}>
         <SlotProvider slots={slots}>
