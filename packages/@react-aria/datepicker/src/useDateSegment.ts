@@ -85,6 +85,21 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
 
   let parser = useMemo(() => new NumberParser(locale, {maximumFractionDigits: 0}), [locale]);
 
+  let backspace = () => {
+    if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly && !segment.isPlaceholder) {
+      let newValue = segment.text.slice(0, -1);
+      let parsed = parser.parse(newValue);
+      if (newValue.length === 0 || parsed === 0) {
+        state.clearSegment(segment.type);
+      } else {
+        state.setSegment(segment.type, parsed);
+      }
+      enteredKeys.current = newValue;
+    } else if (segment.type === 'dayPeriod') {
+      state.clearSegment(segment.type);
+    }
+  };
+
   let onKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
       return;
@@ -119,15 +134,12 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
         break;
       case 'Tab':
         break;
-      case 'Backspace': {
+      case 'Backspace':
+      case 'Delete': {
         // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
         e.preventDefault();
         e.stopPropagation();
-        if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly) {
-          let newValue = segment.text.slice(0, -1);
-          state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
-          enteredKeys.current = newValue;
-        }
+        backspace();
         break;
       }
     }
@@ -243,9 +255,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       case 'deleteContentBackward':
       case 'deleteContentForward':
         if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly) {
-          let newValue = segment.text.slice(0, -1);
-          state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
-          enteredKeys.current = newValue;
+          backspace();
         }
         break;
       case 'insertCompositionText':

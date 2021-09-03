@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, CalendarDateTime, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar, toCalendarDate, toCalendarDateTime, today} from '@internationalized/date';
+import {Calendar, CalendarDateTime, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, now, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
@@ -40,6 +40,7 @@ export interface DatePickerFieldState {
   decrementPage: (type: Intl.DateTimeFormatPartTypes) => void,
   setSegment: (type: Intl.DateTimeFormatPartTypes, value: number) => void,
   confirmPlaceholder: (type?: Intl.DateTimeFormatPartTypes) => void,
+  clearSegment: (type?: Intl.DateTimeFormatPartTypes) => void,
   getFormatOptions(fieldOptions: FieldOptions): Intl.DateTimeFormatOptions
 }
 
@@ -84,16 +85,19 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
   let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
   let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
   let timeZone = defaultTimeZone || 'UTC';
-  let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
+
+  // Compute default granularity from the value. If the value becomes null, keep the last granularity.
+  let defaultGranularity: DatePickerProps<T>['granularity'] = (v && 'minute' in v ? 'minute' : 'day');
+  let lastGranularity = useRef(defaultGranularity);
+  if (v) {
+    lastGranularity.current = defaultGranularity;
+  }
+  let granularity = props.granularity || lastGranularity.current;
 
   // props.granularity must actually exist in the value if one is provided.
   if (v && !(granularity in v)) {
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
-
-  let [validSegments, setValidSegments] = useState<Partial<typeof EDITABLE_SEGMENTS>>(
-    props.value || props.defaultValue ? {...EDITABLE_SEGMENTS} : {}
-  );
 
   let formatOpts = useMemo(() => ({
     granularity,
@@ -110,26 +114,22 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
 
   // Determine how many editable segments there are for validation purposes.
   // The result is cached for performance.
-  let numSegments = useMemo(() =>
+  let allSegments = useMemo(() =>
     dateFormatter.formatToParts(new Date())
       .filter(seg => EDITABLE_SEGMENTS[seg.type])
-      .length
+      .reduce((p, seg) => (p[seg.type] = true, p), {})
   , [dateFormatter]);
 
-  // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
-  if (props.value && Object.keys(validSegments).length < numSegments) {
-    validSegments = {...EDITABLE_SEGMENTS};
-    setValidSegments(validSegments);
-  }
+  let [validSegments, setValidSegments] = useState<Partial<typeof EDITABLE_SEGMENTS>>(
+    () => props.value || props.defaultValue ? {...allSegments} : {}
+  );
 
   // We keep track of the placeholder date separately in state so that onChange is not called
   // until all segments are set. If the value === null (not undefined), then assume the component
   // is controlled, so use the placeholder as the value until all segments are entered so it doesn't
   // change from uncontrolled to controlled and emit a warning.
   let [placeholderDate, setPlaceholderDate] = useState(
-    props.placeholderValue
-      ? convertValue(props.placeholderValue, calendar)
-      : createPlaceholderDate(granularity, calendar, defaultTimeZone)
+    () => createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
   );
 
   // Reset placeholder when calendar changes
@@ -140,10 +140,10 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
       setPlaceholderDate(placeholder =>
         Object.keys(validSegments).length > 0
           ? toCalendar(placeholder, calendar)
-          : createPlaceholderDate(granularity, calendar, defaultTimeZone)
+          : createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
       );
     }
-  }, [calendar, granularity, validSegments, defaultTimeZone]);
+  }, [calendar, granularity, validSegments, defaultTimeZone, props.placeholderValue]);
 
   let [value, setDate] = useControlledState<DateValue>(
     props.value,
@@ -151,16 +151,29 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
     props.onChange
   );
 
-  let calendarValue = convertValue(value, calendar);
+  let calendarValue = useMemo(() => convertValue(value, calendar), [value, calendar]);
+
+  // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
+  if (value && Object.keys(validSegments).length < Object.keys(allSegments).length) {
+    validSegments = {...allSegments};
+    setValidSegments(validSegments);
+  }
+
+  // If the value is set to null and all segments are valid, reset the placeholder.
+  if (value == null && Object.keys(validSegments).length === Object.keys(allSegments).length) {
+    validSegments = {};
+    setValidSegments(validSegments);
+    setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
+  }
 
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
-  let displayValue = calendarValue && Object.keys(validSegments).length >= numSegments ? calendarValue : placeholderDate;
+  let displayValue = calendarValue && Object.keys(validSegments).length >= Object.keys(allSegments).length ? calendarValue : placeholderDate;
   let setValue = (newValue: DateValue) => {
     if (props.isDisabled || props.isReadOnly) {
       return;
     }
 
-    if (Object.keys(validSegments).length >= numSegments) {
+    if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
@@ -231,8 +244,8 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
       if (!part) {
         // Confirm the rest of the placeholder if any of the segments are valid.
         let numValid = Object.keys(validSegments).length;
-        if (numValid > 0 && numValid < numSegments) {
-          validSegments = {...EDITABLE_SEGMENTS};
+        if (numValid > 0 && numValid < Object.keys(allSegments).length) {
+          validSegments = {...allSegments};
           setValidSegments(validSegments);
           setValue(displayValue.copy());
         }
@@ -240,6 +253,29 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
         markValid(part);
         setValue(displayValue.copy());
       }
+    },
+    clearSegment(part) {
+      delete validSegments[part];
+      setValidSegments({...validSegments});
+
+      let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
+      let value = displayValue;
+
+      // Reset day period to default without changing the hour.
+      if (part === 'dayPeriod' && 'hour' in displayValue && 'hour' in placeholder) {
+        let isPM = displayValue.hour >= 12;
+        let shouldBePM = placeholder.hour >= 12;
+        if (isPM && !shouldBePM) {
+          value = displayValue.set({hour: displayValue.hour - 12});
+        } else if (!isPM && shouldBePM) {
+          value = displayValue.set({hour: displayValue.hour + 12});
+        }
+      } else if (part in displayValue) {
+        value = displayValue.set({[part]: placeholder[part]});
+      }
+
+      setDate(null);
+      setValue(value);
     },
     getFormatOptions(fieldOptions: FieldOptions) {
       return getFormatOptions(fieldOptions, formatOpts);
@@ -396,8 +432,17 @@ function convertValue(value: DateValue, calendar: Calendar): DateValue {
   return toCalendar(value, calendar);
 }
 
-function createPlaceholderDate(granularity, calendar, timeZone) {
-  let date = toCalendar(today(timeZone), calendar);
+function createPlaceholderDate(placeholderValue, granularity, calendar, timeZone) {
+  if (placeholderValue) {
+    return convertValue(placeholderValue, calendar);
+  }
+
+  let date = toCalendar(now(timeZone).set({
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  }), calendar);
 
   if (granularity === 'year' || granularity === 'month' || granularity === 'day') {
     return toCalendarDate(date);

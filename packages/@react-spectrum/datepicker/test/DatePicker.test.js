@@ -959,45 +959,51 @@ describe('DatePicker', function () {
       }
 
       it('should support backspace in the month segment', function () {
-        testBackspace('month', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 1, 3));
-        testBackspace('month', new CalendarDate(2019, 6, 3), new CalendarDate(2019, 1, 3));
+        testBackspace('month', new CalendarDate(2019, 2, 3), null);
+        testBackspace('month', new CalendarDate(2019, 6, 3), null);
         testBackspace('month', new CalendarDate(2019, 12, 3), new CalendarDate(2019, 1, 3));
       });
 
       it('should support backspace in the day segment', function () {
-        testBackspace('day', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 1));
+        testBackspace('day', new CalendarDate(2019, 2, 3), null);
         testBackspace('day', new CalendarDate(2019, 2, 20), new CalendarDate(2019, 2, 2));
       });
 
       it('should support backspace in the year segment', function () {
         testBackspace('year', new CalendarDate(2019, 2, 3), new CalendarDate(201, 2, 3));
+        testBackspace('year', new CalendarDate(2, 2, 3), null);
       });
 
       it('should support backspace in the hour segment in 12 hour time', function () {
         // AM
-        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 0));
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 8), null);
         testBackspace('hour', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 1));
 
         // PM
-        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 16), new CalendarDateTime(2019, 2, 3, 12));
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 16), null);
         testBackspace('hour', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 13));
       });
 
       it('should support backspace in the hour segment in 24 hour time', function () {
-        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 0), {hourCycle: 24});
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 8), null, {hourCycle: 24});
         testBackspace('hour', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 1), {hourCycle: 24});
         testBackspace('hour', new CalendarDateTime(2019, 2, 3, 16), new CalendarDateTime(2019, 2, 3, 1), {hourCycle: 24});
         testBackspace('hour', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 2), {hourCycle: 24});
       });
 
+      it('should support backspace in the am/pm field', function () {
+        testBackspace('AM/PM', new CalendarDateTime(2019, 2, 3, 8), null);
+        testBackspace('AM/PM', new CalendarDateTime(2019, 2, 3, 16), null);
+      });
+
       it('should support backspace in the minute segment', function () {
-        testBackspace('minute', new CalendarDateTime(2019, 2, 3, 5, 8), new CalendarDateTime(2019, 2, 3, 5, 0));
+        testBackspace('minute', new CalendarDateTime(2019, 2, 3, 5, 8), null);
         testBackspace('minute', new CalendarDateTime(2019, 2, 3, 5, 25), new CalendarDateTime(2019, 2, 3, 5, 2));
         testBackspace('minute', new CalendarDateTime(2019, 2, 3, 5, 59), new CalendarDateTime(2019, 2, 3, 5, 5));
       });
 
       it('should support second in the minute segment', function () {
-        testBackspace('second', new CalendarDateTime(2019, 2, 3, 5, 5, 8), new CalendarDateTime(2019, 2, 3, 5, 5, 0), {granularity: 'second'});
+        testBackspace('second', new CalendarDateTime(2019, 2, 3, 5, 5, 8), null, {granularity: 'second'});
         testBackspace('second', new CalendarDateTime(2019, 2, 3, 5, 5, 25), new CalendarDateTime(2019, 2, 3, 5, 5, 2), {granularity: 'second'});
         testBackspace('second', new CalendarDateTime(2019, 2, 3, 5, 5, 59), new CalendarDateTime(2019, 2, 3, 5, 5, 5), {granularity: 'second'});
       });
@@ -1172,7 +1178,7 @@ describe('DatePicker', function () {
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(value.cycle('year', 1));
-      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone()))); // controlled
+      expectPlaceholder(combobox, formatter.format(new Date())); // controlled
 
       value = value.cycle('year', 1);
       rerender(<DatePicker label="Date" onChange={onChange} value={value} />);
@@ -1241,13 +1247,9 @@ describe('DatePicker', function () {
 
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(1);
-      beforeInput(document.activeElement, '0');
-      beforeInput(document.activeElement, '2');
-      beforeInput(document.activeElement, '0');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2, 4, 5));
       expect(segments[2]).toHaveFocus();
-      expect(onChange).toHaveBeenCalledTimes(4);
-      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2020, 4, 5));
-      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone()))); // controlled
+      expectPlaceholder(combobox, formatter.format(new Date())); // controlled
 
       value = new CalendarDate(2020, 4, 5);
       rerender(<DatePicker label="Date" onChange={onChange} value={value} />);

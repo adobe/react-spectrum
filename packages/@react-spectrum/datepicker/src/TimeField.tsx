@@ -22,7 +22,7 @@ export function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>
   props = useProviderProps(props);
   let {
     autoFocus,
-    placeholderValue = new Time(12),
+    placeholderValue = new Time(),
     minValue,
     maxValue
   } = props;
@@ -41,7 +41,7 @@ export function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>
 
   let dateTime = useMemo(() => value == null ? null : convertValue(value), [value]);
   let onChange = newValue => {
-    setValue(v && 'day' in v ? newValue : toTime(newValue));
+    setValue(v && 'day' in v ? newValue : newValue && toTime(newValue));
   };
 
   return (
