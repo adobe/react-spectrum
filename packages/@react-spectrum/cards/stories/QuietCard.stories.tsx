@@ -40,10 +40,13 @@ import {SpectrumCardProps} from '@react-types/cards';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {usePress} from '@react-aria/interactions';
 
+// see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
+const StoryFn = ({storyFn}) => storyFn();
 
 const meta: Meta<SpectrumCardProps> = {
   title: 'Card/quiet',
-  component: Card
+  component: Card,
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 export default meta;

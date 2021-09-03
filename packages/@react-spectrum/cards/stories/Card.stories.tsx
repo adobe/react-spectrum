@@ -27,11 +27,15 @@ import {Meta, Story} from '@storybook/react';
 import React, {Dispatch, SetStateAction, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import {usePress} from '@react-aria/interactions';
+import {useProvider} from '@react-spectrum/provider';
 
+// see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
+const StoryFn = ({storyFn}) => storyFn();
 
 const meta: Meta<SpectrumCardProps> = {
   title: 'Card/default',
-  component: Card
+  component: Card,
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 export default meta;
@@ -292,43 +296,47 @@ NoImage.args = {children: (
   </>
 )};
 
-export const CardGrid = (props: SpectrumCardProps) => (
-  <div
-    style={{
-      width: '100%',
-      margin: '50px',
-      display: 'grid',
-      gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 208px)',
-      gridAutoRows: 'auto',
-      justifyContent: 'center',
-      justifyItems: 'center',
-      alignItems: 'start'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{width: '208px', height: '293px'}}>
-            <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
-              <Image src={url} />
-              <Heading>Title {index}</Heading>
-              <Text slot="detail">PNG</Text>
-              <Content>Description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="secondary">Button</Button>
-              </Footer>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
+export const CardGrid = (props: SpectrumCardProps) => {
+  let {scale} = useProvider();
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        margin: '50px',
+        display: 'grid',
+        gap: '20px',
+        gridTemplateColumns: 'repeat(auto-fit, 208px)',
+        gridAutoRows: 'auto',
+        justifyContent: 'center',
+        justifyItems: 'center',
+        alignItems: 'start'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <div style={scale === 'medium' ? {width: '208px', height: '293px'} : {width: '208px', height: '355px'}}>
+              <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
+                <Image src={url} />
+                <Heading>Title {index}</Heading>
+                <Text slot="detail">PNG</Text>
+                <Content>Description</Content>
+                <ActionMenu>
+                  <Item>Action 1</Item>
+                  <Item>Action 2</Item>
+                </ActionMenu>
+                <Footer>
+                  <Button variant="secondary">Button</Button>
+                </Footer>
+              </Card>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
+};
 
 export const CardWaterfall = (props: SpectrumCardProps) => (
   <div
@@ -397,43 +405,47 @@ export const CardFloat = (props: SpectrumCardProps) => (
   </div>
 );
 
-export const CardGridMessyText = (props: SpectrumCardProps) => (
-  <div
-    style={{
-      width: '100%',
-      margin: '50px',
-      display: 'grid',
-      gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 208px)',
-      gridAutoRows: 'auto',
-      justifyContent: 'center',
-      justifyItems: 'center',
-      alignItems: 'start'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{width: '208px', height: '293px'}}>
-            <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
-              <Image src={url} />
-              <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
-              <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
-              <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="primary">Something</Button>
-              </Footer>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
+export const CardGridMessyText = (props: SpectrumCardProps) => {
+  let {scale} = useProvider();
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        margin: '50px',
+        display: 'grid',
+        gap: '20px',
+        gridTemplateColumns: 'repeat(auto-fit, 208px)',
+        gridAutoRows: 'auto',
+        justifyContent: 'center',
+        justifyItems: 'center',
+        alignItems: 'start'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <div style={scale === 'medium' ? {width: '208px', height: '293px'} : {width: '208px', height: '355px'}}>
+              <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
+                <Image src={url} />
+                <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+                <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+                <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+                <ActionMenu>
+                  <Item>Action 1</Item>
+                  <Item>Action 2</Item>
+                </ActionMenu>
+                <Footer>
+                  <Button variant="primary">Something</Button>
+                </Footer>
+              </Card>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
+};
 
 export const CardWaterfallMessyText = (props: SpectrumCardProps) => (
   <div
@@ -471,42 +483,46 @@ export const CardWaterfallMessyText = (props: SpectrumCardProps) => (
   </div>
 );
 
-export const CardGridNoPreview = (props: SpectrumCardProps) => (
-  <div
-    style={{
-      width: '100%',
-      margin: '50px',
-      display: 'grid',
-      gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 208px)',
-      gridAutoRows: 'auto',
-      justifyContent: 'center',
-      justifyItems: 'center',
-      alignItems: 'start'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{width: '208px', height: '160px'}}>
-            <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
-              <Heading>Title {index}</Heading>
-              <Text slot="detail">PNG</Text>
-              <Content>Description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="secondary">Button</Button>
-              </Footer>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
+export const CardGridNoPreview = (props: SpectrumCardProps) => {
+  let {scale} = useProvider();
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        margin: '50px',
+        display: 'grid',
+        gap: '20px',
+        gridTemplateColumns: 'repeat(auto-fit, 208px)',
+        gridAutoRows: 'auto',
+        justifyContent: 'center',
+        justifyItems: 'center',
+        alignItems: 'start'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <div style={scale === 'medium' ? {width: '208px', height: '160px'} : {width: '208px', height: '200px'}}>
+              <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
+                <Heading>Title {index}</Heading>
+                <Text slot="detail">PNG</Text>
+                <Content>Description</Content>
+                <ActionMenu>
+                  <Item>Action 1</Item>
+                  <Item>Action 2</Item>
+                </ActionMenu>
+                <Footer>
+                  <Button variant="secondary">Button</Button>
+                </Footer>
+              </Card>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
+};
 
 export const CardWaterfallNoPreview = (props: SpectrumCardProps) => (
   <div
