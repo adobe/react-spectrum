@@ -9,3 +9,7 @@
 .react-spectrum-CardView-CardWrapper {
   overflow: visible !important;
 }
+
+.react-spectrum-CardView {
+  outline: none;
+}

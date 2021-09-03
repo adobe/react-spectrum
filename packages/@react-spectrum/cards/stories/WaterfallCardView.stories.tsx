@@ -78,16 +78,16 @@ isLoadingNoHeightWaterfall.storyName = 'loadingState = loading, no height';
 export const isLoadingHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loading'});
 isLoadingHeightWaterfall.storyName = 'loadingState = loading, set height';
 
-export const loadingMoreWaterfall = () => DynamicCardView({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
+export const loadingMoreWaterfall = () => DynamicCardView({layout: WaterfallLayout, loadingState: 'loadingMore', items});
 loadingMoreWaterfall.storyName = 'loadingState = loadingMore';
 
-export const filteringWaterfall = () => DynamicCardView({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'filtering', items});
+export const filteringWaterfall = () => DynamicCardView({layout: WaterfallLayout, loadingState: 'filtering', items});
 filteringWaterfall.storyName = 'loadingState = filtering';
 
 export const emptyWithHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightWaterfall.storyName = 'empty, set height';
 
-export const AsyncLoading = () => AsyncLoadingCardView({layout: WaterfallLayout, width: '800px', height: '800px'});
+export const AsyncLoading = () => AsyncLoadingCardView({layout: WaterfallLayout});
 AsyncLoading.storyName = 'Async loading';
 
 export const CustomLayoutOptions = () => CustomGalleryLayout({items}, {minSpace: new Size(50, 50), maxColumns: 2, itemPadding: 400});

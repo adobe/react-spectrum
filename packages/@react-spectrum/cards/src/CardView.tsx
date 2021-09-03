@@ -95,6 +95,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
       <Virtualizer
         {...gridProps}
         {...styleProps}
+        className={classNames(cardViewStyles, 'react-spectrum-CardView')}
         ref={domRef}
         focusedKey={state.selectionManager.focusedKey}
         scrollDirection="vertical"

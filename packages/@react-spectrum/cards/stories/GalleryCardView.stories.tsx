@@ -91,16 +91,16 @@ isLoadingNoHeightGallery.storyName = 'loadingState = loading, no height';
 export const isLoadingHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loading'});
 isLoadingHeightGallery.storyName = 'loadingState = loading, set height';
 
-export const loadingMoreGallery = () => DynamicCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
+export const loadingMoreGallery = () => DynamicCardView({layout: GalleryLayout, loadingState: 'loadingMore', items});
 loadingMoreGallery.storyName = 'loadingState = loadingMore';
 
-export const filteringGallery = () => DynamicCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'filtering', items});
+export const filteringGallery = () => DynamicCardView({layout: GalleryLayout, loadingState: 'filtering', items});
 filteringGallery.storyName = 'loadingState = filtering';
 
 export const emptyWithHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightGallery.storyName = 'empty, set height';
 
-export const AsyncLoading = () => AsyncLoadingCardView({layout: GalleryLayout, width: '800px', height: '800px'});
+export const AsyncLoading = () => AsyncLoadingCardView({layout: GalleryLayout});
 AsyncLoading.storyName = 'Async loading';
 
 export const CustomLayoutOptions = () => CustomGalleryLayout({items: itemsLowVariance}, {idealRowHeight: 270, itemSpacing: new Size(10, 10), itemPadding: 114});
