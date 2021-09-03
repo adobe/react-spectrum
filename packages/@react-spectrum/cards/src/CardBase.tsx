@@ -61,6 +61,11 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
 
   let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
 
+  // ToDo: see css for comment about avatar under selector .spectrum-Card--noLayout.spectrum-Card--default
+  let hasPreviewImage = useHasChild(`.${styles['spectrum-Card-image']}`, gridRef);
+  let hasPreviewIllustration = useHasChild(`.${styles['spectrum-Card-illustration']}`, gridRef);
+  let hasPreview = hasPreviewImage || hasPreviewIllustration;
+
   let slots = useMemo(() => ({
     image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: orientation === 'horizontal' ? 'cover' : 'contain', alt: ''},
     illustration: {UNSAFE_className: classNames(styles, 'spectrum-Card-illustration')},
@@ -146,6 +151,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           'spectrum-Card--isQuiet': isQuiet && orientation !== 'horizontal',
           'spectrum-Card--horizontal': orientation === 'horizontal',
           'spectrum-Card--closeToSquare': isCloseToSquare,
+          'spectrum-Card--noPreview': !hasPreview,
           'is-hovered': isHovered,
           'is-focused': isFocused,
           'is-selected': isSelected,

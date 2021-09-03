@@ -396,6 +396,7 @@ export const CardFloat = (props: SpectrumCardProps) => (
     }
   </div>
 );
+
 export const CardGridMessyText = (props: SpectrumCardProps) => (
   <div
     style={{
@@ -461,6 +462,78 @@ export const CardWaterfallMessyText = (props: SpectrumCardProps) => (
               </ActionMenu>
               <Footer>
                 <Button variant="primary">Something</Button>
+              </Footer>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardGridNoPreview = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      margin: '50px',
+      display: 'grid',
+      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fit, 208px)',
+      gridAutoRows: 'auto',
+      justifyContent: 'center',
+      justifyItems: 'center',
+      alignItems: 'start'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', height: '160px'}}>
+            <Card {...Default.args} {...props} layout="grid" key={`${index}${url}`}>
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+              <Footer>
+                <Button variant="secondary">Button</Button>
+              </Footer>
+            </Card>
+          </div>
+        );
+      })
+    }
+  </div>
+);
+
+export const CardWaterfallNoPreview = (props: SpectrumCardProps) => (
+  <div
+    style={{
+      width: '100%',
+      height: '150vh',
+      margin: '50px',
+      display: 'flex',
+      flexDirection: 'column',
+      flexWrap: 'wrap',
+      alignItems: 'start'
+    }}>
+    {
+      (new Array(15).fill(0)).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', margin: '10px'}}>
+            <Card {...Default.args} {...props} layout="waterfall" key={`${index}${url}`}>
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>{getDescription(index)}</Content>
+              <ActionMenu>
+                <Item>Action 1</Item>
+                <Item>Action 2</Item>
+              </ActionMenu>
+              <Footer>
+                <Button variant="secondary">Button</Button>
               </Footer>
             </Card>
           </div>
