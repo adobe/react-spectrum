@@ -1065,5 +1065,35 @@ describe('DateRangePicker', function () {
 
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
     });
+
+    it('should confirm the placeholder on blur', function () {
+      let onChange = jest.fn();
+      let {getAllByRole, getByLabelText} = render(<DateRangePicker label="Date" onChange={onChange} />);
+
+      let startDate = getByLabelText('Start Date');
+      let endDate = getByLabelText('End Date');
+
+      let formatter = new Intl.DateTimeFormat('en-US');
+      expectPlaceholder(startDate, formatter.format(new Date()));
+      expectPlaceholder(endDate, formatter.format(new Date()));
+
+      let segments = getAllByRole('spinbutton');
+      act(() => {segments[0].focus();});
+
+      // Should not emit onChange if no segments are set
+      act(() => {segments[0].blur();});
+      expect(onChange).not.toHaveBeenCalled();
+
+      act(() => {segments[0].focus();});
+      beforeInput(document.activeElement, '4');
+      expect(onChange).not.toHaveBeenCalled();
+
+      expect(segments[1]).toHaveFocus();
+      act(() => {segments[1].blur();});
+      expect(onChange).toHaveBeenCalledWith({
+        start: today(getLocalTimeZone()).set({month: 4}),
+        end: today(getLocalTimeZone())
+      });
+    });
   });
 });

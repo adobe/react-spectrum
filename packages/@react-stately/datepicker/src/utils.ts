@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Calendar, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
-import {Time} from '@internationalized/date';
 
 export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
   return value != null && (
@@ -84,4 +84,40 @@ export function getPlaceholderTime(placeholderValue: DateValue): TimeValue {
   }
 
   return new Time();
+}
+
+export function convertValue(value: DateValue, calendar: Calendar): DateValue {
+  if (value === null) {
+    return null;
+  }
+
+  if (!value) {
+    return undefined;
+  }
+
+  return toCalendar(value, calendar);
+}
+
+
+export function createPlaceholderDate(placeholderValue: DateValue, granularity: string, calendar: Calendar, timeZone: string) {
+  if (placeholderValue) {
+    return convertValue(placeholderValue, calendar);
+  }
+
+  let date = toCalendar(now(timeZone).set({
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
+  }), calendar);
+
+  if (granularity === 'year' || granularity === 'month' || granularity === 'day') {
+    return toCalendarDate(date);
+  }
+
+  if (!timeZone) {
+    return toCalendarDateTime(date);
+  }
+
+  return date;
 }

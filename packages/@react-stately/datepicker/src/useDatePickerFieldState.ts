@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, CalendarDateTime, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, now, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {Calendar, CalendarDateTime, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
+import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid} from './utils';
 import {DatePickerProps, DateValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
@@ -418,39 +418,4 @@ function setSegment(value: DateValue, part: string, segmentValue: number, option
         return value.set({[part]: segmentValue});
     }
   }
-}
-
-function convertValue(value: DateValue, calendar: Calendar): DateValue {
-  if (value === null) {
-    return null;
-  }
-
-  if (!value) {
-    return undefined;
-  }
-
-  return toCalendar(value, calendar);
-}
-
-function createPlaceholderDate(placeholderValue, granularity, calendar, timeZone) {
-  if (placeholderValue) {
-    return convertValue(placeholderValue, calendar);
-  }
-
-  let date = toCalendar(now(timeZone).set({
-    hour: 0,
-    minute: 0,
-    second: 0,
-    millisecond: 0
-  }), calendar);
-
-  if (granularity === 'year' || granularity === 'month' || granularity === 'day') {
-    return toCalendarDate(date);
-  }
-
-  if (!timeZone) {
-    return toCalendarDateTime(date);
-  }
-
-  return date;
 }

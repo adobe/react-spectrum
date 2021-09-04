@@ -21,6 +21,7 @@ import intlMessages from '../intl/*.json';
 import {KeyboardEvent} from '@react-types/shared';
 import {mergeProps, useDescription, useId, useLabels} from '@react-aria/utils';
 import {useField} from '@react-aria/label';
+import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 interface DateRangePickerAria<T extends DateValue> {
@@ -71,10 +72,16 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     }
   };
 
+  let {focusWithinProps} = useFocusWithin({
+    onBlurWithin() {
+      state.confirmPlaceholder();
+    }
+  });
+
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
 
   return {
-    groupProps: mergeProps(fieldProps, descProps, {
+    groupProps: mergeProps(fieldProps, descProps, focusWithinProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-describedby': ariaDescribedBy,

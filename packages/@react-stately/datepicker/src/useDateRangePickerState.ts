@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {createPlaceholderDate, FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid} from './utils';
 import {DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid} from './utils';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
@@ -30,7 +30,8 @@ export interface DateRangePickerState {
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
   validationState: ValidationState,
-  formatValue(locale: string, fieldOptions: FieldOptions): string
+  formatValue(locale: string, fieldOptions: FieldOptions): string,
+  confirmPlaceholder(): void
 }
 
 export function useDateRangePickerState<T extends DateValue>(props: DateRangePickerProps<T>): DateRangePickerState {
@@ -50,6 +51,7 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
   let v = (value?.start || value?.end || props.placeholderValue);
   let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+  let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
 
   let [dateRange, setSelectedDateRange] = useState<DateRange>(null);
   let [timeRange, setSelectedTimeRange] = useState<TimeRange>(null);
@@ -172,6 +174,20 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
       }
 
       return `${startFormatter.format(value.start.toDate(startTimeZone))} – ${endFormatter.format(value.end.toDate(endTimeZone))}`;
+    },
+    confirmPlaceholder() {
+      setValue(value => {
+        if (value && Boolean(value.start) !== Boolean(value.end)) {
+          let calendar = (value.start || value.end).calendar;
+          let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
+          return {
+            start: value.start || placeholder,
+            end: value.end || placeholder
+          };
+        }
+
+        return value;
+      });
     }
   };
 }
