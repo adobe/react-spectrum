@@ -32,7 +32,18 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
    * The vertical padding for an item.
    * @default 114
    */
-  itemPadding?: Size
+  itemPadding?: number,
+  /**
+   * Minimum size for a item in the grid.
+   * @default 24 x 32
+   */
+  minItemSize?: Size,
+  /**
+   * Target for adding extra weight to elements during linear partitioning. Anything with an aspect ratio smaler than this value
+   * will be targeted. Maybe should expose the re-weighting function instead?
+   * @type {number}
+   */
+  threshold?: number
 }
 
 // TODO: copied from V2, update this with the proper spectrum values
@@ -48,7 +59,8 @@ const DEFAULT_OPTIONS = {
   },
   L: {
     idealRowHeight: 208,
-    minItemSize: new Size(136, 136),
+    // Arbitrary size, bumped up from (136, 136) Figure out the min width of the v3 cards
+    minItemSize: new Size(160, 160),
     itemSpacing: new Size(24, 32),
     // TODO: updated to work with new v3 cards (there is additional space required for the descriptions if there is a description)
     itemPadding: 114,
@@ -61,6 +73,8 @@ export class GalleryLayout<T> extends BaseLayout<T> {
   // TODO: should this have had a margin option? v2 seems to use itemSpacing
   protected itemSpacing: Size;
   protected itemPadding: number;
+  protected minItemSize: Size;
+  protected threshold: number;
 
   constructor(options: GalleryLayoutOptions = {}) {
     super(options);
@@ -69,10 +83,54 @@ export class GalleryLayout<T> extends BaseLayout<T> {
     this.idealRowHeight = options.idealRowHeight || DEFAULT_OPTIONS[cardSize].idealRowHeight;
     this.itemSpacing = options.itemSpacing || DEFAULT_OPTIONS[cardSize].itemSpacing;
     this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
+    this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
+    this.threshold = options.threshold || 1;
   }
 
   get layoutType() {
     return 'gallery';
+  }
+
+  /**
+   * Takes a row of widths and if there are any widths smaller than the min-width, leech width starting from
+   * the widest in the row until it can't give anymore, then move to the second widest and so forth.
+   * Do this until all assets meet the min-width.
+   * */
+  _distributeWidths(widths) {
+    // create a copy of the widths array and sort it largest to smallest
+    let sortedWidths = widths.concat().sort((a, b) => a[1] > b[1] ? -1 : 1);
+    for (let width of widths) {
+      // for each width, if it's smaller than the min width
+      if (width[1] < this.minItemSize.width) {
+        // then figure out how much smaller
+        let delta = this.minItemSize.width - width[1];
+        for (let item of sortedWidths) {
+          // go from the largest width in the row to the smallest
+          // if the width is greater than the min width
+          if (widths[item[0]][1] > this.minItemSize.width) {
+            // subtract the delta from the width, if it's still greater than the min width
+            // then we have finished, subtract the delta permanently from that width
+            if (widths[item[0]][1] - delta > this.minItemSize.width) {
+              widths[item[0]][1] -= delta;
+              delta = 0;
+              break;
+            } else {
+              // otherwise, we take as much as we can from the current width and then move on to
+              // the next largest and take some width from it
+              let maxChange = widths[item[0]][1] - this.minItemSize.width;
+              delta -= maxChange;
+              widths[item[0]][1] -= maxChange;
+            }
+          }
+        }
+        if (delta > 0) {
+          return false;
+        }
+        // force the width to be the min width that we just rebalanced for
+        width[1] = this.minItemSize.width;
+      }
+    }
+    return true;
   }
 
   validate() {
@@ -108,16 +166,34 @@ export class GalleryLayout<T> extends BaseLayout<T> {
     // Compute aspect ratios for all of the items, and the total width if all items were on in a single row.
     let ratios = [];
     let totalWidth = 0;
+    let minRatio = this.minItemSize.width / this.idealRowHeight;
+    let maxRatio = availableWidth / this.idealRowHeight;
+
     for (let node of this.collection) {
       let ratio = node.props.width / node.props.height;
+      if (ratio < minRatio) {
+        ratio = minRatio;
+      } else if (ratio > maxRatio && ratio !== minRatio) {
+        ratio = maxRatio;
+      }
+
+      let itemWidth = ratio * this.idealRowHeight;
       ratios.push(ratio);
-      totalWidth += ratio * this.idealRowHeight;
+      totalWidth += itemWidth;
     }
 
     // Determine how many rows we'll need, and partition the items into rows
     // using the aspect ratios as weights.
     let rows = Math.max(1, Math.round(totalWidth / availableWidth));
-    let partition = linearPartition(ratios, rows);
+    // if the available width can't hold two items, then every item will get its own row
+    // this leads to a faster run through linear partition and more dependable output for small row widths
+    if (availableWidth <= (this.minItemSize.width * 2) + (this.itemPadding * 2)) {
+      rows = this.collection.size;
+    }
+
+    let weightedRatios = ratios.map(ratio => ratio < this.threshold ? ratio + (0.5 * (1 / ratio)) : ratio);
+    let partition = linearPartition(weightedRatios, rows);
+
 
     let index = 0;
     for (let row of partition) {
@@ -128,18 +204,29 @@ export class GalleryLayout<T> extends BaseLayout<T> {
       }
 
       // Determine the row height based on the total available width and weight of this row.
-      let rowHeight = (availableWidth - (row.length - 1) * this.itemSpacing.width) / totalWeight;
-      if (row === partition[partition.length - 1] && rowHeight > this.idealRowHeight * 2) {
-        rowHeight = this.idealRowHeight;
-      }
+      let bestRowHeight = (availableWidth - (row.length - 1) * this.itemSpacing.width) / totalWeight;
 
-      let itemHeight = Math.round(rowHeight) + this.itemPadding;
+      // if this is the last row and the row height is >2x the ideal row height, then cap to the ideal height
+      // probably doing this because if the last row has one extremely tall image, then the row becomes huge
+      // though that can happen anywhere if a row has lots of tall images... so i'm not sure why this one matters
+      if (row === partition[partition.length - 1] && bestRowHeight > this.idealRowHeight * 2) {
+        bestRowHeight = this.idealRowHeight;
+      }
+      let itemHeight = Math.round(bestRowHeight) + this.itemPadding;
       let x = this.itemSpacing.width;
+
+      // if any items are going to end up too small, add a bit of width to them and subtract it from wider objects
+      let widths = [];
+      for (let j = index; j < index + row.length; j++) {
+        let width = Math.round(bestRowHeight * ratios[j]);
+        widths.push([j - index, width]);
+      }
+      this._distributeWidths(widths);
 
       // Create items for this row.
       for (let j = index; j < index + row.length; j++) {
         let node = this.collection.at(j);
-        let itemWidth = Math.round(rowHeight * ratios[j]);
+        let itemWidth = widths[j - index][1];
         let rect = new Rect(x, y, itemWidth, itemHeight);
         let layoutInfo = new LayoutInfo(node.type, node.key, rect);
         this.layoutInfos.set(node.key, layoutInfo);
