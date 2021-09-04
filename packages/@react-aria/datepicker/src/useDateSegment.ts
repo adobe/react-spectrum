@@ -190,6 +190,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
 
         let numberValue = parser.parse(newValue);
         let segmentValue = numberValue;
+        let allowsZero = segment.minValue === 0;
         if (segment.type === 'hour' && state.dateFormatter.resolvedOptions().hour12) {
           switch (state.dateFormatter.resolvedOptions().hourCycle) {
             case 'h11':
@@ -198,10 +199,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
               }
               break;
             case 'h12':
-              if (numberValue === 0) {
-                return;
-              }
-
+              allowsZero = false;
               if (numberValue > 12) {
                 segmentValue = parser.parse(key);
               }
@@ -219,11 +217,16 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
           return;
         }
 
-        state.setSegment(segment.type, segmentValue);
+        let shouldSetValue = segmentValue !== 0 || allowsZero;
+        if (shouldSetValue) {
+          state.setSegment(segment.type, segmentValue);
+        }
 
-        if (Number(numberValue + '0') > segment.maxValue) {
+        if (Number(numberValue + '0') > segment.maxValue || newValue.length >= String(segment.maxValue).length) {
           enteredKeys.current = '';
-          focusManager.focusNext();
+          if (shouldSetValue) {
+            focusManager.focusNext();
+          }
         } else {
           enteredKeys.current = newValue;
         }

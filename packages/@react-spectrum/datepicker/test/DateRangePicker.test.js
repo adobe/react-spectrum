@@ -683,12 +683,12 @@ describe('DateRangePicker', function () {
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
 
       triggerPress(startDate);
-      expect(startSegments[startSegments.length - 1]).toHaveFocus();
+      expect(startSegments[0]).toHaveFocus();
 
       act(() => document.activeElement.blur());
 
       triggerPress(endDate);
-      expect(endSegments[endSegments.length - 1]).toHaveFocus();
+      expect(endSegments[0]).toHaveFocus();
     });
 
     it('should focus the first segment of the end date on mouse down on the dash', function () {

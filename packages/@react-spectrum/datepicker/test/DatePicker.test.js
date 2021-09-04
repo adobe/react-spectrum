@@ -790,11 +790,14 @@ describe('DatePicker', function () {
         let textContent = segment.textContent;
         act(() => {segment.focus();});
 
-        let i = 0;
-        for (let key of keys) {
+        let allowsZero = (label === 'hour' && props?.hourCycle === 24) || label === 'minute' || label === 'second';
+        let count = 0;
+        for (let [i, key] of [...keys].entries()) {
           beforeInput(segment, key);
 
-          expect(onChange).toHaveBeenCalledTimes(++i);
+          if (key !== '0' || (moved && i === keys.length - 1) || allowsZero) {
+            expect(onChange).toHaveBeenCalledTimes(++count);
+          }
           expect(segment.textContent).toBe(textContent);
 
           if (i < keys.length - 1) {
@@ -821,12 +824,14 @@ describe('DatePicker', function () {
         textContent = segment.textContent;
         act(() => {segment.focus();});
 
-        i = 0;
-        for (let key of keys) {
+        count = 0;
+        for (let [i, key] of [...keys].entries()) {
           beforeInput(segment, key);
 
-          expect(onChange).toHaveBeenCalledTimes(++i);
-          expect(segment.textContent).not.toBe(textContent);
+          if (key !== '0' || (moved && i === keys.length - 1) || allowsZero) {
+            expect(onChange).toHaveBeenCalledTimes(++count);
+            expect(segment.textContent).not.toBe(textContent);
+          }
 
           if (i < keys.length - 1) {
             expect(segment).toHaveFocus();
@@ -865,53 +870,92 @@ describe('DatePicker', function () {
         unmount();
       }
 
+      function testIgnored(label, value, keys, props) {
+        let onChange = jest.fn();
+        let {getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} {...props} />);
+
+        let segment = getByLabelText(label);
+        let textContent = segment.textContent;
+        act(() => {segment.focus();});
+
+        for (let key of keys) {
+          beforeInput(segment, key);
+        }
+
+        expect(onChange).not.toHaveBeenCalled();
+        expect(segment.textContent).toBe(textContent);
+        expect(segment).toHaveFocus();
+        unmount();
+      }
+
       it('should support typing into the month segment', function () {
         testInput('month', new CalendarDate(2019, 2, 3), '1', new CalendarDate(2019, 1, 3), false);
+        testInput('month', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 1, 3), true);
         testInput('month', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 12, 3), true);
         testInput('month', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 4, 3), true);
+        testIgnored('month', new CalendarDate(2019, 2, 3), '0');
+        testIgnored('month', new CalendarDate(2019, 2, 3), '00');
       });
 
       it('should support typing into the day segment', function () {
         testInput('day', new CalendarDate(2019, 2, 3), '1', new CalendarDate(2019, 2, 1), false);
+        testInput('day', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 2, 1), true);
         testInput('day', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 2, 12), true);
         testInput('day', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 2, 4), true);
+        testIgnored('day', new CalendarDate(2019, 2, 3), '0');
+        testIgnored('day', new CalendarDate(2019, 2, 3), '00');
       });
 
       it('should support typing into the year segment', function () {
         testInput('year', new CalendarDate(2019, 2, 3), '1993', new CalendarDate(1993, 2, 3), false);
         testInput('year', new CalendarDateTime(2019, 2, 3, 8), '1993', new CalendarDateTime(1993, 2, 3, 8), true);
+        testIgnored('year', new CalendarDate(2019, 2, 3), '0');
       });
 
       it('should support typing into the hour segment in 12 hour time', function () {
         // AM
         testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '1', new CalendarDateTime(2019, 2, 3, 1), false);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '01', new CalendarDateTime(2019, 2, 3, 1), true);
         testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '11', new CalendarDateTime(2019, 2, 3, 11), true);
         testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '12', new CalendarDateTime(2019, 2, 3, 0), true);
         testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '4', new CalendarDateTime(2019, 2, 3, 4), true);
+        testIgnored('hour', new CalendarDateTime(2019, 2, 3, 8), '0');
 
         // PM
         testInput('hour', new CalendarDateTime(2019, 2, 3, 20), '1', new CalendarDateTime(2019, 2, 3, 13), false);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 20), '01', new CalendarDateTime(2019, 2, 3, 13), true);
         testInput('hour', new CalendarDateTime(2019, 2, 3, 20), '11', new CalendarDateTime(2019, 2, 3, 23), true);
         testInput('hour', new CalendarDateTime(2019, 2, 3, 20), '12', new CalendarDateTime(2019, 2, 3, 12), true);
         testInput('hour', new CalendarDateTime(2019, 2, 3, 20), '4', new CalendarDateTime(2019, 2, 3, 16), true);
+        testIgnored('hour', new CalendarDateTime(2019, 2, 3, 20), '0');
       });
 
       it('should support typing into the hour segment in 24 hour time', function () {
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '0', new CalendarDateTime(2019, 2, 3, 0), false, {hourCycle: 24});
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '00', new CalendarDateTime(2019, 2, 3, 0), true, {hourCycle: 24});
         testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '1', new CalendarDateTime(2019, 2, 3, 1), false, {hourCycle: 24});
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '01', new CalendarDateTime(2019, 2, 3, 1), true, {hourCycle: 24});
         testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '11', new CalendarDateTime(2019, 2, 3, 11), true, {hourCycle: 24});
         testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '23', new CalendarDateTime(2019, 2, 3, 23), true, {hourCycle: 24});
       });
 
       it('should support typing into the minute segment', function () {
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '0', new CalendarDateTime(2019, 2, 3, 8, 0), false);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '00', new CalendarDateTime(2019, 2, 3, 8, 0), true);
         testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '1', new CalendarDateTime(2019, 2, 3, 8, 1), false);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '01', new CalendarDateTime(2019, 2, 3, 8, 1), true);
         testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '2', new CalendarDateTime(2019, 2, 3, 8, 2), false);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '02', new CalendarDateTime(2019, 2, 3, 8, 2), true);
         testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '5', new CalendarDateTime(2019, 2, 3, 8, 5), false);
         testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '6', new CalendarDateTime(2019, 2, 3, 8, 6), true);
         testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '59', new CalendarDateTime(2019, 2, 3, 8, 59), true);
       });
 
       it('should support typing into the second segment', function () {
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '0', new CalendarDateTime(2019, 2, 3, 8, 5, 0), false, {granularity: 'second'});
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '00', new CalendarDateTime(2019, 2, 3, 8, 5, 0), true, {granularity: 'second'});
         testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '1', new CalendarDateTime(2019, 2, 3, 8, 5, 1), false, {granularity: 'second'});
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '01', new CalendarDateTime(2019, 2, 3, 8, 5, 1), true, {granularity: 'second'});
         testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '2', new CalendarDateTime(2019, 2, 3, 8, 5, 2), false, {granularity: 'second'});
         testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '5', new CalendarDateTime(2019, 2, 3, 8, 5, 5), false, {granularity: 'second'});
         testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '6', new CalendarDateTime(2019, 2, 3, 8, 5, 6), true, {granularity: 'second'});
