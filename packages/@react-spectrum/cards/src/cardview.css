@@ -8,6 +8,7 @@
 
 .react-spectrum-CardView-CardWrapper {
   overflow: visible !important;
+  contain: size layout style !important;
 }
 
 .react-spectrum-CardView {
