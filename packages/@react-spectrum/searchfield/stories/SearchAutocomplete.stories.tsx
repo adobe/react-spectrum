@@ -12,13 +12,22 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Flex} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '@react-spectrum/searchfield';
 import {mergeProps} from '@react-aria/utils';
+import {Meta} from '@storybook/react';
 import React from 'react';
+import {SpectrumSearchAutocompleteProps} from '@react-types/searchfield';
 
-export default {
-  title: 'SearchAutocomplete'
+const StoryFn = ({storyFn}) => storyFn();
+
+const meta: Meta<SpectrumSearchAutocompleteProps<{}>> = {
+  title: 'SearchAutocomplete',
+  component: SearchAutocomplete,
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
+
+export default meta;
 
 let options = [
   {id: 1, name: 'Aerospace'},
@@ -35,14 +44,13 @@ let options = [
 let actions = {
   onOpenChange: action('onOpenChange'),
   onInputChange: action('onInputChange'),
-  onSelectionChange: action('onSelectionChange'),
   onBlur: action('onBlur'),
   onFocus: action('onFocus'),
   onChange: action('onChange'),
   onSubmit: action('onSubmit')
 };
 
-function render(props = {}) {
+function Default(props) {
   return (
     <SearchAutocomplete label="Search with Autocomplete" {...mergeProps(props, actions)}>
       <Item>Aerospace</Item>
@@ -58,18 +66,18 @@ function render(props = {}) {
   );
 }
 
-function renderDynamic(props = {}, items: any[] = options) {
+function Dynamic(props) {
   return (
-    <SearchAutocomplete defaultItems={items} label="Search with Autocomplete" {...mergeProps(props, actions)}>
+    <SearchAutocomplete defaultItems={options} label="Search with Autocomplete" {...mergeProps(props, actions)}>
       {(item: any) => <Item>{item.name}</Item>}
     </SearchAutocomplete>
   );
 }
 
-function renderMapped(props = {}, items = options) {
+function Mapped(props) {
   return (
     <SearchAutocomplete label="Search with Autocomplete" {...mergeProps(props, actions)}>
-      {items.map((item) => (
+      {options.map((item) => (
         <Item key={item.id}>
           {item.name}
         </Item>
@@ -78,77 +86,103 @@ function renderMapped(props = {}, items = options) {
   );
 }
 
-export const Static = () => render();
+function CustomOnSubmit(props) {
+  let [searchTerm, setSearchTerm] = React.useState('');
+
+  let onSubmit = (value, key) => {
+    if (value) {
+      setSearchTerm(value);
+    } else if (key) {
+      setSearchTerm(options.find(o => o.id === key).name);
+    }
+  };
+
+  return (
+    <Flex direction="column">
+      <SearchAutocomplete defaultItems={options} label="Search with Autocomplete" {...mergeProps(props, actions, {onSubmit})}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </SearchAutocomplete>
+      <div>
+        Search results for: {searchTerm}
+      </div>
+    </Flex>
+  );
+}
+
+export const Static = (props) => <Default {...props} />;
 Static.storyName = 'static items';
 
-export const Dynamic = () => renderDynamic();
-Dynamic.storyName = 'dynamic items';
+export const DynamicItems = (props) => <Dynamic {...props} />;
+DynamicItems.storyName = 'dynamic items';
 
-export const NoItems = () => renderDynamic({}, []);
+export const NoItems = (props) =>  <Dynamic {...props} defaultItems={options} />;
 NoItems.storyName = 'no items';
 
-export const MappedItems = () => renderMapped();
+export const MappedItems = (props) => <Mapped {...props} />;
 MappedItems.storyName = 'with mapped items';
 
-export const MenuTriggerFocus = () => render({menuTrigger: 'focus'});
+export const MenuTriggerFocus = (props) => <Default {...props} menuTrigger="focus" />;
 MenuTriggerFocus.storyName = 'menuTrigger: focus';
 
-export const MenuTriggerManual = () => render({menuTrigger: 'manual'});
+export const MenuTriggerManual = (props) => <Default {...props} menuTrigger="manual" />;
 MenuTriggerManual.storyName = 'menuTrigger: manual';
 
-export const isQuiet = () => render({isQuiet: true});
+export const isQuiet = (props) => <Default {...props} isQuiet />;
 isQuiet.storyName = 'isQuiet';
 
-export const isDisabled = () => render({isDisabled: true});
+export const isDisabled = (props) => <Default {...props} isDisabled />;
 isDisabled.storyName = 'isDisabled';
 
-export const isReadOnly = () => render({isReadOnly: true, value: 'Read only'});
+export const isReadOnly = (props) => <Default {...props} isReadOnly value="Read only" />;
 isReadOnly.storyName = 'isReadOnly';
 
-export const labelAlignEnd = () => render({labelAlign: 'end'});
+export const labelAlignEnd = (props) => <Default {...props} labelAlign="end" />;
 labelAlignEnd.storyName = 'labelPosition: top, labelAlign: end';
 
-export const labelPositionSide = () => render({labelPosition: 'side'});
+export const labelPositionSide = (props) => <Default {...props} labelPosition="side" />;
 labelPositionSide.storyName = 'labelPosition: side';
 
-export const noVisibleLabel = () => render({label: undefined, 'aria-label': 'Search Autocomplete'});
+export const noVisibleLabel = (props) =>  <Default {...props} label={undefined} aria-label="Search Autocomplete" />;
 noVisibleLabel.storyName = 'No visible label';
 
-export const noVisibleLabelIsQuiet = () => render({label: undefined, 'aria-label': 'Search Autocomplete', isQuiet: true});
+export const noVisibleLabelIsQuiet = (props) => <Default {...props} label={undefined} aria-label="Search Autocomplete" isQuiet />;
 noVisibleLabelIsQuiet.storyName = 'No visible label, isQuiet';
 
-export const isRequired = () => render({isRequired: true});
+export const isRequired = (props) => <Default {...props} isRequired />;
 isRequired.storyName = 'isRequired';
 
-export const isRequiredNecessityIndicatorLabel = () => render({isRequired: true, necessityIndicator: 'label'});
+export const isRequiredNecessityIndicatorLabel = (props) => <Default {...props} isRequired necessityIndicator="label"  />;
 isRequiredNecessityIndicatorLabel.storyName = 'isRequired, necessityIndicator: label';
 
-export const validationStateInvalid = () => render({validationState: 'invalid'});
+export const validationStateInvalid = (props) => <Default {...props} validationState="invalid" />;
 validationStateInvalid.storyName = 'validationState: invalid';
 
-export const validationStateValid = () => render({validationState: 'valid'});
+export const validationStateValid = (props) => <Default {...props} validationState="invalid" />;
 validationStateValid.storyName = 'validationState: valid';
 
-export const validationStateInvalidIsQuiet = () => render({validationState: 'invalid', isQuiet: true});
+export const validationStateInvalidIsQuiet = (props) => <Default {...props} validationState="invalid" isQuiet />;
 validationStateInvalidIsQuiet.storyName = 'validationState: invalid, isQuiet';
 
-export const validationStateValidIsQuiet = () => render({validationState: 'valid', isQuiet: true});
+export const validationStateValidIsQuiet = (props) => <Default {...props} validationState="valid" isQuiet />;
 validationStateValidIsQuiet.storyName = 'validationState: valid, isQuiet';
 
-export const placeholder = () => render({placeholder: 'Select an item...'});
+export const placeholder = (props) => <Default {...props} placeholder="Select an item..." />;
 placeholder.storyName = 'placeholder';
 
-export const autoFocus = () => render({autoFocus: true});
+export const autoFocus = (props) => <Default {...props} autoFocus={true} />;
 autoFocus.storyName = 'autoFocus: true';
 
-export const directionTop = () => render({direction: 'top'});
+export const directionTop = (props) => <Default {...props} direction="top" />;
 directionTop.storyName = 'direction: top';
 
-export const customWidth500 = () => render({width: 'size-500'});
+export const customWidth500 = (props) => <Default {...props} width="size-500" />;
 customWidth500.storyName = 'custom width: size-500';
 
-export const customWidth3000 = () => render({width: 'size-3000'});
+export const customWidth3000 = (props) => <Default {...props} width="size-3000'" />;
 customWidth3000.storyName = 'custom width: size-3000';
 
-export const customWidth6000 = () => render({width: 'size-6000'});
+export const customWidth6000 = (props) => <Default {...props} width="size-6000" />;
 customWidth6000.storyName = 'custom width: size-6000';
+
+export const customOnSubmit = (props) => <CustomOnSubmit {...props} />;
+customOnSubmit.storyName = 'custom onSubmit';
