@@ -19,7 +19,7 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
   //  */
   // cardSize?: 'S' | 'M' | 'L',
   /**
-   * The the default row height.
+   * The the default row height. Note this must be larger than the min item height.
    * @default 208
    */
   idealRowHeight?: number,
@@ -35,12 +35,12 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
   itemPadding?: number,
   /**
    * Minimum size for a item in the grid.
-   * @default 24 x 32
+   * @default 136 x 136
    */
   minItemSize?: Size,
   /**
    * Target for adding extra weight to elements during linear partitioning. Anything with an aspect ratio smaler than this value
-   * will be targeted. Maybe should expose the re-weighting function instead?
+   * will be targeted.
    * @type {number}
    */
   threshold?: number,
@@ -173,8 +173,8 @@ export class GalleryLayout<T> extends BaseLayout<T> {
     // Compute aspect ratios for all of the items, and the total width if all items were on in a single row.
     let ratios = [];
     let totalWidth = 0;
-    let minRatio = this.minItemSize.width / this.idealRowHeight;
-    let maxRatio = availableWidth / this.idealRowHeight;
+    let minRatio = this.minItemSize.width / this.minItemSize.height;
+    let maxRatio = availableWidth / this.minItemSize.height;
 
     for (let node of this.collection) {
       let ratio = node.props.width / node.props.height;
@@ -184,14 +184,16 @@ export class GalleryLayout<T> extends BaseLayout<T> {
         ratio = maxRatio;
       }
 
-      let itemWidth = ratio * this.idealRowHeight;
+      let itemWidth = ratio * this.minItemSize.height;
       ratios.push(ratio);
       totalWidth += itemWidth;
     }
 
+    totalWidth += this.itemSpacing.width * (this.collection.size - 1);
+
     // Determine how many rows we'll need, and partition the items into rows
     // using the aspect ratios as weights.
-    let rows = Math.max(1, Math.round(totalWidth / availableWidth));
+    let rows = Math.max(1, Math.ceil(totalWidth / availableWidth));
     // if the available width can't hold two items, then every item will get its own row
     // this leads to a faster run through linear partition and more dependable output for small row widths
     if (availableWidth <= (this.minItemSize.width * 2) + (this.itemPadding * 2)) {
@@ -200,7 +202,6 @@ export class GalleryLayout<T> extends BaseLayout<T> {
 
     let weightedRatios = ratios.map(ratio => ratio < this.threshold ? ratio + (0.5 * (1 / ratio)) : ratio);
     let partition = linearPartition(weightedRatios, rows);
-
 
     let index = 0;
     for (let row of partition) {
