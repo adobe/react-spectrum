@@ -169,7 +169,7 @@ validationStateValidIsQuiet.storyName = 'validationState: valid, isQuiet';
 export const placeholder = (props) => <Default {...props} placeholder="Select an item..." />;
 placeholder.storyName = 'placeholder';
 
-export const autoFocus = (props) => <Default {...props} autoFocus={true} />;
+export const autoFocus = (props) => <Default {...props} autoFocus />;
 autoFocus.storyName = 'autoFocus: true';
 
 export const directionTop = (props) => <Default {...props} direction="top" />;
