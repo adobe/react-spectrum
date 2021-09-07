@@ -76,7 +76,9 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
       keyboardDelegate,
       popoverRef,
       listBoxRef,
-      inputRef
+      inputRef,
+      onFocus: undefined,
+      onBlur: undefined
     },
     state
   );
