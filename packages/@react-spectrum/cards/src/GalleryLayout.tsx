@@ -65,8 +65,7 @@ const DEFAULT_OPTIONS = {
   },
   L: {
     idealRowHeight: 208,
-    // Arbitrary size, bumped up from (136, 136) Figure out the min width of the v3 cards
-    minItemSize: new Size(160, 160),
+    minItemSize: new Size(136, 136),
     itemSpacing: new Size(18, 18),
     // TODO: updated to work with new v3 cards (there is additional space required for the descriptions if there is a description)
     itemPadding: 114,
@@ -234,7 +233,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
       // Create items for this row.
       for (let j = index; j < index + row.length; j++) {
         let node = this.collection.at(j);
-        let itemWidth = widths[j - index][1];
+        let itemWidth = Math.max(widths[j - index][1], this.minItemSize.width);
         let rect = new Rect(x, y, itemWidth, itemHeight);
         let layoutInfo = new LayoutInfo(node.type, node.key, rect);
         this.layoutInfos.set(node.key, layoutInfo);
