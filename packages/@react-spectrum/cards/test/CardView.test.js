@@ -292,11 +292,11 @@ describe('CardView', function () {
           expect(div.style.width).toEqual(expectedWidth);
           expect(div.style.height).toEqual(expectedHeight);
           if (currentTop === div.style.top) {
-            // 25px due to how horizontal spacing is calculated in the layout
-            currentLeft = `${parseInt(currentLeft, 10) + parseInt(expectedWidth, 10) + 25}px`;
+            // 19px due to how horizontal spacing is calculated in the layout
+            currentLeft = `${parseInt(currentLeft, 10) + parseInt(expectedWidth, 10) + 19}px`;
           } else {
-            // default space between the two cards vertically is 48px
-            currentTop = `${parseInt(currentTop, 10) + parseInt(expectedHeight, 10) + 48}px`;
+            // default space between the two cards vertically is 18px
+            currentTop = `${parseInt(currentTop, 10) + parseInt(expectedHeight, 10) + 18}px`;
             currentLeft = '24px';
             expect(div.style.top).toEqual(currentTop);
           }
@@ -317,7 +317,7 @@ describe('CardView', function () {
         expect(document.activeElement).toBe(cards[1]);
         let cardStyles = getCardStyles(cards[1]);
         let expectedLeft = cardStyles.left;
-        let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 48}px`;
+        let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 18}px`;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -341,7 +341,7 @@ describe('CardView', function () {
         expect(document.activeElement).toBe(cards[5]);
         let cardStyles = getCardStyles(cards[5]);
         let expectedLeft = cardStyles.left;
-        let expectedTop = `${parseInt(cardStyles.top, 10) - parseInt(cardStyles.height, 10) - 48}px`;
+        let expectedTop = `${parseInt(cardStyles.top, 10) - parseInt(cardStyles.height, 10) - 18}px`;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
@@ -380,8 +380,8 @@ describe('CardView', function () {
 
         expect(document.activeElement).toBe(cards[0]);
         cardStyles = getCardStyles(document.activeElement);
-        // horizontal spacing in grid is minimum 24px, but in this specific setup the calculated horizontal spacing is 25px due to margins
-        let horizontalSpacing = Name === 'Grid layout' ? 25 : 24;
+        // horizontal spacing in grid is minimum 18px, but in this specific setup the calculated horizontal spacing is 19px due to margins
+        let horizontalSpacing = Name === 'Grid layout' ? 19 : 18;
         expectedLeft = `${parseInt(expectedLeft, 10) - parseInt(cardStyles.width, 10) - horizontalSpacing}px`;
         expect(cardStyles.top).toEqual(expectedTop);
         expect(cardStyles.left).toEqual(expectedLeft);
@@ -424,8 +424,8 @@ describe('CardView', function () {
 
         expect(document.activeElement).toBe(cards[0]);
         cardStyles = getCardStyles(document.activeElement);
-        // horizontal spacing in grid is minimum 24px, but in this specific setup the calculated horizontal spacing is 25px due to margins
-        let horizontalSpacing = Name === 'Grid layout' ? 25 : 24;
+        // horizontal spacing in grid is minimum 18px, but in this specific setup the calculated horizontal spacing is 19px due to margins
+        let horizontalSpacing = Name === 'Grid layout' ? 19 : 18;
         expectedRight = `${parseInt(expectedRight, 10) - parseInt(cardStyles.width, 10) - horizontalSpacing}px`;
         expect(cardStyles.top).toEqual(expectedTop);
         expect(cardStyles.right).toEqual(expectedRight);
@@ -451,8 +451,8 @@ describe('CardView', function () {
         let cardStyles = getCardStyles(document.activeElement);
         let expectedLeft = cardStyles.left;
 
-        let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 48));
-        let expectedTop = `${parseInt(cardStyles.top, 10) - numCardsInPage * (parseInt(cardStyles.height, 10) + 48)}px`;
+        let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 18));
+        let expectedTop = `${parseInt(cardStyles.top, 10) - numCardsInPage * (parseInt(cardStyles.height, 10) + 18)}px`;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'PageUp', code: 33, charCode: 33});
@@ -478,8 +478,8 @@ describe('CardView', function () {
         let cardStyles = getCardStyles(document.activeElement);
         let expectedLeft = cardStyles.left;
 
-        let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 48));
-        let expectedTop = `${parseInt(cardStyles.top, 10) + numCardsInPage * (parseInt(cardStyles.height, 10) + 48)}px`;
+        let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 18));
+        let expectedTop = `${parseInt(cardStyles.top, 10) + numCardsInPage * (parseInt(cardStyles.height, 10) + 18)}px`;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
@@ -514,11 +514,10 @@ describe('CardView', function () {
         if (!expectedHeight) {
           currentTop = div.style.top;
           expectedHeight = div.style.height;
-          // TODO: should this match the other layouts?
-          expect(div.style.top).toEqual('32px');
+          expect(div.style.top).toEqual('24px');
           expect(div.style.left).toEqual('24px');
 
-          expectedLeft = `${parseInt(div.style.left, 10) + parseInt(div.style.width, 10) + 24}px`;
+          expectedLeft = `${parseInt(div.style.left, 10) + parseInt(div.style.width, 10) + 18}px`;
         } else {
           if (currentTop === div.style.top) {
             expect(div.style.left).toEqual(expectedLeft);
@@ -529,7 +528,7 @@ describe('CardView', function () {
             expect(div.style.left).toEqual('24px');
           }
           expect(div.style.height).toEqual(expectedHeight);
-          expectedLeft = `${parseInt(div.style.left, 10) + parseInt(div.style.width, 10) + 24}px`;
+          expectedLeft = `${parseInt(div.style.left, 10) + parseInt(div.style.width, 10) + 18}px`;
         }
       }
     });
@@ -547,7 +546,7 @@ describe('CardView', function () {
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
 
         let cardStyles = getCardStyles(cards[0]);
-        let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 32}px`;
+        let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 18}px`;
 
         act(() => {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -581,7 +580,7 @@ describe('CardView', function () {
         });
 
         cardStyles = getCardStyles(document.activeElement);
-        expectedTop = `${parseInt(expectedTop, 10) - parseInt(cardStyles.height, 10) - 32}px`;
+        expectedTop = `${parseInt(expectedTop, 10) - parseInt(cardStyles.height, 10) - 18}px`;
         expect(cardStyles.top).toEqual(expectedTop);
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
       });
@@ -653,7 +652,7 @@ describe('CardView', function () {
         });
 
         let cardStyles = getCardStyles(document.activeElement);
-        let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 32));
+        let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 18));
 
         for (let i = 0; i < numCardsInPage; i++) {
           act(() => {
@@ -695,7 +694,7 @@ describe('CardView', function () {
           expect(div.style.left).toEqual('24px');
           columnLefts.push(div.style.left);
 
-          let expectedHeight = `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 24}px`;
+          let expectedHeight = `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 18}px`;
           columnHeights.push(expectedHeight);
         } else {
           expect(div.style.width).toEqual(expectedWidth);
@@ -703,13 +702,13 @@ describe('CardView', function () {
           // Make sure each item is within one of the columns of the waterfall and check the positioning
           if (div.style.top === '24px') {
             columnLefts.push(div.style.left);
-            let expectedHeight = `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 24}px`;
+            let expectedHeight = `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 18}px`;
             columnHeights.push(expectedHeight);
           } else {
             let index = columnLefts.indexOf(div.style.left);
             expect(index).not.toEqual(-1);
             expect(columnHeights[index]).toEqual(div.style.top);
-            columnHeights[index] = `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 24}px`;
+            columnHeights[index] = `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 18}px`;
           }
         }
       }
@@ -728,7 +727,7 @@ describe('CardView', function () {
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
 
         let cardStyles = getCardStyles(cards[0]);
-        let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 24}px`;
+        let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 18}px`;
         let expectedLeft = cardStyles.left;
 
         act(() => {
@@ -740,7 +739,7 @@ describe('CardView', function () {
         cardStyles = getCardStyles(document.activeElement);
         expect(cardStyles.top).toEqual(expectedTop);
         expect(cardStyles.left).toEqual(expectedLeft);
-        expect(within(document.activeElement).getByText('Title 4')).toBeTruthy();
+        expect(within(document.activeElement).getByText('Title 3')).toBeTruthy();
       });
 
       it('should move focus via Arrow Up', function () {
@@ -750,11 +749,11 @@ describe('CardView', function () {
         });
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[3]);
-        expect(document.activeElement).toBe(cards[3]);
-        expect(within(document.activeElement).getByText('Title 4')).toBeTruthy();
+        triggerPress(cards[2]);
+        expect(document.activeElement).toBe(cards[2]);
+        expect(within(document.activeElement).getByText('Title 3')).toBeTruthy();
 
-        let cardStyles = getCardStyles(cards[3]);
+        let cardStyles = getCardStyles(cards[2]);
         let expectedTop = cardStyles.top;
         let expectedLeft = cardStyles.left;
 
@@ -765,7 +764,7 @@ describe('CardView', function () {
         });
 
         cardStyles = getCardStyles(document.activeElement);
-        expectedTop = `${parseInt(expectedTop, 10) - parseInt(cardStyles.height, 10) - 24}px`;
+        expectedTop = `${parseInt(expectedTop, 10) - parseInt(cardStyles.height, 10) - 18}px`;
         expect(cardStyles.top).toEqual(expectedTop);
         expect(cardStyles.left).toEqual(expectedLeft);
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
@@ -797,7 +796,7 @@ describe('CardView', function () {
 
         expect(document.activeElement).toBe(cards[0]);
         cardStyles = getCardStyles(document.activeElement);
-        expectedLeft = `${parseInt(expectedLeft, 10) - parseInt(cardStyles.width, 10) - 24}px`;
+        expectedLeft = `${parseInt(expectedLeft, 10) - parseInt(cardStyles.width, 10) - 18}px`;
         expect(cardStyles.top).toEqual(expectedTop);
         expect(cardStyles.left).toEqual(expectedLeft);
       });
