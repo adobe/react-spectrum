@@ -37,7 +37,7 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
   margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
   /**
    * The minimum space required between items.
-   * @default 24 x 48
+   * @default 18 x 18
    */
   minSpace?: Size,
   /**
@@ -47,7 +47,7 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
   maxColumns?: number,
   /**
    * The vertical padding for an item.
-   * @default 52
+   * @default 95
    */
   itemPadding?: number
 }
@@ -60,18 +60,18 @@ const DEFAULT_OPTIONS = {
     minItemSize: new Size(96, 96),
     maxItemSize: new Size(Infinity, Infinity),
     margin: 8,
-    minSpace: new Size(8, 16),
+    minSpace: new Size(6, 6),
     maxColumns: Infinity,
     dropSpacing: 50
   },
   L: {
     // TODO: for now bumping this higher since the new cards have more stuff in the content area.
     // Will need to ask Spectrum what these values should be. Used to be 52. Do the same for S above
-    itemPadding: 100,
+    itemPadding: 95,
     minItemSize: new Size(208, 208),
     maxItemSize: new Size(Infinity, Infinity),
     margin: 24,
-    minSpace: new Size(24, 48),
+    minSpace: new Size(18, 18),
     maxColumns: Infinity,
     dropSpacing: 100
   }
@@ -187,7 +187,7 @@ export class GridLayout<T> extends BaseLayout<T> {
 
     // Compute the number of rows and columns needed to display the content
     let availableWidth = visibleWidth - this.margin * 2;
-    let columns = Math.floor(availableWidth / (this.minItemSize.width + this.minSpace.width));
+    let columns = Math.floor((availableWidth + this.minSpace.width) / (this.minItemSize.width + this.minSpace.width));
     this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
     this.numRows = Math.ceil(this.collection.size / this.numColumns);
 

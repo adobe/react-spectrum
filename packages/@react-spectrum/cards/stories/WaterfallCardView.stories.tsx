@@ -90,7 +90,7 @@ emptyWithHeightWaterfall.storyName = 'empty, set height';
 export const AsyncLoading = () => AsyncLoadingCardView({layout: WaterfallLayout});
 AsyncLoading.storyName = 'Async loading';
 
-export const CustomLayoutOptions = () => CustomGalleryLayout({items}, {minSpace: new Size(50, 50), maxColumns: 2, itemPadding: 400});
+export const CustomLayoutOptions = () => CustomGalleryLayout({items}, {minSpace: new Size(50, 50), maxColumns: 2, itemPadding: 400, margin: 10});
 CustomGalleryLayout.storyName = 'Custom layout options';
 
 function CustomGalleryLayout(props, layoutOptions) {

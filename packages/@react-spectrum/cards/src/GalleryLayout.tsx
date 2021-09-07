@@ -25,7 +25,7 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
   idealRowHeight?: number,
   /**
    * The spacing between items.
-   * @default 24 x 32
+   * @default 18 x 18
    */
   itemSpacing?: Size,
   /**
@@ -43,7 +43,12 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
    * will be targeted. Maybe should expose the re-weighting function instead?
    * @type {number}
    */
-  threshold?: number
+  threshold?: number,
+  /**
+   * The margin around the grid view between the edges and the items.
+   * @default 24
+   */
+  margin?: number // TODO: Perhaps should accept Responsive<DimensionValue>
 }
 
 // TODO: copied from V2, update this with the proper spectrum values
@@ -55,22 +60,24 @@ const DEFAULT_OPTIONS = {
     itemSpacing: new Size(8, 16),
     // TODO: will need to update as well
     itemPadding: 24,
-    dropSpacing: 50
+    dropSpacing: 50,
+    margin: 8
   },
   L: {
     idealRowHeight: 208,
     // Arbitrary size, bumped up from (136, 136) Figure out the min width of the v3 cards
     minItemSize: new Size(160, 160),
-    itemSpacing: new Size(24, 32),
+    itemSpacing: new Size(18, 18),
     // TODO: updated to work with new v3 cards (there is additional space required for the descriptions if there is a description)
     itemPadding: 114,
-    dropSpacing: 100
+    dropSpacing: 100,
+    margin: 24
   }
 };
 
 export class GalleryLayout<T> extends BaseLayout<T> {
   protected idealRowHeight: number;
-  // TODO: should this have had a margin option? v2 seems to use itemSpacing
+  protected margin: number;
   protected itemSpacing: Size;
   protected itemPadding: number;
   protected minItemSize: Size;
@@ -85,6 +92,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
     this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
     this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
     this.threshold = options.threshold || 1;
+    this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
   }
 
   get layoutType() {
@@ -160,8 +168,8 @@ export class GalleryLayout<T> extends BaseLayout<T> {
   buildCollection() {
     let visibleWidth = this.virtualizer.visibleRect.width;
     let visibleHeight = this.virtualizer.visibleRect.height;
-    let y = this.itemSpacing.height;
-    let availableWidth = visibleWidth - this.itemSpacing.width * 2;
+    let y = this.margin;
+    let availableWidth = visibleWidth - this.margin * 2;
 
     // Compute aspect ratios for all of the items, and the total width if all items were on in a single row.
     let ratios = [];
@@ -213,7 +221,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
         bestRowHeight = this.idealRowHeight;
       }
       let itemHeight = Math.round(bestRowHeight) + this.itemPadding;
-      let x = this.itemSpacing.width;
+      let x = this.margin;
 
       // if any items are going to end up too small, add a bit of width to them and subtract it from wider objects
       let widths = [];
