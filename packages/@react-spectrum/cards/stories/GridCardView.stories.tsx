@@ -135,8 +135,8 @@ export function DynamicCardView(props) {
   };
 
   return (
-    <div style={{width: '800px', resize: 'both', height: '800px', overflow: 'auto'}}>
-      <Flex direction="column" height="100%" width="100%">
+    <div style={{width: '800px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+      <Flex direction="column" height="100%" width="100%" >
         <Flex direction="row" maxWidth="500px" alignItems="end">
           <TextField value={value} onChange={setValue} label="Nth item to remove" />
           <ActionButton onPress={removeItem}>Remove</ActionButton>
@@ -183,7 +183,7 @@ export function ControlledCardView(props) {
   };
 
   return (
-    <div style={{width: '800px', resize: 'both', height: '800px', overflow: 'auto'}}>
+    <div style={{width: '800px', resize: 'both', height: '90vh', overflow: 'auto'}}>
       <Flex direction="column" width="100%" height="100%">
         <Flex direction="row" maxWidth="500px" alignItems="end">
           <TextField value={value} onChange={setValue} label="Nth item to remove" />
@@ -250,7 +250,7 @@ export function StaticCardView(props) {
   } = props;
 
   return (
-    <div style={{width: '800px', resize: 'both', height: '800px', overflow: 'auto'}}>
+    <div style={{width: '800px', resize: 'both', height: '90vh', overflow: 'auto'}}>
       <CardView  {...actions} {...props} height="100%" width="100%" layout={layout} UNSAFE_style={{background: 'var(--spectrum-global-color-gray-300)'}} aria-label="Test CardView" selectionMode="multiple">
         <Card key="Bob 1" width={1001} height={381} textValue="Bob 1">
           <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
@@ -342,7 +342,7 @@ export function AsyncLoadingCardView(props) {
   });
 
   return (
-    <div style={{width: '800px', resize: 'both', height: '800px', overflow: 'auto'}}>
+    <div style={{width: '800px', resize: 'both', height: '90vh', overflow: 'auto'}}>
       <CardView {...actions} {...props} height="100%" width="100%" items={list.items} onLoadMore={list.loadMore} loadingState={list.loadingState} layout={layout} UNSAFE_style={{background: 'var(--spectrum-global-color-gray-300)'}} aria-label="Test CardView" selectionMode="multiple">
         {(item: any) => (
           <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
@@ -382,7 +382,7 @@ export function CustomLayout(props, layoutOptions) {
   };
 
   return (
-    <div style={{width: '800px', resize: 'both', height: '800px', overflow: 'auto'}}>
+    <div style={{width: '800px', resize: 'both', height: '90vh', overflow: 'auto'}}>
       <Flex direction="column" width="100%" height="100%">
         <Flex direction="row" maxWidth="500px" alignItems="end">
           <TextField value={value} onChange={setValue} label="Nth item to remove" />
