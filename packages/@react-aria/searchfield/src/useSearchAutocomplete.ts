@@ -82,6 +82,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
       popoverRef,
       listBoxRef,
       inputRef,
+      label: labelProps.id,
       onFocus: undefined,
       onBlur: undefined
     },
@@ -91,9 +92,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
   return {
     labelProps,
     inputProps: mergeProps(inputProps, comboBoxInputProps),
-    listBoxProps: mergeProps(listBoxProps, {
-      selectionMode: 'none'
-    }),
+    listBoxProps,
     clearButtonProps
   };
 }
