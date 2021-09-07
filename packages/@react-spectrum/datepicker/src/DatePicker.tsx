@@ -40,7 +40,8 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
     isDisabled,
     isReadOnly,
     isRequired,
-    placeholderValue
+    placeholderValue,
+    visibleMonths
     // showFormatHelpText,
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -141,7 +142,8 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
               <Calendar
                 autoFocus
                 value={state.dateValue}
-                onChange={state.setDateValue} />
+                onChange={state.setDateValue}
+                visibleMonths={visibleMonths} />
               {showTimeField &&
                 <TimeField
                   label="Time"

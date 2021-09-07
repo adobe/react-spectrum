@@ -33,5 +33,10 @@ export type DateRange = RangeValue<DateValue>;
 export interface CalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<T, MappedDateValue<T>> {}
 export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<RangeValue<T>, RangeValue<MappedDateValue<T>>> {}
 
-export interface SpectrumCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, StyleProps {}
-export interface SpectrumRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, StyleProps {}
+export interface SpectrumCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, StyleProps {
+  visibleMonths?: number
+}
+
+export interface SpectrumRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, StyleProps {
+  visibleMonths?: number
+}

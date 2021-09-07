@@ -117,6 +117,14 @@ storiesOf('Date and Time/DatePicker', module)
   .add(
     'placeholderValue: 1980/1/1, zoned',
     () => render({placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')})
+  )
+  .add(
+    'visibleMonths: 2',
+    () => render({visibleMonths: 2, granularity: 'minute'})
+  )
+  .add(
+    'visibleMonths: 3',
+    () => render({visibleMonths: 3, granularity: 'minute'})
   );
 
 storiesOf('Date and Time/DatePicker/styling', module)
