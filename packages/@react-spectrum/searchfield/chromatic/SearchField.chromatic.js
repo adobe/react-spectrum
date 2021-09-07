@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {Flex} from '../../layout';
+
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
