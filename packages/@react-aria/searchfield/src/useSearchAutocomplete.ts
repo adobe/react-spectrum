@@ -63,7 +63,12 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
     onChange: state.setInputValue,
     autoComplete: 'off',
     onClear: () => state.setInputValue(''),
-    onSubmit: (value) => onSubmit(value, state.selectedKey || null)
+    onSubmit: (value) => {
+      // Prevent submission from search field if menu item was selected
+      if (state.selectionManager.focusedKey === null) {
+        onSubmit(value, null);
+      }
+    } 
   }, {
     value: state.inputValue,
     setValue: state.setInputValue
