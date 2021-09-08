@@ -35,9 +35,9 @@ module.exports = new Resolver({
         // Parcel removes the source field from package.json when the code comes from node_modules.
         // these are full filepaths, so don't check if they start with the pattern, they won't
         if ((
-          /@(react-spectrum|react-aria|react-stately|internationalized|react-types|spectrum-icons|adobe\/react-spectrum)/g.test(resolved.filePath)
+          /@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum)/g.test(resolved.filePath)
           || /(react-aria|react-stately)/g.test(resolved.filePath)
-        ) && resolved.filePath.endsWith('.d.ts') && !resolved.filePath.includes('@react-types')) {
+        ) && resolved.filePath.endsWith('.d.ts')) {
           resolved.filePath = path.resolve(path.dirname(resolved.filePath), '..', 'src', 'index.ts');
         }
 
