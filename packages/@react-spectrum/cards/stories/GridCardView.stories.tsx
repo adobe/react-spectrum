@@ -25,6 +25,7 @@ import {Size} from '@react-stately/virtualizer';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
 import {useCollator} from '@react-aria/i18n';
+import {useProvider} from '@react-spectrum/provider';
 
 export let items = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
@@ -63,9 +64,12 @@ export function renderEmptyState() {
   );
 }
 
+const StoryFn = ({storyFn}) => storyFn();
+
 export default {
   title: 'CardView/Grid layout',
-  excludeStories: ['items', 'renderEmptyState', 'DynamicCardView', 'NoItemCardView', 'StaticCardView', 'ControlledCardView', 'AsyncLoadingCardView', 'CustomLayout']
+  excludeStories: ['items', 'renderEmptyState', 'DynamicCardView', 'NoItemCardView', 'StaticCardView', 'ControlledCardView', 'AsyncLoadingCardView', 'CustomLayout'],
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 let onSelectionChange = action('onSelectionChange');
@@ -118,8 +122,14 @@ export const CustomLayoutOptions = () => CustomLayout({items}, {maxColumns: 2, m
 CustomLayoutOptions.storyName = 'Custom layout options';
 
 export function DynamicCardView(props) {
+  let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
+  let gridLayout = useMemo(() =>
+    new GridLayout({
+      itemPadding: scale === 'large' ? 116 : 95,
+      collator
+    })
+  , [collator, scale]);
   let {
     layout = gridLayout,
     selectionMode = 'multiple',
@@ -164,8 +174,14 @@ export function DynamicCardView(props) {
 }
 
 export function ControlledCardView(props) {
+  let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
+  let gridLayout = useMemo(() =>
+    new GridLayout({
+      itemPadding: scale === 'large' ? 116 : 95,
+      collator
+    })
+  , [collator, scale]);
   let {
     layout = gridLayout,
     selectionMode = 'multiple',
@@ -212,7 +228,14 @@ export function ControlledCardView(props) {
 }
 
 export function NoItemCardView(props) {
-  let gridLayout = useMemo(() => new GridLayout({}), []);
+  let {scale} = useProvider();
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let gridLayout = useMemo(() =>
+    new GridLayout({
+      itemPadding: scale === 'large' ? 116 : 95,
+      collator
+    })
+  , [collator, scale]);
   let {
     layout = gridLayout
   } = props;
@@ -243,8 +266,14 @@ export function NoItemCardView(props) {
 }
 
 export function StaticCardView(props) {
+  let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
+  let gridLayout = useMemo(() =>
+    new GridLayout({
+      itemPadding: scale === 'large' ? 116 : 95,
+      collator
+    })
+  , [collator, scale]);
   let {
     layout = gridLayout
   } = props;
@@ -317,8 +346,14 @@ export function AsyncLoadingCardView(props) {
     url: string
   }
 
+  let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
+  let gridLayout = useMemo(() =>
+    new GridLayout({
+      itemPadding: scale === 'large' ? 116 : 95,
+      collator
+    })
+  , [collator, scale]);
   let {
     layout = gridLayout
   } = props;
@@ -365,8 +400,15 @@ export function AsyncLoadingCardView(props) {
 }
 
 export function CustomLayout(props, layoutOptions) {
+  let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator, ...layoutOptions}), [collator, layoutOptions]);
+  let gridLayout = useMemo(() =>
+    new GridLayout({
+      itemPadding: scale === 'large' ? 116 : 95,
+      collator,
+      ...layoutOptions
+    })
+  , [collator, scale, layoutOptions]);
   let {
     layout = gridLayout,
     selectionMode = 'multiple',

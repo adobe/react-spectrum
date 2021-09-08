@@ -25,9 +25,11 @@ import {SpectrumCardViewProps} from '@react-types/cards';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
+import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
 function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let {scale} = useProvider();
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   let {
@@ -40,6 +42,15 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator}) : layout, [layout, collator]);
+  let layoutType = cardViewLayout.layoutType;
+
+  if (typeof layout === 'function') {
+    if (layoutType === 'grid') {
+      cardViewLayout.itemPadding = scale === 'large' ? 116 : 95;
+    } else if (layoutType === 'gallery') {
+      cardViewLayout.itemPadding = scale === 'large' ? 143 : 114;
+    }
+  }
 
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();

@@ -36,7 +36,9 @@ interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate {
   collection: Collection<Node<T>>,
   disabledKeys: any,
   isLoading: boolean,
-  direction: Direction
+  direction: Direction,
+  layoutType: string,
+  itemPadding: number
 }
 
 export interface CardViewLayoutConstructor<T> {
