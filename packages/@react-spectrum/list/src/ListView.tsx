@@ -80,24 +80,21 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
-    items: [...collection].map(item => {
-      return {
-        ...item,
-        hasChildNodes: true,
-        childNodes: [{
-          key: `cell-${item.key}`,
-          type: 'cell',
-          index: 0,
-          value: null,
-          level: 0,
-          rendered: null,
-          textValue: item.textValue,
-          hasChildNodes: false,
-          childNodes: []
-
-        }]
-      }
-    })
+    items: [...collection].map(item => ({
+      ...item,
+      hasChildNodes: true,
+      childNodes: [{
+        key: `cell-${item.key}`,
+        type: 'cell',
+        index: 0,
+        value: null,
+        level: 0,
+        rendered: null,
+        textValue: item.textValue,
+        hasChildNodes: false,
+        childNodes: []
+      }]
+    }))
   }), [collection]);
   let state = useGridState({
     ...props,
