@@ -80,16 +80,24 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
-    items: [...collection].map(item => ({
-      type: 'item',
-      key: item.key,
-      childNodes: [{
+    items: [...collection].map(item => {
+      return {
         ...item,
-        index: 0,
-        type: 'cell',
-        key: `cell-${item.key}`
-      }]
-    }))
+        hasChildNodes: true,
+        childNodes: [{
+          key: `cell-${item.key}`,
+          type: 'cell',
+          index: 0,
+          value: null,
+          level: 0,
+          rendered: null,
+          textValue: item.textValue,
+          hasChildNodes: false,
+          childNodes: []
+
+        }]
+      }
+    })
   }), [collection]);
   let state = useGridState({
     ...props,
@@ -112,7 +120,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   // Sync loading state into the layout.
   layout.isLoading = loadingState === 'loading';
-
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate}}>
       <Virtualizer
@@ -133,7 +140,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           )
         }
         layout={layout}
-        collection={collection}
+        collection={gridCollection}
         transitionDuration={transitionDuration}>
         {(type, item) => {
           if (type === 'item') {
