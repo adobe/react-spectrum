@@ -106,8 +106,8 @@ function NumberField(props) {
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
   let inputRef = React.useRef();
-  let incrRef = useRef();
-  let decRef = useRef();
+  let incrRef = React.useRef();
+  let decRef = React.useRef();
   let {
     labelProps,
     groupProps,
