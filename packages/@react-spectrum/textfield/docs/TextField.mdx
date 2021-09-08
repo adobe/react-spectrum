@@ -182,6 +182,31 @@ By default, the label is positioned above the TextField. The `labelPosition` pro
 ```tsx example
 <TextField label="Search" labelPosition="side" labelAlign="end" />
 ```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Help-text-(description-and-error-message))
+
+Both a description and an error message can be supplied to a TextField. Description shows all the time except when the `validationState` is "invalid". The error message should help the user fix their input quickly and it should be changed depending on the detected error. Both the description and error message should be localized as well.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState('0');
+  let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+
+  return (
+    <TextField
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Favorite number"
+      maxLength={1}
+      description="Enter a single digit number."
+      errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9.'}
+    />
+  );
+}
+```
+
 ### Custom width
 
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
