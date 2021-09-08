@@ -1,4 +1,9 @@
 {
-    "select": "Επιλέγω",
-    "selectAll": "Επιλογή όλων"
+  "ascending": "αύξουσα",
+  "ascendingSort": "διαλογή ανά στήλη {columnName} σε αύξουσα σειρά",
+  "descending": "φθίνουσα",
+  "descendingSort": "διαλογή ανά στήλη {columnName} σε φθίνουσα σειρά",
+  "select": "Επιλογή",
+  "selectAll": "Επιλογή όλων",
+  "sortable": "Στήλη διαλογής"
 }

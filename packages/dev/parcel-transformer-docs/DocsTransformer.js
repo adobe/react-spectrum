@@ -31,7 +31,7 @@ module.exports = new Transformer({
       allowReturnOutsideFunction: true,
       strictMode: false,
       sourceType: 'module',
-      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx']
+      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods']
     });
 
     let exports = {};
@@ -56,7 +56,8 @@ module.exports = new Transformer({
             exports[path.node.declaration.id.name] = processExport(path.get('declaration'));
           } else {
             let identifiers = t.getBindingIdentifiers(path.node.declaration);
-            for (let id of Object.keys(identifiers)) {
+            for (let [index, id] of Object.keys(identifiers).entries()) {
+              exports[identifiers[id].name] = processExport(path.get('declaration.declarations')[index]);
               asset.symbols.set(identifiers[id].name, identifiers[id].name);
             }
           }

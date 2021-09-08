@@ -1,4 +1,9 @@
 {
-  "select": "يحدد",
-  "selectAll": "تحديد الكل"
+  "ascending": "تصاعدي",
+  "ascendingSort": "ترتيب حسب العمود {columnName} بترتيب تصاعدي",
+  "descending": "تنازلي",
+  "descendingSort": "ترتيب حسب العمود {columnName} بترتيب تنازلي",
+  "select": "تحديد",
+  "selectAll": "تحديد الكل",
+  "sortable": "عمود قابل للترتيب"
 }

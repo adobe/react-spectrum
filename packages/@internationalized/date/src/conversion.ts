@@ -13,11 +13,13 @@
 // Portions of the code in this file are based on code from the TC39 Temporal proposal.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar} from './types';
-import {CalendarDate, CalendarDateTime, Time} from './CalendarDate';
+import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguation, TimeFields} from './types';
+import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
+import {getLocalTimeZone} from './queries';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
+import {Mutable} from './utils';
 
-function epochFromDate(date: CalendarDateTime) {
+export function epochFromDate(date: AnyDateTime) {
   date = toCalendar(date, new GregorianCalendar());
   return epochFromParts(date.year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
 }
@@ -32,9 +34,14 @@ function epochFromParts(year: number, month: number, day: number, hour: number, 
 }
 
 export function getTimeZoneOffset(ms: number, timeZone: string) {
+  // Fast path: for local timezone, use native Date.
+  if (timeZone === getLocalTimeZone()) {
+    return new Date(ms).getTimezoneOffset() * -60 * 1000;
+  }
+
   let {year, month, day, hour, minute, second} = getTimeZoneParts(ms, timeZone);
   let utc = epochFromParts(year, month, day, hour, minute, second, 0);
-  return utc - ms;
+  return utc - Math.floor(ms / 1000) * 1000;
 }
 
 const formattersByTimeZone = new Map<string, Intl.DateTimeFormat>();
@@ -99,10 +106,20 @@ function isValidWallTime(date: CalendarDateTime, timeZone: string, absolute: num
     && date.second === parts.second;
 }
 
-type Disambiguation = 'compatible' | 'earlier' | 'later' | 'reject';
-
-export function toAbsolute(date: CalendarDate, timeZone: string, disambiguation: Disambiguation = 'compatible'): number {
+export function toAbsolute(date: CalendarDate | CalendarDateTime, timeZone: string, disambiguation: Disambiguation = 'compatible'): number {
   let dateTime = toCalendarDateTime(date);
+
+  // Fast path: if the time zone is the local timezone and disambiguation is compatible, use native Date.
+  if (timeZone === getLocalTimeZone() && disambiguation === 'compatible') {
+    dateTime = toCalendar(dateTime, new GregorianCalendar());
+
+    // Don't use Date constructor here because two-digit years are interpreted in the 20th century.
+    let date = new Date();
+    date.setFullYear(dateTime.year, dateTime.month - 1, dateTime.day);
+    date.setHours(dateTime.hour, dateTime.minute, dateTime.second, dateTime.millisecond);
+    return date.getTime();
+  }
+
   let ms = epochFromDate(dateTime);
   let offsetBefore = getTimeZoneOffset(ms - DAYMILLIS, timeZone);
   let offsetAfter = getTimeZoneOffset(ms + DAYMILLIS, timeZone);
@@ -137,11 +154,11 @@ export function toAbsolute(date: CalendarDate, timeZone: string, disambiguation:
   }
 }
 
-export function toDate(dateTime: CalendarDate, timeZone: string, disambiguation: Disambiguation = 'compatible'): Date {
+export function toDate(dateTime: CalendarDate | CalendarDateTime, timeZone: string, disambiguation: Disambiguation = 'compatible'): Date {
   return new Date(toAbsolute(dateTime, timeZone, disambiguation));
 }
 
-export function fromAbsolute(ms: number, timeZone: string): CalendarDateTime {
+export function fromAbsolute(ms: number, timeZone: string): ZonedDateTime {
   let offset = getTimeZoneOffset(ms, timeZone);
   let date = new Date(ms + offset);
   let year = date.getUTCFullYear();
@@ -152,52 +169,106 @@ export function fromAbsolute(ms: number, timeZone: string): CalendarDateTime {
   let second = date.getUTCSeconds();
   let millisecond = date.getUTCMilliseconds();
 
-  return new CalendarDateTime(year, month, day, hour, minute, second, millisecond);
+  return new ZonedDateTime(year, month, day, timeZone, offset, hour, minute, second, millisecond);
 }
 
-export function toCalendarDate(dateTime: CalendarDateTime): CalendarDate {
+export function fromDate(date: Date, timeZone: string): ZonedDateTime {
+  return fromAbsolute(date.getTime(), timeZone);
+}
+
+export function fromDateToLocal(date: Date): ZonedDateTime {
+  return fromDate(date, getLocalTimeZone());
+}
+
+export function toCalendarDate(dateTime: AnyCalendarDate): CalendarDate {
   return new CalendarDate(dateTime.calendar, dateTime.era, dateTime.year, dateTime.month, dateTime.day);
 }
 
-export function toCalendarDateTime(date: CalendarDate, time?: Time): CalendarDateTime {
-  if (date instanceof CalendarDateTime && !time) {
+export function toDateFields(date: AnyCalendarDate): DateFields {
+  return {
+    era: date.era,
+    year: date.year,
+    month: date.month,
+    day: date.day
+  };
+}
+
+export function toTimeFields(date: AnyTime): TimeFields {
+  return {
+    hour: date.hour,
+    minute: date.minute,
+    second: date.second,
+    millisecond: date.millisecond
+  };
+}
+
+export function toCalendarDateTime(date: CalendarDate | CalendarDateTime | ZonedDateTime, time?: AnyTime): CalendarDateTime {
+  let hour = 0, minute = 0, second = 0, millisecond = 0;
+  if ('timeZone' in date) {
+    ({hour, minute, second, millisecond} = date);
+  } else if ('hour' in date && !time) {
     return date;
   }
 
   if (time) {
-    return new CalendarDateTime(
-      date.calendar,
-      date.era,
-      date.year,
-      date.month,
-      date.day,
-      time.hour,
-      time.minute,
-      time.second,
-      time.millisecond
-    );
+    ({hour, minute, second, millisecond} = time);
   }
 
-  return new CalendarDateTime(date.calendar, date.era, date.year, date.month, date.day);
+  return new CalendarDateTime(
+    date.calendar,
+    date.era,
+    date.year,
+    date.month,
+    date.day,
+    hour,
+    minute,
+    second,
+    millisecond
+  );
 }
 
 export function toTime(dateTime: CalendarDateTime): Time {
   return new Time(dateTime.hour, dateTime.minute, dateTime.second, dateTime.millisecond);
 }
 
-/* eslint-disable no-redeclare */
-export function toCalendar(date: CalendarDateTime, calendar: Calendar): CalendarDateTime;
-export function toCalendar(date: CalendarDate, calendar: Calendar): CalendarDate;
-export function toCalendar(date: CalendarDate | CalendarDateTime, calendar: Calendar): CalendarDate | CalendarDateTime {
-/* eslint-enable no-redeclare */
+export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calendar): T {
   if (date.calendar.identifier === calendar.identifier) {
     return date;
   }
 
   let calendarDate = calendar.fromJulianDay(date.calendar.toJulianDay(date));
-  if (date instanceof CalendarDateTime) {
-    return toCalendarDateTime(calendarDate, toTime(date));
+  let copy: Mutable<T> = date.copy();
+  copy.calendar = calendar;
+  copy.era = calendarDate.era;
+  copy.year = calendarDate.year;
+  copy.month = calendarDate.month;
+  copy.day = calendarDate.day;
+  return copy;
+}
+
+export function toZoned(date: CalendarDate | CalendarDateTime | ZonedDateTime, timeZone: string, disambiguation?: Disambiguation) {
+  if (date instanceof ZonedDateTime) {
+    if (date.timeZone === timeZone) {
+      return date;
+    }
+
+    return toTimeZone(date, timeZone);
   }
 
-  return calendarDate;
+  let ms = toAbsolute(date, timeZone, disambiguation);
+  return fromAbsolute(ms, timeZone);
+}
+
+export function zonedToDate(date: ZonedDateTime) {
+  let ms = epochFromDate(date) - date.offset;
+  return new Date(ms);
+}
+
+export function toTimeZone(date: ZonedDateTime, timeZone: string): ZonedDateTime {
+  let ms = epochFromDate(date) - date.offset;
+  return toCalendar(fromAbsolute(ms, timeZone), date.calendar);
+}
+
+export function toLocalTimeZone(date: ZonedDateTime) {
+  return toTimeZone(date, getLocalTimeZone());
 }
