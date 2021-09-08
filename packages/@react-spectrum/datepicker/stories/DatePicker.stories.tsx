@@ -11,7 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, toZoned} from '@internationalized/date';
+import {chain} from '@react-aria/utils';
 import {DatePicker} from '../';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
@@ -34,7 +36,7 @@ storiesOf('Date and Time/DatePicker', module)
   )
   .add(
     'controlled value',
-    () => render({value: new CalendarDate(2020, 2, 3)})
+    () => <ControlledExample />
   )
   .add(
     'defaultValue, zoned',
@@ -268,6 +270,18 @@ function Example(props) {
       <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
         <DatePicker {...props} />
       </Provider>
+    </Flex>
+  );
+}
+
+function ControlledExample(props) {
+  let [value, setValue] = React.useState(null);
+
+  return (
+    <Flex direction="column" alignItems="center" gap="size-150">
+      <Example label="Controlled" {...props} value={value} onChange={chain(setValue, action('onChange'))} />
+      <ActionButton onPress={() => setValue(new CalendarDate(2020, 2, 3))}>Change value</ActionButton>
+      <ActionButton onPress={() => setValue(null)}>Clear</ActionButton>
     </Flex>
   );
 }

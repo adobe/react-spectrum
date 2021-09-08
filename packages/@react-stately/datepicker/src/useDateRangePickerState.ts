@@ -15,7 +15,7 @@ import {DateFormatter, toCalendarDateTime, toDateFields} from '@internationalize
 import {DateRange, DateRangePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 
 type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState {
@@ -23,6 +23,7 @@ export interface DateRangePickerState {
   setValue: (value: DateRange) => void,
   setDate: (part: keyof DateRange, value: DateValue) => void,
   setTime: (part: keyof TimeRange, value: TimeValue) => void,
+  setDateTime: (part: keyof DateRange, value: DateValue) => void,
   dateRange: DateRange,
   setDateRange: (value: DateRange) => void,
   timeRange: TimeRange,
@@ -36,17 +37,28 @@ export interface DateRangePickerState {
 
 export function useDateRangePickerState<T extends DateValue>(props: DateRangePickerProps<T>): DateRangePickerState {
   let [isOpen, setOpen] = useState(false);
-  let onChange = value => {
-    if (value.start && value.end && props.onChange) {
-      props.onChange(value);
+  let [controlledValue, setControlledValue] = useControlledState<DateRange>(props.value, props.defaultValue || null, props.onChange);
+  let [placeholderValue, setPlaceholderValue] = useState(() => controlledValue || {start: null, end: null});
+
+  // Reset the placeholder if the value prop is set to null.
+  if (controlledValue == null && placeholderValue.start && placeholderValue.end) {
+    placeholderValue = {start: null, end: null};
+    setPlaceholderValue(placeholderValue);
+  }
+
+  let value = controlledValue || placeholderValue;
+  let valueRef = useRef(value);
+  valueRef.current = value;
+
+  let setValue = (value: DateRange) => {
+    valueRef.current = value;
+    setPlaceholderValue(value);
+    if (value?.start && value.end) {
+      setControlledValue(value);
+    } else {
+      setControlledValue(null);
     }
   };
-
-  let [value, setValue] = useControlledState<DateRange>(
-    props.value === null ? {start: null, end: null} : props.value,
-    props.defaultValue || {start: null, end: null},
-    onChange
-  );
 
   let v = (value?.start || value?.end || props.placeholderValue);
   let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
@@ -115,6 +127,9 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     setTime(part, time) {
       setTimeRange({...timeRange, [part]: time});
     },
+    setDateTime(part, dateTime) {
+      setValue({...value, [part]: dateTime});
+    },
     setDateRange,
     setTimeRange,
     isOpen,
@@ -176,18 +191,17 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
       return `${startFormatter.format(value.start.toDate(startTimeZone))} – ${endFormatter.format(value.end.toDate(endTimeZone))}`;
     },
     confirmPlaceholder() {
-      setValue(value => {
-        if (value && Boolean(value.start) !== Boolean(value.end)) {
-          let calendar = (value.start || value.end).calendar;
-          let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
-          return {
-            start: value.start || placeholder,
-            end: value.end || placeholder
-          };
-        }
-
-        return value;
-      });
+      // Need to use ref value here because the value can be set in the same tick as
+      // a blur, which means the component won't have re-rendered yet.
+      let value = valueRef.current;
+      if (value && Boolean(value.start) !== Boolean(value.end)) {
+        let calendar = (value.start || value.end).calendar;
+        let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
+        setValue({
+          start: value.start || placeholder,
+          end: value.end || placeholder
+        });
+      }
     }
   };
 }

@@ -120,9 +120,9 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             validationState={state.validationState}
             hideValidationIcon
             placeholderValue={placeholderValue}
-            value={value.start}
+            value={value?.start || null}
             defaultValue={null}
-            onChange={start => state.setValue({...value, start})}
+            onChange={start => state.setDateTime('start', start)}
             granularity={props.granularity}
             hourCycle={props.hourCycle}
             UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')}
@@ -136,9 +136,9 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             isRequired={isRequired}
             validationState={state.validationState}
             placeholderValue={placeholderValue}
-            value={value.end}
+            value={value?.end || null}
             defaultValue={null}
-            onChange={end => state.setValue({...value, end})}
+            onChange={end => state.setDateTime('end', end)}
             granularity={props.granularity}
             hourCycle={props.hourCycle}
             UNSAFE_className={classNames(

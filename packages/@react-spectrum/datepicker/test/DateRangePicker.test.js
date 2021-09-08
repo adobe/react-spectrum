@@ -1095,5 +1095,54 @@ describe('DateRangePicker', function () {
         end: today(getLocalTimeZone())
       });
     });
+
+    it('should confirm the placeholder on blur when controlled', function () {
+      let onChange = jest.fn();
+      let {getAllByRole, getByLabelText} = render(<DateRangePicker label="Date" onChange={onChange} value={null} />);
+
+      let startDate = getByLabelText('Start Date');
+      let endDate = getByLabelText('End Date');
+
+      let formatter = new Intl.DateTimeFormat('en-US');
+      expectPlaceholder(startDate, formatter.format(new Date()));
+      expectPlaceholder(endDate, formatter.format(new Date()));
+
+      let segments = getAllByRole('spinbutton');
+      act(() => {segments[0].focus();});
+
+      // Should not emit onChange if no segments are set
+      act(() => {segments[0].blur();});
+      expect(onChange).not.toHaveBeenCalled();
+
+      act(() => {segments[0].focus();});
+      beforeInput(document.activeElement, '4');
+      expect(onChange).not.toHaveBeenCalled();
+
+      expect(segments[1]).toHaveFocus();
+      act(() => {segments[1].blur();});
+      expect(onChange).toHaveBeenCalledWith({
+        start: today(getLocalTimeZone()).set({month: 4}),
+        end: today(getLocalTimeZone())
+      });
+
+      expectPlaceholder(endDate, formatter.format(new Date())); // controlled
+    });
+
+    it('should reset to the placeholder if controlled value is set to null', function () {
+      let onChange = jest.fn();
+      let {getByLabelText, rerender} = render(<DateRangePicker label="Date" onChange={onChange} value={{start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)}} />);
+
+      let startDate = getByLabelText('Start Date');
+      let endDate = getByLabelText('End Date');
+
+      let formatter = new Intl.DateTimeFormat('en-US');
+      expectPlaceholder(startDate, formatter.format(new Date(2020, 1, 3)));
+      expectPlaceholder(endDate, formatter.format(new Date(2022, 3, 8)));
+
+      rerender(<DateRangePicker label="Date" onChange={onChange} value={null} />);
+
+      expectPlaceholder(startDate, formatter.format(new Date()));
+      expectPlaceholder(endDate, formatter.format(new Date()));
+    });
   });
 });

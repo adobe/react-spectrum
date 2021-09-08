@@ -11,8 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, parseDate, toZoned} from '@internationalized/date';
+import {chain} from '@react-aria/utils';
 import {DateRangePicker} from '../';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -30,7 +33,7 @@ storiesOf('Date and Time/DateRangePicker', module)
   )
   .add(
     'controlled value',
-    () => render({value: {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)}})
+    () => <ControlledExample />
   )
   .add(
     'defaultValue, zoned',
@@ -164,5 +167,17 @@ function render(props = {}) {
         onChange={action('change')}
         {...props} />
     </div>
+  );
+}
+
+function ControlledExample(props) {
+  let [value, setValue] = React.useState(null);
+
+  return (
+    <Flex direction="column" alignItems="center" gap="size-150">
+      <DateRangePicker label="Controlled" {...props} value={value} onChange={chain(setValue, action('onChange'))} />
+      <ActionButton onPress={() => setValue({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 5, 4)})}>Change value</ActionButton>
+      <ActionButton onPress={() => setValue(null)}>Clear</ActionButton>
+    </Flex>
   );
 }
