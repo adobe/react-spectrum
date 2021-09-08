@@ -60,7 +60,7 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
       <Radio value="dogs">Dogs</Radio>
       <Radio value="cats">Cats</Radio>
       <Radio value="dragons">Dragons</Radio>
-      <Checkbox value="dragons">Ringu the five headed metallic dragon of gold, silver, bronze, copper, and brass</Checkbox>
+      <Radio value="dragons">Ringu the five headed metallic dragon of gold, silver, bronze, copper, and brass</Radio>
     </RadioGroup>
     <SearchField label="Search for the entirety of knowledge on Creative Cloud Express" placeholder="Enter text" />
     <SearchWithin label="SearchWithin the depths of the human soul searching for what made us farm">
