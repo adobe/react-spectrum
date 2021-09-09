@@ -45,7 +45,11 @@ interface NumberFieldAria {
   /** Props for the increment button, to be passed to [useButton](useButton.html). */
   incrementButtonProps: AriaButtonProps,
   /** Props for the decrement button, to be passed to [useButton](useButton.html). */
-  decrementButtonProps: AriaButtonProps
+  decrementButtonProps: AriaButtonProps,
+  /** Props for the number field's description element. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the number field's error message element. */
+  errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -70,7 +74,9 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onFocus,
     onFocusChange,
     onKeyDown,
-    onKeyUp
+    onKeyUp,
+    description,
+    errorMessage
   } = props;
 
   let {
@@ -166,7 +172,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     state.setInputValue(value);
   };
 
-  let {labelProps, inputProps: textFieldProps} = useFormattedTextField({
+  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
     label,
     autoFocus,
     isDisabled,
@@ -185,7 +191,9 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onFocus,
     onFocusChange,
     onKeyDown,
-    onKeyUp
+    onKeyUp,
+    description,
+    errorMessage
   }, state, inputRef);
 
   let inputProps = mergeProps(
@@ -274,6 +282,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     labelProps,
     inputProps,
     incrementButtonProps,
-    decrementButtonProps
+    decrementButtonProps,
+    errorMessageProps,
+    descriptionProps
   };
 }
