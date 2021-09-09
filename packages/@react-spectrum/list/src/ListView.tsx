@@ -81,18 +81,24 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
-      type: 'item',
+      ...item,
+      hasChildNodes: true,
       childNodes: [{
-        ...item,
+        key: `cell-${item.key}`,
+        type: 'cell',
         index: 0,
-        type: 'cell'
+        value: null,
+        level: 0,
+        rendered: null,
+        textValue: item.textValue,
+        hasChildNodes: false,
+        childNodes: []
       }]
     }))
   }), [collection]);
   let state = useGridState({
     ...props,
-    collection: gridCollection,
-    allowsCellSelection: true
+    collection: gridCollection
   });
   let layout = useListLayout(state);
   let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({
@@ -112,13 +118,19 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   // Sync loading state into the layout.
   layout.isLoading = loadingState === 'loading';
 
+  let focusedKey = state.selectionManager.focusedKey;
+  let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
+  if (focusedItem?.parentKey != null) {
+    focusedKey = focusedItem.parentKey;
+  }
+
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
         ref={domRef}
-        focusedKey={state.selectionManager.focusedKey}
+        focusedKey={focusedKey}
         scrollDirection="vertical"
         className={
           classNames(
@@ -132,7 +144,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           )
         }
         layout={layout}
-        collection={collection}
+        collection={gridCollection}
         transitionDuration={transitionDuration}>
         {(type, item) => {
           if (type === 'item') {
