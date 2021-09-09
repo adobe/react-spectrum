@@ -186,6 +186,14 @@ storiesOf('NumberField', module)
     )
   )
   .add(
+    'with description, no visible label',
+    () => renderNoLabel({'aria-label': 'Age', description: 'Please select your age.'})
+  )
+  .add(
+    'with error message, labelPosition: side',
+    () => render({labelPosition: 'side', errorMessage: 'Please enter a positive number.', validationState: 'invalid'})
+  )
+  .add(
     'custom width',
     () => render({width: 'size-3000'})
   )
