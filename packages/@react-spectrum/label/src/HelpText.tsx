@@ -43,7 +43,6 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
         styles,
         'spectrum-HelpText',
         `spectrum-HelpText--${isErrorMessage ? 'negative' : 'neutral'}`,
-        {'spectrum-HelpText--alignEnd': labelAlign === 'end'},
         {'is-disabled': isDisabled}
       )}
       ref={domRef}>
