@@ -49,6 +49,10 @@ storiesOf('NumberField', module)
     () => render({formatOptions: {style: 'percent'}, label: 'Tax'})
   )
   .add(
+    'percent, max fraction digits: 2, no min fraction digits',
+    () => render({formatOptions: {style: 'percent', maximumFractionDigits: 2}, label: 'Tax'})
+  )
+  .add(
     'percent min = 2 max = 2 fraction digits',
     () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2}, label: 'Tax'})
   )
