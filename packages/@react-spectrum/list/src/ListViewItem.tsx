@@ -46,7 +46,7 @@ export function ListViewItem(props) {
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
-    focusMode: 'child'
+    focusMode: 'cell'
   }, state, cellRef);
   const mergedProps = mergeProps(
     rowProps,

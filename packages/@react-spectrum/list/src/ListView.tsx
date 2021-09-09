@@ -107,7 +107,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     ref: domRef,
     direction,
     collator,
-    focusMode: 'row'
+    focusMode: 'cell'
   }), [state, domRef, direction, collator]);
   let {gridProps} = useGrid({
     ...props,
@@ -117,13 +117,20 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   // Sync loading state into the layout.
   layout.isLoading = loadingState === 'loading';
+
+  let focusedKey = state.selectionManager.focusedKey;
+  let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
+  if (focusedItem?.parentKey != null) {
+    focusedKey = focusedItem.parentKey;
+  }
+
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
         ref={domRef}
-        focusedKey={state.selectionManager.focusedKey}
+        focusedKey={focusedKey}
         scrollDirection="vertical"
         className={
           classNames(
