@@ -301,14 +301,15 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         manager.setFocusedKey(manager.firstSelectedKey ?? delegate.getFirstKey());
       }
     } else if (!isVirtualized) {
+      // Restore the scroll position to what it was before.
+      scrollRef.current.scrollTop = scrollPos.current.top;
+      scrollRef.current.scrollLeft = scrollPos.current.left;
+
+      // Refocus and scroll the focused item into view if it exists within the scrollable region.
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection
         focusWithoutScrolling(element);
-
-        // Restore the scroll position to what it was before, and then scroll the focused element into view.
-        scrollRef.current.scrollTop = scrollPos.current.top;
-        scrollRef.current.scrollLeft = scrollPos.current.left;
         scrollIntoView(scrollRef.current, element);
       }
     }
