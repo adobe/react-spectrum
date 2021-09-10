@@ -27,15 +27,15 @@
       <circle cx="2.5" cy="2.5" r="2.5" transform="translate(399.5 -327)" fill="var(--anatomy-gray-500)" />
       <rect width="1" height="17" transform="translate(401.5 -343)" fill="var(--anatomy-gray-500)" />
     </g>
-    <text transform="translate(349 176)" fill="#4a6fc3" font-size="18" font-family="AdobeClean-Regular, Adobe Clean">
+    <text transform="translate(349 176)" fill="var(--anatomy-gray-700)" font-size="18" font-family="Adobe-Clean">
       <tspan x="0" y="0">Help text</tspan>
     </text>
     <g transform="translate(-143.25 9)">
-      <text transform="translate(587 164)" fill="#4a6fc3" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic">
+      <text transform="translate(587 164)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" style="font-style: italic">
         <tspan x="0" y="0">Description or error message</tspan>
       </text>
-      <circle cx="2.5" cy="2.5" r="2.5" transform="translate(559.5 162) rotate(-90)" fill="#a2b6e1" />
-      <rect width="1" height="21" transform="translate(563.5 160) rotate(-90)" fill="#a2b6e1" />
+      <circle cx="2.5" cy="2.5" r="2.5" transform="translate(559.5 162) rotate(-90)" fill="var(--anatomy-gray-500)" />
+      <rect width="1" height="21" transform="translate(563.5 160) rotate(-90)" fill="var(--anatomy-gray-500)" />
     </g>
   </g>
 </svg>
