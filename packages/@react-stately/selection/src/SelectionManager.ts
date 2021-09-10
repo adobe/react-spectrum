@@ -36,7 +36,7 @@ export class SelectionManager implements MultipleSelectionManager {
   private state: MultipleSelectionState;
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean;
-  private selectionBehavior: SelectionBehavior;
+  selectionBehavior: SelectionBehavior;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
@@ -299,7 +299,10 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    this.state.setSelectedKeys(new Selection([key], key, key));
+    let newSelection = new Selection([key], key, key);
+    if (!this.isSelectionEqual(newSelection)) {
+      this.state.setSelectedKeys(newSelection);
+    }
   }
 
   /**

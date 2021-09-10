@@ -105,7 +105,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     shouldFocusWrap = false,
     disallowEmptySelection = false,
     disallowSelectAll = false,
-    selectOnFocus = false,
+    selectOnFocus = manager.selectionBehavior === 'replace',
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
     allowsTabNavigation = false,

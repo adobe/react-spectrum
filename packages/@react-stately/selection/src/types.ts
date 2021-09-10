@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy, PressEvent, Selection, SelectionMode} from '@react-types/shared';
+import {FocusStrategy, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 
 export interface FocusState {
@@ -51,6 +51,7 @@ export interface MultipleSelectionState extends FocusState {
 export interface MultipleSelectionManager extends FocusState {
   /** The type of selection that is allowed in the collection. */
   readonly selectionMode: SelectionMode,
+  readonly selectionBehavior: SelectionBehavior;
   /** Whether the collection allows empty selection. */
   readonly disallowEmptySelection?: boolean,
   /** The currently selected keys in the collection. */
