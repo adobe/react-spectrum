@@ -444,7 +444,7 @@ function renderTooltips(props, items: any = docItems) {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];
           return (
-            <TooltipTrigger key={`${itemProps.name}-tooltipTrigger`} >
+            <TooltipTrigger>
               <Item key={itemProps.name} textValue={itemProps.children} aria-label={itemProps.children}>
                 <IconElement />
               </Item>
