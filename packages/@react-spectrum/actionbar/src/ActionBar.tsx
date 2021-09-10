@@ -98,16 +98,18 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
           styleProps.className
         )}>
         <div className={classNames(styles, 'react-spectrum-ActionBar-bar')}>
-          <ActionGroup
-            aria-label={formatMessage('actions')}
-            isQuiet
-            staticColor={isEmphasized ? 'white' : null}
-            overflowMode="collapse"
-            buttonLabelBehavior="collapse"
-            onAction={onAction}
-            UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-actionGroup')}>
-            {children}
-          </ActionGroup>
+          <div className={classNames(styles, 'react-spectrum-ActionBar-actionGroupWrapper')}>
+            <ActionGroup
+              aria-label={formatMessage('actions')}
+              isQuiet
+              staticColor={isEmphasized ? 'white' : null}
+              overflowMode="collapse"
+              buttonLabelBehavior="collapse"
+              onAction={onAction}
+              UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-actionGroup')}>
+              {children}
+            </ActionGroup>
+          </div>
           <ActionButton
             gridArea="clear"
             aria-label={formatMessage('clearSelection')}

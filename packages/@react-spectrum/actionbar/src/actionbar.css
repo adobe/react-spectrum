@@ -35,7 +35,7 @@
     display: grid;
     grid-template-areas: "clear selected . actiongroup";
     /* actionbuttons have a min-width of size-400 */
-    grid-template-columns: auto minmax(0, max-content) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-global-dimension-size-400), 1fr);
+    grid-template-columns: auto minmax(0, auto) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-global-dimension-size-400), 1fr);
     align-items: center;
     isolation: isolate;
     justify-content: space-between;
@@ -80,8 +80,16 @@
     text-overflow: ellipsis;
   }
 
-  .react-spectrum-ActionBar-actionGroup {
+  .react-spectrum-ActionBar-actionGroupWrapper {
     grid-area: actiongroup;
-    min-width: 0;
+    display: grid;
+    min-inline-size: 0;
+    justify-self: stretch;
+    justify-items: end;
+  }
+
+  .react-spectrum-ActionBar-actionGroup {
+    min-inline-size: 0;
+    max-inline-size: 100%;
   }
 }

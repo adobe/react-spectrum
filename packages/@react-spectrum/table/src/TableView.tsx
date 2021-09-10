@@ -113,7 +113,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     layout
   }, state, domRef);
 
-  // This overrides collection view's renderWrapper to support DOM heirarchy.
+  // This overrides collection view's renderWrapper to support DOM hierarchy.
   type View = ReusableView<GridNode<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
