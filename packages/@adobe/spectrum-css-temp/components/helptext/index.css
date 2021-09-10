@@ -47,15 +47,4 @@
     text-transform: var(--spectrum-helptext-neutral-textonly-text-transform);
     letter-spacing: var(--spectrum-helptext-neutral-textonly-text-letter-spacing);
   }
-  /* Not in DNA */
-  &.spectrum-HelpText--alignEnd {
-    text-align: end; /* Works with labelPosition=top and labelPosition=side */
-    .spectrum-HelpText-text {
-      margin-inline-end: 0;
-      margin-inline-start: var(--spectrum-helptext-neutral-texticon-icon-gap);
-    }
-    .spectrum-HelpText-validationIcon {
-      margin-inline-end: 0;
-    }
-  }
 }

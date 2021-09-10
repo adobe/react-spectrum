@@ -11,8 +11,8 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {Alignment, DOMRef, SpectrumHelpTextProps} from '@react-types/shared';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
+import {DOMRef, SpectrumHelpTextProps} from '@react-types/shared';
 import React, {HTMLAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/helptext/vars.css';
 
@@ -30,7 +30,6 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
     validationState,
     isDisabled,
     showErrorIcon,
-    labelAlign = 'start' as Alignment,
     descriptionProps,
     errorMessageProps
   } = props;
@@ -43,7 +42,6 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
         styles,
         'spectrum-HelpText',
         `spectrum-HelpText--${isErrorMessage ? 'negative' : 'neutral'}`,
-        {'spectrum-HelpText--alignEnd': labelAlign === 'end'},
         {'is-disabled': isDisabled}
       )}
       ref={domRef}>

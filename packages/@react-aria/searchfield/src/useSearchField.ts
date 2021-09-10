@@ -26,9 +26,9 @@ interface SearchFieldAria {
   inputProps: InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
   /** Props for the clear button. */
   clearButtonProps: AriaButtonProps,
-  /** Props for the description element. */
+  /** Props for the searchfield's description element. */
   descriptionProps: HTMLAttributes<HTMLElement>,
-  /** Props for the error message element. */
+  /** Props for the searchfield's error message element. */
   errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
