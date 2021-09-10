@@ -75,7 +75,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   props = useProviderProps(props);
   let {isQuiet} = props;
   let {styleProps} = useStyleProps(props);
-  let state = useTableState({...props, showSelectionCheckboxes: true});
+  let state = useTableState({...props, showSelectionCheckboxes: props.selectionBehavior !== 'replace'});
   let domRef = useDOMRef(ref);
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -533,6 +533,7 @@ function TableRow({item, children, ...otherProps}) {
           {
             'is-active': isPressed,
             'is-selected': isSelected,
+            'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
             'is-hovered': isHovered && allowsSelection,

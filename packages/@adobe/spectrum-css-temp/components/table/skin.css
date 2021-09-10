@@ -158,6 +158,10 @@ tbody.spectrum-Table-body {
     }
   }
 
+  &.spectrum-Table-row--highlightSelection {
+    border-bottom-color: var(--spectrum-global-color-blue-500);
+  }
+
   &.is-drop-target {
     &::before {
       box-shadow: inset 0 0 0 2px var(--spectrum-alias-border-color-focus);
