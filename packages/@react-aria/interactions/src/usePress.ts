@@ -635,14 +635,14 @@ function isHTMLAnchorLink(target: HTMLElement): boolean {
 }
 
 function isValidKeyboardEvent(event: KeyboardEvent): boolean {
-  const {key, target} = event;
+  const {key, code, target} = event;
   const element = target as HTMLElement;
   const {tagName, isContentEditable} = element;
   const role = element.getAttribute('role');
   // Accessibility for keyboards. Space and Enter only.
   // "Spacebar" is for IE 11
   return (
-    (key === 'Enter' || key === ' ' || key === 'Spacebar') &&
+    (key === 'Enter' || key === ' ' || key === 'Spacebar' || code === 'Space') &&
     (tagName !== 'INPUT' &&
       tagName !== 'TEXTAREA' &&
       isContentEditable !== true) &&

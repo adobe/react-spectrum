@@ -69,7 +69,13 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     focus
   } = options;
 
-  let onSelect = (e: PressEvent | PointerEvent) => manager.select(key, e);
+  let onSelect = (e: PressEvent | PointerEvent) => {
+    if (e.pointerType === 'keyboard' && e.ctrlKey && e.altKey) {
+      manager.toggleSelection(key);
+    } else {
+      manager.select(key, e);
+    }
+  };
 
   // Focus the associated DOM node when this item becomes the focusedKey
   let isFocused = key === manager.focusedKey;
