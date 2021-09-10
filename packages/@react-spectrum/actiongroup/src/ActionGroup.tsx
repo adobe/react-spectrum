@@ -85,7 +85,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     }
 
     let computeVisibleItems = (visibleItems: number) => {
-      let listItems = Array.from(domRef.current.children) as HTMLLIElement[];
+      let listItems = Array.from(domRef.current.children).filter(node => !node.hasAttribute('hidden')) as HTMLLIElement[];
       let containerSize = orientation === 'horizontal' ? wrapperRef.current.offsetWidth : wrapperRef.current.offsetHeight;
       let isShowingMenu = visibleItems < state.collection.size;
       let calculatedSize = 0;

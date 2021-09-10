@@ -34,7 +34,8 @@
   .react-spectrum-ActionBar-bar {
     display: grid;
     grid-template-areas: "clear selected . actiongroup";
-    grid-template-columns: auto max-content minmax(var(--spectrum-global-dimension-size-300), 1fr) auto;
+    /* actionbuttons have a min-width of size-400 */
+    grid-template-columns: auto minmax(0, max-content) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-global-dimension-size-400), 1fr);
     align-items: center;
     isolation: isolate;
     justify-content: space-between;
@@ -74,6 +75,9 @@
     padding: 0 var(--spectrum-global-dimension-size-50);
     user-select: none;
     cursor: default;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .react-spectrum-ActionBar-actionGroup {
