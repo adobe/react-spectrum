@@ -28,6 +28,7 @@ governing permissions and limitations under the License.
 .spectrum-Table-sortedIcon {
   display: none;
   margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-arrow-down-small-width);
 
   vertical-align: middle;
 

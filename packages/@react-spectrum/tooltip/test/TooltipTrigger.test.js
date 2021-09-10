@@ -645,7 +645,7 @@ describe('TooltipTrigger', function () {
       });
       let goodTooltip = getByText(helpfulText);
       expect(goodTooltip).toBeVisible();
-      expect(getByText(unHelpfulText)).not.toBeVisible();
+      expect(() => getByText(unHelpfulText)).toThrow();
       act(() => {
         goodButton.blur();
       });
@@ -654,7 +654,7 @@ describe('TooltipTrigger', function () {
       });
       let badTooltip = getByText(unHelpfulText);
       expect(badTooltip).toBeVisible();
-      expect(getByText(helpfulText)).not.toBeVisible();
+      expect(() => getByText(helpfulText)).toThrow();
       act(() => {
         badButton.blur();
       });
@@ -684,21 +684,21 @@ describe('TooltipTrigger', function () {
         jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
       });
       fireEvent.mouseLeave(goodButton);
-      expect(getByText(helpfulText)).not.toBeVisible();
-      expect(getByText(unHelpfulText)).not.toBeVisible();
+      expect(() => getByText(helpfulText)).toThrow();
+      expect(() => getByText(unHelpfulText)).toThrow();
       fireEvent.mouseEnter(badButton);
       fireEvent.mouseMove(badButton);
       act(() => {
         jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
       });
-      expect(getByText(helpfulText)).not.toBeVisible();
-      expect(getByText(unHelpfulText)).not.toBeVisible();
+      expect(() => getByText(helpfulText)).toThrow();
+      expect(() => getByText(unHelpfulText)).toThrow();
       act(() => {
         jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
       });
       let badTooltip = getByText(unHelpfulText);
       expect(badTooltip).toBeVisible();
-      expect(getByText(helpfulText)).not.toBeVisible();
+      expect(() => getByText(helpfulText)).toThrow();
       fireEvent.mouseLeave(badButton);
     });
   });
@@ -837,7 +837,7 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseEnter(badButton);
       fireEvent.mouseMove(badButton);
 
-      expect(getByText(helpfulText)).not.toBeVisible();
+      expect(() => getByText(helpfulText)).toThrow();
       expect(getByText(unHelpfulText)).toBeVisible();
     });
 
@@ -911,7 +911,7 @@ describe('TooltipTrigger', function () {
 
   describe('accessibility', () => {
     it('has a trigger described by the tooltip when open', () => {
-      let {getByRole, getByLabelText, getByText} = render(
+      let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger delay={0}>
             <ActionButton aria-label="trigger" />
@@ -921,20 +921,14 @@ describe('TooltipTrigger', function () {
       );
       fireEvent.mouseMove(document.body);
       let button = getByLabelText('trigger');
-      let tooltip = getByText('Helpful information.').parentElement;
-      expect(tooltip).not.toBeVisible();
-      expect(button).toHaveAttribute('aria-describedBy', tooltip.id);
-
+      expect(button).not.toHaveAttribute('aria-describedBy');
       fireEvent.mouseEnter(button);
       fireEvent.mouseMove(button);
-      tooltip = getByRole('tooltip');
+      let tooltip = getByRole('tooltip');
       expect(button).toHaveAttribute('aria-describedBy', tooltip.id);
-      expect(tooltip.parentElement.hidden).toBe(false);
       fireEvent.mouseLeave(button);
       act(jest.runAllTimers);
-      tooltip = getByText('Helpful information.').parentElement;
-      expect(tooltip).not.toBeVisible();
-      expect(button).toHaveAttribute('aria-describedBy', tooltip.id);
+      expect(button).not.toHaveAttribute('aria-describedBy');
     });
   });
 
