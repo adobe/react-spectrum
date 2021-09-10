@@ -28,7 +28,7 @@ describe('useSideNav', function () {
   };
 
   let renderSideNavHook = (menuProps) => {
-    let {result} = renderHook(() => useSideNav({...menuProps, layout: mockLayout}, mockState,  mockRef));
+    let {result} = renderHook(() => useSideNav({...menuProps, layout: mockLayout}, mockState, mockRef));
     return result.current;
   };
 
