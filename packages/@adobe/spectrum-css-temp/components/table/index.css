@@ -44,7 +44,6 @@ governing permissions and limitations under the License.
 }
 .spectrum-Table-headCellContents {
   display: inline-block;
-  justify-self: start;
   min-inline-size: 0;
   overflow: hidden;
   white-space: nowrap;
