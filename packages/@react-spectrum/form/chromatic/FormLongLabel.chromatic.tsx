@@ -12,17 +12,17 @@
 
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ColorField} from '@react-spectrum/color';
-import {ComboBox} from '@react-spectrum/ComboBox';
+import {ComboBox} from '@react-spectrum/combobox';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
-import {SearchField} from '@react-spectrum/SearchField';
-import {SearchWithin} from '@react-spectrum/SearchWithin';
+import {SearchField} from '@react-spectrum/searchfield';
+import {SearchWithin} from '@react-spectrum/searchwithin';
 import {SpectrumFormProps} from '@react-types/form';
-import {Switch} from '@react-spectrum/Switch';
+import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
 const meta: Meta<SpectrumFormProps> = {
