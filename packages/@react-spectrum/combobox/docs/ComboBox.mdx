@@ -859,7 +859,6 @@ function Example() {
       {id: 9, name: 'Wombat'}
     ];
   let isValid = React.useMemo(() => animalId !== 2 && animalId !== 7, [animalId]);
-  console.log(animalId);
 
   return (
     <ComboBox
