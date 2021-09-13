@@ -33,10 +33,10 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.4.1",
-    "@react-aria/grid": "3.0.0-rc.0",
+    "@react-aria/grid": "^3.0.0",
     "@react-aria/i18n": "^3.3.2",
     "@react-aria/interactions": "^3.5.1",
-    "@react-aria/table": "3.0.0-rc.0",
+    "@react-aria/table": "^3.0.0",
     "@react-aria/utils": "^3.8.2",
     "@react-aria/virtualizer": "^3.3.4",
     "@react-aria/visually-hidden": "^3.2.3",
