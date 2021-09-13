@@ -186,7 +186,7 @@ By default, the label is positioned above the TextField. The `labelPosition` pro
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Help-text-(description-and-error-message))
 
-Both a description and an error message can be supplied to a TextField. Description shows all the time except when the `validationState` is "invalid". The error message should help the user fix their input quickly and it should be changed depending on the detected error. Both the description and error message should be localized as well.
+Both a description and an error message can be supplied to a TextField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
 
 ```tsx example
 function Example() {
