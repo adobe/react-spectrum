@@ -137,7 +137,7 @@ describe('ListView', function () {
         let tree = renderList();
         let target = getCell(tree, 'Baz');
         let grid = tree.getByRole('grid');
-        grid.focus();
+        act(() => grid.focus());
         fireEvent.keyDown(grid, {key: 'B'});
         fireEvent.keyDown(grid, {key: 'A'});
         fireEvent.keyDown(grid, {key: 'Z'});

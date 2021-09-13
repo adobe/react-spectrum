@@ -90,6 +90,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         value: null,
         level: 0,
         rendered: null,
+        textValue: item.textValue,
         hasChildNodes: false,
         childNodes: []
       }]
