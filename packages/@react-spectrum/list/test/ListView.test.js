@@ -132,6 +132,19 @@ describe('ListView', function () {
 
     let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
+    describe('Type to select', function () {
+      it('focuses the correct cell when typing', function () {
+        let tree = renderList();
+        let target = getCell(tree, 'Baz');
+        let grid = tree.getByRole('grid');
+        grid.focus();
+        fireEvent.keyDown(grid, {key: 'B'});
+        fireEvent.keyDown(grid, {key: 'A'});
+        fireEvent.keyDown(grid, {key: 'Z'});
+        expect(document.activeElement).toBe(target);
+      });
+    });
+
     describe('ArrowRight', function () {
       it('should not move focus if no focusables present', function () {
         let tree = renderList();

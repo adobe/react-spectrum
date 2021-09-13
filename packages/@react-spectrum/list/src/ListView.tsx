@@ -90,7 +90,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         value: null,
         level: 0,
         rendered: null,
-        textValue: item.textValue,
         hasChildNodes: false,
         childNodes: []
       }]
@@ -107,6 +106,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     ref: domRef,
     direction,
     collator,
+    // Focus the ListView cell instead of the row so that focus doesn't change with left/right arrow keys when there aren't any
+    // focusable children in the cell.
     focusMode: 'cell'
   }), [state, domRef, direction, collator]);
   let {gridProps} = useGrid({
