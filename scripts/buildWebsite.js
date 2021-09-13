@@ -131,8 +131,6 @@ async function build() {
   tf = 'require("./label.css");\n' + tf;
   fs.writeFileSync(tfpath, tf);
 
-  return;
-
   // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
 
