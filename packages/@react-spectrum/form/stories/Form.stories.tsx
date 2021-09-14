@@ -14,6 +14,8 @@ import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+import {ColorField} from '@react-spectrum/color';
+import {ComboBox} from '@react-spectrum/combobox';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
@@ -24,6 +26,7 @@ import React, {Key, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '@react-spectrum/searchwithin';
 import {storiesOf} from '@storybook/react';
+import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
 storiesOf('Form', module)
@@ -150,6 +153,13 @@ function render(props: any = {}) {
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>
       </CheckboxGroup>
+      <ColorField label="Primary Color" />
+      <ComboBox label="More Animals">
+        <Item key="red panda">Red Panda</Item>
+        <Item key="aardvark">Aardvark</Item>
+        <Item key="kangaroo">Kangaroo</Item>
+        <Item key="snake">Snake</Item>
+      </ComboBox>
       <RadioGroup label="Favorite pet" name="favorite-pet-group">
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
@@ -164,12 +174,14 @@ function render(props: any = {}) {
         <Item>Purple</Item>
       </Picker>
       <TextArea label="Comments" placeholder="How do you feel?" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <SearchField label="Search" />
       <SearchWithin label="Search">
         <SearchField placeholder="Search" />
         <Picker label="State" placeholder="Select a state" items={states}>
           {item => <Item key={item.abbr}>{item.name}</Item>}
         </Picker>
       </SearchWithin>
+      <Switch>Low power mode</Switch>
     </Form>
   );
 }

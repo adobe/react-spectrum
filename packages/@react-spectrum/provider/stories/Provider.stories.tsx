@@ -11,15 +11,22 @@
  */
 
 import {Button} from '@react-spectrum/button';
-import {Checkbox} from '@react-spectrum/checkbox';
+import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+import {ColorField} from '@react-spectrum/color';
+import {ComboBox} from '@react-spectrum/combobox';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
+import {Item, Picker} from '@react-spectrum/picker';
+import {NumberField} from '@react-spectrum/numberfield';
 import {Provider} from '../';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
+import {SearchField} from '@react-spectrum/searchfield';
+import {SearchWithin} from '@react-spectrum/searchwithin';
+import {Slider} from '@react-spectrum/slider';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -173,13 +180,37 @@ function render(props = {}) {
           placeholder="Something"
           marginTop="size-100"
           necessityIndicator="label" />
-        <Checkbox>Cats!</Checkbox>
+        <CheckboxGroup defaultValue={['dragons']} label="Pets">
+          <Checkbox value="dogs">Dogs</Checkbox>
+          <Checkbox value="cats">Cats</Checkbox>
+          <Checkbox value="dragons">Dragons</Checkbox>
+        </CheckboxGroup>
+        <ColorField label="Primary Color" />
+        <ComboBox label="More Animals">
+          <Item key="red panda">Red Panda</Item>
+          <Item key="aardvark">Aardvark</Item>
+          <Item key="kangaroo">Kangaroo</Item>
+          <Item key="snake">Snake</Item>
+        </ComboBox>
+        <NumberField label="Years lived there" />
         <Switch>Dogs!</Switch>
         <RadioGroup label="A radio group">
           <Radio value="dogs">Dogs</Radio>
           <Radio value="cats">Cats</Radio>
           <Radio value="horses">Horses</Radio>
         </RadioGroup>
+        <SearchWithin label="Search">
+          <SearchField placeholder="Search" />
+          <Picker name="favorite-color3" label="Favorite color searchwithin">
+            <Item key="red">Red</Item>
+            <Item key="orange">Orange</Item>
+            <Item key="yellow">Yellow</Item>
+            <Item key="green">Green</Item>
+            <Item key="blue">Blue</Item>
+            <Item key="purple">Purple</Item>
+          </Picker>
+        </SearchWithin>
+        <Slider label="Cookies to buy" defaultValue={12} />
       </Form>
     </Provider>
   );
