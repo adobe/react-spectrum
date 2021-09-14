@@ -48,10 +48,10 @@ export function useField(props: AriaFieldProps): FieldAria {
   let descriptionProps: HTMLAttributes<HTMLElement> = {};
   let errorMessageProps: HTMLAttributes<HTMLElement> = {};
   if (description) {
-    descriptionProps.id = descriptionId;
+    descriptionProps.id = descriptionId || errorMessageId;
   }
   if (errorMessage) {
-    errorMessageProps.id = errorMessageId;
+    errorMessageProps.id = errorMessageId || descriptionId;
   }
 
   return {

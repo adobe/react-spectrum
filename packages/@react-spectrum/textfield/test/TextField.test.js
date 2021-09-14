@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain} from '@react-aria/utils';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
@@ -446,6 +447,58 @@ describe('Shared TextField behavior', () => {
     let errorMessage = tree.getByText('Remove special characters.');
     expect(errorMessage).toHaveAttribute('id');
     expect(input).toHaveAttribute('aria-describedby', `${errorMessage.id}`);
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports description or error message', ({Component}) => {
+    function Example(props) {
+      let [value, setValue] = React.useState('0');
+      let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+    
+      return (
+        <Component
+          {...props}
+          validationState={isValid ? 'valid' : 'invalid'}
+          value={value}
+          onChange={chain(props.onChange, setValue)}
+          label="Favorite number"
+          maxLength={1}
+          description="Enter a single digit number."
+          errorMessage={
+            value === ''
+              ? 'Empty input not allowed.'
+              : 'Single digit numbers are 0-9.'
+          } />
+      );
+    }
+    let tree = renderComponent(Example);
+    let input = tree.getByTestId(testId);
+    let helpText = tree.getByText('Enter a single digit number.');
+    expect(helpText).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
+    expect(input.value).toBe('0');
+    let newValue = 's';
+    fireEvent.change(input, {target: {value: newValue}});
+    expect(input.value).toBe(newValue);
+    helpText = tree.getByText('Single digit numbers are 0-9.');
+    expect(helpText).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
+    newValue = '';
+    fireEvent.change(input, {target: {value: newValue}});
+    expect(input.value).toBe(newValue);
+    helpText = tree.getByText('Empty input not allowed.');
+    expect(helpText).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
+    newValue = '4';
+    fireEvent.change(input, {target: {value: newValue}});
+    expect(input.value).toBe(newValue);
+    helpText = tree.getByText('Enter a single digit number.');
+    expect(helpText).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
   });
 
   it.each`
