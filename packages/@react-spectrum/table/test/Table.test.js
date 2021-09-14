@@ -10,17 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
-import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
+import {announce} from '@react-aria/live-announcer';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
+import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
+import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
@@ -56,19 +64,43 @@ for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
-describe('Table', function () {
+function ExampleSortTable() {
+  let [sortDescriptor, setSortDescriptor] = React.useState({column: 'bar', direction: 'ascending'});
+
+  return (
+    <TableView aria-label="Table" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+      <TableHeader>
+        <Column key="foo" allowsSorting>Foo</Column>
+        <Column key="bar" allowsSorting>Bar</Column>
+        <Column key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>Foo 1</Cell>
+          <Cell>Bar 1</Cell>
+          <Cell>Baz 1</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  );
+}
+
+describe('TableView', function () {
   let offsetWidth, offsetHeight;
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.useFakeTimers();
   });
 
   afterAll(function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
+  });
+
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
@@ -100,7 +132,7 @@ describe('Table', function () {
 
   it('renders a static table', function () {
     let {getByRole} = render(
-      <Table aria-label="Table" data-testid="test">
+      <TableView aria-label="Table" data-testid="test">
         <TableHeader>
           <Column>Foo</Column>
           <Column>Bar</Column>
@@ -118,7 +150,7 @@ describe('Table', function () {
             <Cell>Baz 2</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     let grid = getByRole('grid');
@@ -144,6 +176,7 @@ describe('Table', function () {
 
     for (let header of headers) {
       expect(header).not.toHaveAttribute('aria-sort');
+      expect(header).not.toHaveAttribute('aria-describedby');
     }
 
     expect(headers[0]).toHaveTextContent('Foo');
@@ -165,7 +198,7 @@ describe('Table', function () {
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
-    expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+    expect(rows[1]).not.toHaveAttribute('aria-selected');
     expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
 
 
@@ -180,7 +213,7 @@ describe('Table', function () {
 
   it('renders a static table with selection', function () {
     let {getByRole} = render(
-      <Table aria-label="Table" data-testid="test" selectionMode="multiple">
+      <TableView aria-label="Table" data-testid="test" selectionMode="multiple">
         <TableHeader>
           <Column>Foo</Column>
           <Column>Bar</Column>
@@ -198,7 +231,7 @@ describe('Table', function () {
             <Cell>Baz 2</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     let grid = getByRole('grid');
@@ -225,6 +258,7 @@ describe('Table', function () {
 
     for (let header of headers) {
       expect(header).not.toHaveAttribute('aria-sort');
+      expect(header).not.toHaveAttribute('aria-describedby');
     }
 
     let checkbox = within(headers[0]).getByRole('checkbox');
@@ -275,7 +309,7 @@ describe('Table', function () {
 
   it('renders a dynamic table', function () {
     let {getByRole} = render(
-      <Table aria-label="Table">
+      <TableView aria-label="Table">
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -286,7 +320,7 @@ describe('Table', function () {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     let grid = getByRole('grid');
@@ -324,7 +358,7 @@ describe('Table', function () {
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
-    expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+    expect(rows[1]).not.toHaveAttribute('aria-selected');
     expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
@@ -338,7 +372,7 @@ describe('Table', function () {
 
   it('renders a dynamic table with selection', function () {
     let {getByRole} = render(
-      <Table aria-label="Table" selectionMode="multiple">
+      <TableView aria-label="Table" selectionMode="multiple">
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -349,7 +383,7 @@ describe('Table', function () {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     let grid = getByRole('grid');
@@ -418,7 +452,7 @@ describe('Table', function () {
 
   it('renders a static table with nested columns', function () {
     let {getByRole} = render(
-      <Table aria-label="Table" selectionMode="multiple">
+      <TableView aria-label="Table" selectionMode="multiple">
         <TableHeader>
           <Column key="test">Test</Column>
           <Column title="Group 1">
@@ -443,7 +477,7 @@ describe('Table', function () {
             <Cell>Baz 2</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     let grid = getByRole('grid');
@@ -523,7 +557,7 @@ describe('Table', function () {
 
   it('renders a dynamic table with nested columns', function () {
     let {getByRole} = render(
-      <Table aria-label="Table" selectionMode="multiple">
+      <TableView aria-label="Table" selectionMode="multiple">
         <TableHeader columns={nestedColumns}>
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
@@ -536,7 +570,7 @@ describe('Table', function () {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     let grid = getByRole('grid');
@@ -626,7 +660,7 @@ describe('Table', function () {
 
   it('renders a table with multiple row headers', function () {
     let {getByRole} = render(
-      <Table aria-label="Table" selectionMode="multiple">
+      <TableView aria-label="Table" selectionMode="multiple">
         <TableHeader>
           <Column isRowHeader>First Name</Column>
           <Column isRowHeader>Last Name</Column>
@@ -644,7 +678,7 @@ describe('Table', function () {
             <Cell>February 10</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     let grid = getByRole('grid');
@@ -678,7 +712,7 @@ describe('Table', function () {
     // locale is being set here, since we can't nest them, use original render function
     let renderTable = (locale = 'en-US', props = {}) => renderComponent(
       <Provider locale={locale} theme={theme}>
-        <Table aria-label="Table" {...props}>
+        <TableView aria-label="Table" {...props}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -689,14 +723,14 @@ describe('Table', function () {
               </Row>)
             }
           </TableBody>
-        </Table>
+        </TableView>
       </Provider>
     );
 
     // locale is being set here, since we can't nest them, use original render function
     let renderNested = (locale = 'en-US') => renderComponent(
       <Provider locale={locale} theme={theme}>
-        <Table aria-label="Table">
+        <TableView aria-label="Table">
           <TableHeader columns={nestedColumns}>
             {column =>
               <Column childColumns={column.children}>{column.name}</Column>
@@ -709,12 +743,12 @@ describe('Table', function () {
               </Row>)
             }
           </TableBody>
-        </Table>
+        </TableView>
       </Provider>
     );
 
     let renderMany = () => render(
-      <Table aria-label="Table">
+      <TableView aria-label="Table">
         <TableHeader columns={columns}>
           {column =>
             <Column>{column.name}</Column>
@@ -727,7 +761,7 @@ describe('Table', function () {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
@@ -1109,7 +1143,7 @@ describe('Table', function () {
 
     describe('type to select', function () {
       let renderTypeSelect = () => render(
-        <Table aria-label="Table" selectionMode="none">
+        <TableView aria-label="Table" selectionMode="none">
           <TableHeader>
             <Column isRowHeader>First Name</Column>
             <Column isRowHeader>Last Name</Column>
@@ -1132,7 +1166,7 @@ describe('Table', function () {
               <Cell>December 12</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       it('focuses cell by typing letters in rapid succession', function () {
@@ -1240,7 +1274,7 @@ describe('Table', function () {
       let renderFocusable = () => render(
         <>
           <input data-testid="before" />
-          <Table aria-label="Table" selectionMode="multiple">
+          <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader>
               <Column>Foo</Column>
               <Column>Bar</Column>
@@ -1258,7 +1292,7 @@ describe('Table', function () {
                 <Cell>Baz 2</Cell>
               </Row>
             </TableBody>
-          </Table>
+          </TableView>
           <input data-testid="after" />
         </>
       );
@@ -1471,7 +1505,7 @@ describe('Table', function () {
 
         expect(body.scrollTop).toBe(1000);
         expect(document.activeElement).toBe(tree.getByRole('grid'));
-        expect(cell).not.toBeInTheDocument();
+        expect(tree.queryByText('Baz 5')).toBeNull();
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
@@ -1501,7 +1535,7 @@ describe('Table', function () {
 
   describe('selection', function () {
     let renderJSX = (props, items = manyItems) => (
-      <Table aria-label="Table" selectionMode="multiple" {...props}>
+      <TableView aria-label="Table" selectionMode="multiple" {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -1512,7 +1546,7 @@ describe('Table', function () {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     let renderTable = (props, items = manyItems) => render(renderJSX(props, items));
@@ -2151,11 +2185,111 @@ describe('Table', function () {
         checkRowSelection(rows.slice(4, 20), true);
       });
     });
+
+    describe('annoucements', function () {
+      it('should announce the selected or deselected row', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let row = tree.getAllByRole('row')[1];
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Foo 1 selected.');
+
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Foo 1 not selected.');
+      });
+
+      it('should announce the row and number of selected items when there are more than one', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        triggerPress(rows[1]);
+        triggerPress(rows[2]);
+
+        expect(announce).toHaveBeenLastCalledWith('Foo 2 selected. 2 items selected.');
+
+        triggerPress(rows[2]);
+        expect(announce).toHaveBeenLastCalledWith('Foo 2 not selected. 1 item selected.');
+      });
+
+      it('should announce only the number of selected items when multiple are selected at once', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        triggerPress(rows[1]);
+        triggerPress(rows[3], {shiftKey: true});
+
+        expect(announce).toHaveBeenLastCalledWith('3 items selected.');
+
+        triggerPress(rows[1], {shiftKey: true});
+        expect(announce).toHaveBeenLastCalledWith('1 item selected.');
+      });
+
+      it('should announce select all', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        userEvent.click(tree.getByLabelText('Select All'));
+        expect(announce).toHaveBeenLastCalledWith('All items selected.');
+
+        userEvent.click(tree.getByLabelText('Select All'));
+        expect(announce).toHaveBeenLastCalledWith('No items selected.');
+      });
+
+      it('should announce all row header columns', function () {
+        let tree = render(
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader>
+              <Column isRowHeader>First Name</Column>
+              <Column isRowHeader>Last Name</Column>
+              <Column>Birthday</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell>Sam</Cell>
+                <Cell>Smith</Cell>
+                <Cell>May 3</Cell>
+              </Row>
+              <Row>
+                <Cell>Julia</Cell>
+                <Cell>Jones</Cell>
+                <Cell>February 10</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
+        );
+
+        let row = tree.getAllByRole('row')[1];
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Sam Smith selected.');
+
+        triggerPress(row);
+        expect(announce).toHaveBeenLastCalledWith('Sam Smith not selected.');
+      });
+
+      it('should announce changes in sort order', function () {
+        let tree = render(<ExampleSortTable />);
+        let table = tree.getByRole('grid');
+        let columnheaders = within(table).getAllByRole('columnheader');
+        expect(columnheaders).toHaveLength(3);
+
+        triggerPress(columnheaders[1]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Bar in descending order', 'assertive', 500);
+        triggerPress(columnheaders[1]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Bar in ascending order', 'assertive', 500);
+        triggerPress(columnheaders[0]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in ascending order', 'assertive', 500);
+        triggerPress(columnheaders[0]);
+        expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in descending order', 'assertive', 500);
+      });
+    });
   });
 
   describe('single selection', function () {
     let renderJSX = (props, items = manyItems) => (
-      <Table aria-label="Table" selectionMode="single" {...props}>
+      <TableView aria-label="Table" selectionMode="single" {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -2166,7 +2300,7 @@ describe('Table', function () {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     let renderTable = (props, items = manyItems) => render(renderJSX(props, items));
@@ -2372,11 +2506,25 @@ describe('Table', function () {
         expect(onSelectionChange).not.toHaveBeenCalled();
       });
     });
+
+    describe('row selection column header', function () {
+      it('should contain a hidden checkbox and VisuallyHidden accessible text', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+        let columnheader = tree.getAllByRole('columnheader')[0];
+        let checkboxInput = columnheader.querySelector('input[type="checkbox"]');
+        expect(columnheader).not.toHaveAttribute('aria-disabled', 'true');
+        expect(columnheader.firstElementChild).toBeVisible();
+        expect(checkboxInput).not.toBeVisible();
+        expect(checkboxInput.getAttribute('aria-label')).toEqual('Select');
+        expect(columnheader.firstElementChild.textContent).toEqual(checkboxInput.getAttribute('aria-label'));
+      });
+    });
   });
 
   describe('press/hover interactions and selection mode', function () {
     let TableExample = (props) => (
-      <Table aria-label="Table" {...props}>
+      <TableView aria-label="Table" {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -2387,7 +2535,7 @@ describe('Table', function () {
             </Row>)
           }
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', function () {
@@ -2483,13 +2631,18 @@ describe('Table', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
 
+      // Need requestAnimationFrame to actually be async for this test to work.
+      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
+
       triggerPress(menuItems[1]);
+      act(() => jest.runAllTimers());
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('alertdialog', {hidden: true});
       let deleteButton = within(dialog).getByRole('button', {hidden: true});
 
       triggerPress(deleteButton);
+      act(() => jest.runAllTimers());
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
@@ -2622,17 +2775,13 @@ describe('Table', function () {
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
 
-      expect(() => {
-        tree.getByRole('menu');
-      }).toThrow();
+      expect(tree.queryByRole('menu')).toBeNull();
 
       expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
 
-      expect(() => {
-        tree.getByRole('menu');
-      }).toThrow();
+      expect(tree.queryByRole('menu')).toBeNull();
 
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
@@ -2687,24 +2836,110 @@ describe('Table', function () {
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeInTheDocument();
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[1]);
 
-      act(() => table.focus());
+      // Need requestAnimationFrame to actually be async for this test to work.
+      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
+
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+
+      act(() => jest.runAllTimers());
 
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
     });
   });
 
+  describe('with dialog trigger', function () {
+    let TableExample = (props) => (
+      <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} {...props}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="bar">Bar</Column>
+          <Column key="baz">Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>
+              <DialogTrigger>
+                <ActionButton aria-label="Add"><Add /></ActionButton>
+                {close => (
+                  <Dialog>
+                    <Heading>The Heading</Heading>
+                    <Divider />
+                    <Content>
+                      <TextField autoFocus label="Last Words" data-testid="input" />
+                    </Content>
+                    <ButtonGroup>
+                      <Button variant="secondary" onPress={close}>Cancel</Button>
+                      <Button variant="cta" onPress={close}>Confirm</Button>
+                    </ButtonGroup>
+                  </Dialog>
+                )}
+              </DialogTrigger>
+            </Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+
+    it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
+      let tree = render(<TableExample />);
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+
+      let button = within(rows[1]).getByRole('button');
+      triggerPress(button);
+
+      let dialog = tree.getByRole('dialog');
+      let input = within(dialog).getByTestId('input');
+
+      expect(input).toBeTruthy();
+      userEvent.type(input, 'blah');
+      expect(document.activeElement).toEqual(input);
+      expect(input.value).toBe('blah');
+
+      act(() => {
+        fireEvent.keyDown(input, {key: 'ArrowLeft', code: 37, charCode: 37});
+        fireEvent.keyUp(input, {key: 'ArrowLeft', code: 37, charCode: 37});
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toEqual(input);
+
+      act(() => {
+        fireEvent.keyDown(input, {key: 'ArrowRight', code: 39, charCode: 39});
+        fireEvent.keyUp(input, {key: 'ArrowRight', code: 39, charCode: 39});
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toEqual(input);
+
+      act(() => {
+        fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+        fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
+        jest.runAllTimers();
+      });
+
+      expect(dialog).not.toBeInTheDocument();
+    });
+  });
+
   describe('async loading', function () {
     let defaultTable = (
-      <Table aria-label="Table">
+      <TableView aria-label="Table">
         <TableHeader>
           <Column key="foo">Foo</Column>
           <Column key="bar">Bar</Column>
@@ -2719,20 +2954,20 @@ describe('Table', function () {
             <Cell>Bar 2</Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
     );
 
     it('should display a spinner when loading', function () {
       let tree = render(
-        <Table aria-label="Table" selectionMode="multiple">
+        <TableView aria-label="Table" selectionMode="multiple">
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody isLoading>
+          <TableBody loadingState="loading">
             {[]}
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
@@ -2758,12 +2993,12 @@ describe('Table', function () {
 
     it('should display a spinner at the bottom when loading more', function () {
       let tree = render(
-        <Table aria-label="Table">
+        <TableView aria-label="Table">
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody isLoading>
+          <TableBody loadingState="loadingMore">
             <Row>
               <Cell>Foo 1</Cell>
               <Cell>Bar 1</Cell>
@@ -2773,7 +3008,7 @@ describe('Table', function () {
               <Cell>Bar 2</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
@@ -2797,6 +3032,30 @@ describe('Table', function () {
       expect(spinner).not.toBeInTheDocument();
     });
 
+    it('should not display a spinner when filtering', function () {
+      let tree = render(
+        <TableView aria-label="Table">
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </TableHeader>
+          <TableBody loadingState="filtering">
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+            </Row>
+            <Row>
+              <Cell>Foo 2</Cell>
+              <Cell>Bar 2</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+      );
+
+      let table = tree.getByRole('grid');
+      expect(within(table).queryByRole('progressbar')).toBeNull();
+    });
+
     it('should fire onLoadMore when scrolling near the bottom', function () {
       let items = [];
       for (let i = 1; i <= 100; i++) {
@@ -2805,7 +3064,7 @@ describe('Table', function () {
 
       let onLoadMore = jest.fn();
       let tree = render(
-        <Table aria-label="Table">
+        <TableView aria-label="Table">
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -2817,7 +3076,7 @@ describe('Table', function () {
               </Row>
             )}
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let body = tree.getAllByRole('rowgroup')[1];
@@ -2843,7 +3102,7 @@ describe('Table', function () {
       let onLoadMoreSpy = jest.fn();
 
       let TableMock = (props) => (
-        <Table aria-label="Table">
+        <TableView aria-label="Table">
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -2855,7 +3114,7 @@ describe('Table', function () {
               </Row>
             )}
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       render(<TableMock items={items} />);
@@ -2866,7 +3125,7 @@ describe('Table', function () {
 
     it('should display an empty state when there are no items', function () {
       let tree = render(
-        <Table aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
+        <TableView aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -2874,7 +3133,7 @@ describe('Table', function () {
           <TableBody>
             {[]}
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
@@ -2899,9 +3158,9 @@ describe('Table', function () {
   });
 
   describe('sorting', function () {
-    it('should set aria-sort="none" on sortable column headers', function () {
+    it('should set the proper aria-describedby and aria-sort on sortable column headers', function () {
       let tree = render(
-        <Table aria-label="Table">
+        <TableView aria-label="Table">
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2914,7 +3173,7 @@ describe('Table', function () {
               <Cell>Baz 1</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
@@ -2923,11 +3182,16 @@ describe('Table', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
-    it('should set aria-sort="ascending" on sorted column header', function () {
+    it('should set the proper aria-describedby and aria-sort on an ascending sorted column header', function () {
       let tree = render(
-        <Table aria-label="Table" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
+        <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2940,7 +3204,7 @@ describe('Table', function () {
               <Cell>Baz 1</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
@@ -2949,11 +3213,16 @@ describe('Table', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'ascending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
-    it('should set aria-sort="descending" on sorted column header', function () {
+    it('should set the proper aria-describedby and aria-sort on an descending sorted column header', function () {
       let tree = render(
-        <Table aria-label="Table" sortDescriptor={{column: 'bar', direction: 'descending'}}>
+        <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'descending'}}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2966,7 +3235,7 @@ describe('Table', function () {
               <Cell>Baz 1</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
@@ -2975,12 +3244,39 @@ describe('Table', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'descending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should add sort direction info to the column header\'s aria-describedby for Android', function () {
+      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+      let tree = render(<ExampleSortTable />);
+
+      let table = tree.getByRole('grid');
+      let columnheaders = within(table).getAllByRole('columnheader');
+      expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[1]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
+
+      triggerPress(columnheaders[1]);
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
+
+      uaMock.mockRestore();
     });
 
     it('should fire onSortChange when there is no existing sortDescriptor', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table aria-label="Table" onSortChange={onSortChange}>
+        <TableView aria-label="Table" onSortChange={onSortChange}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2993,7 +3289,7 @@ describe('Table', function () {
               <Cell>Baz 1</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
@@ -3002,6 +3298,11 @@ describe('Table', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[0]);
 
@@ -3012,7 +3313,7 @@ describe('Table', function () {
     it('should toggle the sort direction from ascending to descending', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
+        <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -3025,7 +3326,7 @@ describe('Table', function () {
               <Cell>Baz 1</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
@@ -3034,6 +3335,11 @@ describe('Table', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'ascending');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[0]);
 
@@ -3044,7 +3350,7 @@ describe('Table', function () {
     it('should toggle the sort direction from descending to ascending', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table aria-label="Table" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
+        <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -3057,15 +3363,20 @@ describe('Table', function () {
               <Cell>Baz 1</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
       let columnheaders = within(table).getAllByRole('columnheader');
       expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'descending');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[0]);
 
@@ -3076,7 +3387,7 @@ describe('Table', function () {
     it('should trigger sorting on a different column', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
+        <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -3089,7 +3400,7 @@ describe('Table', function () {
               <Cell>Baz 1</Cell>
             </Row>
           </TableBody>
-        </Table>
+        </TableView>
       );
 
       let table = tree.getByRole('grid');
@@ -3098,6 +3409,11 @@ describe('Table', function () {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'ascending');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+      expect(columnheaders[0]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       triggerPress(columnheaders[1]);
 
@@ -3109,7 +3425,7 @@ describe('Table', function () {
   describe('layout', function () {
     describe('row heights', function () {
       let renderTable = (props, scale) => render(
-        <Table aria-label="Table" {...props}>
+        <TableView aria-label="Table" {...props}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -3120,7 +3436,7 @@ describe('Table', function () {
               </Row>)
             }
           </TableBody>
-        </Table>
+        </TableView>
       , scale);
 
       it('should layout rows with default height', function () {
@@ -3266,7 +3582,7 @@ describe('Table', function () {
           });
 
         let tree = render(
-          <Table aria-label="Table" overflowMode="wrap">
+          <TableView aria-label="Table" overflowMode="wrap">
             <TableHeader columns={nestedColumns}>
               {column => <Column childColumns={column.children}>{column.name}</Column>}
             </TableHeader>
@@ -3277,7 +3593,7 @@ describe('Table', function () {
                 </Row>)
               }
             </TableBody>
-          </Table>
+          </TableView>
         );
         let rows = tree.getAllByRole('row');
         expect(rows).toHaveLength(5);
@@ -3306,12 +3622,60 @@ describe('Table', function () {
 
         scrollHeight.mockRestore();
       });
+
+      // To test https://github.com/adobe/react-spectrum/issues/1885
+      it('should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled', function () {
+        function ControlledSelection(props) {
+          let [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+          return (
+            <TableView aria-label="Table" overflowMode="wrap" selectionMode={props.selectionMode} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+              <TableHeader columns={columns}>
+                {column => <Column>{column.name}</Column>}
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell>{item[key]}</Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+        }
+
+        let tree = render(<ControlledSelection selectionMode="multiple" />);
+        let row = tree.getAllByRole('row')[2];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        userEvent.click(within(row).getByRole('checkbox'));
+        expect(row).toHaveAttribute('aria-selected', 'true');
+
+        // Without ListLayout fix, throws here with "TypeError: Cannot set property 'estimatedSize' of undefined"
+        rerender(tree, <ControlledSelection selectionMode="none" />);
+        act(() => jest.runAllTimers());
+        expect(tree.queryByRole('checkbox')).toBeNull();
+      });
+
+      it('should return the proper cell z-indexes for overflowMode="wrap"', function () {
+        let tree = renderTable({overflowMode: 'wrap', selectionMode: 'multiple'});
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        for (let row of rows) {
+          for (let [index, cell] of row.childNodes.entries()) {
+            if (index === 0) {
+              expect(cell.style.zIndex).toBe('2');
+            } else {
+              expect(cell.style.zIndex).toBe('1');
+            }
+          }
+        }
+      });
     });
 
     describe('column widths', function () {
       it('should divide the available width by default', function () {
         let tree = render(
-          <Table aria-label="Table" selectionMode="multiple">
+          <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader columns={columns}>
               {column => <Column>{column.name}</Column>}
             </TableHeader>
@@ -3322,22 +3686,48 @@ describe('Table', function () {
                 </Row>)
               }
             </TableBody>
-          </Table>
+          </TableView>
         );
 
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
-          expect(row.childNodes[1].style.width).toBe('315px');
-          expect(row.childNodes[2].style.width).toBe('315px');
-          expect(row.childNodes[3].style.width).toBe('315px');
+          expect(row.childNodes[0].style.width).toBe('38px');
+          expect(row.childNodes[1].style.width).toBe('320.6666666666667px');
+          expect(row.childNodes[2].style.width).toBe('320.6666666666667px');
+          expect(row.childNodes[3].style.width).toBe('320.6666666666667px');
+        }
+      });
+
+      it('should divide the available width by default in large scale', function () {
+        let tree = render((
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader columns={columns}>
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        ), 'large');
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('48px');
+          expect(row.childNodes[1].style.width).toBe('317.3333333333333px');
+          expect(row.childNodes[2].style.width).toBe('317.3333333333333px');
+          expect(row.childNodes[3].style.width).toBe('317.3333333333333px');
         }
       });
 
       it('should support explicitly sized columns', function () {
         let tree = render(
-          <Table aria-label="Table">
+          <TableView aria-label="Table">
             <TableHeader>
               <Column key="foo" width={200}>Foo</Column>
               <Column key="bar" width={500}>Bar</Column>
@@ -3350,7 +3740,7 @@ describe('Table', function () {
                 </Row>)
               }
             </TableBody>
-          </Table>
+          </TableView>
         );
 
         let rows = tree.getAllByRole('row');
@@ -3364,7 +3754,7 @@ describe('Table', function () {
 
       it('should divide remaining width amoung remaining columns', function () {
         let tree = render(
-          <Table aria-label="Table" selectionMode="multiple">
+          <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader>
               <Column key="foo" width={200}>Foo</Column>
               <Column key="bar">Bar</Column>
@@ -3377,22 +3767,22 @@ describe('Table', function () {
                 </Row>)
               }
             </TableBody>
-          </Table>
+          </TableView>
         );
 
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[0].style.width).toBe('38px');
           expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('372.5px');
-          expect(row.childNodes[3].style.width).toBe('372.5px');
+          expect(row.childNodes[2].style.width).toBe('381px');
+          expect(row.childNodes[3].style.width).toBe('381px');
         }
       });
 
       it('should support percentage widths', function () {
         let tree = render(
-          <Table aria-label="Table">
+          <TableView aria-label="Table">
             <TableHeader>
               <Column key="foo" width="10%">Foo</Column>
               <Column key="bar" width={500}>Bar</Column>
@@ -3405,7 +3795,7 @@ describe('Table', function () {
                 </Row>)
               }
             </TableBody>
-          </Table>
+          </TableView>
         );
 
         let rows = tree.getAllByRole('row');
@@ -3419,7 +3809,7 @@ describe('Table', function () {
 
       it('should support minWidth', function () {
         let tree = render(
-          <Table aria-label="Table" selectionMode="multiple">
+          <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader>
               <Column key="foo" width={200}>Foo</Column>
               <Column key="bar" minWidth={500}>Bar</Column>
@@ -3432,22 +3822,22 @@ describe('Table', function () {
                 </Row>)
               }
             </TableBody>
-          </Table>
+          </TableView>
         );
 
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[0].style.width).toBe('38px');
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('245px');
+          expect(row.childNodes[3].style.width).toBe('262px');
         }
       });
 
       it('should support maxWidth', function () {
         let tree = render(
-          <Table aria-label="Table">
+          <TableView aria-label="Table">
             <TableHeader>
               <Column key="foo" width={200}>Foo</Column>
               <Column key="bar" maxWidth={300}>Bar</Column>
@@ -3460,7 +3850,7 @@ describe('Table', function () {
                 </Row>)
               }
             </TableBody>
-          </Table>
+          </TableView>
         );
 
         let rows = tree.getAllByRole('row');
@@ -3475,7 +3865,7 @@ describe('Table', function () {
 
       it('should compute the correct widths for tiered headings with selection', function () {
         let tree = render(
-          <Table aria-label="Table" selectionMode="multiple">
+          <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader columns={nestedColumns}>
               {column => <Column childColumns={column.children}>{column.name}</Column>}
             </TableHeader>
@@ -3486,26 +3876,26 @@ describe('Table', function () {
                 </Row>)
               }
             </TableBody>
-          </Table>
+          </TableView>
         );
 
         let rows = tree.getAllByRole('row');
 
-        expect(rows[0].childNodes[0].style.width).toBe('244px');
-        expect(rows[0].childNodes[1].style.width).toBe('756px');
+        expect(rows[0].childNodes[0].style.width).toBe('230.4px');
+        expect(rows[0].childNodes[1].style.width).toBe('769.6px');
 
-        expect(rows[1].childNodes[0].style.width).toBe('244px');
-        expect(rows[1].childNodes[1].style.width).toBe('378px');
-        expect(rows[1].childNodes[2].style.width).toBe('189px');
-        expect(rows[1].childNodes[3].style.width).toBe('189px');
+        expect(rows[1].childNodes[0].style.width).toBe('230.4px');
+        expect(rows[1].childNodes[1].style.width).toBe('384.8px');
+        expect(rows[1].childNodes[2].style.width).toBe('192.4px');
+        expect(rows[1].childNodes[3].style.width).toBe('192.4px');
 
         for (let row of rows.slice(2)) {
-          expect(row.childNodes[0].style.width).toBe('55px');
-          expect(row.childNodes[1].style.width).toBe('189px');
-          expect(row.childNodes[2].style.width).toBe('189px');
-          expect(row.childNodes[3].style.width).toBe('189px');
-          expect(row.childNodes[4].style.width).toBe('189px');
-          expect(row.childNodes[5].style.width).toBe('189px');
+          expect(row.childNodes[0].style.width).toBe('38px');
+          expect(row.childNodes[1].style.width).toBe('192.4px');
+          expect(row.childNodes[2].style.width).toBe('192.4px');
+          expect(row.childNodes[3].style.width).toBe('192.4px');
+          expect(row.childNodes[4].style.width).toBe('192.4px');
+          expect(row.childNodes[5].style.width).toBe('192.4px');
         }
       });
     });
@@ -3583,12 +3973,63 @@ describe('Table', function () {
         expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
       }
     });
+
+    it('should update the row widths when removing and adding columns', function () {
+      function compareWidths(row, b) {
+        let newWidth = row.childNodes[1].style.width;
+        expect(parseInt(newWidth, 10)).toBeGreaterThan(parseInt(b, 10));
+        return newWidth;
+      }
+
+      let tree = render(<HidingColumns />);
+      let table = tree.getByRole('grid');
+      let columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(6);
+
+      let rows = tree.getAllByRole('row');
+      let oldWidth = rows[1].childNodes[1].style.width;
+
+      let audienceCheckbox = tree.getByLabelText('Audience Type');
+      let budgetCheckbox = tree.getByLabelText('Net Budget');
+      let targetCheckbox = tree.getByLabelText('Target OTP');
+      let reachCheckbox = tree.getByLabelText('Reach');
+
+      userEvent.click(audienceCheckbox);
+      expect(audienceCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+
+      userEvent.click(budgetCheckbox);
+      expect(budgetCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+
+      userEvent.click(targetCheckbox);
+      expect(targetCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+
+      // This previously failed, the first column wouldn't update its width
+      // when the 2nd to last column was removed
+      userEvent.click(reachCheckbox);
+      expect(reachCheckbox.checked).toBe(false);
+      act(() => jest.runAllTimers());
+      oldWidth = compareWidths(rows[1], oldWidth);
+      columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(2);
+
+      // Readd the column and check that the width decreases
+      userEvent.click(audienceCheckbox);
+      expect(audienceCheckbox.checked).toBe(true);
+      act(() => jest.runAllTimers());
+      expect(parseInt(rows[1].childNodes[1].style.width, 10)).toBeLessThan(parseInt(oldWidth, 10));
+    });
   });
 
   describe('headerless columns', function () {
 
     let renderTable = (props, scale, showDivider = false) => render(
-      <Table aria-label="Table" data-testid="test" {...props}>
+      <TableView aria-label="Table" data-testid="test" {...props}>
         <TableHeader>
           <Column key="foo">Foo</Column>
           <Column key="addAction" hideHeader showDivider={showDivider}>
@@ -3605,7 +4046,7 @@ describe('Table', function () {
             </Cell>
           </Row>
         </TableBody>
-      </Table>
+      </TableView>
       , scale);
 
     it('renders  table with headerless column with default scale', function () {

@@ -184,6 +184,30 @@ By default, the label is positioned above the TextArea. The `labelPosition` prop
 <TextArea label="Search" labelPosition="side" labelAlign="end" />
 ```
 
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/text-area/#Help-text-(description-and-error-message))
+
+Both a description and an error message can be supplied to a TextArea. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState('0');
+  let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+
+  return (
+    <TextArea
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Favorite number"
+      maxLength={1}
+      description="Enter a single digit number."
+      errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9.'}
+    />
+  );
+}
+```
+
 ### Custom width
 
 [View guidelines](https://spectrum.adobe.com/page/text-area/#Width)

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, Node, PressEvent, SelectionMode} from '@react-types/shared';
+import {Collection, FocusStrategy, Selection as ISelection, Node, PressEvent, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
@@ -92,6 +92,14 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   /**
+   * The raw selection value for the collection.
+   * Either 'all' for select all, or a set of keys.
+   */
+  get rawSelection(): ISelection {
+    return this.state.selectedKeys;
+  }
+
+  /**
    * Returns whether a key is selected.
    */
   isSelected(key: Key) {
@@ -100,7 +108,9 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     key = this.getKey(key);
-    return this.state.selectedKeys === 'all' || this.state.selectedKeys.has(key);
+    return this.state.selectedKeys === 'all'
+      ? !this.state.disabledKeys.has(key)
+      : this.state.selectedKeys.has(key);
   }
 
   /**
@@ -161,27 +171,28 @@ export class SelectionManager implements MultipleSelectionManager {
    */
   extendSelection(toKey: Key) {
     toKey = this.getKey(toKey);
-    this.state.setSelectedKeys(selectedKeys => {
-      // Only select the one key if coming from a select all.
-      if (selectedKeys === 'all') {
-        return new Selection([toKey], toKey, toKey);
-      }
 
-      let selection = selectedKeys as Selection;
-      let anchorKey = selection.anchorKey || toKey;
-      let keys = new Selection(selection, anchorKey, toKey);
-      for (let key of this.getKeyRange(anchorKey, selection.currentKey || toKey)) {
-        keys.delete(key);
+    let selection: Selection;
+
+    // Only select the one key if coming from a select all.
+    if (this.state.selectedKeys === 'all') {
+      selection = new Selection([toKey], toKey, toKey);
+    } else {
+      let selectedKeys = this.state.selectedKeys as Selection;
+      let anchorKey = selectedKeys.anchorKey || toKey;
+      selection = new Selection(selectedKeys, anchorKey, toKey);
+      for (let key of this.getKeyRange(anchorKey, selectedKeys.currentKey || toKey)) {
+        selection.delete(key);
       }
 
       for (let key of this.getKeyRange(toKey, anchorKey)) {
         if (!this.state.disabledKeys.has(key)) {
-          keys.add(key);
+          selection.add(key);
         }
       }
+    }
 
-      return keys;
-    });
+    this.state.setSelectedKeys(selection);
   }
 
   private getKeyRange(from: Key, to: Key) {
@@ -250,20 +261,22 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    this.state.setSelectedKeys(selectedKeys => {
-      let keys = new Selection(selectedKeys === 'all' ? this.getSelectAllKeys() : selectedKeys);
-      if (keys.has(key)) {
-        keys.delete(key);
-        // TODO: move anchor to last selected key...
-        // Does `current` need to move here too?
-      } else {
-        keys.add(key);
-        keys.anchorKey = key;
-        keys.currentKey = key;
-      }
+    let keys = new Selection(this.state.selectedKeys === 'all' ? this.getSelectAllKeys() : this.state.selectedKeys);
+    if (keys.has(key)) {
+      keys.delete(key);
+      // TODO: move anchor to last selected key...
+      // Does `current` need to move here too?
+    } else {
+      keys.add(key);
+      keys.anchorKey = key;
+      keys.currentKey = key;
+    }
 
-      return keys;
-    });
+    if (this.disallowEmptySelection && keys.size === 0) {
+      return;
+    }
+
+    this.state.setSelectedKeys(keys);
   }
 
   /**
@@ -337,7 +350,7 @@ export class SelectionManager implements MultipleSelectionManager {
    * Removes all keys from the selection.
    */
   clearSelection() {
-    if (this.state.selectedKeys === 'all' || this.state.selectedKeys.size > 0) {
+    if (!this.disallowEmptySelection && (this.state.selectedKeys === 'all' || this.state.selectedKeys.size > 0)) {
       this.state.setSelectedKeys(new Selection());
     }
   }

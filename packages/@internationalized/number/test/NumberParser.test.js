@@ -251,9 +251,11 @@ describe('NumberParser', function () {
       expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10')).toBe(true);
       expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10.5')).toBe(false);
       expect(new NumberParser('en-US', {style: 'percent', minimumFractionDigits: 2}).isValidPartialNumber('10.5')).toBe(true);
+      expect(new NumberParser('en-US', {style: 'percent', maximumFractionDigits: 2}).isValidPartialNumber('10.5')).toBe(true);
       expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10%')).toBe(true);
       expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10.5%')).toBe(false);
       expect(new NumberParser('en-US', {style: 'percent', minimumFractionDigits: 2}).isValidPartialNumber('10.5%')).toBe(true);
+      expect(new NumberParser('en-US', {style: 'percent', maximumFractionDigits: 2}).isValidPartialNumber('10.5%')).toBe(true);
       expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('%')).toBe(true);
       expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10 %')).toBe(true);
     });

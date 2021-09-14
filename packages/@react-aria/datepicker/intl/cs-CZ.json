@@ -1,10 +1,13 @@
 {
   "calendar": "Kalendář",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} až {end, date, long}",
   "date": "Datum",
   "dateRange": "Rozsah dat",
   "day": "Den",
   "dayPeriod": "Denní doba",
   "endDate": "Konečné datum",
+  "era": "Letopočet",
   "hour": "Hodina",
   "minute": "Minuta",
   "month": "Měsíc",

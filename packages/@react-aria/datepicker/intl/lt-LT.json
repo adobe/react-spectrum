@@ -1,10 +1,13 @@
 {
   "calendar": "Kalendorius",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "Nuo {start, date, long} iki {end, date, long}",
   "date": "Data",
   "dateRange": "Datų intervalas",
   "day": "Diena",
   "dayPeriod": "Dienos laikotarpis",
   "endDate": "Pabaigos data",
+  "era": "Era",
   "hour": "Valanda",
   "minute": "Minutė",
   "month": "Mėnuo",

@@ -11,45 +11,29 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-types/dialog';
-import {DatePickerProps, DateRangePickerProps} from '@react-types/datepicker';
-import {DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
-import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId, useLabels} from '@react-aria/utils';
-import {HTMLAttributes, KeyboardEvent} from 'react';
+import {createFocusManager} from '@react-aria/focus';
+import {DatePickerState} from '@react-stately/datepicker';
+import {HTMLAttributes, KeyboardEvent, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useMessageFormatter} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
+import {mergeProps, useDescription, useId} from '@react-aria/utils';
+import {useLabel} from '@react-aria/label';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
-interface DatePickerAria {
-  comboboxProps: HTMLAttributes<HTMLElement>,
-  fieldProps: HTMLAttributes<HTMLElement>,
+interface DatePickerAria<T extends DateValue> {
+  groupProps: HTMLAttributes<HTMLElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  fieldProps: AriaDatePickerProps<T>,
   buttonProps: AriaButtonProps,
   dialogProps: AriaDialogProps
 }
 
-type DatePickerAriaProps = (DatePickerProps | DateRangePickerProps) & DOMProps;
-
-export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState | DateRangePickerState): DatePickerAria {
+export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<HTMLElement>): DatePickerAria<T> {
   let buttonId = useId();
   let dialogId = useId();
   let formatMessage = useMessageFormatter(intlMessages);
-  let labels = useLabels(props, formatMessage('date'));
-  let labelledBy = labels['aria-labelledby'] || labels.id;
-  let domProps = filterDOMProps(props, {labelable: true});
-
-  // When a touch event occurs on the date field, open the calendar instead.
-  // The date segments are too small to interact with on a touch device.
-  // TODO: time picker in popover??
-  let {pressProps} = usePress({
-    onPress: (e) => {
-      // really should detect if there is a keyboard attached too, but not sure how to do that.
-      if (e.pointerType === 'touch' || e.pointerType === 'pen') {
-        state.setOpen(true);
-      }
-    }
-  });
 
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
@@ -60,32 +44,41 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
     }
   };
 
+  let {labelProps, fieldProps} = useLabel({
+    ...props,
+    labelElementType: 'span'
+  });
+
+  let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
+
+  let {locale} = useLocale();
+  let descriptionProps = useDescription(state.formatValue(locale, {month: 'long'}));
+
   return {
-    comboboxProps: mergeProps(domProps, {
-      role: 'combobox',
-      'aria-haspopup': 'dialog',
-      'aria-expanded': state.isOpen,
-      'aria-owns': state.isOpen ? dialogId : null,
-      'aria-invalid': state.validationState === 'invalid' || null,
-      'aria-errormessage': props['aria-errormessage'],
+    groupProps: mergeProps(descriptionProps, {
+      role: 'group',
       'aria-disabled': props.isDisabled || null,
-      'aria-readonly': props.isReadOnly || null,
-      'aria-required': props.isRequired || null,
-      ...mergeProps(pressProps, {onKeyDown}),
-      ...labels
+      'aria-labelledby': labelledBy,
+      onKeyDown
     }),
-    fieldProps: {
-      'aria-labelledby': labelledBy
+    labelProps: {
+      ...labelProps,
+      onClick: () => {
+        let focusManager = createFocusManager(ref);
+        focusManager.focusFirst();
+      }
     },
+    fieldProps,
     buttonProps: {
-      excludeFromTabOrder: true,
+      ...descriptionProps,
       id: buttonId,
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`
     },
     dialogProps: {
-      id: dialogId
+      id: dialogId,
+      'aria-labelledby': `${labelledBy} ${buttonId}`
     }
   };
 }

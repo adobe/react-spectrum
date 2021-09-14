@@ -1,0 +1,12 @@
+diff --git a/node_modules/@parcel/bundler-default/lib/DefaultBundler.js b/node_modules/@parcel/bundler-default/lib/DefaultBundler.js
+index 262937e..9262447 100644
+--- a/node_modules/@parcel/bundler-default/lib/DefaultBundler.js
++++ b/node_modules/@parcel/bundler-default/lib/DefaultBundler.js
+@@ -207,6 +207,7 @@ var _default = new _plugin.Bundler({
+     bundleGraph,
+     config
+   }) {
++    return;
+     (0, _assert.default)(config != null); // Step 2: Remove asset graphs that begin with entries to other bundles.
+ 
+     bundleGraph.traverseBundles(bundle => {

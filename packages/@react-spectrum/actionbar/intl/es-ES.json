@@ -1,0 +1,7 @@
+{
+  "actions": "Acciones",
+  "actionsAvailable": "Acciones disponibles.",
+  "clearSelection": "Borrar selección",
+  "selected": "{count, plural, =0 {Nada seleccionado} other {# seleccionado}}",
+  "selectedAll": "Todo seleccionado"
+}

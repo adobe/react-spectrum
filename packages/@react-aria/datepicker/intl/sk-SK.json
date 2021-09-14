@@ -1,10 +1,13 @@
 {
   "calendar": "Kalendár",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} do {end, date, long}",
   "date": "Dátum",
   "dateRange": "Rozsah dátumov",
   "day": "Deň",
   "dayPeriod": "Časť dňa",
   "endDate": "Dátum ukončenia",
+  "era": "Letopočet",
   "hour": "Hodina",
   "minute": "Minúta",
   "month": "Mesiac",

@@ -120,6 +120,9 @@ function rtl(ltr: string, rtl: string) {
 }
 
 const UNIT_RE = /(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax|fr)$/;
+const FUNC_RE = /^\s*\w+\(/;
+const SPECTRUM_VARIABLE_RE = /(static-)?size-\d+|single-line-(height|width)/g;
+
 export function dimensionValue(value: DimensionValue) {
   if (typeof value === 'number') {
     return value + 'px';
@@ -127,6 +130,10 @@ export function dimensionValue(value: DimensionValue) {
 
   if (UNIT_RE.test(value)) {
     return value;
+  }
+
+  if (FUNC_RE.test(value)) {
+    return value.replace(SPECTRUM_VARIABLE_RE, 'var(--spectrum-global-dimension-$&, var(--spectrum-alias-$&))');
   }
 
   return `var(--spectrum-global-dimension-${value}, var(--spectrum-alias-${value}))`;
@@ -212,31 +219,33 @@ export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers
   return style;
 }
 
-export function useStyleProps<T extends StyleProps>(props: T, options: {
-  handlers?: StyleHandlers,
+type StylePropsOptions = {
   matchedBreakpoints?: Breakpoint[]
-} = {
-  handlers: baseStyleProps
-}) {
+};
+
+export function useStyleProps<T extends StyleProps>(
+  props: T,
+  handlers: StyleHandlers = baseStyleProps,
+  options: StylePropsOptions = {}
+) {
   let {
     UNSAFE_className,
     UNSAFE_style,
     ...otherProps
   } = props;
-  let {
-    handlers = baseStyleProps,
-    matchedBreakpoints = ['base']
-  } = options;
   let breakpointProvider = useBreakpoint();
   let {direction} = useLocale();
-  let styles = convertStyleProps(props, handlers, direction, breakpointProvider?.matchedBreakpoints || matchedBreakpoints);
+  let {
+    matchedBreakpoints = breakpointProvider?.matchedBreakpoints || ['base']
+  } = options;
+  let styles = convertStyleProps(props, handlers, direction, matchedBreakpoints);
   let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore
   if (otherProps.className) {
     console.warn(
       'The className prop is unsafe and is unsupported in React Spectrum v3. ' +
-      'Please use style props with Spectrum variables, or UNSAFE_className if you absolutely must to something custom. ' +
+      'Please use style props with Spectrum variables, or UNSAFE_className if you absolutely must do something custom. ' +
       'Note that this may break in future versions due to DOM structure changes.'
     );
   }
@@ -245,7 +254,7 @@ export function useStyleProps<T extends StyleProps>(props: T, options: {
   if (otherProps.style) {
     console.warn(
       'The style prop is unsafe and is unsupported in React Spectrum v3. ' +
-      'Please use style props with Spectrum variables, or UNSAFE_style if you absolutely must to something custom. ' +
+      'Please use style props with Spectrum variables, or UNSAFE_style if you absolutely must do something custom. ' +
       'Note that this may break in future versions due to DOM structure changes.'
     );
   }
@@ -255,7 +264,7 @@ export function useStyleProps<T extends StyleProps>(props: T, options: {
     className: UNSAFE_className
   };
 
-  if (props.isHidden) {
+  if (getResponsiveProp(props.isHidden, matchedBreakpoints)) {
     styleProps.hidden = true;
   }
 
@@ -272,7 +281,7 @@ export function getResponsiveProp<T>(prop: Responsive<T>, matchedBreakpoints: Br
   if (prop && typeof prop === 'object' && !Array.isArray(prop)) {
     for (let i = 0; i < matchedBreakpoints.length; i++) {
       let breakpoint = matchedBreakpoints[i];
-      if (prop[breakpoint]) {
+      if (prop[breakpoint] != null) {
         return prop[breakpoint];
       }
     }

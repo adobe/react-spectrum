@@ -1614,6 +1614,27 @@ describe('NumberField', function () {
       expect(decrementButton).not.toHaveAttribute('id');
       expect(decrementButton).not.toHaveAttribute('aria-labelledby');
     });
+
+    it('error message', () => {
+      let {textField, root} = renderNumberField({
+        label: 'Width',
+        errorMessage: 'This is a error.',
+        validationState: 'invalid'
+      });
+
+      let errorText = within(root).getByText('This is a error.');
+      expect(textField).toHaveAttribute('aria-describedby', errorText.id);
+    });
+
+    it('description', () => {
+      let {textField, root} = renderNumberField({
+        label: 'Width',
+        description: 'This is a description.'
+      });
+
+      let description = within(root).getByText('This is a description.');
+      expect(textField).toHaveAttribute('aria-describedby', description.id);
+    });
   });
 
   it.each`
@@ -1655,7 +1676,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(10123);
   });
 
-  it.each`
+  it.skip.each`
     Name
     ${'NumberField controlled'}
   `('$Name 10 is rendered and will change if the controlled version is implemented', () => {
@@ -1922,7 +1943,7 @@ describe('NumberField', function () {
       InputEvent.prototype.getTargetRanges = getTargetRanges;
     });
 
-    it.each(['deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('allows %s of whole currency symbol', (inputType) => {
+    it.each(['deleteHardLineBackward', 'deleteSoftLineBackward', 'deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('allows %s of whole currency symbol', (inputType) => {
       let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
 
       act(() => {textField.focus();});
@@ -1942,7 +1963,7 @@ describe('NumberField', function () {
       expect(proceed).toBe(true);
     });
 
-    it.each(['deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('prevents %s of partial currency symbol', (inputType) => {
+    it.each(['deleteHardLineBackward', 'deleteSoftLineBackward', 'deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('prevents %s of partial currency symbol', (inputType) => {
       let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
 
       act(() => {textField.focus();});

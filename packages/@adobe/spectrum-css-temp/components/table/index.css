@@ -28,10 +28,18 @@ governing permissions and limitations under the License.
 .spectrum-Table-sortedIcon {
   display: none;
   margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-arrow-down-small-width);
 
   vertical-align: middle;
 
   transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
+}
+
+.spectrum-Table-headWrapper {
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-right-width: 1px;
+  border-right-style: solid;
 }
 
 .spectrum-Table-headCell {
@@ -150,6 +158,10 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-cellContents {
+  flex: 1 1 0%;
+  /* To ensure the flex child only takes up available width, see https://makandracards.com/makandra/66994-css-flex-and-min-width */
+  min-width: 0px;
+
   /* truncate text with ellipsis */
   overflow: hidden;
   white-space: nowrap;
@@ -251,6 +263,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table--quiet {
+  .spectrum-Table-headWrapper {
+    border-left: 0;
+    border-right: 0;
+  }
+
   .spectrum-Table-body {
     border-radius: var(--spectrum-table-quiet-border-radius);
   }
@@ -272,6 +289,10 @@ governing permissions and limitations under the License.
   padding-top: 0px;
   padding-bottom: 0px;
   vertical-align: var(--spectrum-table-cell-checkbox-vertical-alignment);
+
+  .spectrum-Table-checkbox {
+    padding-inline-end: 0px;
+  }
 }
 
 .spectrum-Table-checkbox {

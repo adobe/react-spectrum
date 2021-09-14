@@ -44,7 +44,6 @@ governing permissions and limitations under the License.
 .spectrum-ActionGroup {
   display: flex;
   flex-wrap: wrap;
-  isolation: isolate;
   --column-gap: var(--spectrum-actionbuttongroup-text-button-gap-x);
   --row-gap: var(--spectrum-actionbuttongroup-text-button-gap-y);
 
@@ -162,4 +161,29 @@ governing permissions and limitations under the License.
       flex: 1 0 auto;
     }
   }
+}
+
+.spectrum-ActionGroup--overflowCollapse {
+  flex-wrap: nowrap;
+}
+
+.spectrum-ActionGroup-menu {
+  /* specificity must be higher than `.spectrum-ActionButton .spectrum-Icon` */
+  svg.spectrum-ActionGroup-menu-chevron {
+    order: 2;
+    padding-inline-start: 0;
+    padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
+  }
+
+  .spectrum-ActionGroup-menu-contents {
+    /* This wrapper is needed to keep the :only-child/sibling selectors
+     * in button CSS working with the additional chevron element. */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.spectrum-ActionGroup-item--iconOnly {
+  padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
 }

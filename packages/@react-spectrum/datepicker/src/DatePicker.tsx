@@ -12,80 +12,114 @@
 
 import {Calendar} from '@react-spectrum/calendar';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
+import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
+import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
-import {FocusRing, FocusScope} from '@react-aria/focus';
+import {FocusScope, useFocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
-import {SpectrumDatePickerProps} from '@react-types/datepicker';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import {TimeField} from './TimeField';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export function DatePicker(props: SpectrumDatePickerProps) {
+export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>) {
   props = useProviderProps(props);
   let {
     autoFocus,
-    formatOptions,
     isQuiet,
     isDisabled,
     isReadOnly,
     isRequired,
-    placeholderDate,
-    ...otherProps
+    placeholderValue,
+    visibleMonths
+    // showFormatHelpText,
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
-  let state = useDatePickerState(props);
-  let {comboboxProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state);
-  let {value, setValue, selectDate, isOpen, setOpen} = state;
   let targetRef = useRef<HTMLDivElement>();
+  let state = useDatePickerState(props);
+  let {groupProps, labelProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state, targetRef);
+  let {value, setValue, isOpen, setOpen} = state;
   let {direction} = useLocale();
+
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({
+    within: true,
+    isTextInput: true,
+    autoFocus
+  });
 
   let className = classNames(
     styles,
     'spectrum-InputGroup',
     {
       'spectrum-InputGroup--quiet': isQuiet,
-      'is-invalid': state.validationState === 'invalid',
+      'spectrum-InputGroup--invalid': state.validationState === 'invalid',
       'is-disabled': isDisabled,
-      'is-hovered': isHovered
-    },
-    styleProps.className
+      'is-hovered': isHovered,
+      'is-focused': isFocused,
+      'focus-ring': isFocusVisible
+    }
   );
+
+  let fieldClassName = classNames(
+    styles,
+    'spectrum-InputGroup-input',
+    {
+      'is-disabled': isDisabled,
+      'is-invalid': state.validationState === 'invalid'
+    }
+  );
+
+  // TODO: format help text
+  // let formatter = useDateFormatter({dateStyle: 'short'});
+  // let segments = showFormatHelpText ? formatter.formatToParts(new Date()).map(s => {
+  //   if (s.type === 'literal') {
+  //     return s.value;
+  //   }
+
+  //   return s.type;
+  // }).join(' ') : '';
+
+  let v = state.value || props.placeholderValue;
+  let placeholder: DateValue = placeholderValue;
+  let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : null;
+  let timeMinValue = props.minValue && 'hour' in props.minValue ? props.minValue : null;
+  let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
+  let timeGranularity = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second' || props.granularity === 'millisecond' ? props.granularity : null;
+  let showTimeField = (v && 'hour' in v) || !!timeGranularity;
+
   return (
-    <FocusRing
-      within
-      isTextInput
-      focusClass={classNames(styles, 'is-focused')}
-      focusRingClass={classNames(styles, 'focus-ring')}
-      autoFocus={autoFocus}>
+    <Field {...props} labelProps={labelProps}>
       <div
-        {...styleProps}
-        {...mergeProps(comboboxProps, hoverProps)}
+        {...mergeProps(groupProps, hoverProps, focusProps)}
         className={className}
         ref={targetRef}>
         <FocusScope autoFocus={autoFocus}>
           <DatePickerField
-            {...fieldProps as any}
+            {...fieldProps}
             data-testid="date-field"
             isQuiet={isQuiet}
             validationState={state.validationState}
             value={value}
             onChange={setValue}
-            placeholderDate={placeholderDate}
+            placeholderValue={placeholderValue}
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
             isRequired={isRequired}
-            formatOptions={formatOptions}
-            UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-endField')} />
+            granularity={props.granularity}
+            hourCycle={props.hourCycle}
+            inputClassName={fieldClassName}
+            UNSAFE_className={classNames(styles, 'spectrum-InputGroup-field')}
+            hideTimeZone={props.hideTimeZone} />
         </FocusScope>
         <DialogTrigger
           type="popover"
@@ -104,13 +138,28 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
-            <Calendar
-              autoFocus
-              value={value}
-              onChange={selectDate} />
+            <Content>
+              <Calendar
+                autoFocus
+                value={state.dateValue}
+                onChange={state.setDateValue}
+                visibleMonths={visibleMonths} />
+              {showTimeField &&
+                <TimeField
+                  label="Time"
+                  value={state.timeValue}
+                  onChange={state.setTimeValue}
+                  placeholderValue={timePlaceholder}
+                  granularity={timeGranularity}
+                  minValue={timeMinValue}
+                  maxValue={timeMaxValue}
+                  hourCycle={props.hourCycle}
+                  hideTimeZone={props.hideTimeZone} />
+              }
+            </Content>
           </Dialog>
         </DialogTrigger>
       </div>
-    </FocusRing>
+    </Field>
   );
 }

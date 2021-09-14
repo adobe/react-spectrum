@@ -10,10 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {DOMProps, RangeValue, StyleProps, ValueBase} from '@react-types/shared';
 
-export type DateValue = string | number | Date;
+export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
+type MappedDateValue<T> =
+  T extends ZonedDateTime ? ZonedDateTime :
+  T extends CalendarDateTime ? CalendarDateTime :
+  T extends CalendarDate ? CalendarDate :
+  never;
+
 export interface CalendarPropsBase {
+  timeZone?: string,
   minValue?: DateValue,
   maxValue?: DateValue,
   isDisabled?: boolean,
@@ -21,8 +29,14 @@ export interface CalendarPropsBase {
   autoFocus?: boolean
 }
 
-export interface CalendarProps extends CalendarPropsBase, ValueBase<DateValue> {}
-export interface RangeCalendarProps extends CalendarPropsBase, ValueBase<RangeValue<DateValue>> {}
+export type DateRange = RangeValue<DateValue>;
+export interface CalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<T, MappedDateValue<T>> {}
+export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<RangeValue<T>, RangeValue<MappedDateValue<T>>> {}
 
-export interface SpectrumCalendarProps extends CalendarProps, DOMProps, StyleProps {}
-export interface SpectrumRangeCalendarProps extends RangeCalendarProps, DOMProps, StyleProps {}
+export interface SpectrumCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, StyleProps {
+  visibleMonths?: number
+}
+
+export interface SpectrumRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, StyleProps {
+  visibleMonths?: number
+}

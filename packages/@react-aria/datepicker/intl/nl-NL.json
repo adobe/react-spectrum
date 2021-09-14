@@ -1,10 +1,13 @@
 {
   "calendar": "Kalender",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} t/m {end, date, long}",
   "date": "Datum",
   "dateRange": "Datumbereik",
   "day": "Dag",
   "dayPeriod": "Dagdeel",
   "endDate": "Einddatum",
+  "era": "Tijdperk",
   "hour": "Uur",
   "minute": "Minuut",
   "month": "Maand",
