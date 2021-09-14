@@ -56,7 +56,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   protected margin: number;
   protected minSpace: Size;
   protected maxColumns: number;
-  protected itemPadding: number;
+  itemPadding: number;
   protected numColumns: number;
   protected itemWidth: number;
   protected horizontalSpacing: number;

@@ -84,7 +84,7 @@ export class GridLayout<T> extends BaseLayout<T> {
   protected margin: number;
   protected minSpace: Size;
   protected maxColumns: number;
-  protected itemPadding: number;
+  itemPadding: number;
   protected itemSize: Size;
   protected numColumns: number;
   protected numRows: number;

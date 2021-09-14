@@ -68,7 +68,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
   protected idealRowHeight: number;
   protected margin: number;
   protected itemSpacing: Size;
-  protected itemPadding: number;
+  itemPadding: number;
 
   constructor(options: GalleryLayoutOptions = {}) {
     super(options);
