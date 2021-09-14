@@ -11,6 +11,7 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './';
+import {GridCollection} from '@react-stately/grid';
 import {Key} from 'react';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Node} from '@react-types/shared';
@@ -138,9 +139,8 @@ export class GridLayout<T> extends BaseLayout<T> {
       // The approach from v2 uses indexes where other v3 layouts iterate through every node/root node. This feels more efficient
       let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
       let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
-
       for (let index = firstVisibleItem; index <= lastVisibleItem; index++) {
-        let keyFromIndex = this.collection.at(index).key;
+        let keyFromIndex = this.collection.rows[index].key;
         let layoutInfo = this.layoutInfos.get(keyFromIndex);
         if (this.isVisible(layoutInfo, rect)) {
           res.push(layoutInfo);
@@ -158,7 +158,7 @@ export class GridLayout<T> extends BaseLayout<T> {
   }
 
   validate() {
-    this.collection = this.virtualizer.collection;
+    this.collection = this.virtualizer.collection as GridCollection<T>;
     this.buildCollection();
 
     // Remove layout info that doesn't exist in new collection
@@ -249,6 +249,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     y = this.margin + row * (this.itemSize.height + this.minSpace.height);
 
     let rect = new Rect(x, y, this.itemSize.width, this.itemSize.height);
+    // TODO: Perhaps have it so that the child key for each row is stored with the layoutInfo?
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     this.layoutInfos.set(node.key, layoutInfo);
     return layoutInfo;
@@ -258,28 +259,30 @@ export class GridLayout<T> extends BaseLayout<T> {
   // then return the key that occupies the row + column below. This can be done by figuring out how many cards exist per column then dividing the
   // collection contents by that number (which will give us the row distribution)
   getKeyBelow(key: Key) {
+    // Expected key is the currently focused cell so we need the parent row key
+    let parentRowKey = this.collection.getItem(key).parentKey;
     let indexRowBelow;
-    let keyArray = [...this.collection.getKeys()];
-    let index = keyArray.findIndex(k => k === key);
+    let index = this.collection.rows.findIndex(card => card.key === parentRowKey);
     if (index !== -1) {
       indexRowBelow = index + this.numColumns;
     } else {
       return null;
     }
 
-    return this.collection.at(indexRowBelow)?.key || null;
+    return this.collection.rows[indexRowBelow]?.childNodes[0].key || null;
   }
 
   getKeyAbove(key: Key) {
+    // Expected key is the currently focused cell so we need the parent row key
+    let parentRowKey = this.collection.getItem(key).parentKey;
     let indexRowAbove;
-    let keyArray = [...this.collection.getKeys()];
-    let index = keyArray.findIndex(k => k === key);
+    let index = this.collection.rows.findIndex(card => card.key === parentRowKey);
     if (index !== -1) {
       indexRowAbove = index - this.numColumns;
     } else {
       return null;
     }
 
-    return this.collection.at(indexRowAbove)?.key || null;
+    return this.collection.rows[indexRowAbove]?.childNodes[0].key || null;
   }
 }

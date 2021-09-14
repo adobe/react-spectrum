@@ -11,6 +11,7 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './';
+import {GridCollection} from '@react-stately/grid';
 import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 import {KeyboardDelegate, Node} from '@react-types/shared';
@@ -84,7 +85,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   }
 
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
-    this.collection = this.virtualizer.collection;
+    this.collection = this.virtualizer.collection as GridCollection<T>;
     this.buildCollection(invalidationContext);
 
     // Remove layout info that doesn't exist in new collection
@@ -245,7 +246,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
 
-    return key;
+    return this.collection.getItem(key)?.childNodes[0]?.key;
   }
 
   getClosestLeft(key: Key) {
@@ -259,14 +260,18 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
 
-    return key;
+    return this.collection.getItem(key)?.childNodes[0]?.key;
   }
 
   getKeyRightOf(key: Key) {
-    return this.direction === 'rtl' ?  this.getClosestLeft(key) : this.getClosestRight(key);
+    // Expected key is the currently focused cell so we need the parent row key
+    let parentRowKey = this.collection.getItem(key).parentKey;
+    return this.direction === 'rtl' ?  this.getClosestLeft(parentRowKey) : this.getClosestRight(parentRowKey);
   }
 
   getKeyLeftOf(key: Key) {
-    return this.direction === 'rtl' ?  this.getClosestRight(key) : this.getClosestLeft(key);
+    // Expected key is the currently focused cell so we need the parent row key
+    let parentRowKey = this.collection.getItem(key).parentKey;
+    return this.direction === 'rtl' ?  this.getClosestRight(parentRowKey) : this.getClosestLeft(parentRowKey);
   }
 }
