@@ -49,13 +49,17 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     columnCount: 1,
     items: [...collection].map(item => ({
       // Makes the Grid row use the keys the user provides to the cards so that selection change via interactions returns the card keys
-      type: 'item',
-      key: item.key,
+      ...item,
+      hasChildNodes: true,
       childNodes: [{
-        ...item,
-        index: 0,
+        key: `cell-${item.key}`,
         type: 'cell',
-        key: `cell-${item.key}`
+        value: null,
+        level: 0,
+        rendered: null,
+        textValue: item.textValue,
+        hasChildNodes: false,
+        childNodes: []
       }]
     }))
   }), [collection]);
@@ -68,7 +72,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   // TODO: need to fix the typescript here, perhaps add a new type in Card types which is a Layout w/ these properties
   // TODO: double check that this is the correct collection being set (we wanna use the list collection for the keyboard delegate?)
   // If not, update the gridlayout code to use the gridCollection
-  cardViewLayout.collection = collection;
+  cardViewLayout.collection = gridCollection;
   cardViewLayout.disabledKeys = state.disabledKeys;
   cardViewLayout.isLoading = isLoading;
   cardViewLayout.direction = direction;
@@ -89,6 +93,12 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
       parent={parent} />
   );
 
+  let focusedKey = state.selectionManager.focusedKey;
+  let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
+  if (focusedItem?.parentKey != null) {
+    focusedKey = focusedItem.parentKey;
+  }
+
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
     <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout}}>
@@ -97,10 +107,10 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         {...styleProps}
         className={classNames(cardViewStyles, 'react-spectrum-CardView')}
         ref={domRef}
-        focusedKey={state.selectionManager.focusedKey}
+        focusedKey={focusedKey}
         scrollDirection="vertical"
         layout={cardViewLayout}
-        collection={collection}
+        collection={gridCollection}
         isLoading={isLoading}
         onLoadMore={onLoadMore}
         renderWrapper={renderWrapper}>
@@ -155,6 +165,7 @@ function InternalCard(props) {
   let {
     item
   } = props;
+  let cellNode = [...item.childNodes][0];
   let {state, cardOrientation, isQuiet, layout} = useCardViewContext();
 
   let layoutType = layout.layoutType;
@@ -168,7 +179,7 @@ function InternalCard(props) {
   }, state, rowRef);
 
   let {gridCellProps} = useGridCell({
-    node: item,
+    node: cellNode,
     focusMode: 'cell'
   }, state, unwrappedRef);
 

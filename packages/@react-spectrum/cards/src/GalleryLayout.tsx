@@ -11,6 +11,7 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './';
+import {GridCollection} from '@react-stately/grid';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface GalleryLayoutOptions extends BaseLayoutOptions {
@@ -84,7 +85,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
   }
 
   validate() {
-    this.collection = this.virtualizer.collection;
+    this.collection = this.virtualizer.collection as GridCollection<T>;
     this.buildCollection();
 
     // Remove layout info that doesn't exist in new collection
@@ -146,7 +147,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
 
       // Create items for this row.
       for (let j = index; j < index + row.length; j++) {
-        let node = this.collection.at(j);
+        let node = this.collection.rows[j];
         let itemWidth = Math.round(rowHeight * ratios[j]);
         let rect = new Rect(x, y, itemWidth, itemHeight);
         let layoutInfo = new LayoutInfo(node.type, node.key, rect);
