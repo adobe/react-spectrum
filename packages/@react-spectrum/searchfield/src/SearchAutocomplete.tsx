@@ -75,7 +75,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
       defaultFilter: contains,
       allowsEmptyCollection: isAsync,
       allowsCustomValue: true,
-      onSelectionChange: (key) => key !== null && props.onSubmit(null, key)
+      onSelectionChange: (key) => key !== null && props.onSubmit && props.onSubmit(null, key)
     }
   );
   let layout = useListBoxLayout(state);
