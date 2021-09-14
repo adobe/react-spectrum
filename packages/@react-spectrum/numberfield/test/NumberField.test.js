@@ -1614,6 +1614,27 @@ describe('NumberField', function () {
       expect(decrementButton).not.toHaveAttribute('id');
       expect(decrementButton).not.toHaveAttribute('aria-labelledby');
     });
+
+    it('error message', () => {
+      let {textField, root} = renderNumberField({
+        label: 'Width',
+        errorMessage: 'This is a error.',
+        validationState: 'invalid'
+      });
+
+      let errorText = within(root).getByText('This is a error.');
+      expect(textField).toHaveAttribute('aria-describedby', errorText.id);
+    });
+
+    it('description', () => {
+      let {textField, root} = renderNumberField({
+        label: 'Width',
+        description: 'This is a description.'
+      });
+
+      let description = within(root).getByText('This is a description.');
+      expect(textField).toHaveAttribute('aria-describedby', description.id);
+    });
   });
 
   it.each`
@@ -1655,7 +1676,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(10123);
   });
 
-  it.each`
+  it.skip.each`
     Name
     ${'NumberField controlled'}
   `('$Name 10 is rendered and will change if the controlled version is implemented', () => {

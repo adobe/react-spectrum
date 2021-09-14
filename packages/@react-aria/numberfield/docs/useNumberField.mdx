@@ -106,6 +106,8 @@ function NumberField(props) {
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
   let inputRef = React.useRef();
+  let incrRef = React.useRef();
+  let decRef = React.useRef();
   let {
     labelProps,
     groupProps,
@@ -114,16 +116,16 @@ function NumberField(props) {
     decrementButtonProps
   } = useNumberField(props, state, inputRef);
 
-  let {buttonProps: incrementProps} = useButton(incrementButtonProps);
-  let {buttonProps: decrementProps} = useButton(decrementButtonProps);
+  let {buttonProps: incrementProps} = useButton(incrementButtonProps, incrRef);
+  let {buttonProps: decrementProps} = useButton(decrementButtonProps, decRef);
 
   return (
     <div>
       <label {...labelProps}>{props.label}</label>
       <div {...groupProps}>
-        <button {...decrementProps}>-</button>
+        <button {...decrementProps} ref={incrRef}>-</button>
         <input {...inputProps} ref={inputRef} />
-        <button {...incrementProps}>+</button>
+        <button {...incrementProps} ref={decRef}>+</button>
       </div>
     </div>
   );

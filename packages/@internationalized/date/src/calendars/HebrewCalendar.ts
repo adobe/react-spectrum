@@ -183,15 +183,14 @@ export class HebrewCalendar implements Calendar {
     return ['AM'];
   }
 
-  addYears(date: Mutable<AnyCalendarDate>, years: number) {
+  balanceYearMonth(date: Mutable<AnyCalendarDate>, previousDate: AnyCalendarDate) {
     // Keep date in the same month when switching between leap years and non leap years
-    let nextYear = date.year + years;
-    if (isLeapYear(date.year) && !isLeapYear(nextYear) && date.month > 6) {
-      date.month--;
-    } else if (!isLeapYear(date.year) && isLeapYear(nextYear) && date.month > 6) {
-      date.month++;
+    if (previousDate.year !== date.year) {
+      if (isLeapYear(previousDate.year) && !isLeapYear(date.year) && previousDate.month > 6) {
+        date.month--;
+      } else if (!isLeapYear(previousDate.year) && isLeapYear(date.year) && previousDate.month > 6) {
+        date.month++;
+      }
     }
-
-    date.year = nextYear;
   }
 }

@@ -15,7 +15,7 @@
 
 import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
-import {mod} from '../utils';
+import {mod, Mutable} from '../utils';
 
 const EPOCH = 1721426; // 001/01/03 Julian C.E.
 export function gregorianToJulianDay(year: number, month: number, day: number): number {
@@ -99,5 +99,16 @@ export class GregorianCalendar implements Calendar {
 
   getEras() {
     return ['BC', 'AD'];
+  }
+
+  getYearsToAdd(date: Mutable<AnyCalendarDate>, years: number) {
+    return date.era === 'BC' ? -years : years;
+  }
+
+  balanceDate(date: Mutable<AnyCalendarDate>) {
+    if (date.year <= 0) {
+      date.era = date.era === 'BC' ? 'AD' : 'BC';
+      date.year = 1 - date.year;
+    }
   }
 }
