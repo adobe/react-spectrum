@@ -15,6 +15,8 @@ import {Item} from '@react-stately/collections';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TagGroup} from '../src';
+import {Icon} from "@react-spectrum/icon";
+import Checkmark from '@spectrum-icons/workflow/Checkmark';
 
 storiesOf('TagGroup', module)
   .add(
@@ -31,13 +33,18 @@ storiesOf('TagGroup', module)
       </TagGroup>
     )
   )
-  // .add('icons', () => (
-  //   <TagGroup>
-  //     <Item>
-  //       <Text>Tag 1</Text>
-  //     </Item>
-  //   </TagGroup>
-  // ))
+  .add('icons', () => (
+    <TagGroup items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
+      {item => (
+        <Item key={item.key}>
+          <Icon>
+            <Checkmark />
+          </Icon>
+          {item.label}
+        </Item>
+      )}
+    </TagGroup>
+  ))
   .add(
     'onRemove',
     () => render({

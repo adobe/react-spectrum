@@ -11,7 +11,7 @@
  */
 
 import {AriaButtonElementTypeProps, ButtonProps} from '@react-types/button';
-import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
 import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';

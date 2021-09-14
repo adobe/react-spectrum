@@ -88,6 +88,8 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     ref: domRef
   }, state);
 
+  console.log(styles);
+
   return (
     <div
       className={

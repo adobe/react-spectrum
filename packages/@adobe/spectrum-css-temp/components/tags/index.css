@@ -21,7 +21,9 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags-item {
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "icon content action";
   align-items: center;
   box-sizing: border-box;
 
@@ -52,22 +54,30 @@ governing permissions and limitations under the License.
 
   .spectrum-Tags-itemClearButton {
     display: flex;
+    width: 100%;
     margin-inline-end: calc(-0.5 * var(--spectrum-tag-padding-x));
     margin-inline-start: var(--spectrum-tag-deletable-border-size-key-focus);
     block-size: var(--spectrum-alias-font-size-default);
     inline-size: var(--spectrum-alias-font-size-default);
     border-radius: var(--spectrum-alias-border-radius-small);
-
-    &:focus-ring {
-       border-color: var(--spectrum-dropzone-border-color-selected-hover);
-       box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
-    }
-
-
   }
 }
 
-.spectrum-Tags-itemLabel {
+.react-spectrum-Tag-icon {
+  grid-area: icon;
+  align-items: center;
+  justify-items: center;
+
+  [dir="ltr"] & {
+    padding-right: var(--spectrum-global-dimension-size-100);
+  }
+  [dir="rtl"] & {
+    padding-left: var(--spectrum-global-dimension-size-100);
+  }
+}
+
+.react-spectrum-Tag-content {
+  grid-area: content;
   block-size: 100%;
   line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
   flex: 1 1 auto;
@@ -77,4 +87,23 @@ governing permissions and limitations under the License.
   white-space: nowrap;
   text-overflow: ellipsis;
   outline: none;
+}
+
+.react-spectrum-Tag-action {
+  grid-area: action;
+  height: 100%;
+  width: var(--spectrum-global-dimension-size-100);
+
+  [dir="ltr"] & {
+    padding-left: var(--spectrum-global-dimension-size-100);
+  }
+  [dir="rtl"] & {
+    padding-right: var(--spectrum-global-dimension-size-100);
+  }
+
+  &:focus-ring {
+    border-color: var(--spectrum-dropzone-border-color-selected-hover);
+    box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
+    border-radius: inherit;
+  }
 }

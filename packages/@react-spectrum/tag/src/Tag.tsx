@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
+import {Grid} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
@@ -19,6 +20,7 @@ import {useFocusRing} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
 import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
+import {Text} from "@react-spectrum/text";
 
 export function Tag(props) {
   const {
@@ -39,12 +41,11 @@ export function Tag(props) {
     item,
     onRemove
   }, state);
-  // TODO: handle icon (any way to use slots?)
 
   return (
     <div
       {...styleProps}
-      {...mergeProps(tagProps, hoverProps)}
+      {...mergeProps(tagProps, hoverProps, focusProps, labelProps)}
       className={classNames(
         styles,
         'spectrum-Tags-item',
@@ -56,18 +57,24 @@ export function Tag(props) {
           'is-hovered': isHovered
         },
         styleProps.className
-      )}>
-      <span
-        {...mergeProps(focusProps, labelProps)}
-        className={classNames(styles, 'spectrum-Tags-itemLabel')}>
-        {props.children}
-      </span>
-      {isRemovable && <TagRemoveButton item={item} state={state} {...clearButtonProps} />}
+      )}
+    >
+      <SlotProvider
+        slots={{
+          icon: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-icon'), size: 'S'},
+          text: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-content')},
+          tagRemoveButton: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-action')}
+        }}>
+        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+        {isRemovable && <TagRemoveButton item={item} state={state} {...clearButtonProps} />}
+      </SlotProvider>
     </div>
   );
 }
 
 function TagRemoveButton(props) {
+  props = useSlotProps(props, 'tagRemoveButton');
+  let {styleProps} = useStyleProps(props);
   let {item, state, ...otherProps} = props;
 
   let clearBtnRef = useRef();
@@ -76,9 +83,10 @@ function TagRemoveButton(props) {
     ref: clearBtnRef
   }, state);
 
+
   return (
     <span
-      {...mergeProps(props, gridCellProps)}
+      {...mergeProps(props, gridCellProps, styleProps)}
       ref={clearBtnRef}>
       <ClearButton
         focusClassName={classNames(styles, 'focus-ring')}
