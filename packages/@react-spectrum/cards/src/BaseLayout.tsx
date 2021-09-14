@@ -196,20 +196,17 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
     let layoutInfo = this.getLayoutInfo(parentRowKey);
-    console.log('layoutInfo 1', layoutInfo)
     if (layoutInfo) {
       let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
       // If the node is so large that it spans multiple page heights, return the key of the item immediately below
       // Otherwise keep going up until we exceed a single page height worth of nodes
       let keyBelow =  this.collection.getItem(this.getKeyBelow(key))?.parentKey;
       layoutInfo = this.getLayoutInfo(keyBelow);
-      console.log('layoutInfo 2', layoutInfo, layoutInfo.rect.y < pageY);
       if (layoutInfo && layoutInfo.rect.y < pageY) {
         while (layoutInfo && layoutInfo.rect.y < pageY) {
           let childKey = this.collection.getItem(layoutInfo.key).childNodes[0].key;
           let keyBelow = this.collection.getItem(this.getKeyBelow(childKey))?.parentKey;
           layoutInfo = this.getLayoutInfo(keyBelow);
-          console.log('layoutInfo 3', layoutInfo, keyBelow, this.getKeyBelow(childKey));
         }
       }
 
