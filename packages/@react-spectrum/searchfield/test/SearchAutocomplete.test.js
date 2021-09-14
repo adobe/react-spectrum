@@ -21,9 +21,6 @@ import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.cs
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
-import {useAsyncList} from '@react-stately/data';
-import {useFilter} from '@react-aria/i18n';
-import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
@@ -97,65 +94,11 @@ function ControlledValueSearchAutocomplete(props) {
   );
 }
 
-function ControlledValueKeySearchAutocomplete(props) {
-  let itemList = props.items || items;
-  let [fieldState, setFieldState] = React.useState({
-    inputValue: ''
-  });
-
-  let onInputChangeHandler = (value) => {
-    setFieldState({
-      inputValue: value
-    });
-  };
-
-  return (
-    <Provider theme={theme}>
-      <SearchAutocomplete {...defaultProps} label="SearchAutocomplete" defaultItems={itemList} inputValue={fieldState.inputValue} onInputChange={onInputChangeHandler} {...props}>
-        {(item) => <Item>{item.name}</Item>}
-      </SearchAutocomplete>
-    </Provider>
-  );
-}
-
 let initialFilterItems = [
   {name: 'Aardvark', id: '1'},
   {name: 'Kangaroo', id: '2'},
   {name: 'Snake', id: '3'}
 ];
-
-let secondCallFilterItems = [
-  {name: 'Aardvark', id: '1'}
-];
-
-function getFilterItems() {
-  return Promise.resolve({
-    items: initialFilterItems
-  });
-}
-
-function mockSecondCall() {
-  return new Promise(resolve => setTimeout(() => resolve({items: secondCallFilterItems}), 1500));
-}
-
-let load;
-let AsyncSearchAutocomplete = () => {
-  let list = useAsyncList({
-    load: load
-  });
-
-  return (
-    <SearchAutocomplete
-      items={list.items}
-      label="SearchAutocomplete"
-      inputValue={list.filterText}
-      onInputChange={list.setFilterText}
-      loadingState={list.loadingState}
-      onLoadMore={list.loadMore}>
-      {(item) => <Item>{item.name}</Item>}
-    </SearchAutocomplete>
-  );
-};
 
 function testSearchAutocompleteOpen(searchAutocomplete, listbox, focusedItemIndex) {
   let searchAutocompleteLabelledBy = searchAutocomplete.getAttribute('aria-labelledby');
@@ -202,14 +145,6 @@ describe('SearchAutocomplete', function () {
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
-  });
-
-  beforeEach(() => {
-    load = jest
-      .fn()
-      .mockImplementationOnce(getFilterItems)
-      .mockImplementationOnce(mockSecondCall)
-      .mockImplementationOnce(mockSecondCall);
   });
 
   afterEach(() => {
