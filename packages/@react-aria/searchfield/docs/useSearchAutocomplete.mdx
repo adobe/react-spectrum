@@ -438,13 +438,10 @@ function Example() {
 
 ### Fully controlled
 
-The following example shows how you would create a controlled SearchAutocomplete, controlling everything from the selected value (`selectedKey`)
-to the autocomplete options (`items`). By passing in `inputValue`, `selectedKey`, and `items` to the `SearchAutocomplete` you can control
+The following example shows how you would create a controlled SearchAutocomplete, by controlling the input value (`inputValue`)
+and the autocomplete options (`items`). By passing in `inputValue` and `items` to the `SearchAutocomplete` you can control
 exactly what your SearchAutocomplete should display. For example, note that the item filtering for the controlled SearchAutocomplete below now follows a "starts with"
 filter strategy, accomplished by controlling the exact set of items available to the SearchAutocomplete whenever the input value updates.
-
-It is important to note that you don't have to control every single aspect of a SearchAutocomplete. If you decide to only control a single property of the
-SearchAutocomplete, be sure to provide the change handler for that prop as well e.g. controlling `selectedKey` would require `onSelectionChange` to be passed to `useSearchAutocomplete` as well.
 
 ```tsx example
 function ControlledSearchAutocomplete() {
@@ -460,7 +457,6 @@ function ControlledSearchAutocomplete() {
   // Store SearchAutocomplete input value, selected option, open state, and items
   // in a state tracker
   let [fieldState, setFieldState] = React.useState({
-    selectedKey: '',
     inputValue: '',
     items: optionList
   });
@@ -471,12 +467,11 @@ function ControlledSearchAutocomplete() {
 
   // Specify how each of the SearchAutocomplete values should change when an
   // option is selected from the list box
-  let onSelectionChange = (key) => {
+  let onSubmit = (value, key) => {
     setFieldState(prevState => {
       let selectedItem = prevState.items.find(option => option.id === key);
       return ({
         inputValue: selectedItem?.name ?? '',
-        selectedKey: key,
         items: optionList.filter(item => startsWith(item.name, selectedItem?.name ?? ''))
       })
     });
@@ -487,7 +482,6 @@ function ControlledSearchAutocomplete() {
   let onInputChange = (value) => {
     setFieldState(prevState => ({
       inputValue: value,
-      selectedKey: value === '' ? null : prevState.selectedKey,
       items: optionList.filter(item => startsWith(item.name, value))
     }));
   };
@@ -497,7 +491,6 @@ function ControlledSearchAutocomplete() {
     if (menuTrigger === 'manual' && isOpen) {
       setFieldState(prevState => ({
         inputValue: prevState.inputValue,
-        selectedKey: prevState.selectedKey,
         items: optionList
       }));
     }
@@ -509,10 +502,9 @@ function ControlledSearchAutocomplete() {
     <SearchAutocomplete
       label="Search Animals"
       items={fieldState.items}
-      selectedKey={fieldState.selectedKey}
       inputValue={fieldState.inputValue}
       onOpenChange={onOpenChange}
-      onSelectionChange={onSelectionChange}
+      onSubmit={onSubmit}
       onInputChange={onInputChange}>
       {item => <Item>{item.name}</Item>}
     </SearchAutocomplete>
