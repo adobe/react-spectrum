@@ -54,11 +54,11 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
     isDisabled,
     validationState,
     isReadOnly,
-    onSubmit
+    onSubmit = () => {}
   } = props;
 
   let {contains} = useFilter({sensitivity: 'base'});
-  let comboBoxState = useComboBoxState({
+  let state = useComboBoxState({
     ...props,
     defaultFilter: contains,
     allowsEmptyCollection: true,
@@ -66,15 +66,11 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
     // user taps on underlay (i.e. initial tap will call setFocused(false) -> commitSelection/commitCustomValue via onBlur,
     // then the closing of the tray will call setFocused(false) again due to cleanup effect)
     shouldCloseOnBlur: false,
-    allowsCustomValue: true
+    allowsCustomValue: true,
+    onSelectionChange: (key) => key !== null && onSubmit(null, key),
+    selectedKey: undefined,
+    defaultSelectedKey: undefined
   });
-
-  let searchFieldState = useSearchFieldState({
-    ...props,
-    onSubmit: (value) => onSubmit(value, null)
-  });
-
-  let state = {...comboBoxState, ...searchFieldState};
   
   let buttonRef = useRef<HTMLElement>();
   let domRef = useFocusableRef(ref, buttonRef);
