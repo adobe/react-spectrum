@@ -57,7 +57,8 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
     direction = 'bottom',
     isQuiet,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    onSubmit = () => {}
   } = props;
 
   let formatMessage = useMessageFormatter(intlMessages);
@@ -75,7 +76,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
       defaultFilter: contains,
       allowsEmptyCollection: isAsync,
       allowsCustomValue: true,
-      onSelectionChange: (key) => key !== null && props.onSubmit && props.onSubmit(null, key),
+      onSelectionChange: (key) => key !== null && onSubmit(null, key),
       selectedKey: undefined,
       defaultSelectedKey: undefined
     }
