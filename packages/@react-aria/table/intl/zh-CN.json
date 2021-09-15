@@ -1,0 +1,9 @@
+{
+  "ascending": "升序",
+  "ascendingSort": "按列 {columnName} 升序排序",
+  "descending": "降序",
+  "descendingSort": "按列 {columnName} 降序排序",
+  "select": "选择",
+  "selectAll": "全选",
+  "sortable": "可排序的列"
+}

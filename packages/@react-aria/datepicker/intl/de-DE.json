@@ -1,10 +1,13 @@
 {
   "calendar": "Kalender",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} bis {end, date, long}",
   "date": "Datum",
   "dateRange": "Datumsbereich",
   "day": "Tag",
   "dayPeriod": "Zeitraum",
   "endDate": "Enddatum",
+  "era": "Epoche",
   "hour": "Stunde",
   "minute": "Minute",
   "month": "Monat",

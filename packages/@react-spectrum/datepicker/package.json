@@ -33,6 +33,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@internationalized/date": "3.0.0-alpha.1",
+    "@internationalized/number": "^3.0.2",
     "@react-aria/datepicker": "3.0.0-alpha.1",
     "@react-aria/focus": "^3.1.0",
     "@react-aria/i18n": "^3.1.0",
@@ -41,9 +43,14 @@
     "@react-spectrum/button": "^3.1.0",
     "@react-spectrum/calendar": "3.0.0-alpha.1",
     "@react-spectrum/dialog": "^3.1.0",
+    "@react-spectrum/label": "^3.3.4",
+    "@react-spectrum/layout": "^3.2.1",
     "@react-spectrum/utils": "^3.1.0",
+    "@react-spectrum/view": "^3.1.1",
     "@react-stately/datepicker": "3.0.0-alpha.1",
+    "@react-stately/utils": "^3.2.1",
     "@react-types/datepicker": "3.0.0-alpha.1",
+    "@react-types/shared": "^3.3.0",
     "@spectrum-icons/ui": "^3.1.0",
     "@spectrum-icons/workflow": "^3.1.0",
     "date-fns": "^1.30.1"
@@ -54,7 +61,8 @@
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
-    "@react-spectrum/provider": "^3.0.0-rc.1"
+    "@react-spectrum/provider": "^3.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

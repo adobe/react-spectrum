@@ -1,10 +1,13 @@
 {
   "calendar": "달력",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} ~ {end, date, long}",
   "date": "날짜",
   "dateRange": "날짜 범위",
   "day": "요일",
   "dayPeriod": "일 기간",
   "endDate": "종료 날짜",
+  "era": "연호",
   "hour": "시간",
   "minute": "분",
   "month": "개월",

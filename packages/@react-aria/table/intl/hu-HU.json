@@ -1,0 +1,9 @@
+{
+  "ascending": "növekvő",
+  "ascendingSort": "rendezve a(z) {columnName} oszlop szerint, növekvő sorrendben",
+  "descending": "csökkenő",
+  "descendingSort": "rendezve a(z) {columnName} oszlop szerint, csökkenő sorrendben",
+  "select": "Kijelölés",
+  "selectAll": "Összes kijelölése",
+  "sortable": "rendezendő oszlop"
+}

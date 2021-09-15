@@ -33,10 +33,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@internationalized/date": "3.0.0-alpha.1",
     "@react-aria/calendar": "3.0.0-alpha.1",
     "@react-aria/focus": "^3.1.0",
     "@react-aria/i18n": "^3.1.0",
     "@react-aria/interactions": "^3.1.0",
+    "@react-aria/utils": "^3.8.2",
     "@react-aria/visually-hidden": "^3.1.0",
     "@react-spectrum/button": "^3.1.0",
     "@react-spectrum/utils": "^3.1.0",
@@ -52,7 +54,8 @@
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
-    "@react-spectrum/provider": "^3.0.0-rc.1"
+    "@react-spectrum/provider": "^3.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

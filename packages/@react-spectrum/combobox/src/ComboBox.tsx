@@ -108,7 +108,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     state
   );
 
-  let {overlayProps, placement} = useOverlayPosition({
+  let {overlayProps, placement, updatePosition} = useOverlayPosition({
     targetRef: unwrappedButtonRef,
     overlayRef: unwrappedPopoverRef,
     scrollRef: listBoxRef,
@@ -137,6 +137,17 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   useLayoutEffect(onResize, [scale, onResize]);
 
+  // Update position once the ListBox has rendered. This ensures that
+  // it flips properly when it doesn't fit in the available space.
+  // TODO: add ResizeObserver to useOverlayPosition so we don't need this.
+  useLayoutEffect(() => {
+    if (state.isOpen) {
+      requestAnimationFrame(() => {
+        updatePosition();
+      });
+    }
+  }, [state.isOpen, updatePosition]);
+
   let style = {
     ...overlayProps.style,
     width: isQuiet ? null : menuWidth,
@@ -145,7 +156,10 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   return (
     <>
-      <Field {...props} labelProps={labelProps} ref={domRef}>
+      <Field
+        {...props}
+        labelProps={labelProps}
+        ref={domRef}>
         <ComboBoxInput
           {...props}
           isOpen={state.isOpen}
@@ -165,8 +179,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         isNonModal
         isDismissable={false}>
         <ListBoxBase
+          {...listBoxProps}
           ref={listBoxRef}
-          domProps={listBoxProps}
           disallowEmptySelection
           autoFocus={state.focusStrategy}
           shouldSelectOnPressUp
