@@ -36,16 +36,11 @@ after_version: 3.0.0
 ## Example
 
 ```tsx example
-function Example() {
-
-  return (
-    <SearchAutocomplete label="Search with Autocomplete">
-      <Item>Aardvark</Item>
-      <Item>Kangaroo</Item>
-      <Item>Snake</Item>
-    </SearchAutocomplete>
-  );
-}
+<SearchAutocomplete label="Search with Autocomplete">
+  <Item>Aardvark</Item>
+  <Item>Kangaroo</Item>
+  <Item>Snake</Item>
+</SearchAutocomplete>
 ```
 
 ## Content
@@ -448,7 +443,7 @@ For right-to-left (RTL) languages, this is flipped.
 ### Read only
 
 ```tsx example
-<SearchAutocomplete label="Favorite Animal" isReadOnly selectedKey="red panda">
+<SearchAutocomplete label="Search Animals" placeholder="Red Panda, Cat, etc" isReadOnly>
   <Item>Red Panda</Item>
   <Item>Cat</Item>
   <Item>Dog</Item>
