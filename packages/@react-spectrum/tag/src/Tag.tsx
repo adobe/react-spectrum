@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, ClearSlots, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-import {Grid} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
@@ -57,8 +56,7 @@ export function Tag(props) {
           'is-hovered': isHovered
         },
         styleProps.className
-      )}
-    >
+      )}>
       <SlotProvider
         slots={{
           icon: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-icon'), size: 'XS'},

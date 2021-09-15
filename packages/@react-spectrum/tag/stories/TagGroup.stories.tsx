@@ -29,7 +29,7 @@ storiesOf('TagGroup', module)
     () => (
       <TagGroup items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
         {item =>
-          <Item key={item.key}>{item.label}</Item>
+          <Item key={item.key}><Text>{item.label}</Text></Item>
         }
       </TagGroup>
     )

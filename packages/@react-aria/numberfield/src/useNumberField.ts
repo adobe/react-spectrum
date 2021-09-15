@@ -46,9 +46,9 @@ interface NumberFieldAria {
   incrementButtonProps: AriaButtonProps,
   /** Props for the decrement button, to be passed to [useButton](useButton.html). */
   decrementButtonProps: AriaButtonProps,
-  /** Props for the number field's description element. */
+  /** Props for the number field's description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
-  /** Props for the number field's error message element. */
+  /** Props for the number field's error message element, if any. */
   errorMessageProps: HTMLAttributes<HTMLElement>
 }
 

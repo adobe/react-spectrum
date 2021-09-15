@@ -64,6 +64,7 @@ formatting options and can be styled as needed.
 * Follows the [spinbutton](https://www.w3.org/TR/wai-aria-practices-1.2/#spinbutton) ARIA pattern
 * Works around bugs in VoiceOver with the spinbutton role
 * Uses an ARIA live region to ensure that value changes are announced
+* Support for description and error message help text linked to the input via ARIA
 
 ## Anatomy
 
@@ -72,6 +73,10 @@ formatting options and can be styled as needed.
 Number fields consist of an input element that shows the current value and allows the user to type a new value,
 optional stepper buttons to increment and decrement the value, a group containing the input and stepper buttons,
 and a label.
+
+`useNumberField` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
 
 `useNumberField` returns props for each of these, which you should spread onto the appropriate elements:
 
@@ -96,6 +101,8 @@ be dispatched after a `<button>` element is disabled while the mouse is pressed.
 twice when incrementing or decrementing the value from the minimum or maximum value. While out of scope for this example,
 you may wish to use a `<div>` element instead of a `<button>` to avoid this issue. See the [useButton docs](useButton.html#custom-element-type)
 for an example of a button with a custom element type.
+
+In addition, see [useTextField](useTextField.html) for an example of the description and error message elements.
 
 ```tsx example export=true
 import {useNumberFieldState} from '@react-stately/numberfield';

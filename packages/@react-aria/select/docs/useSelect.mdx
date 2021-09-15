@@ -57,6 +57,7 @@ select components that can be styled as needed without compromising on high qual
 * Support for disabled options
 * Support for sections
 * Labeling support for accessibility
+* Support for description and error message help text linked to the input via ARIA
 * Support for mouse, touch, and keyboard interactions
 * Tab stop focus management
 * Keyboard support for opening the listbox using the arrow keys, including automatically focusing
@@ -75,6 +76,10 @@ popup. Users can click, touch, or use the keyboard on the button to open the lis
 handles exposing the correct ARIA attributes for accessibility and handles the interactions for the
 select in its collapsed state. It should be combined with [useListBox](useListBox.html), which handles
 the implementation of the popup listbox.
+
+`useSelect` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
 
 `useSelect` returns props that you should spread onto the appropriate element:
 
@@ -125,7 +130,7 @@ See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to impleme
 using <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} />.
 
 In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
-options.
+options. For an example of the description and error message elements, see [useTextField](useTextField.html).
 
 ```tsx example export=true
 import {HiddenSelect, useSelect} from '@react-aria/select';
