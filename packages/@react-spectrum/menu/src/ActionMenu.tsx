@@ -21,6 +21,7 @@ import More from '@spectrum-icons/workflow/More';
 import React from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   props = useSlotProps(props, 'actionmenu');
