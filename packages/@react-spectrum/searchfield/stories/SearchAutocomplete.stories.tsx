@@ -115,7 +115,7 @@ Static.storyName = 'static items';
 export const DynamicItems = (props) => <Dynamic {...props} />;
 DynamicItems.storyName = 'dynamic items';
 
-export const NoItems = (props) =>  <Dynamic {...props} defaultItems={options} />;
+export const NoItems = (props) =>  <Dynamic {...props} defaultItems={[]} />;
 NoItems.storyName = 'no items';
 
 export const MappedItems = (props) => <Mapped {...props} />;
@@ -166,7 +166,7 @@ validationStateInvalidIsQuiet.storyName = 'validationState: invalid, isQuiet';
 export const validationStateValidIsQuiet = (props) => <Default {...props} validationState="valid" isQuiet />;
 validationStateValidIsQuiet.storyName = 'validationState: valid, isQuiet';
 
-export const placeholder = (props) => <Default {...props} placeholder="Select an item..." />;
+export const placeholder = (props) => <Default {...props} placeholder="Search for an item..." />;
 placeholder.storyName = 'placeholder';
 
 export const autoFocus = (props) => <Default {...props} autoFocus />;
