@@ -28,23 +28,24 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
   if (buttonProps['aria-label'] === undefined) {
     buttonProps['aria-label'] = formatMessage('moreActions');
   }
-  
+
   return (
-    <MenuTrigger 
+    <MenuTrigger
+      isOpen={props.isOpen}
       align={props.align}
       direction={props.direction}
       shouldFlip={props.shouldFlip}>
-      <ActionButton 
-        ref={ref} 
+      <ActionButton
+        ref={ref}
         {...buttonProps}
         isDisabled={props.isDisabled}
         isQuiet={props.isQuiet}
         autoFocus={props.autoFocus}>
         <More />
       </ActionButton>
-      <Menu 
-        children={props.children} 
-        items={props.items} 
+      <Menu
+        children={props.children}
+        items={props.items}
         disabledKeys={props.disabledKeys}
         onAction={props.onAction} />
     </MenuTrigger>

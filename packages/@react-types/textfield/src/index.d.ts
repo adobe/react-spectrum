@@ -16,6 +16,7 @@ import {
   FocusableDOMProps,
   FocusableProps,
   FocusableRefValue,
+  HelpTextProps,
   InputBase,
   LabelableProps,
   SpectrumLabelableProps,
@@ -27,7 +28,7 @@ import {
 } from '@react-types/shared';
 import {ReactElement} from 'react';
 
-export interface TextFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
+export interface TextFieldProps extends InputBase, Validation, HelpTextProps, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
 
 export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {
   // https://www.w3.org/TR/wai-aria-1.2/#textbox
