@@ -11,12 +11,13 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import Audio from '@spectrum-icons/workflow/Audio';
+import {Icon} from '@react-spectrum/icon';
 import {Item} from '@react-stately/collections';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TagGroup} from '../src';
-import {Icon} from "@react-spectrum/icon";
-import Checkmark from '@spectrum-icons/workflow/Checkmark';
+import {Text} from '@react-spectrum/text';
 
 storiesOf('TagGroup', module)
   .add(
@@ -36,11 +37,11 @@ storiesOf('TagGroup', module)
   .add('icons', () => (
     <TagGroup items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
       {item => (
-        <Item key={item.key}>
+        <Item key={item.key} textValue={item.label}>
           <Icon>
-            <Checkmark />
+            <Audio />
           </Icon>
-          {item.label}
+          <Text>{item.label}</Text>
         </Item>
       )}
     </TagGroup>
