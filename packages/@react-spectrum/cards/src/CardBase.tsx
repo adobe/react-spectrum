@@ -66,18 +66,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   let hasPreviewIllustration = useHasChild(`.${styles['spectrum-Card-illustration']}`, gridRef);
   let hasPreview = hasPreviewImage || hasPreviewIllustration;
 
-  let slots = useMemo(() => ({
-    image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: orientation === 'horizontal' ? 'cover' : 'contain', alt: ''},
-    illustration: {UNSAFE_className: classNames(styles, 'spectrum-Card-illustration')},
-    avatar: {UNSAFE_className: classNames(styles, 'spectrum-Card-avatar'), size: 'avatar-size-400'},
-    heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
-    content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
-    detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')},
-    actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
-    footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer'), isHidden: isQuiet},
-    divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
-  }), [titleProps, contentProps, isQuiet, orientation]);
-
   // this is for horizontal cards
   let [height, setHeight] = useState(NaN);
   useLayoutEffect(() => {
@@ -87,6 +75,25 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     let cardHeight = gridRef.current.getBoundingClientRect().height;
     setHeight(cardHeight);
   }, [gridRef, setHeight, orientation]);
+  let aspectRatioEnforce = undefined;
+  if (orientation === 'horizontal' && !isNaN(height)) {
+    aspectRatioEnforce = {
+      height: `${height}px`,
+      width: `${height}px`
+    };
+  }
+
+  let slots = useMemo(() => ({
+    image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: orientation === 'horizontal' ? 'cover' : 'contain', alt: '', ...aspectRatioEnforce},
+    illustration: {UNSAFE_className: classNames(styles, 'spectrum-Card-illustration'), ...aspectRatioEnforce},
+    avatar: {UNSAFE_className: classNames(styles, 'spectrum-Card-avatar'), size: 'avatar-size-400'},
+    heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
+    content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
+    detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')},
+    actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
+    footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer'), isHidden: isQuiet},
+    divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
+  }), [titleProps, contentProps, height]);
 
   // This is only for quiet grid cards
   let [isCloseToSquare, setIsCloseToSquare] = useState(false);
@@ -172,10 +179,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
                 isEmphasized
                 aria-label="select" />
             </div>
-          )}
-          {/* This is to workaround the Safari not supporting aspect-ratio */
-            orientation === 'horizontal' && !isNaN(height) && (
-            <img className={classNames(styles, 'spectrum-Card-sizeHelper')} style={{width: `${height}px`, height: `${height}px`}} aria-hidden alt="" width="1" height="1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" />
           )}
           <SlotProvider slots={slots}>
             {props.children}

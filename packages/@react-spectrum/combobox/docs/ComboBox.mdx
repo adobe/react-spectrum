@@ -83,7 +83,7 @@ function Example() {
     <>
       <p>Topic id: {majorId}</p>
       <ComboBox
-        label="Pick a engineering major"
+        label="Pick an engineering major"
         defaultItems={options}
         onSelectionChange={setMajorId}>
         {item => <Item>{item.name}</Item>}
@@ -164,7 +164,7 @@ function Example() {
   return (
     <ComboBox
       width="size-3000"
-      label="Pick a engineering major"
+      label="Pick an engineering major"
       defaultItems={options}
       placeholder="Search engineering majors">
       {item => <Item>{item.name}</Item>}
@@ -837,6 +837,42 @@ For right-to-left (RTL) languages, this is flipped.
   <Item key="kangaroo">Kangaroo</Item>
   <Item key="snake">Snake</Item>
 </ComboBox>
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/combo-box/#Help-text-(description-and-error-message))
+
+Both a description and an error message can be supplied to a ComboBox. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+    let [animalId, setAnimalId] = React.useState();
+    let options = [
+      {id: 1, name: 'Aardvark'},
+      {id: 2, name: 'Cat'},
+      {id: 3, name: 'Dog'},
+      {id: 4, name: 'Kangaroo'},
+      {id: 5, name: 'Koala'},
+      {id: 6, name: 'Penguin'},
+      {id: 7, name: 'Snake'},
+      {id: 8, name: 'Turtle'},
+      {id: 9, name: 'Wombat'}
+    ];
+  let isValid = React.useMemo(() => animalId !== 2 && animalId !== 7, [animalId]);
+
+  return (
+    <ComboBox
+      validationState={!animalId ? undefined : isValid ? 'valid' : 'invalid'}
+      label="Favorite animal"
+      description="Pick your favorite animal, you will be judged."
+      errorMessage={animalId === 2 ? 'The author of this example is a dog person.' : 'Oh god it\'s a snake! Choose anything else.'}
+      items={options}
+      selectedKey={animalId}
+      onSelectionChange={selected => setAnimalId(selected)}>
+      {item => <Item>{item.name}</Item>}
+    </ComboBox>
+  );
+}
 ```
 
 ### Custom widths

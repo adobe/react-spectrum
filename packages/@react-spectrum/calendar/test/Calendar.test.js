@@ -80,6 +80,26 @@ describe('Calendar', () => {
       expect(cell).toHaveFocus();
       expect(grid).not.toHaveAttribute('aria-activedescendant');
     });
+
+    it('should center the selected date if multiple months are visible', () => {
+      let {getAllByRole, getByLabelText} = render(<Calendar value={new CalendarDate(2019, 2, 3)} visibleMonths={3} />);
+
+      let grids = getAllByRole('grid');
+      expect(grids).toHaveLength(3);
+
+      let cell = getByLabelText('selected', {exact: false});
+      expect(grids[1].contains(cell)).toBe(true);
+    });
+
+    it('should constrain the visible region depending on the minValue', () => {
+      let {getAllByRole, getByLabelText} = render(<Calendar value={new CalendarDate(2019, 2, 3)} minValue={new CalendarDate(2019, 2, 1)} visibleMonths={3} />);
+
+      let grids = getAllByRole('grid');
+      expect(grids).toHaveLength(3);
+
+      let cell = getByLabelText('selected', {exact: false});
+      expect(grids[0].contains(cell)).toBe(true);
+    });
   });
 
   describe('selection', () => {
@@ -326,17 +346,17 @@ describe('Calendar', () => {
       expect(getByLabelText('Thursday, June 6, 2019', {exact: false})).toHaveFocus();
     });
 
-    it('renders a caption with the selected date', () => {
+    it('renders a description with the selected date', () => {
       let {getByText, getByRole} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} />);
 
       let grid = getByRole('grid');
       let caption = document.getElementById(grid.getAttribute('aria-describedby'));
-      expect(caption.tagName.toLowerCase()).toBe('caption');
       expect(caption).toHaveTextContent('Selected Date: Wednesday, June 5, 2019');
 
       let newDate = getByText('17');
       triggerPress(newDate);
 
+      caption = document.getElementById(grid.getAttribute('aria-describedby'));
       expect(caption).toHaveTextContent('Selected Date: Monday, June 17, 2019');
     });
   });

@@ -168,12 +168,10 @@ user-provided
 }
 .spectrum-Card-heading {
   grid-area: title;
-  align-self: baseline;
   word-break: break-word;
 }
 .spectrum-Card-detail {
   grid-area: detail;
-  align-self: baseline;
   word-break: break-word;
 }
 .spectrum-Card-actions {
@@ -302,12 +300,14 @@ user-provided
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -437,12 +437,14 @@ user-provided
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -577,12 +579,14 @@ user-provided
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
   .spectrum-Card-heading {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -680,12 +684,14 @@ user-provided
     display: none;
   }
   .spectrum-Card-heading {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -784,12 +790,14 @@ user-provided
     display: none;
   }
   .spectrum-Card-heading {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -907,12 +915,14 @@ user-provided
     display: none;
   }
   .spectrum-Card-heading {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1012,9 +1022,11 @@ user-provided
     display: none;
   }
   .spectrum-Card-heading {
+    align-self: baseline;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
   .spectrum-Card-detail {
+    align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1080,19 +1092,10 @@ For now working around it with a useLayoutEffect in CardBase.
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
-  .spectrum-Card-sizeHelper {
-    display: block;
-    grid-area: preview;
-    block-size: 100%;
-    inline-size: auto;
-  }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
     grid-area: preview;
-    position: absolute;
     block-size: 100%;
-    inline-size: 100%;
-    min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
     /*aspect-ratio: 1/1;*/ /* can't use in safari or FF :( */
 
     align-self: center;
@@ -1117,6 +1120,7 @@ For now working around it with a useLayoutEffect in CardBase.
     display: none;
   }
   .spectrum-Card-heading {
+    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1195,22 +1199,10 @@ For now working around it with a useLayoutEffect in CardBase.
       transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
-  /** This size helper is only for horizontal cards where height of the image is fluid instead of the usual
-      width. https://stackoverflow.com/questions/26438388/maintain-div-aspect-ratio-according-to-height
-   **/
-  .spectrum-Card-sizeHelper {
-    display: block;
-    grid-area: preview;
-    block-size: 100%;
-    inline-size: auto;
-  }
   .spectrum-Card-image,
   .spectrum-Card-illustration {
     grid-area: preview;
-    position: absolute;
     block-size: 100%;
-    inline-size: 100%;
-    min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
     /*aspect-ratio: 1/1;*/ /* can't use in safari or FF :( */
 
     align-self: center;
@@ -1235,6 +1227,7 @@ For now working around it with a useLayoutEffect in CardBase.
     display: none;
   }
   .spectrum-Card-heading {
+    align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
