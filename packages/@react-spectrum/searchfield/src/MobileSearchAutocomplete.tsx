@@ -16,7 +16,6 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
-import comboboxStyles from '@react-spectrum/combobox/src/combobox.css';
 import {DismissButton} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef, ValidationState} from '@react-types/shared';
@@ -29,6 +28,7 @@ import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import searchAutocompleteStyles from './searchautocomplete.css';
 import {SearchFieldState, useSearchFieldState} from '@react-stately/searchfield';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
@@ -235,8 +235,8 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
               'is-hovered': isHovered
             },
             classNames(
-              comboboxStyles,
-              'mobile-combobox'
+              searchAutocompleteStyles,
+              'mobile-searchautocomplete'
             ),
             className
           )
@@ -286,7 +286,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
               id={valueId}
               className={
                 classNames(
-                  comboboxStyles,
+                  searchAutocompleteStyles,
                   'mobile-value'
                 )
               }>
@@ -471,7 +471,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
         ref={popoverRef}
         className={
           classNames(
-            comboboxStyles,
+            searchAutocompleteStyles,
             'tray-dialog'
           )
         }>
@@ -498,7 +498,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
                 'spectrum-Search--valid': validationState === 'valid'
               },
               classNames(
-                comboboxStyles,
+                searchAutocompleteStyles,
                 'tray-textfield',
                 {
                   'has-label': !!props.label
@@ -528,13 +528,13 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
           state={state}
           shouldUseVirtualFocus
           renderEmptyState={() => loadingState !== 'loading' && (
-            <span className={classNames(comboboxStyles, 'no-results')}>
+            <span className={classNames(searchAutocompleteStyles, 'no-results')}>
               {formatMessage('noResults')}
             </span>
           )}
           UNSAFE_className={
             classNames(
-              comboboxStyles,
+              searchAutocompleteStyles,
               'tray-listbox'
             )
           }
