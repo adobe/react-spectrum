@@ -14,7 +14,6 @@ import docs from 'docs:@react-aria/searchfield';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink} from '@react-spectrum/docs';
 import i18nDocs from 'docs:@react-aria/i18n';
-import listboxDocs from 'docs:@react-aria/listbox';
 import overlaysDocs from 'docs:@react-aria/overlays';
 import packageData from '@react-aria/searchfield/package.json';
 import selectionDocs from 'docs:@react-stately/selection';
@@ -45,7 +44,7 @@ after_version: 3.0.0
 ## Features
 
 Autocomplete for search fields can be implemented using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this has limited functionality and behaves differently across browsers.
-`useSearchAutocomplete` helps achieve add accessible autocomplete to search components and can be styled as needed.
+`useSearchAutocomplete` helps achieve accessible search field and autocomplete components that can be styled as needed.
 
 * Support for filtering a list of options by typing
 * Support for selecting a single option
@@ -73,7 +72,7 @@ Autocomplete for search fields can be implemented using the [&lt;datalist&gt;](h
 <img src={anatomy} alt="Anatomy of useSearchAutocomplete" height={400} style={{display: 'block', margin: '20px auto'}} />
 
 A search autocomplete consists of a label, an input which displays the current value, and a list box popup. Users can type within the input
-to and see search suggestions within the list box. The list box popup may be opened by a variety of input field interactions specified
+to see search suggestions within the list box. The list box popup may be opened by a variety of input field interactions specified
 by the `menuTrigger` prop provided to `useSearchAutocomplete`. `useSearchAutocomplete` handles exposing
 the correct ARIA attributes for accessibility for each of the elements comprising the search autocomplete. It should be combined
 with [useListBox](useListBox.html), which handles the implementation of the popup list box.
@@ -87,7 +86,7 @@ with [useListBox](useListBox.html), which handles the implementation of the popu
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> hook from `@react-stately/combobox`.
 The state object should be passed as an option to `useSearchAutocomplete`.
 
-If the search field does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to
+If the search field does not have a visible label, an `aria-label` or `aria-labelledby` prop must be provided instead to
 identify it to assistive technology.
 
 ## State management
@@ -423,8 +422,7 @@ function Example() {
       items={filteredItems}
       inputValue={filterValue}
       onInputChange={setFilterValue}
-      placeholder="Enter recipient email"
-      allowsCustomValue>
+      placeholder="Enter recipient email">
       {(item) => <Item>{item.email}</Item>}
     </SearchAutocomplete>
   );
@@ -597,4 +595,3 @@ function AsyncLoadingExample() {
 For example, the item focus, count, and selection VoiceOver announcements are localized.
 You are responsible for localizing all labels and option
 content that is passed into the autocomplete.
-
