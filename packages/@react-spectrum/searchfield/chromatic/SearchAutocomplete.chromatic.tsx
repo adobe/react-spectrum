@@ -109,10 +109,6 @@ export const PropDefaults = Template.bind({});
 PropDefaults.storyName = 'default';
 PropDefaults.args = {};
 
-export const PropSelectedKey = Template.bind({});
-PropSelectedKey.storyName = 'selectedKey: 2';
-PropSelectedKey.args = {selectedKey: '2'};
-
 export const PropInputValue = Template.bind({});
 PropInputValue.storyName = 'inputValue: Blah';
 PropInputValue.args = {inputValue: 'Blah'};
