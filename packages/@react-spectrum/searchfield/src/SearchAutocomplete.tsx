@@ -23,7 +23,7 @@ import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
-import {ProgressCircle} from '../../progress/src/ProgressCircle';
+import {ProgressCircle} from '@react-spectrum/progress';
 import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumSearchAutocompleteProps} from '@react-types/searchfield';
@@ -102,7 +102,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
     onClose: state.close
   });
 
-  // Measure the width of the inputfield and the button to inform the width of the menu (below).
+  // Measure the width of the inputfield to inform the width of the menu (below).
   let [menuWidth, setMenuWidth] = useState(null);
   let {scale} = useProvider();
 
