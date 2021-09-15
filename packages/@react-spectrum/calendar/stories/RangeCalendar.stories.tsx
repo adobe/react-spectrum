@@ -12,10 +12,13 @@
 
 import {action} from '@storybook/addon-actions';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today} from '@internationalized/date';
-import {Flex} from '@react-spectrum/layout';
+import {classNames} from '@react-spectrum/utils';
+import {Flex, Grid, repeat} from '@react-spectrum/layout';
+import {generatePowerset} from '@react-spectrum/story-utils';
 import {RangeCalendar} from '../';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {TimeField} from '@react-spectrum/datepicker';
 
 storiesOf('Date and Time/RangeCalendar', module)
@@ -58,7 +61,74 @@ storiesOf('Date and Time/RangeCalendar', module)
   .add(
     'autoFocus',
     () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, autoFocus: true})
+  )
+  .add(
+    'visibleMonths: 2',
+    () => render({visibleMonths: 2})
+  )
+  .add(
+    'visibleMonths: 3',
+    () => render({visibleMonths: 3})
+  )
+  .add(
+    'minValue: today, visibleMonths: 3',
+    () => render({minValue: today(getLocalTimeZone()), visibleMonths: 3})
+  )
+  .add(
+    'defaultValue, visibleMonths: 3',
+    () => render({visibleMonths: 3, defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 12, 10)}})
   );
+
+  // Fake cell for testing css
+function Cell({isToday, isSelected, isFocused, isHovered, isPressed, isDisabled, isRangeStart, isRangeEnd, isRangeSelection, isSelectionStart, isSelectionEnd}) {
+  return (
+    <span
+      className={classNames(styles, 'spectrum-Calendar-date', {
+        'is-today': isToday,
+        'is-selected': isSelected,
+        'is-focused': isFocused,
+        'is-disabled': isDisabled,
+        'is-range-start': isRangeStart,
+        'is-range-end': isRangeEnd,
+        'is-range-selection': isRangeSelection,
+        'is-selection-start': isSelectionStart,
+        'is-selection-end': isSelectionEnd,
+        'is-hovered': isHovered,
+        'is-pressed': isPressed
+      })}>
+      12
+    </span>
+  );
+}
+
+let states = [
+  {isToday: true},
+  {isSelected: true},
+  {isFocused: true},
+  {isHovered: true},
+  {isPressed: true},
+  {isDisabled: true},
+  {isRangeSelection: true},
+  {isRangeStart: true},
+  {isRangeEnd: true},
+  {isSelectionStart: true},
+  {isSelectionEnd: true}
+];
+
+storiesOf('Date and Time/RangeCalendar/cell', module)
+  .add('default', () => (
+    <Grid columns={repeat(10, 100)}>
+      {generatePowerset(states, (merged) =>
+        (merged.isDisabled && (merged.isFocused || merged.isHovered || merged.isPressed)) ||
+        (!merged.isSelected && (merged.isRangeSelection || merged.isSelectionStart || merged.isSelectionEnd || merged.isRangeStart || merged.isRangeEnd)) ||
+        ((merged.isRangeStart || merged.isRangeEnd) && !merged.isRangeSelection) ||
+        (merged.isRangeStart && merged.isRangeEnd) ||
+        (merged.isSelectionStart && !merged.isRangeStart) ||
+        (merged.isSelectionEnd && !merged.isRangeEnd)
+      ).map(props => <div>{Object.keys(props).join(' ')}<div style={{position: 'relative', width: 40, height: 40, textAlign: 'center'}}><Cell {...props} /></div></div>)}
+    </Grid>
+  )
+);
 
 function render(props = {}) {
   return <RangeCalendar onChange={action('change')} {...props} />;

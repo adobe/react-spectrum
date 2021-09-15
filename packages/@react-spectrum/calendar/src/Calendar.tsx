@@ -13,20 +13,26 @@
 import {CalendarBase} from './CalendarBase';
 import {createCalendar} from '@internationalized/date';
 import {DateValue, SpectrumCalendarProps} from '@react-types/calendar';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {useCalendar} from '@react-aria/calendar';
 import {useCalendarState} from '@react-stately/calendar';
+import {useLocale} from '@react-aria/i18n';
 
 export function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>) {
+  let {visibleMonths = 1} = props;
+  let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
+  let {locale} = useLocale();
   let state = useCalendarState({
     ...props,
+    locale,
+    visibleDuration,
     createCalendar
   });
-  let aria = useCalendar(props, state);
+
   return (
     <CalendarBase
       {...props}
       state={state}
-      aria={aria} />
+      useCalendar={useCalendar} />
   );
 }

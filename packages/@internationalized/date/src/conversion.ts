@@ -34,6 +34,11 @@ function epochFromParts(year: number, month: number, day: number, hour: number, 
 }
 
 export function getTimeZoneOffset(ms: number, timeZone: string) {
+  // Fast path: for local timezone, use native Date.
+  if (timeZone === getLocalTimeZone()) {
+    return new Date(ms).getTimezoneOffset() * -60 * 1000;
+  }
+
   let {year, month, day, hour, minute, second} = getTimeZoneParts(ms, timeZone);
   let utc = epochFromParts(year, month, day, hour, minute, second, 0);
   return utc - Math.floor(ms / 1000) * 1000;
@@ -103,6 +108,18 @@ function isValidWallTime(date: CalendarDateTime, timeZone: string, absolute: num
 
 export function toAbsolute(date: CalendarDate | CalendarDateTime, timeZone: string, disambiguation: Disambiguation = 'compatible'): number {
   let dateTime = toCalendarDateTime(date);
+
+  // Fast path: if the time zone is the local timezone and disambiguation is compatible, use native Date.
+  if (timeZone === getLocalTimeZone() && disambiguation === 'compatible') {
+    dateTime = toCalendar(dateTime, new GregorianCalendar());
+
+    // Don't use Date constructor here because two-digit years are interpreted in the 20th century.
+    let date = new Date();
+    date.setFullYear(dateTime.year, dateTime.month - 1, dateTime.day);
+    date.setHours(dateTime.hour, dateTime.minute, dateTime.second, dateTime.millisecond);
+    return date.getTime();
+  }
+
   let ms = epochFromDate(dateTime);
   let offsetBefore = getTimeZoneOffset(ms - DAYMILLIS, timeZone);
   let offsetAfter = getTimeZoneOffset(ms + DAYMILLIS, timeZone);
