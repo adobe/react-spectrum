@@ -94,7 +94,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
     footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer'), isHidden: isQuiet},
     divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
-  }), [titleProps, contentProps, isQuiet, orientation]);
+  }), [titleProps, contentProps, height, isQuiet, orientation]);
 
   // This is only for quiet grid cards
   let [isCloseToSquare, setIsCloseToSquare] = useState(false);
