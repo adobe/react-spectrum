@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 .spectrum-Tags {
-  display: inline-block;
+  display: inherit;
 
   margin: 0;
   padding: 0;

@@ -88,10 +88,9 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     ref: domRef
   }, state);
 
-  console.log(styles);
-
   return (
     <div
+      {...mergeProps(styleProps, tagGroupProps, gridProps)}
       className={
         classNames(
           styles,
@@ -102,7 +101,6 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           styleProps.className
         )
       }
-      {...mergeProps(styleProps, tagGroupProps, gridProps)}
       ref={domRef}>
       {[...gridCollection].map(item => (
         <Tag

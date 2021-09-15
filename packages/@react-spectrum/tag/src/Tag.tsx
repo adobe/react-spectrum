@@ -20,7 +20,7 @@ import {useFocusRing} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
 import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
-import {Text} from "@react-spectrum/text";
+import {Text} from '@react-spectrum/text';
 
 export function Tag(props) {
   const {
@@ -61,7 +61,7 @@ export function Tag(props) {
     >
       <SlotProvider
         slots={{
-          icon: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-icon'), size: 'S'},
+          icon: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-icon'), size: 'XS'},
           text: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-content')},
           tagRemoveButton: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-action')}
         }}>
@@ -74,15 +74,14 @@ export function Tag(props) {
 
 function TagRemoveButton(props) {
   props = useSlotProps(props, 'tagRemoveButton');
-  let {styleProps} = useStyleProps(props);
   let {item, state, ...otherProps} = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   let clearBtnRef = useRef();
   let {gridCellProps} = useGridCell({
     node: item.childNodes[1],
     ref: clearBtnRef
   }, state);
-
 
   return (
     <span
