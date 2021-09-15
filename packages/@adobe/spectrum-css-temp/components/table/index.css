@@ -25,7 +25,8 @@ governing permissions and limitations under the License.
   isolation: isolate;
 }
 
-.spectrum-Table-sortedIcon {
+/* specificity must be higher than `.spectrum-Icon` */
+svg.spectrum-Table-sortedIcon {
   display: none;
   margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
   min-inline-size: var(--spectrum-icon-arrow-down-small-width);
