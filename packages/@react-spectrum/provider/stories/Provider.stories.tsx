@@ -26,7 +26,6 @@ import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '@react-spectrum/searchwithin';
-import {Slider} from '@react-spectrum/slider';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -199,6 +198,7 @@ function render(props = {}) {
           <Radio value="cats">Cats</Radio>
           <Radio value="horses">Horses</Radio>
         </RadioGroup>
+        <SearchField label="Search" />
         <SearchWithin label="Search">
           <SearchField placeholder="Search" />
           <Picker name="favorite-color3" label="Favorite color searchwithin">
@@ -210,7 +210,6 @@ function render(props = {}) {
             <Item key="purple">Purple</Item>
           </Picker>
         </SearchWithin>
-        <Slider label="Cookies to buy" defaultValue={12} />
       </Form>
     </Provider>
   );

@@ -11,7 +11,6 @@
  */
 
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
-import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
@@ -54,7 +53,6 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
       <Radio value="dragons">Dragons</Radio>
     </RadioGroup>
     <TextArea label="Comments" placeholder="How do you feel?" />
-    <ColorField label="Primary Color" />
     <ComboBox label="More Animals">
       <Item key="red panda">Red Panda</Item>
       <Item key="aardvark">Aardvark</Item>

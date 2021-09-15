@@ -14,7 +14,6 @@ import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
-import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
@@ -153,7 +152,6 @@ function render(props: any = {}) {
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>
       </CheckboxGroup>
-      <ColorField label="Primary Color" />
       <ComboBox label="More Animals">
         <Item key="red panda">Red Panda</Item>
         <Item key="aardvark">Aardvark</Item>
