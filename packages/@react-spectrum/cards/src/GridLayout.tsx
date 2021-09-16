@@ -11,7 +11,6 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './';
-import {GridCollection} from '@react-stately/grid';
 import {Key} from 'react';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Node} from '@react-types/shared';
@@ -155,30 +154,6 @@ export class GridLayout<T> extends BaseLayout<T> {
     }
 
     return res;
-  }
-
-  validate() {
-    this.collection = this.virtualizer.collection as GridCollection<T>;
-    this.buildCollection();
-
-    // Remove layout info that doesn't exist in new collection
-    if (this.lastCollection) {
-      for (let key of this.lastCollection.getKeys()) {
-        if (!this.collection.getItem(key)) {
-          this.layoutInfos.delete(key);
-        }
-      }
-
-      if (!this.isLoading) {
-        this.layoutInfos.delete('loader');
-      }
-
-      if (this.collection.size > 0) {
-        this.layoutInfos.delete('placeholder');
-      }
-    }
-
-    this.lastCollection = this.collection;
   }
 
   buildCollection() {

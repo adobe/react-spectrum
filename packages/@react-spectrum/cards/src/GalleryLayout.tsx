@@ -11,7 +11,6 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './';
-import {GridCollection} from '@react-stately/grid';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface GalleryLayoutOptions extends BaseLayoutOptions {
@@ -139,30 +138,6 @@ export class GalleryLayout<T> extends BaseLayout<T> {
       }
     }
     return true;
-  }
-
-  validate() {
-    this.collection = this.virtualizer.collection as GridCollection<T>;
-    this.buildCollection();
-
-    // Remove layout info that doesn't exist in new collection
-    if (this.lastCollection) {
-      for (let key of this.lastCollection.getKeys()) {
-        if (!this.collection.getItem(key)) {
-          this.layoutInfos.delete(key);
-        }
-      }
-
-      if (!this.isLoading) {
-        this.layoutInfos.delete('loader');
-      }
-
-      if (this.collection.size > 0) {
-        this.layoutInfos.delete('placeholder');
-      }
-    }
-
-    this.lastCollection = this.collection;
   }
 
   buildCollection() {

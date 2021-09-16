@@ -11,7 +11,6 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './';
-import {GridCollection} from '@react-stately/grid';
 import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 import {KeyboardDelegate, Node} from '@react-types/shared';
@@ -82,30 +81,6 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
 
   get layoutType() {
     return 'waterfall';
-  }
-
-  validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
-    this.collection = this.virtualizer.collection as GridCollection<T>;
-    this.buildCollection(invalidationContext);
-
-    // Remove layout info that doesn't exist in new collection
-    if (this.lastCollection) {
-      for (let key of this.lastCollection.getKeys()) {
-        if (!this.collection.getItem(key)) {
-          this.layoutInfos.delete(key);
-        }
-      }
-
-      if (!this.isLoading) {
-        this.layoutInfos.delete('loader');
-      }
-
-      if (this.collection.size > 0) {
-        this.layoutInfos.delete('placeholder');
-      }
-    }
-
-    this.lastCollection = this.collection;
   }
 
   buildCollection(invalidationContext: InvalidationContext<Node<T>, unknown>) {

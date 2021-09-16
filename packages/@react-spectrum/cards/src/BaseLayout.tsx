@@ -12,8 +12,8 @@
 
 import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
 import {GridCollection} from '@react-stately/grid';
+import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
-import {Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface BaseLayoutOptions {
   collator?: Intl.Collator
@@ -35,6 +35,33 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.collator = options.collator;
     this.lastCollection = null;
   }
+
+  validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
+    this.collection = this.virtualizer.collection as GridCollection<T>;
+    this.buildCollection(invalidationContext);
+
+    // Remove layout info that doesn't exist in new collection
+    if (this.lastCollection) {
+      for (let key of this.lastCollection.getKeys()) {
+        if (!this.collection.getItem(key)) {
+          this.layoutInfos.delete(key);
+        }
+      }
+
+      if (!this.isLoading) {
+        this.layoutInfos.delete('loader');
+      }
+
+      if (this.collection.size > 0) {
+        this.layoutInfos.delete('placeholder');
+      }
+    }
+
+    this.lastCollection = this.collection;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  buildCollection(invalidationContext?: InvalidationContext<Node<T>, unknown>) {}
 
   getContentSize() {
     return this.contentSize;
