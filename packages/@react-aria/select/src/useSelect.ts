@@ -44,10 +44,10 @@ interface SelectAria {
   /** Props for the popup. */
   menuProps: AriaListBoxOptions<unknown>,
 
-  /** Props for the select's description element. */
+  /** Props for the select's description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
 
-  /** Props for the select's error message element. */
+  /** Props for the select's error message element, if any. */
   errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
