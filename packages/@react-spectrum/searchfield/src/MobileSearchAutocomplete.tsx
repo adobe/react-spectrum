@@ -29,7 +29,7 @@ import {mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchAutocompleteStyles from './searchautocomplete.css';
-import {SearchFieldState, useSearchFieldState} from '@react-stately/searchfield';
+import {SearchFieldState} from '@react-stately/searchfield';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumSearchAutocompleteProps} from '@react-types/searchfield';
