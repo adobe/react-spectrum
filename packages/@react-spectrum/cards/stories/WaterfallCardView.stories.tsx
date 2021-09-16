@@ -11,6 +11,7 @@
  */
 
 import {AsyncLoadingCardView, ControlledCardView, CustomLayout, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
+import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
@@ -41,8 +42,11 @@ let itemsNoSize = [
   {src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Bob 8'}
 ];
 
+const StoryFn = ({storyFn}) => storyFn();
+
 export default {
-  title: 'CardView/Waterfall layout'
+  title: 'CardView/Waterfall layout',
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 export const DefaultWaterfallStatic = () => StaticCardView({layout: WaterfallLayout, items});

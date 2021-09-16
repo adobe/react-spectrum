@@ -12,6 +12,7 @@
 
 import {AsyncLoadingCardView, ControlledCardView, CustomLayout, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
 import {GalleryLayout} from '../';
+import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
@@ -57,8 +58,11 @@ let itemsNoThinImages = [
   {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 21, title: 'Bob 5'}
 ];
 
+const StoryFn = ({storyFn}) => storyFn();
+
 export default {
-  title: 'CardView/Gallery layout'
+  title: 'CardView/Gallery layout',
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 export const DefaultGalleryStatic = () => StaticCardView({layout: GalleryLayout, items});
