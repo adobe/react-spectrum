@@ -139,8 +139,11 @@ describe('ListView', function () {
         let grid = tree.getByRole('grid');
         act(() => grid.focus());
         fireEvent.keyDown(grid, {key: 'B'});
+        fireEvent.keyUp(grid, {key: 'Enter'});
         fireEvent.keyDown(grid, {key: 'A'});
+        fireEvent.keyUp(grid, {key: 'A'});
         fireEvent.keyDown(grid, {key: 'Z'});
+        fireEvent.keyUp(grid, {key: 'Z'});
         expect(document.activeElement).toBe(target);
       });
     });
@@ -313,6 +316,7 @@ describe('ListView', function () {
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
         fireEvent.keyDown(row, {key: ' '});
+        fireEvent.keyUp(row, {key: ' '});
 
         checkSelection(onSelectionChange, ['bar']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -325,6 +329,7 @@ describe('ListView', function () {
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
         fireEvent.keyDown(row, {key: 'Enter'});
+        fireEvent.keyUp(row, {key: 'Enter'});
 
         checkSelection(onSelectionChange, ['bar']);
         expect(row).toHaveAttribute('aria-selected', 'true');
