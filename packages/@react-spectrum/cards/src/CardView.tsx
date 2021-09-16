@@ -80,9 +80,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     collection: gridCollection
   });
 
-  // TODO: need to fix the typescript here, perhaps add a new type in Card types which is a Layout w/ these properties
-  // TODO: double check that this is the correct collection being set (we wanna use the list collection for the keyboard delegate?)
-  // If not, update the gridlayout code to use the gridCollection
   cardViewLayout.collection = gridCollection;
   cardViewLayout.disabledKeys = state.disabledKeys;
   cardViewLayout.isLoading = isLoading;
@@ -91,7 +88,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
-    // TODO: fix the typescript here, layout definition need to show that it implements keyboard delegate
     keyboardDelegate: cardViewLayout
   }, state, domRef);
 
@@ -157,7 +153,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   );
 }
 
-// TODO filler centerwrapper from ListView, check if is valid
 function CenteredWrapper({children}) {
   let {state} = useCardViewContext();
   return (
