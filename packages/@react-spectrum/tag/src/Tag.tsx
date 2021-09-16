@@ -15,11 +15,11 @@ import {ClearButton} from '@react-spectrum/button';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
+import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
 import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
-import {Text} from '@react-spectrum/text';
 
 export function Tag(props) {
   const {
