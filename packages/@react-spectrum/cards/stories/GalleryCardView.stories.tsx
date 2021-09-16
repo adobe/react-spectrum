@@ -107,7 +107,7 @@ emptyWithHeightGallery.storyName = 'empty, set height';
 export const AsyncLoading = () => AsyncLoadingCardView({layout: GalleryLayout});
 AsyncLoading.storyName = 'Async loading';
 
-export const CustomLayoutOptions = () => CustomGalleryLayout({items: itemsLowVariance}, {idealRowHeight: 270, itemSpacing: new Size(10, 10), itemPadding: 114});
+export const CustomLayoutOptions = () => CustomGalleryLayout({items: itemsLowVariance}, {idealRowHeight: 400, itemSpacing: new Size(10, 10), itemPadding: 114, minItemSize: new Size(150, 400)});
 CustomGalleryLayout.storyName = 'Custom layout options';
 
 function CustomGalleryLayout(props, layoutOptions) {
