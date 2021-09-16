@@ -56,8 +56,9 @@ governing permissions and limitations under the License.
   /* Use padding instead of text-indent because text-indent does not left align the text in Edge browser  */
   text-indent: 0;
 
-  width: 100%;
+  inline-size: 100%;
   height: var(--spectrum-textfield-height);
+  resize: vertical;
 
   vertical-align: top; /* used to align them correctly in forms. */
 

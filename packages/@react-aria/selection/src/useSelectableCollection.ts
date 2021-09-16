@@ -13,7 +13,7 @@
 import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {focusWithoutScrolling, isMac, mergeProps} from '@react-aria/utils';
+import {focusWithoutScrolling, isMac, mergeProps, useEvent} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
@@ -264,6 +264,15 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   };
 
+  // Store the scroll position so we can restore it later.
+  let scrollPos = useRef({top: 0, left: 0});
+  useEvent(scrollRef, 'scroll', isVirtualized ? null : () => {
+    scrollPos.current = {
+      top: scrollRef.current.scrollTop,
+      left: scrollRef.current.scrollLeft
+    };
+  });
+
   let onFocus = (e: FocusEvent) => {
     if (manager.isFocused) {
       // If a focus event bubbled through a portal, reset focus state.
@@ -290,6 +299,18 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         manager.setFocusedKey(manager.lastSelectedKey ?? delegate.getLastKey());
       } else {
         manager.setFocusedKey(manager.firstSelectedKey ?? delegate.getFirstKey());
+      }
+    } else if (!isVirtualized) {
+      // Restore the scroll position to what it was before.
+      scrollRef.current.scrollTop = scrollPos.current.top;
+      scrollRef.current.scrollLeft = scrollPos.current.left;
+
+      // Refocus and scroll the focused item into view if it exists within the scrollable region.
+      let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+      if (element) {
+        // This prevents a flash of focus on the first/last element in the collection
+        focusWithoutScrolling(element);
+        scrollIntoView(scrollRef.current, element);
       }
     }
   };
