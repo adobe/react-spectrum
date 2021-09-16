@@ -22,7 +22,13 @@ async function compare() {
   let branchDir = path.join(__dirname, '..', 'dist', 'branch-api');
   let publishedDir = path.join(__dirname, '..', 'dist', 'published-api');
   if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
-    console.log('one of the api directories does not exist');
+    if (!fs.existsSync(publishedDir) && fs.existsSync(branchDir)) {
+      console.log('not showing private package', branchDir);
+    } else if (fs.existsSync(publishedDir) && !fs.existsSync(branchDir)) {
+      console.log('something has probably gone wrong, the package exists published but not locally', publishedDir);
+    } else {
+      console.log('something has probably gone wrong, the package does not exist in either place, this should be impossible', publishedDir);
+    }
     return;
   }
   let summaryMessages = [];

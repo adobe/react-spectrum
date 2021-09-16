@@ -74,6 +74,7 @@ A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.
 * Virtual focus management for combo box list box option navigation
 * Hides elements outside the input and list box from assistive technology while the list box is open in a portal
 * Custom localized announcements for option focusing, filtering, and selection using an ARIA live region to work around VoiceOver bugs
+* Support for description and error message help text linked to the input via ARIA
 
 ## Anatomy
 
@@ -86,6 +87,10 @@ by the `menuTrigger` prop provided to `useComboBox`, or by clicking or touching 
 the correct ARIA attributes for accessibility for each of the elements comprising the combo box. It should be combined
 with [useListBox](useListBox.html), which handles the implementation of the popup list box,
 and [useButton](useButton.html) which handles the button press interactions.
+
+`useComboBox` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
 
 `useComboBox` returns props that you should spread onto the appropriate elements:
 
@@ -134,7 +139,7 @@ See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to impleme
 using <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} />.
 
 In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
-options.
+options. For an example of the description and error message elements, see [useTextField](useTextField.html).
 
 ```tsx example export=true
 import {Item} from '@react-stately/collections';

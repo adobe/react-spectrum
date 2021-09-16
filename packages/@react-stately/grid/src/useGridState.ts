@@ -14,15 +14,14 @@ export interface GridState<T, C extends GridCollection<T>> {
 interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelection {
   collection: C,
   disabledKeys?: Iterable<Key>,
-  focusMode?: 'row' | 'cell',
-  allowsCellSelection?: boolean
+  focusMode?: 'row' | 'cell'
 }
 
 /**
  * Provides state management for a grid component. Handles row selection and focusing a grid cell's focusable child if applicable.
  */
 export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
-  let {collection, focusMode, allowsCellSelection = false} = props;
+  let {collection, focusMode} = props;
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
       props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
@@ -56,6 +55,6 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState, {allowsCellSelection})
+    selectionManager: new SelectionManager(collection, selectionState)
   };
 }
