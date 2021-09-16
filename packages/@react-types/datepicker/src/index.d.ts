@@ -51,7 +51,8 @@ export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDateP
 
 interface SpectrumDatePickerBase<T extends DateValue> extends AriaDatePickerBaseProps<T>, SpectrumLabelableProps, StyleProps {
   isQuiet?: boolean,
-  showFormatHelpText?: boolean
+  showFormatHelpText?: boolean,
+  visibleMonths?: number
 }
 
 export interface SpectrumDatePickerProps<T extends DateValue> extends DatePickerProps<T>, SpectrumDatePickerBase<T> {}

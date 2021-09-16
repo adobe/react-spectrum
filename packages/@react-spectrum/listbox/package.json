@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/listbox",
-  "version": "3.5.1",
+  "version": "3.5.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -32,12 +32,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.4.1",
+    "@react-aria/focus": "^3.5.0",
     "@react-aria/i18n": "^3.3.2",
-    "@react-aria/interactions": "^3.5.1",
+    "@react-aria/interactions": "^3.6.0",
     "@react-aria/listbox": "^3.3.1",
     "@react-aria/separator": "^3.1.3",
-    "@react-aria/utils": "^3.8.2",
+    "@react-aria/utils": "^3.9.0",
     "@react-aria/virtualizer": "^3.3.4",
     "@react-spectrum/layout": "^3.2.1",
     "@react-spectrum/progress": "^3.1.3",
@@ -48,7 +48,7 @@
     "@react-stately/list": "^3.3.0",
     "@react-stately/virtualizer": "^3.1.5",
     "@react-types/listbox": "^3.2.1",
-    "@react-types/shared": "^3.8.0",
+    "@react-types/shared": "^3.9.0",
     "@spectrum-icons/ui": "^3.2.1"
   },
   "devDependencies": {

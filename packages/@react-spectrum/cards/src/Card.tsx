@@ -29,6 +29,7 @@ let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) =>
   }
 });
 
+// TODO: Update the typescript for the below and the export
 // @ts-ignore
 // eslint-disable-next-line
 Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Generator<PartialNode<T>> {
