@@ -45,14 +45,15 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   let key = item?.key;
   let isSelected = manager?.isSelected(key);
   let isDisabled = state?.disabledKeys.has(key);
-  let onChange = () => manager.select(key);
+  let onChange = () => manager?.select(key);
 
   let {styleProps} = useStyleProps(props);
   let {cardProps, titleProps, contentProps} = useCard(props);
   let domRef = useDOMRef(ref);
   let gridRef = useRef<HTMLDivElement>();
 
-  let {hoverProps, isHovered} = useHover({});
+  // cards are only interactive if there is a selection manager and it allows selection
+  let {hoverProps, isHovered} = useHover({isDisabled: manager === undefined || manager?.selectionMode === 'none'});
   let [isFocused, setIsFocused] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setIsFocused,

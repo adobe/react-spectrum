@@ -216,7 +216,6 @@ user-provided
     inset-inline-start: 0;
     inset-block-start: 0;
     border-radius: var(--spectrum-card-border-radius);
-    transition: background-color var(--spectrum-global-animation-duration-100);
   }
 
   &:after {
@@ -227,7 +226,6 @@ user-provided
     inset-inline-start: 0;
     inset-block-start: 0;
     border-radius: var(--spectrum-card-border-radius);
-    transition: background-color var(--spectrum-global-animation-duration-100);
   }
 
   .spectrum-Card-grid {
@@ -251,7 +249,6 @@ user-provided
       block-size: 100%;
       border-start-start-radius: var(--spectrum-card-border-radius);
       border-start-end-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
 
@@ -350,7 +347,6 @@ user-provided
     inset-inline-start: 0;
     inset-block-start: 0;
     border-radius: var(--spectrum-card-border-radius);
-    transition: background-color var(--spectrum-global-animation-duration-100);
   }
 
   &:after {
@@ -361,7 +357,6 @@ user-provided
     inset-inline-start: 0;
     inset-block-start: 0;
     border-radius: var(--spectrum-card-border-radius);
-    transition: background-color var(--spectrum-global-animation-duration-100);
   }
 
   &:not(.spectrum-Card--noPreview) .spectrum-Card-grid {
@@ -386,7 +381,6 @@ user-provided
       block-size: 100%;
       border-start-start-radius: var(--spectrum-card-border-radius);
       border-start-end-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
 
@@ -488,7 +482,6 @@ user-provided
     inset-inline-start: 0;
     inset-block-start: 0;
     border-radius: var(--spectrum-card-border-radius);
-    transition: background-color var(--spectrum-global-animation-duration-100);
   }
 
   &:after {
@@ -499,7 +492,6 @@ user-provided
     inset-inline-start: 0;
     inset-block-start: 0;
     border-radius: var(--spectrum-card-border-radius);
-    transition: background-color var(--spectrum-global-animation-duration-100);
   }
 
   &:not(.spectrum-Card--noPreview) .spectrum-Card-grid {
@@ -523,7 +515,6 @@ user-provided
       block-size: 100%;
       border-start-start-radius: var(--spectrum-card-border-radius);
       border-start-end-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
 
@@ -638,7 +629,6 @@ user-provided
       grid-area: preview;
 
       border-radius: var(--spectrum-card-quiet-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
@@ -738,7 +728,6 @@ user-provided
       grid-area: preview;
 
       border-radius: var(--spectrum-card-quiet-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
@@ -850,7 +839,6 @@ user-provided
       padding-left: 100%;
 
       border-radius: var(--spectrum-card-quiet-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
@@ -968,7 +956,6 @@ user-provided
       grid-area: preview;
 
       border-radius: var(--spectrum-card-quiet-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
@@ -1082,7 +1069,6 @@ For now working around it with a useLayoutEffect in CardBase.
       inline-size: 100%;
       block-size: 100%;
       border-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
   .spectrum-Card-image,
@@ -1180,7 +1166,6 @@ For now working around it with a useLayoutEffect in CardBase.
       block-size: 100%;
       position: absolute;
       border-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
     }
 
     &:after {
@@ -1189,7 +1174,6 @@ For now working around it with a useLayoutEffect in CardBase.
       block-size: 100%;
       position: absolute;
       border-radius: var(--spectrum-card-border-radius);
-      transition: background-color var(--spectrum-global-animation-duration-100);
     }
   }
   .spectrum-Card-image,
