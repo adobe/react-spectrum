@@ -369,7 +369,7 @@ user-provided
     display: grid;
     block-size: 100%;
     grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), 1fr) var(--spectrum-global-dimension-size-300) auto auto auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), 1fr) var(--spectrum-global-dimension-size-300) var(--spectrum-alias-single-line-height) auto auto auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
@@ -729,7 +729,7 @@ user-provided
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
-    grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) auto minmax(auto, var(--spectrum-global-dimension-size-600)) var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) var(--spectrum-alias-single-line-height) minmax(auto, var(--spectrum-global-dimension-size-600)) var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
       ".       .       ."
@@ -836,7 +836,7 @@ user-provided
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
-    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) auto 1fr var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) var(--spectrum-alias-single-line-height) 1fr var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
       ".       .       ."
