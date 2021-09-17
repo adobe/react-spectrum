@@ -313,7 +313,8 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
     overlayProps,
     loadingState,
     onLoadMore,
-    onClose
+    onClose,
+    onSubmit
   } = props;
 
   let timeout = useRef(null);
@@ -439,9 +440,11 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
   }, [loadingState, inputValue, showLoading]);
 
   let onKeyDown = (e) => {
-    // Close virtual keyboard if user hits Enter w/o any focused options
+    // Close virtual keyboard, close tray, and fire onSubmit if user hits Enter w/o any focused options
     if (e.key === 'Enter' && state.selectionManager.focusedKey == null) {
       popoverRef.current.focus();
+      onClose();
+      onSubmit(inputValue.toString(), null);
     } else {
       inputProps.onKeyDown(e);
     }
