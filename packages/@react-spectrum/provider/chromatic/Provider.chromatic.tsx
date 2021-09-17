@@ -20,14 +20,13 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Provider} from '../';
+import {ProviderProps} from '@react-types/provider';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '@react-spectrum/searchwithin';
-import {ProviderProps} from '@react-types/provider';
-// import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 
@@ -90,7 +89,7 @@ const Template = (): Story<ProviderProps> => (args) => (
   </Provider>
 );
 
-const NestedColorSchemeTemplate = (): Story<ProviderProps> => (args) => (
+const NestedColorSchemeTemplate = (): Story<ProviderProps> => () => (
   <Provider colorScheme="dark" UNSAFE_style={{padding: 50, textAlign: 'center', width: 500}}>
     <Button variant="primary">I am a dark button</Button>
     <Provider colorScheme="light" UNSAFE_style={{padding: 50, margin: 50, textAlign: 'center'}}>
@@ -99,7 +98,7 @@ const NestedColorSchemeTemplate = (): Story<ProviderProps> => (args) => (
   </Provider>
 );
 
-const NestedPropTemplate = (): Story<ProviderProps> => (args) => (
+const NestedPropTemplate = (): Story<ProviderProps> => () => (
   <Provider isDisabled>
     <Button variant="primary">I am disabled</Button>
     <Provider isQuiet>
