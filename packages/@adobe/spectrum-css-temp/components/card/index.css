@@ -158,9 +158,17 @@ user-provided
 
 .spectrum-Card-image {
   grid-area: preview;
+  & img {
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
 }
 .spectrum-Card-illustration {
   grid-area: preview;
+  & svg {
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
 }
 .spectrum-Card-avatar {
   grid-area: avatar;
