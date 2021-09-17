@@ -19,8 +19,10 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
+import {useFormProps} from '@react-spectrum/form';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
+  props = useFormProps(props);
   let {
     label,
     labelPosition = 'top' as LabelPosition,
