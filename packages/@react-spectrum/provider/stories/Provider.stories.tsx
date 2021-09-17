@@ -12,7 +12,6 @@
 
 import {Button} from '@react-spectrum/button';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
-import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
@@ -174,17 +173,11 @@ function render(props = {}) {
         <Flex> {/* Extra div via Flex so that the button does not expand to 100% width */}
           <Button variant="primary">I am a button</Button>
         </Flex>
-        <TextField
-          label="A text field"
-          placeholder="Something"
-          marginTop="size-100"
-          necessityIndicator="label" />
         <CheckboxGroup defaultValue={['dragons']} label="Pets">
           <Checkbox value="dogs">Dogs</Checkbox>
           <Checkbox value="cats">Cats</Checkbox>
           <Checkbox value="dragons">Dragons</Checkbox>
         </CheckboxGroup>
-        <ColorField label="Primary Color" />
         <ComboBox label="More Animals">
           <Item key="red panda">Red Panda</Item>
           <Item key="aardvark">Aardvark</Item>
@@ -192,7 +185,6 @@ function render(props = {}) {
           <Item key="snake">Snake</Item>
         </ComboBox>
         <NumberField label="Years lived there" />
-        <Switch>Dogs!</Switch>
         <RadioGroup label="A radio group">
           <Radio value="dogs">Dogs</Radio>
           <Radio value="cats">Cats</Radio>
@@ -210,6 +202,13 @@ function render(props = {}) {
             <Item key="purple">Purple</Item>
           </Picker>
         </SearchWithin>
+        <Switch isSelected>Dogs!</Switch>
+        <TextField
+          label="A text field"
+          placeholder="Something"
+          marginTop="size-100"
+          necessityIndicator="label"
+          value="dummy value" />
       </Form>
     </Provider>
   );

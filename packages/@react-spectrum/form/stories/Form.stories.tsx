@@ -135,18 +135,6 @@ storiesOf('Form', module)
 function render(props: any = {}) {
   return (
     <Form {...props}>
-      <TextField label="First Name" placeholder="John" />
-      <TextField label="Last Name" placeholder="Smith" />
-      <TextField label="Street Address" placeholder="123 Any Street" description="Please include apartment or suite number." errorMessage="Please enter a valid street address." />
-      <TextField label="City" placeholder="San Francisco" />
-      <NumberField label="Years lived there" />
-      <Picker label="State" placeholder="Select a state" items={states}>
-        {item => <Item key={item.abbr}>{item.name}</Item>}
-      </Picker>
-      <TextField label="Zip code" placeholder="12345" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
-      <Picker label="Country" placeholder="Select a country" items={countries}>
-        {item => <Item key={item.name}>{item.name}</Item>}
-      </Picker>
       <CheckboxGroup defaultValue={['dragons']} label="Pets">
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
@@ -158,11 +146,13 @@ function render(props: any = {}) {
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </ComboBox>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group">
-        <Radio value="dogs">Dogs</Radio>
-        <Radio value="cats">Cats</Radio>
-        <Radio value="dragons">Dragons</Radio>
-      </RadioGroup>
+      <NumberField label="Years lived there" />
+      <Picker label="State" placeholder="Select a state" items={states}>
+        {item => <Item key={item.abbr}>{item.name}</Item>}
+      </Picker>
+      <Picker label="Country" placeholder="Select a country" items={countries}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Picker>
       <Picker label="Favorite color" description="Select any color you like." errorMessage="Please select a nicer color.">
         <Item>Red</Item>
         <Item>Orange</Item>
@@ -171,15 +161,22 @@ function render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
-      <TextArea label="Comments" placeholder="How do you feel?" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <RadioGroup label="Favorite pet" name="favorite-pet-group">
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
+      </RadioGroup>
       <SearchField label="Search" />
-      <SearchWithin label="Search">
-        <SearchField placeholder="Search" />
+      <SearchWithin label="Search cities">
+        <SearchField placeholder="City" />
         <Picker label="State" placeholder="Select a state" items={states}>
           {item => <Item key={item.abbr}>{item.name}</Item>}
         </Picker>
       </SearchWithin>
       <Switch>Low power mode</Switch>
+      <TextArea label="Comments" placeholder="How do you feel?" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <TextField label="City" placeholder="San Francisco" />
+      <TextField label="Zip code" placeholder="12345" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
     </Form>
   );
 }
