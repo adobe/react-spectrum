@@ -37,28 +37,26 @@ let flatOptions = [
 
 const Template = (): Story<SpectrumFormProps> => (args) => (
   <Form {...args}>
-    <TextField label="City" placeholder="San Francisco" />
-    <Picker label="Animals" placeholder="Choose an animal" items={flatOptions}>
-      {item => <Item key={item.id}>{item.name}</Item>}
-    </Picker>
-    <NumberField label="Test" />
     <CheckboxGroup defaultValue={['dragons']} label="Pets">
       <Checkbox value="dogs">Dogs</Checkbox>
       <Checkbox value="cats">Cats</Checkbox>
       <Checkbox value="dragons">Dragons</Checkbox>
     </CheckboxGroup>
-    <RadioGroup defaultValue="dragons" label="Favorite pet" name="favorite-pet-group">
-      <Radio value="dogs">Dogs</Radio>
-      <Radio value="cats">Cats</Radio>
-      <Radio value="dragons">Dragons</Radio>
-    </RadioGroup>
-    <TextArea label="Comments" placeholder="How do you feel?" />
     <ComboBox label="More Animals">
       <Item key="red panda">Red Panda</Item>
       <Item key="aardvark">Aardvark</Item>
       <Item key="kangaroo">Kangaroo</Item>
       <Item key="snake">Snake</Item>
     </ComboBox>
+    <NumberField label="Test" />
+    <Picker label="Animals" placeholder="Choose an animal" items={flatOptions}>
+      {item => <Item key={item.id}>{item.name}</Item>}
+    </Picker>
+    <RadioGroup defaultValue="dragons" label="Favorite pet" name="favorite-pet-group">
+      <Radio value="dogs">Dogs</Radio>
+      <Radio value="cats">Cats</Radio>
+      <Radio value="dragons">Dragons</Radio>
+    </RadioGroup>
     <SearchField label="Search" />
     <SearchWithin label="Search">
       <SearchField placeholder="Search" />
@@ -66,6 +64,8 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
         {item => <Item key={item.id}>{item.name}</Item>}
       </Picker>
     </SearchWithin>
+    <TextArea label="Comments" placeholder="How do you feel?" />
+    <TextField label="City" placeholder="San Francisco" />
   </Form>
 );
 
