@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseLayout, BaseLayoutOptions} from './';
+import {BaseLayout, BaseLayoutOptions} from './BaseLayout';
 import {Key} from 'react';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Node} from '@react-types/shared';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BaseLayout, BaseLayoutOptions} from './';
+import {BaseLayout, BaseLayoutOptions} from './BaseLayout';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface GalleryLayoutOptions extends BaseLayoutOptions {
