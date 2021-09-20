@@ -108,11 +108,17 @@ governing permissions and limitations under the License.
       }
     }
   }
+  &:before {
+    transition: background-color var(--spectrum-global-animation-duration-100);
+  }
   &:after {
+    transition: background-color var(--spectrum-global-animation-duration-100),
+                opacity var(--spectrum-global-animation-duration-100);
     opacity: 0;
   }
   .spectrum-Card-grid {
     &:before {
+      transition: background-color var(--spectrum-global-animation-duration-100);
       background-color: var(--spectrum-card-quiet-preview-background-color);
     }
   }
@@ -208,6 +214,7 @@ governing permissions and limitations under the License.
 
   .spectrum-Card-grid {
     &:before {
+      transition: background-color var(--spectrum-global-animation-duration-100);
       background-color: var(--spectrum-card-quiet-preview-background-color);
     }
   }
@@ -231,6 +238,8 @@ governing permissions and limitations under the License.
   .spectrum-Card-footer {
   }
   .spectrum-Card-decoration {
+    transition: background-color var(--spectrum-global-animation-duration-100),
+                opacity var(--spectrum-global-animation-duration-100);
     background-color: var(--spectrum-global-color-blue-400);
     opacity: 0;
   }
@@ -311,6 +320,8 @@ governing permissions and limitations under the License.
 
   .spectrum-Card-grid {
     &:after {
+      transition: background-color var(--spectrum-global-animation-duration-100),
+                  opacity var(--spectrum-global-animation-duration-100);
       opacity: 0;
     }
   }
