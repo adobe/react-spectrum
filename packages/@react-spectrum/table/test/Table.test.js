@@ -1979,7 +1979,7 @@ describe('TableView', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, selectionBehavior: 'replace'});
 
-        checkSelectAll(tree, 'unchecked');
+        expect(tree.queryByLabelText('Select All')).toBeNull();
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
@@ -2015,7 +2015,7 @@ describe('TableView', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, selectionBehavior: 'replace'});
 
-        checkSelectAll(tree, 'unchecked');
+        expect(tree.queryByLabelText('Select All')).toBeNull();
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
