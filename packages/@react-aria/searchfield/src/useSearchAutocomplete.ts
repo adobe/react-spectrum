@@ -18,7 +18,7 @@ import {KeyboardDelegate} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {SearchAutocompleteProps} from '@react-types/searchfield';
 import {useComboBox} from '@react-aria/combobox';
-import {useSearchField} from '@react-aria/searchfield';
+import {useSearchField} from './useSearchField';
 
 interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T> {
   /** The ref for the input element. */

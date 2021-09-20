@@ -22,7 +22,6 @@
     "@react-aria/i18n": "^3.3.2",
     "@react-aria/interactions": "^3.6.0",
     "@react-aria/listbox": "^3.3.1",
-    "@react-aria/searchfield": "^3.1.5",
     "@react-aria/textfield": "^3.4.0",
     "@react-aria/utils": "^3.9.0",
     "@react-stately/combobox": "^3.0.1",
