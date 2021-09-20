@@ -12,4 +12,8 @@
 
 /// <reference types="css-module-types" />
 
+export * from './CardView';
+export * from './GalleryLayout';
+export * from './GridLayout';
+export * from './WaterfallLayout';
 export * from './Card';

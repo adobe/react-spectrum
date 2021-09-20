@@ -29,20 +29,23 @@ let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) =>
   }
 });
 
+// TODO: Update the typescript for the below and the export
 // @ts-ignore
 // eslint-disable-next-line
 Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Generator<PartialNode<T>> {
-  let {children} = props;
+  let {children, textValue} = props;
 
   yield {
     type: 'item',
     props: props,
     rendered: children,
     'aria-label': props['aria-label'],
-    hasChildNodes: false
+    hasChildNodes: false,
+    textValue
   };
 };
 
+// We don't want getCollectionNode to show up in the type definition
 // eslint-disable-next-line
 let _Card = Card as <T>(props, ref) => JSX.Element;
 export {_Card as Card};

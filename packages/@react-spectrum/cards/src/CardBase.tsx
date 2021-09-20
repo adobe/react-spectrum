@@ -94,7 +94,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
     footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer'), isHidden: isQuiet},
     divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
-  }), [titleProps, contentProps, height]);
+  }), [titleProps, contentProps, height, isQuiet, orientation]);
 
   // This is only for quiet grid cards
   let [isCloseToSquare, setIsCloseToSquare] = useState(false);
@@ -145,7 +145,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
       };
     }
     // ToDo: how to re-run if image src changes?
-  }, [props.children, setIsCloseToSquare]);
+  }, [props.children, setIsCloseToSquare, isQuiet, layout]);
 
 
   return (
@@ -172,6 +172,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           {manager && manager.selectionMode !== 'none' && (
             <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
               <Checkbox
+                isDisabled={isDisabled}
                 excludeFromTabOrder
                 isSelected={isSelected}
                 onChange={onChange}
