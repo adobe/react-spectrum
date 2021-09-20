@@ -299,10 +299,7 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    let newSelection = new Selection([key], key, key);
-    if (!this.isSelectionEqual(newSelection)) {
-      this.state.setSelectedKeys(newSelection);
-    }
+    this.state.setSelectedKeys(new Selection([key], key, key));
   }
 
   /**
