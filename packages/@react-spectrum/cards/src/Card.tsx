@@ -10,42 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {CardBase} from './CardBase';
 import {DOMRef} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, ReactElement} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import {useCardViewContext} from './CardViewContext';
 
-let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
-  let context = useCardViewContext();
-  if (context !== null) {
-    return null;
-  } else {
-    return (
-      <CardBase {...props} ref={ref} />
-    );
+interface ICard {
+  (props: SpectrumCardProps, ref?: DOMRef<HTMLDivElement>): ReactElement,
+  getCollectionNode: <T>(props, context: any) => Generator<PartialNode<T>>
+}
+
+export const Card: ICard = Object.assign(
+  forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
+    let context = useCardViewContext();
+    if (context !== null) {
+      return null;
+    } else {
+      return (
+        <CardBase {...props} ref={ref} />
+      );
+    }
+  }),
+  {
+    getCollectionNode: function* getCollectionNode<T>(props): Generator<PartialNode<T>> {
+      let {children} = props;
+
+      yield {
+        type: 'item',
+        props: props,
+        rendered: children,
+        'aria-label': props['aria-label'],
+        hasChildNodes: false
+      };
+    }
   }
-});
-
-// TODO: Update the typescript for the below and the export
-// @ts-ignore
-// eslint-disable-next-line
-Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Generator<PartialNode<T>> {
-  let {children, textValue} = props;
-
-  yield {
-    type: 'item',
-    props: props,
-    rendered: children,
-    'aria-label': props['aria-label'],
-    hasChildNodes: false,
-    textValue
-  };
-};
-
-// We don't want getCollectionNode to show up in the type definition
-// eslint-disable-next-line
-let _Card = Card as <T>(props, ref) => JSX.Element;
-export {_Card as Card};
+);
