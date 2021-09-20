@@ -19,11 +19,11 @@ import {SpectrumCardProps} from '@react-types/cards';
 import {useCardViewContext} from './CardViewContext';
 
 interface ICard {
-  (props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>): ReactElement,
+  (props: SpectrumCardProps, ref?: DOMRef<HTMLDivElement>): ReactElement,
   getCollectionNode: <T>(props, context: any) => Generator<PartialNode<T>>
 }
 
-export let Card: ICard = Object.assign(
+export const Card: ICard = Object.assign(
   forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
     let context = useCardViewContext();
     if (context !== null) {
