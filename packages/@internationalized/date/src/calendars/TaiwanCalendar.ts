@@ -64,11 +64,7 @@ export class TaiwanCalendar extends GregorianCalendar {
     gregorianToTaiwan(gregorianYear(date), date);
   }
 
-  addYears(date: Mutable<AnyCalendarDate>, years: number) {
-    if (date.era === 'before_minguo') {
-      years = -years;
-    }
-
-    date.year += years;
+  getYearsToAdd(date: Mutable<AnyCalendarDate>, years: number) {
+    return date.era === 'before_minguo' ? -years : years;
   }
 }

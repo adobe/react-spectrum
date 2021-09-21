@@ -1,5 +1,5 @@
 /*
- * Copyright {{currentYear}} Adobe. All rights reserved.
+ * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,29 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import { {{~componentName~}} } from '../';
+import {Card} from '@react-spectrum/cards';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
-{{#if (includes scopes "@react-types")}}
-import {Spectrum{{componentName}}Props} from '@react-types/{{packageName}}';
-{{/if}}
-{{#unless (includes scopes "@react-types")}}
+import {SpectrumCardProps} from '@react-types/cards';
 
-interface Spectrum{{componentName}}Props {
-
-}
-{{/unless}}
-
-const meta: Meta<Spectrum{{componentName}}Props> = {
-  title: '{{componentName}}',
-  component: {{componentName}}
+const meta: Meta<SpectrumCardProps> = {
+  title: 'Card',
+  component: Card
 };
 
 export default meta;
 
-const Template = (): Story<Spectrum{{componentName}}Props> => (args) => (
-  <{{componentName}} {...args}>This is a React Spectrum {{componentName}}</{{componentName}}>
+
+const Template = (): Story<SpectrumCardProps> => (args) => (
+  <Card {...args} />
 );
+
 
 export const Default = Template().bind({});
 Default.args = {};

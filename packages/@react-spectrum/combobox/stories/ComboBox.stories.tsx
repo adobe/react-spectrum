@@ -233,6 +233,14 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'with descrption, labelAlign: end',
+    () => render({description: 'Please select your spirit animal.', labelAlign: 'end'})
+  )
+  .add(
+    'with error message, labelPosition: side',
+    () => render({errorMessage: 'You did not select a valid spirit animal.', validationState: 'invalid', labelPosition: 'side'})
+  )
+  .add(
     'isRequired',
     () => render({isRequired: true})
   )

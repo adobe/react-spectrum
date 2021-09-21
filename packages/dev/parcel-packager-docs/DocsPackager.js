@@ -246,6 +246,11 @@ function mergeInterface(obj) {
     merge(properties, obj.properties);
 
     for (let ext of obj.extends) {
+      if (!ext) {
+        // temp workaround for ErrorBoundary extends React.Component which isn't being included right now for some reason
+        console.log('ext should not be null', obj);
+        continue;
+      }
       merge(properties, mergeInterface(ext).properties);
     }
   }
