@@ -387,6 +387,9 @@ This is done using the <TypeLink links={docs.links} type={docs.exports.useTableS
 the checkbox will be shown as checked, and when only some rows are selected, the checkbox will be rendered in an indeterminate state.
 The user can check or uncheck the checkbox to select all or clear the selection, respectively.
 
+**Note**: Always ensure that the cell has accessible content, even when the checkbox is hidden (i.e. in single selection mode). The
+[VisuallyHidden](VisuallyHidden.html) component can be used to do this.
+
 ```tsx example export=true render=false
 function TableSelectAllCell({column, state}) {
   let ref = useRef();
@@ -401,20 +404,10 @@ function TableSelectAllCell({column, state}) {
     <th
       {...columnHeaderProps}
       ref={ref}>
-      {
-        /* 
-          In single selection mode, the checkbox will be hidden. 
-          So to avoid leaving a column header with no accessible content, 
-          use a VisuallyHidden component to include the aria-label from the checkbox, 
-          which for single selection will be "Select."
-        */
-        isSingleSelectionMode &&
-        <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
+      {state.selectionManager.selectionMode === 'single'
+        ? <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
+        : <input {...inputProps} ref={inputRef} />
       }
-      <input
-        {...inputProps}
-        ref={inputRef}
-        style={isSingleSelectionMode ? {visibility: 'hidden'} : undefined} />
     </th>
   );
 }

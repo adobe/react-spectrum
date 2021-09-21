@@ -13,11 +13,10 @@
 // Portions of the code in this file are based on code from the TC39 Temporal proposal.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate, Duration} from '../types';
+import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {GregorianCalendar} from './GregorianCalendar';
 import {Mutable} from '../utils';
-import {toCalendar} from '../conversion';
 
 const ERA_START_DATES = [[1868, 9, 8], [1912, 7, 30], [1926, 12, 25], [1989, 1, 8], [2019, 5, 1]];
 const ERA_END_DATES = [[1912, 7, 29], [1926, 12, 24], [1989, 1, 7], [2019, 4, 30]];
@@ -91,21 +90,15 @@ export class JapaneseCalendar extends GregorianCalendar {
     }
   }
 
-  add(date: AnyCalendarDate, duration: Duration) {
-    // Always do addition in the gregorian calendar to avoid issues with eras.
-    // For example, Heisei 31/4/30 + 1 day is Reiwa 1/5/1. Reiwa 1/1/1 does not exist.
-    return toCalendar(toGregorian(date).add(duration), this);
-  }
-
   constrainDate(date: Mutable<AnyCalendarDate>) {
     let idx = ERA_NAMES.indexOf(date.era);
     let end = ERA_END_DATES[idx];
     if (end != null) {
-      let [, endMonth, endDay] = end;
+      let [endYear, endMonth, endDay] = end;
 
       // Constrain the year to the maximum possible value in the era.
       // Then constrain the month and day fields within that.
-      let maxYear = getMaxYear(idx);
+      let maxYear = endYear - ERA_ADDENDS[idx];
       date.year = Math.min(maxYear, date.year);
       if (date.year === maxYear) {
         date.month = Math.min(endMonth, date.month);
@@ -148,26 +141,6 @@ export class JapaneseCalendar extends GregorianCalendar {
     return years;
   }
 
-  getMonthsInYear(date: AnyCalendarDate): number {
-    let idx = ERA_NAMES.indexOf(date.era);
-    let end = ERA_END_DATES[idx];
-    if (end && date.year === getMaxYear(idx)) {
-      return end[1];
-    }
-
-    return super.getMonthsInYear(date);
-  }
-
-  getDaysInMonth(date: AnyCalendarDate): number {
-    let idx = ERA_NAMES.indexOf(date.era);
-    let end = ERA_END_DATES[idx];
-    if (end && date.year === getMaxYear(idx) && date.month === end[1]) {
-      return end[2];
-    }
-
-    return super.getDaysInMonth(date);
-  }
-
   getMinimumMonthInYear(date: AnyCalendarDate): number {
     let start = getMinimums(date);
     return start ? start[1] : 1;
@@ -184,15 +157,4 @@ function getMinimums(date: AnyCalendarDate) {
     let idx = ERA_NAMES.indexOf(date.era);
     return ERA_START_DATES[idx];
   }
-}
-
-function getMaxYear(era: number) {
-  let [endYear, endMonth, endDay] = ERA_END_DATES[era];
-  let [startYear, startMonth, startDay] = ERA_START_DATES[era];
-  let maxYear = endYear - startYear;
-  if (startMonth < endMonth || (startMonth === endMonth && startDay < endDay)) {
-    maxYear++;
-  }
-
-  return maxYear;
 }

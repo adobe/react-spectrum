@@ -31,42 +31,39 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
  * @param args - Multiple sets of props to merge together.
  */
 export function mergeProps<T extends Props[]>(...args: T): UnionToIntersection<TupleTypes<T>> {
-  let result: Props = {};
-  for (let props of args) {
-    for (let key in result) {
+  // Start with a base clone of the first argument. This is a lot faster than starting
+  // with an empty object and adding properties as we go.
+  let result: Props = {...args[0]};
+  for (let i = 1; i < args.length; i++) {
+    let props = args[i];
+    for (let key in props) {
+      let a = result[key];
+      let b = props[key];
+
       // Chain events
       if (
-        /^on[A-Z]/.test(key) &&
-        typeof result[key] === 'function' &&
-        typeof props[key] === 'function'
+        typeof a === 'function' &&
+        typeof b === 'function' &&
+        // This is a lot faster than a regex.
+        key[0] === 'o' &&
+        key[1] === 'n' &&
+        key.charCodeAt(2) >= /* 'A' */ 65 &&
+        key.charCodeAt(2) <= /* 'Z' */ 90
       ) {
-        result[key] = chain(result[key], props[key]);
+        result[key] = chain(a, b);
 
         // Merge classnames, sometimes classNames are empty string which eval to false, so we just need to do a type check
       } else if (
-        key === 'className' &&
-        typeof result.className === 'string' &&
-        typeof props.className === 'string'
+        (key === 'className' || key === 'UNSAFE_className') &&
+        typeof a === 'string' &&
+        typeof b === 'string'
       ) {
-        result[key] = clsx(result.className, props.className);
-      } else if (
-        key === 'UNSAFE_className' &&
-        typeof result.UNSAFE_className === 'string' &&
-        typeof props.UNSAFE_className === 'string'
-      ) {
-        result[key] = clsx(result.UNSAFE_className, props.UNSAFE_className);
-      } else if (key === 'id' && result.id && props.id) {
-        result.id = mergeIds(result.id, props.id);
+        result[key] = clsx(a, b);
+      } else if (key === 'id' && a && b) {
+        result.id = mergeIds(a, b);
         // Override others
       } else {
-        result[key] = props[key] !== undefined ? props[key] : result[key];
-      }
-    }
-
-    // Add props from b that are not in a
-    for (let key in props) {
-      if (result[key] === undefined) {
-        result[key] = props[key];
+        result[key] = b !== undefined ? b : a;
       }
     }
   }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {add, addTime, addZoned, cycleDate, cycleTime, cycleZoned, set, setTime, setZoned, subtract, subtractTime, subtractZoned} from './manipulation';
+import {add, addTime, addZoned, constrain, constrainTime, cycleDate, cycleTime, cycleZoned, set, setTime, setZoned, subtract, subtractTime, subtractZoned} from './manipulation';
 import {AnyCalendarDate, AnyTime, Calendar, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, TimeField, TimeFields} from './types';
 import {compareDate, compareTime} from './queries';
 import {dateTimeToString, dateToString, timeToString, zonedDateTimeToString} from './string';
@@ -59,9 +59,7 @@ export class CalendarDate {
     this.month = month;
     this.day = day;
 
-    if (this.calendar.balanceDate) {
-      this.calendar.balanceDate(this);
-    }
+    constrain(this);
   }
 
   copy(): CalendarDate {
@@ -110,7 +108,9 @@ export class Time {
     public readonly minute: number = 0,
     public readonly second: number = 0,
     public readonly millisecond: number = 0
-  ) {}
+  ) {
+    constrainTime(this);
+  }
 
   copy(): Time {
     return new Time(this.hour, this.minute, this.second, this.millisecond);
@@ -164,15 +164,12 @@ export class CalendarDateTime {
     this.year = year;
     this.month = month;
     this.day = day;
-
-    if (this.calendar.balanceDate) {
-      this.calendar.balanceDate(this);
-    }
-
     this.hour = args.shift() || 0;
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
     this.millisecond = args.shift() || 0;
+
+    constrain(this);
   }
 
   copy(): CalendarDateTime {
@@ -252,17 +249,14 @@ export class ZonedDateTime {
     this.year = year;
     this.month = month;
     this.day = day;
-
-    if (this.calendar.balanceDate) {
-      this.calendar.balanceDate(this);
-    }
-
     this.timeZone = timeZone;
     this.offset = offset;
     this.hour = args.shift() || 0;
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
     this.millisecond = args.shift() || 0;
+
+    constrain(this);
   }
 
   copy(): ZonedDateTime {

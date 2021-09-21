@@ -47,6 +47,7 @@ async function build() {
           name === 'parcel' ||
           name === 'patch-package' ||
           name.startsWith('@spectrum-css') ||
+          name.startsWith('@testing-library') ||
           name.startsWith('postcss') ||
           name.startsWith('@adobe')
         )
@@ -91,14 +92,17 @@ async function build() {
   let babelPatch = patches.find(name => name.startsWith('@babel'));
   fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
 
+  let excludeList = ['@react-spectrum/story-utils'];
   // Copy packages over to temp dir
   console.log('copying over');
   for (let p of packages) {
     if (!p.includes('spectrum-css') && !p.includes('dev/')) {
       let json = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'packages', p)), 'utf8');
-      if (json.private) {
+
+      if (json.name in excludeList) {
         continue;
       }
+
       fs.copySync(path.join(__dirname, '..', 'packages', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)));
       if (!p.includes('@react-types')) {
         delete json.types;

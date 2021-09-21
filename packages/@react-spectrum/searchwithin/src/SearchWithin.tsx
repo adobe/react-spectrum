@@ -116,4 +116,3 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
  */
 const _SearchWithin = React.forwardRef(SearchWithin);
 export {_SearchWithin as SearchWithin};
-
