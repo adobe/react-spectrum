@@ -11,39 +11,39 @@
  */
 
 import {CardBase} from './CardBase';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, ItemProps} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
-import React, {forwardRef, ReactElement} from 'react';
+import React, {forwardRef} from 'react';
 import {SpectrumCardProps} from '@react-types/cards';
 import {useCardViewContext} from './CardViewContext';
 
-interface ICard {
-  (props: SpectrumCardProps, ref?: DOMRef<HTMLDivElement>): ReactElement,
-  getCollectionNode: <T>(props, context: any) => Generator<PartialNode<T>>
+interface ForwardRefWithCollectionNode<T> extends React.ForwardRefExoticComponent<T> {
+  getCollectionNode?: <P>(props: any) => Generator<PartialNode<P>>
 }
 
-export const Card: ICard = Object.assign(
-  forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
-    let context = useCardViewContext();
-    if (context !== null) {
-      return null;
-    } else {
-      return (
-        <CardBase {...props} ref={ref} />
-      );
-    }
-  }),
-  {
-    getCollectionNode: function* getCollectionNode<T>(props): Generator<PartialNode<T>> {
-      let {children} = props;
-
-      yield {
-        type: 'item',
-        props: props,
-        rendered: children,
-        'aria-label': props['aria-label'],
-        hasChildNodes: false
-      };
-    }
+let Card: ForwardRefWithCollectionNode<React.RefAttributes<any>> = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
+  let context = useCardViewContext();
+  if (context !== null) {
+    return null;
+  } else {
+    return (
+      <CardBase {...props} ref={ref} />
+    );
   }
-);
+});
+
+Card.getCollectionNode = function* getCollectionNode<T>(props: any): Generator<PartialNode<T>> {
+  let {children, textValue} = props;
+
+  yield {
+    type: 'item',
+    props: props,
+    rendered: children,
+    'aria-label': props['aria-label'],
+    hasChildNodes: false,
+    textValue
+  };
+};
+
+let _Card = Card as <T>(props: ItemProps<T> & SpectrumCardProps) => JSX.Element;
+export {_Card as Card};
