@@ -174,7 +174,22 @@ storiesOf('ListView', module)
         </Item>
       </ActionMenu>
     )))
-  .add('dynamic items + renderEmptyState', () => (<EmptyTest />));
+  .add('dynamic items + renderEmptyState', () => (<EmptyTest />))
+  .add('selectionBehavior: replace', () => (
+    <ListView width="250px" height={400} selectionBehavior="replace" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+      {item => <Item>{item.name}</Item>}
+    </ListView>
+  ))
+  .add('selectionBehavior: replace, onAction', () => (
+    <ListView width="250px" height={400} selectionBehavior="replace" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+      {item => <Item>{item.name}</Item>}
+    </ListView>
+  ))
+  .add('selectionMode: none, onAction', () => (
+    <ListView width="250px" height={400} selectionMode="none" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+      {item => <Item>{item.name}</Item>}
+    </ListView>
+  ));
 
 function Example(props?) {
   return (
