@@ -21,8 +21,10 @@ import More from '@spectrum-icons/workflow/More';
 import React from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+  props = useSlotProps(props, 'actionmenu');
   let formatMessage = useMessageFormatter(intlMessages);
   let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
@@ -38,6 +40,7 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
       <ActionButton
         ref={ref}
         {...buttonProps}
+        UNSAFE_className={props.UNSAFE_className}
         isDisabled={props.isDisabled}
         isQuiet={props.isQuiet}
         autoFocus={props.autoFocus}>
