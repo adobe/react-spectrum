@@ -42,10 +42,19 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
   let disabledKeysProp = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
+  let [selectionBehavior, setSelectionBehavior] = useState(props.selectionBehavior || 'toggle');
+
+  // If the selectionBehavior prop is set to replace, but the current state is toggle (e.g. due to long press
+  // to enter selection mode on touch), and the selection becomes empty, reset the selection behavior.
+  if (props.selectionBehavior === 'replace' && selectionBehavior === 'toggle' && typeof selectedKeys === 'object' && selectedKeys.size === 0) {
+    setSelectionBehavior('replace');
+  }
 
   return {
     selectionMode,
     disallowEmptySelection,
+    selectionBehavior,
+    setSelectionBehavior,
     get isFocused() {
       return isFocusedRef.current;
     },

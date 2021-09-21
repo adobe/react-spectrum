@@ -281,9 +281,43 @@ storiesOf('TableView', module)
     )
   )
   .add(
-    'multiple selection selectionBehavior replace',
+    'selectionBehavior: replace',
     () => (
       <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionBehavior="replace" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+     )
+   )
+  .add(
+    'selectionBehavior: replace, onAction',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionBehavior="replace" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+     )
+   )
+   .add(
+    'selectionMode: none, onAction',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>

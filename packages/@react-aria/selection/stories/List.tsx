@@ -7,7 +7,6 @@ import {
 } from '@react-types/shared';
 import {ListState, useListState} from '@react-stately/list';
 import React, {useRef} from 'react';
-import {usePress} from '@react-aria/interactions';
 import {useSelectableItem, useSelectableList} from '@react-aria/selection';
 
 function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
@@ -18,16 +17,11 @@ function ListItem<T>({item, state}: {item: Node<T>, state: ListState<T>}) {
     selectionManager: state.selectionManager
   });
   const selected = state.selectionManager.isSelected(item.key);
-  let {pressProps} = usePress({
-    ...itemProps,
-    isDisabled: state.disabledKeys.has(item.key),
-    preventFocusOnPress: false
-  });
   return (
     <li
       role="option"
       ref={ref}
-      {...pressProps}
+      {...itemProps}
       style={{
         background: selected ? 'dodgerblue' : undefined,
         color: selected ? '#fff' : undefined

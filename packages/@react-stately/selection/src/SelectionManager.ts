@@ -14,6 +14,7 @@ import {
   Collection,
   FocusStrategy,
   Selection as ISelection,
+  LongPressEvent,
   Node,
   PressEvent,
   SelectionBehavior,
@@ -24,8 +25,7 @@ import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 
 interface SelectionManagerOptions {
-  allowsCellSelection?: boolean,
-  selectionBehavior?: SelectionBehavior
+  allowsCellSelection?: boolean
 }
 
 /**
@@ -36,13 +36,11 @@ export class SelectionManager implements MultipleSelectionManager {
   private state: MultipleSelectionState;
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean;
-  selectionBehavior: SelectionBehavior;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
     this.state = state;
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
-    this.selectionBehavior = options?.selectionBehavior || 'toggle';
     this._isSelectAll = null;
   }
 
@@ -58,6 +56,20 @@ export class SelectionManager implements MultipleSelectionManager {
    */
   get disallowEmptySelection(): boolean {
     return this.state.disallowEmptySelection;
+  }
+
+  /**
+   * The selection behavior for the collection.
+   */
+  get selectionBehavior(): SelectionBehavior {
+    return this.state.selectionBehavior;
+  }
+
+  /**
+   * Sets the selection behavior for the collection.
+   */
+  setSelectionBehavior(selectionBehavior: SelectionBehavior) {
+    this.state.setSelectionBehavior(selectionBehavior);
   }
 
   /**
@@ -252,7 +264,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     // Find a parent item to select
-    while (item.type !== 'item' && item.parentKey) {
+    while (item.type !== 'item' && item.parentKey != null) {
       item = this.collection.getItem(item.parentKey);
     }
 
@@ -377,7 +389,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
   }
 
-  select(key: Key, e?: PressEvent | PointerEvent) {
+  select(key: Key, e?: PressEvent | LongPressEvent | PointerEvent) {
     if (this.selectionMode === 'none') {
       return;
     }
@@ -422,6 +434,19 @@ export class SelectionManager implements MultipleSelectionManager {
       if (!selection.has(key)) {
         return false;
       }
+    }
+
+    return true;
+  }
+
+  canSelectItem(key: Key) {
+    if (this.state.selectionMode === 'none' || this.state.disabledKeys.has(key)) {
+      return false;
+    }
+
+    let item = this.collection.getItem(key);
+    if (!item || (item.type === 'cell' && !this.allowsCellSelection)) {
+      return false;
     }
 
     return true;

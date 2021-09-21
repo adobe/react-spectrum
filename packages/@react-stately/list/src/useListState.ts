@@ -39,10 +39,7 @@ export interface ListState<T> {
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
-  let {
-    filter,
-    selectionBehavior = 'toggle'
-  } = props;
+  let {filter} = props;
 
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
@@ -64,6 +61,6 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState, {selectionBehavior})
+    selectionManager: new SelectionManager(collection, selectionState)
   };
 }

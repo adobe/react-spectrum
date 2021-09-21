@@ -135,7 +135,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
         if (e.shiftKey && manager.selectionMode === 'multiple') {
           manager.extendSelection(key);
-        } else if (selectOnFocus && !e.ctrlKey) {
+        } else if (selectOnFocus && !(e.ctrlKey && e.altKey)) {
           manager.replaceSelection(key);
         }
       }
