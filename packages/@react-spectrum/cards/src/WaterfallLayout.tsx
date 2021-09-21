@@ -26,14 +26,14 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
    * @default Infinity
    */
   maxItemSize?: Size,
-  // /**
-  //  * The margin around the grid view between the edges and the items.
-  //  * @default 24
-  //  */
-  // margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
+  /**
+   * The margin around the grid view between the edges and the items.
+   * @default 24
+   */
+  margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
   /**
    * The minimum space required between items.
-   * @default 24 x 24
+   * @default 18 x 18
    */
   minSpace?: Size,
   /**
@@ -55,7 +55,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   protected margin: number;
   protected minSpace: Size;
   protected maxColumns: number;
-  protected itemPadding: number;
+  itemPadding: number;
   protected numColumns: number;
   protected itemWidth: number;
   protected horizontalSpacing: number;
@@ -66,9 +66,8 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     super(options);
     this.minItemSize = options.minItemSize || new Size(240, 136);
     this.maxItemSize = options.maxItemSize || new Size(Infinity, Infinity);
-    // TODO: V2 hard coded the margin to 24, current layout calculation breaks if changed from this value
-    this.margin = 24;
-    this.minSpace = options.minSpace || new Size(24, 24);
+    this.margin = options.margin != null ? options.margin : 24;
+    this.minSpace = options.minSpace || new Size(18, 18);
     this.maxColumns = options.maxColumns || Infinity;
     // TODO: not entirely sure what this is for since the layout will automatically shift itself to the correct vertical space for the card
     this.itemPadding = options.itemPadding != null ? options.itemPadding : 56;
@@ -84,32 +83,13 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     return 'waterfall';
   }
 
-  validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
-    this.collection = this.virtualizer.collection;
-    this.buildCollection(invalidationContext);
-
-    // Remove layout info that doesn't exist in new collection
-    if (this.lastCollection) {
-      for (let key of this.lastCollection.getKeys()) {
-        if (!this.collection.getItem(key)) {
-          this.layoutInfos.delete(key);
-        }
-      }
-
-      if (!this.isLoading) {
-        this.layoutInfos.delete('loader');
-      }
-    }
-
-    this.lastCollection = this.collection;
-  }
-
   buildCollection(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     // Compute the number of columns needed to display the content
     let visibleWidth = this.virtualizer.visibleRect.width;
     let availableWidth = visibleWidth - this.margin * 2;
-    let columns = Math.floor(visibleWidth / (this.minItemSize.width + this.minSpace.width));
+    let columns = Math.floor((availableWidth + this.minSpace.width) / (this.minItemSize.width + this.minSpace.width));
     this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
+
 
     // Compute the available width (minus the space between items)
     let width = availableWidth - (this.minSpace.width * (this.numColumns - 1));
@@ -241,7 +221,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
 
-    return key;
+    return this.collection.getItem(key)?.childNodes[0]?.key;
   }
 
   getClosestLeft(key: Key) {
@@ -255,14 +235,18 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
 
-    return key;
+    return this.collection.getItem(key)?.childNodes[0]?.key;
   }
 
   getKeyRightOf(key: Key) {
-    return this.direction === 'rtl' ?  this.getClosestLeft(key) : this.getClosestRight(key);
+    // Expected key is the currently focused cell so we need the parent row key
+    let parentRowKey = this.collection.getItem(key).parentKey;
+    return this.direction === 'rtl' ?  this.getClosestLeft(parentRowKey) : this.getClosestRight(parentRowKey);
   }
 
   getKeyLeftOf(key: Key) {
-    return this.direction === 'rtl' ?  this.getClosestRight(key) : this.getClosestLeft(key);
+    // Expected key is the currently focused cell so we need the parent row key
+    let parentRowKey = this.collection.getItem(key).parentKey;
+    return this.direction === 'rtl' ?  this.getClosestRight(parentRowKey) : this.getClosestLeft(parentRowKey);
   }
 }

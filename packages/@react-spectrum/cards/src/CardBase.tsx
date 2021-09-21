@@ -53,7 +53,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   let gridRef = useRef<HTMLDivElement>();
 
   // cards are only interactive if there is a selection manager and it allows selection
-  let {hoverProps, isHovered} = useHover({isDisabled: manager === undefined || manager?.selectionMode === 'none'});
+  let {hoverProps, isHovered} = useHover({isDisabled: manager === undefined || manager?.selectionMode === 'none' || isDisabled});
   let [isFocused, setIsFocused] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setIsFocused,
@@ -75,7 +75,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     }
     let cardHeight = gridRef.current.getBoundingClientRect().height;
     setHeight(cardHeight);
-  }, [gridRef, setHeight]);
+  }, [gridRef, setHeight, orientation]);
   let aspectRatioEnforce = undefined;
   if (orientation === 'horizontal' && !isNaN(height)) {
     aspectRatioEnforce = {

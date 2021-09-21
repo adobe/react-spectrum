@@ -37,7 +37,7 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
   margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
   /**
    * The minimum space required between items.
-   * @default 24 x 48
+   * @default 18 x 18
    */
   minSpace?: Size,
   /**
@@ -47,7 +47,7 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
   maxColumns?: number,
   /**
    * The vertical padding for an item.
-   * @default 52
+   * @default 95
    */
   itemPadding?: number
 }
@@ -60,18 +60,18 @@ const DEFAULT_OPTIONS = {
     minItemSize: new Size(96, 96),
     maxItemSize: new Size(Infinity, Infinity),
     margin: 8,
-    minSpace: new Size(8, 16),
+    minSpace: new Size(6, 6),
     maxColumns: Infinity,
     dropSpacing: 50
   },
   L: {
     // TODO: for now bumping this higher since the new cards have more stuff in the content area.
     // Will need to ask Spectrum what these values should be. Used to be 52. Do the same for S above
-    itemPadding: 100,
+    itemPadding: 95,
     minItemSize: new Size(208, 208),
     maxItemSize: new Size(Infinity, Infinity),
     margin: 24,
-    minSpace: new Size(24, 48),
+    minSpace: new Size(18, 18),
     maxColumns: Infinity,
     dropSpacing: 100
   }
@@ -83,7 +83,7 @@ export class GridLayout<T> extends BaseLayout<T> {
   protected margin: number;
   protected minSpace: Size;
   protected maxColumns: number;
-  protected itemPadding: number;
+  itemPadding: number;
   protected itemSize: Size;
   protected numColumns: number;
   protected numRows: number;
@@ -115,7 +115,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     let itemWidth = this.itemSize.width + this.horizontalSpacing;
     return Math.max(0,
       Math.min(
-        this.collection.size + (allowInsertingAtEnd ? 1 : 0),
+        this.collection.size - (allowInsertingAtEnd ? 0 : 1),
         Math.floor(y / itemHeight) * this.numColumns + Math.floor((x - this.horizontalSpacing) / itemWidth)
       )
     );
@@ -138,9 +138,8 @@ export class GridLayout<T> extends BaseLayout<T> {
       // The approach from v2 uses indexes where other v3 layouts iterate through every node/root node. This feels more efficient
       let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
       let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
-
-      for (let index = firstVisibleItem; index < lastVisibleItem; index++) {
-        let keyFromIndex = this.collection.at(index).key;
+      for (let index = firstVisibleItem; index <= lastVisibleItem; index++) {
+        let keyFromIndex = this.collection.rows[index].key;
         let layoutInfo = this.layoutInfos.get(keyFromIndex);
         if (this.isVisible(layoutInfo, rect)) {
           res.push(layoutInfo);
@@ -157,35 +156,13 @@ export class GridLayout<T> extends BaseLayout<T> {
     return res;
   }
 
-  validate() {
-    this.collection = this.virtualizer.collection;
-    this.buildCollection();
-
-    // Remove layout info that doesn't exist in new collection
-    if (this.lastCollection) {
-      for (let key of this.lastCollection.getKeys()) {
-        if (!this.collection.getItem(key)) {
-          this.layoutInfos.delete(key);
-        }
-      }
-
-      // TODO: dunno why I had to add this but it gets rid of the loading spinner, otherwise it remains on initial async load
-      // Can't figure out why ListLayout didn't need that
-      if (!this.isLoading) {
-        this.layoutInfos.delete('loader');
-      }
-    }
-
-    this.lastCollection = this.collection;
-  }
-
   buildCollection() {
     let visibleWidth = this.virtualizer.visibleRect.width;
     let visibleHeight = this.virtualizer.visibleRect.height;
 
     // Compute the number of rows and columns needed to display the content
     let availableWidth = visibleWidth - this.margin * 2;
-    let columns = Math.floor(availableWidth / (this.minItemSize.width + this.minSpace.width));
+    let columns = Math.floor((availableWidth + this.minSpace.width) / (this.minItemSize.width + this.minSpace.width));
     this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
     this.numRows = Math.ceil(this.collection.size / this.numColumns);
 
@@ -204,7 +181,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     this.itemSize = new Size(itemWidth, itemHeight);
 
     // Compute the horizontal spacing and content height
-    this.horizontalSpacing = Math.floor((visibleWidth - this.numColumns * this.itemSize.width) / (this.numColumns + 1));
+    this.horizontalSpacing = this.numColumns < 2 ? 0 : Math.floor((availableWidth - this.numColumns * this.itemSize.width) / (this.numColumns - 1));
 
     let y = this.margin;
     let index = 0;
@@ -247,6 +224,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     y = this.margin + row * (this.itemSize.height + this.minSpace.height);
 
     let rect = new Rect(x, y, this.itemSize.width, this.itemSize.height);
+    // TODO: Perhaps have it so that the child key for each row is stored with the layoutInfo?
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     this.layoutInfos.set(node.key, layoutInfo);
     return layoutInfo;
@@ -256,28 +234,30 @@ export class GridLayout<T> extends BaseLayout<T> {
   // then return the key that occupies the row + column below. This can be done by figuring out how many cards exist per column then dividing the
   // collection contents by that number (which will give us the row distribution)
   getKeyBelow(key: Key) {
+    // Expected key is the currently focused cell so we need the parent row key
+    let parentRowKey = this.collection.getItem(key).parentKey;
     let indexRowBelow;
-    let keyArray = [...this.collection.getKeys()];
-    let index = keyArray.findIndex(k => k === key);
+    let index = this.collection.rows.findIndex(card => card.key === parentRowKey);
     if (index !== -1) {
       indexRowBelow = index + this.numColumns;
     } else {
       return null;
     }
 
-    return this.collection.at(indexRowBelow)?.key || null;
+    return this.collection.rows[indexRowBelow]?.childNodes[0].key || null;
   }
 
   getKeyAbove(key: Key) {
+    // Expected key is the currently focused cell so we need the parent row key
+    let parentRowKey = this.collection.getItem(key).parentKey;
     let indexRowAbove;
-    let keyArray = [...this.collection.getKeys()];
-    let index = keyArray.findIndex(k => k === key);
+    let index = this.collection.rows.findIndex(card => card.key === parentRowKey);
     if (index !== -1) {
       indexRowAbove = index - this.numColumns;
     } else {
       return null;
     }
 
-    return this.collection.at(indexRowAbove)?.key || null;
+    return this.collection.rows[indexRowAbove]?.childNodes[0].key || null;
   }
 }

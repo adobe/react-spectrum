@@ -12,6 +12,7 @@
 
 import {AsyncLoadingCardView, ControlledCardView, CustomLayout, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
 import {GalleryLayout} from '../';
+import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
@@ -57,8 +58,11 @@ let itemsNoThinImages = [
   {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 21, title: 'Bob 5'}
 ];
 
+const StoryFn = ({storyFn}) => storyFn();
+
 export default {
-  title: 'CardView/Gallery layout'
+  title: 'CardView/Gallery layout',
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 export const DefaultGalleryStatic = () => StaticCardView({layout: GalleryLayout, items});
@@ -91,19 +95,19 @@ isLoadingNoHeightGallery.storyName = 'loadingState = loading, no height';
 export const isLoadingHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loading'});
 isLoadingHeightGallery.storyName = 'loadingState = loading, set height';
 
-export const loadingMoreGallery = () => DynamicCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'loadingMore', items});
+export const loadingMoreGallery = () => DynamicCardView({layout: GalleryLayout, loadingState: 'loadingMore', items});
 loadingMoreGallery.storyName = 'loadingState = loadingMore';
 
-export const filteringGallery = () => DynamicCardView({layout: GalleryLayout, width: '800px', height: '800px', loadingState: 'filtering', items});
+export const filteringGallery = () => DynamicCardView({layout: GalleryLayout, loadingState: 'filtering', items});
 filteringGallery.storyName = 'loadingState = filtering';
 
 export const emptyWithHeightGallery = () => NoItemCardView({layout: GalleryLayout, width: '800px', height: '800px', renderEmptyState});
 emptyWithHeightGallery.storyName = 'empty, set height';
 
-export const AsyncLoading = () => AsyncLoadingCardView({layout: GalleryLayout, width: '800px', height: '800px'});
+export const AsyncLoading = () => AsyncLoadingCardView({layout: GalleryLayout});
 AsyncLoading.storyName = 'Async loading';
 
-export const CustomLayoutOptions = () => CustomGalleryLayout({items: itemsLowVariance}, {idealRowHeight: 270, itemSpacing: new Size(10, 10), itemPadding: 114});
+export const CustomLayoutOptions = () => CustomGalleryLayout({items: itemsLowVariance}, {idealRowHeight: 400, itemSpacing: new Size(10, 10), itemPadding: 114, minItemSize: new Size(150, 400)});
 CustomGalleryLayout.storyName = 'Custom layout options';
 
 function CustomGalleryLayout(props, layoutOptions) {
