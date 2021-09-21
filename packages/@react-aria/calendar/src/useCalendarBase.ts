@@ -12,146 +12,59 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {CalendarAria} from './types';
+import {calendarIds, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 import {CalendarPropsBase} from '@react-types/calendar';
-import {CalendarStateBase} from '@react-stately/calendar';
+import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId, useLabels, useUpdateEffect} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent, useRef} from 'react';
-import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
+import {useMessageFormatter} from '@react-aria/i18n';
 
-export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarStateBase, selectedDateDescription: string): CalendarAria {
-  let {
-    isReadOnly = false,
-    isDisabled = false
-  } = props;
-
-  let domProps = filterDOMProps(props, {labelable: true});
+export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarState | RangeCalendarState): CalendarAria {
   let formatMessage = useMessageFormatter(intlMessages);
-  let monthFormatter = useDateFormatter({month: 'long', year: 'numeric'});
-  let calendarBody = useRef(null); // TODO: should this be in RSP?
   let calendarId = useId(props.id);
-  let calendarTitleId = useId();
-  let captionId = useId();
-  let {direction} = useLocale();
 
-  // Announce when the current month changes
+  let visibleRangeDescription = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone);
+
+  // Announce when the visible date range changes
   useUpdateEffect(() => {
-    // announce the new month with a change from the Previous or Next button
+    // only when pressing the Previous or Next button
     if (!state.isFocused) {
-      announce(monthFormatter.format(state.currentMonth));
+      announce(visibleRangeDescription);
     }
-    // handle an update to the current month from the Previous or Next button
-    // rather than move focus, we announce the new month value
-  }, [state.currentMonth]);
+  }, [visibleRangeDescription]);
 
   // Announce when the selected value changes
+  let selectedDateDescription = useSelectedDateDescription(state);
   useUpdateEffect(() => {
     if (selectedDateDescription) {
-      announce(selectedDateDescription);
+      announce(selectedDateDescription, 'polite', 4000);
     }
     // handle an update to the caption that describes the currently selected range, to announce the new value
   }, [selectedDateDescription]);
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
-        state.selectFocusedDate();
-        break;
-      case 'PageUp':
-        e.preventDefault();
-        if (e.shiftKey) {
-          state.focusPreviousYear();
-        } else {
-          state.focusPreviousMonth();
-        }
-        break;
-      case 'PageDown':
-        e.preventDefault();
-        if (e.shiftKey) {
-          state.focusNextYear();
-        } else {
-          state.focusNextMonth();
-        }
-        break;
-      case 'End':
-        e.preventDefault();
-        state.focusEndOfMonth();
-        break;
-      case 'Home':
-        e.preventDefault();
-        state.focusStartOfMonth();
-        break;
-      case 'ArrowLeft':
-        e.preventDefault();
-        if (direction === 'rtl') {
-          state.focusNextDay();
-        } else {
-          state.focusPreviousDay();
-        }
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        state.focusPreviousWeek();
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        if (direction === 'rtl') {
-          state.focusPreviousDay();
-        } else {
-          state.focusNextDay();
-        }
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        state.focusNextWeek();
-        break;
-    }
-  };
+  let descriptionProps = useDescription(visibleRangeDescription);
 
-  // aria-label logic
-  let labelProps = useLabels({
-    id: calendarId,
-    'aria-label': props['aria-label'],
-    'aria-labelledby': `${props['aria-labelledby'] || ''} ${props['aria-label'] ? calendarId : ''} ${calendarTitleId}`
-  });
+  // Label the child grid elements by the group element if it is labelled.
+  calendarIds.set(state, props['aria-label'] || props['aria-labelledby'] ? calendarId : null);
 
   return {
-    calendarProps: mergeProps(domProps, {
-      ...labelProps,
+    calendarProps: mergeProps(descriptionProps, {
+      role: 'group',
       id: calendarId,
-      role: 'group'
+      'aria-label': props['aria-label'],
+      'aria-labelledby': props['aria-labelledby']
     }),
-    calendarTitleProps: {
-      id: calendarTitleId
-    },
     nextButtonProps: {
-      onPress: () => state.focusNextMonth(),
+      onPress: () => state.focusNextPage(),
       'aria-label': formatMessage('next'),
-      isDisabled: props.isDisabled || state.isNextMonthInvalid()
+      isDisabled: props.isDisabled || state.isNextVisibleRangeInvalid()
     },
     prevButtonProps: {
-      onPress: () => state.focusPreviousMonth(),
+      onPress: () => state.focusPreviousPage(),
       'aria-label': formatMessage('previous'),
-      isDisabled: props.isDisabled || state.isPreviousMonthInvalid()
-    },
-    calendarBodyProps: {
-      ref: calendarBody,
-      role: 'grid',
-      'aria-readonly': isReadOnly || null,
-      'aria-disabled': isDisabled || null,
-      'aria-labelledby': labelProps['aria-labelledby'],
-      'aria-describedby': selectedDateDescription ? captionId : null,
-      onKeyDown,
-      onFocus: () => state.setFocused(true),
-      onBlur: () => state.setFocused(false)
-    },
-    captionProps: {
-      id: captionId,
-      children: selectedDateDescription
+      isDisabled: props.isDisabled || state.isPreviousVisibleRangeInvalid()
     }
   };
 }

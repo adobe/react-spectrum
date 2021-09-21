@@ -10,15 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render, within} from '@testing-library/react';
 import {Breadcrumbs} from '../';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
-import {render, within} from '@testing-library/react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('Breadcrumbs', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
       if (this instanceof HTMLUListElement) {
@@ -124,7 +127,7 @@ describe('Breadcrumbs', function () {
       </Provider>
     );
     let {children} = getByRole('list');
-    expect(() => within(children[0]).getByRole('button')).toThrow();
+    expect(within(children[0]).queryByRole('button')).toBeNull();
     expect(getByText('Folder 1')).toBeTruthy();
     expect(getByText('Folder 2')).toBeTruthy();
     expect(getByText('Folder 3')).toBeTruthy();
@@ -299,6 +302,7 @@ describe('Breadcrumbs', function () {
 
     let menuButton = getByRole('button');
     triggerPress(menuButton);
+    act(() => {jest.runAllTimers();});
 
     let menu = getByRole('menu');
     expect(menu).toBeTruthy();
@@ -310,6 +314,9 @@ describe('Breadcrumbs', function () {
 
     // breadcrumb root item
     expect(item1[0]).toHaveAttribute('role', 'link');
+    triggerPress(item1[0]);
+    // first press closes the menu, second press
+    act(() => {jest.runAllTimers();});
     triggerPress(item1[0]);
     expect(onAction).toHaveBeenCalledWith('Folder 1');
 

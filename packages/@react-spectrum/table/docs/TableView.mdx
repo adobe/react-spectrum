@@ -1,0 +1,868 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/table';
+import tableTypes from 'docs:@react-types/table/src/index.d.ts';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/table/package.json';
+
+```jsx import
+import {ActionButton} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
+import {Cell, Column, Row, TableView, TableBody, TableHeader} from '@react-spectrum/table';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Collections
+keywords: [table, grid]
+---
+
+# TableView
+
+<p>{docs.exports.TableView.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Cell', 'Column', 'Row', 'TableView', 'TableBody', 'TableHeader']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/table/'}
+  ]} />
+
+## Example
+```tsx example
+<TableView aria-label="Example table with static contents" selectionMode="multiple">
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column align="end">Date Modified</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </Row>
+    <Row>
+      <Cell>Program Files</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </Row>
+    <Row>
+      <Cell>bootmgr</Cell>
+      <Cell>System file</Cell>
+      <Cell>11/20/2010</Cell>
+    </Row>
+    <Row>
+      <Cell>log.txt</Cell>
+      <Cell>Text Document</Cell>
+      <Cell>1/18/2016</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+## Content
+TableView is a complex [collection component](../react-stately/collections.html) that is built up from many child elements including columns, rows, and cells. Columns are defined within a TableHeader element and rows are defined within a TableBody element. Rows contain Cell elements that correspond to each column. Cells can contain any element, allowing you to have focusable children within the TableView.
+
+Basic usage of TableView, seen in the example above, shows the use of a static collection where the contents of the TableView is hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data in this way allows TableView to automatically cache the rendering of each item, which dramatically improves performance.
+
+Columns and rows can be statically defined as children, or generated dynamically using a function based on the data passed to the `columns` or `items` prop respectively. Cells can also be statically defined as children, or generated dynamically based on the columns defined in the TableHeader.
+
+Each column and row has a unique key defined by the data. In the example below, the `uid` property of the column object is used as the `key` for the Column element within the TableHeader. The `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
+
+```tsx example
+let columns = [
+  {name: 'Name', uid: 'name'},
+  {name: 'Type', uid: 'type'},
+  {name: 'Date Modified', uid: 'date'}
+];
+
+let rows = [
+  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+  {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+  {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+  {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+];
+
+<TableView
+  aria-label="Example table with dynamic content"
+  maxWidth="size-6000">
+  <TableHeader columns={columns}>
+    {column => (
+      <Column
+        key={column.uid}
+        align={column.uid === 'date' ? 'end' : 'start'}>
+        {column.name}
+      </Column>
+    )}
+  </TableHeader>
+  <TableBody items={rows}>
+    {item => (
+      <Row>
+        {columnKey => <Cell>{item[columnKey]}</Cell>}
+      </Row>
+    )}
+  </TableBody>
+</TableView>
+```
+### Layout
+TableViews are often contained within a page layout that defines the size of the table. For example, a page might have a header or toolbar with a TableView below that fills the remaining vertical space. TableView is designed to scroll internally while the column headers remain fixed. Because of this, TableViews should not be placed within a scrollable container.
+
+The example below shows how to use a [Flex](Flex.html) component to achieve the layout described above. Note the TableView uses the `flex` prop to fill the remainder of the available space.
+
+
+```tsx example
+///- begin collapse -///
+let columns = [
+  {name: 'First name', id: 'first_name'},
+  {name: 'Last name', id: 'last_name'},
+  {name: 'City', id: 'city'}
+];
+
+let rows = [
+{"id":1,"first_name":"Andras","last_name":"Rodmell","city":"Tilburg"},
+{"id":2,"first_name":"Hansiain","last_name":"Muino","city":"Hollola"},
+{"id":3,"first_name":"Northrop","last_name":"Adnet","city":"Lai Cách"},
+{"id":4,"first_name":"Giana","last_name":"Phython","city":"Laspezia"},
+{"id":5,"first_name":"Maud","last_name":"Jaram","city":"Tipaz"},
+{"id":6,"first_name":"Gasparo","last_name":"Wiggin","city":"Feuknoni"},
+{"id":7,"first_name":"Phillie","last_name":"Lezemere","city":"Krajan Sidodadi"},
+{"id":8,"first_name":"Kailey","last_name":"Du Plantier","city":"Shangping"},
+{"id":9,"first_name":"Brady","last_name":"Oxtarby","city":"Bang Mun Nak"},
+{"id":10,"first_name":"Ekaterina","last_name":"Crennan","city":"Santo Antônio do Amparo"},
+{"id":11,"first_name":"Jaine","last_name":"Trembey","city":"Manūjān"},
+{"id":12,"first_name":"Emmey","last_name":"Dunguy","city":"Garhi Yāsīn"},
+{"id":13,"first_name":"Camille","last_name":"Millwall","city":"Orion"},
+{"id":14,"first_name":"Staci","last_name":"Glusby","city":"Alofi"},
+{"id":15,"first_name":"Ned","last_name":"Crumbleholme","city":"Ban Bueng"},
+{"id":16,"first_name":"Tana","last_name":"Beardsworth","city":"Puerto Aisén"},
+{"id":17,"first_name":"Dewain","last_name":"Fladgate","city":"London"},
+{"id":18,"first_name":"Thurstan","last_name":"Trembath","city":"Orléans"},
+{"id":19,"first_name":"Vaclav","last_name":"Fitzpayn","city":"Huangchen"},
+{"id":20,"first_name":"Keven","last_name":"Monkeman","city":"Medenychi"},
+{"id":21,"first_name":"Talia","last_name":"Ryman","city":"Piteå"},
+{"id":22,"first_name":"Percy","last_name":"Le Teve","city":"Terny"},
+{"id":23,"first_name":"Jackson","last_name":"Anten","city":"Beiling"},
+{"id":24,"first_name":"Jakob","last_name":"Goullee","city":"Pelym"},
+{"id":25,"first_name":"Dru","last_name":"Klainer","city":"Zavrč"},
+{"id":26,"first_name":"Lucie","last_name":"Donahue","city":"Kiryū"},
+{"id":27,"first_name":"Marc","last_name":"McPeck","city":"Nong Muang Khai"},
+{"id":28,"first_name":"Vivianna","last_name":"Allport","city":"Kajatian"},
+{"id":29,"first_name":"Drud","last_name":"Hurn","city":"Bambuí"},
+{"id":30,"first_name":"Trever","last_name":"Ambrodi","city":"Xiangtan"},
+{"id":31,"first_name":"Gwennie","last_name":"Kingswold","city":"San Benito"},
+{"id":32,"first_name":"Karlan","last_name":"Tilby","city":"Patrída"},
+{"id":33,"first_name":"Heddie","last_name":"Sneath","city":"Esperanza"},
+{"id":34,"first_name":"Harlen","last_name":"Sandells","city":"Harrismith"},
+{"id":35,"first_name":"Gavan","last_name":"Halward","city":"Al Ḩayfah"},
+{"id":36,"first_name":"Andre","last_name":"Everest","city":"Bahui"},
+{"id":37,"first_name":"Merilyn","last_name":"Rowbrey","city":"Imishli"},
+{"id":38,"first_name":"Abe","last_name":"Pecht","city":"Pangkalan Kasai"},
+{"id":39,"first_name":"Britt","last_name":"Collingridge","city":"Érd"},
+{"id":40,"first_name":"Leticia","last_name":"Thorndycraft","city":"Paita"},
+{"id":41,"first_name":"Eward","last_name":"Tigwell","city":"Aral"},
+{"id":42,"first_name":"Torrie","last_name":"Curzon","city":"Stockholm"},
+{"id":43,"first_name":"Jenifer","last_name":"Swalwel","city":"Jinniu"},
+{"id":44,"first_name":"Marianna","last_name":"Radley","city":"Hedi"},
+{"id":45,"first_name":"Antoine","last_name":"Tyers","city":"Hewa"},
+{"id":46,"first_name":"Darline","last_name":"Gallehawk","city":"København"},
+{"id":47,"first_name":"Rikki","last_name":"Rosenzveig","city":"Affery"},
+{"id":48,"first_name":"Debera","last_name":"Vedenichev","city":"Żywiec"},
+{"id":49,"first_name":"Morena","last_name":"Hewins","city":"Las Lajas"},
+{"id":50,"first_name":"Cordy","last_name":"Reimer","city":"Derbent"},
+{"id":51,"first_name":"Quint","last_name":"Thoresbie","city":"Guyang"},
+{"id":52,"first_name":"Christean","last_name":"Deere","city":"Waegwan"},
+{"id":53,"first_name":"Moyra","last_name":"Battelle","city":"Villa Presidente Frei, Ñuñoa, Santiago, Chile"},
+{"id":54,"first_name":"Fayth","last_name":"Gallafant","city":"Kedungharjo"},
+{"id":55,"first_name":"Thedrick","last_name":"Duddy","city":"Thị Trấn Mường Lát"},
+{"id":56,"first_name":"George","last_name":"Rickerd","city":"Zarqa"},
+{"id":57,"first_name":"Nikos","last_name":"Rideout","city":"Yuanqiao"},
+{"id":58,"first_name":"Alejandra","last_name":"Le Port","city":"Il’ichëvo"},
+{"id":59,"first_name":"Eleonora","last_name":"Gibberd","city":"Sua"},
+{"id":60,"first_name":"Archibaldo","last_name":"Place","city":"Sidayu"},
+{"id":61,"first_name":"Helen","last_name":"Brenton","city":"Kuressaare"},
+{"id":62,"first_name":"Leyla","last_name":"Armstead","city":"Haifa"},
+{"id":63,"first_name":"Bridget","last_name":"Strotone","city":"Karasuk"},
+{"id":64,"first_name":"Jarid","last_name":"Packer","city":"Студеничани"},
+{"id":65,"first_name":"Christos","last_name":"Natt","city":"Nova Russas"},
+{"id":66,"first_name":"Alwyn","last_name":"Mingaud","city":"Conde"},
+{"id":67,"first_name":"Archy","last_name":"Thorneywork","city":"Gulu"},
+{"id":68,"first_name":"Iolanthe","last_name":"Spurgeon","city":"Ayrihuanca"},
+{"id":69,"first_name":"Rossy","last_name":"Axford","city":"Ledeč nad Sázavou"},
+{"id":70,"first_name":"Consuela","last_name":"Lillegard","city":"Finote Selam"},
+{"id":71,"first_name":"Salomon","last_name":"Buckney","city":"Kampokpok"},
+{"id":72,"first_name":"Celene","last_name":"Espley","city":"Sinubong"},
+{"id":73,"first_name":"Kristos","last_name":"Denyukhin","city":"Las Palmas"},
+{"id":74,"first_name":"Bertha","last_name":"Mallabon","city":"Vera"},
+{"id":75,"first_name":"Jorry","last_name":"Yuryev","city":"Carletonville"},
+{"id":76,"first_name":"Holly-anne","last_name":"Wagstaffe","city":"Sukadana"},
+{"id":77,"first_name":"Lara","last_name":"Shears","city":"Gambēla"},
+{"id":78,"first_name":"Romonda","last_name":"Glanville","city":"Donglu"},
+{"id":79,"first_name":"Felice","last_name":"Pryde","city":"Sapadun"},
+{"id":80,"first_name":"Nick","last_name":"Kidney","city":"Chernigovka"},
+{"id":81,"first_name":"Hermina","last_name":"Dooley","city":"New Agutaya"},
+{"id":82,"first_name":"Ketty","last_name":"FitzGeorge","city":"Abaza"},
+{"id":83,"first_name":"Patrizio","last_name":"Bovingdon","city":"‘Ayn al ‘Arab"},
+{"id":84,"first_name":"Caitrin","last_name":"Braine","city":"Il’inskiy"},
+{"id":85,"first_name":"Ian","last_name":"De Few","city":"Jatinagara"},
+{"id":86,"first_name":"Eben","last_name":"Adan","city":"Bolong"},
+{"id":87,"first_name":"Peder","last_name":"Innott","city":"Gampaha"},
+{"id":88,"first_name":"Selie","last_name":"Cruise","city":"Mariscala"},
+{"id":89,"first_name":"Melania","last_name":"Meredyth","city":"La’ershan"},
+{"id":90,"first_name":"Antonina","last_name":"Proby","city":"Shantoudian"},
+{"id":91,"first_name":"Sabra","last_name":"Dreng","city":"Dzhankoy"},
+{"id":92,"first_name":"Sibeal","last_name":"Hall-Gough","city":"Mengxi"},
+{"id":93,"first_name":"Fidel","last_name":"Maisey","city":"Gus’-Khrustal’nyy"},
+{"id":94,"first_name":"Alejandro","last_name":"Devey","city":"Charata"},
+{"id":95,"first_name":"Norina","last_name":"Stoyle","city":"Malaya Dubna"},
+{"id":96,"first_name":"Lari","last_name":"Kiezler","city":"Guaíba"},
+{"id":97,"first_name":"Percival","last_name":"Geffinger","city":"Ngeni"},
+{"id":98,"first_name":"Jo","last_name":"Spoure","city":"Karata"},
+{"id":99,"first_name":"Karlie","last_name":"Gooddy","city":"Pelem"},
+{"id":100,"first_name":"Edmon","last_name":"Alsopp","city":"Sandu"}];
+///- end collapse -///
+
+<Flex height="size-5000" width="100%" direction="column" gap="size-150">
+  <ActionButton alignSelf="start">Add</ActionButton>
+  <TableView
+    flex
+    aria-label="Example table with dynamic content">
+    <TableHeader columns={columns}>
+      {column => (
+        <Column
+          key={column.id}>
+          {column.name}
+        </Column>
+      )}
+    </TableHeader>
+    <TableBody items={rows}>
+      {item => (
+        <Row>
+          {columnKey => <Cell>{item[columnKey]}</Cell>}
+        </Row>
+      )}
+    </TableBody>
+  </TableView>
+</Flex>
+```
+
+### Internationalization
+To internationalize a TableView, all text content within the TableView should be localized. This includes the `aria-label` provided to the TableView if any.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of TableView is automatically flipped.
+
+## Labeling
+### Accessibility
+An `aria-label` must be provided to the TableView for accessibility. If the TableView is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+By default, the first column of the TableView is used as the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and is announced by assistive technology when navigating through the rows. You can override this behavior by providing the `isRowHeader` prop
+to one or more Columns, allowing you to customize which columns should label the rows of the TableView.
+
+The example below applies `isRowHeader` to the "First Name" and "Last Name" columns so that each row is announced with the person's full name (e.g. "John Doe").
+
+```tsx example
+<TableView aria-label="Example table with static contents">
+  <TableHeader>
+    <Column isRowHeader>First Name</Column>
+    <Column isRowHeader>Last Name</Column>
+    <Column align="end">Age</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>John</Cell>
+      <Cell>Doe</Cell>
+      <Cell>45</Cell>
+    </Row>
+    <Row>
+      <Cell>Jane</Cell>
+      <Cell>Doe</Cell>
+      <Cell>37</Cell>
+    </Row>
+    <Row>
+      <Cell>Joe</Cell>
+      <Cell>Schmoe</Cell>
+      <Cell>67</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+## Asynchronous loading
+TableView supports loading data asynchronously, and will display a progress circle reflecting the current load state,
+set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+See the docs for more information.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncTable() {
+  let columns = [
+    {name: 'Name', key: 'name'},
+    {name: 'Height', key: 'height'},
+    {name: 'Mass', key: 'mass'},
+    {name: 'Birth Year', key: 'birth_year'}
+  ];
+
+  let list = useAsyncList({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <TableView aria-label="example async loading table" height="size-3000">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column align={column.key !== 'name' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody
+        items={list.items}
+        loadingState={list.loadingState}
+        onLoadMore={list.loadMore}>
+        {(item) => (
+          <Row key={item.name}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
+
+## Selection
+
+By default, TableView doesn't allow row selection but this can be enabled using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the value of the selected keys must match the `key` prop of the Row.
+
+The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "2" and "4".
+
+```tsx example
+<TableView aria-label="Example table with multiple selection" selectionMode="multiple" defaultSelectedKeys={['2', '4']}>
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column align="end">Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row key="1">
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </Row>
+    <Row key="2">
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </Row>
+    <Row key="3">
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </Row>
+    <Row key="4">
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly.
+
+Here is how you would control selection for the above example.
+
+```tsx example export=true
+function PokemonTable(props) {
+  let columns = [
+    {name: 'Name', uid: 'name'},
+    {name: 'Type', uid: 'type'},
+    {name: 'Level', uid: 'level'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+
+  return (
+    <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
+### Single selection
+
+To limit users to selecting only a single item at a time, `selectionMode` can be set to `single`.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="single" />
+```
+
+### Disallow empty selection
+
+TableView also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the TableView selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+// Using the same table as above
+<PokemonTable disallowEmptySelection />
+```
+
+### Disabled rows
+
+You can disable specific rows by providing an array of keys to TableView via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
+```
+
+## Sorting
+
+TableView supports sorting its data when a column header is pressed. To designate that a Column should support sorting, provide it with
+the `allowsSorting` prop. The TableView accepts a `sortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
+When the user presses a sortable column header, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update the `sortDescriptor` appropriately.
+
+This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
+See the docs for more information on how to perform server side sorting.
+
+```tsx example
+function AsyncSortTable() {
+  let list = useAsyncList({
+    async load({signal}) {
+      let res = await fetch(`https://swapi.dev/api/people/?search`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results
+      };
+    },
+    async sort({items, sortDescriptor}) {
+      return {
+        items: items.sort((a, b) => {
+          let first = a[sortDescriptor.column];
+          let second = b[sortDescriptor.column];
+          let cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        })
+      };
+    }
+  });
+
+  return (
+    <TableView aria-label="Example table with client side sorting" sortDescriptor={list.sortDescriptor} onSortChange={list.sort} height="size-3000">
+      <TableHeader>
+        <Column key="name" allowsSorting>Name</Column>
+        <Column key="height" allowsSorting>Height</Column>
+        <Column key="mass" allowsSorting>Mass</Column>
+        <Column key="birth_year" allowsSorting>Birth Year</Column>
+      </TableHeader>
+      <TableBody
+        items={list.items}
+        loadingState={list.loadingState}>
+        {item => (
+          <Row key={item.name}>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
+## Props
+
+### TableView props
+
+<PropTable component={docs.exports.TableView} links={docs.links} style={{marginBottom: '40px'}} />
+
+### TableHeader props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.TableHeaderProps.properties))
+  }
+}} links={tableTypes.links} style={{marginBottom: '40px'}} />
+
+### Column props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.SpectrumColumnProps.properties))
+  }
+}} links={tableTypes.links} style={{marginBottom: '40px'}} />
+
+### TableBody props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.TableBodyProps.properties))
+  }
+}} links={tableTypes.links} style={{marginBottom: '40px'}} />
+
+### Row props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.RowProps.properties))
+  }
+}} links={tableTypes.links} style={{marginBottom: '40px'}} />
+
+### Cell props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(tableTypes.exports.CellProps.properties))
+  }
+}} links={tableTypes.links} />
+
+## Visual options
+### Column alignment
+[View guidelines](https://spectrum.adobe.com/page/table/#Usage-guidelines)
+
+```tsx example
+<TableView aria-label="Example table for column alignment">
+  <TableHeader>
+    <Column align="start">Name</Column>
+    <Column align="center">Type</Column>
+    <Column align="end">Size</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>2021406_Proposal</Cell>
+      <Cell>PDF</Cell>
+      <Cell>86 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Budget Template</Cell>
+      <Cell>XLS</Cell>
+      <Cell>120 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Onboarding</Cell>
+      <Cell>PPT</Cell>
+      <Cell>472 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Welcome</Cell>
+      <Cell>TXT</Cell>
+      <Cell>24 KB</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+### Column widths
+Columns support three different width props: `minWidth`, `width`, and `maxWidth`. Each of these props accepts fixed values or percentages. TableView prioritizes columns with defined widths and divides the remaining space evenly amongst the other columns.
+
+```tsx example
+<TableView aria-label="Example table for column widths">
+  <TableHeader>
+    <Column maxWidth={300} align="start">Name</Column>
+    <Column width={80}>Type</Column>
+    <Column minWidth={100} align="end">Size</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>2021406_Proposal</Cell>
+      <Cell>PDF</Cell>
+      <Cell>86 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Budget Template</Cell>
+      <Cell>XLS</Cell>
+      <Cell>120 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Onboarding</Cell>
+      <Cell>PPT</Cell>
+      <Cell>472 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Welcome</Cell>
+      <Cell>TXT</Cell>
+      <Cell>24 KB</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+### Column dividers
+[View guidelines](https://spectrum.adobe.com/page/table/#Column-dividers)
+
+```tsx example
+<TableView aria-label="Example table for column dividers">
+  <TableHeader>
+    <Column align="start" showDivider>Name</Column>
+    <Column showDivider>Type</Column>
+    <Column align="end" showDivider>Size</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>2021406_Proposal</Cell>
+      <Cell>PDF</Cell>
+      <Cell>86 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Budget Template</Cell>
+      <Cell>XLS</Cell>
+      <Cell>120 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Onboarding</Cell>
+      <Cell>PPT</Cell>
+      <Cell>472 KB</Cell>
+    </Row>
+    <Row>
+      <Cell>Welcome</Cell>
+      <Cell>TXT</Cell>
+      <Cell>24 KB</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+### Hide header
+Individual column headers can be hidden by providing the `hideHeader` prop to the Column. A tooltip is rendered when the column header is focused
+to compensate for the lack of a visual title. Note that the `hideHeader` prop is specifically intended for columns that contain ActionButtons instead
+of text content.
+
+```tsx example export=true
+function TableExample(props) {
+  let columns = [
+    {name: 'First Name', key: 'firstName'},
+    {name: 'Last Name', key: 'lastName'},
+    {name: 'Add Info', key: 'addInfo'},
+    {name: 'Age', key: 'age'}
+  ];
+
+  let rows = [
+    {id: '1', firstName: 'John', lastName: 'Doe', age: '45'},
+    {id: '2', firstName: 'Jane', lastName: 'Doe', age: '37'},
+    {id: '3', firstName: 'Joe', lastName: 'Schmoe', age: '67'},
+    {id: '4', firstName: 'Joe', lastName: 'Bloggs', age: '12'},
+    {id: '5', firstName: 'Taylor', lastName: 'Rodriguez Lloyd-Atkinson', age: '83'}
+  ];
+
+  return (
+    <TableView aria-label="Example table with hidden headers" maxWidth="size-6000" {...props}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column
+            hideHeader={column.key === 'addInfo'}
+            align={column.key === 'age' ? 'end' : 'start'}
+            showDivider={column.key === 'addInfo'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item =>
+          (<Row key={item.id}>
+            {key =>
+              key === 'addInfo'
+              ? <Cell><ActionButton aria-label="Add Info" isQuiet><Add /></ActionButton></Cell>
+              : <Cell>{item[key]}</Cell>
+            }
+          </Row>)
+        }
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
+### Quiet
+[View guidelines](https://spectrum.adobe.com/page/table/#Standard-or-quiet)
+
+```tsx example
+// Using same setup as hide header example
+<TableExample isQuiet />
+```
+
+### Density
+The amount of vertical padding that each row contains can be modified by providing the `density` prop.
+
+```tsx example
+// Using same setup as hide header example
+<Flex direction="column" gap="size-300">
+  <TableExample density="compact" />
+  <TableExample density="spacious" />
+</Flex>
+```
+
+### Overflow mode
+By default, text content that overflows its table cell will be truncated. You can have it wrap instead by passing `overflowMode="wrap"`
+to the TableView.
+
+```tsx example
+// Using same setup as hide header example
+<TableExample overflowMode="wrap" />
+```
+
+### Empty state
+Use the `renderEmptyState` prop to customize what the TableView will display if there are no rows provided.
+
+```tsx example
+import {Content} from '@react-spectrum/view';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
+import {Heading} from '@react-spectrum/text';
+
+function renderEmptyState() {
+  return (
+    <IllustratedMessage>
+      <NotFound />
+      <Heading>No results</Heading>
+      <Content>No results found</Content>
+    </IllustratedMessage>
+  );
+}
+
+<TableView aria-label="Example table for empty state" height="size-3000" renderEmptyState={renderEmptyState}>
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column>Size</Column>
+  </TableHeader>
+  <TableBody>
+    {[]}
+  </TableBody>
+</TableView>
+```
+
+### Nested columns
+
+TableView supports nesting columns, allowing you to create column groups, or "tiered" column headers. Data for the leaf columns appears in each row of the table body.
+
+```tsx example
+<TableView aria-label="Example table for nested columns">
+  <TableHeader>
+    <Column title="Name">
+      <Column isRowHeader>First Name</Column>
+      <Column isRowHeader>Last Name</Column>
+    </Column>
+    <Column title="Information">
+      <Column>Age</Column>
+      <Column>Birthday</Column>
+    </Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Sam</Cell>
+      <Cell>Smith</Cell>
+      <Cell>36</Cell>
+      <Cell>May 3</Cell>
+    </Row>
+    <Row>
+      <Cell>Julia</Cell>
+      <Cell>Jones</Cell>
+      <Cell>24</Cell>
+      <Cell>February 10</Cell>
+    </Row>
+    <Row>
+      <Cell>Peter</Cell>
+      <Cell>Parker</Cell>
+      <Cell>28</Cell>
+      <Cell>September 7</Cell>
+    </Row>
+    <Row>
+      <Cell>Bruce</Cell>
+      <Cell>Wayne</Cell>
+      <Cell>32</Cell>
+      <Cell>December 18</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+Nested columns can also be defined dynamically using the function syntax and the `childColumns` prop.
+The following example is the same as the example above, but defined dynamically.
+
+```tsx example
+let columns = [
+  {name: 'Name', key: 'name', children: [
+    {name: 'First Name', key: 'first', isRowHeader: true},
+    {name: 'Last Name', key: 'last', isRowHeader: true}
+  ]},
+  {name: 'Information', key: 'info', children: [
+    {name: 'Age', key: 'age'},
+    {name: 'Birthday', key: 'birthday'}
+  ]}
+];
+
+let rows = [
+  {id: 1, first: 'Sam', last: 'Smith', age: 36, birthday: 'May 3'},
+  {id: 2, first: 'Julia', last: 'Jones', age: 24, birthday: 'February 10'},
+  {id: 3, first: 'Peter', last: 'Parker', age: 28, birthday: 'September 7'},
+  {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
+];
+
+<TableView aria-label="Example table for nested columns">
+  <TableHeader columns={columns}>
+    {column => (
+      <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
+        {column.name}
+      </Column>
+    )}
+  </TableHeader>
+  <TableBody items={rows}>
+    {item => (
+      <Row>
+        {columnKey => <Cell>{item[columnKey]}</Cell>}
+      </Row>
+    )}
+  </TableBody>
+</TableView>
+```

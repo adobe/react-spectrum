@@ -15,12 +15,12 @@ import {PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
 import {RowProps} from '@react-types/table';
 
-function Row<T>(props: RowProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+function Row(props: RowProps): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
-Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
-  let {childItems, children, textValue} = props;
+Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
+  let {children, textValue} = props;
 
   yield {
     type: 'item',
@@ -63,16 +63,6 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
 
         yield* cells;
       }
-
-      // Then process child rows (e.g. treeble)
-      if (childItems) {
-        for (let child of childItems) {
-          yield {
-            type: 'item',
-            value: child
-          };
-        }
-      }
     },
     shouldInvalidate(newContext: CollectionBuilderContext<T>) {
       // Invalidate all rows if the columns changed.
@@ -84,6 +74,11 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
   };
 };
 
+/**
+ * A Row represents a single item in a Table and contains Cell elements for each column.
+ * Cells can be statically defined as children, or generated dynamically using a function
+ * based on the columns defined in the TableHeader.
+ */
 // We don't want getCollectionNode to show up in the type definition
-let _Row = Row as <T>(props: RowProps<T>) => JSX.Element;
+let _Row = Row as (props: RowProps) => JSX.Element;
 export {_Row as Row};

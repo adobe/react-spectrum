@@ -11,7 +11,7 @@
  */
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames, SlotProvider} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
@@ -96,26 +96,28 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
               'spectrum-Menu-itemGrid'
             )
           }>
-          <SlotProvider
-            slots={{
-              text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
-              end: {UNSAFE_className: styles['spectrum-Menu-end'], ...descriptionProps},
-              icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
-              description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
-              keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
-            }}>
-            {contents}
-            {isSelected &&
-              <CheckmarkMedium
-                slot="checkmark"
-                UNSAFE_className={
-                      classNames(
-                        styles,
-                        'spectrum-Menu-checkmark'
-                      )
-                    } />
-                }
-          </SlotProvider>
+          <ClearSlots>
+            <SlotProvider
+              slots={{
+                text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
+                end: {UNSAFE_className: styles['spectrum-Menu-end'], ...descriptionProps},
+                icon: {UNSAFE_className: styles['spectrum-Menu-icon'], size: 'S'},
+                description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
+                keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
+              }}>
+              {contents}
+              {isSelected &&
+                <CheckmarkMedium
+                  slot="checkmark"
+                  UNSAFE_className={
+                        classNames(
+                          styles,
+                          'spectrum-Menu-checkmark'
+                        )
+                      } />
+                  }
+            </SlotProvider>
+          </ClearSlots>
         </Grid>
       </li>
     </FocusRing>

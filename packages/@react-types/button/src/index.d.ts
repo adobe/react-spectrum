@@ -74,7 +74,9 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
 
 export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
   /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
-  isQuiet?: boolean
+  isQuiet?: boolean,
+  /** The static color style to apply. Useful when the button appears over a color background. */
+  staticColor?: 'white' | 'black'
 }
 
 export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {

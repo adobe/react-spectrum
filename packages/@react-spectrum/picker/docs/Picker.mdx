@@ -117,6 +117,7 @@ Picker can be labeled using the `label` prop. If no label is provided, an altern
 
 ## Selection
 Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item. See [Events](#events) for more details on selection events.
+Additionally see the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
 function Example() {
@@ -344,6 +345,43 @@ By default, the label is positioned above the Picker. The `labelPosition` prop c
   <Item key="always">Always</Item>
 </Picker>
 ```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/picker/#Help-text-(description-and-error-message))
+
+Both a description and an error message can be supplied to a Picker. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+    let [animalId, setAnimalId] = React.useState();
+    let options = [
+      {id: 1, name: 'Aardvark'},
+      {id: 2, name: 'Cat'},
+      {id: 3, name: 'Dog'},
+      {id: 4, name: 'Kangaroo'},
+      {id: 5, name: 'Koala'},
+      {id: 6, name: 'Penguin'},
+      {id: 7, name: 'Snake'},
+      {id: 8, name: 'Turtle'},
+      {id: 9, name: 'Wombat'}
+    ];
+  let isValid = React.useMemo(() => animalId !== 2 && animalId !== 7, [animalId]);
+
+  return (
+    <Picker
+      validationState={isValid ? 'valid' : 'invalid'}
+      label="Favorite animal"
+      description="Pick your favorite animal, you will be judged."
+      errorMessage={animalId === 2 ? 'The author of this example is a dog person.' : 'Oh god it\'s a snake! Choose anything else.'}
+      items={options}
+      selectedKey={animalId}
+      onSelectionChange={selected => setAnimalId(selected)}>
+      {item => <Item>{item.name}</Item>}
+    </Picker>
+  );
+}
+```
+
 ### Custom widths
 ```tsx example
 <Flex direction="column" rowGap="size-150">
@@ -360,6 +398,7 @@ By default, the label is positioned above the Picker. The `labelPosition` prop c
   </Picker>
 </Flex>
 ```
+
 ### Align and direction
 ```tsx example
 <Flex direction="column" gap="size-150">
@@ -376,8 +415,10 @@ By default, the label is positioned above the Picker. The `labelPosition` prop c
   </Picker>
 </Flex>
 ```
+
 ### Menu state
 The open state of the menu can be controlled via the `defaultOpen` and `isOpen` props
+
 ```tsx example
 function Example() {
   let [open, setOpen] = React.useState(false);

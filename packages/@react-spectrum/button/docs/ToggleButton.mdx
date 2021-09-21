@@ -17,6 +17,7 @@ import packageData from '@react-spectrum/button/package.json';
 ```jsx import
 import {Flex} from '@react-spectrum/layout';
 import {ToggleButton} from '@react-spectrum/button';
+import {View} from '@react-spectrum/view';
 ```
 
 ---
@@ -128,4 +129,28 @@ function Example() {
 
 ```tsx example
 <ToggleButton isEmphasized defaultSelected>Pin</ToggleButton>
+```
+
+### Static color
+
+The `staticColor` prop can be used when a ToggleButton is displayed over a color background. When selected, the icon and text
+automatically take on the color of the background. You are responsible for choosing the static color variant that ensures the
+text meets an [accessible contrast ratio](https://developer.mozilla.org/en-US/docs/Web/Accessibility/Understanding_WCAG/Perceivable/Color_contrast)
+with the background.
+
+```tsx example
+<Flex wrap gap="size-250">
+  <View backgroundColor="static-seafoam-700" padding="size-500">
+    <ToggleButton staticColor="white">
+      <Pin />
+      <Text>Pin</Text>
+    </ToggleButton>
+  </View>
+  <View backgroundColor="static-yellow-400" padding="size-500">
+    <ToggleButton staticColor="black" isQuiet defaultSelected>
+      <Pin />
+      <Text>Pin</Text>
+    </ToggleButton>
+  </View>
+</Flex>
 ```

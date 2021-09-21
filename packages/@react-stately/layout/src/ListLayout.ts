@@ -23,10 +23,12 @@ export type ListLayoutOptions<T> = {
   estimatedHeadingHeight?: number,
   padding?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
-  collator?: Intl.Collator
+  collator?: Intl.Collator,
+  loaderHeight?: number,
+  placeholderHeight?: number
 };
 
-// A wrapper around LayoutInfo that supports heirarchy
+// A wrapper around LayoutInfo that supports hierarchy
 export interface LayoutNode {
   node?: Node<unknown>,
   layoutInfo: LayoutInfo,
@@ -64,6 +66,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected rootNodes: LayoutNode[];
   protected collator: Intl.Collator;
   protected invalidateEverything: boolean;
+  protected loaderHeight: number;
+  protected placeholderHeight: number;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -78,6 +82,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.padding = options.padding || 0;
     this.indentationForItem = options.indentationForItem;
     this.collator = options.collator;
+    this.loaderHeight = options.loaderHeight;
+    this.placeholderHeight = options.placeholderHeight;
     this.layoutInfos = new Map();
     this.layoutNodes = new Map();
     this.rootNodes = [];
@@ -123,6 +129,20 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.collection = this.virtualizer.collection;
     this.rootNodes = this.buildCollection();
 
+    // Remove deleted layout nodes
+    if (this.lastCollection) {
+      for (let key of this.lastCollection.getKeys()) {
+        if (!this.collection.getItem(key)) {
+          let layoutNode = this.layoutNodes.get(key);
+          if (layoutNode) {
+            this.layoutInfos.delete(layoutNode.layoutInfo.key);
+            this.layoutInfos.delete(layoutNode.header?.key);
+            this.layoutNodes.delete(key);
+          }
+        }
+      }
+    }
+
     this.lastWidth = this.virtualizer.visibleRect.width;
     this.lastCollection = this.collection;
   }
@@ -136,20 +156,22 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       nodes.push(layoutNode);
     }
 
-    if (nodes.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.rowHeight || this.estimatedRowHeight);
-      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
-      this.layoutInfos.set('placeholder', placeholder);
-      nodes.push({layoutInfo: placeholder});
-      y = placeholder.rect.maxY;
-    }
-
     if (this.isLoading) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, 40);
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width,
+        this.loaderHeight ?? this.virtualizer.visibleRect.height);
       let loader = new LayoutInfo('loader', 'loader', rect);
       this.layoutInfos.set('loader', loader);
       nodes.push({layoutInfo: loader});
       y = loader.rect.maxY;
+    }
+
+    if (nodes.length === 0) {
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width,
+        this.placeholderHeight ?? this.virtualizer.visibleRect.height);
+      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
+      this.layoutInfos.set('placeholder', placeholder);
+      nodes.push({layoutInfo: placeholder});
+      y = placeholder.rect.maxY;
     }
 
     this.contentSize = new Size(this.virtualizer.visibleRect.width, y + this.padding);
@@ -171,43 +193,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       this.layoutInfos.set(layoutNode.header.key, layoutNode.header);
     }
 
-    // Remove deleted child layout nodes from key mapping.
-    if (cached) {
-      let childKeys = new Set();
-      if (layoutNode.children) {
-        for (let child of layoutNode.children) {
-          childKeys.add(child.layoutInfo.key);
-        }
-      }
-
-      if (cached.children) {
-        for (let child of cached.children) {
-          if (!childKeys.has(child.layoutInfo.key)) {
-            this.removeLayoutNode(child);
-          }
-        }
-      }
-    }
-
     this.layoutNodes.set(node.key, layoutNode);
     return layoutNode;
-  }
-
-  removeLayoutNode(layoutNode: LayoutNode) {
-    this.layoutNodes.delete(layoutNode.layoutInfo.key);
-
-    this.layoutInfos.delete(layoutNode.layoutInfo.key);
-    if (layoutNode.header) {
-      this.layoutInfos.delete(layoutNode.header.key);
-    }
-
-    if (layoutNode.children) {
-      for (let child of layoutNode.children) {
-        if (this.layoutNodes.get(child.layoutInfo.key) === child) {
-          this.removeLayoutNode(child);
-        }
-      }
-    }
   }
 
   buildNode(node: Node<T>, x: number, y: number): LayoutNode {
@@ -311,6 +298,11 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   updateItemSize(key: Key, size: Size) {
     let layoutInfo = this.layoutInfos.get(key);
+    // If no layoutInfo, item has been deleted/removed.
+    if (!layoutInfo) {
+      return false;
+    }
+
     layoutInfo.estimatedSize = false;
     if (layoutInfo.rect.height !== size.height) {
       // Copy layout info rather than mutating so that later caches are invalidated.

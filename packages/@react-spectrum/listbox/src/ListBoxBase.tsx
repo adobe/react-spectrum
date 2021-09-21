@@ -11,6 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, FocusStrategy, Node, StyleProps} from '@react-types/shared';
+import {AriaListBoxOptions, useListBox} from '@react-aria/listbox';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -25,11 +26,10 @@ import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useMemo} from
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useCollator, useMessageFormatter} from '@react-aria/i18n';
-import {useListBox} from '@react-aria/listbox';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
-interface ListBoxBaseProps<T> extends DOMProps, AriaLabelingProps, StyleProps {
+interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabelingProps, StyleProps {
   layout: ListLayout<T>,
   state: ListState<T>,
   autoFocus?: boolean | FocusStrategy,
@@ -55,6 +55,8 @@ export function useListBoxLayout<T>(state: ListState<T>) {
       estimatedRowHeight: scale === 'large' ? 48 : 32,
       estimatedHeadingHeight: scale === 'large' ? 33 : 26,
       padding: scale === 'large' ? 5 : 4, // TODO: get from DNA
+      loaderHeight: 40,
+      placeholderHeight: scale === 'large' ? 48 : 32,
       collator
     })
   , [collator, scale]);
@@ -69,7 +71,6 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration = 0, onScroll} = props;
   let {listBoxProps} = useListBox({
     ...props,
-    ...domProps,
     keyboardDelegate: layout,
     isVirtualized: true
   }, state, ref);

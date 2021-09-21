@@ -1,5 +1,6 @@
 import {HTMLAttributes, useState} from 'react';
-import {useFocus, useFocusVisible, useFocusWithin} from '@react-aria/interactions';
+import {isFocusVisible, useFocus, useFocusVisibleListener, useFocusWithin} from '@react-aria/interactions';
+import {useRef} from 'react';
 
 interface FocusRingProps {
   /**
@@ -34,22 +35,44 @@ interface FocusRingAria {
  * not with a mouse, touch, or other input methods.
  */
 export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
-  let {within} = props;
+  let {
+    autoFocus = false,
+    isTextInput,
+    within
+  } = props;
+  let state = useRef({
+    isFocused: false,
+    isFocusVisible: autoFocus || isFocusVisible()
+  }).current;
   let [isFocused, setFocused] = useState(false);
-  let [isFocusWithin, setFocusWithin] = useState(false);
-  let {isFocusVisible} = useFocusVisible(props);
+  let [isFocusVisibleState, setFocusVisible] = useState(() => state.isFocused && state.isFocusVisible);
+
+  let updateState = () => setFocusVisible(state.isFocused && state.isFocusVisible);
+
+  let onFocusChange = isFocused => {
+    state.isFocused = isFocused;
+    setFocused(isFocused);
+    updateState();
+  };
+
+  useFocusVisibleListener((isFocusVisible) => {
+    state.isFocusVisible = isFocusVisible;
+    updateState();
+  }, [], {isTextInput});
+
   let {focusProps} = useFocus({
     isDisabled: within,
-    onFocusChange: setFocused
+    onFocusChange
   });
+
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !within,
-    onFocusWithinChange: setFocusWithin
+    onFocusWithinChange: onFocusChange
   });
 
   return {
-    isFocused: within ? isFocusWithin : isFocused,
-    isFocusVisible: (within ? isFocusWithin : isFocused) && isFocusVisible,
+    isFocused,
+    isFocusVisible: state.isFocused && isFocusVisibleState,
     focusProps: within ? focusWithinProps : focusProps
   };
 }

@@ -23,6 +23,8 @@ Item.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>, con
 
   let rendered = props.title || props.children;
   let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'] || '';
+
+  // suppressTextValueWarning is used in components like Tabs, which don't have type to select support.
   if (!textValue && !context?.suppressTextValueWarning) {
     console.warn('<Item> with non-plain text contents is unsupported by type to select for accessibility. Please add a `textValue` prop.');
   }

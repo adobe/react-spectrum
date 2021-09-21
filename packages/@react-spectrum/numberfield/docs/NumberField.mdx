@@ -96,7 +96,7 @@ The NumberField value can be formatted by using the `formatOptions` prop.
 `formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
 Currently only standard notation is supported, though scientific, engineering, and compact notation may be supported in the future.
 
-NumberField supports three numeral systems; Latin, Arabic-Indic, and Han decimal. Regardless of the locale, these three
+NumberField supports three numeral systems; Latin, Arabic-Indic, and Han positional decimal. Regardless of the locale, these three
 can be parsed from typed input. Initial rendering will appear in the [default numeral system](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem) for the locale unless explicitly overridden.
 
 ### Decimals
@@ -313,6 +313,29 @@ By default, the label is positioned above the NumberField. The `labelPosition` p
 
 ```tsx example
 <NumberField label="Cookies" labelPosition="side" labelAlign="end" minValue={0} />
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
+
+Both a description and an error message can be supplied to a NumberField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(1);
+  let isValid = React.useMemo(() => value > 0 || value === NaN, [value]);
+
+  return (
+    <NumberField
+      validationState={value === NaN ? undefined : (isValid ? 'valid' : 'invalid')}
+      value={value}
+      onChange={setValue}
+      label="Positive numbers only"
+      description="Enter a positive number."
+      errorMessage={value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'}
+    />
+  );
+}
 ```
 
 ### Custom width

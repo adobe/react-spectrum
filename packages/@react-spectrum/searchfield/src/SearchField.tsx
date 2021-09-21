@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useSlotProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
@@ -23,6 +23,7 @@ import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
 
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
+  props = useSlotProps(props, 'searchfield');
   props = useProviderProps(props);
   let defaultIcon = (
     <Magnifier data-testid="searchicon" />
@@ -37,7 +38,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
 
   let state = useSearchFieldState(props);
   let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
-  let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
+  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (
     <ClearButton
@@ -57,6 +58,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       {...otherProps}
       labelProps={labelProps}
       inputProps={inputProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
       UNSAFE_className={
         classNames(
           styles,

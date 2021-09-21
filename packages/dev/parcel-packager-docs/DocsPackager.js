@@ -46,10 +46,18 @@ module.exports = new Packager({
       for (let [exported] of asset.symbols) {
         let {asset: resolvedAsset, exportSymbol} = bundleGraph.resolveSymbol(asset, exported);
         let processed = resolvedAsset.id === asset.id ? obj : processAsset(resolvedAsset);
+
         if (exportSymbol === '*') {
           Object.assign(res, processed);
         } else {
-          res[exported] = processed[exportSymbol];
+          // Re-exported with different name (e.g. export {useGridCell as useTableCell})
+          if (exportSymbol !== exported) {
+            let clone = {...processed[exportSymbol]};
+            clone.name = exported;
+            res[exported] = clone;
+          } else {
+            res[exported] = processed[exportSymbol];
+          }
         }
       }
 
@@ -238,6 +246,11 @@ function mergeInterface(obj) {
     merge(properties, obj.properties);
 
     for (let ext of obj.extends) {
+      if (!ext) {
+        // temp workaround for ErrorBoundary extends React.Component which isn't being included right now for some reason
+        console.log('ext should not be null', obj);
+        continue;
+      }
       merge(properties, mergeInterface(ext).properties);
     }
   }

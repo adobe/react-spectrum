@@ -1,0 +1,749 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/table';
+import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
+import selectionDocs from 'docs:@react-stately/selection';
+import statelyDocs from 'docs:@react-stately/table';
+import focusDocs from 'docs:@react-aria/focus';
+import checkboxDocs from 'docs:@react-aria/checkbox';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/table/package.json';
+import Anatomy from './TableAnatomy.svg';
+
+```jsx import
+import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableHeaderRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import VisuallyHidden from '@react-aria/visually-hidden';
+```
+
+---
+category: Collections
+keywords: [table, aria, grid]
+---
+
+# useTable
+
+<p>{docs.exports.useTable.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useTable', 'useTableCell', 'useTableColumnHeader', 'useTableRow', 'useTableHeaderRow', 'useTableRowGroup', 'useTableSelectAllCheckbox', 'useTableSelectionCheckbox']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#grid'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useTable} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableRowGroup} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableHeaderRow} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableColumnHeader} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableRow} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableCell} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableSelectionCheckbox} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableSelectAllCheckbox} links={docs.links} />
+
+## Features
+
+A table can be built using the [&lt;table&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table), [&lt;tr&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tr),
+[&lt;td&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/td), and other table specific HTML elements, but is very limited in functionality especially when it comes to user interactions.
+HTML tables are meant for static content, rather than tables with rich interactions like focusable elements within cells, keyboard navigation, row selection, sorting, etc.
+`useTable` helps achieve accessible and interactive table components that can be styled as needed.
+
+* Exposed to assistive technology as a `grid` using ARIA
+* Keyboard navigation between columns, rows, cells, and in-cell focusable elements via the arrow keys
+* Single, multiple, or no row selection via mouse, touch, or keyboard interactions
+* Support for disabled rows, which cannot be selected
+* Optional support for checkboxes in each row for selection, as well as in the header to select all rows
+* Column sorting support
+* Async loading, infinite scrolling, filtering, and sorting support
+* Support for column groups via nested columns
+* Typeahead to allow focusing rows by typing text
+* Automatic scrolling support during keyboard navigation
+* Labeling support for accessibility
+* Support for marking columns as [row headers](https://www.w3.org/TR/wai-aria-1.1/#rowheader), which will be read when navigating the rows with a screen reader
+* Ensures that selections are announced using an ARIA live region
+* Support for using HTML table elements, or custom element types (e.g. `<div>`) for layout flexibility
+* Virtualized scrolling support for performance with large tables
+
+## Anatomy
+
+<Anatomy />
+
+A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content.
+If the table supports row selection, each row can optionally include a selection checkbox in the first column. Additionally, a "select all" checkbox is displayed as the first column header if the table supports multiple row selection.
+
+The <TypeLink links={docs.links} type={docs.exports.useTable} />, <TypeLink links={docs.links} type={docs.exports.useTableRow} />, <TypeLink links={docs.links} type={docs.exports.useTableCell} />, and <TypeLink links={docs.links} type={docs.exports.useTableColumnHeader} /> hooks handle keyboard, mouse, and other interactions to support
+row selection, in table navigation, and overall focus behavior. Those hooks, along with <TypeLink links={docs.links} type={docs.exports.useTableRowGroup} /> and <TypeLink links={docs.links} type={docs.exports.useTableHeaderRow} />, also handle exposing the table and its contents
+to assistive technology using ARIA. <TypeLink links={docs.links} type={docs.exports.useTableSelectAllCheckbox} /> and <TypeLink links={docs.links} type={docs.exports.useTableSelectionCheckbox} /> handle row selection and associating each checkbox with its respective rows
+for assistive technology. Each of these hooks returns props to be spread onto the appropriate HTML element.
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableState} />
+hook from `@react-stately/table`. The state object should be passed as an option to each of the above hooks where applicable.
+
+Note that an `aria-label` or `aria-labelledby` must be passed to the table to identify the element to assistive technology.
+
+## State management
+
+`useTable` requires knowledge of the rows, cells, and columns in the table in order to handle keyboard
+navigation and other interactions. It does this using
+the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
+interface, which is a generic interface to access sequential unique keyed data. You can
+implement this interface yourself, e.g. by using a prop to pass a list of item objects,
+but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableState} /> from
+`@react-stately/table` implements a JSX based interface for building collections instead.
+See [Collection Components](/react-stately/collections.html) for more information,
+and [Collection Interface](/react-stately/Collection.html) for internal details.
+
+Data is defined using the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.TableHeader} />, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.Column} />, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.TableBody} />, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.Row} />, and <TypeLink links={statelyDocs.links} type={statelyDocs.exports.Cell} /> components, which support both static and dynamic data.
+See the examples in the [usage](#usage) section below for details on how to use these components.
+
+In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableState} />
+manages the state necessary for multiple selection and exposes
+a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
+which makes use of the collection to provide an interface to update the selection state.
+For more information, see [Selection](/react-stately/selection.html).
+
+## Example
+
+Tables are complex [collection components](../react-stately/collections.html) that are built up from many child elements
+including columns, rows, and cells. In this example, we'll use the standard HTML table elements along with hooks from React
+Aria for each child. You may also use other elements like `<div>` to render these components as appropriate.
+Since there are many pieces, we'll walk through each of them one by one.
+
+The <TypeLink links={docs.links} type={docs.exports.useTable} /> hook will be used to render the outer most table element. It uses
+the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableState} /> hook to construct the table's collection of rows and columns,
+and manage state such as the focused row/cell, selection, and sort column/direction. We'll use the collection to iterate through
+the rows and cells of the table and render the relevant components, which we'll define below.
+
+```tsx example export=true render=false
+import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
+import {mergeProps} from '@react-aria/utils';
+import {useRef} from 'react';
+import {useFocusRing} from '@react-aria/focus';
+
+function Table(props) {
+  let state = useTableState({...props, showSelectionCheckboxes: props.selectionMode === 'multiple'});
+  let ref = useRef();
+  let {collection} = state;
+  let {gridProps} = useTable(props, state, ref);
+
+  return (
+    <table {...gridProps} ref={ref} style={{borderCollapse: 'collapse'}}>
+      <TableRowGroup type="thead" style={{borderBottom: '2px solid var(--spectrum-global-color-gray-800)'}}>
+        {collection.headerRows.map(headerRow => (
+          <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
+            {[...headerRow.childNodes].map(column =>
+              column.props.isSelectionCell
+                ? <TableSelectAllCell key={column.key} column={column} state={state} />
+                : <TableColumnHeader key={column.key} column={column} state={state} />
+            )}
+          </TableHeaderRow>
+        ))}
+      </TableRowGroup>
+      <TableRowGroup type="tbody">
+        {[...collection.body.childNodes].map(row => (
+          <TableRow key={row.key} item={row} state={state}>
+            {[...row.childNodes].map(cell =>
+              cell.props.isSelectionCell
+                ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
+                : <TableCell key={cell.key} cell={cell} state={state} />
+            )}
+          </TableRow>
+        ))}
+      </TableRowGroup>
+    </table>
+  );
+}
+```
+
+### Table header
+
+A <TypeLink links={docs.links} type={docs.exports.useTableRowGroup} /> hook will be used to group the rows in the table header and table body. In this example,
+we're using HTML table elements, so this will be either a `<thead>` or `<tbody>` element, as passed from the
+above `Table` component via the `type` prop.
+
+```tsx example export=true render=false
+function TableRowGroup({type: Element, style, children}) {
+  let {rowGroupProps} = useTableRowGroup();
+  return (
+    <Element {...rowGroupProps} style={style}>
+      {children}
+    </Element>
+  );
+}
+```
+
+The <TypeLink links={docs.links} type={docs.exports.useTableHeaderRow} /> hook will be used to render a header row. Header rows are similar to other rows,
+but they don't support user interaction like selection. In this example, there's only one header
+row, but there could be multiple in the case of nested columns. See the [example below](#nested-columns) for details.
+
+```tsx example export=true render=false
+function TableHeaderRow({item, state, children}) {
+  let ref = useRef();
+  let {rowProps} = useTableHeaderRow({node: item}, state, ref);
+
+  return (
+    <tr {...rowProps} ref={ref}>
+      {children}
+    </tr>
+  );
+}
+```
+
+The <TypeLink links={docs.links} type={docs.exports.useTableColumnHeader} /> hook will be used to render each column header. Column headers act as a label
+for all of the cells in that column, and can optionally support user interaction to sort by the column
+and change the sort order.
+
+The `allowsSorting` property of the column object can be used to determine
+if the column supports sorting at all.
+
+The `sortDescriptor` object stored in the `state` object indicates which column the table is currently sorted by,
+as well as the sort direction (ascending or descending). This is used to render an arrow icon to visually
+indicate the sort direction. When not sorted by this column, we use `visibility: hidden` to ensure that
+we reserve space for this icon at all times. That way the table's layout doesn't shift when we change the
+column we're sorting by. See the [example below](#sorting) of all of this in action.
+
+Finally, we use the <TypeLink links={focusDocs.links} type={focusDocs.exports.useFocusRing} /> hook to ensure that a focus ring is rendered when
+the cell is navigated to with the keyboard.
+
+```tsx example export=true render=false
+function TableColumnHeader({column, state}) {
+  let ref = useRef();
+  let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let arrowIcon = state.sortDescriptor?.direction === 'ascending' ? '▲' : '▼';
+
+  return (
+    <th
+      {...mergeProps(columnHeaderProps, focusProps)}
+      colSpan={column.colspan}
+      style={{
+        textAlign: column.colspan > 1 ? 'center' : 'left',
+        padding: '5px 10px',
+        outline: isFocusVisible ? '2px solid orange' : 'none',
+        cursor: 'default'
+      }}
+      ref={ref}>
+      {column.rendered}
+      {column.props.allowsSorting &&
+        <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
+          {arrowIcon}
+        </span>
+      }
+    </th>
+  );
+}
+```
+
+### Table body
+
+Now that we've covered the table header, let's move on to the body. We'll use
+the <TypeLink links={docs.links} type={docs.exports.useTableRow} /> hook to render each row in the table.
+Table rows can be focused and navigated to using the keyboard via the arrow keys. In addition, table rows
+can optionally support selection via mouse, touch, or keyboard. Clicking, tapping, or pressing the <kbd>Space</kbd>
+key anywhere in the row selects it.
+
+We'll use the <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} /> object exposed
+by the `state` to determine if a row is selected, and render a pink background if so. We'll also use the <TypeLink links={focusDocs.links} type={focusDocs.exports.useFocusRing} />
+hook to render a focus ring when the user navigates to the row with the keyboard.
+
+```tsx example export=true render=false
+function TableRow({item, children, state}) {
+  let ref = useRef();
+  let isSelected = state.selectionManager.isSelected(item.key);
+  let {rowProps} = useTableRow({node: item}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <tr
+      style={{
+        background: isSelected
+          ? 'blueviolet'
+          : item.index % 2
+            ? 'var(--spectrum-alias-highlight-hover)'
+            : 'none',
+        color: isSelected ? 'white' : null,
+        outline: isFocusVisible ? '2px solid orange' : 'none'
+      }}
+      {...mergeProps(rowProps, focusProps)}
+      ref={ref}>
+      {children}
+    </tr>
+  );
+}
+```
+
+Finally, we'll use the <TypeLink links={docs.links} type={docs.exports.useTableCell} /> hook to render each cell.
+Users can use the left and right arrow keys to navigate to each cell in a row, as well as any focusable elements
+within a cell. This is indicated by the focus ring, as created with the <TypeLink links={focusDocs.links} type={focusDocs.exports.useFocusRing} />
+hook. The cell's contents are available in the `rendered` property of the cell <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Node} />
+object.
+
+```tsx example export=true render=false
+function TableCell({cell, state}) {
+  let ref = useRef();
+  let {gridCellProps} = useTableCell({node: cell}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <td
+      {...mergeProps(gridCellProps, focusProps)}
+      style={{
+        padding: '5px 10px',
+        outline: isFocusVisible ? '2px solid orange' : 'none',
+        cursor: 'default'
+      }}
+      ref={ref}>
+      {cell.rendered}
+    </td>
+  );
+}
+```
+
+With all of the above components in place, we can render an example of our Table in action.
+This example shows a static collection, where all of the data is hard coded. [See below](#dynamic-collections)
+for examples of using this Table component with dynamic collections (e.g. from a server).
+
+Try tabbing into the table and navigating using the arrow keys.
+
+```tsx example
+<Table aria-label="Example static collection table" style={{height: '210px', maxWidth: '400px'}}>
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </Row>
+    <Row>
+      <Cell>Program Files</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </Row>
+    <Row>
+      <Cell>bootmgr</Cell>
+      <Cell>System file</Cell>
+      <Cell>11/20/2010</Cell>
+    </Row>
+    <Row>
+      <Cell>log.txt</Cell>
+      <Cell>Text Document</Cell>
+      <Cell>1/18/2016</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+### Adding selection
+
+Next, let's add support for selection. For multiple selection, we'll want to add a column of checkboxes to the left
+of the table to allow the user to select rows. This is done using the <TypeLink links={docs.links} type={docs.exports.useTableSelectionCheckbox} />
+hook. It is passed the `parentKey` of the cell, which refers to the row the cell is contained within. When the user
+checks or unchecks the checkbox, the row will be added or removed from the Table's selection.
+
+In this example, we pass the result of the `checkboxProps` into the <TypeLink links={checkboxDocs.links} type={checkboxDocs.exports.useCheckbox} />
+hook and render an `<input>` element directly, but it's likely you'll have a `Checkbox` component in your component library that uses these hooks already.
+See the [useCheckbox docs](useCheckbox.html) for more information.
+
+```tsx example export=true render=false
+import {useToggleState} from '@react-stately/toggle';
+import {useCheckbox} from '@react-aria/checkbox';
+
+function TableCheckboxCell({cell, state}) {
+  let ref = useRef();
+  let {gridCellProps} = useTableCell({node: cell}, state, ref);
+  let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
+
+  let inputRef = useRef(null);
+  let {inputProps} = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
+
+  return (
+    <td
+      {...gridCellProps}
+      ref={ref}>
+      <input {...inputProps} />
+    </td>
+  );
+}
+```
+
+We also want the user to be able to select all rows in the table at once. This is possible using the <kbd>⌘ Cmd</kbd> + <kbd>A</kbd>
+keyboard shortcut, but we'll also add a checkbox into the table header to do this and represent the selection state visually.
+This is done using the <TypeLink links={docs.links} type={docs.exports.useTableSelectAllCheckbox} /> hook. When all rows are selected,
+the checkbox will be shown as checked, and when only some rows are selected, the checkbox will be rendered in an indeterminate state.
+The user can check or uncheck the checkbox to select all or clear the selection, respectively.
+
+**Note**: Always ensure that the cell has accessible content, even when the checkbox is hidden (i.e. in single selection mode). The
+[VisuallyHidden](VisuallyHidden.html) component can be used to do this.
+
+```tsx example export=true render=false
+function TableSelectAllCell({column, state}) {
+  let ref = useRef();
+  let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
+  let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
+
+  let {checkboxProps} = useTableSelectAllCheckbox(state);
+  let inputRef = useRef(null);
+  let {inputProps} = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
+
+  return (
+    <th
+      {...columnHeaderProps}
+      ref={ref}>
+      {state.selectionManager.selectionMode === 'single'
+        ? <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
+        : <input {...inputProps} ref={inputRef} />
+      }
+    </th>
+  );
+}
+```
+
+The following example shows how to enable multiple selection support using the Table component we built above.
+It's as simple as setting the `selectionMode` prop to `"multiple"`. Because we set the `showSelectionCheckboxes`
+option of `useTableState` to true when multiple selection is enabled, an extra column for these checkboxes is
+automatically added for us.
+
+```tsx example
+<Table aria-label="Table with selection" selectionMode="multiple">
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row key="1">
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </Row>
+    <Row key="2">
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </Row>
+    <Row key="3">
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </Row>
+    <Row key="4">
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+And that's it! We now have a fully interactive table component that can support keyboard navigation, single or multiple selection,
+as well as column sorting. In addition, it is fully accessible for screen readers and other assistive technology. See below for more
+examples of how to use the Table component that we've built.
+
+## Usage
+
+### Dynamic collections
+
+So far, our examples have shown static collections, where the data is hard coded.
+Dynamic collections, as shown below, can be used when the table data comes from an external data source such as an API, or updates over time.
+In the example below, both the columns and the rows are provided to the table via a render function. You can also make the columns static and
+only the rows dynamic.
+
+```tsx example export=true
+function ExampleTable(props) {
+  let columns = [
+    {name: 'Name', key: 'name'},
+    {name: 'Type', key: 'type'},
+    {name: 'Date Modified', key: 'date'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+    {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+    {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+    {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+  ];
+
+  return (
+    <Table aria-label="Example dynamic collection table" {...props}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Single selection
+
+By default, `useTableState` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
+Note that the value of the selected keys must match the `key` prop of the row.
+
+The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with key equal to "2".
+A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
+
+```tsx example
+// Using the example above
+<ExampleTable selectionMode="single" defaultSelectedKeys={[2]} />
+```
+
+### Multiple selection
+
+Multiple selection can be enabled by setting `selectionMode` to `multiple`.
+
+```tsx example
+// Using the example above
+<ExampleTable selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
+```
+
+### Disallow empty selection
+
+Table also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the Table selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+// Using the example above
+<ExampleTable selectionMode="single" defaultSelectedKeys={[2]} disallowEmptySelection />
+```
+
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly.
+
+```tsx example export=true
+function PokemonTable(props) {
+  let columns = [
+    {name: 'Name', uid: 'name'},
+    {name: 'Type', uid: 'type'},
+    {name: 'Level', uid: 'level'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+
+  return (
+    <Table aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column key={column.uid}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Disabled rows
+
+You can disable specific rows by providing an array of keys to `useTableState` via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
+```
+
+### Sorting
+
+Table supports sorting its data when a column header is pressed. To designate that a Column should support sorting, provide it with
+the `allowsSorting` prop. The Table accepts a `sortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
+When the user presses a sortable column header, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update
+the `sortDescriptor` appropriately.
+
+This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
+See the docs for more information on how to perform server side sorting.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncSortTable() {
+  let list = useAsyncList({
+    async load({signal}) {
+      let res = await fetch(`https://swapi.dev/api/people/?search`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results
+      };
+    },
+    async sort({items, sortDescriptor}) {
+      return {
+        items: items.sort((a, b) => {
+          let first = a[sortDescriptor.column];
+          let second = b[sortDescriptor.column];
+          let cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        })
+      };
+    }
+  });
+
+  return (
+    <Table aria-label="Example table with client side sorting" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+      <TableHeader>
+        <Column key="name" allowsSorting>Name</Column>
+        <Column key="height" allowsSorting>Height</Column>
+        <Column key="mass" allowsSorting>Mass</Column>
+        <Column key="birth_year" allowsSorting>Birth Year</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row key={item.name}>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Nested columns
+
+Columns can be nested to create column groups. This will result in more than one header row to be created, with the `colspan`
+attribute of each column header cell set to the appropriate value so that the columns line up. Data for the leaf columns
+appears in each row of the table body.
+
+This example also shows the use of the `isRowHeader` prop for `Column`, which controls which columns are included in the
+accessibility name for each row. By default, only the first column is included, but in some cases more than one column may
+be used to represent the row. In this example, the first and last name columns are combined to form the ARIA label for the row.
+Only leaf columns may be marked as row headers.
+
+```tsx example
+<Table aria-label="Example table with nested columns">
+  <TableHeader>
+    <Column title="Name">
+      <Column isRowHeader>First Name</Column>
+      <Column isRowHeader>Last Name</Column>
+    </Column>
+    <Column title="Information">
+      <Column>Age</Column>
+      <Column>Birthday</Column>
+    </Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Sam</Cell>
+      <Cell>Smith</Cell>
+      <Cell>36</Cell>
+      <Cell>May 3</Cell>
+    </Row>
+    <Row>
+      <Cell>Julia</Cell>
+      <Cell>Jones</Cell>
+      <Cell>24</Cell>
+      <Cell>February 10</Cell>
+    </Row>
+    <Row>
+      <Cell>Peter</Cell>
+      <Cell>Parker</Cell>
+      <Cell>28</Cell>
+      <Cell>September 7</Cell>
+    </Row>
+    <Row>
+      <Cell>Bruce</Cell>
+      <Cell>Wayne</Cell>
+      <Cell>32</Cell>
+      <Cell>December 18</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+### Dynamic nested columns
+
+Nested columns can also be defined dynamically using the function syntax and the `childColumns` prop.
+The following example is the same as the example above, but defined dynamically.
+
+```tsx example
+let columns = [
+  {name: 'Name', key: 'name', children: [
+    {name: 'First Name', key: 'first', isRowHeader: true},
+    {name: 'Last Name', key: 'last', isRowHeader: true}
+  ]},
+  {name: 'Information', key: 'info', children: [
+    {name: 'Age', key: 'age'},
+    {name: 'Birthday', key: 'birthday'}
+  ]}
+];
+
+let rows = [
+  {id: 1, first: 'Sam', last: 'Smith', age: 36, birthday: 'May 3'},
+  {id: 2, first: 'Julia', last: 'Jones', age: 24, birthday: 'February 10'},
+  {id: 3, first: 'Peter', last: 'Parker', age: 28, birthday: 'September 7'},
+  {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
+];
+
+<Table aria-label="Example table with dynamic nested columns">
+  <TableHeader columns={columns}>
+    {column => (
+      <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
+        {column.name}
+      </Column>
+    )}
+  </TableHeader>
+  <TableBody items={rows}>
+    {item => (
+      <Row>
+        {columnKey => <Cell>{item[columnKey]}</Cell>}
+      </Row>
+    )}
+  </TableBody>
+</Table>
+```
+
+## Internationalization
+
+`useTable` handles some aspects of internationalization automatically.
+For example, type to select is implemented with an
+[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator)
+for internationalized string matching, and keyboard navigation is mirrored in right-to-left languages.
+You are responsible for localizing all text content within the table.
+
+### RTL
+
+In right-to-left languages, the table layout should be mirrored. The columns should be ordered from right to left and the
+individual column text alignment should be inverted. Ensure that your CSS accounts for this.

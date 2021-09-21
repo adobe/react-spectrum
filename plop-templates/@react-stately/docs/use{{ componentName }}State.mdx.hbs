@@ -1,0 +1,51 @@
+<!-- Copyright {{currentYear}} Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-stately/{{packageName}}';
+import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-stately/{{packageName}}/package.json';
+
+*Include after_version if the docs shouldn't be published to the website until reaching a specific package version.*
+---
+category: Category Name
+keywords: []
+after_version: 3.0.0-alpha.0
+---
+
+# use{{componentName}}State
+
+<p>{docs.exports.use{{componentName}}State.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['use{{componentName}}State']} />
+
+## API
+
+*Include an additional FunctionAPI if multiple hooks are being documented in a single file. See useTabList.mdx for an example.*
+<FunctionAPI function={docs.exports.use{{componentName}}State} links={docs.links} />
+
+## Introduction
+
+*Give some background for the hook if needed.*
+
+## Options
+
+*Include ClassAPI if this stately hook takes options (see useAsyncList for an example)*
+
+## Interface
+
+<ClassAPI links={docs.links} class={docs.links[docs.exports.use{{componentName}}State.return.id]} />
+
+## Example
+
+*Link to other docs if hook is being used elsewhere, otherwise show an example of usage.*

@@ -12,31 +12,30 @@
 
 import {action} from '@storybook/addon-actions';
 import React, {useEffect, useRef} from 'react';
-import {storiesOf} from '@storybook/react';
-import {useInteractOutside} from '../';
+import {useInteractOutside, usePress} from '../';
 
-storiesOf('useInteractOutside', module)
-  .addDecorator(story => (
-    <BodyStyler>{story()}</BodyStyler>
-  ))
-  .add(
-    'outside body',
-    () => <Demo />
-  );
+export default {
+  title: 'useInteractOutside'
+};
+
+export const OutsideBody = () => <Demo />;
+OutsideBody.decorators = [(Story) => <BodyStyler><Story /></BodyStyler>];
+
+export const ClickingButtonShouldFireOnInteractOutside = () => <App />;
 
 function Demo() {
   let ref = useRef();
   let onInteractOutside = action('outside');
   useInteractOutside({ref, onInteractOutside});
-  return <div ref={ref} style={{marginInlineStart: '50px', marginBlockStart: '50px'}}>Click anywhere but here</div>;
+  return <div ref={ref} style={{marginInlineStart: '50px', marginBlockStart: '50px'}}>Click anywhere but this text</div>;
 }
 
 function BodyStyler(props) {
   useEffect(() => {
     let story: HTMLElement = document.querySelector('.react-spectrum-story');
     let prev = {body: {height: document.body.style.height, width: document.body.style.width}, story: {minHeight: story.style.minHeight}};
-    document.body.style.height = '50px';
-    document.body.style.width = '50px';
+    document.body.style.height = 'fit-content';
+    document.body.style.width = 'fit-content';
     story.style.minHeight = 'initial';
     return () => {
       document.body.style.height = prev.body.height;
@@ -45,4 +44,40 @@ function BodyStyler(props) {
     };
   });
   return props.children;
+}
+
+
+function MyButton() {
+  let ref = React.useRef(null);
+  let {pressProps} = usePress({ref});
+
+  return (
+    <button {...pressProps} ref={ref}>
+      My Button
+    </button>
+  );
+}
+
+function App() {
+  let ref = React.useRef(null);
+
+  useInteractOutside({
+    // Clicking on "My Button" should fire this callback
+    onInteractOutside: action('clicked outside of orange div'),
+    ref
+  });
+
+  return (
+    <div className="App">
+      <div>Clicking 'My Button' should fire onInteractOutside</div>
+      <div
+        ref={ref}
+        style={{
+          width: '100px',
+          height: '100px',
+          background: 'orange'
+        }} />
+      <MyButton />
+    </div>
+  );
 }

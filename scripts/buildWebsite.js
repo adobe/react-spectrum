@@ -104,10 +104,11 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
 
-  // Only copy babel patch over
-  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches'));
-  let babelPatch = patches.find(name => name.startsWith('@babel'));
-  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
+  // Only copy babel and parcel patches over
+  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel'));
+  for (let patch of patches) {
+    fs.copySync(path.join(__dirname, '..', 'patches', patch), path.join(dir, 'patches', patch));
+  }
 
   // Install dependencies from npm
   await run('yarn', {cwd: dir, stdio: 'inherit'});
@@ -118,6 +119,17 @@ async function build() {
       fs.copySync(path.join(dir, 'node_modules', p), path.join(dir, 'docs', p));
     }
   }
+
+  // TEMP HACK: Patch textfield css to workaround parcel bug
+  fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));
+  let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.js');
+  let tf = fs.readFileSync(tfpath, 'utf8');
+  tf = 'import "./label.css";\n' + tf;
+  fs.writeFileSync(tfpath, tf);
+  tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'main.js');
+  tf = fs.readFileSync(tfpath, 'utf8');
+  tf = 'require("./label.css");\n' + tf;
+  fs.writeFileSync(tfpath, tf);
 
   // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
