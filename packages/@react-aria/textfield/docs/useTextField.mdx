@@ -69,7 +69,7 @@ input via the `aria-describedby` attribute.
 `useTextField` returns props that you should spread onto the appropriate element:
 
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.links[docs.exports.useTextField.return.id].properties} />
+  <InterfaceType properties={docs.links[docs.exports.useTextField.return.base.id].properties} />
 </TypeContext.Provider>
 
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead

@@ -125,7 +125,7 @@ export interface TextInputDOMProps extends DOMProps {
    * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
    */
   onCompositionStart?: CompositionEventHandler<HTMLInputElement>,
-  
+
   /**
    * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
    */
@@ -152,3 +152,12 @@ export interface TextInputDOMProps extends DOMProps {
    */
   onInput?: FormEventHandler<HTMLInputElement>
 }
+
+/**
+ * Matches the `JSX.IntrinsicElements` values of type `T` and returns their
+ * corresponding keys. For example, `InputHTMLAttributes<HTMLInputElement>`
+ * yields `'input'`.
+ */
+export type IntrinsicElementType<T> = {
+  [K in keyof JSX.IntrinsicElements]: keyof T extends keyof JSX.IntrinsicElements[K] ? K : never
+}[keyof JSX.IntrinsicElements];
