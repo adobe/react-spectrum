@@ -282,12 +282,13 @@ export function usePress(props: PressHookProps): PressResult {
         e.stopPropagation();
 
         state.isPressed = false;
-        triggerPressEnd(createEvent(state.target, e), 'keyboard', e.target === state.target);
+        let target = e.target as HTMLElement;
+        triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
 
         // If the target is a link, trigger the click method to open the URL,
         // but defer triggering pressEnd until onClick event handler.
-        if (e.target === state.target && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link') {
+        if (state.target.contains(target) && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link') {
           state.target.click();
         }
       }
