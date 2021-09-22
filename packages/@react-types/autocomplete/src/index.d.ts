@@ -10,50 +10,50 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
-
-export type MenuTriggerAction = 'focus' | 'input' | 'manual';
-
-export interface AutocompleteProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps, LabelableProps, HelpTextProps {
-  /** The list of Autocomplete items (uncontrolled). */
+import {AsyncLoadable, CollectionBase, LoadingState, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {Key} from 'react';
+import {MenuTriggerAction} from '@react-types/combobox';
+import {SearchFieldProps} from '@react-types/searchfield';
+export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit'> {
+  /** The list of SearchAutocomplete items (uncontrolled). */
   defaultItems?: Iterable<T>,
-  /** The list of Autocomplete items (controlled). */
+  /** The list of SearchAutocomplete items (controlled). */
   items?: Iterable<T>,
   /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
   onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
-  /** The value of the Autocomplete input (controlled). */
+  /** The value of the SearchAutocomplete input (controlled). */
   inputValue?: string,
-  /** The default value of the Autocomplete input (uncontrolled). */
+  /** The default value of the SearchAutocomplete input (uncontrolled). */
   defaultInputValue?: string,
-  /** Handler that is called when the Autocomplete input value changes. */
+  /** Handler that is called when the SearchAutocomplete input value changes. */
   onInputChange?: (value: string) => void,
-  /** Whether the Autocomplete allows a non-item matching input value to be set. */
-  allowsCustomValue?: boolean,
   /**
-   * The interaction required to display the Autocomplete menu.
-   * @default 'input'
-   */
-  menuTrigger?: MenuTriggerAction
-}
-
-export interface SpectrumAutocompleteProps<T> extends Omit<AutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
-  /**
-   * The interaction required to display the Autocomplete menu. Note that this prop has no effect on the mobile Autocomplete experience.
+   * The interaction required to display the SearchAutocomplete menu.
    * @default 'input'
    */
   menuTrigger?: MenuTriggerAction,
-  /** Whether the Autocomplete should be displayed with a quiet style. */
+  onSubmit?: (value: string, key: Key | null) => void
+}
+
+export interface SpectrumSearchAutocompleteProps<T> extends Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+  /**
+   * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
+   * @default 'input'
+   */
+  menuTrigger?: MenuTriggerAction,
+  /** Whether the SearchAutocomplete should be displayed with a quiet style. */
   isQuiet?: boolean,
   /**
-   * Direction the menu will render relative to the Autocomplete.
+   * Direction the menu will render relative to the SearchAutocomplete.
    * @default 'bottom'
    */
   direction?: 'bottom' | 'top',
-  /** The current loading state of the Autocomplete. Determines whether or not the progress circle should be shown. */
+  /** The current loading state of the SearchAutocomplete. Determines whether or not the progress circle should be shown. */
   loadingState?: LoadingState,
   /**
    * Whether the menu should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean
+  shouldFlip?: boolean,
+  onLoadMore?: () => void
 }
