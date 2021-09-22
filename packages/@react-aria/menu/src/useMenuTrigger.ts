@@ -46,7 +46,7 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
   let {triggerProps, overlayProps} = useOverlayTrigger({type}, state, ref);
 
   let onKeyDown = (e) => {
-    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented || isDisabled) {
+    if (isDisabled) {
       return;
     }
 
