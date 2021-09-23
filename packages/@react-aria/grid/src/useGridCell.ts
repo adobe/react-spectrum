@@ -60,7 +60,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let {direction} = useLocale();
   let keyboardDelegate = gridKeyboardDelegates.get(state);
-  let isEditable = node.props.isEditable;
+  let isEditable = node.props?.isEditable;
   // TODO: perhaps make this a state
   let editModeEnabled = useRef(false);
 
@@ -178,7 +178,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         }
         break;
       case 'a': {
-        if (isCtrlKeyPressed(e)) {
+        if (isCtrlKeyPressed(e) && editModeEnabled.current) {
           e.stopPropagation();
         }
         break;
