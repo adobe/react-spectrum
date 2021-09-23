@@ -15,8 +15,8 @@ import {ActionMenu, Item} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {triggerPress} from '@react-spectrum/test-utils';
-import {Tooltip, TooltipTrigger} from '../../tooltip';
 import userEvent from '@testing-library/user-event';
 
 let CLOSE_TIME = 350;
