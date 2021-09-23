@@ -53,14 +53,14 @@ describe('useSelectableCollection', () => {
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(options[1]).not.toHaveAttribute('aria-selected');
     expect(options[2]).not.toHaveAttribute('aria-selected');
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true, altKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true, altKey: true});
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
     expect(document.activeElement).toBe(options[1]);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(options[1]).not.toHaveAttribute('aria-selected');
     expect(options[2]).not.toHaveAttribute('aria-selected');
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true, altKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true, altKey: true});
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
     expect(document.activeElement).toBe(options[2]);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(options[1]).not.toHaveAttribute('aria-selected');

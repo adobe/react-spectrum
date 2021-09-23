@@ -81,7 +81,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   } = options;
 
   let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
-    if (e.pointerType === 'keyboard' && e.ctrlKey && e.altKey) {
+    if (e.pointerType === 'keyboard' && e.altKey) {
       manager.toggleSelection(key);
     } else {
       manager.select(key, e);

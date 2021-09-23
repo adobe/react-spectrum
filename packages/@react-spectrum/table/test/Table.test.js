@@ -2487,18 +2487,18 @@ describe('TableView', function () {
         checkSelection(onSelectionChange, ['Foo 5']);
 
         onSelectionChange.mockReset();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true, altKey: true});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true, altKey: true});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(document.activeElement).toBe(getCell(tree, 'Baz 6').closest('[role="row"]'));
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true, altKey: true});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true, altKey: true});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(document.activeElement).toBe(getCell(tree, 'Baz 7').closest('[role="row"]'));
 
-        fireEvent.keyDown(document.activeElement, {key: ' ', ctrlKey: true, altKey: true});
-        fireEvent.keyUp(document.activeElement, {key: ' ', ctrlKey: true, altKey: true});
+        fireEvent.keyDown(document.activeElement, {key: ' ', altKey: true});
+        fireEvent.keyUp(document.activeElement, {key: ' ', altKey: true});
         checkSelection(onSelectionChange, ['Foo 5', 'Foo 7']);
 
         onSelectionChange.mockReset();
