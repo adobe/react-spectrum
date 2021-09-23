@@ -45,7 +45,6 @@ Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Ge
   };
 };
 
-// We don't want getCollectionNode to show up in the type definition
 // eslint-disable-next-line
 let _Card = Card as <T>(props, ref) => JSX.Element;
 export {_Card as Card};

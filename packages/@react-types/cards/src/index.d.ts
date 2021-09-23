@@ -22,7 +22,6 @@ interface SpectrumCardProps extends AriaCardProps, StyleProps, DOMProps {
   layout?: 'grid' | 'waterfall' | 'gallery',
   // TODO: readd size when we get updated designs from spectrum
   // size?: 'S' | 'M' | 'L',
-  // not needed for quiet cards
   orientation?: 'horizontal' | 'vertical'
 }
 
@@ -37,7 +36,9 @@ interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate {
   collection: Collection<Node<T>>,
   disabledKeys: any,
   isLoading: boolean,
-  direction: Direction
+  direction: Direction,
+  layoutType: string,
+  itemPadding: number
 }
 
 export interface CardViewLayoutConstructor<T> {
