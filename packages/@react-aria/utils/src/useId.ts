@@ -102,3 +102,22 @@ export function useSlotId(): string {
 
   return resolvedId;
 }
+
+export function useSlotIdWithUpdater(): any {
+  let id = useId();
+  let [resolvedId, setResolvedId] = useState(id);
+  useLayoutEffect(() => {
+    let setCurr = idsUpdaterMap.get(id);
+    if (setCurr && !document.getElementById(id)) {
+      setResolvedId(null);
+
+    } else {
+      setResolvedId(id);
+    }
+  }, [id]);
+
+  return {
+    id: resolvedId,
+    updater: (value: boolean) => setResolvedId(value ? id : null)
+  };
+}

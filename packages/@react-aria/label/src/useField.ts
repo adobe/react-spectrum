@@ -13,7 +13,7 @@
 import {HelpTextProps} from '@react-types/shared';
 import {HTMLAttributes} from 'react';
 import {LabelAria, LabelAriaProps, useLabel} from './useLabel';
-import {mergeProps, useSlotId} from '@react-aria/utils';
+import {mergeProps, useSlotIdWithUpdater} from '@react-aria/utils';
 
 interface AriaFieldProps extends LabelAriaProps, HelpTextProps {}
 
@@ -33,8 +33,8 @@ export function useField(props: AriaFieldProps): FieldAria {
   let {description, errorMessage} = props;
   let {labelProps, fieldProps} = useLabel(props);
 
-  let descriptionId = useSlotId();
-  let errorMessageId = useSlotId();
+  let {id: descriptionId, updater: descriptionUpdater} = useSlotIdWithUpdater();
+  let {id: errorMessageId, updater: errorMessageUpdater} = useSlotIdWithUpdater();
 
   fieldProps = mergeProps(fieldProps, {
     'aria-describedby': [
@@ -47,11 +47,14 @@ export function useField(props: AriaFieldProps): FieldAria {
 
   let descriptionProps: HTMLAttributes<HTMLElement> = {};
   let errorMessageProps: HTMLAttributes<HTMLElement> = {};
+  descriptionProps.ref = (elem) => descriptionUpdater(!!elem);
+  errorMessageProps.ref = (elem) => errorMessageUpdater(!!elem);
+
   if (description) {
-    descriptionProps.id = descriptionId || errorMessageId;
+    descriptionProps.id = descriptionId;
   }
   if (errorMessage) {
-    errorMessageProps.id = errorMessageId || descriptionId;
+    errorMessageProps.id = errorMessageId;
   }
 
   return {
