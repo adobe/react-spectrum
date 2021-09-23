@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/cards",
+  "name": "@react-spectrum/card",
   "version": "3.0.0-alpha.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
@@ -48,7 +48,7 @@
     "@react-stately/list": "^3.3.0",
     "@react-stately/utils": "^3.2.1",
     "@react-stately/virtualizer": "^3.1.5",
-    "@react-types/cards": "3.0.0-alpha.0",
+    "@react-types/card": "3.0.0-alpha.0",
     "@react-types/shared": "^3.0.0"
   },
   "devDependencies": {

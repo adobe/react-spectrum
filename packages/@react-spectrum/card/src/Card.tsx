@@ -15,7 +15,7 @@ import {CardBase} from './CardBase';
 import {DOMRef} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
 import React, {forwardRef} from 'react';
-import {SpectrumCardProps} from '@react-types/cards';
+import {SpectrumCardProps} from '@react-types/card';
 import {useCardViewContext} from './CardViewContext';
 
 let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
