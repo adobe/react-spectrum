@@ -24,12 +24,12 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+  props = useSlotProps(props, 'actionmenu');
   let formatMessage = useMessageFormatter(intlMessages);
   let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
     buttonProps['aria-label'] = formatMessage('moreActions');
   }
-  props = useSlotProps(props, 'actionGroup');
 
   return (
     <MenuTrigger
@@ -39,10 +39,8 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
       shouldFlip={props.shouldFlip}>
       <ActionButton
         ref={ref}
-        {...buttonProps}
-        isDisabled={props.isDisabled}
-        isQuiet={props.isQuiet}
-        autoFocus={props.autoFocus}>
+        {...props}
+        {...buttonProps}>
         <More />
       </ActionButton>
       <Menu

@@ -16,6 +16,10 @@ interface ResolvedDateTimeFormatOptions extends Intl.ResolvedDateTimeFormatOptio
   hourCycle?: Intl.DateTimeFormatOptions['hourCycle']
 }
 
+interface DateRangeFormatPart extends Intl.DateTimeFormatPart {
+  source: 'startRange' | 'endRange' | 'shared'
+}
+
 export class DateFormatter implements Intl.DateTimeFormat {
   private formatter: Intl.DateTimeFormat;
   private options: Intl.DateTimeFormatOptions;
@@ -34,7 +38,7 @@ export class DateFormatter implements Intl.DateTimeFormat {
     return this.formatter.formatToParts(value);
   }
 
-  formatRange(start: Date, end: Date) {
+  formatRange(start: Date, end: Date): string {
     // @ts-ignore
     if (typeof this.formatter.formatRange === 'function') {
       // @ts-ignore
@@ -49,7 +53,7 @@ export class DateFormatter implements Intl.DateTimeFormat {
     return `${this.formatter.format(start)} – ${this.formatter.format(end)}`;
   }
 
-  formatRangeToParts(start: Date, end: Date) {
+  formatRangeToParts(start: Date, end: Date): DateRangeFormatPart[] {
     // @ts-ignore
     if (typeof this.formatter.formatRangeToParts === 'function') {
       // @ts-ignore
@@ -63,9 +67,9 @@ export class DateFormatter implements Intl.DateTimeFormat {
     let startParts = this.formatter.formatToParts(start);
     let endParts = this.formatter.formatToParts(end);
     return [
-      ...startParts.map(p => ({...p, source: 'startRange'})),
+      ...startParts.map(p => ({...p, source: 'startRange'} as DateRangeFormatPart)),
       {type: 'literal', value: ' – ', source: 'shared'},
-      ...endParts.map(p => ({...p, source: 'endRange'}))
+      ...endParts.map(p => ({...p, source: 'endRange'} as DateRangeFormatPart))
     ];
   }
 
@@ -150,6 +154,10 @@ function hasBuggyResolvedHourCycle() {
 }
 
 function getResolvedHourCycle(locale: string, options: Intl.DateTimeFormatOptions) {
+  if (!options.timeStyle && !options.hour) {
+    return undefined;
+  }
+
   // Work around buggy results in resolved hourCycle and hour12 options in WebKit.
   // Format the minimum possible hour and maximum possible hour in a day and parse the results.
   locale = locale.replace(/(-u-)?-nu-[a-zA-Z0-9]+/, '');

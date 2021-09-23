@@ -11,35 +11,58 @@
  */
 
 import {AnyCalendarDate, AnyTime} from './types';
-import {CalendarDate, ZonedDateTime} from './CalendarDate';
+import {CalendarDate, CalendarDateTime, ZonedDateTime} from './CalendarDate';
 import {fromAbsolute, toAbsolute, toCalendar, toCalendarDate} from './conversion';
-import {Mutable} from './utils';
+import {weekStartData} from './weekStartData';
 
-export function isSameDay(a: AnyCalendarDate, b: AnyCalendarDate): boolean {
+type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
+
+export function isSameDay(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
   return a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
 }
 
-export function isSameMonth(a: AnyCalendarDate, b: AnyCalendarDate): boolean {
+export function isSameMonth(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
+  // In the Japanese calendar, months can span multiple eras/years, so only compare the first of the month.
+  a = startOfMonth(a);
+  b = startOfMonth(b);
   return a.era === b.era && a.year === b.year && a.month === b.month;
 }
 
-export function isSameYear(a: AnyCalendarDate, b: AnyCalendarDate): boolean {
+export function isSameYear(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
+  a = startOfYear(a);
+  b = startOfYear(b);
   return a.era === b.era && a.year === b.year;
 }
 
-export function isToday(date: AnyCalendarDate, timeZone: string): boolean {
+export function isEqualDay(a: DateValue, b: DateValue): boolean {
+  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
+}
+
+export function isEqualMonth(a: DateValue, b: DateValue): boolean {
+  a = startOfMonth(a);
+  b = startOfMonth(b);
+  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month;
+}
+
+export function isEqualYear(a: DateValue, b: DateValue): boolean {
+  a = startOfYear(a);
+  b = startOfYear(b);
+  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year;
+}
+
+export function isToday(date: DateValue, timeZone: string): boolean {
   return isSameDay(date, today(timeZone));
 }
 
-export function getDayOfWeek(date: AnyCalendarDate) {
+export function getDayOfWeek(date: DateValue, locale: string) {
   let julian = date.calendar.toJulianDay(date);
 
   // If julian is negative, then julian % 7 will be negative, so we adjust
   // accordingly.  Julian day 0 is Monday.
-  let dayOfWeek = Math.ceil((julian + 1)) % 7;
+  let dayOfWeek = Math.ceil(julian + 1 - getWeekStart(locale)) % 7;
   if (dayOfWeek < 0) {
     dayOfWeek += 7;
   }
@@ -74,22 +97,47 @@ export function getHoursInDay(a: CalendarDate, timeZone: string): number {
   return (tomorrowMs - ms) / 3600000;
 }
 
+let localTimeZone = null;
 export function getLocalTimeZone(): string {
-  // TODO: cache? but how to invalidate...
-  return new Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // TODO: invalidate this somehow?
+  if (localTimeZone == null) {
+    localTimeZone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+
+  return localTimeZone;
 }
 
-export function startOfMonth<T extends AnyCalendarDate>(date: T): T {
-  let mutableDate: Mutable<T> = date.copy();
-  // TODO: should this use getMinimumDayInMonth? That breaks Calendar...
-  mutableDate.day = 1;
-  return mutableDate;
+export function startOfMonth(date: ZonedDateTime): ZonedDateTime;
+export function startOfMonth(date: CalendarDateTime): CalendarDateTime;
+export function startOfMonth(date: CalendarDate): CalendarDate;
+export function startOfMonth(date: DateValue): DateValue;
+export function startOfMonth(date: DateValue) {
+  // Use `subtract` instead of `set` so we don't get constrained in an era.
+  return date.subtract({days: date.day - 1});
 }
 
-export function endOfMonth<T extends AnyCalendarDate>(date: T): T {
-  let mutableDate: Mutable<T> = date.copy();
-  mutableDate.day = date.calendar.getDaysInMonth(date);
-  return mutableDate;
+export function endOfMonth(date: ZonedDateTime): ZonedDateTime;
+export function endOfMonth(date: CalendarDateTime): CalendarDateTime;
+export function endOfMonth(date: CalendarDate): CalendarDate;
+export function endOfMonth(date: DateValue): DateValue;
+export function endOfMonth(date: DateValue) {
+  return date.add({days: date.calendar.getDaysInMonth(date) - date.day});
+}
+
+export function startOfYear(date: ZonedDateTime): ZonedDateTime;
+export function startOfYear(date: CalendarDateTime): CalendarDateTime;
+export function startOfYear(date: CalendarDate): CalendarDate;
+export function startOfYear(date: DateValue): DateValue;
+export function startOfYear(date: DateValue) {
+  return startOfMonth(date.subtract({months: date.month - 1}));
+}
+
+export function endOfYear(date: ZonedDateTime): ZonedDateTime;
+export function endOfYear(date: CalendarDateTime): CalendarDateTime;
+export function endOfYear(date: CalendarDate): CalendarDate;
+export function endOfYear(date: DateValue): DateValue;
+export function endOfYear(date: DateValue) {
+  return endOfMonth(date.add({months: date.calendar.getMonthsInYear(date) - date.month}));
 }
 
 export function getMinimumMonthInYear(date: AnyCalendarDate) {
@@ -106,4 +154,64 @@ export function getMinimumDayInMonth(date: AnyCalendarDate) {
   }
 
   return 1;
+}
+
+export function startOfWeek(date: ZonedDateTime, locale: string): ZonedDateTime;
+export function startOfWeek(date: CalendarDateTime, locale: string): CalendarDateTime;
+export function startOfWeek(date: CalendarDate, locale: string): CalendarDate;
+export function startOfWeek(date: DateValue, locale: string): DateValue;
+export function startOfWeek(date: DateValue, locale: string) {
+  let dayOfWeek = getDayOfWeek(date, locale);
+  return date.subtract({days: dayOfWeek});
+}
+
+export function endOfWeek(date: ZonedDateTime, locale: string): ZonedDateTime;
+export function endOfWeek(date: CalendarDateTime, locale: string): CalendarDateTime;
+export function endOfWeek(date: CalendarDate, locale: string): CalendarDate;
+export function endOfWeek(date: DateValue, locale: string) {
+  return startOfWeek(date, locale).add({days: 6});
+}
+
+const cachedRegions = new Map<string, string>();
+
+function getRegion(locale: string) {
+  // If the Intl.Locale API is available, use it to get the region for the locale.
+  // @ts-ignore
+  if (Intl.Locale) {
+    // Constructing an Intl.Locale is expensive, so cache the result.
+    let region = cachedRegions.get(locale);
+    if (!region) {
+      // @ts-ignore
+      region = new Intl.Locale(locale).maximize().region;
+      cachedRegions.set(locale, region);
+    }
+    return region;
+  }
+
+  // If not, just try splitting the string.
+  // If the second part of the locale string is 'u',
+  // then this is a unicode extension, so ignore it.
+  // Otherwise, it should be the region.
+  let part = locale.split('-')[1];
+  return part === 'u' ? null : part;
+}
+
+function getWeekStart(locale: string) {
+  // TODO: use Intl.Locale for this once browsers support the weekInfo property
+  // https://github.com/tc39/proposal-intl-locale-info
+  let region = getRegion(locale);
+  return weekStartData[region] || 0;
+}
+
+export function getWeeksInMonth(date: DateValue, locale: string) {
+  let days = date.calendar.getDaysInMonth(date);
+  return Math.ceil((getDayOfWeek(startOfMonth(date), locale) + days) / 7);
+}
+
+export function minDate<A extends DateValue, B extends DateValue>(a: A, b: B): A | B {
+  return a.compare(b) <= 0 ? a : b;
+}
+
+export function maxDate<A extends DateValue, B extends DateValue>(a: A, b: B): A | B {
+  return a.compare(b) >= 0 ? a : b;
 }
