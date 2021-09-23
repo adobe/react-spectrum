@@ -11,7 +11,7 @@
  */
 
 import {HelpTextProps} from '@react-types/shared';
-import {HTMLAttributes} from 'react';
+import {HTMLAttributes, RefCallback} from 'react';
 import {LabelAria, LabelAriaProps, useLabel} from './useLabel';
 import {mergeProps, useSlotIdWithUpdater} from '@react-aria/utils';
 
@@ -45,17 +45,15 @@ export function useField(props: AriaFieldProps): FieldAria {
     ].filter(Boolean).join(' ') || undefined
   });
 
-  let descriptionProps: HTMLAttributes<HTMLElement> = {};
-  let errorMessageProps: HTMLAttributes<HTMLElement> = {};
-  descriptionProps.ref = (elem) => descriptionUpdater(!!elem);
-  errorMessageProps.ref = (elem) => errorMessageUpdater(!!elem);
+  let descriptionProps: HTMLAttributes<HTMLElement> & {ref: Function} = {
+    id: (description ? descriptionId : null),
+    ref: (elem: RefCallback<HTMLElement>) => descriptionUpdater(!!elem)
+  };
 
-  if (description) {
-    descriptionProps.id = descriptionId;
-  }
-  if (errorMessage) {
-    errorMessageProps.id = errorMessageId;
-  }
+  let errorMessageProps: HTMLAttributes<HTMLElement> & {ref: Function} = {
+    id: (errorMessage ? errorMessageId : null),
+    ref: (elem: RefCallback<HTMLElement>) => errorMessageUpdater(!!elem)
+  };
 
   return {
     labelProps,
