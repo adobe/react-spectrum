@@ -37,6 +37,7 @@ export {SearchField} from '@react-spectrum/searchfield';
 export {StatusLight} from '@react-spectrum/statuslight';
 export {Switch} from '@react-spectrum/switch';
 export {Heading, Keyboard, Text} from '@react-spectrum/text';
+export {TableView, TableHeader, TableBody, Column, Row, Cell} from '@react-spectrum/table';
 export {Tabs, TabList, TabPanels} from '@react-spectrum/tabs';
 export {TextArea, TextField} from '@react-spectrum/textfield';
 export {theme as darkTheme} from '@react-spectrum/theme-dark';

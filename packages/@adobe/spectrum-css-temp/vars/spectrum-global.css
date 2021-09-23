@@ -451,6 +451,12 @@
   --spectrum-alias-heading-xxs-text-size: var(--spectrum-global-dimension-font-size-100);
   --spectrum-alias-heading6-margin-top: var(--spectrum-global-dimension-font-size-75);
   --spectrum-alias-heading-xxs-margin-top: var(--spectrum-global-dimension-font-size-75);
+  --spectrum-alias-avatar-size-50: var(--spectrum-global-dimension-size-200);
+  --spectrum-alias-avatar-size-75: var(--spectrum-global-dimension-size-225);
+  --spectrum-alias-avatar-size-200: var(--spectrum-global-dimension-size-275);
+  --spectrum-alias-avatar-size-300: var(--spectrum-global-dimension-size-325);
+  --spectrum-alias-avatar-size-500: var(--spectrum-global-dimension-size-400);
+  --spectrum-alias-avatar-size-700: var(--spectrum-global-dimension-size-500);
 }
 
 .spectrum--darkest,
