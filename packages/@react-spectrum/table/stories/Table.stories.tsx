@@ -973,7 +973,7 @@ storiesOf('TableView', module)
   .add(
     'with editable cells',
     () => (
-      <TableView aria-label="TableView with editable cells" selectionMode="multiple" width={1000} height={200}>
+      <TableView disabledKeys={['Foo 1']} aria-label="TableView with editable cells" selectionMode="multiple" width={1000} height={200}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>

@@ -92,9 +92,31 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     shouldSelectOnPressUp
   });
 
+  // Prevent click and touch row selection on a editable cell in edit mode
+  let onPressStart = (e) => {
+    if (editModeEnabled.current) {
+      return;
+    }
+    itemProps?.onPressStart && itemProps.onPressStart(e);
+  };
+
+  let onPress = (e) => {
+    if (editModeEnabled.current) {
+      return;
+    }
+    itemProps?.onPress && itemProps.onPress(e);
+  };
+
+  let onPressUp = (e) => {
+    if (editModeEnabled.current) {
+      return;
+    }
+    itemProps?.onPressUp && itemProps.onPressUp(e);
+  };
+
   // TODO: move into useSelectableItem?
   let isDisabled = state.disabledKeys.has(node.key) || state.disabledKeys.has(node.parentKey);
-  let {pressProps} = usePress({...itemProps, isDisabled});
+  let {pressProps} = usePress({...itemProps, onPressStart, onPress, onPressUp, isDisabled});
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as HTMLElement)) {
@@ -107,14 +129,19 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     switch (e.key) {
       case 'Enter': {
         if (isEditable) {
+          walker.currentNode = ref.current;
           let focusable = walker.firstChild() as HTMLElement;
-          if (!editModeEnabled.current && focusable && focusable !== ref.current) {
+          if (!editModeEnabled.current && focusable) {
             editModeEnabled.current = true;
             // Prevent selection from triggering by stopping event propagation, but only if the
             // editable cell actually has something to focus and presumably edit
             e.preventDefault();
             e.stopPropagation();
-            focusSafely(focusable);
+
+            // Only focus the first child if Enter is happening on the cell, otherwise focus is within the cell already and we shouldn't shift focus
+            if (e.target === ref.current) {
+              focusSafely(focusable);
+            }
           }
         }
         break;
