@@ -14,19 +14,22 @@ import {CardBase} from './CardBase';
 import {CardViewContext, useCardViewContext} from './CardViewContext';
 import cardViewStyles from './cardview.css';
 import {classNames, useDOMRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, Node} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useMemo, useRef} from 'react';
+import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/cards';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
-import {Virtualizer} from '@react-aria/virtualizer';
+import {useProvider} from '@react-spectrum/provider';
+import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
 function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let {scale} = useProvider();
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   let {
@@ -39,6 +42,15 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator}) : layout, [layout, collator]);
+  let layoutType = cardViewLayout.layoutType;
+
+  if (typeof layout === 'function') {
+    if (layoutType === 'grid') {
+      cardViewLayout.itemPadding = scale === 'large' ? 116 : 95;
+    } else if (layoutType === 'gallery') {
+      cardViewLayout.itemPadding = scale === 'large' ? 143 : 114;
+    }
+  }
 
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
@@ -48,13 +60,17 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     columnCount: 1,
     items: [...collection].map(item => ({
       // Makes the Grid row use the keys the user provides to the cards so that selection change via interactions returns the card keys
-      type: 'item',
-      key: item.key,
+      ...item,
+      hasChildNodes: true,
       childNodes: [{
-        ...item,
-        index: 0,
+        key: `cell-${item.key}`,
         type: 'cell',
-        key: `cell-${item.key}`
+        value: null,
+        level: 0,
+        rendered: null,
+        textValue: item.textValue,
+        hasChildNodes: false,
+        childNodes: []
       }]
     }))
   }), [collection]);
@@ -64,10 +80,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     collection: gridCollection
   });
 
-  // TODO: need to fix the typescript here, perhaps add a new type in Card types which is a Layout w/ these properties
-  // TODO: double check that this is the correct collection being set (we wanna use the list collection for the keyboard delegate?)
-  // If not, update the gridlayout code to use the gridCollection
-  cardViewLayout.collection = collection;
+  cardViewLayout.collection = gridCollection;
   cardViewLayout.disabledKeys = state.disabledKeys;
   cardViewLayout.isLoading = isLoading;
   cardViewLayout.direction = direction;
@@ -75,9 +88,23 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
-    // TODO: fix the typescript here, layout definition need to show that it implements keyboard delegate
     keyboardDelegate: cardViewLayout
   }, state, domRef);
+
+  type View = ReusableView<Node<T>, unknown>;
+  let renderWrapper = (parent: View, reusableView: View) => (
+    <VirtualizerItem
+      className={classNames(cardViewStyles, 'react-spectrum-CardView-CardWrapper')}
+      key={reusableView.key}
+      reusableView={reusableView}
+      parent={parent} />
+  );
+
+  let focusedKey = state.selectionManager.focusedKey;
+  let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
+  if (focusedItem?.parentKey != null) {
+    focusedKey = focusedItem.parentKey;
+  }
 
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
@@ -85,13 +112,15 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
       <Virtualizer
         {...gridProps}
         {...styleProps}
+        className={classNames(cardViewStyles, 'react-spectrum-CardView')}
         ref={domRef}
-        focusedKey={state.selectionManager.focusedKey}
+        focusedKey={focusedKey}
         scrollDirection="vertical"
         layout={cardViewLayout}
-        collection={collection}
+        collection={gridCollection}
         isLoading={isLoading}
-        onLoadMore={onLoadMore}>
+        onLoadMore={onLoadMore}
+        renderWrapper={renderWrapper}>
         {(type, item) => {
           if (type === 'item') {
             return (
@@ -124,7 +153,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   );
 }
 
-// TODO filler centerwrapper from ListView, check if is valid
 function CenteredWrapper({children}) {
   let {state} = useCardViewContext();
   return (
@@ -143,6 +171,7 @@ function InternalCard(props) {
   let {
     item
   } = props;
+  let cellNode = [...item.childNodes][0];
   let {state, cardOrientation, isQuiet, layout} = useCardViewContext();
 
   let layoutType = layout.layoutType;
@@ -156,7 +185,7 @@ function InternalCard(props) {
   }, state, rowRef);
 
   let {gridCellProps} = useGridCell({
-    node: item,
+    node: cellNode,
     focusMode: 'cell'
   }, state, unwrappedRef);
 
