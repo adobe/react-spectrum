@@ -75,14 +75,18 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     }
     let cardHeight = gridRef.current.getBoundingClientRect().height;
     setHeight(cardHeight);
-  }, [gridRef, setHeight]);
-  let aspectRatioEnforce = undefined;
-  if (orientation === 'horizontal' && !isNaN(height)) {
-    aspectRatioEnforce = {
-      height: `${height}px`,
-      width: `${height}px`
-    };
-  }
+  }, [orientation, gridRef, setHeight]);
+
+  let aspectRatioEnforce = useMemo(() => {
+    if (orientation === 'horizontal' && !isNaN(height)) {
+      return {
+        height: `${height}px`,
+        width: `${height}px`
+      };
+    }
+    return undefined;
+  }, [orientation, height]);
+
 
   let slots = useMemo(() => ({
     image: {UNSAFE_className: classNames(styles, 'spectrum-Card-image'), objectFit: orientation === 'horizontal' ? 'cover' : 'contain', alt: '', ...aspectRatioEnforce},
@@ -94,7 +98,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
     footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer'), isHidden: isQuiet},
     divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
-  }), [titleProps, contentProps, height, isQuiet, orientation, aspectRatioEnforce]);
+  }), [titleProps, contentProps, isQuiet, orientation, aspectRatioEnforce]);
 
   // This is only for quiet grid cards
   let [isCloseToSquare, setIsCloseToSquare] = useState(false);
