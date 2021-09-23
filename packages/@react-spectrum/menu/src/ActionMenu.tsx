@@ -21,7 +21,7 @@ import More from '@spectrum-icons/workflow/More';
 import React from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   props = useSlotProps(props, 'actionmenu');
@@ -30,7 +30,6 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
   if (buttonProps['aria-label'] === undefined) {
     buttonProps['aria-label'] = formatMessage('moreActions');
   }
-  let {styleProps} = useStyleProps(props);
 
   return (
     <MenuTrigger
@@ -40,12 +39,8 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
       shouldFlip={props.shouldFlip}>
       <ActionButton
         ref={ref}
-        {...buttonProps}
-        UNSAFE_className={styleProps.className}
-        UNSAFE_style={styleProps.style}
-        isDisabled={props.isDisabled}
-        isQuiet={props.isQuiet}
-        autoFocus={props.autoFocus}>
+        {...props}
+        {...buttonProps}>
         <More />
       </ActionButton>
       <Menu
