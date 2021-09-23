@@ -1,0 +1,16 @@
+.react-spectrum-CardView-centeredWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.react-spectrum-CardView-CardWrapper {
+  overflow: visible !important;
+  contain: size layout style !important;
+}
+
+.react-spectrum-CardView {
+  outline: none;
+}
