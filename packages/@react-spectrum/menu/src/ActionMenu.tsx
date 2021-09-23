@@ -39,11 +39,8 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
       shouldFlip={props.shouldFlip}>
       <ActionButton
         ref={ref}
-        {...buttonProps}
-        UNSAFE_className={props.UNSAFE_className}
-        isDisabled={props.isDisabled}
-        isQuiet={props.isQuiet}
-        autoFocus={props.autoFocus}>
+        {...props}
+        {...buttonProps}>
         <More />
       </ActionButton>
       <Menu
