@@ -60,13 +60,13 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): Li
   let {focusableProps} = useFocusable(props, ref);
   let {pressProps, isPressed} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
   let domProps = filterDOMProps(otherProps, {labelable: true});
+  let interactionHandlers = mergeProps(focusableProps, pressProps);
 
   return {
     isPressed, // Used to indicate press state for visual
     linkProps: mergeProps(domProps, {
-      ...pressProps,
+      ...interactionHandlers,
       ...linkProps,
-      ...focusableProps,
       'aria-disabled': isDisabled || undefined,
       onClick: (e) => {
         pressProps.onClick(e);
