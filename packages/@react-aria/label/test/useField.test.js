@@ -31,9 +31,9 @@ describe('useField', function () {
     expect(errorMessageProps.id).toBeDefined();
   });
 
-  it('should not return props for description and error message if they are not passed in', function () {
+  it('should not return an id for description and error message if they are not passed in', function () {
     let {descriptionProps, errorMessageProps} = renderFieldHook({label: 'Test'});
-    expect(descriptionProps).toEqual({});
-    expect(errorMessageProps).toEqual({});
+    expect(descriptionProps.id).toBeNull();
+    expect(errorMessageProps.id).toBeNull();
   });
 });
