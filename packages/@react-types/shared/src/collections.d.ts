@@ -178,5 +178,7 @@ export interface Node<T> {
   /** Additional properties specific to a particular node type. */
   props?: any,
   /** @private */
-  shouldInvalidate?: (context: unknown) => boolean
+  shouldInvalidate?: (context: unknown) => boolean,
+  /** Whether the cell contains editable content or components that should override default grid keyboard navigation. */
+  isEditable?: boolean
 }

@@ -969,6 +969,54 @@ storiesOf('TableView', module)
         </TableBody>
       </TableView>
     )
+  )
+  .add(
+    'with editable cells',
+    () => (
+      <TableView aria-label="TableView with editable cells" selectionMode="multiple" width={1000} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => key === 'bar' ?
+              (
+                <Cell isEditable textValue={item[key]}>
+                  <DialogTrigger>
+                    <ActionButton aria-label="Add Dialog"><Add /></ActionButton>
+                    {close => (
+                      <Dialog>
+                        <Heading>The Heading</Heading>
+                        <Divider />
+                        <Content>
+                          <TextField label="Last Words" />
+                        </Content>
+                        <ButtonGroup>
+                          <Button variant="secondary" onPress={close}>Cancel</Button>
+                          <Button variant="cta" onPress={close}>Confirm</Button>
+                        </ButtonGroup>
+                      </Dialog>
+                    )}
+                  </DialogTrigger>
+                  <TextField aria-label="Info field" />
+                  <ActionButton isQuiet aria-label="Add Info">
+                    <Add />
+                  </ActionButton>
+                </Cell>
+              ) : (
+                <Cell textValue={item[key]}>
+                  <ActionButton>
+                    {item[key]}
+                  </ActionButton>
+                </Cell>
+              )
+            }
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
   );
 
 function AsyncLoadingExample() {

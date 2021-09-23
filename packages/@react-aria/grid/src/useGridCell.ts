@@ -14,12 +14,20 @@ import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {GridCollection} from '@react-types/grid';
 import {gridKeyboardDelegates} from './utils';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
+import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
-import {mergeProps} from '@react-aria/utils';
+import {isMac, mergeProps} from '@react-aria/utils';
 import {Node as RSNode} from '@react-types/shared';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
+
+function isCtrlKeyPressed(e: ReactKeyboardEvent) {
+  if (isMac()) {
+    return e.metaKey;
+  }
+
+  return e.ctrlKey;
+}
 
 interface GridCellProps {
   /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */
@@ -52,12 +60,15 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let {direction} = useLocale();
   let keyboardDelegate = gridKeyboardDelegates.get(state);
+  let isEditable = node.props.isEditable;
+  // TODO: perhaps make this a state
+  let editModeEnabled = useRef(false);
 
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
-    if (focusMode === 'child') {
+    if (focusMode === 'child' && !isEditable) {
       let focusable = state.selectionManager.childFocusStrategy === 'last'
         ? last(treeWalker)
         : treeWalker.firstChild() as HTMLElement;
@@ -94,6 +105,57 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     walker.currentNode = document.activeElement;
 
     switch (e.key) {
+      case 'Enter': {
+        if (isEditable) {
+          let focusable = walker.firstChild() as HTMLElement;
+          if (!editModeEnabled.current && focusable && focusable !== ref.current) {
+            editModeEnabled.current = true;
+            // Prevent selection from triggering by stopping event propagation, but only if the
+            // editable cell actually has something to focus and presumably edit
+            e.preventDefault();
+            e.stopPropagation();
+            focusSafely(focusable);
+          }
+        }
+        break;
+      }
+      case 'Escape': {
+        // Leave edit mode and refocus the cell
+        if (editModeEnabled.current) {
+          editModeEnabled.current = false;
+          // TODO: what if the child is a searchfield? This will prevent escape from clearing the field
+          e.preventDefault();
+          e.stopPropagation();
+          focusSafely(ref.current);
+        }
+      }
+      case 'Tab': {
+        if (editModeEnabled.current) {
+          let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+          if (!nextElement || nextElement === ref.current) {
+            walker.currentNode = ref.current;
+            nextElement = (e.shiftKey ? walker.lastChild() : walker.firstChild()) as HTMLElement;
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          focusSafely(nextElement);
+        }
+        break;
+      }
+      case 'PageUp':
+      case 'PageDown':
+      case 'Home':
+      case 'End':
+        if (editModeEnabled.current) {
+          e.stopPropagation();
+        }
+        break;
+      case 'a': {
+        if (isCtrlKeyPressed(e)) {
+          e.stopPropagation();
+        }
+        break;
+      }
       case 'ArrowLeft': {
         // Find the next focusable element within the cell.
         let focusable = direction === 'rtl'
@@ -105,11 +167,17 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           focusable = null;
         }
 
-        if (focusable) {
+        if (focusable && !isEditable) {
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
         } else {
+          // Prevent left arrow from moving focus when in editable cell in edit mode
+          if (editModeEnabled.current) {
+            e.stopPropagation();
+            break;
+          }
+
           // If there is no next focusable child, then move to the next cell to the left of this one.
           // This will be handled by useSelectableCollection. However, if there is no cell to the left
           // of this one, only one column, and the grid doesn't focus rows, then the next key will be the
@@ -122,7 +190,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
           e.preventDefault();
           e.stopPropagation();
-          if (focusMode === 'cell' && direction === 'rtl') {
+          if ((focusMode === 'cell' && direction === 'rtl') || isEditable) {
             focusSafely(ref.current);
           } else {
             walker.currentNode = ref.current;
@@ -145,11 +213,17 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           focusable = null;
         }
 
-        if (focusable) {
+        if (focusable && !isEditable) {
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
         } else {
+          // Prevent right arrow from moving focus when in editable cell in edit mode
+          if (editModeEnabled.current) {
+            e.stopPropagation();
+            break;
+          }
+
           let next = keyboardDelegate.getKeyRightOf(node.key);
           if (next !== node.key) {
             break;
@@ -157,7 +231,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
           e.preventDefault();
           e.stopPropagation();
-          if (focusMode === 'cell' && direction === 'ltr') {
+          if ((focusMode === 'cell' && direction === 'ltr') || isEditable) {
             focusSafely(ref.current);
           } else {
             walker.currentNode = ref.current;
@@ -173,6 +247,13 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
       case 'ArrowUp':
       case 'ArrowDown':
+        if (editModeEnabled.current) {
+          // Prevent scrolling in edit mode
+          e.preventDefault();
+          e.stopPropagation();
+          break;
+        }
+
         // Prevent this event from reaching cell children, e.g. menu buttons. We want arrow keys to navigate
         // to the cell above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
@@ -206,11 +287,16 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     // If the cell itself is focused, wait a frame so that focus finishes propagatating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      if (focusMode === 'child' && document.activeElement === ref.current) {
+      if (focusMode === 'child' && document.activeElement === ref.current && !isEditable) {
         focus();
       }
     });
   };
+
+  if (editModeEnabled.current && state.selectionManager.focusedKey !== node.key) {
+    // If focus leaves a editable cell that is in the middle of being edited (e.g. via user click), turn off edit mode
+    editModeEnabled.current = false;
+  }
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',

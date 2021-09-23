@@ -113,7 +113,9 @@ export interface CellProps {
   /** The contents of the cell. */
   children: ReactNode,
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Whether the cell contains editable content or components that should override default grid keyboard navigation. */
+  isEditable?: boolean
 }
 
 export type CellElement = ReactElement<CellProps>;
