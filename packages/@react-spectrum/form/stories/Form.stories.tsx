@@ -27,6 +27,7 @@ import {SearchWithin} from '@react-spectrum/searchwithin';
 import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {TextArea, TextField} from '@react-spectrum/textfield';
+import {Provider} from '@react-spectrum/provider';
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -357,6 +358,8 @@ function FormWithControls(props: any = {}) {
 function FormWithSubmit() {
   let [policies, setPolicies] = useState([]);
   let [policiesDirty, setPoliciesDirty] = useState(false);
+  let [pet, setPet] = useState('');
+  let [petDirty, setPetDirty] = useState(false);
   let [truth, setTruth] = useState(false);
   let [truthDirty, setTruthDirty] = useState(false);
 
@@ -450,6 +453,7 @@ function FormWithSubmit() {
           Cookie policy
         </Checkbox>
       </CheckboxGroup>
+
       <Checkbox
         isRequired
         value="truth"
@@ -458,6 +462,23 @@ function FormWithSubmit() {
         validationState={getValidationState(truth)}>
         I am telling the truth
       </Checkbox>
+
+      <RadioGroup
+        label="Favorite pet"
+        isRequired
+        value={pet}
+        onChange={setPet}
+        validationState={getValidationState(pet !== null && pet !== '')}>
+        <Radio value="dogs">
+          Dogs
+        </Radio>
+        <Radio value="cats">
+          Cats
+        </Radio>
+        <Radio value="dragons">
+          Dragons
+        </Radio>
+      </RadioGroup>
 
       <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
       <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>
