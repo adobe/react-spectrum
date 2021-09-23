@@ -27,7 +27,6 @@ import {SearchWithin} from '@react-spectrum/searchwithin';
 import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {TextArea, TextField} from '@react-spectrum/textfield';
-import {Provider} from '@react-spectrum/provider';
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -370,8 +369,8 @@ function FormWithSubmit() {
     ['invalid', 'fixing'].includes(formStatus) && !isValid ? 'invalid' : null;
 
   useEffect(() => {
-    let validate = (): boolean => policies.length === 3 && truth;
-    let formDirty = policiesDirty || truthDirty;
+    let validate = (): boolean => policies.length === 3 && pet && truth;
+    let formDirty = policiesDirty || petDirty || truthDirty;
 
     if (isSubmitted) {
       if (formDirty) {
@@ -382,7 +381,7 @@ function FormWithSubmit() {
     } else {
       setFormStatus('progress');
     }
-  }, [policies, policiesDirty, truth, truthDirty, isSubmitted]);
+  }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, isSubmitted]);
 
   let Status = ({formStatus}) => {
     let [variant, setVariant] = useState<'info' | 'negative' | 'positive' | 'notice'>('info');
@@ -414,6 +413,7 @@ function FormWithSubmit() {
     e.preventDefault();
     setPoliciesDirty(false);
     setTruthDirty(false);
+    setPetDirty(false);
     setSubmitted(true);
     action('onSubmit')(e);
   };
@@ -421,8 +421,10 @@ function FormWithSubmit() {
   let reset = () => {
     setSubmitted(false);
     setPolicies([]);
+    setPet('');
     setTruth(false);
     setPoliciesDirty(false);
+    setPetDirty(false);
     setTruthDirty(false);
     setFormStatus('progress');
   };
@@ -467,8 +469,8 @@ function FormWithSubmit() {
         label="Favorite pet"
         isRequired
         value={pet}
-        onChange={setPet}
-        validationState={getValidationState(pet !== null && pet !== '')}>
+        onChange={chain(() => setPetDirty(true), setPet)}
+        validationState={getValidationState(Boolean(pet))}>
         <Radio value="dogs">
           Dogs
         </Radio>
