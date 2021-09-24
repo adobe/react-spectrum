@@ -11,7 +11,7 @@
  */
 
 import {LongPressEvent} from '@react-types/shared';
-import {mergeProps, useDescription} from '@react-aria/utils';
+import {mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {usePress} from './usePress';
 import {useRef} from 'react';
 
@@ -55,6 +55,7 @@ export function useLongPress(props: LongPressProps) {
   } = props;
 
   const timeRef = useRef(null);
+  let {addGlobalListener} = useGlobalListeners();
 
   let {pressProps} = usePress({
     isDisabled,
@@ -78,6 +79,22 @@ export function useLongPress(props: LongPressProps) {
           }
           timeRef.current = null;
         }, threshold);
+
+        // Prevent context menu, which may be opened on long press on touch devices
+        if (e.pointerType === 'touch') {
+          let onContextMenu = e => {
+            e.preventDefault();
+          };
+
+          addGlobalListener(e.target, 'contextmenu', onContextMenu, {once: true});
+          addGlobalListener(window, 'pointerup', () => {
+            // If no contextmenu event is fired quickly after pointerup, remove the handler
+            // so future context menu events outside a long press are not prevented.
+            setTimeout(() => {
+              e.target.removeEventListener('contextmenu', onContextMenu);
+            }, 30);
+          }, {once: true});
+        }
       }
     },
     onPressEnd(e) {

@@ -410,4 +410,17 @@ describe('useLongPress', function () {
     let el = res.getByText('test');
     expect(el).not.toHaveAttribute('aria-describedby');
   });
+
+  it('prevents context menu events on touch', function () {
+    let res = render(<Example onLongPress={() => {}} />);
+
+    let el = res.getByText('test');
+    fireEvent.pointerDown(el, {pointerType: 'touch'});
+    act(() => jest.advanceTimersByTime(600));
+
+    let performDefault = fireEvent.contextMenu(el);
+    expect(performDefault).toBe(false);
+
+    fireEvent.pointerUp(el, {pointerType: 'touch'});
+  });
 });
