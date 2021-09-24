@@ -12,6 +12,7 @@
 
 import {focusSafely} from '@react-aria/focus';
 import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
+import {isNonContiguousSelectionModifier} from './utils';
 import {LongPressEvent, PressEvent} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -81,7 +82,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   } = options;
 
   let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
-    if (e.pointerType === 'keyboard' && e.altKey) {
+    if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {
       manager.toggleSelection(key);
     } else {
       manager.select(key, e);
