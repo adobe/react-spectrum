@@ -55,7 +55,7 @@ export function useLongPress(props: LongPressProps) {
   } = props;
 
   const timeRef = useRef(null);
-  let {addGlobalListener} = useGlobalListeners();
+  let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let {pressProps} = usePress({
     isDisabled,
@@ -91,7 +91,7 @@ export function useLongPress(props: LongPressProps) {
             // If no contextmenu event is fired quickly after pointerup, remove the handler
             // so future context menu events outside a long press are not prevented.
             setTimeout(() => {
-              e.target.removeEventListener('contextmenu', onContextMenu);
+              removeGlobalListener(e.target, 'contextmenu', onContextMenu);
             }, 30);
           }, {once: true});
         }
