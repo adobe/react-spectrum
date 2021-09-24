@@ -128,7 +128,7 @@ storiesOf('HelpText', module)
     () => (
       <Flex direction="column" gap="size-200" UNSAFE_style={{textAlign: 'center'}}>
         <TextField label="Password" description="Enter a single digit number." />
-        <TextField label="Password 2" errorMessage='Create a password with at least 8 characters.' validationState="invalid" />
+        <TextField label="Password 2" errorMessage="Create a password with at least 8 characters." validationState="invalid" />
       </Flex>
     )
   );
