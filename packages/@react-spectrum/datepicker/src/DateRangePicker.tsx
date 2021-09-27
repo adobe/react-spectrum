@@ -173,7 +173,9 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
                 autoFocus
                 value={state.dateRange}
                 onChange={state.setDateRange}
-                visibleMonths={visibleMonths} />
+                visibleMonths={visibleMonths}
+                minValue={props.minValue}
+                maxValue={props.maxValue} />
               {showTimeField &&
                 <Flex gap="size-100">
                   <TimeField

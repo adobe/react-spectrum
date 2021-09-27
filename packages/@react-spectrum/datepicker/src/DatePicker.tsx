@@ -143,7 +143,9 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
                 autoFocus
                 value={state.dateValue}
                 onChange={state.setDateValue}
-                visibleMonths={visibleMonths} />
+                visibleMonths={visibleMonths}
+                minValue={props.minValue}
+                maxValue={props.maxValue} />
               {showTimeField &&
                 <TimeField
                   label="Time"
