@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate} from '@internationalized/date';
-import {DatePickerProps, DateValue} from '@react-types/datepicker';
+import {CalendarDate, DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
+import {DatePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions} from './utils';
 import {isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
@@ -20,31 +20,69 @@ import {ValidationState} from '@react-types/shared';
 
 export interface DatePickerState {
   value: DateValue,
-  dateValue: Date,
   setValue: (value: DateValue) => void,
-  selectDate: (value: CalendarDate) => void,
+  dateValue: DateValue,
+  setDateValue: (value: CalendarDate) => void,
+  timeValue: TimeValue,
+  setTimeValue: (value: TimeValue) => void,
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
   validationState: ValidationState,
   formatValue(locale: string, fieldOptions: FieldOptions): string
 }
 
-export function useDatePickerState(props: DatePickerProps): DatePickerState {
+export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T>): DatePickerState {
   let [isOpen, setOpen] = useState(false);
-  let [value, setValue] = useControlledState(props.value, props.defaultValue || null, props.onChange);
+  let [value, setValue] = useControlledState<DateValue>(props.value, props.defaultValue || null, props.onChange);
 
   let v = (value || props.placeholderValue);
   let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
   let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
   let dateValue = value != null ? value.toDate(defaultTimeZone ?? 'UTC') : null;
+  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+
+  let [selectedDate, setSelectedDate] = useState<DateValue>(null);
+  let [selectedTime, setSelectedTime] = useState<TimeValue>(null);
+
+  if (value) {
+    selectedDate = value;
+    if ('hour' in value) {
+      selectedTime = value;
+    }
+  }
+
+  // props.granularity must actually exist in the value if one is provided.
+  if (v && !(granularity in v)) {
+    throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
+  }
+
+  let commitValue = (date: DateValue, time: TimeValue) => {
+    setValue('timeZone' in time ? time.set(toDateFields(date)) : toCalendarDateTime(date, time));
+  };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
   let selectDate = (newValue: CalendarDate) => {
-    if (value && 'hour' in value) {
-      newValue = value.set(newValue);
+    if (hasTime) {
+      if (selectedTime) {
+        commitValue(newValue, selectedTime);
+      } else {
+        setSelectedDate(newValue);
+      }
+    } else {
+      setValue(newValue);
     }
-    setValue(newValue);
-    setOpen(false);
+
+    if (!hasTime) {
+      setOpen(false);
+    }
+  };
+
+  let selectTime = (newValue: TimeValue) => {
+    if (selectedDate) {
+      commitValue(selectedDate, newValue);
+    } else {
+      setSelectedTime(newValue);
+    }
   };
 
   let validationState: ValidationState = props.validationState ||
@@ -52,13 +90,19 @@ export function useDatePickerState(props: DatePickerProps): DatePickerState {
 
   return {
     value,
-    dateValue,
     setValue,
-    selectDate,
+    dateValue: selectedDate,
+    timeValue: selectedTime,
+    setDateValue: selectDate,
+    setTimeValue: selectTime,
     isOpen,
     setOpen,
     validationState,
     formatValue(locale, fieldOptions) {
+      if (!dateValue) {
+        return '';
+      }
+
       let formatOptions = getFormatOptions(fieldOptions, {
         granularity,
         timeZone: defaultTimeZone,
@@ -66,8 +110,7 @@ export function useDatePickerState(props: DatePickerProps): DatePickerState {
         hourCycle: props.hourCycle
       });
 
-      // TODO: cache
-      let formatter = new Intl.DateTimeFormat(locale, formatOptions);
+      let formatter = new DateFormatter(locale, formatOptions);
       return formatter.format(dateValue);
     }
   };

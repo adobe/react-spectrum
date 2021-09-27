@@ -11,13 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {addWeeks} from 'date-fns';
 import {Calendar} from '../';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {TimeField} from '@react-spectrum/datepicker';
 import {useLocale} from '@react-aria/i18n';
 
 storiesOf('Date and Time/Calendar', module)
@@ -27,31 +28,55 @@ storiesOf('Date and Time/Calendar', module)
   )
   .add(
     'defaultValue',
-    () => render({defaultValue: new Date(2019, 5, 5)})
+    () => render({defaultValue: new CalendarDate(2019, 6, 5)})
   )
   .add(
     'controlled value',
-    () => render({value: new Date(2019, 5, 5)})
+    () => render({value: new CalendarDate(2019, 5, 5)})
+  )
+  .add(
+    'with time',
+    () => <CalendarWithTime />
+  )
+  .add(
+    'with zoned time',
+    () => <CalendarWithZonedTime />
   )
   .add(
     'minValue: today, maxValue: 1 week from now',
-    () => render({minValue: new Date(), maxValue: addWeeks(new Date(), 1)})
+    () => render({minValue: today(getLocalTimeZone()), maxValue: today(getLocalTimeZone()).add({weeks: 1})})
   )
   .add(
     'defaultValue + minValue + maxValue',
-    () => render({defaultValue: new Date(2019, 5, 10), minValue: new Date(2019, 5, 5), maxValue: new Date(2019, 5, 20)})
+    () => render({defaultValue: new CalendarDate(2019, 6, 10), minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)})
   )
   .add(
     'isDisabled',
-    () => render({defaultValue: new Date(2019, 5, 5), isDisabled: true})
+    () => render({defaultValue: new CalendarDate(2019, 6, 5), isDisabled: true})
   )
   .add(
     'isReadOnly',
-    () => render({defaultValue: new Date(2019, 5, 5), isReadOnly: true})
+    () => render({defaultValue: new CalendarDate(2019, 6, 5), isReadOnly: true})
   )
   .add(
     'autoFocus',
-    () => render({defaultValue: new Date(2019, 5, 5), autoFocus: true})
+    () => render({defaultValue: new CalendarDate(2019, 6, 5), autoFocus: true})
+  )
+  .add(
+    'visibleMonths: 2',
+    () => render({visibleMonths: 2})
+  )
+  .add(
+    'visibleMonths: 3',
+    () => render({visibleMonths: 3})
+  )
+  .add(
+    'minValue: today, visibleMonths: 3',
+    () => render({minValue: today(getLocalTimeZone()), visibleMonths: 3})
+  )
+  .add(
+    'minValue, visibleMonths: 3, defaultValue',
+    () => render({minValue: new CalendarDate(2019, 6, 1), defaultValue: new CalendarDate(2019, 6, 5), visibleMonths: 3})
   );
 
 function render(props = {}) {
@@ -109,7 +134,7 @@ function Example(props) {
 
   return (
     <Flex direction="column" gap="size-600" alignItems="center">
-      <Flex direction="row" gap="size-150">
+      <Flex direction="column" gap="size-150" wrap>
         <Picker label="Locale" items={preferences} selectedKey={locale} onSelectionChange={updateLocale}>
           {item => <Item key={item.locale}>{item.label}</Item>}
         </Picker>
@@ -125,6 +150,36 @@ function Example(props) {
       <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
         <Calendar {...props} />
       </Provider>
+    </Flex>
+  );
+}
+
+function CalendarWithTime() {
+  let [value, setValue] = useState(new CalendarDateTime(2019, 6, 5, 8));
+  let onChange = (v: CalendarDateTime) => {
+    setValue(v);
+    action('onChange')(v);
+  };
+
+  return (
+    <Flex direction="column">
+      <Calendar value={value} onChange={onChange} />
+      <TimeField label="Time" value={value} onChange={onChange} />
+    </Flex>
+  );
+}
+
+function CalendarWithZonedTime() {
+  let [value, setValue] = useState(parseZonedDateTime('2021-03-14T00:45-08:00[America/Los_Angeles]'));
+  let onChange = (v: ZonedDateTime) => {
+    setValue(v);
+    action('onChange')(v);
+  };
+
+  return (
+    <Flex direction="column">
+      <Calendar value={value} onChange={onChange} />
+      <TimeField label="Time" value={value} onChange={onChange} />
     </Flex>
   );
 }

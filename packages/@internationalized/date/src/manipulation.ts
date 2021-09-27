@@ -10,27 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
+import {AnyCalendarDate, AnyTime, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, TimeField, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
-import {CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, OverflowBehavior, TimeField, TimeFields} from './types';
 import {epochFromDate, fromAbsolute, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
 
 const ONE_HOUR = 3600000;
 
-/* eslint-disable no-redeclare */
 export function add(date: CalendarDateTime, duration: Duration): CalendarDateTime;
 export function add(date: CalendarDate, duration: Duration): CalendarDate;
-export function add(date: CalendarDate | CalendarDateTime, duration: Duration): CalendarDate | CalendarDateTime {
-/* eslint-enable no-redeclare */
-  let mutableDate: Mutable<CalendarDate> = date.copy();
-  let days = addTimeFields(toCalendarDateTime(date), duration);
+export function add(date: CalendarDate | CalendarDateTime, duration: Duration): CalendarDate | CalendarDateTime;
+export function add(date: CalendarDate | CalendarDateTime, duration: Duration) {
+  let mutableDate: Mutable<AnyCalendarDate> = date.copy();
+  let days = 'hour' in date ? addTimeFields(date, duration) : 0;
 
   addYears(mutableDate, duration.years || 0);
+  if (mutableDate.calendar.balanceYearMonth) {
+    mutableDate.calendar.balanceYearMonth(mutableDate, date);
+  }
+
   mutableDate.month += duration.months || 0;
 
   balanceYearMonth(mutableDate);
-  constrain(mutableDate);
+  constrainMonthDay(mutableDate);
 
   mutableDate.day += (duration.weeks || 0) * 7;
   mutableDate.day += duration.days || 0;
@@ -45,18 +48,18 @@ export function add(date: CalendarDate | CalendarDateTime, duration: Duration): 
   return mutableDate;
 }
 
-function addYears(date: Mutable<CalendarDate>, years: number) {
-  if (date.calendar.addYears) {
-    date.calendar.addYears(date, years);
-  } else {
-    date.year += years;
+function addYears(date: Mutable<AnyCalendarDate>, years: number) {
+  if (date.calendar.getYearsToAdd) {
+    years = date.calendar.getYearsToAdd(date, years);
   }
+
+  date.year += years;
 }
 
-function balanceYearMonth(date: Mutable<CalendarDate>) {
+function balanceYearMonth(date: Mutable<AnyCalendarDate>) {
   while (date.month < 1) {
-    date.month += date.calendar.getMonthsInYear(date);
     addYears(date, -1);
+    date.month += date.calendar.getMonthsInYear(date);
   }
 
   let monthsInYear = 0;
@@ -66,7 +69,7 @@ function balanceYearMonth(date: Mutable<CalendarDate>) {
   }
 }
 
-function balanceDay(date: Mutable<CalendarDate>) {
+function balanceDay(date: Mutable<AnyCalendarDate>) {
   while (date.day < 1) {
     date.month--;
     balanceYearMonth(date);
@@ -80,18 +83,18 @@ function balanceDay(date: Mutable<CalendarDate>) {
   }
 }
 
-function balance(date: Mutable<CalendarDate>) {
-  balanceYearMonth(date);
-  balanceDay(date);
-
-  if (date.calendar.balanceDate) {
-    date.calendar.balanceDate(date);
-  }
-}
-
-function constrain(date: Mutable<CalendarDate>) {
+function constrainMonthDay(date: Mutable<AnyCalendarDate>) {
   date.month = Math.max(1, Math.min(date.calendar.getMonthsInYear(date), date.month));
   date.day = Math.max(1, Math.min(date.calendar.getDaysInMonth(date), date.day));
+}
+
+export function constrain(date: Mutable<AnyCalendarDate>) {
+  if (date.calendar.constrainDate) {
+    date.calendar.constrainDate(date);
+  }
+
+  date.year = Math.max(1, Math.min(date.calendar.getYearsInEra(date), date.year));
+  constrainMonthDay(date);
 }
 
 export function invertDuration(duration: Duration): Duration {
@@ -105,20 +108,16 @@ export function invertDuration(duration: Duration): Duration {
   return inverseDuration;
 }
 
-/* eslint-disable no-redeclare */
 export function subtract(date: CalendarDateTime, duration: Duration): CalendarDateTime;
 export function subtract(date: CalendarDate, duration: Duration): CalendarDate;
 export function subtract(date: CalendarDate | CalendarDateTime, duration: Duration): CalendarDate | CalendarDateTime {
-/* eslint-enable no-redeclare */
   return add(date, invertDuration(duration));
 }
 
-/* eslint-disable no-redeclare */
-export function set(date: CalendarDateTime, fields: DateFields, behavior?: OverflowBehavior): CalendarDateTime;
-export function set(date: CalendarDate, fields: DateFields, behavior: OverflowBehavior): CalendarDate;
-export function set(date: CalendarDate, fields: DateFields, behavior: OverflowBehavior = 'balance'): CalendarDate {
-/* eslint-enable no-redeclare */
-  let mutableDate: Mutable<CalendarDate> = date.copy();
+export function set(date: CalendarDateTime, fields: DateFields): CalendarDateTime;
+export function set(date: CalendarDate, fields: DateFields): CalendarDate;
+export function set(date: CalendarDate | CalendarDateTime, fields: DateFields) {
+  let mutableDate: Mutable<AnyCalendarDate> = date.copy();
 
   if (fields.era != null) {
     mutableDate.era = fields.era;
@@ -126,7 +125,6 @@ export function set(date: CalendarDate, fields: DateFields, behavior: OverflowBe
 
   if (fields.year != null) {
     mutableDate.year = fields.year;
-    // addYears(mutableDate, fields.year - mutableDate.year);
   }
 
   if (fields.month != null) {
@@ -137,25 +135,13 @@ export function set(date: CalendarDate, fields: DateFields, behavior: OverflowBe
     mutableDate.day = fields.day;
   }
 
-  switch (behavior) {
-    case 'balance':
-      balance(mutableDate);
-      break;
-    case 'constrain':
-      constrain(mutableDate);
-      break;
-    default:
-      throw new Error(`Invalid behavior: ${behavior}. Must be either 'balance' or 'constrain'.`);
-  }
-
+  constrain(mutableDate);
   return mutableDate;
 }
 
-/* eslint-disable no-redeclare */
-export function setTime(value: CalendarDateTime, fields: TimeFields, behavior?: OverflowBehavior): CalendarDateTime;
-export function setTime(value: Time, fields: TimeFields, behavior: OverflowBehavior): Time;
-export function setTime(value: Time | CalendarDateTime, fields: TimeFields, behavior: OverflowBehavior = 'balance'): Time | CalendarDateTime {
-/* eslint-enable no-redeclare */
+export function setTime(value: CalendarDateTime, fields: TimeFields): CalendarDateTime;
+export function setTime(value: Time, fields: TimeFields): Time;
+export function setTime(value: Time | CalendarDateTime, fields: TimeFields) {
   let mutableValue: Mutable<Time | CalendarDateTime> = value.copy();
 
   if (fields.hour != null) {
@@ -174,26 +160,11 @@ export function setTime(value: Time | CalendarDateTime, fields: TimeFields, beha
     mutableValue.millisecond = fields.millisecond;
   }
 
-  switch (behavior) {
-    case 'balance': {
-      let days = balanceTime(mutableValue);
-      if ('day' in mutableValue) {
-        mutableValue.day += days;
-        balance(mutableValue);
-      } else if (days > 0) {
-        throw new Error('Hours cannot be greater than 24');
-      }
-      break;
-    }
-    case 'constrain':
-      constrainTime(mutableValue);
-      break;
-  }
-
+  constrainTime(mutableValue);
   return mutableValue;
 }
 
-function balanceTime(time: TimeFields): number {
+function balanceTime(time: Mutable<AnyTime>): number {
   time.second += Math.floor(time.millisecond / 1000);
   time.millisecond = nonNegativeMod(time.millisecond, 1000);
 
@@ -209,7 +180,7 @@ function balanceTime(time: TimeFields): number {
   return days;
 }
 
-function constrainTime(time: Mutable<Time | CalendarDateTime>) {
+export function constrainTime(time: Mutable<AnyTime>) {
   time.millisecond = Math.max(0, Math.min(time.millisecond, 1000));
   time.second = Math.max(0, Math.min(time.second, 59));
   time.minute = Math.max(0, Math.min(time.minute, 59));
@@ -224,7 +195,7 @@ function nonNegativeMod(a: number, b: number) {
   return result;
 }
 
-function addTimeFields(time: TimeFields, duration: Duration): number {
+function addTimeFields(time: Mutable<AnyTime>, duration: Duration): number {
   time.hour += duration.hours || 0;
   time.minute += duration.minutes || 0;
   time.second += duration.seconds || 0;
@@ -242,24 +213,10 @@ export function subtractTime(time: Time, duration: Duration): Time {
   return addTime(time, invertDuration(duration));
 }
 
-export function startOfMonth(date: CalendarDate): CalendarDate {
-  let mutableDate: Mutable<CalendarDate> = date.copy();
-  mutableDate.day = 1;
-  return mutableDate;
-}
-
-export function endOfMonth(date: CalendarDate): CalendarDate {
-  let mutableDate: Mutable<CalendarDate> = date.copy();
-  mutableDate.day = date.calendar.getDaysInMonth(date);
-  return mutableDate;
-}
-
-/* eslint-disable no-redeclare */
 export function cycleDate(value: CalendarDateTime, field: DateField, amount: number, options?: CycleOptions): CalendarDateTime;
 export function cycleDate(value: CalendarDate, field: DateField, amount: number, options?: CycleOptions): CalendarDate;
-export function cycleDate(value: CalendarDate, field: DateField, amount: number, options?: CycleOptions) {
-/* eslint-enable no-redeclare */
-  let mutable: Mutable<CalendarDate> = value.copy();
+export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateField, amount: number, options?: CycleOptions) {
+  let mutable: Mutable<CalendarDate | CalendarDateTime> = value.copy();
 
   switch (field) {
     case 'era': {
@@ -270,11 +227,27 @@ export function cycleDate(value: CalendarDate, field: DateField, amount: number,
       }
       eraIndex = cycleValue(eraIndex, amount, 0, eras.length - 1, options?.round);
       mutable.era = eras[eraIndex];
+
+      // Constrain the year and other fields within the era, so the era doesn't change when we balance below.
+      constrain(mutable);
       break;
     }
     case 'year': {
-      let year = cycleValue(value.year, amount, 1, value.calendar.getYearsInEra(value), options?.round);
-      addYears(mutable, year - value.year);
+      if (mutable.calendar.getYearsToAdd) {
+        amount = mutable.calendar.getYearsToAdd(mutable, amount);
+      }
+
+      // The year field should not cycle within the era as that can cause weird behavior affecting other fields.
+      // We need to also allow values < 1 so that decrementing goes to the previous era. If we get -Infinity back
+      // we know we wrapped around after reaching 9999 (the maximum), so set the year back to 1.
+      mutable.year = cycleValue(value.year, amount, -Infinity, 9999, options?.round);
+      if (mutable.year === -Infinity) {
+        mutable.year = 1;
+      }
+
+      if (mutable.calendar.balanceYearMonth) {
+        mutable.calendar.balanceYearMonth(mutable, value);
+      }
       break;
     }
     case 'month':
@@ -287,18 +260,17 @@ export function cycleDate(value: CalendarDate, field: DateField, amount: number,
       throw new Error('Unsupported field ' + field);
   }
 
-  if (mutable.calendar.balanceDate) {
-    mutable.calendar.balanceDate(mutable);
+  if (value.calendar.balanceDate) {
+    value.calendar.balanceDate(mutable);
   }
 
+  constrain(mutable);
   return mutable;
 }
 
-/* eslint-disable no-redeclare */
 export function cycleTime(value: CalendarDateTime, field: TimeField, amount: number, options?: CycleTimeOptions): CalendarDateTime;
 export function cycleTime(value: Time, field: TimeField, amount: number, options?: CycleTimeOptions): Time;
 export function cycleTime(value: Time | CalendarDateTime, field: TimeField, amount: number, options?: CycleTimeOptions) {
-/* eslint-enable no-redeclare */
   let mutable: Mutable<Time | CalendarDateTime> = value.copy();
 
   switch (field) {
@@ -363,7 +335,7 @@ function cycleValue(value: number, amount: number, min: number, max: number, rou
 export function addZoned(dateTime: ZonedDateTime, duration: Duration): ZonedDateTime {
   let ms: number;
   if ((duration.years != null && duration.years !== 0) || (duration.months != null && duration.months !== 0) || (duration.days != null && duration.days !== 0)) {
-    let res = add(dateTime, {
+    let res = add(toCalendarDateTime(dateTime), {
       years: duration.years,
       months: duration.months,
       days: duration.days
@@ -412,11 +384,12 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
       // Or it might end at midnight and repeat the 11pm hour. To handle this, we get
       // the possible absolute times for the min and max, and find the maximum range
       // that is within the current day.
-      let minDate = toCalendar(setTime(dateTime, {hour: min}), new GregorianCalendar());
+      let plainDateTime = toCalendarDateTime(dateTime);
+      let minDate = toCalendar(setTime(plainDateTime, {hour: min}), new GregorianCalendar());
       let minAbsolute = [toAbsolute(minDate, dateTime.timeZone, 'earlier'), toAbsolute(minDate, dateTime.timeZone, 'later')]
         .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === minDate.day)[0];
 
-      let maxDate = toCalendar(setTime(dateTime, {hour: max}), new GregorianCalendar());
+      let maxDate = toCalendar(setTime(plainDateTime, {hour: max}), new GregorianCalendar());
       let maxAbsolute = [toAbsolute(maxDate, dateTime.timeZone, 'earlier'), toAbsolute(maxDate, dateTime.timeZone, 'later')]
         .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === maxDate.day).pop();
 
@@ -446,17 +419,27 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
     case 'year':
     case 'month':
     case 'day': {
-      let res = cycleDate(dateTime, field, amount, options);
+      let res = cycleDate(toCalendarDateTime(dateTime), field, amount, options);
       let ms = toAbsolute(res, dateTime.timeZone);
       return toCalendar(fromAbsolute(ms, dateTime.timeZone), dateTime.calendar);
     }
+    default:
+      throw new Error('Unsupported field ' + field);
   }
 }
 
-export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, behavior?: OverflowBehavior, disambiguation?: Disambiguation): ZonedDateTime {
+export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime {
   // Set the date/time fields, and recompute the UTC offset to account for DST changes.
   // We also need to validate by converting back to a local time in case hours are skipped during forward DST transitions.
-  let res = setTime(set(dateTime, fields, behavior), fields, behavior);
+  let plainDateTime = toCalendarDateTime(dateTime);
+  let res = setTime(set(plainDateTime, fields), fields);
+
+  // If the resulting plain date time values are equal, return the original time.
+  // We don't want to change the offset when setting the time to the same value.
+  if (res.compare(plainDateTime) === 0) {
+    return dateTime;
+  }
+
   let ms = toAbsolute(res, dateTime.timeZone, disambiguation);
   return toCalendar(fromAbsolute(ms, dateTime.timeZone), dateTime.calendar);
 }

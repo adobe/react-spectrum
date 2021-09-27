@@ -41,10 +41,6 @@ storiesOf('Date and Time/DatePicker', module)
     () => render({defaultValue: toZoned(parseDate('2020-02-03'), 'America/Los_Angeles')})
   )
   .add(
-    'granularity: month',
-    () => render({granularity: 'month'})
-  )
-  .add(
     'granularity: minute',
     () => render({granularity: 'minute'})
   )
@@ -73,6 +69,10 @@ storiesOf('Date and Time/DatePicker', module)
   )
   .add('granularity: minute, defaultValue, zoned, absolute, timeZone',
     () => render({granularity: 'minute', defaultValue: parseAbsolute('2021-11-07T07:45:00Z', 'America/New_York')})
+  )
+  .add(
+    'defaultValue with time, granularity: day',
+    () => render({granularity: 'day', defaultValue: parseDateTime('2021-03-14T08:45')})
   )
   .add(
     'hideTimeZone',
@@ -117,6 +117,14 @@ storiesOf('Date and Time/DatePicker', module)
   .add(
     'placeholderValue: 1980/1/1, zoned',
     () => render({placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')})
+  )
+  .add(
+    'visibleMonths: 2',
+    () => render({visibleMonths: 2, granularity: 'minute'})
+  )
+  .add(
+    'visibleMonths: 3',
+    () => render({visibleMonths: 3, granularity: 'minute'})
   );
 
 storiesOf('Date and Time/DatePicker/styling', module)

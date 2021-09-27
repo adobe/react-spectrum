@@ -1,4 +1,9 @@
 {
-  "select": "Žymėti",
-  "selectAll": "Žymėti viską"
+  "ascending": "didėjančia tvarka",
+  "ascendingSort": "surikiuota pagal stulpelį {columnName} didėjančia tvarka",
+  "descending": "mažėjančia tvarka",
+  "descendingSort": "surikiuota pagal stulpelį {columnName} mažėjančia tvarka",
+  "select": "Pasirinkti",
+  "selectAll": "Pasirinkti viską",
+  "sortable": "rikiuojamas stulpelis"
 }

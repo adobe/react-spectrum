@@ -41,6 +41,10 @@ storiesOf('Date and Time/DateRangePicker', module)
     () => render({granularity: 'minute'})
   )
   .add(
+    'granularity: second',
+    () => render({granularity: 'second'})
+  )
+  .add(
     'hourCycle: 12',
     () => render({granularity: 'minute', hourCycle: 12})
   )
@@ -79,6 +83,14 @@ storiesOf('Date and Time/DateRangePicker', module)
   .add(
     'placeholderValue: 1980/1/1',
     () => render({placeholderValue: new CalendarDate(1980, 1, 1)})
+  )
+  .add(
+    'visibleMonths: 2',
+    () => render({visibleMonths: 2, granularity: 'minute'})
+  )
+  .add(
+    'visibleMonths: 3',
+    () => render({visibleMonths: 3, granularity: 'minute'})
   );
 
 storiesOf('Date and Time/DateRangePicker/styling', module)

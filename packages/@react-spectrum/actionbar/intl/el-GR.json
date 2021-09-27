@@ -1,0 +1,7 @@
+{
+  "actions": "Ενέργειες",
+  "actionsAvailable": "Υπάρχουν διαθέσιμες ενέργειες.",
+  "clearSelection": "Εκκαθάριση επιλογής",
+  "selected": "{count, plural, =0 {Δεν επιλέχθηκε κανένα} other {Επιλέχθηκαν #}}",
+  "selectedAll": "Επιλέχθηκαν όλα"
+}

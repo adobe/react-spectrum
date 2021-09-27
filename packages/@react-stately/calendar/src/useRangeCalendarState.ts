@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, CalendarDate, compareDate, fromAbsolute, toCalendarDate, toDate} from '@internationalized/date';
-import {DateValue} from '@react-types/calendar';
+import {alignCenter} from './utils';
+import {Calendar, CalendarDate, Duration, GregorianCalendar, toCalendar, toCalendarDate} from '@internationalized/date';
+import {DateRange, DateValue} from '@react-types/calendar';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from './types';
 import {RangeValue} from '@react-types/shared';
@@ -19,27 +20,43 @@ import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
-interface RangeCalendarStateOptions extends RangeCalendarProps {
-  createCalendar: (name: string) => Calendar
+interface RangeCalendarStateOptions<T extends DateValue> extends RangeCalendarProps<T> {
+  locale: string,
+  createCalendar: (name: string) => Calendar,
+  visibleDuration?: Duration
 }
 
-export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCalendarState {
-  let {value: valueProp, defaultValue, onChange, createCalendar, ...calendarProps} = props;
-  let [value, setValue] = useControlledState(
+export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState {
+  let {value: valueProp, defaultValue, onChange, createCalendar, locale, visibleDuration = {months: 1}, minValue, maxValue, ...calendarProps} = props;
+  let [value, setValue] = useControlledState<DateRange>(
     valueProp,
     defaultValue,
     onChange
   );
 
   let [anchorDate, setAnchorDate] = useState(null);
+  let alignment: 'center' | 'start' = 'center';
+  if (value && value.start && value.end) {
+    let start = alignCenter(toCalendarDate(value.start), visibleDuration, locale, minValue, maxValue);
+    let end = start.add(visibleDuration).subtract({days: 1});
+
+    if (value.end.compare(end) > 0) {
+      alignment = 'start';
+    }
+  }
+
   let calendar = useCalendarState({
     ...calendarProps,
     value: value && value.start,
-    createCalendar
+    createCalendar,
+    locale,
+    visibleDuration,
+    minValue,
+    maxValue,
+    selectionAlignment: alignment
   });
 
-  let dateRange = value != null ? convertRange(value, calendar.timeZone) : null;
-  let highlightedRange = anchorDate ? makeRange(anchorDate, calendar.focusedDate) : value && makeRange(dateRange.start, dateRange.end);
+  let highlightedRange = anchorDate ? makeRange(anchorDate, calendar.focusedDate) : value && makeRange(value.start, value.end);
   let selectDate = (date: CalendarDate) => {
     if (props.isReadOnly) {
       return;
@@ -50,8 +67,8 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     } else {
       let range = makeRange(anchorDate, date);
       setValue({
-        start: toDate(range.start, calendar.timeZone),
-        end: toDate(range.end, calendar.timeZone)
+        start: convertValue(range.start, value?.start),
+        end: convertValue(range.end, value?.end)
       });
       setAnchorDate(null);
     }
@@ -59,7 +76,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
 
   return {
     ...calendar,
-    value: dateRange,
+    value,
     setValue,
     anchorDate,
     setAnchorDate,
@@ -74,26 +91,32 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
       }
     },
     isSelected(date) {
-      return highlightedRange && compareDate(date, highlightedRange.start) >= 0 && compareDate(date, highlightedRange.end) <= 0;
+      return highlightedRange && date.compare(highlightedRange.start) >= 0 && date.compare(highlightedRange.end) <= 0;
     }
   };
 }
 
-function makeRange(start: CalendarDate, end: CalendarDate): RangeValue<CalendarDate> {
+function makeRange(start: DateValue, end: DateValue): RangeValue<CalendarDate> {
   if (!start || !end) {
     return null;
   }
 
-  if (compareDate(end, start) < 0) {
+  if (end.compare(start) < 0) {
     [start, end] = [end, start];
   }
 
-  return {start, end};
+  return {start: toCalendarDate(start), end: toCalendarDate(end)};
 }
 
-function convertRange(range: RangeValue<DateValue>, timeZone: string): RangeValue<CalendarDate> {
-  return {
-    start: range.start ? toCalendarDate(fromAbsolute(new Date(range.start).getTime(), timeZone)) : null,
-    end: range.end ? toCalendarDate(fromAbsolute(new Date(range.end).getTime(), timeZone)) : null
-  };
+function convertValue(newValue: CalendarDate, oldValue: DateValue) {
+  // The display calendar should not have any effect on the emitted value.
+  // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
+  newValue = toCalendar(newValue, oldValue?.calendar || new GregorianCalendar());
+
+  // Preserve time if the input value had one.
+  if (oldValue && 'hour' in oldValue) {
+    return oldValue.set(newValue);
+  }
+
+  return newValue;
 }
