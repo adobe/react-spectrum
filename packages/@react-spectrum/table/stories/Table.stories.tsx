@@ -999,7 +999,7 @@ storiesOf('TableView', module)
                       </Dialog>
                     )}
                   </DialogTrigger>
-                  <TextField aria-label="Info field" />
+                  <SearchField aria-label="Info field" />
                   <ActionButton isQuiet aria-label="Add Info">
                     <Add />
                   </ActionButton>

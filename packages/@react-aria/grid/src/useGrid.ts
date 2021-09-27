@@ -90,7 +90,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     selectionManager: state.selectionManager,
     keyboardDelegate: delegate,
     isVirtualized,
-    scrollRef
+    scrollRef,
+    disallowTypeAhead: state.editModeCell != null
   });
 
   let id = useId();

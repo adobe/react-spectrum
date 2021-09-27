@@ -57,12 +57,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     focusMode = 'child',
     shouldSelectOnPressUp
   } = props;
-
   let {direction} = useLocale();
   let keyboardDelegate = gridKeyboardDelegates.get(state);
   let isEditable = node.props?.isEditable;
-  // TODO: perhaps make this a state
-  let editModeEnabled = useRef(false);
+  let editModeEnabled = state.editModeCell === node.key;
 
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
@@ -94,21 +92,21 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   // Prevent click and touch row selection on a editable cell in edit mode
   let onPressStart = (e) => {
-    if (editModeEnabled.current) {
+    if (editModeEnabled) {
       return;
     }
     itemProps?.onPressStart && itemProps.onPressStart(e);
   };
 
   let onPress = (e) => {
-    if (editModeEnabled.current) {
+    if (editModeEnabled) {
       return;
     }
     itemProps?.onPress && itemProps.onPress(e);
   };
 
   let onPressUp = (e) => {
-    if (editModeEnabled.current) {
+    if (editModeEnabled) {
       return;
     }
     itemProps?.onPressUp && itemProps.onPressUp(e);
@@ -125,14 +123,13 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
-
     switch (e.key) {
       case 'Enter': {
         if (isEditable) {
           walker.currentNode = ref.current;
           let focusable = walker.firstChild() as HTMLElement;
-          if (!editModeEnabled.current && focusable) {
-            editModeEnabled.current = true;
+          if (!editModeEnabled && focusable) {
+            state.setEditModeCell(node.key);
             // Prevent selection from triggering by stopping event propagation, but only if the
             // editable cell actually has something to focus and presumably edit
             e.preventDefault();
@@ -148,16 +145,21 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
       case 'Escape': {
         // Leave edit mode and refocus the cell
-        if (editModeEnabled.current) {
-          editModeEnabled.current = false;
+        // TODO: right now only do this if the cell itself is focused so that escape key works for searchfield/combobox children
+        // Perhaps have a non-capturing onKeyDown in addition to this key down that does the same state.setEditModeCell and stuff
+        // so that we support getting out of escape mode even when user is focused on child element. Will need to modify useSearchField and useComboBox
+        // so that stopPropagation happens if the field isn't empty and/or the menu is open so that the user will have to hit escape twice to properly exit edit mode
+        if (editModeEnabled && ref.current === walker.currentNode) {
+          state.setEditModeCell(null);
           // TODO: what if the child is a searchfield? This will prevent escape from clearing the field
           e.preventDefault();
           e.stopPropagation();
           focusSafely(ref.current);
         }
+        break;
       }
       case 'Tab': {
-        if (editModeEnabled.current) {
+        if (editModeEnabled) {
           let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
           if (!nextElement || nextElement === ref.current) {
             walker.currentNode = ref.current;
@@ -173,12 +175,12 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       case 'PageDown':
       case 'Home':
       case 'End':
-        if (editModeEnabled.current) {
+        if (editModeEnabled) {
           e.stopPropagation();
         }
         break;
       case 'a': {
-        if (isCtrlKeyPressed(e) && editModeEnabled.current) {
+        if (isCtrlKeyPressed(e) && editModeEnabled) {
           e.stopPropagation();
         }
         break;
@@ -200,7 +202,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           focusSafely(focusable);
         } else {
           // Prevent left arrow from moving focus when in editable cell in edit mode
-          if (editModeEnabled.current) {
+          if (editModeEnabled) {
             e.stopPropagation();
             break;
           }
@@ -246,7 +248,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           focusSafely(focusable);
         } else {
           // Prevent right arrow from moving focus when in editable cell in edit mode
-          if (editModeEnabled.current) {
+          if (editModeEnabled) {
             e.stopPropagation();
             break;
           }
@@ -274,7 +276,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
       case 'ArrowUp':
       case 'ArrowDown':
-        if (editModeEnabled.current) {
+        if (editModeEnabled) {
           // Prevent scrolling in edit mode
           e.preventDefault();
           e.stopPropagation();
@@ -320,9 +322,11 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     });
   };
 
-  if (editModeEnabled.current && state.selectionManager.focusedKey !== node.key) {
+  // TODO: make this onBlur? But what aabout if the user opens a dialog from a editable cell
+  if (editModeEnabled && state.selectionManager.focusedKey !== node.key) {
     // If focus leaves a editable cell that is in the middle of being edited (e.g. via user click), turn off edit mode
-    editModeEnabled.current = false;
+    // TODO: check if this has problems when clicking into another cell
+    state.setEditModeCell(null);
   }
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
