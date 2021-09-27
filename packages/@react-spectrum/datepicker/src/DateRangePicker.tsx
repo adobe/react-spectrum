@@ -42,7 +42,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
     isRequired,
     autoFocus,
     placeholderValue,
-    visibleMonths,
+    visibleMonths = 1,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -187,7 +187,9 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
                     minValue={timeMinValue}
                     maxValue={timeMaxValue}
                     hourCycle={props.hourCycle}
-                    hideTimeZone={props.hideTimeZone} />
+                    hideTimeZone={props.hideTimeZone}
+                    flex={visibleMonths === 1}
+                    width={visibleMonths === 1 ? 'auto' : undefined} />
                   <TimeField
                     label="End time"
                     value={state.timeRange?.end || null}
@@ -197,7 +199,9 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
                     minValue={timeMinValue}
                     maxValue={timeMaxValue}
                     hourCycle={props.hourCycle}
-                    hideTimeZone={props.hideTimeZone} />
+                    hideTimeZone={props.hideTimeZone}
+                    flex={visibleMonths === 1}
+                    width={visibleMonths === 1 ? 'auto' : undefined} />
                 </Flex>
               }
             </Content>
