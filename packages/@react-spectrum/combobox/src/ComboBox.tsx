@@ -192,7 +192,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(comboboxStyles, 'no-results')}>
-              {formatMessage('noResults')}
+              {loadingState === 'loading' ? formatMessage('loading') :  formatMessage('noResults')}
             </span>
           )} />
         <DismissButton onDismiss={() => state.close()} />
