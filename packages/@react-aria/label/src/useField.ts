@@ -45,12 +45,12 @@ export function useField(props: AriaFieldProps): FieldAria {
     ].filter(Boolean).join(' ') || undefined
   });
 
-  let descriptionProps: HTMLAttributes<HTMLElement> & {ref: Function} = {
+  let descriptionProps: HTMLAttributes<HTMLElement> & {ref: (elem: RefCallback<HTMLElement>) => void} = {
     id: (description ? descriptionId : null),
     ref: (elem: RefCallback<HTMLElement>) => descriptionUpdater(!!elem)
   };
 
-  let errorMessageProps: HTMLAttributes<HTMLElement> & {ref: Function} = {
+  let errorMessageProps: HTMLAttributes<HTMLElement> & {ref: (elem: RefCallback<HTMLElement>) => void} = {
     id: (errorMessage ? errorMessageId : null),
     ref: (elem: RefCallback<HTMLElement>) => errorMessageUpdater(!!elem)
   };

@@ -107,7 +107,7 @@ export function useSlotId(): string {
  * Used to generate an id with an updater method that accepts a boolean parameter to set
  * whether the element that will use the id is currently rendered.
  */
-export function useSlotIdWithUpdater(): {id: string, updater: Function} {
+export function useSlotIdWithUpdater(): {id: string, updater: (value: boolean) => void} {
   let id = useId();
   let [resolvedId, setResolvedId] = useState(id);
   useLayoutEffect(() => {
