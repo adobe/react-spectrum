@@ -12,6 +12,10 @@
 
 .react-spectrum-Datepicker-startField.react-spectrum-Datepicker-startField {
   width: auto;
+
+  .react-spectrum-Datepicker-input {
+    padding-inline-end: var(--spectrum-textfield-padding-x);
+  }
 }
 
 .react-spectrum-Datepicker-endField {
