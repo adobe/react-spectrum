@@ -20,9 +20,15 @@ describe('useSideNav', function () {
   let mockLayout = new ListLayout({
     rowHeight: 40
   });
+  let mockRef = {
+    current: {
+      addEventListener: () => jest.fn(),
+      removeEventListener: () => jest.fn()
+    }
+  };
 
   let renderSideNavHook = (menuProps) => {
-    let {result} = renderHook(() => useSideNav({...menuProps, layout: mockLayout}, mockState));
+    let {result} = renderHook(() => useSideNav({...menuProps, layout: mockLayout}, mockState, mockRef));
     return result.current;
   };
 

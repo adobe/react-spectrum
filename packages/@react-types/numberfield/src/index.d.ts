@@ -14,6 +14,7 @@ import {
   AriaLabelingProps,
   DOMProps,
   FocusableProps,
+  HelpTextProps,
   InputBase, LabelableProps,
   RangeInputBase, SpectrumLabelableProps,
   StyleProps,
@@ -22,7 +23,7 @@ import {
   ValueBase
 } from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps {
+export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
   /**
    * Formatting options for the value displayed in the number field.
    * This also affects what characters are allowed to be typed by the user.
