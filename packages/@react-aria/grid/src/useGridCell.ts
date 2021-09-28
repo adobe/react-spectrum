@@ -113,7 +113,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       return;
     }
 
-    let walker = getFocusableTreeWalker(ref.current);
+    let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
     walker.currentNode = document.activeElement;
     switch (e.key) {
       case 'Enter': {
