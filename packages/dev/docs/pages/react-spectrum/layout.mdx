@@ -71,7 +71,7 @@ to ensure consistency across applications, and allow the layout to adapt to diff
 This example shows a simple vertical stack, with a gap between each item defined
 using a [Spectrum dimension variable](styling.html#dimension-values).
 
-```tsx example
+```tsx example sandbox-disabled=true
 <Flex direction="column" width="size-2000" gap="size-100">
   <View backgroundColor="celery-600" height="size-800" />
   <View backgroundColor="blue-600" height="size-800" />
@@ -118,7 +118,7 @@ The following example shows how you could use `Grid` to declare a common applica
 content area, and footer. Notice how there are no nested layout elements — the layout is entirely declared in the
 `Grid` and the children simply declare where they should be placed.
 
-```tsx example
+```tsx example sandbox-disabled=true
 <Grid
   areas={[
     'header  header',
@@ -177,7 +177,7 @@ the Flex `direction` prop between `row` and `column` at the medium breakpoint.
 
 Resize your browser window to see how the layout changes.
 
-```tsx example
+```tsx example sandbox-disabled=true
 <Grid
   areas={{
     base: [
@@ -255,7 +255,7 @@ icons, text, and descriptions to be added as children of items, and the layout a
 The icon and main text element of an item are placed in slots automatically, and the description text element is
 placed using the `slot` prop to specify a named area.
 
-```tsx example
+```tsx example sandbox-disabled=true
 <Picker label="Permission" defaultSelectedKey="read">
   <Item textValue="Read" key="read">
     <Book size="S" />

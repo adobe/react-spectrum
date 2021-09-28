@@ -53,7 +53,7 @@ In case you need to override the operating system setting for some reason, e.g. 
 you can use the `colorScheme` prop on the [Provider](Provider.html) component. This can be set to `"light"`
 or `"dark"` to force the color scheme to a particular setting.
 
-```tsx example
+```tsx example sandbox-disabled=true
 <Provider colorScheme="dark">
   <ActionButton margin="size-200">I'm a dark button</ActionButton>
 </Provider>
@@ -63,7 +63,7 @@ Color schemes can also be nested. You could have a dark themed dialog inside a l
 This might be useful for certain experiences like photo editing that are more optimal in dark mode, regardless of
 the operating system setting.
 
-```tsx example
+```tsx example sandbox-disabled=true
 <Provider colorScheme="light">
   <ActionButton margin="size-200">I'm a light button</ActionButton>
   <Provider colorScheme="dark">

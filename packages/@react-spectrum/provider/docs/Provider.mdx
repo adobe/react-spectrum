@@ -31,7 +31,7 @@ keywords: [theme, locale, application, colorstop]
 
 ## Example
 
-```tsx example
+```tsx example sandbox-disabled=true
 import {Provider} from '@react-spectrum/provider';
 import {theme} from '@react-spectrum/theme-default';
 import {Button} from '@react-spectrum/button';
@@ -57,7 +57,7 @@ In order to provide the styling attributes that components need to render, you m
 ### Color Schemes
 We recommend supporting both light and dark color schemes in your app, however, if you need to override this with an application specific setting, you can use the `colorScheme` prop.
 
-```tsx example
+```tsx example sandbox-disabled=true
 <Provider theme={theme} colorScheme="light">
   <ActionButton margin="size-100">I'm a light button</ActionButton>
 </Provider>
@@ -91,7 +91,7 @@ These breakpoints can be overridden by passing the `breakpoints` prop to the `Pr
 
 This example specifies two breakpoints: `tablet` and `desktop`. It displays a [View](View.html) that changes color depending on which breakpoint is matched: green by default, blue at the `tablet` breakpoint, and magenta at the `desktop` breakpoint. See the docs for [style props](styling.html#responsive-styles) for more details.
 
-```tsx example
+```tsx example sandbox-disabled=true
 <Provider theme={theme} breakpoints={{tablet: 640, desktop: 1024}}>
   <View height="size-1000" backgroundColor={{base: 'celery-600', tablet: 'blue-600', desktop: 'magenta-600'}} />
 </Provider>
@@ -100,7 +100,7 @@ This example specifies two breakpoints: `tablet` and `desktop`. It displays a [V
 ## Property groups
 Provider can also be used to define common properties for a group of components within it. For example, a group of components could be disabled together rather than individually by setting the `isDisabled` prop on any parent provider.
 
-```tsx example
+```tsx example sandbox-disabled=true
 <Flex direction="column" gap="size-100" alignItems="start">
   <Provider isDisabled>
     <RadioGroup label="Favorite animal">
@@ -120,7 +120,7 @@ Property groups can also be nested. For example, a group of components could be 
 
 The following example shows a registration form, which disables a picker and submit button until an email address is entered. All elements within the form use a quiet style, except the submit button, which overrides the provider setting using a prop.
 
-```tsx example
+```tsx example sandbox-disabled=true
 function Register() {
   let [email, setEmail] = React.useState('');
 

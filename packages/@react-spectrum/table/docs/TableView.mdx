@@ -441,7 +441,7 @@ function PokemonTable(props) {
 
 To limit users to selecting only a single item at a time, `selectionMode` can be set to `single`.
 
-```tsx example
+```tsx example sandbox-disabled=true
 // Using the same table as above
 <PokemonTable selectionMode="single" />
 ```
@@ -451,7 +451,7 @@ To limit users to selecting only a single item at a time, `selectionMode` can be
 TableView also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the TableView selected at all times.
 In this mode, if a single row is selected and the user presses it, it will not be deselected.
 
-```tsx example
+```tsx example sandbox-disabled=true
 // Using the same table as above
 <PokemonTable disallowEmptySelection />
 ```
@@ -460,7 +460,7 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 You can disable specific rows by providing an array of keys to TableView via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
 
-```tsx example
+```tsx example sandbox-disabled=true
 // Using the same table as above
 <PokemonTable selectionMode="multiple" disabledKeys={[3]} />
 ```
