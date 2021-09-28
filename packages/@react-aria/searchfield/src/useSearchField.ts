@@ -67,6 +67,12 @@ export function useSearchField(
     }
 
     if (key === 'Escape') {
+      if (state.value === '') {
+        // TODO: test this. To allow the grid cell recieving the escape event and exiting edit mode
+        // Will need to do the same for other components
+        e.continuePropagation();
+      }
+
       state.setValue('');
       if (onClear) {
         onClear();

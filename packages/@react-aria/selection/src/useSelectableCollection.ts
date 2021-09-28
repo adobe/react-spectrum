@@ -85,7 +85,11 @@ interface SelectableCollectionOptions {
    * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
    * If not provided, defaults to the collection ref.
    */
-  scrollRef?: RefObject<HTMLElement>
+  scrollRef?: RefObject<HTMLElement>,
+  /**
+   * Whether something in the collection is in edit mode and should disable typeahead and other collection keyboard behavior.
+   */
+  editModeEnabled?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -111,7 +115,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     allowsTabNavigation = false,
     isVirtualized,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
-    scrollRef = ref
+    scrollRef = ref,
+    editModeEnabled
   } = options;
   let {direction} = useLocale();
 
@@ -139,10 +144,12 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
       }
     };
-
+    // TODO: figure out what I can add a conditional for editModeEnabled
+    // some I'll need to handle in useGridCell since we need a capturing listener to stop native scrolling
+    // add it to the arrow up/down/left/right?
     switch (e.key) {
       case 'ArrowDown': {
-        if (delegate.getKeyBelow) {
+        if (delegate.getKeyBelow && !editModeEnabled) {
           e.preventDefault();
           let nextKey = manager.focusedKey != null
               ? delegate.getKeyBelow(manager.focusedKey)
@@ -155,7 +162,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowUp': {
-        if (delegate.getKeyAbove) {
+        if (delegate.getKeyAbove && !editModeEnabled) {
           e.preventDefault();
           let nextKey = manager.focusedKey != null
               ? delegate.getKeyAbove(manager.focusedKey)
@@ -168,7 +175,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowLeft': {
-        if (delegate.getKeyLeftOf) {
+        if (delegate.getKeyLeftOf && !editModeEnabled) {
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
           navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
@@ -176,7 +183,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowRight': {
-        if (delegate.getKeyRightOf) {
+        if (delegate.getKeyRightOf && !editModeEnabled) {
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
           navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
@@ -224,12 +231,15 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       case 'a':
         if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
           e.preventDefault();
-          manager.selectAll();
+          if (editModeEnabled) {
+            manager.selectAll();
+          }
+
         }
         break;
       case 'Escape':
         e.preventDefault();
-        if (!disallowEmptySelection) {
+        if (!disallowEmptySelection && !editModeEnabled) {
           manager.clearSelection();
         }
         break;
@@ -381,7 +391,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     selectionManager: manager
   });
 
-  if (!disallowTypeAhead) {
+  if (!(disallowTypeAhead || editModeEnabled)) {
     handlers = mergeProps(typeSelectProps, handlers);
   }
 

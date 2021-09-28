@@ -116,7 +116,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let isDisabled = state.disabledKeys.has(node.key) || state.disabledKeys.has(node.parentKey);
   let {pressProps} = usePress({...itemProps, onPressStart, onPress, onPressUp, isDisabled});
 
-  let onKeyDown = (e: ReactKeyboardEvent) => {
+  let onKeyDownCapture = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as HTMLElement)) {
       return;
     }
@@ -143,21 +143,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         }
         break;
       }
-      case 'Escape': {
-        // Leave edit mode and refocus the cell
-        // TODO: right now only do this if the cell itself is focused so that escape key works for searchfield/combobox children
-        // Perhaps have a non-capturing onKeyDown in addition to this key down that does the same state.setEditModeCell and stuff
-        // so that we support getting out of escape mode even when user is focused on child element. Will need to modify useSearchField and useComboBox
-        // so that stopPropagation happens if the field isn't empty and/or the menu is open so that the user will have to hit escape twice to properly exit edit mode
-        if (editModeEnabled && ref.current === walker.currentNode) {
-          state.setEditModeCell(null);
-          // TODO: what if the child is a searchfield? This will prevent escape from clearing the field
-          e.preventDefault();
-          e.stopPropagation();
-          focusSafely(ref.current);
-        }
-        break;
-      }
       case 'Tab': {
         if (editModeEnabled) {
           let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
@@ -176,15 +161,13 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       case 'Home':
       case 'End':
         if (editModeEnabled) {
+          // TODO: this stops searchfield home/end behavior, but preventDefault properly stops scrolling of the grid/table (this scrolling is independent of useSelectableCollection)
+          // Needs to be done here, too late if done in useSelectableCollection.
+          // Why is this not a problem for up/down/left/right?
+          e.preventDefault()
           e.stopPropagation();
         }
         break;
-      case 'a': {
-        if (isCtrlKeyPressed(e) && editModeEnabled) {
-          e.stopPropagation();
-        }
-        break;
-      }
       case 'ArrowLeft': {
         // Find the next focusable element within the cell.
         let focusable = direction === 'rtl'
@@ -201,12 +184,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.stopPropagation();
           focusSafely(focusable);
         } else {
-          // Prevent left arrow from moving focus when in editable cell in edit mode
-          if (editModeEnabled) {
-            e.stopPropagation();
-            break;
-          }
-
           // If there is no next focusable child, then move to the next cell to the left of this one.
           // This will be handled by useSelectableCollection. However, if there is no cell to the left
           // of this one, only one column, and the grid doesn't focus rows, then the next key will be the
@@ -247,12 +224,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.stopPropagation();
           focusSafely(focusable);
         } else {
-          // Prevent right arrow from moving focus when in editable cell in edit mode
-          if (editModeEnabled) {
-            e.stopPropagation();
-            break;
-          }
-
           let next = keyboardDelegate.getKeyRightOf(node.key);
           if (next !== node.key) {
             break;
@@ -276,13 +247,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
       case 'ArrowUp':
       case 'ArrowDown':
-        if (editModeEnabled) {
-          // Prevent scrolling in edit mode
-          e.preventDefault();
-          e.stopPropagation();
-          break;
-        }
-
         // Prevent this event from reaching cell children, e.g. menu buttons. We want arrow keys to navigate
         // to the cell above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
@@ -294,6 +258,29 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           );
         }
         break;
+    }
+  };
+
+  let onKeyDown = (e: ReactKeyboardEvent) => {
+    if (!e.currentTarget.contains(e.target as HTMLElement)) {
+      return;
+    }
+
+    let walker = getFocusableTreeWalker(ref.current);
+    walker.currentNode = document.activeElement;
+    switch (e.key) {
+      case 'Escape': {
+        // Leave edit mode and refocus the cell
+        // This needs to be done in a non capturing listener so that searchfield can decide when to actually propagate it's escape event
+        // to the grid cell. If the search field isn't empty when hitting enter, then it should stop propagation so we don't leave edit mode. If
+        // the search field is empty, then the escape event will be propagated so that we can leave edit mode.
+        // If we did this in a capturing listener, we would leave edit mode too early
+        if (editModeEnabled) {
+          state.setEditModeCell(null);
+          focusSafely(ref.current);
+        }
+        break;
+      }
     }
   };
 
@@ -331,7 +318,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',
-    onKeyDownCapture: onKeyDown,
+    onKeyDownCapture,
+    onKeyDown,
     onFocus
   });
 
