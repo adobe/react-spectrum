@@ -148,19 +148,12 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         }
         break;
       }
-      case 'PageUp':
-      case 'PageDown':
-      case 'Home':
-      case 'End':
-        if (editModeEnabled) {
-          // TODO: this stops searchfield home/end behavior, but preventDefault properly stops scrolling of the grid/table (this scrolling is independent of useSelectableCollection)
-          // Needs to be done here, too late if done in useSelectableCollection.
-          // Why is this not a problem for up/down/left/right?
-          e.preventDefault();
-          e.stopPropagation();
-        }
-        break;
       case 'ArrowLeft': {
+        if (editModeEnabled) {
+          // Early return if edit mode enabled so cell children handle event
+          break;
+        }
+
         // Find the next focusable element within the cell.
         let focusable = direction === 'rtl'
           ? walker.nextNode() as HTMLElement
@@ -203,6 +196,11 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         break;
       }
       case 'ArrowRight': {
+        if (editModeEnabled) {
+          // Early return if edit mode enabled so cell children handle event
+          break;
+        }
+
         let focusable = direction === 'rtl'
           ? walker.previousNode() as HTMLElement
           : walker.nextNode() as HTMLElement;
@@ -239,6 +237,11 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
       case 'ArrowUp':
       case 'ArrowDown':
+        if (editModeEnabled) {
+          // Early return if edit mode enabled so cell children handle event
+          break;
+        }
+
         // Prevent this event from reaching cell children, e.g. menu buttons. We want arrow keys to navigate
         // to the cell above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
@@ -254,12 +257,11 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   };
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
+    // TODO: check if I need the below
     if (!e.currentTarget.contains(e.target as HTMLElement)) {
       return;
     }
 
-    let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
     switch (e.key) {
       case 'Escape': {
         // Leave edit mode and refocus the cell

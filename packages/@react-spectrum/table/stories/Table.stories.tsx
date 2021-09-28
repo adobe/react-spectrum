@@ -15,6 +15,7 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {ComboBox, Item} from '@react-spectrum/combobox';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -973,9 +974,11 @@ storiesOf('TableView', module)
   .add(
     'with editable cells',
     () => (
-      <TableView disabledKeys={['Foo 1']} aria-label="TableView with editable cells" selectionMode="multiple" width={1000} height={200}>
-        <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+      <TableView disabledKeys={['Foo 1']} aria-label="TableView with editable cells" selectionMode="multiple" width={600} height={200}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="bar" minWidth={500}>Bar</Column>
+          <Column key="baz" minWidth={150}>Baz</Column>
         </TableHeader>
         <TableBody items={items}>
           {item =>
@@ -983,6 +986,11 @@ storiesOf('TableView', module)
               {key => key === 'bar' ?
               (
                 <Cell isEditable textValue={item[key]}>
+                  <button onKeyDown={(e) => console.log('e', e.isDefaultPrevented())}>gaweg</button>
+                  <input onKeyDown={(e) => console.log('e', e)} />
+                  <ActionButton isQuiet aria-label="Add Info">
+                    <Add />
+                  </ActionButton>
                   <DialogTrigger>
                     <ActionButton aria-label="Add Dialog"><Add /></ActionButton>
                     {close => (
@@ -1000,9 +1008,11 @@ storiesOf('TableView', module)
                     )}
                   </DialogTrigger>
                   <SearchField aria-label="Info field" />
-                  <ActionButton isQuiet aria-label="Add Info">
-                    <Add />
-                  </ActionButton>
+                  <ComboBox aria-label="ComboBox">
+                    <Item key="one">Item One</Item>
+                    <Item key="two">Item Two</Item>
+                    <Item key="three">Item Three</Item>
+                  </ComboBox>
                 </Cell>
               ) : (
                 <Cell textValue={item[key]}>

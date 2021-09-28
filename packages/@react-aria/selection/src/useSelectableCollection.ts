@@ -144,12 +144,13 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
       }
     };
-    // TODO: figure out what I can add a conditional for editModeEnabled
-    // some I'll need to handle in useGridCell since we need a capturing listener to stop native scrolling
-    // add it to the arrow up/down/left/right?
+
     switch (e.key) {
       case 'ArrowDown': {
-        if (delegate.getKeyBelow && !editModeEnabled) {
+        if (editModeEnabled) {
+          // Prevent scrolling from happening if in edit mode
+          e.preventDefault();
+        } else if (delegate.getKeyBelow) {
           e.preventDefault();
           let nextKey = manager.focusedKey != null
               ? delegate.getKeyBelow(manager.focusedKey)
@@ -162,7 +163,10 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowUp': {
-        if (delegate.getKeyAbove && !editModeEnabled) {
+        if (editModeEnabled) {
+          // Prevent scrolling from happening if in edit mode
+          e.preventDefault();
+        } else if (delegate.getKeyAbove) {
           e.preventDefault();
           let nextKey = manager.focusedKey != null
               ? delegate.getKeyAbove(manager.focusedKey)
@@ -175,7 +179,10 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowLeft': {
-        if (delegate.getKeyLeftOf && !editModeEnabled) {
+        if (editModeEnabled) {
+          // Prevent scrolling from happening if in edit mode
+          e.preventDefault();
+        } else if (delegate.getKeyLeftOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
           navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
@@ -183,7 +190,10 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowRight': {
-        if (delegate.getKeyRightOf && !editModeEnabled) {
+        if (editModeEnabled) {
+          // Prevent scrolling from happening if in edit mode
+          e.preventDefault();
+        } else if (delegate.getKeyRightOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
           navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
@@ -191,7 +201,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'Home':
-        if (delegate.getFirstKey) {
+        if (editModeEnabled) {
+          // Prevent scrolling from happening if in edit mode
+          // TODO: not sure why this doesn't stop table scrolling when in a searchfield in editmode...
+          e.preventDefault();
+        } else if (delegate.getFirstKey) {
           e.preventDefault();
           let firstKey = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(firstKey);
@@ -203,7 +217,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'End':
-        if (delegate.getLastKey) {
+        if (editModeEnabled) {
+          // Prevent scrolling from happening if in edit mode
+          // TODO: not sure why this doesn't stop table scrolling when in a searchfield in editmode...
+          e.preventDefault();
+        } else if (delegate.getLastKey) {
           e.preventDefault();
           let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(lastKey);
@@ -215,26 +233,31 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'PageDown':
-        if (delegate.getKeyPageBelow) {
+        if (editModeEnabled) {
+          // Prevent scrolling from happening if in edit mode
+          // TODO: not sure why this doesn't stop table scrolling when in a searchfield in editmode...
+          e.preventDefault();
+        } else if (delegate.getKeyPageBelow) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
           navigateToKey(nextKey);
         }
         break;
       case 'PageUp':
-        if (delegate.getKeyPageAbove) {
+        if (editModeEnabled) {
+          // Prevent scrolling from happening if in edit mode
+          // TODO: not sure why this doesn't stop table scrolling when in a searchfield in editmode...
+          e.preventDefault();
+        } else if (delegate.getKeyPageAbove) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
           navigateToKey(nextKey);
         }
         break;
       case 'a':
-        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
+        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true && !editModeEnabled) {
           e.preventDefault();
-          if (!editModeEnabled) {
-            manager.selectAll();
-          }
-
+          manager.selectAll();
         }
         break;
       case 'Escape':
@@ -244,7 +267,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'Tab': {
-        if (!allowsTabNavigation) {
+        if (!allowsTabNavigation && !editModeEnabled) {
           // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
           // However, collections should be treated as a single tab stop, with arrow key navigation internally.
           // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
