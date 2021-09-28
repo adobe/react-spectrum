@@ -80,7 +80,7 @@ ReactDOM.render(
 `;
 
 export function createCodeSandbox(e) {
-  let exampleTitle = document.querySelector('h1').textContent;
+  let exampleTitle = `${document.title.split(' – ')[0]} Example - ${document.title.split(' – ')[1]}`;
   let exampleCode = e.target.parentNode.parentNode.querySelector('.source').textContent;
   let isFragment = e.target.closest('.example').getAttribute('data-fragment') === 'true';
   let pageImports =  e.target.closest('.example').getAttribute('data-imports');
@@ -164,7 +164,8 @@ export default function Example() {
 }
 `;
   }
-
+ 
+  // https://codesandbox.io/docs/api/#define-api
   fetch('https://codesandbox.io/api/v1/sandboxes/define?json=1', {
     method: 'POST',
     headers: {
@@ -175,7 +176,7 @@ export default function Example() {
       files: {
         'package.json': {
           content: {
-            name: `${exampleTitle} Example - React Spectrum`, // TODO: Include a subtitle for components with more than one example
+            name: exampleTitle, // TODO: Include a subtitle for components with more than one example
             main: 'index.js',
             dependencies: {
               react: 'latest',
