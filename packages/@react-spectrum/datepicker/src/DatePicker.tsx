@@ -28,7 +28,7 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
-import {useFormatHelpText} from './utils';
+import {useFormatHelpText, useVisibleMonths} from './utils';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -42,7 +42,7 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
     isReadOnly,
     isRequired,
     placeholderValue,
-    visibleMonths
+    maxVisibleMonths = 1
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
@@ -90,6 +90,8 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
   let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
   let timeGranularity = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second' || props.granularity === 'millisecond' ? props.granularity : null;
   let showTimeField = (v && 'hour' in v) || !!timeGranularity;
+
+  let visibleMonths = useVisibleMonths(maxVisibleMonths);
 
   return (
     <Field

@@ -121,12 +121,12 @@ storiesOf('Date and Time/DatePicker', module)
     () => render({placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')})
   )
   .add(
-    'visibleMonths: 2',
-    () => render({visibleMonths: 2, granularity: 'minute'})
+    'maxVisibleMonths: 2',
+    () => render({maxVisibleMonths: 2, granularity: 'minute'})
   )
   .add(
-    'visibleMonths: 3',
-    () => render({visibleMonths: 3, granularity: 'minute'})
+    'maxVisibleMonths: 3',
+    () => render({maxVisibleMonths: 3, granularity: 'minute'})
   )
   .add(
     'showFormatHelpText',

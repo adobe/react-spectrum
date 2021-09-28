@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render, within} from '@testing-library/react';
+import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render as render_, within} from '@testing-library/react';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
 import {DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -48,6 +48,23 @@ function getTextValue(el) {
 
 function expectPlaceholder(el, placeholder) {
   expect(getTextValue(el)).toBe(placeholder);
+}
+
+function render(el) {
+  if (el.type === Provider) {
+    return render_(el);
+  }
+  let res = render_(
+    <Provider theme={theme}>
+      {el}
+    </Provider>
+  );
+  return {
+    ...res,
+    rerender(el) {
+      return res.rerender(<Provider theme={theme}>{el}</Provider>);
+    }
+  };
 }
 
 describe('DateRangePicker', function () {

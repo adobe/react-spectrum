@@ -28,7 +28,7 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
-import {useFormatHelpText} from './utils';
+import {useFormatHelpText, useVisibleMonths} from './utils';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -42,7 +42,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
     isRequired,
     autoFocus,
     placeholderValue,
-    visibleMonths = 1,
+    maxVisibleMonths = 1,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -95,6 +95,8 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
   let timeGranularity = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second' || props.granularity === 'millisecond' ? props.granularity : null;
   let showTimeField = (v && 'hour' in v) || !!timeGranularity;
+
+  let visibleMonths = useVisibleMonths(maxVisibleMonths);
 
   return (
     <Field
@@ -168,7 +170,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
-            <Content>
+            <Content UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
               <RangeCalendar
                 autoFocus
                 value={state.dateRange}
@@ -177,7 +179,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
                 minValue={props.minValue}
                 maxValue={props.maxValue} />
               {showTimeField &&
-                <Flex gap="size-100">
+                <Flex gap="size-100" marginTop="size-100">
                   <TimeField
                     label="Start time"
                     value={state.timeRange?.start || null}

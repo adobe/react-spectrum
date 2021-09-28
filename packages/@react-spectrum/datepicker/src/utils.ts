@@ -12,7 +12,9 @@
 import {SpectrumDatePickerBase} from '@react-types/datepicker';
 import {useDateFormatter} from '@react-aria/i18n';
 import {useDisplayNames} from '@react-aria/datepicker';
-import {useMemo} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
+import {useMemo, useState} from 'react';
+import {useProvider} from '@react-spectrum/provider';
 
 export function useFormatHelpText(props: SpectrumDatePickerBase<any>) {
   let formatter = useDateFormatter({dateStyle: 'short'});
@@ -34,4 +36,27 @@ export function useFormatHelpText(props: SpectrumDatePickerBase<any>) {
 
     return '';
   }, [props.description, props.showFormatHelpText, formatter, displayNames]);
+}
+
+export function useVisibleMonths(maxVisibleMonths: number) {
+  let {scale} = useProvider();
+  let [visibleMonths, setVisibleMonths] = useState(getVisibleMonths(scale));
+  useLayoutEffect(() => {
+    let onResize = () => setVisibleMonths(getVisibleMonths(scale));
+    onResize();
+
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
+  }, [scale]);
+
+  return Math.max(1, Math.min(visibleMonths, maxVisibleMonths, 3));
+}
+
+function getVisibleMonths(scale) {
+  let monthWidth = scale === 'large' ? 336 : 280;
+  let gap = scale === 'large' ? 30 : 24;
+  let popoverPadding = scale === 'large' ? 32 : 48;
+  return Math.floor((window.innerWidth - popoverPadding * 2) / (monthWidth + gap));
 }

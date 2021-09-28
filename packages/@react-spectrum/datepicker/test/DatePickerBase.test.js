@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render as render_} from '@testing-library/react';
 import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DatePicker, DateRangePicker} from '../';
 import {installPointerEvent} from '@react-spectrum/test-utils';
@@ -28,6 +28,17 @@ function pointerEvent(type, opts) {
     button: opts.button || 0
   }, opts);
   return evt;
+}
+
+function render(el) {
+  if (el.type === Provider) {
+    return render_(el);
+  }
+  return render_(
+    <Provider theme={theme}>
+      {el}
+    </Provider>
+  );
 }
 
 describe('DatePickerBase', function () {
