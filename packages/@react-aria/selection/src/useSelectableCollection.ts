@@ -231,7 +231,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       case 'a':
         if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
           e.preventDefault();
-          if (editModeEnabled) {
+          if (!editModeEnabled) {
             manager.selectAll();
           }
 
