@@ -70,7 +70,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         rendered: null,
         textValue: item.textValue,
         hasChildNodes: false,
-        childNodes: []
+        childNodes: [],
+        props: {isEditable: true}
       }]
     }))
   }), [collection]);

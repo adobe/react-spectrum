@@ -14,20 +14,12 @@ import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {GridCollection} from '@react-types/grid';
 import {gridKeyboardDelegates} from './utils';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
+import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
-import {isMac, mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {Node as RSNode} from '@react-types/shared';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
-
-function isCtrlKeyPressed(e: ReactKeyboardEvent) {
-  if (isMac()) {
-    return e.metaKey;
-  }
-
-  return e.ctrlKey;
-}
 
 interface GridCellProps {
   /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */
@@ -164,7 +156,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           // TODO: this stops searchfield home/end behavior, but preventDefault properly stops scrolling of the grid/table (this scrolling is independent of useSelectableCollection)
           // Needs to be done here, too late if done in useSelectableCollection.
           // Why is this not a problem for up/down/left/right?
-          e.preventDefault()
+          e.preventDefault();
           e.stopPropagation();
         }
         break;
