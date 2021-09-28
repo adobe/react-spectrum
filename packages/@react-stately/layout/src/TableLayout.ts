@@ -29,6 +29,7 @@ export class TableLayout<T> extends ListLayout<T> {
   getDefaultWidth: (props) => string | number;
   wasLoading = false;
   isLoading = false;
+  editModeKey: Key;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
@@ -337,6 +338,30 @@ export class TableLayout<T> extends ListLayout<T> {
     for (let node of this.rootNodes) {
       res.push(node.layoutInfo);
       this.addVisibleLayoutInfos(res, node, rect);
+    }
+
+    // If there is an active editable cell, make sure it remains in the DOM even when scrolled out of view
+    // so that we don't lose edited content or the focused child. This really only matters for virtualized tables
+    let editModeLayoutInfo = this.getLayoutInfo(this.editModeKey);
+    if (editModeLayoutInfo) {
+      let parentKey = editModeLayoutInfo.parentKey;
+      let parentLayoutInfo = this.getLayoutInfo(parentKey);
+      let editCellVisible = editModeLayoutInfo.rect.intersects(rect);
+      let parentRowVisible = parentLayoutInfo.rect.intersects(rect);
+
+      // If the parent row if the active editable cell isn't visible, place it at the top/bottom
+      // of the visible layout array depending on if it is above or below the visible rows
+      if (!parentRowVisible) {
+        if (parentLayoutInfo.rect.y > rect.y) {
+          res.push(parentLayoutInfo);
+        } else {
+          res.unshift(parentLayoutInfo);
+        }
+      }
+
+      if (!editCellVisible) {
+        res.push(editModeLayoutInfo);
+      }
     }
 
     return res;

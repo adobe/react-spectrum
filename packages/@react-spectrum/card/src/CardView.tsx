@@ -85,6 +85,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   cardViewLayout.disabledKeys = state.disabledKeys;
   cardViewLayout.isLoading = isLoading;
   cardViewLayout.direction = direction;
+  cardViewLayout.editModeKey = state.editModeKey;
 
   let {gridProps} = useGrid({
     ...props,

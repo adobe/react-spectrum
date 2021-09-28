@@ -58,16 +58,11 @@ let nestedColumns = [
   ]}
 ];
 
-let items = [
-  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {test: 'Test 1', foo: 'Foo 3', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 4', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {test: 'Test 1', foo: 'Foo 5', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {test: 'Test 1', foo: 'Foo 7', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
-];
+let items = [];
+for (let i = 0; i < 20; i++) {
+  let row = {test: 'Test ' + i, foo: 'Foo ' + i, bar: 'Bar ' + i, yay: 'Yay ' + i, baz: 'Baz ' + i};
+  items.push(row);
+}
 
 let manyColunns = [];
 for (let i = 0; i < 100; i++) {
@@ -978,8 +973,10 @@ storiesOf('TableView', module)
       <TableView disabledKeys={['Foo 1']} aria-label="TableView with editable cells" selectionMode="multiple" width={600} height={200}>
         <TableHeader>
           <Column key="foo">Foo</Column>
-          <Column key="bar" minWidth={500}>Bar</Column>
-          <Column key="baz" minWidth={150}>Baz</Column>
+          <Column key="bar" minWidth={550}>Bar</Column>
+          <Column key="baz" minWidth={500}>Baz</Column>
+          <Column key="test" minWidth={500}>Test</Column>
+          <Column key="yay">Yay</Column>
         </TableHeader>
         <TableBody items={items}>
           {item =>

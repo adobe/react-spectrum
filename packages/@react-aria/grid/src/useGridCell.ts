@@ -52,7 +52,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let {direction} = useLocale();
   let keyboardDelegate = gridKeyboardDelegates.get(state);
   let isEditable = node.props?.isEditable;
-  let editModeEnabled = state.editModeCell === node.key;
+  let editModeEnabled = state.editModeKey === node.key;
 
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
@@ -121,7 +121,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           walker.currentNode = ref.current;
           let focusable = walker.firstChild() as HTMLElement;
           if (!editModeEnabled && focusable) {
-            state.setEditModeCell(node.key);
+            state.setEditModeKey(node.key);
             // Prevent selection from triggering by stopping event propagation, but only if the
             // editable cell actually has something to focus and presumably edit
             e.preventDefault();
@@ -270,7 +270,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         // the search field is empty, then the escape event will be propagated so that we can leave edit mode.
         // If we did this in a capturing listener, we would leave edit mode too early
         if (editModeEnabled) {
-          state.setEditModeCell(null);
+          state.setEditModeKey(null);
           focusSafely(ref.current);
         }
         break;
@@ -294,7 +294,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
       // Activating edit mode if user focuses a child of the editable cell (e.g. via click)
       if (!editModeEnabled && isEditable) {
-        state.setEditModeCell(node.key);
+        state.setEditModeKey(node.key);
       }
       return;
     }
@@ -312,7 +312,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   if (editModeEnabled && state.selectionManager.focusedKey !== node.key) {
     // If focus leaves a editable cell that is in the middle of being edited (e.g. via user click), turn off edit mode
     // TODO: check if this has problems when clicking into another cell
-    state.setEditModeCell(null);
+    state.setEditModeKey(null);
   }
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {

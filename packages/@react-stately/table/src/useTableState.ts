@@ -62,7 +62,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
-  let {disabledKeys, selectionManager, editModeCell, setEditModeCell} = useGridState({...props, collection});
+  let {disabledKeys, selectionManager, editModeKey, setEditModeKey} = useGridState({...props, collection});
 
   return {
     collection,
@@ -78,7 +78,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
           : 'ascending'
       });
     },
-    editModeCell,
-    setEditModeCell
+    editModeKey,
+    setEditModeKey
   };
 }

@@ -106,6 +106,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }), [props.overflowMode, scale, density]);
   let {direction} = useLocale();
   layout.collection = state.collection;
+  layout.editModeKey = state.editModeKey;
 
   let {gridProps} = useTable({
     ...props,

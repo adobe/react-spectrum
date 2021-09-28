@@ -10,9 +10,9 @@ export interface GridState<T, C extends GridCollection<T>> {
   /** A selection manager to read and update row selection state. */
   selectionManager: SelectionManager,
   /** The key of the cell currently in edit mode if any. */
-  readonly editModeCell: Key,
+  readonly editModeKey: Key,
   /** Sets the key of the cell currently in edit mode if any. */
-  setEditModeCell(value: Key): void
+  setEditModeKey(value: Key): void
 }
 
 interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelection {
@@ -26,7 +26,7 @@ interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelec
  */
 export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
   let {collection, focusMode} = props;
-  let [editModeCell, setEditModeCell] = useState(null);
+  let [editModeKey, setEditModeKey] = useState(null);
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
       props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
@@ -61,7 +61,7 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
     collection,
     disabledKeys,
     selectionManager: new SelectionManager(collection, selectionState),
-    editModeCell,
-    setEditModeCell
+    editModeKey,
+    setEditModeKey
   };
 }

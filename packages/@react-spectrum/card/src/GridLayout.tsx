@@ -151,6 +151,22 @@ export class GridLayout<T> extends BaseLayout<T> {
       if (loader && this.isVisible(loader, rect)) {
         res.push(loader);
       }
+
+      // If there is an active editable card, make sure it remains in the DOM even when scrolled out of view
+      // so that we don't lose the card's focused child. This really only matters for virtualized card view
+      let rowKey = this.collection.getItem(this.editModeKey)?.parentKey;
+      let editModeLayoutInfo = this.layoutInfos.get(rowKey);
+      if (editModeLayoutInfo) {
+        let editRowVisible = editModeLayoutInfo.rect.intersects(rect);
+
+        if (!editRowVisible) {
+          if (editModeLayoutInfo.rect.y > rect.y) {
+            res.push(editModeLayoutInfo);
+          } else {
+            res.unshift(editModeLayoutInfo);
+          }
+        }
+      }
     }
 
     return res;
