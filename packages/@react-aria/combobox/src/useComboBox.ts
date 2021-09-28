@@ -17,11 +17,11 @@ import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {FocusEvent, HTMLAttributes, InputHTMLAttributes, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardDelegate, PressEvent} from '@react-types/shared';
+import {KeyboardDelegate, KeyboardEvent, PressEvent} from '@react-types/shared';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
@@ -116,6 +116,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.commit();
         break;
       case 'Escape':
+        if (!state.isOpen) {
+          // Allow the escape event to bubble up to the grid cell so that we can exit edit mode
+          e.continuePropagation();
+        }
+
         state.revert();
         break;
       case 'ArrowDown':

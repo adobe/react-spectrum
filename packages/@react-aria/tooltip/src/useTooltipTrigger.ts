@@ -64,6 +64,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
         // Escape after clicking something can give it keyboard focus
         // dismiss tooltip on esc key press
         if (e.key === 'Escape') {
+          if (state.isOpen) {
+            e.stopPropagation();
+          }
           state.close(true);
         }
       }

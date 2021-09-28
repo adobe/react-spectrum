@@ -33,6 +33,7 @@ import {SelectionMode} from '@react-types/shared';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useAsyncList} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
@@ -986,11 +987,14 @@ storiesOf('TableView', module)
               {key => key === 'bar' ?
               (
                 <Cell isEditable textValue={item[key]}>
-                  <button onKeyDown={(e) => console.log('e', e.isDefaultPrevented())}>gaweg</button>
-                  <input onKeyDown={(e) => console.log('e', e)} />
-                  <ActionButton isQuiet aria-label="Add Info">
-                    <Add />
-                  </ActionButton>
+                  <TooltipTrigger >
+                    <ActionButton isQuiet aria-label="Add Info">
+                      <Add />
+                    </ActionButton>
+                    <Tooltip>
+                      Add Info.
+                    </Tooltip>
+                  </TooltipTrigger>
                   <DialogTrigger>
                     <ActionButton aria-label="Add Dialog"><Add /></ActionButton>
                     {close => (
