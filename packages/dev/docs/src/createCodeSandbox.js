@@ -80,13 +80,14 @@ ReactDOM.render(
 `;
 
 export function createCodeSandbox(e) {
-  let exampleTitle = `${document.title.split(' – ')[0]} Example - ${document.title.split(' – ')[1]}`;
-  let exampleCode = e.target.parentNode.parentNode.querySelector('.source').textContent;
-  let isFragment = e.target.closest('.example').getAttribute('data-fragment') === 'true';
-  let pageImports =  e.target.closest('.example').getAttribute('data-imports');
-  let extraCode =  e.target.closest('.example').getAttribute('data-extra-code');
+  let name = `${document.title.split(' – ')[0]} Example - ${document.title.split(' – ')[1]}`; // TODO: Include a subtitle in name
+  let example = e.target.closest('.example');
+  let exampleCode = example.querySelector('.source').textContent;
+  let isFragment = example.getAttribute('data-fragment') === 'true';
+  let pageImports =  example.getAttribute('data-imports');
+  let extraCode =  example.getAttribute('data-extra-code');
   let importsRegex = /import ((?:.|\n)*?) from (['"].*?['"]);?/g;
-  let packageInfo = e.target.closest('article').querySelector('tbody').childNodes;
+  let packageInfo = example.closest('article').querySelector('tbody').childNodes;
   let packageName = packageInfo[0].innerText.split('add ')[1];
   let packageVersion = packageInfo[1].innerText.split('\t')[1];
   let isPreRelease = packageVersion.includes('-alpha.') || packageVersion.includes('-beta.') || packageVersion.includes('-rc.');
@@ -176,7 +177,7 @@ export default function Example() {
       files: {
         'package.json': {
           content: {
-            name: exampleTitle, // TODO: Include a subtitle for components with more than one example
+            name,
             main: 'index.js',
             dependencies: {
               react: 'latest',
