@@ -222,10 +222,16 @@ module.exports = new Transformer({
       return (tree) => (
         flatMap(tree, node => {
           if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring) {
-            node.properties.className = node.children[0].properties.metastring.split(' ');
+            let meta = node.children[0].properties.metastring.split(' ');
+            node.properties.className = meta.filter(m => !m.includes('='));
+            if (meta.includes('fragment=true')) {
+              node.properties['data-fragment'] = true;
+            }
+            if (meta.includes('sandbox-disabled=true')) {
+              node.properties['data-sandbox-disabled'] = true;
+            }
             node.properties['data-imports'] = exampleImports.join('/n');
             node.properties['data-extra-code'] = exampleExtraCode.filter(c => c !== '').join('/n');
-            node.properties['data-fragment'] = node.children[0].properties.metastring.includes('fragment=true');
           }
 
           return [node];
