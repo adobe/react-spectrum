@@ -291,6 +291,11 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       if (!isFocusVisible()) {
         state.selectionManager.setFocusedKey(node.key);
       }
+
+      // Activating edit mode if user focuses a child of the editable cell (e.g. via click)
+      if (!editModeEnabled && isEditable) {
+        state.setEditModeCell(node.key);
+      }
       return;
     }
 

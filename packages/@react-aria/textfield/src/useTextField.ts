@@ -16,6 +16,7 @@ import {ElementType, HTMLAttributes} from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
+import {usePress} from '@react-aria/interactions';
 
 export interface TextFieldAria {
   /** Props for the input element. */
@@ -65,9 +66,17 @@ export function useTextField(
     pattern: props.pattern
   };
 
+  // TODO: should we support press events on textfield?
+  // This is added here so that pressing on a textfield in a table properly focuses the textfield
+  // and that selection doesn't trigger since usePress will stop propagation
+  let {pressProps} = usePress({
+    ref
+  });
+
   return {
     labelProps,
     inputProps: mergeProps(
+      pressProps,
       domProps,
       inputElementType === 'input' && inputOnlyProps,
       {
