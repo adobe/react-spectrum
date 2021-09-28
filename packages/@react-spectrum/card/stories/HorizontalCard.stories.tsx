@@ -11,7 +11,7 @@
  */
 
 import {ActionMenu, Item} from '@react-spectrum/menu';
-import {Card} from '../';
+import {Card} from '..';
 import {Content} from '@react-spectrum/view';
 import {
   Default,
@@ -30,7 +30,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
-import {SpectrumCardProps} from '@react-types/cards';
+import {SpectrumCardProps} from '@react-types/card';
 
 // see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
 const StoryFn = ({storyFn}) => storyFn();

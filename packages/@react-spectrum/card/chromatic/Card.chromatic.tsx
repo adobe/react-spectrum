@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Card} from '@react-spectrum/cards';
+import {Card} from '@react-spectrum/card';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
-import {SpectrumCardProps} from '@react-types/cards';
+import {SpectrumCardProps} from '@react-types/card';
 
 const meta: Meta<SpectrumCardProps> = {
   title: 'Card',
