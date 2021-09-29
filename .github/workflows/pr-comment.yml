@@ -1,0 +1,16 @@
+name: PR comment run TS Diff
+on: issue_comment
+
+jobs:
+  pr_commented:
+    name: PR comment
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: What is the comment
+        run: |
+          echo "Comment on PR #${{ github.event.comment.body }}"
+      - name: Comment contains trigger
+        if: contains(github.event.comment.body, 'typescript-report')
+        run: |
+          echo "Comment on PR #${{ github.event.issue.number }}"
