@@ -521,7 +521,7 @@ function TableRow({item, children, ...otherProps}) {
     focusWithinProps,
     focusProps,
     hoverProps,
-    !containsEditCell && pressProps
+    !containsEditCell && allowsSelection && pressProps
   );
 
   return (

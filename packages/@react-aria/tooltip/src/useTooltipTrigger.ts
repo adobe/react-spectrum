@@ -65,6 +65,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
         // dismiss tooltip on esc key press
         if (e.key === 'Escape') {
           if (state.isOpen) {
+            // Stop propagation so that we don't exit edit mode at the same time as closing the tooltip
             e.stopPropagation();
           }
           state.close(true);

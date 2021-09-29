@@ -11,8 +11,8 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, Collection, CollectionBase, Direction, DOMProps, KeyboardDelegate, LoadingState, MultipleSelection, Node, StyleProps} from '@react-types/shared';
+import {Key, ReactNode} from 'react';
 import {Layout} from '@react-stately/virtualizer';
-import {ReactNode} from 'react';
 
 interface AriaCardProps extends AriaLabelingProps {}
 
@@ -38,7 +38,8 @@ interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate {
   isLoading: boolean,
   direction: Direction,
   layoutType: string,
-  itemPadding: number
+  itemPadding: number,
+  editModeKey: Key
 }
 
 export interface CardViewLayoutConstructor<T> {

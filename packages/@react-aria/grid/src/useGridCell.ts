@@ -86,7 +86,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let isDisabled = state.disabledKeys.has(node.key) || state.disabledKeys.has(node.parentKey);
   let {pressProps} = usePress({...itemProps, isDisabled});
 
-  if (isEditable) {
+  if (editModeEnabled) {
     // If the cell is currently being edited, remove the press handlers so selection doesn't happen on press and
     // to support text selection
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -301,7 +301,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     if (editModeEnabled && !ref.current.contains(e.relatedTarget)) {
       state.setEditModeKey(null);
     }
-  }
+  };
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',
