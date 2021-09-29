@@ -2,7 +2,7 @@ name: PR comment
 on: issue_comment
 
 jobs:
-  pr_commented:
+  pr_commented_v2:
     name: PR comment workflow
     if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
