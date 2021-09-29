@@ -74,9 +74,11 @@ export function useTextField(
   //   ref
   // });
   // The below is an alternative that allows the user to click into a textfield in a editable cell
-  let onPointerDown = () => {
+  let onPointerDown = (e) => {
     ref.current.focus();
+    e.stopPropagation();
   };
+
 
   return {
     labelProps,
