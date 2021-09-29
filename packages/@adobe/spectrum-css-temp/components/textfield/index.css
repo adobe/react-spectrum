@@ -38,6 +38,10 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-textfield-min-width);
   width: var(--spectrum-component-single-line-width);
 
+  &:not(.spectrum-Textfield--quiet).spectrum-Textfield--multiline .spectrum-Textfield-input {
+    resize: vertical;
+  }
+
   &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input {
     height: var(--spectrum-textfield-height);
     min-height: var(--spectrum-textfield-height);
@@ -58,7 +62,6 @@ governing permissions and limitations under the License.
 
   inline-size: 100%;
   height: var(--spectrum-textfield-height);
-  resize: vertical;
 
   vertical-align: top; /* used to align them correctly in forms. */
 
