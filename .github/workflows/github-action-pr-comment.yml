@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: What is the comment
         run: |
-        echo "Comment on PR #${{ github.event.comment.body }}"
+          echo "Comment on PR #${{ github.event.comment.body }}"
       - name: Comment contains trigger
         if: contains(github.event.comment.body, 'typescript-report')
         run: |
