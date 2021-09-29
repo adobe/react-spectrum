@@ -95,6 +95,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   }
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
+    // Ignore events that come from outside the row (e.g. key down events from a dialog that was triggered from the table)
     if (!e.currentTarget.contains(e.target as HTMLElement)) {
       return;
     }
@@ -243,7 +244,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   };
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
-    // TODO: check if I need the below
+    // Ignore events that come from outside the row (e.g. key down events from a dialog that was triggered from the table)
     if (!e.currentTarget.contains(e.target as HTMLElement)) {
       return;
     }
@@ -279,7 +280,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
 
       // Activating edit mode if user focuses a child of the editable cell (e.g. via click)
-      if (!editModeEnabled && isEditable) {
+      if (isEditable) {
         state.setEditModeKey(node.key);
       }
       return;

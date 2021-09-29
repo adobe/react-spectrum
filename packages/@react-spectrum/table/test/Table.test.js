@@ -11,12 +11,13 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {act, fireEvent, render as renderComponent, waitFor, within} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {ComboBox, Item} from '@react-spectrum/combobox';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -27,6 +28,7 @@ import {HidingColumns} from '../stories/HidingColumns';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {SearchField} from '@react-spectrum/searchfield';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
@@ -84,7 +86,6 @@ function ExampleSortTable() {
     </TableView>
   );
 }
-
 describe('TableView', function () {
   let offsetWidth, offsetHeight;
 
@@ -129,6 +130,8 @@ describe('TableView', function () {
 
     return el;
   };
+  let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
+  let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
   it('renders a static table', function () {
     let {getByRole} = render(
@@ -763,9 +766,6 @@ describe('TableView', function () {
         </TableBody>
       </TableView>
     );
-
-    let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
-    let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
     describe('ArrowRight', function () {
       it('should move focus to the next cell in a row with ArrowRight', function () {
@@ -4131,5 +4131,283 @@ describe('TableView', function () {
       expect(tooltip).toBeVisible();
     });
 
+  });
+
+  describe('edit mode', function () {
+    beforeAll(function () {
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    });
+
+    afterAll(function () {
+      jest.restoreAllMocks();
+    });
+
+    let renderTable = (locale = 'en-US', props = {}) => renderComponent(
+      <Provider locale={locale} theme={theme}>
+        <TableView aria-label="Editable Table" selectionMode="multiple" {...props}>
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+            <Column key="baz">Baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Cell 1</Cell>
+              <Cell isEditable textValue="Cell 2">
+                <DialogTrigger>
+                  <ActionButton aria-label="Add Dialog" data-testid="dialogtrigger">Open</ActionButton>
+                  {close => (
+                    <Dialog>
+                      <Heading>The Heading</Heading>
+                      <Divider />
+                      <Content>
+                        <TextField autoFocus label="Textfield" data-testid="dialogInput" />
+                      </Content>
+                      <ButtonGroup>
+                        <Button variant="secondary" onPress={close}>Cancel</Button>
+                        <Button variant="cta" onPress={close}>Confirm</Button>
+                      </ButtonGroup>
+                    </Dialog>
+                  )}
+                </DialogTrigger>
+                <SearchField aria-label="Info field" data-testid="searchfield" />
+                <ComboBox aria-label="ComboBox" data-testid="combobox">
+                  <Item key="one">Item One</Item>
+                  <Item key="two">Item Two</Item>
+                  <Item key="three">Item Three</Item>
+                </ComboBox>
+              </Cell>
+              <Cell textValue="Cell 3">
+                <ActionButton>
+                  ActionButton 2
+                </ActionButton>
+              </Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+      </Provider>
+    );
+
+    it('should enter edit mode if the user hits Enter on a editable cell', function () {
+      let tree = renderTable();
+      focusCell(tree, 'Cell 1');
+      moveFocus('ArrowRight');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      let dialogTrigger = tree.getByTestId('dialogtrigger');
+      let searchfield = tree.getByTestId('searchfield');
+      let combobox = tree.getByTestId('combobox');
+
+      // Focuses the first element of the editable cell
+      expect(document.activeElement).toBe(dialogTrigger);
+
+      // Arrow keys should not move focus
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(dialogTrigger);
+      moveFocus('ArrowDown');
+      expect(document.activeElement).toBe(dialogTrigger);
+      moveFocus('ArrowLeft');
+      expect(document.activeElement).toBe(dialogTrigger);
+      moveFocus('ArrowUp');
+      expect(document.activeElement).toBe(dialogTrigger);
+
+      // Tab should move focus within the cell
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(searchfield);
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(combobox);
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(dialogTrigger);
+    });
+
+    it('should exit edit mode if the user hits Escape on a editable cell', async function () {
+      let tree = renderTable();
+      focusCell(tree, 'Cell 1');
+      moveFocus('ArrowRight');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      let dialogTrigger = tree.getByTestId('dialogtrigger');
+      let searchfield = tree.getByTestId('searchfield');
+      let combobox = tree.getByTestId('combobox');
+
+      // Doesn't leave edit mode if child component handles escape event and stops propagation
+      expect(document.activeElement).toBe(dialogTrigger);
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {
+        jest.runAllTimers();
+      });
+      let dialog = tree.getByRole('dialog');
+      await waitFor(() => {
+        expect(dialog).toBeVisible();
+      });
+      let dialogInput = tree.getByTestId('dialogInput');
+      expect(document.activeElement).toBe(dialogInput);
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      act(() => {
+        jest.runAllTimers();
+      });
+      await waitFor(() => {
+        expect(dialog).not.toBeInTheDocument();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(document.activeElement).toBe(dialogTrigger);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(searchfield);
+      typeText(searchfield, 'blah');
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      expect(document.activeElement).toBe(searchfield);
+      expect(searchfield.value).toBe('');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(combobox);
+      typeText(combobox, 'Ite');
+      act(() => {
+        jest.runAllTimers();
+      });
+      let listbox = tree.getByRole('listbox');
+      expect(listbox).toBeTruthy();
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(tree.queryByRole('listbox')).toBeFalsy();
+      expect(document.activeElement).toBe(combobox);
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(dialogTrigger);
+
+      // Escape leaves edit mode
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      let cells = tree.getAllByRole('gridcell');
+      expect(document.activeElement).toBe(cells[1]);
+    });
+
+    it('home, end, pageup, pagedown, and ctrl+a do not do anything when in edit mode in a cell', function () {
+      let onSelectionChange = jest.fn();
+      let tree = renderTable(undefined, {onSelectionChange});
+      focusCell(tree, 'Cell 1');
+      moveFocus('ArrowRight');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      let dialogTrigger = tree.getByTestId('dialogtrigger');
+      let combobox = tree.getByTestId('combobox');
+      expect(document.activeElement).toBe(dialogTrigger);
+
+      // Test that Home/End/etc don't move focus when focusing the dialogTrigger in edit mode
+      fireEvent.keyDown(document.activeElement, {key: 'Home'});
+      fireEvent.keyUp(document.activeElement, {key: 'Home'});
+      expect(document.activeElement).toBe(dialogTrigger);
+      fireEvent.keyDown(document.activeElement, {key: 'End'});
+      fireEvent.keyUp(document.activeElement, {key: 'End'});
+      expect(document.activeElement).toBe(dialogTrigger);
+      fireEvent.keyDown(document.activeElement, {key: 'PageUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'PageUp'});
+      expect(document.activeElement).toBe(dialogTrigger);
+      fireEvent.keyDown(document.activeElement, {key: 'PageDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'PageDown'});
+      expect(document.activeElement).toBe(dialogTrigger);
+      fireEvent.keyDown(document.activeElement, {key: 'a', ctrlKey: true});
+      fireEvent.keyUp(document.activeElement, {key: 'a', ctrlKey: true});
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+      // Test that the child combobox handles Home/End/etc when in edit mode
+      act(() => {
+        combobox.focus();
+      });
+      typeText(combobox, 'Ite');
+      act(() => {
+        jest.runAllTimers();
+      });
+      let listbox = tree.getByRole('listbox');
+      expect(listbox).toBeTruthy();
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
+      let items = within(listbox).getAllByRole('option');
+      fireEvent.keyDown(document.activeElement, {key: 'Home'});
+      fireEvent.keyUp(document.activeElement, {key: 'Home'});
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+      fireEvent.keyDown(document.activeElement, {key: 'End'});
+      fireEvent.keyUp(document.activeElement, {key: 'End'});
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[2].id);
+      fireEvent.keyDown(document.activeElement, {key: 'PageUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'PageUp'});
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+      fireEvent.keyDown(document.activeElement, {key: 'PageDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'PageDown'});
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[2].id);
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(combobox.value).toBe('Item Three');
+      fireEvent.keyDown(document.activeElement, {key: 'a', ctrlKey: true});
+      fireEvent.keyUp(document.activeElement, {key: 'a', ctrlKey: true});
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+    });
+
+    it('type select does not move focus when in edit mode in a cell', function () {
+      let tree = renderTable();
+      focusCell(tree, 'Cell 1');
+      moveFocus('ArrowRight');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      let dialogTrigger = tree.getByTestId('dialogtrigger');
+      expect(document.activeElement).toBe(dialogTrigger);
+
+      // Test that typing C doesn't move focus to Cell 1
+      fireEvent.keyDown(document.activeElement, {key: 'C'});
+      fireEvent.keyUp(document.activeElement, {key: 'C'});
+      expect(document.activeElement).toBe(dialogTrigger);
+
+      // Test that type ahead works when not in edit mode
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      fireEvent.keyDown(document.activeElement, {key: 'C'});
+      fireEvent.keyUp(document.activeElement, {key: 'C'});
+      expect(document.activeElement).toBe(getCell(tree, 'Cell 1'));
+    });
+
+    it('should exit edit mode if the user blurs from the editable cell', function () {
+      let tree = renderTable();
+      let cells = tree.getAllByRole('gridcell');
+      let dialogTrigger = tree.getByTestId('dialogtrigger');
+      let searchfield = tree.getByTestId('searchfield');
+      focusCell(tree, 'Cell 1');
+      moveFocus('ArrowRight');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      // Focuses the first element of the editable cell and confirm currently in edit mode
+      expect(document.activeElement).toBe(dialogTrigger);
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(searchfield);
+
+      // Focus on first cell
+      focusCell(tree, 'Cell 1');
+      expect(document.activeElement).toBe(getCell(tree, 'Cell 1'));
+
+      // Confirm that the editable cell is no longer in edit mode by making sure arrow key presses move focus
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(cells[1]);
+      moveFocus('ArrowRight');
+      let buttons = tree.getAllByRole('button');
+      expect(document.activeElement).toBe(buttons[buttons.length - 1]);
+    });
+
+    // TODO: add tests for clicking into a cell and triggering edit mode if we decide we like that behavior
   });
 });
