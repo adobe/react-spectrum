@@ -57,6 +57,14 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress({...itemProps, isDisabled});
 
+  let containsEditCell = state.collection.getItem(state.editModeKey)?.parentKey === node.key;
+  if (containsEditCell) {
+    // If the row contains the active editable cell, remove the press handlers so selection doesn't happen on press and
+    // to support text selection
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {onPressStart, onPressEnd, onPressUp, onPress, ...otherProps} = itemProps;
+    pressProps = otherProps;
+  }
   let rowProps: HTMLAttributes<HTMLElement> = {
     role: 'row',
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,

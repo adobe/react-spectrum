@@ -514,13 +514,14 @@ function TableRow({item, children, ...otherProps}) {
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled});
+  let containsEditCell = state.collection.getItem(state.editModeKey)?.parentKey === item.key;
   let props = mergeProps(
     rowProps,
     otherProps,
     focusWithinProps,
     focusProps,
     hoverProps,
-    allowsSelection && pressProps
+    !containsEditCell && pressProps
   );
 
   return (

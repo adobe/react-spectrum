@@ -82,31 +82,17 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     shouldSelectOnPressUp
   });
 
-  // Prevent click and touch row selection on a editable cell in edit mode
-  let onPressStart = (e) => {
-    if (editModeEnabled) {
-      return;
-    }
-    itemProps?.onPressStart && itemProps.onPressStart(e);
-  };
-
-  let onPress = (e) => {
-    if (editModeEnabled) {
-      return;
-    }
-    itemProps?.onPress && itemProps.onPress(e);
-  };
-
-  let onPressUp = (e) => {
-    if (editModeEnabled) {
-      return;
-    }
-    itemProps?.onPressUp && itemProps.onPressUp(e);
-  };
-
   // TODO: move into useSelectableItem?
   let isDisabled = state.disabledKeys.has(node.key) || state.disabledKeys.has(node.parentKey);
-  let {pressProps} = usePress({...itemProps, onPressStart, onPress, onPressUp, isDisabled});
+  let {pressProps} = usePress({...itemProps, isDisabled});
+
+  if (isEditable) {
+    // If the cell is currently being edited, remove the press handlers so selection doesn't happen on press and
+    // to support text selection
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {onPressStart, onPressEnd, onPressUp, onPress, ...otherProps} = itemProps;
+    pressProps = otherProps;
+  }
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as HTMLElement)) {
@@ -308,18 +294,21 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     });
   };
 
-  // TODO: make this onBlur? But what aabout if the user opens a dialog from a editable cell
-  if (editModeEnabled && state.selectionManager.focusedKey !== node.key) {
-    // If focus leaves a editable cell that is in the middle of being edited (e.g. via user click), turn off edit mode
-    // TODO: check if this has problems when clicking into another cell
-    state.setEditModeKey(null);
+  let onBlur = (e) => {
+    // Exit edit mode if blurring away from the active edit cell or its contents.
+    // In the case that focus moves into a dialog triggered from within the editable cell, edit mode will be restored
+    // when the trigger button is refocused when the dialog is closed
+    if (editModeEnabled && !ref.current.contains(e.relatedTarget)) {
+      state.setEditModeKey(null);
+    }
   }
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',
     onKeyDownCapture,
     onKeyDown,
-    onFocus
+    onFocus,
+    onBlur
   });
 
   if (isVirtualized) {

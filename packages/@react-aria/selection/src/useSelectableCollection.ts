@@ -402,7 +402,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     onBlur,
     onMouseDown(e) {
       // Ignore events that bubbled through portals.
-      if (e.currentTarget.contains(e.target)) {
+      // TODO: this has a problem where entering edit mode -> clicking on the scrollbar will focus the collection,
+      // but we need to NOT prevent default so that we can hightlight text
+      if (e.currentTarget.contains(e.target) && !editModeEnabled) {
         // Prevent focus going to the collection when clicking on the scrollbar.
         e.preventDefault();
       }
