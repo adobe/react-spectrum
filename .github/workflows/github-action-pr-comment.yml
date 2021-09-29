@@ -1,18 +1,13 @@
 name: PR comment run TS Diff
-on:
-  pull_request:
-    types: [opened]
-  issue_comment:
-    types: [created]
+on: issue_comment
+
 jobs:
-  Run-TS-Diff:
+  pr_commented:
+    name: PR comment
+    if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     steps:
-      - uses: khan/pull-request-comment-trigger@master
-        id: check
-        with:
-          trigger: '@typescript-report'
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      - run: 'echo Found it!'
-        if: steps.check.outputs.triggered == 'true'
+      - name: Comment contains trigger
+        if: contains(github.event.comment.body, 'typescript-report')
+        run: |
+          echo "Comment on PR #${{ github.event.issue.number }}"
