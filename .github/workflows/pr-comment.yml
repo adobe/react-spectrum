@@ -1,9 +1,9 @@
-name: PR comment run TS Diff
+name: PR comment
 on: issue_comment
 
 jobs:
   pr_commented:
-    name: PR comment
+    name: PR comment workflow
     if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     steps:
