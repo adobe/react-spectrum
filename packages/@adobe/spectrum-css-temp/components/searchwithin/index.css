@@ -29,7 +29,7 @@ governing permissions and limitations under the License.
 
 .spectrum-SearchWithin-picker {
   inline-size: auto;
-  min-inline-size: var(--spectrum-global-dimension-size-900);
+  min-inline-size: var(--spectrum-global-dimension-size-1000);
   flex-shrink: 1;
 
   > button {
