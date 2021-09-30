@@ -390,7 +390,7 @@ function FormWithSubmit() {
     } else {
       setFormStatus('progress');
     }
-  }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, isSubmitted, emailDirty]);
+  }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, email, emailDirty, isSubmitted]);
 
   let Status = ({formStatus}) => {
     let [variant, setVariant] = useState<'info' | 'negative' | 'positive' | 'notice'>('info');
