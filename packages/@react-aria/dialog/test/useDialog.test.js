@@ -20,6 +20,12 @@ function Example(props) {
   return <div ref={ref} {...dialogProps} data-testid="test">{props.children}</div>;
 }
 
+function ControlledExample(props) {
+  let ref = useRef();
+  let {dialogProps} = useDialog(props, ref);
+  return props.isOpen ? <div ref={ref} {...dialogProps} data-testid="test">{props.children}</div> : null;
+}
+
 describe('useDialog', function () {
   it('should have role="dialog" by default', function () {
     let res = render(<Example />);
@@ -40,11 +46,41 @@ describe('useDialog', function () {
     expect(document.activeElement).toBe(el);
   });
 
+  it('should focus the overlay on open', function () {
+    let res = render(<ControlledExample />);
+    res.rerender(<ControlledExample isOpen />);
+    // run the useEffect hook
+    res.rerender(<ControlledExample isOpen />);
+    let el = res.getByTestId('test');
+    expect(el).toHaveAttribute('tabIndex', '-1');
+    expect(document.activeElement).toBe(el);
+  });
+
   it('should not focus the overlay if something inside is auto focused', function () {
     let res = render(
       <Example>
         <input data-testid="input" autoFocus />
       </Example>
+    );
+    let input = res.getByTestId('input');
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('should not focus the overlay on open if something inside is auto focused', function () {
+    let res = render(
+      <ControlledExample>
+        <input data-testid="input" autoFocus />
+      </ControlledExample>
+    );
+    res.rerender(
+      <ControlledExample isOpen>
+        <input data-testid="input" autoFocus />
+      </ControlledExample>
+    );
+    res.rerender(
+      <ControlledExample isOpen>
+        <input data-testid="input" autoFocus />
+      </ControlledExample>
     );
     let input = res.getByTestId('input');
     expect(document.activeElement).toBe(input);

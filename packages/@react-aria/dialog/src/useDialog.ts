@@ -51,7 +51,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
         clearTimeout(timeout);
       };
     }
-  }, [ref]);
+  }, [ref.current]);
 
   // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
   // on mount when inside an iframe, no matter which element we programmatically focus.
