@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
 import {countries, states} from './data';
@@ -21,9 +22,10 @@ import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {Key, useState} from 'react';
+import React, {Key, useEffect, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '@react-spectrum/searchwithin';
+import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
@@ -112,6 +114,10 @@ storiesOf('Form', module)
   .add(
     'form with reset',
     () => <FormWithControls />
+  )
+  .add(
+    'form with submit',
+    () => <FormWithSubmit />
   )
   .add(
     'form with numberfield and locale=ar-AE',
@@ -352,5 +358,140 @@ function FormWithControls(props: any = {}) {
         </Flex>
       </form>
     </Flex>
+  );
+}
+
+function FormWithSubmit() {
+  let [policies, setPolicies] = useState([]);
+  let [policiesDirty, setPoliciesDirty] = useState(false);
+  let [pet, setPet] = useState('');
+  let [petDirty, setPetDirty] = useState(false);
+  let [truth, setTruth] = useState(false);
+  let [truthDirty, setTruthDirty] = useState(false);
+
+  let [formStatus, setFormStatus] = useState<'progress' | 'invalid' | 'valid' | 'fixing'>('progress');
+  let [isSubmitted, setSubmitted] = useState(false); // TODO: really should be isSectionInvalid / 'fixing' for each form field. once form is submitted with mistakes, unchecking an unrelated, previously valid field should not make it look invalid.
+
+  let getValidationState = (isValid: boolean): 'invalid' | null =>
+    ['invalid', 'fixing'].includes(formStatus) && !isValid ? 'invalid' : null;
+
+  useEffect(() => {
+    let validate = (): boolean => policies.length === 3 && pet && truth;
+    let formDirty = policiesDirty || petDirty || truthDirty;
+
+    if (isSubmitted) {
+      if (formDirty) {
+        setFormStatus('fixing');
+      } else {
+        setFormStatus(validate() ? 'valid' : 'invalid');
+      }
+    } else {
+      setFormStatus('progress');
+    }
+  }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, isSubmitted]);
+
+  let Status = ({formStatus}) => {
+    let [variant, setVariant] = useState<'info' | 'negative' | 'positive' | 'notice'>('info');
+
+    useEffect(() => {
+      switch (formStatus) {
+        case 'invalid':
+          return setVariant('negative');
+        case 'valid':
+          return setVariant('positive');
+        case 'fixing':
+          return setVariant('notice');
+        default:
+          return setVariant('info');
+      }
+    }, [formStatus]);
+
+    return (
+      <StatusLight variant={variant}>
+        {formStatus === 'progress' && 'In progress'}
+        {formStatus === 'valid' && 'Submitted successfully'}
+        {formStatus === 'invalid' && 'Error'}
+        {formStatus === 'fixing' && 'Fixing mistakes'}
+      </StatusLight>
+    );
+  };
+
+  let handleSubmit: React.FormEventHandler<Element> = (e) => {
+    e.preventDefault();
+    setPoliciesDirty(false);
+    setTruthDirty(false);
+    setPetDirty(false);
+    setSubmitted(true);
+    action('onSubmit')(e);
+  };
+
+  let reset = () => {
+    setSubmitted(false);
+    setPolicies([]);
+    setPet('');
+    setTruth(false);
+    setPoliciesDirty(false);
+    setPetDirty(false);
+    setTruthDirty(false);
+    setFormStatus('progress');
+  };
+
+  return (
+    <Form onSubmit={handleSubmit} isReadOnly={formStatus === 'valid'}>
+      <CheckboxGroup
+        label="Agree to the following"
+        isRequired
+        value={policies}
+        onChange={chain(() => setPoliciesDirty(true), setPolicies)}>
+        <Checkbox
+          value="terms"
+          isRequired
+          validationState={getValidationState(policies.includes('terms'))}>
+          Terms and conditions
+        </Checkbox>
+        <Checkbox
+          value="privacy"
+          isRequired
+          validationState={getValidationState(policies.includes('privacy'))}>
+          Privacy policy
+        </Checkbox>
+        <Checkbox
+          value="cookies"
+          isRequired
+          validationState={getValidationState(policies.includes('cookies'))}>
+          Cookie policy
+        </Checkbox>
+      </CheckboxGroup>
+
+      <Checkbox
+        isRequired
+        value="truth"
+        isSelected={truth}
+        onChange={(chain(() => setTruthDirty(true), setTruth))}
+        validationState={getValidationState(truth)}>
+        I am telling the truth
+      </Checkbox>
+
+      <RadioGroup
+        label="Favorite pet"
+        isRequired
+        value={pet}
+        onChange={chain(() => setPetDirty(true), setPet)}
+        validationState={getValidationState(Boolean(pet))}>
+        <Radio value="dogs">
+          Dogs
+        </Radio>
+        <Radio value="cats">
+          Cats
+        </Radio>
+        <Radio value="dragons">
+          Dragons
+        </Radio>
+      </RadioGroup>
+
+      <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
+      <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>
+      <Status formStatus={formStatus} />
+    </Form>
   );
 }
