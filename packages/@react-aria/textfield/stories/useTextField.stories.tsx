@@ -47,7 +47,6 @@ const TextAreaFieldTemplate: Story<TextFieldProps> = (args) => (
 
 export const WithHTMLInputElement = TextInputFieldTemplate.bind({});
 WithHTMLInputElement.args = {
-  inputElementType: 'input',
   label: 'Test label',
   value: 'Test value'
 };

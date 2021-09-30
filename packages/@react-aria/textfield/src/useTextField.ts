@@ -14,10 +14,8 @@ import {AriaTextFieldProps} from '@react-types/textfield';
 import {
   ChangeEvent,
   HTMLAttributes,
-  InputHTMLAttributes,
   LabelHTMLAttributes,
-  RefObject,
-  TextareaHTMLAttributes
+  RefObject
 } from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {IntrinsicHTMLAttributes, IntrinsicHTMLElements} from '@react-types/shared';
@@ -25,16 +23,6 @@ import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
 
 type DefaultElementType = 'input';
-export interface TextFieldAria<T extends TextFieldHTMLAttributesType = IntrinsicHTMLAttributes[DefaultElementType]> {
-  /** Props for the input element. */
-  inputProps: T,
-  /** Props for the text field's visible label element, if any. */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  /** Props for the text field's description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
-  /** Props for the text field's error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>
-}
 
 /**
  * The intrinsic HTML element names that `useTextField` supports; e.g. `input`,
@@ -42,21 +30,27 @@ export interface TextFieldAria<T extends TextFieldHTMLAttributesType = Intrinsic
  */
 type TextFieldIntrinsicElements = keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>;
 
-/**
- * The HTML element interfaces that `useTextField` supports based on what is
- * defined for `TextFieldIntrinsicElements`; e.g. `HTMLInputElement`,
- * `HTMLTextAreaElement`.
- */
-type TextFieldHTMLElementType = Pick<IntrinsicHTMLElements, TextFieldIntrinsicElements>[TextFieldIntrinsicElements];
+ /**
+  * The HTML element interfaces that `useTextField` supports based on what is
+  * defined for `TextFieldIntrinsicElements`; e.g. `HTMLInputElement`,
+  * `HTMLTextAreaElement`.
+  */
+type TextFieldHTMLElementType = Pick<IntrinsicHTMLElements, TextFieldIntrinsicElements>;
+
+ /**
+  * The HTML attributes interfaces that `useTextField` supports based on what
+  * is defined for `TextFieldIntrinsicElements`; e.g. `InputHTMLAttributes`,
+  * `TextareaHTMLAttributes`.
+  */
+type TextFieldHTMLAttributesType = Pick<IntrinsicHTMLAttributes, TextFieldIntrinsicElements>;
 
 /**
- * The HTML attributes interfaces that `useTextField` supports based on what
- * is defined for `TextFieldIntrinsicElements`; e.g. `InputHTMLAttributes`,
+ * The type of `inputProps` returned by `useTextField`; e.g. `InputHTMLAttributes`,
  * `TextareaHTMLAttributes`.
  */
-type TextFieldHTMLAttributesType = Pick<IntrinsicHTMLAttributes, TextFieldIntrinsicElements>[TextFieldIntrinsicElements];
+type TextFieldInputProps<T extends TextFieldIntrinsicElements> = TextFieldHTMLAttributesType[T];
 
-interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements = DefaultElementType> extends AriaTextFieldProps {
+interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps {
   /**
    * The HTML element used to render the input, e.g. 'input', or 'textarea'.
    * It determines whether certain HTML attributes will be included in `inputProps`.
@@ -66,18 +60,33 @@ interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements = DefaultEle
   inputElementType?: T
 }
 
-export function useTextField(props: AriaTextFieldOptions<'input'>, ref: RefObject<HTMLInputElement>): TextFieldAria<InputHTMLAttributes<HTMLInputElement>>;
-export function useTextField(props: AriaTextFieldOptions<'textarea'>, ref: RefObject<HTMLTextAreaElement>): TextFieldAria<TextareaHTMLAttributes<HTMLTextAreaElement>>;
+/**
+ * The type of `ref` object that can be passed to `useTextField` based on the given
+ * intrinsic HTML element name; e.g.`RefObject<HTMLInputElement>`,
+ * `RefObject<HTMLTextAreaElement>`.
+ */
+type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T]>;
+
+export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultElementType> {
+  /** Props for the input element. */
+  inputProps: TextFieldInputProps<T>,
+  /** Props for the text field's visible label element, if any. */
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  /** Props for the text field's description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the text field's error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>
+}
 
 /**
  * Provides the behavior and accessibility implementation for a text field.
  * @param props - Props for the text field.
  * @param ref - Ref to the HTML input or textarea element.
  */
-export function useTextField(
-  props: AriaTextFieldOptions<TextFieldIntrinsicElements>,
-  ref: RefObject<TextFieldHTMLElementType>
-): TextFieldAria<TextFieldHTMLAttributesType> {
+export function useTextField<T extends TextFieldIntrinsicElements = DefaultElementType>(
+  props: AriaTextFieldOptions<T>,
+  ref: TextFieldRefObject<T>
+): TextFieldAria<T> {
   let {
     inputElementType = 'input',
     isDisabled = false,
@@ -86,7 +95,7 @@ export function useTextField(
     validationState,
     type = 'text',
     onChange = () => {}
-  } = props;
+  }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
   let {focusableProps} = useFocusable(props, ref);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
   let domProps = filterDOMProps(props, {labelable: true});
