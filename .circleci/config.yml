@@ -1,5 +1,10 @@
 version: 2.1
 
+parameters:
+  run_output_workflow:
+    type: boolean
+    default: false
+
 orbs:
   azure-cli: circleci/azure-cli@1.2.0
 
@@ -270,6 +275,11 @@ jobs:
           name: Publish
           command: make publish-nightly
 
+  output:
+    executor: rsp
+    steps:
+      - run: echo "this is an output build"
+
 workflows:
   version: 2
   commit:
@@ -325,6 +335,10 @@ workflows:
       - comment:
           requires:
             - deploy
+  output:
+    when: << pipeline.parameters.run_output_workflow >>
+    jobs:
+      - output
 
   nightly:
     triggers:
