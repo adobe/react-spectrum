@@ -1,0 +1,35 @@
+name: PR comment
+on: issue_comment
+
+jobs:
+  pr_commented:
+    name: PR comment workflow
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout source code https://github.com/actions/checkout/issues/331#issuecomment-925405415
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Checkout Pull Request
+        run: hub pr checkout ${{ github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Use Node 14
+        uses: actions/setup-node@v2
+        with:
+          node_version: '14.16.1'
+      - name: install
+        run: yarn install
+      - name: Configure CI Git User
+        run: |
+          git remote rm origin
+          git remote add origin "https://github-actions:$GITHUB_TOKEN@github.com/adobe/react-spectrum.git"
+          git fetch
+          git config --global user.email octobot@github.com
+          git config --global user.name GitHub Actions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Diff TS
+        run: |
+          yarn check-apis
