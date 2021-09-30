@@ -105,11 +105,8 @@ describe('Tray', function () {
 
     let dialog = await getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
-    // The iOS Safari workaround blurs and refocuses the dialog after 0.5s
-    expect(onClose).toHaveBeenCalledTimes(1);
 
     act(() => {dialog.blur();});
-    // (The iOS Safari workaround) + (the actual onClose) = 2
-    expect(onClose).toHaveBeenCalledTimes(2);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

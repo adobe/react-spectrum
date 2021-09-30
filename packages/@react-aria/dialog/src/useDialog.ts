@@ -36,20 +36,6 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
   useEffect(() => {
     if (ref.current && !ref.current.contains(document.activeElement)) {
       focusSafely(ref.current);
-
-      // Safari on iOS does not move the VoiceOver cursor to the dialog
-      // or announce that it has opened until it has rendered. A workaround
-      // is to wait for half a second, then blur and re-focus the dialog.
-      let timeout = setTimeout(() => {
-        if (document.activeElement === ref.current) {
-          ref.current.blur();
-          focusSafely(ref.current);
-        }
-      }, 500);
-
-      return () => {
-        clearTimeout(timeout);
-      };
     }
   }, [ref.current]);
 
