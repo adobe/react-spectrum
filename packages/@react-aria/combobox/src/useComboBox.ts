@@ -69,6 +69,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     listBoxRef,
     keyboardDelegate,
     // completionMode = 'suggest',
+    shouldFocusWrap,
     isReadOnly,
     isDisabled
   } = props;
@@ -98,6 +99,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     keyboardDelegate: delegate,
     disallowTypeAhead: true,
     disallowEmptySelection: true,
+    shouldFocusWrap,
     ref: inputRef,
     // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
     isVirtualized: true
