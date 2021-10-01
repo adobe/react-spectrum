@@ -527,7 +527,7 @@ describe('usePress', function () {
       expect(allowDefault).toBe(true);
     });
 
-    it('should detect virtual pointer events', function () {
+    it('should ignore virtual pointer events', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
@@ -540,8 +540,11 @@ describe('usePress', function () {
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
 
+      expect(events).toEqual([]);
+
+      fireEvent.click(el);
       expect(events).toEqual([
         {
           type: 'pressstart',
