@@ -64,13 +64,15 @@ async function compare() {
   }
 
   let count = 0;
+  let diffs = {};
   for (let pair of pairs) {
     let diff = getDiff(summaryMessages, pair);
     if (diff.diff.length > 0) {
       count += 1;
+      diffs[diff.name] = diff.diff;
     }
-    analyzeDiff(summaryMessages, diff.diff, diff.name);
   }
+  analyzeDiff(summaryMessages, diffs);
   summaryMessages.forEach(({msg, severity}) => {
     console[severity](chalk[severity === 'warn' ? 'yellow' : 'red'](msg));
   });
@@ -123,9 +125,10 @@ function getDiff(summaryMessages, pair) {
   return {diff, name};
 }
 
-function analyzeDiff(summaryMessages, diff, name) {
-  console.log(`analyzing ${name}`);
+function analyzeDiffs(summaryMessages, diffs) {
+  for (let [key, value] of Object.entries(diffs)) {
 
+  }
 }
 
 function run(cmd, args, opts) {
