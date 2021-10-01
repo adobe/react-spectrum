@@ -66,7 +66,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let listBoxRef = useRef();
-  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});

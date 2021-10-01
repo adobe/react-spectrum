@@ -51,6 +51,14 @@ storiesOf('TextField', module)
     () => render({validationState: 'valid'})
   )
   .add(
+    'type: email',
+    () => render({type: 'email'})
+  )
+  .add(
+    'pattern: [0-9]+',
+    () => render({pattern: '[0-9]+'})
+  )
+  .add(
     'isReadOnly: true',
     () => render({isReadOnly: true})
   )

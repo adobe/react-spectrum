@@ -22,7 +22,7 @@ import {useSearchField} from '@react-aria/searchfield';
 
 interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
   popoverRef: RefObject<HTMLDivElement>,
   /** The ref for the list box. */
