@@ -217,7 +217,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
 function DateRangeDash() {
   return (
     <div
-      role="presentation"
+      aria-hidden="true"
       data-testid="date-range-dash"
       className={classNames(datepickerStyles, 'react-spectrum-Datepicker-rangeDash')} />
   );

@@ -55,7 +55,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     minValue: segment.minValue,
     maxValue: segment.maxValue,
     isDisabled: props.isDisabled,
-    isReadOnly: props.isReadOnly,
+    isReadOnly: props.isReadOnly || !segment.isEditable,
     isRequired: props.isRequired,
     onIncrement: () => {
       enteredKeys.current = '';
@@ -316,7 +316,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
   });
 
   // spinbuttons cannot be focused with VoiceOver on iOS.
-  let touchPropOverrides = isIOS() ? {
+  let touchPropOverrides = isIOS() || segment.type === 'timeZoneName' ? {
     role: 'textbox',
     'aria-valuemax': null,
     'aria-valuemin': null,
@@ -327,6 +327,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
   let fieldLabelId = labelIds.get(state);
 
   let id = useId(props.id);
+  let isEditable = !props.isDisabled && !props.isReadOnly && segment.isEditable;
   return {
     segmentProps: mergeProps(spinButtonProps, pressProps, {
       id,
@@ -337,14 +338,15 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       'aria-label': segment.type !== 'literal' ? displayNames.of(segment.type) : undefined,
       'aria-labelledby': `${fieldLabelId} ${id}`,
       'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
-      contentEditable: !props.isDisabled,
-      suppressContentEditableWarning: !props.isDisabled,
-      spellCheck: 'false',
-      autoCapitalize: 'off',
-      autoCorrect: 'off',
+      'aria-readonly': props.isReadOnly || segment.isEditable ? 'true' : undefined,
+      contentEditable: isEditable,
+      suppressContentEditableWarning: isEditable,
+      spellCheck: isEditable ? 'false' : undefined,
+      autoCapitalize: isEditable ? 'off' : undefined,
+      autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
-      [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: 'next',
-      inputMode: props.isDisabled || segment.type === 'dayPeriod' ? undefined : 'numeric',
+      [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,
+      inputMode: props.isDisabled || segment.type === 'dayPeriod' || !isEditable ? undefined : 'numeric',
       tabIndex: props.isDisabled ? undefined : 0,
       onKeyDown,
       onFocus

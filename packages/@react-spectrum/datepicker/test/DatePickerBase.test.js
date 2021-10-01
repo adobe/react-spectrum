@@ -138,6 +138,22 @@ describe('DatePickerBase', function () {
         expect(segment).toHaveAttribute('aria-invalid', 'true');
       }
     });
+
+    it.each`
+      Name                   | Component
+      ${'DatePicker'}        | ${DatePicker}
+      ${'DateRangePicker'}   | ${DateRangePicker}
+    `('$Name should set aria-readonly on non-editable segments', ({Component}) => {
+      let {getAllByTestId} = render(<Component label="Date" placeholderValue={parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')} />);
+
+      let timezones = getAllByTestId('timeZoneName');
+      for (let tz of timezones) {
+        expect(tz).toHaveAttribute('role', 'textbox');
+        expect(tz).toHaveAttribute('aria-readonly', 'true');
+        expect(tz).toHaveTextContent('PDT');
+        expect(tz).not.toHaveAttribute('contenteditable');
+      }
+    });
   });
 
   describe('calendar popover', function () {
@@ -336,17 +352,6 @@ describe('DatePickerBase', function () {
 
       fireEvent(literals[0], pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       expect(segments[1]).toHaveFocus();
-    });
-
-    it.each`
-      Name                   | Component
-      ${'DatePicker'}        | ${DatePicker}
-      ${'DateRangePicker'}   | ${DateRangePicker}
-    `('$Name should focus the next segment on mouse down on a non-editable segment', ({Component}) => {
-      let {getAllByTestId} = render(<Component label="Date" placeholderValue={parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')} />);
-
-      fireEvent(getAllByTestId('timeZoneName').pop(), pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      expect(getAllByTestId('dayPeriod').pop()).toHaveFocus();
     });
 
     it.each`

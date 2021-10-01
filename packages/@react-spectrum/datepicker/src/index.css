@@ -86,10 +86,6 @@
   color: var(--spectrum-textfield-text-color);
 }
 
-.react-spectrum-Datepicker-literal.is-placeholder {
-  color: var(--spectrum-global-color-gray-700);
-}
-
 .react-spectrum-DatePicker-cell {
   border: none;
   background: none;
@@ -123,6 +119,13 @@
 
 .react-spectrum-DatePicker-cell.is-placeholder:focus {
   color: var(--spectrum-global-color-static-gray-400);
+}
+
+.react-spectrum-DatePicker-cell.is-read-only {
+  color: var(--spectrum-global-color-gray-700);
+  &:focus {
+    color: var(--spectrum-global-color-static-gray-300);
+  }
 }
 
 .react-spectrum-Datepicker-dialog {
