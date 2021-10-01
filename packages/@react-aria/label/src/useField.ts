@@ -11,9 +11,9 @@
  */
 
 import {HelpTextProps} from '@react-types/shared';
-import {HTMLAttributes, RefCallback} from 'react';
+import {HTMLAttributes} from 'react';
 import {LabelAria, LabelAriaProps, useLabel} from './useLabel';
-import {mergeProps, useSlotIdWithUpdater} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 
 interface AriaFieldProps extends LabelAriaProps, HelpTextProps {}
 
@@ -30,35 +30,31 @@ export interface FieldAria extends LabelAria {
  * @param props - Props for the Field.
  */
 export function useField(props: AriaFieldProps): FieldAria {
-  let {description, errorMessage} = props;
+  let {description, errorMessage, validationState} = props;
   let {labelProps, fieldProps} = useLabel(props);
 
-  let {id: descriptionId, updater: descriptionUpdater} = useSlotIdWithUpdater();
-  let {id: errorMessageId, updater: errorMessageUpdater} = useSlotIdWithUpdater();
+  let descriptionId = useId();
+  let errorMessageId = useId();
+  let isDisplayingDescription = ((validationState === 'invalid' && !errorMessage) || validationState !== 'invalid') && !!description;
+  let isDisplayingError = validationState === 'invalid' && !!errorMessage;
 
   fieldProps = mergeProps(fieldProps, {
     'aria-describedby': [
-      descriptionId,
+      (isDisplayingDescription ? descriptionId : ''),
       // Use aria-describedby for error message because aria-errormessage is unsupported using VoiceOver or NVDA. See https://github.com/adobe/react-spectrum/issues/1346#issuecomment-740136268
-      errorMessageId,
+      (isDisplayingError ? errorMessageId : ''),
       props['aria-describedby']
     ].filter(Boolean).join(' ') || undefined
   });
 
-  let descriptionProps: HTMLAttributes<HTMLElement> & {ref: (elem: RefCallback<HTMLElement>) => void} = {
-    id: (description ? descriptionId : null),
-    ref: (elem: RefCallback<HTMLElement>) => descriptionUpdater(!!elem)
-  };
-
-  let errorMessageProps: HTMLAttributes<HTMLElement> & {ref: (elem: RefCallback<HTMLElement>) => void} = {
-    id: (errorMessage ? errorMessageId : null),
-    ref: (elem: RefCallback<HTMLElement>) => errorMessageUpdater(!!elem)
-  };
-
   return {
     labelProps,
     fieldProps,
-    descriptionProps,
-    errorMessageProps
+    descriptionProps: {
+      id: (isDisplayingDescription ? descriptionId : null)
+    },
+    errorMessageProps: {
+      id: (isDisplayingError ? errorMessageId : null)
+    }
   };
 }

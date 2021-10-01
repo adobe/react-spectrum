@@ -102,26 +102,3 @@ export function useSlotId(): string {
 
   return resolvedId;
 }
-
-/**
- * Used to generate an id with an updater method that accepts a boolean parameter to set
- * whether the element that will use the id is currently rendered.
- */
-export function useSlotIdWithUpdater(): {id: string, updater: (value: boolean) => void} {
-  let id = useId();
-  let [resolvedId, setResolvedId] = useState(id);
-  useLayoutEffect(() => {
-    let setCurr = idsUpdaterMap.get(id);
-    if (setCurr && !document.getElementById(id)) {
-      setResolvedId(null);
-
-    } else {
-      setResolvedId(id);
-    }
-  }, [id]);
-
-  return {
-    id: resolvedId,
-    updater: (value: boolean) => setResolvedId(value ? id : null)
-  };
-}

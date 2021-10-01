@@ -62,6 +62,7 @@ export interface RangeInputBase<T> {
 }
 
 export interface HelpTextProps {
+  validationState: ValidationState,
   /** A description for the field. Provides a hint such as specific requirements for what to choose. */
   description?: ReactNode,
   /** An error message for the field. */
