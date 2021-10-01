@@ -22,20 +22,15 @@ async function compare() {
   let branchDir = path.join(__dirname, '..', 'dist', 'branch-api');
   let publishedDir = path.join(__dirname, '..', 'dist', 'published-api');
   if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
-    if (!fs.existsSync(publishedDir) && fs.existsSync(branchDir)) {
-      console.log('not showing private package', branchDir);
-    } else if (fs.existsSync(publishedDir) && !fs.existsSync(branchDir)) {
-      console.log('something has probably gone wrong, the package exists published but not locally', publishedDir);
-    } else {
-      console.log('something has probably gone wrong, the package does not exist in either place, this should be impossible', publishedDir);
-    }
+    console.log(chalk.red(`you must have both a branchDir ${branchDir} and publishedDir ${publishedDir}`));
     return;
   }
   let summaryMessages = [];
-  // don't worry about private packages, they don't make it through the build
+
   let branchAPIs = fg.sync(`${branchDir}/**/api.json`);
   let publishedAPIs = fg.sync(`${publishedDir}/**/api.json`);
   let pairs = [];
+  // we only care about changes to already published APIs, so find all matching pairs based on what's been published
   for (let pubApi of publishedAPIs) {
     let pubApiPath = pubApi.split(path.sep);
     let sharedPath = path.join(...pubApiPath.slice(pubApiPath.length - 4));
@@ -51,6 +46,7 @@ async function compare() {
       summaryMessages.push({msg: `removed module ${pubApi}`, severity: 'error'});
     }
   }
+  // don't care about not published APIs, but we do care if we're about to publish a new one
   for (let branchApi of branchAPIs) {
     let branchApiPath = branchApi.split(path.sep);
     let sharedPath = path.join(...branchApiPath.slice(branchApiPath.length - 4));
@@ -69,37 +65,11 @@ async function compare() {
 
   let count = 0;
   for (let pair of pairs) {
-    console.log(`comparing ${pair.branchApi.replace(/.*branch-api/, '')}`);
-    let publishedApi = fs.readJsonSync(pair.pubApi);
-    delete publishedApi.links;
-    walkObject(publishedApi, ({value, location, isLeaf}) => {
-      if (!isLeaf && value.id && typeof value.id === 'string') {
-        value.id = value.id.replace(/.*(node_modules|packages)/, '');
-      }
-    });
-    let branchApi = fs.readJsonSync(pair.branchApi);
-    delete branchApi.links;
-    walkObject(branchApi, ({value, location, isLeaf}) => {
-      if (!isLeaf && value.id && typeof value.id === 'string') {
-        value.id = value.id.replace(/.*(node_modules|packages)/, '');
-      }
-    });
-    let diff = changesets.diff(publishedApi, branchApi);
-    if (diff.length > 0) {
+    let diff = getDiff(summaryMessages, pair);
+    if (diff.diff.length > 0) {
       count += 1;
-      console.log(util.inspect(diff, {depth: null}));
     }
-
-    let publishedExports = publishedApi.exports;
-    let branchExports = branchApi.exports;
-    let addedExports = Object.keys(branchExports).filter(key => !publishedExports[key]);
-    let removedExports = Object.keys(publishedExports).filter(key => !branchExports[key]);
-    if (addedExports.length > 0) {
-      summaryMessages.push({msg: `added exports ${addedExports} to ${pair.branchApi}`, severity: 'warn'});
-    }
-    if (removedExports.length > 0) {
-      summaryMessages.push({msg: `removed exports ${removedExports} from ${pair.branchApi}`, severity: 'error'});
-    }
+    analyzeDiff(summaryMessages, diff.diff, diff.name);
   }
   summaryMessages.forEach(({msg, severity}) => {
     console[severity](chalk[severity === 'warn' ? 'yellow' : 'red'](msg));
@@ -115,6 +85,47 @@ async function compare() {
   } else {
     console.log(chalk.green('no modules changed their API'));
   }
+}
+
+function getDiff(summaryMessages, pair) {
+  let name = pair.branchApi.replace(/.*branch-api/, '');
+  console.log(`diffing ${name}`);
+  let publishedApi = fs.readJsonSync(pair.pubApi);
+  delete publishedApi.links;
+  walkObject(publishedApi, ({value, location, isLeaf}) => {
+    if (!isLeaf && value.id && typeof value.id === 'string') {
+      value.id = value.id.replace(/.*(node_modules|packages)/, '');
+    }
+  });
+  let branchApi = fs.readJsonSync(pair.branchApi);
+  delete branchApi.links;
+  walkObject(branchApi, ({value, location, isLeaf}) => {
+    if (!isLeaf && value.id && typeof value.id === 'string') {
+      value.id = value.id.replace(/.*(node_modules|packages)/, '');
+    }
+  });
+  let diff = changesets.diff(publishedApi, branchApi);
+  if (diff.length > 0) {
+    // for now print the whole diff
+    console.log(util.inspect(diff, {depth: null}));
+  }
+
+  let publishedExports = publishedApi.exports;
+  let branchExports = branchApi.exports;
+  let addedExports = Object.keys(branchExports).filter(key => !publishedExports[key]);
+  let removedExports = Object.keys(publishedExports).filter(key => !branchExports[key]);
+  if (addedExports.length > 0) {
+    summaryMessages.push({msg: `added exports ${addedExports} to ${pair.branchApi}`, severity: 'warn'});
+  }
+  if (removedExports.length > 0) {
+    summaryMessages.push({msg: `removed exports ${removedExports} from ${pair.branchApi}`, severity: 'error'});
+  }
+  return {diff, name};
+}
+
+function analyzeDiff(summaryMessages, diff, name) {
+  console.log(`analyzing ${name}`);
+
 }
 
 function run(cmd, args, opts) {
