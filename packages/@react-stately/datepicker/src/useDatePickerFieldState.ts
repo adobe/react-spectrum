@@ -186,14 +186,21 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
   let segments = useMemo(() =>
     dateFormatter.formatToParts(dateValue)
-      .map(segment => ({
-        type: TYPE_MAPPING[segment.type] || segment.type,
-        text: segment.value,
-        ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
-        isPlaceholder: EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type],
-        isEditable: EDITABLE_SEGMENTS[segment.type]
-      } as DateSegment))
-  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue]);
+      .map(segment => {
+        let isEditable = EDITABLE_SEGMENTS[segment.type];
+        if (segment.type === 'era' && calendar.getEras().length === 1) {
+          isEditable = false;
+        }
+
+        return {
+          type: TYPE_MAPPING[segment.type] || segment.type,
+          text: segment.value,
+          ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
+          isPlaceholder: EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type],
+          isEditable
+        } as DateSegment;
+      })
+  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar]);
 
   let hasEra = useMemo(() => segments.some(s => s.type === 'era'), [segments]);
 
