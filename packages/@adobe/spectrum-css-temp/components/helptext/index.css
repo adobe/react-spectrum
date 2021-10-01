@@ -31,6 +31,7 @@
 
 .spectrum-HelpText {
   display: flex;
+  text-align: start;
   font-size: var(--spectrum-helptext-neutral-texticon-text-size);
   .spectrum-HelpText-validationIcon {
     margin-inline-end: var(--spectrum-helptext-neutral-texticon-icon-gap);
