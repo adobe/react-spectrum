@@ -18,8 +18,8 @@ import {DateRangePickerState} from '@react-stately/datepicker';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent} from '@react-types/shared';
 import {mergeProps, useDescription, useId, useLabels} from '@react-aria/utils';
+import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
@@ -63,15 +63,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   let buttonId = useId();
   let dialogId = useId();
 
-  // Open the popover on alt + arrow down
-  let onKeyDown = (e: KeyboardEvent) => {
-    if (e.altKey && e.key === 'ArrowDown') {
-      e.preventDefault();
-      e.stopPropagation();
-      state.setOpen(true);
-    }
-  };
-
+  let groupProps = useDatePickerGroup(state, ref);
   let {focusWithinProps} = useFocusWithin({
     onBlurWithin() {
       state.confirmPlaceholder();
@@ -81,11 +73,10 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
 
   return {
-    groupProps: mergeProps(fieldProps, descProps, focusWithinProps, {
+    groupProps: mergeProps(groupProps, fieldProps, descProps, focusWithinProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
-      'aria-describedby': ariaDescribedBy,
-      onKeyDown
+      'aria-describedby': ariaDescribedBy
     }),
     labelProps: {
       ...labelProps,

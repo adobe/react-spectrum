@@ -15,10 +15,11 @@ import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-types/dialog';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
-import {HTMLAttributes, KeyboardEvent, LabelHTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useDescription, useId} from '@react-aria/utils';
+import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
@@ -39,19 +40,12 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let dialogId = useId();
   let formatMessage = useMessageFormatter(intlMessages);
 
-  // Open the popover on alt + arrow down
-  let onKeyDown = (e: KeyboardEvent) => {
-    if (e.altKey && e.key === 'ArrowDown') {
-      e.preventDefault();
-      e.stopPropagation();
-      state.setOpen(true);
-    }
-  };
-
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
   });
+
+  let groupProps = useDatePickerGroup(state, ref);
 
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
 
@@ -60,12 +54,11 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
 
   return {
-    groupProps: mergeProps(descProps, {
+    groupProps: mergeProps(groupProps, descProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-labelledby': labelledBy,
-      'aria-describedby': ariaDescribedBy,
-      onKeyDown
+      'aria-describedby': ariaDescribedBy
     }),
     labelProps: {
       ...labelProps,

@@ -20,7 +20,7 @@ import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
-import {FocusScope, useFocusRing} from '@react-aria/focus';
+import {Input} from './Input';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
@@ -28,6 +28,7 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
+import {useFocusRing} from '@react-aria/focus';
 import {useFormatHelpText, useVisibleMonths} from './utils';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -100,12 +101,19 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
-      validationState={state.validationState}>
+      validationState={state.validationState}
+      UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <div
         {...mergeProps(groupProps, hoverProps, focusProps)}
         className={className}
         ref={targetRef}>
-        <FocusScope autoFocus={autoFocus}>
+        <Input
+          isDisabled={isDisabled}
+          isQuiet={isQuiet}
+          validationState={state.validationState}
+          autoFocus={autoFocus}
+          className={classNames(styles, 'spectrum-InputGroup-field')}
+          inputClassName={fieldClassName}>
           <DatePickerField
             {...fieldProps}
             data-testid="date-field"
@@ -120,9 +128,8 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
             granularity={props.granularity}
             hourCycle={props.hourCycle}
             inputClassName={fieldClassName}
-            UNSAFE_className={classNames(styles, 'spectrum-InputGroup-field')}
             hideTimeZone={props.hideTimeZone} />
-        </FocusScope>
+        </Input>
         <DialogTrigger
           type="popover"
           mobileType="tray"
@@ -158,7 +165,8 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
                   minValue={timeMinValue}
                   maxValue={timeMaxValue}
                   hourCycle={props.hourCycle}
-                  hideTimeZone={props.hideTimeZone} />
+                  hideTimeZone={props.hideTimeZone}
+                  marginTop="size-100" />
               }
             </Content>
           </Dialog>

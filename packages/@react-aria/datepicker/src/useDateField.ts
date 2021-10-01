@@ -16,8 +16,12 @@ import {DatePickerFieldState} from '@react-stately/datepicker';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {mergeProps, useDescription} from '@react-aria/utils';
 import {useDateFormatter} from '@react-aria/i18n';
+import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
-import {useFocusWithin, usePress} from '@react-aria/interactions';
+import {useFocusWithin} from '@react-aria/interactions';
+
+// Allows this hook to also be used with TimeField
+interface DateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
 
 interface DateFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
@@ -30,38 +34,13 @@ interface DateFieldAria {
 
 export const labelIds = new WeakMap<DatePickerFieldState, string>();
 
-export function useDateField<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+export function useDateField<T extends DateValue>(props: DateFieldProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
   });
 
-  // Focus the first placeholder segment from the end on mouse down/touch up in the field.
-  let focusLast = () => {
-    let segments = state.segments.filter(s => s.isEditable);
-    let index = segments.length - 1;
-    while (index >= 0 && segments[index].isPlaceholder) {
-      index--;
-    }
-    index = Math.min(index + 1, segments.length - 1);
-    let element = ref.current.querySelectorAll('[role="spinbutton"]')[index] as HTMLElement;
-    if (element) {
-      element.focus();
-    }
-  };
-
-  let {pressProps} = usePress({
-    onPressStart(e) {
-      if (e.pointerType === 'mouse') {
-        focusLast();
-      }
-    },
-    onPress(e) {
-      if (e.pointerType !== 'mouse') {
-        focusLast();
-      }
-    }
-  });
+  let groupProps = useDatePickerGroup(state, ref);
 
   let {focusWithinProps} = useFocusWithin({
     onBlurWithin() {
@@ -82,7 +61,7 @@ export function useDateField<T extends DateValue>(props: AriaDatePickerProps<T>,
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(fieldProps, descProps, pressProps, focusWithinProps, {
+    fieldProps: mergeProps(fieldProps, descProps, groupProps, focusWithinProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || undefined,
       'aria-describedby': [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined

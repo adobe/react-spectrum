@@ -10,17 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-Datepicker-startField.react-spectrum-Datepicker-startField {
-  width: auto;
+.react-spectrum-Datepicker-fieldWrapper.react-spectrum-Datepicker-fieldWrapper {
+   width: auto;
+   min-width: var(--spectrum-global-dimension-size-2000);
+ }
 
-  .react-spectrum-Datepicker-input {
-    padding-inline-end: var(--spectrum-textfield-padding-x);
-  }
+.react-spectrum-Datepicker-startField {
+  width: auto;
+  padding-inline-end: var(--spectrum-global-dimension-size-100);
 }
 
 .react-spectrum-Datepicker-endField {
   width: auto;
   flex: 1;
+  padding-inline-start: var(--spectrum-global-dimension-size-100);
 }
 
 .react-spectrum-Datepicker-field ~ .react-spectrum-Datepicker-endField > .react-spectrum-Datepicker-input {
@@ -29,11 +32,30 @@
   border-end-start-radius: 0;
 }
 
-.react-spectrum-Datepicker-field {
-  /* overflow: hidden; */
+.react-spectrum-Datepicker-field.react-spectrum-Datepicker-field {
+  width: auto;
 }
 
-.react-spectrum-Datepicker-input {
+/* specificity war with .spectrum-Field--positionSide etc. */
+.react-spectrum-DateField.react-spectrum-DateField.react-spectrum-DateField.react-spectrum-DateField {
+  min-width: var(--spectrum-global-dimension-size-2000)
+}
+
+.react-spectrum-TimeField.react-spectrum-TimeField.react-spectrum-TimeField.react-spectrum-TimeField {
+  min-width: var(--spectrum-global-dimension-size-1600);
+}
+
+.react-spectrum-TimeField-fieldWrapper.react-spectrum-TimeField-fieldWrapper {
+  width: auto;
+  min-width: var(--spectrum-global-dimension-size-1600);
+}
+
+.react-spectrum-Datepicker-input.react-spectrum-Datepicker-input {
+  /* always reserve space for the validation icon */
+  padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+}
+
+.react-spectrum-Datepicker-inputContents {
   display: flex;
   align-items: center;
   /* width: auto; */
@@ -45,6 +67,17 @@
     width: 0;
     height: 0;
   }
+}
+
+.react-spectrum-Datepicker-rangeDash {
+  &:before {
+    content: '–';
+  }
+}
+
+.react-spectrum-Datepicker-segments {
+  display: flex;
+  align-items: center;
 }
 
 .react-spectrum-Datepicker-literal {
@@ -80,7 +113,7 @@
   color: var(--spectrum-textfield-placeholder-text-color, var(--spectrum-global-color-gray-600));
 
   &:before {
-    content: attr(data-placeholder);
+    content: attr(aria-placeholder);
   }
 }
 
@@ -96,7 +129,6 @@
   width: auto;
 }
 
-.react-spectrum-Datepicker-dialogContent {
-  display: grid;
-  justify-content: center;
+.react-spectrum-Datepicker-timeFields {
+  width: calc((var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12));
 }

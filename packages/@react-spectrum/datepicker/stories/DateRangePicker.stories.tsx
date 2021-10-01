@@ -139,19 +139,19 @@ storiesOf('Date and Time/DateRangePicker/styling', module)
   )
   .add(
     'custom width',
-    () => render({width: 'size-3600'})
+    () => render({width: 'size-4600'})
   )
   .add(
     'quiet custom width',
-    () => render({isQuiet: true, width: 'size-3600'})
+    () => render({isQuiet: true, width: 'size-4600'})
   )
   .add(
     'custom width no visible label',
-    () => render({width: 'size-3600', label: null, 'aria-label': 'Date range'})
+    () => render({width: 'size-4600', label: null, 'aria-label': 'Date range'})
   )
   .add(
     'custom width, labelPosition=side',
-    () => render({width: 'size-3600', labelPosition: 'side'})
+    () => render({width: 'size-4600', labelPosition: 'side'})
   )
   .add(
     'description',
@@ -168,6 +168,7 @@ function render(props = {}) {
       <Example
         label="Date range"
         onChange={action('change')}
+        maxWidth="calc(100vw - 40px)"
         {...props} />
     </div>
   );

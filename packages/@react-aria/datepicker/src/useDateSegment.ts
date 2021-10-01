@@ -336,6 +336,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
       'aria-label': segment.type !== 'literal' ? displayNames.of(segment.type) : undefined,
       'aria-labelledby': `${fieldLabelId} ${id}`,
+      'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
       contentEditable: !props.isDisabled,
       suppressContentEditableWarning: !props.isDisabled,
       spellCheck: 'false',

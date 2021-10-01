@@ -197,6 +197,7 @@ function render(props = {}) {
     <Example
       label="Date"
       onChange={action('change')}
+      maxWidth="calc(100vw - 40px)"
       {...props} />
   );
 }

@@ -38,7 +38,7 @@ function beforeInput(target, key) {
 }
 
 function getTextValue(el) {
-  let placeholder = el.getAttribute('data-placeholder');
+  let placeholder = el.getAttribute('aria-placeholder');
   if (placeholder) {
     return placeholder;
   }
@@ -711,12 +711,12 @@ describe('DateRangePicker', function () {
     it('should focus the first segment of the end date on mouse down on the dash', function () {
       let {getByTestId, getByLabelText} = render(<DateRangePicker label="Date range" />);
       let rangeDash = getByTestId('date-range-dash');
-      let endDate = getByLabelText('End Date');
-      let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
+      let startDate = getByLabelText('Start Date');
+      let startSegments = getAllByRoleInContainer(startDate, 'spinbutton');
 
       fireEvent(rangeDash, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       triggerPress(rangeDash);
-      expect(endSegments[0]).toHaveFocus();
+      expect(startSegments[0]).toHaveFocus();
     });
   });
 

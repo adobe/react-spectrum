@@ -27,7 +27,7 @@ function beforeInput(target, key) {
 }
 
 function getTextValue(el) {
-  let placeholder = el.getAttribute('data-placeholder');
+  let placeholder = el.getAttribute('aria-placeholder');
   if (placeholder) {
     return placeholder;
   }
