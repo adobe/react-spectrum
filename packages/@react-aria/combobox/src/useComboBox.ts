@@ -29,7 +29,7 @@ import {useTextField} from '@react-aria/textfield';
 
 interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
   popoverRef: RefObject<HTMLDivElement>,
   /** The ref for the list box. */
