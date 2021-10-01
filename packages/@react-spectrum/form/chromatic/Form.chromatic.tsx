@@ -11,12 +11,15 @@
  */
 
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+import {ComboBox} from '@react-spectrum/combobox';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
+import {SearchField} from '@react-spectrum/searchfield';
+import {SearchWithin} from '@react-spectrum/searchwithin';
 import {SpectrumFormProps} from '@react-types/form';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
@@ -34,22 +37,35 @@ let flatOptions = [
 
 const Template = (): Story<SpectrumFormProps> => (args) => (
   <Form {...args}>
-    <TextField label="City" placeholder="San Francisco" />
-    <Picker label="Animals" placeholder="Choose an animal" items={flatOptions}>
-      {item => <Item key={item.id}>{item.name}</Item>}
-    </Picker>
-    <NumberField label="Test" />
     <CheckboxGroup defaultValue={['dragons']} label="Pets">
       <Checkbox value="dogs">Dogs</Checkbox>
       <Checkbox value="cats">Cats</Checkbox>
       <Checkbox value="dragons">Dragons</Checkbox>
     </CheckboxGroup>
+    <ComboBox label="More Animals">
+      <Item key="red panda">Red Panda</Item>
+      <Item key="aardvark">Aardvark</Item>
+      <Item key="kangaroo">Kangaroo</Item>
+      <Item key="snake">Snake</Item>
+    </ComboBox>
+    <NumberField label="Test" />
+    <Picker label="Animals" placeholder="Choose an animal" items={flatOptions}>
+      {item => <Item key={item.id}>{item.name}</Item>}
+    </Picker>
     <RadioGroup defaultValue="dragons" label="Favorite pet" name="favorite-pet-group">
       <Radio value="dogs">Dogs</Radio>
       <Radio value="cats">Cats</Radio>
       <Radio value="dragons">Dragons</Radio>
     </RadioGroup>
+    <SearchField label="Search" />
+    <SearchWithin label="Search">
+      <SearchField placeholder="Search" />
+      <Picker label="State" placeholder="Select a state" items={flatOptions}>
+        {item => <Item key={item.id}>{item.name}</Item>}
+      </Picker>
+    </SearchWithin>
     <TextArea label="Comments" placeholder="How do you feel?" />
+    <TextField label="City" placeholder="San Francisco" />
   </Form>
 );
 
@@ -65,6 +81,10 @@ LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
 export const LabelAlignEnd = Template().bind({});
 LabelAlignEnd.storyName = 'label align: end';
 LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
+
+export const LabelAlignSideEnd = Template().bind({});
+LabelAlignSideEnd.storyName = 'label position: side, label align: end';
+LabelAlignSideEnd.args = {...Default.args, labelPosition: 'side', labelAlign: 'end'};
 
 export const Required = Template().bind({});
 Required.storyName = 'isRequired';
