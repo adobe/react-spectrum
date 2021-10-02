@@ -387,14 +387,14 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
 }
 
 function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
-  // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
+  // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
+  const nodeToRestore = useRef(typeof document !== 'undefined' ? document.activeElement as HTMLElement : null);
   useLayoutEffect(() => {
     if (!restoreFocus) {
       return;
     }
 
     let scope = scopeRef.current;
-    let nodeToRestore = document.activeElement as HTMLElement;
 
     // Handle the Tab key so that tabbing out of the scope goes to the next element
     // after the node that had focus when the scope mounted. This is important when
@@ -417,14 +417,14 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       walker.currentNode = focusedElement;
       let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
 
-      if (!document.body.contains(nodeToRestore) || nodeToRestore === document.body) {
-        nodeToRestore = null;
+      if (!document.body.contains(nodeToRestore.current) || nodeToRestore.current === document.body) {
+        nodeToRestore.current = null;
       }
 
       // If there is no next element, or it is outside the current scope, move focus to the
       // next element after the node to restore to instead.
-      if ((!nextElement || !isElementInScope(nextElement, scope)) && nodeToRestore) {
-        walker.currentNode = nodeToRestore;
+      if ((!nextElement || !isElementInScope(nextElement, scope)) && nodeToRestore.current) {
+        walker.currentNode = nodeToRestore.current;
 
         // Skip over elements within the scope, in case the scope immediately follows the node to restore.
         do {
@@ -439,10 +439,10 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
            // If there is no next element and the nodeToRestore isn't within a FocusScope (i.e. we are leaving the top level focus scope)
            // then move focus to the body.
            // Otherwise restore focus to the nodeToRestore (e.g menu within a popover -> tabbing to close the menu should move focus to menu trigger)
-          if (!isElementInAnyScope(nodeToRestore)) {
+          if (!isElementInAnyScope(nodeToRestore.current)) {
             focusedElement.blur();
           } else {
-            focusElement(nodeToRestore, true);
+            focusElement(nodeToRestore.current, true);
           }
         }
       }
@@ -459,8 +459,8 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
 
       if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scope)) {
         requestAnimationFrame(() => {
-          if (document.body.contains(nodeToRestore)) {
-            focusElement(nodeToRestore);
+          if (document.body.contains(nodeToRestore.current)) {
+            focusElement(nodeToRestore.current);
           }
         });
       }

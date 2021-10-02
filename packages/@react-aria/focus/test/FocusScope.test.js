@@ -331,6 +331,37 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(outside);
     });
 
+    it('should restore focus to the previously focused node after a child with autoFocus unmounts', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            {show &&
+              <FocusScope restoreFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" autoFocus />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let outside = getByTestId('outside');
+      act(() => {outside.focus();});
+
+      rerender(<Test show />);
+
+      let input2 = getByTestId('input2');
+      expect(document.activeElement).toBe(input2);
+
+      rerender(<Test />);
+
+      expect(document.activeElement).toBe(outside);
+    });
+
     it('should move focus to the next element after the previously focused node on Tab', function () {
       function Test({show}) {
         return (
