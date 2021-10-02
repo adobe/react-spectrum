@@ -88,6 +88,7 @@ export function mergeIds(idA: string, idB: string): string {
 /**
  * Used to generate an id, and after render, check if that id is rendered so we know
  * if we can use it in places such as labelledby.
+ * @param depArray - When to recalculate if the id is in the DOM.
  */
 export function useSlotId(depArray: any[] = []): string {
   let id = useId();
