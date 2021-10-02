@@ -13,7 +13,7 @@
 import {HelpTextProps} from '@react-types/shared';
 import {HTMLAttributes} from 'react';
 import {LabelAria, LabelAriaProps, useLabel} from './useLabel';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 
 interface AriaFieldProps extends LabelAriaProps, HelpTextProps {}
 
@@ -33,16 +33,14 @@ export function useField(props: AriaFieldProps): FieldAria {
   let {description, errorMessage, validationState} = props;
   let {labelProps, fieldProps} = useLabel(props);
 
-  let descriptionId = useId();
-  let errorMessageId = useId();
-  let isDisplayingDescription = ((validationState === 'invalid' && !errorMessage) || validationState !== 'invalid') && !!description;
-  let isDisplayingError = validationState === 'invalid' && !!errorMessage;
+  let descriptionId = useSlotId([Boolean(description), Boolean(errorMessage), validationState]);
+  let errorMessageId = useSlotId([Boolean(description), Boolean(errorMessage), validationState]);
 
   fieldProps = mergeProps(fieldProps, {
     'aria-describedby': [
-      (isDisplayingDescription ? descriptionId : ''),
+      descriptionId,
       // Use aria-describedby for error message because aria-errormessage is unsupported using VoiceOver or NVDA. See https://github.com/adobe/react-spectrum/issues/1346#issuecomment-740136268
-      (isDisplayingError ? errorMessageId : ''),
+      errorMessageId,
       props['aria-describedby']
     ].filter(Boolean).join(' ') || undefined
   });
@@ -51,10 +49,10 @@ export function useField(props: AriaFieldProps): FieldAria {
     labelProps,
     fieldProps,
     descriptionProps: {
-      id: (isDisplayingDescription ? descriptionId : null)
+      id: descriptionId
     },
     errorMessageProps: {
-      id: (isDisplayingError ? errorMessageId : null)
+      id: errorMessageId
     }
   };
 }
