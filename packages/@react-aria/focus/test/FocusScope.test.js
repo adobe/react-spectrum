@@ -362,6 +362,38 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(outside);
     });
 
+    it('should restore focus to the previously focused node after children change', function () {
+      function Test({show, showChild}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            {show &&
+              <FocusScope restoreFocus autoFocus>
+                <input data-testid="input1" />
+                {showChild && <input data-testid="dynamic" />}
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let outside = getByTestId('outside');
+      act(() => {outside.focus();});
+
+      rerender(<Test show />);
+      rerender(<Test show showChild />);
+
+      let dynamic = getByTestId('dynamic');
+      act(() => {dynamic.focus();});
+      expect(document.activeElement).toBe(dynamic);
+
+      rerender(<Test />);
+
+      expect(document.activeElement).toBe(outside);
+    });
+
     it('should move focus to the next element after the previously focused node on Tab', function () {
       function Test({show}) {
         return (
