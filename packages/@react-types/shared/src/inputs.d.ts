@@ -62,6 +62,7 @@ export interface RangeInputBase<T> {
 }
 
 export interface HelpTextProps {
+  /** Whether the input should display its "valid" or "invalid" visual styling. */
   validationState?: ValidationState,
   /** A description for the field. Provides a hint such as specific requirements for what to choose. */
   description?: ReactNode,
