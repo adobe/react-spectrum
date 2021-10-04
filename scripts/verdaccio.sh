@@ -6,10 +6,10 @@ output="output.out"
 
 function cleanup {
   lsof -ti tcp:4000 | xargs kill
-  rm -rf storage/ ~/.config/verdaccio/storage/
+  rm -rf storage/ ~/.config/verdaccio/storage/ $output
   git tag -d $(git tag -l)
   git fetch
-  # git reset --hard HEAD^
+  git reset --hard HEAD^
 }
 
 # Start verdaccio and send it to the background
