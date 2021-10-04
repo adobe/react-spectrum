@@ -95,7 +95,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   );
   let layout = useListBoxLayout(state);
 
-  let {buttonProps, inputProps, listBoxProps, labelProps} = useComboBox(
+  let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps} = useComboBox(
     {
       ...props,
       keyboardDelegate: layout,
@@ -158,6 +158,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     <>
       <Field
         {...props}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
         labelProps={labelProps}
         ref={domRef}>
         <ComboBoxInput
