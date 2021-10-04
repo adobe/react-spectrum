@@ -13,7 +13,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '@react-aria/ssr';
-import {useValueEffect} from '@react-spectrum/utils';
+import {useValueEffect} from '@react-aria/utils';
 
 let idsUpdaterMap: Map<string, (v: string) => void> = new Map();
 
@@ -101,7 +101,7 @@ export function useSlotId(depArray: any[] = []): string {
     });
   }, [id, setResolvedId]);
 
-  useLayoutEffect(updateId, [id, ...depArray]);
+  useLayoutEffect(updateId, [id, updateId, ...depArray]);
 
   return resolvedId;
 }
