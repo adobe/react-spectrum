@@ -58,11 +58,10 @@ describe('NumberField', function () {
 
     let root = props.label ? container.firstChild.firstChild : undefined;
     container = within(container).queryByRole('group');
-    let textField = container.firstChild;
+    let textField = within(container).queryByRole('textbox');
     let buttons = within(container).queryAllByRole('button');
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
-    textField = textField.firstChild;
     return {
       root,
       container,
