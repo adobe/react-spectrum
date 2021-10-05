@@ -34,7 +34,7 @@ yarn lerna version minor --force-publish --allow-branch `git branch --show-curre
 # Publish packages to verdaccio
 yarn lerna publish from-package --registry $registry --yes
 
-if [ci = true];
+if [$ci = true];
 then
   # build prod docs
   echo "building docs"
