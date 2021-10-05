@@ -19,7 +19,15 @@ function cleanup {
   git fetch
   git reset --hard HEAD~1
   npm set registry $original_registry
+  if [ "$ci" = false ];
+  then
+    # Clean up generated dists if run locally
+    rm -rf **/dist
+  fi
 }
+
+# Generate dists for the packages
+make build
 
 # Start verdaccio and send it to the background
 yarn verdaccio --listen $port &>${output}&
@@ -41,7 +49,7 @@ npm set registry $registry
 if [ "$ci" = true ];
 then
   # build prod docs
-  echo "building docs"
+  make website-production
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"
