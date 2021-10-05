@@ -3,13 +3,20 @@
 port=4000
 registry="http://localhost:$port"
 output="output.out"
+ci=false
+
+if [ "$1" = "ci" ];
+then
+  ci=true
+fi
 
 function cleanup {
   lsof -ti tcp:4000 | xargs kill
+  # TODO: figure out what of the below doesn't need to happen on CI
   rm -rf storage/ ~/.config/verdaccio/storage/ $output
   git tag -d $(git tag -l)
   git fetch
-  git reset --hard HEAD^
+  git reset --hard HEAD~1
 }
 
 # Start verdaccio and send it to the background
@@ -27,7 +34,13 @@ yarn lerna version minor --force-publish --allow-branch `git branch --show-curre
 # Publish packages to verdaccio
 yarn lerna publish from-package --registry $registry --yes
 
-# Wait for user input to do cleanup
-read -n 1 -p "Press a key to close server and cleanup"
+if [ci = true];
+then
+  # build prod docs
+  echo "building docs"
+else
+  # Wait for user input to do cleanup
+  read -n 1 -p "Press a key to close server and cleanup"
+fi
 
 cleanup
