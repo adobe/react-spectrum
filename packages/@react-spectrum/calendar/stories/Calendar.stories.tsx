@@ -61,6 +61,22 @@ storiesOf('Date and Time/Calendar', module)
   .add(
     'autoFocus',
     () => render({defaultValue: new CalendarDate(2019, 6, 5), autoFocus: true})
+  )
+  .add(
+    'visibleMonths: 2',
+    () => render({visibleMonths: 2})
+  )
+  .add(
+    'visibleMonths: 3',
+    () => render({visibleMonths: 3})
+  )
+  .add(
+    'minValue: today, visibleMonths: 3',
+    () => render({minValue: today(getLocalTimeZone()), visibleMonths: 3})
+  )
+  .add(
+    'minValue, visibleMonths: 3, defaultValue',
+    () => render({minValue: new CalendarDate(2019, 6, 1), defaultValue: new CalendarDate(2019, 6, 5), visibleMonths: 3})
   );
 
 function render(props = {}) {
@@ -118,7 +134,7 @@ function Example(props) {
 
   return (
     <Flex direction="column" gap="size-600" alignItems="center">
-      <Flex direction="row" gap="size-150">
+      <Flex direction="column" gap="size-150" wrap>
         <Picker label="Locale" items={preferences} selectedKey={locale} onSelectionChange={updateLocale}>
           {item => <Item key={item.locale}>{item.label}</Item>}
         </Picker>
