@@ -368,6 +368,8 @@ function FormWithSubmit() {
   let [petDirty, setPetDirty] = useState(false);
   let [truth, setTruth] = useState(false);
   let [truthDirty, setTruthDirty] = useState(false);
+  let [email, setEmail] = useState('');
+  let [emailDirty, setEmailDirty] = useState(false);
 
   let [formStatus, setFormStatus] = useState<'progress' | 'invalid' | 'valid' | 'fixing'>('progress');
   let [isSubmitted, setSubmitted] = useState(false); // TODO: really should be isSectionInvalid / 'fixing' for each form field. once form is submitted with mistakes, unchecking an unrelated, previously valid field should not make it look invalid.
@@ -376,8 +378,8 @@ function FormWithSubmit() {
     ['invalid', 'fixing'].includes(formStatus) && !isValid ? 'invalid' : null;
 
   useEffect(() => {
-    let validate = (): boolean => policies.length === 3 && pet && truth;
-    let formDirty = policiesDirty || petDirty || truthDirty;
+    let validate = (): boolean => policies.length === 3 && pet && truth && email.includes('@');
+    let formDirty = policiesDirty || petDirty || truthDirty || emailDirty;
 
     if (isSubmitted) {
       if (formDirty) {
@@ -388,7 +390,7 @@ function FormWithSubmit() {
     } else {
       setFormStatus('progress');
     }
-  }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, isSubmitted]);
+  }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, email, emailDirty, isSubmitted]);
 
   let Status = ({formStatus}) => {
     let [variant, setVariant] = useState<'info' | 'negative' | 'positive' | 'notice'>('info');
@@ -421,6 +423,7 @@ function FormWithSubmit() {
     setPoliciesDirty(false);
     setTruthDirty(false);
     setPetDirty(false);
+    setEmailDirty(false);
     setSubmitted(true);
     action('onSubmit')(e);
   };
@@ -433,11 +436,20 @@ function FormWithSubmit() {
     setPoliciesDirty(false);
     setPetDirty(false);
     setTruthDirty(false);
+    setEmail('');
+    setEmailDirty(false);
     setFormStatus('progress');
   };
 
   return (
     <Form onSubmit={handleSubmit} isReadOnly={formStatus === 'valid'}>
+      <TextField
+        label="Email address"
+        type="email"
+        value={email}
+        onChange={chain(() => setEmailDirty(true), setEmail)}
+        validationState={getValidationState(email.includes('@'))}
+        errorMessage="Email address must contain @" />
       <CheckboxGroup
         label="Agree to the following"
         isRequired
