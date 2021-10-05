@@ -90,7 +90,7 @@ export function mergeIds(idA: string, idB: string): string {
  * if we can use it in places such as labelledby.
  * @param depArray - When to recalculate if the id is in the DOM.
  */
-export function useSlotId(depArray: any[] = []): string {
+export function useSlotId(depArray: ReadonlyArray<any> = []): string {
   let id = useId();
   let [resolvedId, setResolvedId] = useValueEffect(id);
   let updateId = useCallback(() => {
