@@ -362,6 +362,37 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(outside);
     });
 
+    it('should restore focus to the previously focused node when tabbing away from a child with autoFocus', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <input data-testid="after" />
+            {show &&
+              <FocusScope restoreFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" />
+                <input data-testid="input3" autoFocus />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let outside = getByTestId('outside');
+      act(() => {outside.focus();});
+
+      rerender(<Test show />);
+
+      let input3 = getByTestId('input3');
+      expect(document.activeElement).toBe(input3);
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(getByTestId('after'));
+    });
+
     it('should restore focus to the previously focused node after children change', function () {
       function Test({show, showChild}) {
         return (
