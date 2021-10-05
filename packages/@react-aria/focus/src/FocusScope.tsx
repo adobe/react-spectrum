@@ -66,7 +66,7 @@ interface IFocusContext {
 
 const FocusContext = React.createContext<IFocusContext>(null);
 
-let activeScope: Scope = null;
+let containedScope: Scope = null;
 let scopes: Map<Scope, Scope | null> = new Map();
 
 // This is a hacky DOM-based implementation of a FocusScope until this RFC lands in React:
@@ -110,18 +110,18 @@ export function FocusScope(props: FocusScopeProps) {
       // Parent effect cleanups run before children, so we need to check if the
       // parent scope actually still exists before restoring the active scope to it.
       if (
-        (scope === activeScope || isAncestorScope(scope, activeScope)) &&
+        (scope === containedScope || isAncestorScope(scope, containedScope)) &&
         (!parentScope || scopes.has(parentScope))
       ) {
-        activeScope = parentScope;
+        containedScope = parentScope;
       }
       scopes.delete(scope);
     };
   }, [parentScope]);
 
+  useAutoFocus(scopeRef.current, autoFocus);
   useFocusContainment(scopeRef.current, contain);
   useRestoreFocus(scopeRef.current, restoreFocus, contain);
-  useAutoFocus(scopeRef.current, autoFocus);
 
   let focusManager = createFocusManagerForScope(scopeRef.current);
 
@@ -236,7 +236,7 @@ function useFocusContainment(scope: Scope, contain: boolean) {
 
     // Handle the Tab key to contain focus within the scope
     let onKeyDown = (e) => {
-      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || scope !== activeScope) {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || scope !== containedScope) {
         return;
       }
 
@@ -262,18 +262,20 @@ function useFocusContainment(scope: Scope, contain: boolean) {
     let onFocus = (e) => {
       // If focusing an element in a child scope of the currently active scope, the child becomes active.
       // Moving out of the active scope to an ancestor is not allowed.
-      if (!activeScope || isAncestorScope(activeScope, scope)) {
-        activeScope = scope;
-        focusedNode.current = e.target;
-      } else if (scope === activeScope && !isElementInChildScope(e.target, scope)) {
+      if (isElementInScope(e.target, scope)) {
+        if (!containedScope || isAncestorScope(containedScope, scope)) {
+          containedScope = scope;
+          focusedNode.current = e.target;
+        }
+      } else if (scope === containedScope && !isElementInChildScope(e.target, scope)) {
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
           focusedNode.current.focus();
-        } else if (activeScope) {
-          focusFirstInScope(activeScope);
+        } else if (containedScope) {
+          focusFirstInScope(containedScope);
         }
-      } else if (scope === activeScope) {
+      } else if (scope === containedScope) {
         focusedNode.current = e.target;
       }
     };
@@ -282,8 +284,8 @@ function useFocusContainment(scope: Scope, contain: boolean) {
       // Firefox doesn't shift focus back to the Dialog properly without this
       raf.current = requestAnimationFrame(() => {
         // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
-        if (scope === activeScope && !isElementInChildScope(document.activeElement, scope)) {
-          activeScope = scope;
+        if (scope === containedScope && !isElementInChildScope(document.activeElement, scope)) {
+          containedScope = scope;
           focusedNode.current = e.target;
           focusedNode.current.focus();
         }
@@ -292,13 +294,11 @@ function useFocusContainment(scope: Scope, contain: boolean) {
 
     document.addEventListener('keydown', onKeyDown, false);
     document.addEventListener('focusin', onFocus, false);
-    scope.forEach(element => element.addEventListener('focusin', onFocus, false));
-    scope.forEach(element => element.addEventListener('focusout', onBlur, false));
+    document.addEventListener('focusout', onBlur, false);
     return () => {
       document.removeEventListener('keydown', onKeyDown, false);
       document.removeEventListener('focusin', onFocus, false);
-      scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
-      scope.forEach(element => element.removeEventListener('focusout', onBlur, false));
+      document.removeEventListener('focusout', onBlur, false);
     };
   }, [scope, contain]);
 
@@ -370,13 +370,10 @@ function focusFirstInScope(scope: Scope) {
 }
 
 function useAutoFocus(scope: Scope, autoFocus: boolean) {
-  const autoFocusRef = React.useRef(autoFocus);
-  useEffect(() => {
-    if (autoFocusRef.current) {
-      activeScope = scope;
-      if (!isElementInScope(document.activeElement, activeScope)) {
-        focusFirstInScope(scope);
-      }
+  const autoFocusRef = useRef(autoFocus);
+  useLayoutEffect(() => {
+    if (autoFocusRef.current && !isElementInScope(document.activeElement, scope)) {
+      focusFirstInScope(scope);
     }
     autoFocusRef.current = false;
   }, [scope]);
