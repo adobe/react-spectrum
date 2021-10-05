@@ -32,7 +32,6 @@ async function compare() {
 
   let branchAPIs = fg.sync(`${branchDir}/**/api.json`);
   let publishedAPIs = fg.sync(`${publishedDir}/**/api.json`);
-  console.log(branchAPIs)
   let pairs = [];
   // we only care about changes to already published APIs, so find all matching pairs based on what's been published
   for (let pubApi of publishedAPIs) {
