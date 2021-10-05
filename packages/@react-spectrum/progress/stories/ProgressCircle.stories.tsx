@@ -13,7 +13,6 @@
 import {number, withKnobs} from '@storybook/addon-knobs';
 import {ProgressCircle} from '../';
 import React, {CSSProperties} from 'react';
-import {storiesOf} from '@storybook/react';
 
 const sliderOptions = {
   range: true,
@@ -31,83 +30,107 @@ const grayedBoxStyle: CSSProperties = {
   justifyContent: 'center'
 };
 
-storiesOf('Progress/ProgressCircle', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .addDecorator(withKnobs)
-  .add(
-    'Default',
-    () => render()
-  )
-  .add(
-    'value: 50',
-    () => {
-      const value = number('Value', 50, sliderOptions);
-      return render({value});
-    }
-  )
-  .add(
-    'value: 100',
-    () => {
-      const value = number('Value', 100, sliderOptions);
-      return render({value});
-    }
-  )
-  .add(
-    'size: S',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({value, size: 'S'});
-    }
-  )
-  .add(
-    'size: L',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({value, size: 'L'});
-    }
-  )
-  .add(
-    'variant: overBackground',
-    () =>  {
-      const value = number('Value', 32, sliderOptions);
-      return (
-        <div style={grayedBoxStyle}>
-          {render({value, variant: 'overBackground'})}
-        </div>
-      );
-    }
-  )
-  .add(
-    'Using raw values for minValue, maxValue, and value',
-    () => render({
-      labelPosition: 'top',
-      maxValue: 2147483648,
-      value: 715827883
-    })
-  )
-  .add(
-    'isIndeterminate: true',
-    () => render({isIndeterminate: true})
-  )
-  .add(
-    'isIndeterminate: true, size: S',
-    () => render({isIndeterminate: true, size: 'S'})
-  )
-  .add(
-    'isIndeterminate: true, size: L',
-    () => render({isIndeterminate: true, size: 'L'})
-  )
-  .add(
-    'isIndeterminate: true, variant: overBackground',
-    () => (
-      <div style={grayedBoxStyle}>
-        {render({isIndeterminate: true, variant: 'overBackground'})}
-      </div>
-    )
+export default {
+  title: 'Progress/ProgressCircle',
+  decorators: [withKnobs],
+
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const Default = () => render();
+
+export const Value50 = () => {
+  const value = number('Value', 50, sliderOptions);
+  return render({value});
+};
+
+Value50.story = {
+  name: 'value: 50'
+};
+
+export const Value100 = () => {
+  const value = number('Value', 100, sliderOptions);
+  return render({value});
+};
+
+Value100.story = {
+  name: 'value: 100'
+};
+
+export const SizeS = () => {
+  const value = number('Value', 32, sliderOptions);
+  return render({value, size: 'S'});
+};
+
+SizeS.story = {
+  name: 'size: S'
+};
+
+export const SizeL = () => {
+  const value = number('Value', 32, sliderOptions);
+  return render({value, size: 'L'});
+};
+
+SizeL.story = {
+  name: 'size: L'
+};
+
+export const VariantOverBackground = () => {
+  const value = number('Value', 32, sliderOptions);
+  return (
+    <div style={grayedBoxStyle}>
+      {render({value, variant: 'overBackground'})}
+    </div>
   );
+};
+
+VariantOverBackground.story = {
+  name: 'variant: overBackground'
+};
+
+export const UsingRawValuesForMinValueMaxValueAndValue = () =>
+  render({
+    labelPosition: 'top',
+    maxValue: 2147483648,
+    value: 715827883
+  });
+
+UsingRawValuesForMinValueMaxValueAndValue.story = {
+  name: 'Using raw values for minValue, maxValue, and value'
+};
+
+export const IsIndeterminateTrue = () => render({isIndeterminate: true});
+
+IsIndeterminateTrue.story = {
+  name: 'isIndeterminate: true'
+};
+
+export const IsIndeterminateTrueSizeS = () =>
+  render({isIndeterminate: true, size: 'S'});
+
+IsIndeterminateTrueSizeS.story = {
+  name: 'isIndeterminate: true, size: S'
+};
+
+export const IsIndeterminateTrueSizeL = () =>
+  render({isIndeterminate: true, size: 'L'});
+
+IsIndeterminateTrueSizeL.story = {
+  name: 'isIndeterminate: true, size: L'
+};
+
+export const IsIndeterminateTrueVariantOverBackground = () => (
+  <div style={grayedBoxStyle}>
+    {render({isIndeterminate: true, variant: 'overBackground'})}
+  </div>
+);
+
+IsIndeterminateTrueVariantOverBackground.story = {
+  name: 'isIndeterminate: true, variant: overBackground'
+};
 
 function render(props = {}) {
-  return (
-    <ProgressCircle aria-label="Loading…" {...props} />
-  );
+  return <ProgressCircle aria-label="Loading…" {...props} />;
 }

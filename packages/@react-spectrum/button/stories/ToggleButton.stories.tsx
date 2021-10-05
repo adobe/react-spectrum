@@ -14,60 +14,89 @@ import {action} from '@storybook/addon-actions';
 import Add from '@spectrum-icons/workflow/Add';
 import {Flex, Text, View} from '@adobe/react-spectrum';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {ToggleButton} from '../';
 
-storiesOf('Button/ToggleButton', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'default',
-    () => render()
-  ).add(
-    'emphasized',
-    () => render({isEmphasized: true})
-  ).add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  ).add(
-    'isQuiet & emphasized',
-    () => render({isEmphasized: true, isQuiet: true})
-  )
-  .add(
-    'staticColor: white',
-    () => (
-      <View backgroundColor="static-seafoam-600" padding="size-1000">
-        <Flex direction="column" rowGap="size-150">
-          {render({staticColor: 'white'})}
-          {render({staticColor: 'white', isQuiet: true})}
-        </Flex>
-      </View>
-    )
-  )
-  .add(
-    'staticColor: black',
-    () => (
-      <View backgroundColor="static-yellow-400" padding="size-1000">
-        <Flex direction="column" rowGap="size-150">
-          {render({staticColor: 'black'})}
-          {render({staticColor: 'black', isQuiet: true})}
-        </Flex>
-      </View>
-    )
-  );
+export default {
+  title: 'Button/ToggleButton',
+
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const Default = () => render();
+
+Default.story = {
+  name: 'default'
+};
+
+export const Emphasized = () => render({isEmphasized: true});
+
+Emphasized.story = {
+  name: 'emphasized'
+};
+
+export const IsQuiet = () => render({isQuiet: true});
+
+IsQuiet.story = {
+  name: 'isQuiet'
+};
+
+export const IsQuietEmphasized = () =>
+  render({isEmphasized: true, isQuiet: true});
+
+IsQuietEmphasized.story = {
+  name: 'isQuiet & emphasized'
+};
+
+export const StaticColorWhite = () => (
+  <View backgroundColor="static-seafoam-600" padding="size-1000">
+    <Flex direction="column" rowGap="size-150">
+      {render({staticColor: 'white'})}
+      {render({staticColor: 'white', isQuiet: true})}
+    </Flex>
+  </View>
+);
+
+StaticColorWhite.story = {
+  name: 'staticColor: white'
+};
+
+export const StaticColorBlack = () => (
+  <View backgroundColor="static-yellow-400" padding="size-1000">
+    <Flex direction="column" rowGap="size-150">
+      {render({staticColor: 'black'})}
+      {render({staticColor: 'black', isQuiet: true})}
+    </Flex>
+  </View>
+);
+
+StaticColorBlack.story = {
+  name: 'staticColor: black'
+};
 
 function render(props = {}) {
-  return (<Flex gap="size-100">
-    <ToggleButton onChange={action('change')} onPress={action('press')} {...props}>
-      <Add />
-      <Text>Default</Text>
-    </ToggleButton>
-    <ToggleButton onChange={action('change')} onPress={action('press')} defaultSelected {...props}>
-      <Add />
-      <Text>Selected</Text>
-    </ToggleButton>
-    <ToggleButton defaultSelected isDisabled {...props}>
-      <Add />
-      <Text>Disabled + selected</Text>
-    </ToggleButton>
-  </Flex>);
+  return (
+    <Flex gap="size-100">
+      <ToggleButton
+        onChange={action('change')}
+        onPress={action('press')}
+        {...props}>
+        <Add />
+        <Text>Default</Text>
+      </ToggleButton>
+      <ToggleButton
+        onChange={action('change')}
+        onPress={action('press')}
+        defaultSelected
+        {...props}>
+        <Add />
+        <Text>Selected</Text>
+      </ToggleButton>
+      <ToggleButton defaultSelected isDisabled {...props}>
+        <Add />
+        <Text>Disabled + selected</Text>
+      </ToggleButton>
+    </Flex>
+  );
 }

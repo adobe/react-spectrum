@@ -12,123 +12,93 @@
 
 import {action} from '@storybook/addon-actions';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today} from '@internationalized/date';
-import {classNames} from '@react-spectrum/utils';
-import {Flex, Grid, repeat} from '@react-spectrum/layout';
-import {generatePowerset} from '@react-spectrum/story-utils';
+import {Flex} from '@react-spectrum/layout';
 import {RangeCalendar} from '../';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
-import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {TimeField} from '@react-spectrum/datepicker';
 
-storiesOf('Date and Time/RangeCalendar', module)
-  .add(
-    'Default',
-    () => render()
-  )
-  .add(
-    'defaultValue',
-    () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}})
-  )
-  .add(
-    'controlled value',
-    () => render({value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}})
-  )
-  .add(
-    'with time',
-    () => <RangeCalendarWithTime />
-  )
-  .add(
-    'with zoned time',
-    () => <RangeCalendarWithZonedTime />
-  )
-  .add(
-    'minValue: today, maxValue: 1 week from now',
-    () => render({minValue: today(getLocalTimeZone()), maxValue: today(getLocalTimeZone()).add({weeks: 1})})
-  )
-  .add(
-    'defaultValue + minValue + maxValue',
-    () => render({defaultValue: {start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 12)}, minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)})
-  )
-  .add(
-    'isDisabled',
-    () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, isDisabled: true})
-  )
-  .add(
-    'isReadOnly',
-    () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, isReadOnly: true})
-  )
-  .add(
-    'autoFocus',
-    () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, autoFocus: true})
-  )
-  .add(
-    'visibleMonths: 2',
-    () => render({visibleMonths: 2})
-  )
-  .add(
-    'visibleMonths: 3',
-    () => render({visibleMonths: 3})
-  )
-  .add(
-    'minValue: today, visibleMonths: 3',
-    () => render({minValue: today(getLocalTimeZone()), visibleMonths: 3})
-  )
-  .add(
-    'defaultValue, visibleMonths: 3',
-    () => render({visibleMonths: 3, defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 12, 10)}})
-  );
+export default {
+  title: 'Date and Time/RangeCalendar'
+};
 
-  // Fake cell for testing css
-function Cell({isToday, isSelected, isFocused, isHovered, isPressed, isDisabled, isRangeStart, isRangeEnd, isRangeSelection, isSelectionStart, isSelectionEnd}) {
-  return (
-    <span
-      className={classNames(styles, 'spectrum-Calendar-date', {
-        'is-today': isToday,
-        'is-selected': isSelected,
-        'is-focused': isFocused,
-        'is-disabled': isDisabled,
-        'is-range-start': isRangeStart,
-        'is-range-end': isRangeEnd,
-        'is-range-selection': isRangeSelection,
-        'is-selection-start': isSelectionStart,
-        'is-selection-end': isSelectionEnd,
-        'is-hovered': isHovered,
-        'is-pressed': isPressed
-      })}>
-      12
-    </span>
-  );
-}
+export const Default = () => render();
+export const DefaultValue = () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}});
 
-let states = [
-  {isToday: true},
-  {isSelected: true},
-  {isFocused: true},
-  {isHovered: true},
-  {isPressed: true},
-  {isDisabled: true},
-  {isRangeSelection: true},
-  {isRangeStart: true},
-  {isRangeEnd: true},
-  {isSelectionStart: true},
-  {isSelectionEnd: true}
-];
+DefaultValue.story = {
+  name: 'defaultValue'
+};
 
-storiesOf('Date and Time/RangeCalendar/cell', module)
-  .add('default', () => (
-    <Grid columns={repeat(10, 100)}>
-      {generatePowerset(states, (merged) =>
-        (merged.isDisabled && (merged.isFocused || merged.isHovered || merged.isPressed)) ||
-        (!merged.isSelected && (merged.isRangeSelection || merged.isSelectionStart || merged.isSelectionEnd || merged.isRangeStart || merged.isRangeEnd)) ||
-        ((merged.isRangeStart || merged.isRangeEnd) && !merged.isRangeSelection) ||
-        (merged.isRangeStart && merged.isRangeEnd) ||
-        (merged.isSelectionStart && !merged.isRangeStart) ||
-        (merged.isSelectionEnd && !merged.isRangeEnd)
-      ).map(props => <div>{Object.keys(props).join(' ')}<div style={{position: 'relative', width: 40, height: 40, textAlign: 'center'}}><Cell {...props} /></div></div>)}
-    </Grid>
-  )
-);
+export const ControlledValue = () => render({value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}});
+
+ControlledValue.story = {
+  name: 'controlled value'
+};
+
+export const WithTime = () => <RangeCalendarWithTime />;
+
+WithTime.story = {
+  name: 'with time'
+};
+
+export const WithZonedTime = () => <RangeCalendarWithZonedTime />;
+
+WithZonedTime.story = {
+  name: 'with zoned time'
+};
+
+export const MinValueTodayMaxValue1WeekFromNow = () => render({minValue: today(getLocalTimeZone()), maxValue: today(getLocalTimeZone()).add({weeks: 1})});
+
+MinValueTodayMaxValue1WeekFromNow.story = {
+  name: 'minValue: today, maxValue: 1 week from now'
+};
+
+export const DefaultValueMinValueMaxValue = () => render({defaultValue: {start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 12)}, minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)});
+
+DefaultValueMinValueMaxValue.story = {
+  name: 'defaultValue + minValue + maxValue'
+};
+
+export const IsDisabled = () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, isDisabled: true});
+
+IsDisabled.story = {
+  name: 'isDisabled'
+};
+
+export const IsReadOnly = () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, isReadOnly: true});
+
+IsReadOnly.story = {
+  name: 'isReadOnly'
+};
+
+export const AutoFocus = () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, autoFocus: true});
+
+AutoFocus.story = {
+  name: 'autoFocus'
+};
+
+export const VisibleMonths2 = () => render({visibleMonths: 2});
+
+VisibleMonths2.story = {
+  name: 'visibleMonths: 2'
+};
+
+export const VisibleMonths3 = () => render({visibleMonths: 3});
+
+VisibleMonths3.story = {
+  name: 'visibleMonths: 3'
+};
+
+export const MinValueTodayVisibleMonths3 = () => render({minValue: today(getLocalTimeZone()), visibleMonths: 3});
+
+MinValueTodayVisibleMonths3.story = {
+  name: 'minValue: today, visibleMonths: 3'
+};
+
+export const DefaultValueVisibleMonths3 = () => render({visibleMonths: 3, defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 12, 10)}});
+
+DefaultValueVisibleMonths3.story = {
+  name: 'defaultValue, visibleMonths: 3'
+};
 
 function render(props = {}) {
   return <RangeCalendar onChange={action('change')} {...props} />;

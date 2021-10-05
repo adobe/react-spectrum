@@ -13,59 +13,123 @@
 import {action} from '@storybook/addon-actions';
 import {Link} from '../';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Link', module)
-  .addParameters({providerSwitcher: {status: 'notice'}})
-  .add(
-    'Default',
-    () => render({onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'variant: secondary',
-    () => render({variant: 'secondary', onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'variant: overBackground',
-    () => (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
-        {render({variant: 'overBackground', onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})}
-      </div>
-    )
-  )
-  .add(
-    'isQuiet: true',
-    () => render({isQuiet: true, onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'isQuiet: true, variant: secondary',
-    () => render({isQuiet: true, variant: 'secondary', onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'children: a',
-    () => renderWithChildren({onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'onPress',
-    () => render({onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'onClick',
-    () => render({onClick: action('deprecatedOnClick'), onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  );
+export default {
+  title: 'Link',
+
+  parameters: {
+    providerSwitcher: {status: 'notice'}
+  }
+};
+
+export const Default = () =>
+  render({
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend')
+  });
+export const VariantSecondary = () =>
+  render({
+    variant: 'secondary',
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend')
+  });
+
+VariantSecondary.story = {
+  name: 'variant: secondary'
+};
+
+export const VariantOverBackground = () => (
+  <div
+    style={{
+      backgroundColor: 'rgb(15, 121, 125)',
+      color: 'rgb(15, 121, 125)',
+      padding: '15px 20px',
+      display: 'inline-block'
+    }}>
+    {render({
+      variant: 'overBackground',
+      onPress: action('press'),
+      onPressStart: action('pressstart'),
+      onPressEnd: action('pressend')
+    })}
+  </div>
+);
+
+VariantOverBackground.story = {
+  name: 'variant: overBackground'
+};
+
+export const IsQuietTrue = () =>
+  render({
+    isQuiet: true,
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend')
+  });
+
+IsQuietTrue.story = {
+  name: 'isQuiet: true'
+};
+
+export const IsQuietTrueVariantSecondary = () =>
+  render({
+    isQuiet: true,
+    variant: 'secondary',
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend')
+  });
+
+IsQuietTrueVariantSecondary.story = {
+  name: 'isQuiet: true, variant: secondary'
+};
+
+export const ChildrenA = () =>
+  renderWithChildren({
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend')
+  });
+
+ChildrenA.story = {
+  name: 'children: a'
+};
+
+export const OnPress = () =>
+  render({
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend')
+  });
+
+OnPress.story = {
+  name: 'onPress'
+};
+
+export const OnClick = () =>
+  render({
+    onClick: action('deprecatedOnClick'),
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend')
+  });
+
+OnClick.story = {
+  name: 'onClick'
+};
 
 function render(props = {}) {
-  return (
-    <Link {...props}>
-      This is a React Spectrum Link
-    </Link>
-  );
+  return <Link {...props}>This is a React Spectrum Link</Link>;
 }
 
 function renderWithChildren(props = {}) {
   return (
     <Link {...props}>
-      <a href="//example.com" target="_self">This is a React Spectrum Link</a>
+      <a href="//example.com" target="_self">
+        This is a React Spectrum Link
+      </a>
     </Link>
   );
 }

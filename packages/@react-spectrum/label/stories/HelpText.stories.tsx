@@ -13,136 +13,199 @@
 import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
 import {SpectrumTextFieldProps} from '@react-types/textfield';
-import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
-storiesOf('HelpText', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'description',
-    () => render({description: 'Password must be at least 8 characters.'})
-  )
-  .add(
-    'error message',
-    () => render({errorMessage: 'Create a password with at least 8 characters.', validationState: 'invalid'})
-  )
-  .add(
-    'description and error message',
-    () => {
-      let [value, setValue] = useState('');
+export default {
+  title: 'HelpText',
 
-      return (
-        <TextField
-          label="Empty field"
-          description="This input is only valid when it's empty."
-          errorMessage="Remove input."
-          value={value}
-          onChange={setValue}
-          validationState={value.length ? 'invalid' : undefined} />
-      );
-    }
-  )
-  .add(
-    'description, validationState: valid',
-    () => render({
-      label: 'Nickname',
-      description: 'Enter your nickname, or leave blank if you don\'t have one.',
-      validationState: 'valid'
-    })
-  )
-  .add(
-    'description and error message, validationState: valid',
-    () => render({
-      label: 'Valid field',
-      description: 'The error message will never render because validationState is "valid".',
-      errorMessage: 'Uninformative error message', // Won't render
-      validationState: 'valid'
-    })
-  )
-  .add(
-    'disabled',
-    () => render({description: 'Password must be at least 8 characters.', isDisabled: true})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({
-      description: 'Password must be at least 8 characters.',
-      labelAlign: 'end'
-    })
-  )
-  .add(
-    'labelPosition: side',
-    () => render({
-      description: 'Password must be at least 8 characters.',
-      labelPosition: 'side'
-    })
-  )
-  .add(
-    'labelAlign: end, labelPosition: side',
-    () => render({
-      description: 'Password must be at least 8 characters.',
-      labelAlign: 'end',
-      labelPosition: 'side'
-    })
-  )
-  .add(
-    'no visible label',
-    () => render({
-      label: null,
-      'aria-label': 'Password',
-      description: 'Password must be at least 8 characters.'
-    })
-  )
-  .add(
-    'no visible label, labelPosition: side',
-    () => render({
-      label: null,
-      'aria-label': 'Password',
-      description: 'Password must be at least 8 characters.',
-      labelPosition: 'side'
-    })
-  )
-  .add(
-    'custom width',
-    () => render({
-      label: 'Password',
-      description: 'Password must be at least 8 characters.',
-      width: '100px'
-    })
-  )
-  .add(
-    'custom width, labelPosition: side',
-    () => render({
-      label: 'Password',
-      description: 'Password must be at least 8 characters.',
-      width: '440px',
-      labelPosition: 'side'
-    })
-  )
-  .add(
-    'description and custom description',
-    () => renderCustomDescription({description: 'Password must be at least 8 characters.'})
-  )
-  .add(
-    'container with text alignment set',
-    () => (
-      <Flex direction="column" gap="size-200" UNSAFE_style={{textAlign: 'center'}}>
-        <TextField label="Password" description="Enter a single digit number." />
-        <TextField label="Password 2" errorMessage="Create a password with at least 8 characters." validationState="invalid" />
-      </Flex>
-    )
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const Description = () =>
+  render({description: 'Password must be at least 8 characters.'});
+
+Description.story = {
+  name: 'description'
+};
+
+export const ErrorMessage = () =>
+  render({
+    errorMessage: 'Create a password with at least 8 characters.',
+    validationState: 'invalid'
+  });
+
+ErrorMessage.story = {
+  name: 'error message'
+};
+
+export const DescriptionAndErrorMessage = () => {
+  let [value, setValue] = useState('');
+
+  return (
+    <TextField
+      label="Empty field"
+      description="This input is only valid when it's empty."
+      errorMessage="Remove input."
+      value={value}
+      onChange={setValue}
+      validationState={value.length ? 'invalid' : undefined} />
   );
+};
+
+DescriptionAndErrorMessage.story = {
+  name: 'description and error message'
+};
+
+export const DescriptionValidationStateValid = () =>
+  render({
+    label: 'Nickname',
+    description: "Enter your nickname, or leave blank if you don't have one.",
+    validationState: 'valid'
+  });
+
+DescriptionValidationStateValid.story = {
+  name: 'description, validationState: valid'
+};
+
+export const DescriptionAndErrorMessageValidationStateValid = () =>
+  render({
+    label: 'Valid field',
+    description:
+      'The error message will never render because validationState is "valid".',
+    errorMessage: 'Uninformative error message', // Won't render
+    validationState: 'valid'
+  });
+
+DescriptionAndErrorMessageValidationStateValid.story = {
+  name: 'description and error message, validationState: valid'
+};
+
+export const Disabled = () =>
+  render({
+    description: 'Password must be at least 8 characters.',
+    isDisabled: true
+  });
+
+Disabled.story = {
+  name: 'disabled'
+};
+
+export const LabelAlignEnd = () =>
+  render({
+    description: 'Password must be at least 8 characters.',
+    labelAlign: 'end'
+  });
+
+LabelAlignEnd.story = {
+  name: 'labelAlign: end'
+};
+
+export const LabelPositionSide = () =>
+  render({
+    description: 'Password must be at least 8 characters.',
+    labelPosition: 'side'
+  });
+
+LabelPositionSide.story = {
+  name: 'labelPosition: side'
+};
+
+export const LabelAlignEndLabelPositionSide = () =>
+  render({
+    description: 'Password must be at least 8 characters.',
+    labelAlign: 'end',
+    labelPosition: 'side'
+  });
+
+LabelAlignEndLabelPositionSide.story = {
+  name: 'labelAlign: end, labelPosition: side'
+};
+
+export const NoVisibleLabel = () =>
+  render({
+    label: null,
+    'aria-label': 'Password',
+    description: 'Password must be at least 8 characters.'
+  });
+
+NoVisibleLabel.story = {
+  name: 'no visible label'
+};
+
+export const NoVisibleLabelLabelPositionSide = () =>
+  render({
+    label: null,
+    'aria-label': 'Password',
+    description: 'Password must be at least 8 characters.',
+    labelPosition: 'side'
+  });
+
+NoVisibleLabelLabelPositionSide.story = {
+  name: 'no visible label, labelPosition: side'
+};
+
+export const CustomWidth = () =>
+  render({
+    label: 'Password',
+    description: 'Password must be at least 8 characters.',
+    width: '100px'
+  });
+
+CustomWidth.story = {
+  name: 'custom width'
+};
+
+export const CustomWidthLabelPositionSide = () =>
+  render({
+    label: 'Password',
+    description: 'Password must be at least 8 characters.',
+    width: '440px',
+    labelPosition: 'side'
+  });
+
+CustomWidthLabelPositionSide.story = {
+  name: 'custom width, labelPosition: side'
+};
+
+export const DescriptionAndCustomDescription = () =>
+  renderCustomDescription({
+    description: 'Password must be at least 8 characters.'
+  });
+
+DescriptionAndCustomDescription.story = {
+  name: 'description and custom description'
+};
+
+export const ContainerWithTextAlignmentSet = () => (
+  <Flex
+    direction="column"
+    gap="size-200"
+    UNSAFE_style={{textAlign: 'center'}}>
+    <TextField label="Password" description="Enter a single digit number." />
+    <TextField
+      label="Password 2"
+      errorMessage="Create a password with at least 8 characters."
+      validationState="invalid" />
+  </Flex>
+);
+
+ContainerWithTextAlignmentSet.story = {
+  name: 'container with text alignment set'
+};
 
 function render(props: SpectrumTextFieldProps = {}) {
-  return (
-    <TextField label="Password" {...props} />
-  );
+  return <TextField label="Password" {...props} />;
 }
 
 function renderCustomDescription(props: SpectrumTextFieldProps = {}) {
   return (
     <Flex direction="column" gap="size-125">
-      <TextField label="Password" {...props} aria-describedby="custom-description" />
+      <TextField
+        label="Password"
+        {...props}
+        aria-describedby="custom-description" />
       <p id="custom-description">Custom description.</p>
     </Flex>
   );

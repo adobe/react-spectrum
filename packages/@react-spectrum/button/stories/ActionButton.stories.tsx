@@ -15,70 +15,88 @@ import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
 
-storiesOf('Button/ActionButton', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'default',
-    () => render()
-  )
-  .add(
-    'icon',
-    () => renderWithIcon()
-  )
-  .add(
-    'icon only',
-    () => (
-      <Flex gap="size-100">
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}>
-          <Add />
-        </ActionButton>
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled>
-          <Add />
-        </ActionButton>
-      </Flex>
-    )
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'autoFocus',
-    () => render({autoFocus: true})
-  )
-  .add(
-    'staticColor: white',
-    () => (
-      <View backgroundColor="static-seafoam-600" padding="size-1000">
-        <Flex direction="column" rowGap="size-150">
-          {renderWithIcon({staticColor: 'white'})}
-          {renderWithIcon({staticColor: 'white', isQuiet: true})}
-        </Flex>
-      </View>
-    )
-  )
-  .add(
-    'staticColor: black',
-    () => (
-      <View backgroundColor="static-yellow-400" padding="size-1000">
-        <Flex direction="column" rowGap="size-150">
-          {renderWithIcon({staticColor: 'black'})}
-          {renderWithIcon({staticColor: 'black', isQuiet: true})}
-        </Flex>
-      </View>
-    )
-  );
+export default {
+  title: 'Button/ActionButton',
+
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const Default = () => render();
+
+Default.story = {
+  name: 'default'
+};
+
+export const Icon = () => renderWithIcon();
+
+Icon.story = {
+  name: 'icon'
+};
+
+export const IconOnly = () => (
+  <Flex gap="size-100">
+    <ActionButton
+      onPress={action('press')}
+      onPressStart={action('pressstart')}
+      onPressEnd={action('pressend')}>
+      <Add />
+    </ActionButton>
+    <ActionButton
+      onPress={action('press')}
+      onPressStart={action('pressstart')}
+      onPressEnd={action('pressend')}
+      isDisabled>
+      <Add />
+    </ActionButton>
+  </Flex>
+);
+
+IconOnly.story = {
+  name: 'icon only'
+};
+
+export const IsQuiet = () => render({isQuiet: true});
+
+IsQuiet.story = {
+  name: 'isQuiet'
+};
+
+export const AutoFocus = () => render({autoFocus: true});
+
+AutoFocus.story = {
+  name: 'autoFocus'
+};
+
+export const StaticColorWhite = () => (
+  <View backgroundColor="static-seafoam-600" padding="size-1000">
+    <Flex direction="column" rowGap="size-150">
+      {renderWithIcon({staticColor: 'white'})}
+      {renderWithIcon({staticColor: 'white', isQuiet: true})}
+    </Flex>
+  </View>
+);
+
+StaticColorWhite.story = {
+  name: 'staticColor: white'
+};
+
+export const StaticColorBlack = () => (
+  <View backgroundColor="static-yellow-400" padding="size-1000">
+    <Flex direction="column" rowGap="size-150">
+      {renderWithIcon({staticColor: 'black'})}
+      {renderWithIcon({staticColor: 'black', isQuiet: true})}
+    </Flex>
+  </View>
+);
+
+StaticColorBlack.story = {
+  name: 'staticColor: black'
+};
 
 function render(props = {}) {
   return (

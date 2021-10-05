@@ -12,30 +12,43 @@
 
 import {Button} from '@react-spectrum/button';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {View} from '../';
 
-storiesOf('View', module)
-  .add(
-    'name me',
-    () => (
-      <div style={{display: 'flex'}}>
-        <View 
-          backgroundColor="negative"
-          width="single-line-width"
-          height="size-500"
-          elementType="span" />
-        <View 
-          backgroundColor="positive"
-          width="size-500"
-          height="size-500"
-          marginStart="size-250"
-          borderColor="default"
-          borderWidth="thin" />
-        <Button variant="primary" marginStart="size-250">Test</Button>
-      </div>
-    )
-  )
-  .add('dimension functions', () => (
-    <View width="calc(100px + size-250)" height="single-line-height" backgroundColor="blue-400" />
-  ));
+export default {
+  title: 'View'
+};
+
+export const NameMe = () => (
+  <div style={{display: 'flex'}}>
+    <View
+      backgroundColor="negative"
+      width="single-line-width"
+      height="size-500"
+      elementType="span" />
+    <View
+      backgroundColor="positive"
+      width="size-500"
+      height="size-500"
+      marginStart="size-250"
+      borderColor="default"
+      borderWidth="thin" />
+    <Button variant="primary" marginStart="size-250">
+      Test
+    </Button>
+  </div>
+);
+
+NameMe.story = {
+  name: 'name me'
+};
+
+export const DimensionFunctions = () => (
+  <View
+    width="calc(100px + size-250)"
+    height="single-line-height"
+    backgroundColor="blue-400" />
+);
+
+DimensionFunctions.story = {
+  name: 'dimension functions'
+};

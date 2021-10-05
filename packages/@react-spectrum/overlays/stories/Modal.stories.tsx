@@ -18,18 +18,26 @@ import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
 import {Modal} from '../';
 import React, {Fragment, useState} from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Modal', module)
-  .addParameters({providerSwitcher: {status: 'notice'}})
-  .add(
-    'default',
-    () => <ModalExample />
-  )
-  .add(
-    'unmounting trigger',
-    () => <UnmountingTrigger />
-  );
+export default {
+  title: 'Modal',
+
+  parameters: {
+    providerSwitcher: {status: 'notice'}
+  }
+};
+
+export const Default = () => <ModalExample />;
+
+Default.story = {
+  name: 'default'
+};
+
+export const _UnmountingTrigger = () => <UnmountingTrigger />;
+
+_UnmountingTrigger.story = {
+  name: 'unmounting trigger'
+};
 
 function ModalExample() {
   let [isOpen, setOpen] = useState(false);
@@ -41,8 +49,14 @@ function ModalExample() {
         <Dialog>
           <Heading>Title</Heading>
           <Divider />
-          <Content><Text>I am a dialog</Text></Content>
-          <ButtonGroup><Button variant="cta" onPress={() => setOpen(false)}>Close</Button></ButtonGroup>
+          <Content>
+            <Text>I am a dialog</Text>
+          </Content>
+          <ButtonGroup>
+            <Button variant="cta" onPress={() => setOpen(false)}>
+              Close
+            </Button>
+          </ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>
@@ -61,21 +75,34 @@ function UnmountingTrigger() {
   // Ideally this would be a menu, but we don't have those implemented yet...
   return (
     <Fragment>
-      <DialogTrigger type="popover" isOpen={isPopoverOpen} onOpenChange={setPopoverOpen}>
+      <DialogTrigger
+        type="popover"
+        isOpen={isPopoverOpen}
+        onOpenChange={setPopoverOpen}>
         <ActionButton>Open popover</ActionButton>
         <Dialog>
           <Heading>Title</Heading>
           <Divider />
-          <Content><Text>I am a dialog</Text></Content>
-          <ButtonGroup><ActionButton onPress={openModal}>Open modal</ActionButton></ButtonGroup>
+          <Content>
+            <Text>I am a dialog</Text>
+          </Content>
+          <ButtonGroup>
+            <ActionButton onPress={openModal}>Open modal</ActionButton>
+          </ButtonGroup>
         </Dialog>
       </DialogTrigger>
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
         <Dialog>
           <Heading>Title</Heading>
           <Divider />
-          <Content><Text>I am a dialog</Text></Content>
-          <ButtonGroup><Button variant="cta" onPress={() => setModalOpen(false)}>Close</Button></ButtonGroup>
+          <Content>
+            <Text>I am a dialog</Text>
+          </Content>
+          <ButtonGroup>
+            <Button variant="cta" onPress={() => setModalOpen(false)}>
+              Close
+            </Button>
+          </ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>

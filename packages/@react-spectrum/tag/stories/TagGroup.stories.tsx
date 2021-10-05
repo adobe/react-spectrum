@@ -12,34 +12,50 @@
 
 import {action} from '@storybook/addon-actions';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
 import {Tag, TagGroup} from '../src';
 
-storiesOf('TagGroup', module)
-  .add(
-    'default',
-    () => render({})
-  ).add(
-    'onRemove',
-    () => renderWithRemovableTags({
-      onRemove: action('onRemove')
-    })
-  ).add(
-    'is Disabled',
-    () => render({
-      isDisabled: true
-    })
-  ).add(
-    'isReadOnly',
-    () => renderWithRemovableTags({
-      isReadOnly: true
-    })
-  ).add(
-    'with announcing',
-    () => (
-      <WithAnnouncing />
-    )
-  );
+export default {
+  title: 'TagGroup'
+};
+
+export const Default = () => render({});
+
+Default.story = {
+  name: 'default'
+};
+
+export const OnRemove = () =>
+  renderWithRemovableTags({
+    onRemove: action('onRemove')
+  });
+
+OnRemove.story = {
+  name: 'onRemove'
+};
+
+export const IsDisabled = () =>
+  render({
+    isDisabled: true
+  });
+
+IsDisabled.story = {
+  name: 'is Disabled'
+};
+
+export const IsReadOnly = () =>
+  renderWithRemovableTags({
+    isReadOnly: true
+  });
+
+IsReadOnly.story = {
+  name: 'isReadOnly'
+};
+
+export const _WithAnnouncing = () => <WithAnnouncing />;
+
+_WithAnnouncing.story = {
+  name: 'with announcing'
+};
 
 function render(props: any = {}) {
   return (
@@ -75,7 +91,9 @@ function WithAnnouncing() {
       {/*
         // @ts-ignore */}
       <TagGroup onKeyDown={handleKeyDown}>
-        {tags.map((t, index) => <Tag key={index}>{t}</Tag>)}
+        {tags.map((t, index) => (
+          <Tag key={index}>{t}</Tag>
+        ))}
       </TagGroup>
     </React.Fragment>
   );

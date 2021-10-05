@@ -13,22 +13,38 @@
 import {action} from '@storybook/addon-actions';
 import {Example} from './Example';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {useViewportSize} from '@react-aria/utils';
 
-storiesOf('ActionBar', module)
-  .add(
-    'default',
-    () => <Example onAction={action('onAction')} />
-  )
-  .add(
-    'isEmphasized',
-    () => <Example isEmphasized onAction={action('onAction')} />
-  )
-  .add(
-    'full width',
-    () => {
-      let viewport = useViewportSize();
-      return <Example isEmphasized tableWidth="100vw" containerHeight={viewport.height} isQuiet onAction={action('onAction')} />;
-    }
+export default {
+  title: 'ActionBar'
+};
+
+export const Default = () => <Example onAction={action('onAction')} />;
+
+Default.story = {
+  name: 'default'
+};
+
+export const IsEmphasized = () => (
+  <Example isEmphasized onAction={action('onAction')} />
+);
+
+IsEmphasized.story = {
+  name: 'isEmphasized'
+};
+
+export const FullWidth = () => {
+  let viewport = useViewportSize();
+  return (
+    <Example
+      isEmphasized
+      tableWidth="100vw"
+      containerHeight={viewport.height}
+      isQuiet
+      onAction={action('onAction')} />
   );
+};
+
+FullWidth.story = {
+  name: 'full width'
+};

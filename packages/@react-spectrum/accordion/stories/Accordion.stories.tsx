@@ -12,28 +12,46 @@
 
 import {Accordion, Item} from '../src';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Accordion', module)
-  .add(
-    'default',
-    () => render({})
-  )
-  .add(
-    'disabledKeys: files, shared',
-    () => render({disabledKeys: ['files', 'shared']})
-  )
-  .add('defaultExpandedKeys: files', () => render({
+export default {
+  title: 'Accordion'
+};
+
+export const Default = () => render({});
+
+Default.story = {
+  name: 'default'
+};
+
+export const DisabledKeysFilesShared = () =>
+  render({disabledKeys: ['files', 'shared']});
+
+DisabledKeysFilesShared.story = {
+  name: 'disabledKeys: files, shared'
+};
+
+export const DefaultExpandedKeysFiles = () =>
+  render({
     defaultExpandedKeys: ['files']
-  }))
-  .add('disabledKeys: files, shared, defaultExpandedKeys: files', () => render({
+  });
+
+DefaultExpandedKeysFiles.story = {
+  name: 'defaultExpandedKeys: files'
+};
+
+export const DisabledKeysFilesSharedDefaultExpandedKeysFiles = () =>
+  render({
     defaultExpandedKeys: ['files'],
     disabledKeys: ['files', 'shared']
-  }));
+  });
+
+DisabledKeysFilesSharedDefaultExpandedKeysFiles.story = {
+  name: 'disabledKeys: files, shared, defaultExpandedKeys: files'
+};
 
 function render(props = {}) {
   return (
-    <Accordion {...props} >
+    <Accordion {...props}>
       <Item key="files" title="Your files">
         files
       </Item>

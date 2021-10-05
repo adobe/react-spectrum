@@ -12,53 +12,99 @@
 
 import React from 'react';
 import {StatusLight} from '../';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('StatusLight', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'variant: celery',
-    () => render({variant: 'celery'})
-  ).add(
-    'variant: yellow',
-    () => render({variant: 'yellow'})
-  ).add(
-    'variant: fuchsia',
-    () => render({variant: 'fuchsia'})
-  ).add(
-    'variant: indigo',
-    () => render({variant: 'indigo'})
-  ).add(
-    'variant: seafoam',
-    () => render({variant: 'seafoam'})
-  ).add(
-    'variant: chartreuse',
-    () => render({variant: 'chartreuse'})
-  ).add(
-    'variant: magenta',
-    () => render({variant: 'magenta'})
-  ).add(
-    'variant: purple',
-    () => render({variant: 'purple'})
-  ).add(
-    'variant: neutral',
-    () => render({variant: 'neutral'})
-  ).add(
-    'variant: info',
-    () => render({variant: 'info'})
-  ).add(
-    'variant: positive',
-    () => render({variant: 'positive'})
-  ).add(
-    'variant: notice',
-    () => render({variant: 'notice'})
-  ).add(
-    'variant: negative',
-    () => render({variant: 'negative'})
-  ).add(
-    'isDisabled: true',
-    () => render({variant: 'positive', isDisabled: true})
-  );
+export default {
+  title: 'StatusLight',
+
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const VariantCelery = () => render({variant: 'celery'});
+
+VariantCelery.story = {
+  name: 'variant: celery'
+};
+
+export const VariantYellow = () => render({variant: 'yellow'});
+
+VariantYellow.story = {
+  name: 'variant: yellow'
+};
+
+export const VariantFuchsia = () => render({variant: 'fuchsia'});
+
+VariantFuchsia.story = {
+  name: 'variant: fuchsia'
+};
+
+export const VariantIndigo = () => render({variant: 'indigo'});
+
+VariantIndigo.story = {
+  name: 'variant: indigo'
+};
+
+export const VariantSeafoam = () => render({variant: 'seafoam'});
+
+VariantSeafoam.story = {
+  name: 'variant: seafoam'
+};
+
+export const VariantChartreuse = () => render({variant: 'chartreuse'});
+
+VariantChartreuse.story = {
+  name: 'variant: chartreuse'
+};
+
+export const VariantMagenta = () => render({variant: 'magenta'});
+
+VariantMagenta.story = {
+  name: 'variant: magenta'
+};
+
+export const VariantPurple = () => render({variant: 'purple'});
+
+VariantPurple.story = {
+  name: 'variant: purple'
+};
+
+export const VariantNeutral = () => render({variant: 'neutral'});
+
+VariantNeutral.story = {
+  name: 'variant: neutral'
+};
+
+export const VariantInfo = () => render({variant: 'info'});
+
+VariantInfo.story = {
+  name: 'variant: info'
+};
+
+export const VariantPositive = () => render({variant: 'positive'});
+
+VariantPositive.story = {
+  name: 'variant: positive'
+};
+
+export const VariantNotice = () => render({variant: 'notice'});
+
+VariantNotice.story = {
+  name: 'variant: notice'
+};
+
+export const VariantNegative = () => render({variant: 'negative'});
+
+VariantNegative.story = {
+  name: 'variant: negative'
+};
+
+export const IsDisabledTrue = () =>
+  render({variant: 'positive', isDisabled: true});
+
+IsDisabledTrue.story = {
+  name: 'isDisabled: true'
+};
 
 function render(props: any = {}) {
   return <StatusLight {...props}>Status light of love</StatusLight>;

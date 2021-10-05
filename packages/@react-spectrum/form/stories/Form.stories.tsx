@@ -26,117 +26,186 @@ import React, {Key, useEffect, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '@react-spectrum/searchwithin';
 import {StatusLight} from '@react-spectrum/statuslight';
-import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
-storiesOf('Form', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'Default',
-    () => render({})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'custom width',
-    () => render({width: 400})
-  )
-  .add(
-    'custom width, labelPosition: side',
-    () => render({width: 400, labelPosition: 'side'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({width: 400, labelAlign: 'end'})
-  )
-  .add(
-    'labelPosition: side, labelAlign: end',
-    () => render({width: 400, labelPosition: 'side', labelAlign: 'end'})
-  )
-  .add(
-    'fields next to each other',
-    () => (
-      <Form>
-        <Flex>
-          <TextField label="First Name" placeholder="John" marginEnd="size-100" flex={1} description="Please enter your first name." />
-          <TextField label="Last Name" placeholder="Smith" flex={1} description="Please enter your last name." />
-        </Flex>
-        <TextField label="Street Address" placeholder="123 Any Street" description="Please include apartment or suite number." />
-        <Flex>
-          <TextField label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} description="Please enter the city you live in." />
-          <Picker label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
-            {item => <Item key={item.abbr}>{item.name}</Item>}
-          </Picker>
-          <TextField label="Zip code" placeholder="12345" flex={1} description="Please enter a five-digit zip code." />
-        </Flex>
-      </Form>
-    )
-  )
-  .add(
-    'isRequired: true',
-    () => render({isRequired: true})
-  )
-  .add(
-    'isRequired: true, necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'isRequired: false, necessityIndicator: label',
-    () => render({isRequired: false, necessityIndicator: 'label'})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'isQuiet, labelPosition: side',
-    () => render({isQuiet: true, labelPosition: 'side'})
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'validationState: invalid',
-    () => render({validationState: 'invalid'})
-  )
-  .add(
-    'validationState: valid',
-    () => render({validationState: 'valid'})
-  )
-  .add(
-    'form with reset',
-    () => <FormWithControls />
-  )
-  .add(
-    'form with submit',
-    () => <FormWithSubmit />
-  )
-  .add(
-    'form with numberfield and locale=ar-AE',
-    () => (
-      <Flex gap="size-100">
-        <NumberField label="Outside form" />
-        <Form>
-          <NumberField label="Inside form" />
-        </Form>
-        <Form>
-          <TextField label="First Name" placeholder="John" />
-        </Form>
-        <Form>
-          <TextField label="First Name" placeholder="John" />
-          <NumberField label="Inside form" />
-        </Form>
-      </Flex>
-    )
-  );
+export default {
+  title: 'Form',
+
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const Default = () => render({});
+export const LabelPositionSide = () => render({labelPosition: 'side'});
+
+LabelPositionSide.story = {
+  name: 'labelPosition: side'
+};
+
+export const CustomWidth = () => render({width: 400});
+
+CustomWidth.story = {
+  name: 'custom width'
+};
+
+export const CustomWidthLabelPositionSide = () =>
+  render({width: 400, labelPosition: 'side'});
+
+CustomWidthLabelPositionSide.story = {
+  name: 'custom width, labelPosition: side'
+};
+
+export const LabelAlignEnd = () => render({width: 400, labelAlign: 'end'});
+
+LabelAlignEnd.story = {
+  name: 'labelAlign: end'
+};
+
+export const LabelPositionSideLabelAlignEnd = () =>
+  render({width: 400, labelPosition: 'side', labelAlign: 'end'});
+
+LabelPositionSideLabelAlignEnd.story = {
+  name: 'labelPosition: side, labelAlign: end'
+};
+
+export const FieldsNextToEachOther = () => (
+  <Form>
+    <Flex>
+      <TextField
+        label="First Name"
+        placeholder="John"
+        marginEnd="size-100"
+        flex={1}
+        description="Please enter your first name." />
+      <TextField
+        label="Last Name"
+        placeholder="Smith"
+        flex={1}
+        description="Please enter your last name." />
+    </Flex>
+    <TextField
+      label="Street Address"
+      placeholder="123 Any Street"
+      description="Please include apartment or suite number." />
+    <Flex>
+      <TextField
+        label="City"
+        placeholder="San Francisco"
+        marginEnd="size-100"
+        flex={1}
+        description="Please enter the city you live in." />
+      <Picker
+        label="State"
+        placeholder="Select a state"
+        items={states}
+        marginEnd="size-100"
+        flex={1}>
+        {(item) => <Item key={item.abbr}>{item.name}</Item>}
+      </Picker>
+      <TextField
+        label="Zip code"
+        placeholder="12345"
+        flex={1}
+        description="Please enter a five-digit zip code." />
+    </Flex>
+  </Form>
+);
+
+FieldsNextToEachOther.story = {
+  name: 'fields next to each other'
+};
+
+export const IsRequiredTrue = () => render({isRequired: true});
+
+IsRequiredTrue.story = {
+  name: 'isRequired: true'
+};
+
+export const IsRequiredTrueNecessityIndicatorLabel = () =>
+  render({isRequired: true, necessityIndicator: 'label'});
+
+IsRequiredTrueNecessityIndicatorLabel.story = {
+  name: 'isRequired: true, necessityIndicator: label'
+};
+
+export const IsRequiredFalseNecessityIndicatorLabel = () =>
+  render({isRequired: false, necessityIndicator: 'label'});
+
+IsRequiredFalseNecessityIndicatorLabel.story = {
+  name: 'isRequired: false, necessityIndicator: label'
+};
+
+export const IsDisabled = () => render({isDisabled: true});
+
+IsDisabled.story = {
+  name: 'isDisabled'
+};
+
+export const IsQuiet = () => render({isQuiet: true});
+
+IsQuiet.story = {
+  name: 'isQuiet'
+};
+
+export const IsQuietLabelPositionSide = () =>
+  render({isQuiet: true, labelPosition: 'side'});
+
+IsQuietLabelPositionSide.story = {
+  name: 'isQuiet, labelPosition: side'
+};
+
+export const IsEmphasized = () => render({isEmphasized: true});
+
+IsEmphasized.story = {
+  name: 'isEmphasized'
+};
+
+export const ValidationStateInvalid = () =>
+  render({validationState: 'invalid'});
+
+ValidationStateInvalid.story = {
+  name: 'validationState: invalid'
+};
+
+export const ValidationStateValid = () => render({validationState: 'valid'});
+
+ValidationStateValid.story = {
+  name: 'validationState: valid'
+};
+
+export const FormWithReset = () => <FormWithControls />;
+
+FormWithReset.story = {
+  name: 'form with reset'
+};
+
+export const _FormWithSubmit = () => <FormWithSubmit />;
+
+_FormWithSubmit.story = {
+  name: 'form with submit'
+};
+
+export const FormWithNumberfieldAndLocaleArAe = () => (
+  <Flex gap="size-100">
+    <NumberField label="Outside form" />
+    <Form>
+      <NumberField label="Inside form" />
+    </Form>
+    <Form>
+      <TextField label="First Name" placeholder="John" />
+    </Form>
+    <Form>
+      <TextField label="First Name" placeholder="John" />
+      <NumberField label="Inside form" />
+    </Form>
+  </Flex>
+);
+
+FormWithNumberfieldAndLocaleArAe.story = {
+  name: 'form with numberfield and locale=ar-AE'
+};
 
 function render(props: any = {}) {
   return (
@@ -154,12 +223,15 @@ function render(props: any = {}) {
       </ComboBox>
       <NumberField label="Years lived there" />
       <Picker label="State" placeholder="Select a state" items={states}>
-        {item => <Item key={item.abbr}>{item.name}</Item>}
+        {(item) => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
       <Picker label="Country" placeholder="Select a country" items={countries}>
-        {item => <Item key={item.name}>{item.name}</Item>}
+        {(item) => <Item key={item.name}>{item.name}</Item>}
       </Picker>
-      <Picker label="Favorite color" description="Select any color you like." errorMessage="Please select a nicer color.">
+      <Picker
+        label="Favorite color"
+        description="Select any color you like."
+        errorMessage="Please select a nicer color.">
         <Item>Red</Item>
         <Item>Orange</Item>
         <Item>Yellow</Item>
@@ -176,13 +248,21 @@ function render(props: any = {}) {
       <SearchWithin label="Search cities">
         <SearchField placeholder="City" />
         <Picker label="State" placeholder="Select a state" items={states}>
-          {item => <Item key={item.abbr}>{item.name}</Item>}
+          {(item) => <Item key={item.abbr}>{item.name}</Item>}
         </Picker>
       </SearchWithin>
       <Switch>Low power mode</Switch>
-      <TextArea label="Comments" placeholder="How do you feel?" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <TextArea
+        label="Comments"
+        placeholder="How do you feel?"
+        description="Express yourself!"
+        errorMessage="No wrong answers, except for this one." />
       <TextField label="City" placeholder="San Francisco" />
-      <TextField label="Zip code" placeholder="12345" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
+      <TextField
+        label="Zip code"
+        placeholder="12345"
+        description="Please enter a five-digit zip code."
+        errorMessage="Please remove letters and special characters." />
     </Form>
   );
 }
@@ -203,34 +283,67 @@ function FormWithControls(props: any = {}) {
 
   return (
     <Flex>
-      <Checkbox isSelected={preventDefault} onChange={setPreventDefault}>Prevent Default onSubmit</Checkbox>
+      <Checkbox isSelected={preventDefault} onChange={setPreventDefault}>
+        Prevent Default onSubmit
+      </Checkbox>
       <Form
-        onSubmit={e => {
+        onSubmit={(e) => {
           action('onSubmit')(e);
           if (preventDefault) {
             e.preventDefault();
           }
         }}
         {...props}>
-        <TextField name="first-name" label="First Name controlled" placeholder="John" value={firstName} onChange={setFirstName} />
-        <TextField name="last-name" label="Last Name default" placeholder="Smith" defaultValue="world" />
-        <TextField name="street-address" label="Street Address none" placeholder="123 Any Street" />
-        <Picker name="country" label="Country none" placeholder="Select a country" items={countries}>
-          {item => <Item key={item.name}>{item.name}</Item>}
+        <TextField
+          name="first-name"
+          label="First Name controlled"
+          placeholder="John"
+          value={firstName}
+          onChange={setFirstName} />
+        <TextField
+          name="last-name"
+          label="Last Name default"
+          placeholder="Smith"
+          defaultValue="world" />
+        <TextField
+          name="street-address"
+          label="Street Address none"
+          placeholder="123 Any Street" />
+        <Picker
+          name="country"
+          label="Country none"
+          placeholder="Select a country"
+          items={countries}>
+          {(item) => <Item key={item.name}>{item.name}</Item>}
         </Picker>
-        <Checkbox name="is-hunter" isSelected={isHunter} onChange={setIsHunter}>I am a hunter! controlled</Checkbox>
-        <Checkbox name="is-wizard" defaultSelected>I am a wizard! default</Checkbox>
-        <RadioGroup label="Favorite pet controlled" name="favorite-pet-group" value={favoritePet} onChange={setFavoritePet}>
+        <Checkbox name="is-hunter" isSelected={isHunter} onChange={setIsHunter}>
+          I am a hunter! controlled
+        </Checkbox>
+        <Checkbox name="is-wizard" defaultSelected>
+          I am a wizard! default
+        </Checkbox>
+        <RadioGroup
+          label="Favorite pet controlled"
+          name="favorite-pet-group"
+          value={favoritePet}
+          onChange={setFavoritePet}>
           <Radio value="dogs">Dogs</Radio>
           <Radio value="cats">Cats</Radio>
           <Radio value="dragons">Dragons</Radio>
         </RadioGroup>
-        <RadioGroup label="Favorite pet none" name="favorite-pet-group2" defaultValue="cats">
+        <RadioGroup
+          label="Favorite pet none"
+          name="favorite-pet-group2"
+          defaultValue="cats">
           <Radio value="dogs">Dogs</Radio>
           <Radio value="cats">Cats</Radio>
           <Radio value="dragons">Dragons</Radio>
         </RadioGroup>
-        <Picker name="favorite-color" label="Favorite color controlled" selectedKey={favoriteColor} onSelectionChange={setFavoriteColor}>
+        <Picker
+          name="favorite-color"
+          label="Favorite color controlled"
+          selectedKey={favoriteColor}
+          onSelectionChange={setFavoriteColor}>
           <Item key="red">Red</Item>
           <Item key="orange">Orange</Item>
           <Item key="yellow">Yellow</Item>
@@ -238,11 +351,24 @@ function FormWithControls(props: any = {}) {
           <Item key="blue">Blue</Item>
           <Item key="purple">Purple</Item>
         </Picker>
-        <TextArea name="comments-controlled" label="Comments" placeholder="How do you feel? controlled" value={howIFeel} onChange={setHowIFeel} />
-        <TextArea name="comments-uncontrolled" label="Comments" placeholder="How do you feel? default" defaultValue="hello" />
+        <TextArea
+          name="comments-controlled"
+          label="Comments"
+          placeholder="How do you feel? controlled"
+          value={howIFeel}
+          onChange={setHowIFeel} />
+        <TextArea
+          name="comments-uncontrolled"
+          label="Comments"
+          placeholder="How do you feel? default"
+          defaultValue="hello" />
         <SearchWithin label="Search">
           <SearchField placeholder="Search" />
-          <Picker name="favorite-color3" label="Favorite color searchwithin" selectedKey={favoriteColor3} onSelectionChange={setFavoriteColor3}>
+          <Picker
+            name="favorite-color3"
+            label="Favorite color searchwithin"
+            selectedKey={favoriteColor3}
+            onSelectionChange={setFavoriteColor3}>
             <Item key="red">Red</Item>
             <Item key="orange">Orange</Item>
             <Item key="yellow">Yellow</Item>
@@ -252,11 +378,13 @@ function FormWithControls(props: any = {}) {
           </Picker>
         </SearchWithin>
         <ButtonGroup>
-          <Button variant="primary" type="submit">Submit</Button>
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
         </ButtonGroup>
       </Form>
       <form
-        onSubmit={e => {
+        onSubmit={(e) => {
           action('onSubmit')(e);
           if (preventDefault) {
             e.preventDefault();
@@ -266,7 +394,11 @@ function FormWithControls(props: any = {}) {
         <Flex direction="column" gap="size-500" marginTop="size-500">
           <label>
             First Name controlled
-            <input type="text" placeholder="John" value={firstName2} onChange={e => setFirstName2(e.target.value)} />
+            <input
+              type="text"
+              placeholder="John"
+              value={firstName2}
+              onChange={(e) => setFirstName2(e.target.value)} />
           </label>
           <label>
             Last Name default
@@ -279,12 +411,17 @@ function FormWithControls(props: any = {}) {
           <label>
             Country none
             <select name="Country" placeholder="Select a country">
-              {countries.map(item => <option value={item.name}>{item.name}</option>)}
+              {countries.map((item) => (
+                <option value={item.name}>{item.name}</option>
+              ))}
             </select>
           </label>
           <label>
             I am a hunter! controlled
-            <input type="checkbox" checked={isHunter2} onChange={e => setIsHunter2(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={isHunter2}
+              onChange={(e) => setIsHunter2(e.target.checked)} />
           </label>
           <label>
             I am a wizard! default
@@ -294,15 +431,30 @@ function FormWithControls(props: any = {}) {
             Favorite Pet controlled
             <label>
               Dogs
-              <input type="radio" name="favorit-pet-group3" value="dogs" checked={favoritePet2 === 'dogs'} onChange={e => setFavoritePet2(e.target.value)} />
+              <input
+                type="radio"
+                name="favorit-pet-group3"
+                value="dogs"
+                checked={favoritePet2 === 'dogs'}
+                onChange={(e) => setFavoritePet2(e.target.value)} />
             </label>
             <label>
               Cats
-              <input type="radio" name="favorit-pet-group3" value="cats" checked={favoritePet2 === 'cats'} onChange={e => setFavoritePet2(e.target.value)} />
+              <input
+                type="radio"
+                name="favorit-pet-group3"
+                value="cats"
+                checked={favoritePet2 === 'cats'}
+                onChange={(e) => setFavoritePet2(e.target.value)} />
             </label>
             <label>
               Dragons
-              <input type="radio" name="favorit-pet-group3" value="dragons" checked={favoritePet2 === 'dragons'} onChange={e => setFavoritePet2(e.target.value)} />
+              <input
+                type="radio"
+                name="favorit-pet-group3"
+                value="dragons"
+                checked={favoritePet2 === 'dragons'}
+                onChange={(e) => setFavoritePet2(e.target.value)} />
             </label>
           </div>
           <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -313,7 +465,11 @@ function FormWithControls(props: any = {}) {
             </label>
             <label>
               Cats
-              <input type="radio" name="favorit-pet-group4" value="cats" defaultChecked />
+              <input
+                type="radio"
+                name="favorit-pet-group4"
+                value="cats"
+                defaultChecked />
             </label>
             <label>
               Dragons
@@ -322,18 +478,33 @@ function FormWithControls(props: any = {}) {
           </div>
           <label>
             Favorite Color controlled
-            <select onChange={e => setFavoriteColor2(e.target.value)}>
-              <option value="red" selected={favoriteColor2 === 'red'}>Red</option>
-              <option value="orange" selected={favoriteColor2 === 'orange'}>Orange</option>
-              <option value="yellow" selected={favoriteColor2 === 'yellow'}>Yellow</option>
-              <option value="green" selected={favoriteColor2 === 'green'}>Green</option>
-              <option value="blue" selected={favoriteColor2 === 'blue'}>Blue</option>
-              <option value="purple" selected={favoriteColor2 === 'purple'}>Purple</option>
+            <select onChange={(e) => setFavoriteColor2(e.target.value)}>
+              <option value="red" selected={favoriteColor2 === 'red'}>
+                Red
+              </option>
+              <option value="orange" selected={favoriteColor2 === 'orange'}>
+                Orange
+              </option>
+              <option value="yellow" selected={favoriteColor2 === 'yellow'}>
+                Yellow
+              </option>
+              <option value="green" selected={favoriteColor2 === 'green'}>
+                Green
+              </option>
+              <option value="blue" selected={favoriteColor2 === 'blue'}>
+                Blue
+              </option>
+              <option value="purple" selected={favoriteColor2 === 'purple'}>
+                Purple
+              </option>
             </select>
           </label>
           <label>
             Comments controlled
-            <textarea placeholder="How do you feel?" value={howIFeel2} onChange={e => setHowIFeel2(e.target.value)} />
+            <textarea
+              placeholder="How do you feel?"
+              value={howIFeel2}
+              onChange={(e) => setHowIFeel2(e.target.value)} />
           </label>
           <label>
             Comments default
@@ -342,18 +513,34 @@ function FormWithControls(props: any = {}) {
           <label>
             Favorite Color searchwithin
             <input type="text" placeholder="Search" />
-            <select onChange={e => setFavoriteColor3(e.target.value)}>
-              <option value="red" selected={favoriteColor3 === 'red'}>Red</option>
-              <option value="orange" selected={favoriteColor3 === 'orange'}>Orange</option>
-              <option value="yellow" selected={favoriteColor3 === 'yellow'}>Yellow</option>
-              <option value="green" selected={favoriteColor3 === 'green'}>Green</option>
-              <option value="blue" selected={favoriteColor3 === 'blue'}>Blue</option>
-              <option value="purple" selected={favoriteColor3 === 'purple'}>Purple</option>
+            <select onChange={(e) => setFavoriteColor3(e.target.value)}>
+              <option value="red" selected={favoriteColor3 === 'red'}>
+                Red
+              </option>
+              <option value="orange" selected={favoriteColor3 === 'orange'}>
+                Orange
+              </option>
+              <option value="yellow" selected={favoriteColor3 === 'yellow'}>
+                Yellow
+              </option>
+              <option value="green" selected={favoriteColor3 === 'green'}>
+                Green
+              </option>
+              <option value="blue" selected={favoriteColor3 === 'blue'}>
+                Blue
+              </option>
+              <option value="purple" selected={favoriteColor3 === 'purple'}>
+                Purple
+              </option>
             </select>
           </label>
           <ButtonGroup>
-            <Button variant="secondary" type="reset">Reset</Button>
-            <Button variant="primary" type="submit">Submit</Button>
+            <Button variant="secondary" type="reset">
+              Reset
+            </Button>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
           </ButtonGroup>
         </Flex>
       </form>
@@ -371,14 +558,17 @@ function FormWithSubmit() {
   let [email, setEmail] = useState('');
   let [emailDirty, setEmailDirty] = useState(false);
 
-  let [formStatus, setFormStatus] = useState<'progress' | 'invalid' | 'valid' | 'fixing'>('progress');
+  let [formStatus, setFormStatus] = useState<
+    'progress' | 'invalid' | 'valid' | 'fixing'
+  >('progress');
   let [isSubmitted, setSubmitted] = useState(false); // TODO: really should be isSectionInvalid / 'fixing' for each form field. once form is submitted with mistakes, unchecking an unrelated, previously valid field should not make it look invalid.
 
   let getValidationState = (isValid: boolean): 'invalid' | null =>
     ['invalid', 'fixing'].includes(formStatus) && !isValid ? 'invalid' : null;
 
   useEffect(() => {
-    let validate = (): boolean => policies.length === 3 && pet && truth && email.includes('@');
+    let validate = (): boolean =>
+      policies.length === 3 && pet && truth && email.includes('@');
     let formDirty = policiesDirty || petDirty || truthDirty || emailDirty;
 
     if (isSubmitted) {
@@ -390,10 +580,22 @@ function FormWithSubmit() {
     } else {
       setFormStatus('progress');
     }
-  }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, email, emailDirty, isSubmitted]);
+  }, [
+    policies,
+    policiesDirty,
+    pet,
+    petDirty,
+    truth,
+    truthDirty,
+    email,
+    emailDirty,
+    isSubmitted
+  ]);
 
   let Status = ({formStatus}) => {
-    let [variant, setVariant] = useState<'info' | 'negative' | 'positive' | 'notice'>('info');
+    let [variant, setVariant] = useState<
+      'info' | 'negative' | 'positive' | 'notice'
+    >('info');
 
     useEffect(() => {
       switch (formStatus) {
@@ -479,7 +681,7 @@ function FormWithSubmit() {
         isRequired
         value="truth"
         isSelected={truth}
-        onChange={(chain(() => setTruthDirty(true), setTruth))}
+        onChange={chain(() => setTruthDirty(true), setTruth)}
         validationState={getValidationState(truth)}>
         I am telling the truth
       </Checkbox>
@@ -490,19 +692,17 @@ function FormWithSubmit() {
         value={pet}
         onChange={chain(() => setPetDirty(true), setPet)}
         validationState={getValidationState(Boolean(pet))}>
-        <Radio value="dogs">
-          Dogs
-        </Radio>
-        <Radio value="cats">
-          Cats
-        </Radio>
-        <Radio value="dragons">
-          Dragons
-        </Radio>
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
 
-      <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
-      <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>
+      <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>
+        Submit
+      </Button>
+      <Button variant="secondary" type="reset" onPress={reset}>
+        Reset
+      </Button>
       <Status formStatus={formStatus} />
     </Form>
   );

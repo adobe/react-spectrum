@@ -13,26 +13,48 @@
 import {ColorThumb} from '../src/ColorThumb';
 import {parseColor} from '@react-stately/color';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('ColorThumb', module)
-  .add(
-    'default',
-    () => <ColorThumb value={parseColor('#f00')} />
-  )
-  .add(
-    'focused',
-    () => <ColorThumb value={parseColor('#f00')} isFocused />
-  )
-  .add(
-    'focused, dragging',
-    () => <ColorThumb value={parseColor('#f00')} isFocused isDragging />
-  )
-  .add(
-    'focused, dragging, alpha',
-    () => <ColorThumb value={parseColor('hsla(0, 100%, 100%, 0)')} isFocused isDragging />
-  )
-  .add(
-    'disabled',
-    () => <ColorThumb value={parseColor('#f00')} isDisabled />
-  );
+export default {
+  title: 'ColorThumb'
+};
+
+export const Default = () => <ColorThumb value={parseColor('#f00')} />;
+
+Default.story = {
+  name: 'default'
+};
+
+export const Focused = () => (
+  <ColorThumb value={parseColor('#f00')} isFocused />
+);
+
+Focused.story = {
+  name: 'focused'
+};
+
+export const FocusedDragging = () => (
+  <ColorThumb value={parseColor('#f00')} isFocused isDragging />
+);
+
+FocusedDragging.story = {
+  name: 'focused, dragging'
+};
+
+export const FocusedDraggingAlpha = () => (
+  <ColorThumb
+    value={parseColor('hsla(0, 100%, 100%, 0)')}
+    isFocused
+    isDragging />
+);
+
+FocusedDraggingAlpha.story = {
+  name: 'focused, dragging, alpha'
+};
+
+export const Disabled = () => (
+  <ColorThumb value={parseColor('#f00')} isDisabled />
+);
+
+Disabled.story = {
+  name: 'disabled'
+};

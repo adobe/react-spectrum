@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
-import {AlertDialog, Dialog, DialogTrigger} from '../';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
+import {Dialog, DialogTrigger} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
@@ -24,213 +23,105 @@ import {Image} from '@react-spectrum/image';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
-import {SpectrumAlertDialogProps} from '@react-types/dialog';
-import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
-storiesOf('Dialog', module)
-  .addParameters({providerSwitcher: {status: 'notice'}})
-  .add(
-    'default',
-    () => render({})
-  )
-  .add(
-  'isDismissable',
-  () => render({isDismissable: true})
-  )
-  .add(
-    'long content',
-    () => renderLongContent({})
-  )
-  .add(
-    'with hero',
-    () => renderHero({})
-  )
-  .add(
-    'with hero, isDimissable',
-    () => renderHero({isDismissable: true})
-  )
-  .add(
-    'with footer',
-    () => renderFooter({})
-  )
-  .add(
-    'small',
-    () => render({size: 'S'})
-  )
-  .add(
-    'medium',
-    () => render({size: 'M'})
-  )
-  .add(
-    'large',
-    () => render({size: 'L'})
-  )
-  .add(
-    'form',
-    () => renderWithForm({})
-  )
-  .add(
-    'fullscreenTakeover form',
-    () => renderWithForm({type: 'fullscreenTakeover'})
-  )
-  .add(
-    'three buttons',
-    () => renderWithThreeButtons({})
-  )
-  .add(
-    'three buttons, vertical orientation',
-    () => renderWithThreeButtonsVertical({})
-  )
-  .add(
-    'cleared content',
-    () => renderWithDividerInContent({})
-  )
-  .add(
-    'with iframe',
-    () => renderIframe({})
-  );
+export default {
+  title: 'Dialog',
 
-storiesOf('Dialog/Alert', module)
-  .add(
-    'destructive',
-    () => renderAlert({
-      variant: 'destructive',
-      title: 'Warning Destructive',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel')
-    })
-  )
-  .add(
-    'confirmation',
-    () => renderAlert({
-      variant: 'confirmation',
-      title: 'Confirmation Required',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel')
-    })
-  )
-  .add(
-    'information',
-    () => renderAlert({
-      variant: 'information',
-      title: 'Informative Alert',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel')
-    })
-  )
-  .add(
-    'error',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel')
-    })
-  )
-  .add(
-    'warning',
-    () => renderAlert({
-      variant: 'warning',
-      title: 'This is a warning',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel')
-    })
-  )
-  .add(
-    'primary disabled',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel'),
-      isPrimaryActionDisabled: true
-    })
-  )
-  .add(
-    'autoFocus primary',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      secondaryActionLabel: 'Secondary button',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel'),
-      autoFocusButton: 'primary'
-    })
-  )
-  .add(
-    'secondary disabled',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      secondaryActionLabel: 'Secondary button',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel'),
-      isSecondaryActionDisabled: true
-    })
-  )
-  .add(
-    'autoFocus secondary',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      secondaryActionLabel: 'Secondary button',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel'),
-      autoFocusButton: 'secondary'
-    })
-  )
-  .add(
-    'autoFocus cancel',
-    () => renderAlert({
-      variant: 'error',
-      title: 'Error: Danger Will Robinson',
-      children: singleParagraph(),
-      primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      secondaryActionLabel: 'Secondary button',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel'),
-      autoFocusButton: 'cancel'
-    })
-  );
+  parameters: {
+    providerSwitcher: {status: 'notice'}
+  }
+};
+
+export const Default = () => render({});
+
+Default.story = {
+  name: 'default'
+};
+
+export const IsDismissable = () => render({isDismissable: true});
+
+IsDismissable.story = {
+  name: 'isDismissable'
+};
+
+export const LongContent = () => renderLongContent({});
+
+LongContent.story = {
+  name: 'long content'
+};
+
+export const WithHero = () => renderHero({});
+
+WithHero.story = {
+  name: 'with hero'
+};
+
+export const WithHeroIsDimissable = () => renderHero({isDismissable: true});
+
+WithHeroIsDimissable.story = {
+  name: 'with hero, isDimissable'
+};
+
+export const WithFooter = () => renderFooter({});
+
+WithFooter.story = {
+  name: 'with footer'
+};
+
+export const Small = () => render({size: 'S'});
+
+Small.story = {
+  name: 'small'
+};
+
+export const Medium = () => render({size: 'M'});
+
+Medium.story = {
+  name: 'medium'
+};
+
+export const Large = () => render({size: 'L'});
+
+Large.story = {
+  name: 'large'
+};
+
+export const _Form = () => renderWithForm({});
+
+_Form.story = {
+  name: 'form'
+};
+
+export const FullscreenTakeoverForm = () => renderWithForm({type: 'fullscreenTakeover'});
+
+FullscreenTakeoverForm.story = {
+  name: 'fullscreenTakeover form'
+};
+
+export const ThreeButtons = () => renderWithThreeButtons({});
+
+ThreeButtons.story = {
+  name: 'three buttons'
+};
+
+export const ThreeButtonsVerticalOrientation = () => renderWithThreeButtonsVertical({});
+
+ThreeButtonsVerticalOrientation.story = {
+  name: 'three buttons, vertical orientation'
+};
+
+export const ClearedContent = () => renderWithDividerInContent({});
+
+ClearedContent.story = {
+  name: 'cleared content'
+};
+
+export const WithIframe = () => renderIframe({});
+
+WithIframe.story = {
+  name: 'with iframe'
+};
 
 function render({width = 'auto', isDismissable = undefined, ...props}) {
   return (
@@ -323,17 +214,6 @@ function renderFooter({width = 'auto', isDismissable = undefined, ...props}) {
             </ButtonGroup>}
           </Dialog>
         )}
-      </DialogTrigger>
-    </div>
-  );
-}
-
-function renderAlert({...props}: SpectrumAlertDialogProps) {
-  return (
-    <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
-      <DialogTrigger defaultOpen>
-        <ActionButton>Trigger</ActionButton>
-        <AlertDialog {...props} onPrimaryAction={action('primary')} onSecondaryAction={action('secondary')} onCancel={props.onCancel} />
       </DialogTrigger>
     </div>
   );

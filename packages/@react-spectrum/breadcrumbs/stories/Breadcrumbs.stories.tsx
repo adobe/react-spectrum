@@ -15,128 +15,152 @@ import {Breadcrumbs} from '../';
 // import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
 let styles = {
   width: '100vw'
 };
-const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
+const CenterDecorator = (storyFn) => (
+  <div style={styles}>
+    <div>{storyFn()}</div>
+  </div>
+);
 
-storiesOf('Breadcrumbs', module)
-  .addDecorator(CenterDecorator)
-  .addParameters({providerSwitcher: {status: 'negative'}})
-  .add(
-    'Default (with 3 items)',
-    () => render()
-  )
-  .add(
-    'Default (with 7 items)',
-    () => renderMany({})
-  )
-  .add(
-    'isMultiline',
-    () => render({isMultiline: true})
-  )
-  .add(
-    'size: S',
-    () => render({size: 'S'})
-  )
-  .add(
-    'size: S, isMultiline',
-    () => render({size: 'S', isMultiline: true})
-  )
-  .add(
-    'size: M',
-    () => render({size: 'M'})
-  )
-  .add(
-    'size: M, isMultiline',
-    () => render({size: 'M', isMultiline: true})
-  )
-  .add(
-    'truncated',
-    () => (
-      <div style={{width: '120px'}}>
-        {render({})}
-      </div>
-    )
-  )
-  .add(
-    'truncated, isMultiline',
-    () => (
-      <div style={{width: '100px'}}>
-        {render({isMultiline: true})}
-      </div>
-    )
-  )
-  .add(
-    'many items, showRoot: true',
-    () => renderMany({showRoot: true})
-  )
-  .add(
-    'many items, isMultiline',
-    () => renderMany({isMultiline: true})
-  )
-  .add(
-    'many items, isMultiline, showRoot: true',
-    () => renderMany({maxVisibleItems: 'auto', isMultiline: true, showRoot: true})
-  )
-  .add(
-    'isDisabled: true',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isDisabled: true, isMultiline',
-    () => render({isDisabled: true, isMultiline: true})
-  )
-  .add(
-    'resizeable',
-    () => (
-      <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderMany({})}
-      </div>
-    )
-  )
-  // .add(
-  //   'last item Heading',
-  //   () => renderHeading()
-  // )
-  // .add(
-  //   'last item Heading, size: S',
-  //   () => renderHeading({size: 'S'})
-  // )
-  // .add(
-  //   'last item Heading, size: M',
-  //   () => renderHeading({size: 'M'})
-  // )
-  // .add(
-  //   'last item Heading, isMultiline',
-  //   () => renderHeading({isMultiline: true})
-  // )
-  // .add(
-  //   'last item Heading, size: S, isMultiline',
-  //   () => renderHeading({isMultiline: true, size: 'S'})
-  // )
-  // .add(
-  //   'last item Heading, size: M, isMultiline',
-  //   () => renderHeading({isMultiline: true, size: 'M'})
-  // )
-  .add(
-    'Only one item',
-    () => (
-      <Breadcrumbs>
-        <Item>Root</Item>
-      </Breadcrumbs>
-    )
-  )
-  .add(
-    'Only one item, isMultiline',
-    () => (
-      <Breadcrumbs isMultiline>
-        <Item>Root</Item>
-      </Breadcrumbs>
-    )
-  );
+export default {
+  title: 'Breadcrumbs',
+  decorators: [CenterDecorator],
+
+  parameters: {
+    providerSwitcher: {status: 'negative'}
+  }
+};
+
+export const DefaultWith3Items = () => render();
+
+DefaultWith3Items.story = {
+  name: 'Default (with 3 items)'
+};
+
+export const DefaultWith7Items = () => renderMany({});
+
+DefaultWith7Items.story = {
+  name: 'Default (with 7 items)'
+};
+
+export const IsMultiline = () => render({isMultiline: true});
+
+IsMultiline.story = {
+  name: 'isMultiline'
+};
+
+export const SizeS = () => render({size: 'S'});
+
+SizeS.story = {
+  name: 'size: S'
+};
+
+export const SizeSIsMultiline = () => render({size: 'S', isMultiline: true});
+
+SizeSIsMultiline.story = {
+  name: 'size: S, isMultiline'
+};
+
+export const SizeM = () => render({size: 'M'});
+
+SizeM.story = {
+  name: 'size: M'
+};
+
+export const SizeMIsMultiline = () => render({size: 'M', isMultiline: true});
+
+SizeMIsMultiline.story = {
+  name: 'size: M, isMultiline'
+};
+
+export const Truncated = () => (
+  <div style={{width: '120px'}}>{render({})}</div>
+);
+
+Truncated.story = {
+  name: 'truncated'
+};
+
+export const TruncatedIsMultiline = () => (
+  <div style={{width: '100px'}}>{render({isMultiline: true})}</div>
+);
+
+TruncatedIsMultiline.story = {
+  name: 'truncated, isMultiline'
+};
+
+export const ManyItemsShowRootTrue = () => renderMany({showRoot: true});
+
+ManyItemsShowRootTrue.story = {
+  name: 'many items, showRoot: true'
+};
+
+export const ManyItemsIsMultiline = () => renderMany({isMultiline: true});
+
+ManyItemsIsMultiline.story = {
+  name: 'many items, isMultiline'
+};
+
+export const ManyItemsIsMultilineShowRootTrue = () =>
+  renderMany({maxVisibleItems: 'auto', isMultiline: true, showRoot: true});
+
+ManyItemsIsMultilineShowRootTrue.story = {
+  name: 'many items, isMultiline, showRoot: true'
+};
+
+export const IsDisabledTrue = () => render({isDisabled: true});
+
+IsDisabledTrue.story = {
+  name: 'isDisabled: true'
+};
+
+export const IsDisabledTrueIsMultiline = () =>
+  render({isDisabled: true, isMultiline: true});
+
+IsDisabledTrueIsMultiline.story = {
+  name: 'isDisabled: true, isMultiline'
+};
+
+export const Resizeable = () => (
+  <div
+    style={{
+      minWidth: '100px',
+      width: '300px',
+      padding: '10px',
+      resize: 'horizontal',
+      overflow: 'auto',
+      backgroundColor: 'var(--spectrum-global-color-gray-50)'
+    }}>
+    {renderMany({})}
+  </div>
+);
+
+Resizeable.story = {
+  name: 'resizeable'
+};
+
+export const OnlyOneItem = () => (
+  <Breadcrumbs>
+    <Item>Root</Item>
+  </Breadcrumbs>
+);
+
+OnlyOneItem.story = {
+  name: 'Only one item'
+};
+
+export const OnlyOneItemIsMultiline = () => (
+  <Breadcrumbs isMultiline>
+    <Item>Root</Item>
+  </Breadcrumbs>
+);
+
+OnlyOneItemIsMultiline.story = {
+  name: 'Only one item, isMultiline'
+};
 
 function render(props = {}) {
   return (

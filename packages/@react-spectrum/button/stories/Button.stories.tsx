@@ -16,82 +16,124 @@ import {Button} from '../';
 import {Flex} from '@react-spectrum/layout';
 import React, {ElementType} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
-import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 
-storiesOf('Button', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'variant: cta',
-    () => render({variant: 'cta'})
-  )
-  .add(
-    'with icon',
-    () => (
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          variant="primary">
-          <Bell />
-          <Text>Default</Text>
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          variant="primary">
-          <Text>Disabled</Text>
-          <Bell />
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isQuiet
-          variant="primary">
-          <Bell />
-          <Text>Quiet</Text>
-        </Button>
-      </Flex>
-    )
-  )
-  .add(
-    'variant: overBackground',
-    () => (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
-        {render({variant: 'overBackground'})}
-      </div>
-    )
-  )
-  .add(
-    'variant: primary',
-    () => render({variant: 'primary'})
-  )
-  .add(
-    'variant: secondary',
-    () => render({variant: 'secondary'})
-  )
-  .add(
-    'variant: negative',
-    () => render({variant: 'negative'})
-  )
-  .add(
-    'element: a',
-    () => render({elementType: 'a', variant: 'primary'})
-  )
-  .add(
-    'element: a, href: \'//example.com\', target: \'_self\'',
-    () => render({elementType: 'a', href: '//example.com', target: '_self', variant: 'primary'})
-  )
-  .add(
-    'element: a, rel: \'noopener noreferrer\'',
-    () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
-  );
+export default {
+  title: 'Button',
 
-function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const VariantCta = () => render({variant: 'cta'});
+
+VariantCta.story = {
+  name: 'variant: cta'
+};
+
+export const WithIcon = () => (
+  <Flex gap="size-200">
+    <Button
+      onPress={action('press')}
+      onPressStart={action('pressstart')}
+      onPressEnd={action('pressend')}
+      variant="primary">
+      <Bell />
+      <Text>Default</Text>
+    </Button>
+    <Button
+      onPress={action('press')}
+      onPressStart={action('pressstart')}
+      onPressEnd={action('pressend')}
+      isDisabled
+      variant="primary">
+      <Text>Disabled</Text>
+      <Bell />
+    </Button>
+    <Button
+      onPress={action('press')}
+      onPressStart={action('pressstart')}
+      onPressEnd={action('pressend')}
+      isQuiet
+      variant="primary">
+      <Bell />
+      <Text>Quiet</Text>
+    </Button>
+  </Flex>
+);
+
+WithIcon.story = {
+  name: 'with icon'
+};
+
+export const VariantOverBackground = () => (
+  <div
+    style={{
+      backgroundColor: 'rgb(15, 121, 125)',
+      color: 'rgb(15, 121, 125)',
+      padding: '15px 20px',
+      display: 'inline-block'
+    }}>
+    {render({variant: 'overBackground'})}
+  </div>
+);
+
+VariantOverBackground.story = {
+  name: 'variant: overBackground'
+};
+
+export const VariantPrimary = () => render({variant: 'primary'});
+
+VariantPrimary.story = {
+  name: 'variant: primary'
+};
+
+export const VariantSecondary = () => render({variant: 'secondary'});
+
+VariantSecondary.story = {
+  name: 'variant: secondary'
+};
+
+export const VariantNegative = () => render({variant: 'negative'});
+
+VariantNegative.story = {
+  name: 'variant: negative'
+};
+
+export const ElementA = () => render({elementType: 'a', variant: 'primary'});
+
+ElementA.story = {
+  name: 'element: a'
+};
+
+export const ElementAHrefExampleComTargetSelf = () =>
+  render({
+    elementType: 'a',
+    href: '//example.com',
+    target: '_self',
+    variant: 'primary'
+  });
+
+ElementAHrefExampleComTargetSelf.story = {
+  name: "element: a, href: '//example.com', target: '_self'"
+};
+
+export const ElementARelNoopenerNoreferrer = () =>
+  render({
+    elementType: 'a',
+    href: '//example.com',
+    rel: 'noopener noreferrer',
+    variant: 'primary'
+  });
+
+ElementARelNoopenerNoreferrer.story = {
+  name: "element: a, rel: 'noopener noreferrer'"
+};
+
+function render<T extends ElementType = 'button'>(
+  props: SpectrumButtonProps<T> = {variant: 'primary'}
+) {
   return (
     <Flex gap="size-200">
       <Button
@@ -110,14 +152,14 @@ function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> 
         Disabled
       </Button>
       {props.variant !== 'cta' && (
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isQuiet
-        {...props}>
-        Quiet
-      </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isQuiet
+          {...props}>
+          Quiet
+        </Button>
       )}
     </Flex>
   );

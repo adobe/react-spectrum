@@ -18,73 +18,89 @@ import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import NotFound from '@spectrum-icons/illustrations/src/NotFound';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import Timeout from '@spectrum-icons/illustrations/Timeout';
 import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
 import Unavailable from '@spectrum-icons/illustrations/Unavailable';
 import Upload from '@spectrum-icons/illustrations/Upload';
 
-storiesOf('IllustratedMessage', module)
-  .add(
-    'Not found',
-    () => render({
-      heading: 'Error 404: Page not found',
-      description: 'This page isn’t available. Try checking the URL or visit a different page.',
-      illustration: <NotFound />
-    })
-  )
-  .add(
-    'No search results',
-    () => render({
-      heading: 'No matching results',
-      description: 'Try another search.',
-      illustration: <NoSearchResults />
-    })
-  )
-  .add(
-    'Unauthorized',
-    () => render({
-      heading: 'Error 401: Unauthorized',
-      description: 'You don’t have access to this page. Try checking the URL or visit a different page.',
-      illustration: <Unauthorized />
-    })
-  )
-  .add(
-    'Error',
-    () => render({
-      heading: 'Error 500: Internal Server Error',
-      description: 'This page isn’t available right now. Try visiting this page again later.',
-      illustration: <Error />
-    })
-  )
-  .add(
-    'Unavailable',
-    () => render({
-      heading: 'Error 503: Service Unavailable',
-      description: 'This page isn’t available right now. Try visiting this page again later.',
-      illustration: <Unavailable />
-    })
-  )
-  .add(
-    'Timeout',
-    () => render({
-      heading: 'Error 504: Gateway Timeout',
-      description: 'This page isn’t available right now. Try visiting this page again later.',
-      illustration: <Timeout />
-    })
-  )
-  .add(
-    'Upload',
-    () => render({
-      heading: 'Drag and drop your file',
-      description: <><Link>Select a file</Link> from your computer<br />or <Link>search Adobe Stock</Link>.</>,
-      illustration: <Upload />
-    })
-  )
-  .add(
-    'No heading or description',
-    () => render({illustration: <NotFound aria-label="No Results" />})
-  );
+export default {
+  title: 'IllustratedMessage'
+};
+
+export const _NotFound = () =>
+  render({
+    heading: 'Error 404: Page not found',
+    description:
+      'This page isn’t available. Try checking the URL or visit a different page.',
+    illustration: <NotFound />
+  });
+
+_NotFound.story = {
+  name: 'Not found'
+};
+
+export const _NoSearchResults = () =>
+  render({
+    heading: 'No matching results',
+    description: 'Try another search.',
+    illustration: <NoSearchResults />
+  });
+
+_NoSearchResults.story = {
+  name: 'No search results'
+};
+
+export const _Unauthorized = () =>
+  render({
+    heading: 'Error 401: Unauthorized',
+    description:
+      'You don’t have access to this page. Try checking the URL or visit a different page.',
+    illustration: <Unauthorized />
+  });
+
+export const _Error = () =>
+  render({
+    heading: 'Error 500: Internal Server Error',
+    description:
+      'This page isn’t available right now. Try visiting this page again later.',
+    illustration: <Error />
+  });
+
+export const _Unavailable = () =>
+  render({
+    heading: 'Error 503: Service Unavailable',
+    description:
+      'This page isn’t available right now. Try visiting this page again later.',
+    illustration: <Unavailable />
+  });
+
+export const _Timeout = () =>
+  render({
+    heading: 'Error 504: Gateway Timeout',
+    description:
+      'This page isn’t available right now. Try visiting this page again later.',
+    illustration: <Timeout />
+  });
+
+export const _Upload = () =>
+  render({
+    heading: 'Drag and drop your file',
+    description: (
+      <>
+        <Link>Select a file</Link> from your computer
+        <br />
+        or <Link>search Adobe Stock</Link>.
+      </>
+    ),
+    illustration: <Upload />
+  });
+
+export const NoHeadingOrDescription = () =>
+  render({illustration: <NotFound aria-label="No Results" />});
+
+NoHeadingOrDescription.story = {
+  name: 'No heading or description'
+};
 
 function render(props: any = {}) {
   let {illustration, heading, description, ...otherProps} = props;

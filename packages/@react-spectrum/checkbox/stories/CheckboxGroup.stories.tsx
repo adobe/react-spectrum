@@ -14,101 +14,161 @@ import {action} from '@storybook/addon-actions';
 import {Checkbox, CheckboxGroup} from '../';
 import React from 'react';
 import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('CheckboxGroup', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'Default',
-    () => render()
-  )
-  .add(
-    'defaultValue: dragons',
-    () => render({defaultValue: ['dragons']})
-  )
-  .add(
-    'controlled: dragons',
-    () => render({value: ['dragons']})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelAlign: 'end'})
-  )
-  .add(
-    'horizontal',
-    () => render({orientation: 'horizontal'})
-  )
-  .add(
-    'horizontal, labelPosition: side',
-    () => render({orientation: 'horizontal', labelPosition: 'side'})
-  )
-  .add(
-    'horizontal, labelAlign: end',
-    () => render({orientation: 'horizontal', labelAlign: 'end'})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isDisabled on one checkbox',
-    () => render({}, [{}, {isDisabled: true}, {}])
-  )
-  .add(
-    'isDisabled on one checkbox horizontal',
-    () => render({orientation: 'horizontal'}, [{}, {isDisabled: true}, {}])
-  )
-  .add(
-    'isRequired',
-    () => render({isRequired: true})
-  )
-  .add(
-    'isRequired, necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'necessityIndicator: label, labelPosition: side',
-    () => render({necessityIndicator: 'label', labelPosition: 'side'})
-  )
-  .add(
-    'isReadOnly',
-    () => render({isReadOnly: true})
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'validationState: "invalid"',
-    () => render({validationState: 'invalid'})
-  )
-  .add(
-    'validationState: "invalid" on one checkbox',
-    () => render({}, [{}, {validationState: 'invalid'}, {}])
-  )
-  .add(
-    'no visible label',
-    () => render({label: null, 'aria-label': 'Pets'})
-  )
-  .add(
-    'autoFocus on one checkbox',
-    () => render({}, [{}, {autoFocus: true}, {}])
-  )
-  .add(
-    'form name',
-    () => render({name: 'pets'})
-  );
+export default {
+  title: 'CheckboxGroup',
 
-function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkboxProps: any[] = []) {
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const Default = () => render();
+export const DefaultValueDragons = () => render({defaultValue: ['dragons']});
+
+DefaultValueDragons.story = {
+  name: 'defaultValue: dragons'
+};
+
+export const ControlledDragons = () => render({value: ['dragons']});
+
+ControlledDragons.story = {
+  name: 'controlled: dragons'
+};
+
+export const LabelPositionSide = () => render({labelPosition: 'side'});
+
+LabelPositionSide.story = {
+  name: 'labelPosition: side'
+};
+
+export const LabelAlignEnd = () => render({labelAlign: 'end'});
+
+LabelAlignEnd.story = {
+  name: 'labelAlign: end'
+};
+
+export const Horizontal = () => render({orientation: 'horizontal'});
+
+Horizontal.story = {
+  name: 'horizontal'
+};
+
+export const HorizontalLabelPositionSide = () =>
+  render({orientation: 'horizontal', labelPosition: 'side'});
+
+HorizontalLabelPositionSide.story = {
+  name: 'horizontal, labelPosition: side'
+};
+
+export const HorizontalLabelAlignEnd = () =>
+  render({orientation: 'horizontal', labelAlign: 'end'});
+
+HorizontalLabelAlignEnd.story = {
+  name: 'horizontal, labelAlign: end'
+};
+
+export const IsDisabled = () => render({isDisabled: true});
+
+IsDisabled.story = {
+  name: 'isDisabled'
+};
+
+export const IsDisabledOnOneCheckbox = () =>
+  render({}, [{}, {isDisabled: true}, {}]);
+
+IsDisabledOnOneCheckbox.story = {
+  name: 'isDisabled on one checkbox'
+};
+
+export const IsDisabledOnOneCheckboxHorizontal = () =>
+  render({orientation: 'horizontal'}, [{}, {isDisabled: true}, {}]);
+
+IsDisabledOnOneCheckboxHorizontal.story = {
+  name: 'isDisabled on one checkbox horizontal'
+};
+
+export const IsRequired = () => render({isRequired: true});
+
+IsRequired.story = {
+  name: 'isRequired'
+};
+
+export const IsRequiredNecessityIndicatorLabel = () =>
+  render({isRequired: true, necessityIndicator: 'label'});
+
+IsRequiredNecessityIndicatorLabel.story = {
+  name: 'isRequired, necessityIndicator: label'
+};
+
+export const NecessityIndicatorLabelLabelPositionSide = () =>
+  render({necessityIndicator: 'label', labelPosition: 'side'});
+
+NecessityIndicatorLabelLabelPositionSide.story = {
+  name: 'necessityIndicator: label, labelPosition: side'
+};
+
+export const IsReadOnly = () => render({isReadOnly: true});
+
+IsReadOnly.story = {
+  name: 'isReadOnly'
+};
+
+export const IsEmphasized = () => render({isEmphasized: true});
+
+IsEmphasized.story = {
+  name: 'isEmphasized'
+};
+
+export const ValidationStateInvalid = () =>
+  render({validationState: 'invalid'});
+
+ValidationStateInvalid.story = {
+  name: 'validationState: "invalid"'
+};
+
+export const ValidationStateInvalidOnOneCheckbox = () =>
+  render({}, [{}, {validationState: 'invalid'}, {}]);
+
+ValidationStateInvalidOnOneCheckbox.story = {
+  name: 'validationState: "invalid" on one checkbox'
+};
+
+export const NoVisibleLabel = () =>
+  render({label: null, 'aria-label': 'Pets'});
+
+NoVisibleLabel.story = {
+  name: 'no visible label'
+};
+
+export const AutoFocusOnOneCheckbox = () =>
+  render({}, [{}, {autoFocus: true}, {}]);
+
+AutoFocusOnOneCheckbox.story = {
+  name: 'autoFocus on one checkbox'
+};
+
+export const FormName = () => render({name: 'pets'});
+
+FormName.story = {
+  name: 'form name'
+};
+
+function render(
+  props: Omit<SpectrumCheckboxGroupProps, 'children'> = {},
+  checkboxProps: any[] = []
+) {
   return (
     <CheckboxGroup label="Pets" {...props} onChange={action('onChange')}>
-      <Checkbox value="dogs" {...checkboxProps[0]}>Dogs</Checkbox>
-      <Checkbox value="cats" {...checkboxProps[1]}>Cats</Checkbox>
-      <Checkbox value="dragons" {...checkboxProps[2]}>Dragons</Checkbox>
+      <Checkbox value="dogs" {...checkboxProps[0]}>
+        Dogs
+      </Checkbox>
+      <Checkbox value="cats" {...checkboxProps[1]}>
+        Cats
+      </Checkbox>
+      <Checkbox value="dragons" {...checkboxProps[2]}>
+        Dragons
+      </Checkbox>
     </CheckboxGroup>
   );
 }

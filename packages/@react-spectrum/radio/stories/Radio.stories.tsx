@@ -14,98 +14,157 @@ import {action} from '@storybook/addon-actions';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('RadioGroup', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'default',
-    () => render({})
-  )
-  .add(
-    'defaultValue: dragons',
-    () => render({defaultValue: 'dragons'})
-  )
-  .add(
-    'controlled: dragons',
-    () => render({value: 'dragons'})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelAlign: 'end'})
-  )
-  .add(
-    'horizontal',
-    () => render({orientation: 'horizontal'})
-  )
-  .add(
-    'horizontal, labelPosition: side',
-    () => render({orientation: 'horizontal', labelPosition: 'side'})
-  )
-  .add(
-    'horizontal, labelAlign: end',
-    () => render({orientation: 'horizontal', labelAlign: 'end'})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isDisabled on one radio',
-    () => render({}, [{}, {isDisabled: true}, {}])
-  )
-  .add(
-    'isDisabled on one radio horizontal',
-    () => render({orientation: 'horizontal'}, [{}, {isDisabled: true}, {}])
-  )
-  .add(
-    'isRequired',
-    () => render({isRequired: true})
-  )
-  .add(
-    'isRequired, necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'necessityIndicator: label, labelPosition: side',
-    () => render({necessityIndicator: 'label', labelPosition: 'side'})
-  )
-  .add(
-    'isReadOnly',
-    () => render({isReadOnly: true})
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'validationState: "invalid"',
-    () => render({validationState: 'invalid'})
-  )
-  .add(
-    'no visible label',
-    () => render({label: null, 'aria-label': 'Favorite pet'})
-  )
-  .add(
-    'long radio label',
-    () => renderLongLabel({})
-  )
-  .add(
-    'provider control: isDisabled',
-    () => renderFormControl()
-  )
-  .add(
-    'autoFocus on one radio',
-    () => render({}, [{}, {autoFocus: true}, {}])
-  );
+export default {
+  title: 'RadioGroup',
+
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const Default = () => render({});
+
+Default.story = {
+  name: 'default'
+};
+
+export const DefaultValueDragons = () => render({defaultValue: 'dragons'});
+
+DefaultValueDragons.story = {
+  name: 'defaultValue: dragons'
+};
+
+export const ControlledDragons = () => render({value: 'dragons'});
+
+ControlledDragons.story = {
+  name: 'controlled: dragons'
+};
+
+export const LabelPositionSide = () => render({labelPosition: 'side'});
+
+LabelPositionSide.story = {
+  name: 'labelPosition: side'
+};
+
+export const LabelAlignEnd = () => render({labelAlign: 'end'});
+
+LabelAlignEnd.story = {
+  name: 'labelAlign: end'
+};
+
+export const Horizontal = () => render({orientation: 'horizontal'});
+
+Horizontal.story = {
+  name: 'horizontal'
+};
+
+export const HorizontalLabelPositionSide = () =>
+  render({orientation: 'horizontal', labelPosition: 'side'});
+
+HorizontalLabelPositionSide.story = {
+  name: 'horizontal, labelPosition: side'
+};
+
+export const HorizontalLabelAlignEnd = () =>
+  render({orientation: 'horizontal', labelAlign: 'end'});
+
+HorizontalLabelAlignEnd.story = {
+  name: 'horizontal, labelAlign: end'
+};
+
+export const IsDisabled = () => render({isDisabled: true});
+
+IsDisabled.story = {
+  name: 'isDisabled'
+};
+
+export const IsDisabledOnOneRadio = () =>
+  render({}, [{}, {isDisabled: true}, {}]);
+
+IsDisabledOnOneRadio.story = {
+  name: 'isDisabled on one radio'
+};
+
+export const IsDisabledOnOneRadioHorizontal = () =>
+  render({orientation: 'horizontal'}, [{}, {isDisabled: true}, {}]);
+
+IsDisabledOnOneRadioHorizontal.story = {
+  name: 'isDisabled on one radio horizontal'
+};
+
+export const IsRequired = () => render({isRequired: true});
+
+IsRequired.story = {
+  name: 'isRequired'
+};
+
+export const IsRequiredNecessityIndicatorLabel = () =>
+  render({isRequired: true, necessityIndicator: 'label'});
+
+IsRequiredNecessityIndicatorLabel.story = {
+  name: 'isRequired, necessityIndicator: label'
+};
+
+export const NecessityIndicatorLabelLabelPositionSide = () =>
+  render({necessityIndicator: 'label', labelPosition: 'side'});
+
+NecessityIndicatorLabelLabelPositionSide.story = {
+  name: 'necessityIndicator: label, labelPosition: side'
+};
+
+export const IsReadOnly = () => render({isReadOnly: true});
+
+IsReadOnly.story = {
+  name: 'isReadOnly'
+};
+
+export const IsEmphasized = () => render({isEmphasized: true});
+
+IsEmphasized.story = {
+  name: 'isEmphasized'
+};
+
+export const ValidationStateInvalid = () =>
+  render({validationState: 'invalid'});
+
+ValidationStateInvalid.story = {
+  name: 'validationState: "invalid"'
+};
+
+export const NoVisibleLabel = () =>
+  render({label: null, 'aria-label': 'Favorite pet'});
+
+NoVisibleLabel.story = {
+  name: 'no visible label'
+};
+
+export const LongRadioLabel = () => renderLongLabel({});
+
+LongRadioLabel.story = {
+  name: 'long radio label'
+};
+
+export const ProviderControlIsDisabled = () => renderFormControl();
+
+ProviderControlIsDisabled.story = {
+  name: 'provider control: isDisabled'
+};
+
+export const AutoFocusOnOneRadio = () =>
+  render({}, [{}, {autoFocus: true}, {}]);
+
+AutoFocusOnOneRadio.story = {
+  name: 'autoFocus on one radio'
+};
 
 function render(props, radioProps = [{}, {}, {}]) {
   return (
-    <RadioGroup label="Favorite pet" {...props} onChange={action('onChange')} name="favorite-pet-group">
+    <RadioGroup
+      label="Favorite pet"
+      {...props}
+      onChange={action('onChange')}
+      name="favorite-pet-group">
       <Radio value="dogs" {...radioProps[0]}>
         Dogs
       </Radio>
@@ -121,9 +180,13 @@ function render(props, radioProps = [{}, {}, {}]) {
 
 function renderLongLabel(props, radioProps = [{}, {}, {}]) {
   return (
-    <RadioGroup aria-label="Favorite pet" {...props} onChange={action('onChange')}>
+    <RadioGroup
+      aria-label="Favorite pet"
+      {...props}
+      onChange={action('onChange')}>
       <Radio value="dogs" {...radioProps[0]}>
-        Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs
+        Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs
+        Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs
       </Radio>
       <Radio value="cats" {...radioProps[1]}>
         Cats
@@ -138,27 +201,21 @@ function renderLongLabel(props, radioProps = [{}, {}, {}]) {
 function renderFormControl() {
   return (
     <Provider isDisabled>
-      <RadioGroup aria-label="Favorite pet" onChange={action('onChangePet')} name="favorite-pet-group">
-        <Radio value="dogs">
-          Dogs
-        </Radio>
-        <Radio value="cats">
-          Cats
-        </Radio>
-        <Radio value="dragons">
-          Dragons
-        </Radio>
+      <RadioGroup
+        aria-label="Favorite pet"
+        onChange={action('onChangePet')}
+        name="favorite-pet-group">
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
-      <RadioGroup aria-label="Favorite cereal" onChange={action('onChangeCereal')} name="favorite-cereal-group">
-        <Radio value="reeses">
-          Reese's Peanut Butter Puffs
-        </Radio>
-        <Radio value="honeynut">
-          HoneyNut Cheerios
-        </Radio>
-        <Radio value="cinnamon">
-          Cinnamon Toast Crunch
-        </Radio>
+      <RadioGroup
+        aria-label="Favorite cereal"
+        onChange={action('onChangeCereal')}
+        name="favorite-cereal-group">
+        <Radio value="reeses">Reese's Peanut Butter Puffs</Radio>
+        <Radio value="honeynut">HoneyNut Cheerios</Radio>
+        <Radio value="cinnamon">Cinnamon Toast Crunch</Radio>
       </RadioGroup>
     </Provider>
   );

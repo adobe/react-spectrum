@@ -13,18 +13,26 @@
 import {action} from '@storybook/addon-actions';
 import {LogicButton} from '../';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Button/LogicButton', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'logic variant: and',
-    () => render({variant: 'and', label: 'and'})
-  )
-  .add(
-    'logic variant: or',
-    () => render({variant: 'or', label: 'or'})
-  );
+export default {
+  title: 'Button/LogicButton',
+
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const LogicVariantAnd = () => render({variant: 'and', label: 'and'});
+
+LogicVariantAnd.story = {
+  name: 'logic variant: and'
+};
+
+export const LogicVariantOr = () => render({variant: 'or', label: 'or'});
+
+LogicVariantOr.story = {
+  name: 'logic variant: or'
+};
 
 function render(props: any = {}) {
   return (

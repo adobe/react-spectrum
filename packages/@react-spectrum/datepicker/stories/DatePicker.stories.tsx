@@ -17,168 +17,172 @@ import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {useLocale} from '@react-aria/i18n';
 
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
-storiesOf('Date and Time/DatePicker', module)
-  .addDecorator(BlockDecorator)
-  .add(
-    'default',
-    () => render()
-  )
-  .add(
-    'defaultValue',
-    () => render({defaultValue: parseDate('2020-02-03')})
-  )
-  .add(
-    'controlled value',
-    () => render({value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'defaultValue, zoned',
-    () => render({defaultValue: toZoned(parseDate('2020-02-03'), 'America/Los_Angeles')})
-  )
-  .add(
-    'granularity: minute',
-    () => render({granularity: 'minute'})
-  )
-  .add(
-    'granularity: second',
-    () => render({granularity: 'second'})
-  )
-  .add(
-    'hourCycle: 12',
-    () => render({granularity: 'minute', hourCycle: 12})
-  )
-  .add(
-    'hourCycle: 24',
-    () => render({granularity: 'minute', hourCycle: 24})
-  )
-  .add(
-    'granularity: minute, defaultValue',
-    () => render({granularity: 'minute', defaultValue: parseDateTime('2021-03-14T08:45')})
-  )
-  .add(
-    'granularity: minute, defaultValue, zoned',
-    () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')})
-  )
-  .add('granularity: minute, defaultValue, zoned, absolute',
-    () => render({granularity: 'minute', defaultValue: parseAbsoluteToLocal('2021-11-07T07:45:00Z')})
-  )
-  .add('granularity: minute, defaultValue, zoned, absolute, timeZone',
-    () => render({granularity: 'minute', defaultValue: parseAbsolute('2021-11-07T07:45:00Z', 'America/New_York')})
-  )
-  .add(
-    'defaultValue with time, granularity: day',
-    () => render({granularity: 'day', defaultValue: parseDateTime('2021-03-14T08:45')})
-  )
-  .add(
-    'hideTimeZone',
-    () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true, value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'isQuiet, isDisabled',
-    () => render({isQuiet: true, isDisabled: true, value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'isReadOnly',
-    () => render({isReadOnly: true, value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'autoFocus',
-    () => render({autoFocus: true})
-  )
-  .add(
-    'validationState: invalid',
-    () => render({validationState: 'invalid', value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'validationState: valid',
-    () => render({validationState: 'valid', value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'minValue: 2010/1/1, maxValue: 2020/1/1',
-    () => render({minValue: new CalendarDate(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)})
-  )
-  .add(
-    'placeholderValue: 1980/1/1',
-    () => render({placeholderValue: new CalendarDate(1980, 1, 1)})
-  )
-  .add(
-    'placeholderValue: 1980/1/1 8 AM',
-    () => render({placeholderValue: new CalendarDateTime(1980, 1, 1, 8)})
-  )
-  .add(
-    'placeholderValue: 1980/1/1, zoned',
-    () => render({placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')})
-  )
-  .add(
-    'visibleMonths: 2',
-    () => render({visibleMonths: 2, granularity: 'minute'})
-  )
-  .add(
-    'visibleMonths: 3',
-    () => render({visibleMonths: 3, granularity: 'minute'})
-  );
+export default {
+  title: 'Date and Time/DatePicker',
+  decorators: [BlockDecorator]
+};
 
-storiesOf('Date and Time/DatePicker/styling', module)
-  .addDecorator(BlockDecorator)
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelPosition: 'top', labelAlign: 'end'})
-  )
-  .add(
-    'required',
-    () => render({isRequired: true})
-  )
-  .add(
-    'required with label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'optional',
-    () => render({necessityIndicator: 'label'})
-  )
-  .add(
-    'no visible label',
-    () => render({'aria-label': 'Date', label: null})
-  )
-  .add(
-    'quiet no visible label',
-    () => render({isQuiet: true, 'aria-label': 'Date', label: null})
-  )
-  .add(
-    'custom width',
-    () => render({width: 'size-3000'})
-  )
-  .add(
-    'quiet custom width',
-    () => render({isQuiet: true, width: 'size-3000'})
-  )
-  .add(
-    'custom width no visible label',
-    () => render({width: 'size-3000', label: null, 'aria-label': 'Date'})
-  )
-  .add(
-    'custom width, labelPosition=side',
-    () => render({width: 'size-3000', labelPosition: 'side'})
-  );
+export const Default = () => render();
 
-function render(props = {}) {
+Default.story = {
+  name: 'default'
+};
+
+export const DefaultValue = () => render({defaultValue: parseDate('2020-02-03')});
+
+DefaultValue.story = {
+  name: 'defaultValue'
+};
+
+export const ControlledValue = () => render({value: new CalendarDate(2020, 2, 3)});
+
+ControlledValue.story = {
+  name: 'controlled value'
+};
+
+export const DefaultValueZoned = () => render({defaultValue: toZoned(parseDate('2020-02-03'), 'America/Los_Angeles')});
+
+DefaultValueZoned.story = {
+  name: 'defaultValue, zoned'
+};
+
+export const GranularityMinute = () => render({granularity: 'minute'});
+
+GranularityMinute.story = {
+  name: 'granularity: minute'
+};
+
+export const GranularitySecond = () => render({granularity: 'second'});
+
+GranularitySecond.story = {
+  name: 'granularity: second'
+};
+
+export const HourCycle12 = () => render({granularity: 'minute', hourCycle: 12});
+
+HourCycle12.story = {
+  name: 'hourCycle: 12'
+};
+
+export const HourCycle24 = () => render({granularity: 'minute', hourCycle: 24});
+
+HourCycle24.story = {
+  name: 'hourCycle: 24'
+};
+
+export const GranularityMinuteDefaultValue = () => render({granularity: 'minute', defaultValue: parseDateTime('2021-03-14T08:45')});
+
+GranularityMinuteDefaultValue.story = {
+  name: 'granularity: minute, defaultValue'
+};
+
+export const GranularityMinuteDefaultValueZoned = () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')});
+
+GranularityMinuteDefaultValueZoned.story = {
+  name: 'granularity: minute, defaultValue, zoned'
+};
+
+export const GranularityMinuteDefaultValueZonedAbsolute = () => render({granularity: 'minute', defaultValue: parseAbsoluteToLocal('2021-11-07T07:45:00Z')});
+
+GranularityMinuteDefaultValueZonedAbsolute.story = {
+  name: 'granularity: minute, defaultValue, zoned, absolute'
+};
+
+export const GranularityMinuteDefaultValueZonedAbsoluteTimeZone = () => render({granularity: 'minute', defaultValue: parseAbsolute('2021-11-07T07:45:00Z', 'America/New_York')});
+
+GranularityMinuteDefaultValueZonedAbsoluteTimeZone.story = {
+  name: 'granularity: minute, defaultValue, zoned, absolute, timeZone'
+};
+
+export const DefaultValueWithTimeGranularityDay = () => render({granularity: 'day', defaultValue: parseDateTime('2021-03-14T08:45')});
+
+DefaultValueWithTimeGranularityDay.story = {
+  name: 'defaultValue with time, granularity: day'
+};
+
+export const HideTimeZone = () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true});
+
+HideTimeZone.story = {
+  name: 'hideTimeZone'
+};
+
+export const IsDisabled = () => render({isDisabled: true, value: new CalendarDate(2020, 2, 3)});
+
+IsDisabled.story = {
+  name: 'isDisabled'
+};
+
+export const IsQuietIsDisabled = () => render({isQuiet: true, isDisabled: true, value: new CalendarDate(2020, 2, 3)});
+
+IsQuietIsDisabled.story = {
+  name: 'isQuiet, isDisabled'
+};
+
+export const IsReadOnly = () => render({isReadOnly: true, value: new CalendarDate(2020, 2, 3)});
+
+IsReadOnly.story = {
+  name: 'isReadOnly'
+};
+
+export const AutoFocus = () => render({autoFocus: true});
+
+AutoFocus.story = {
+  name: 'autoFocus'
+};
+
+export const ValidationStateInvalid = () => render({validationState: 'invalid', value: new CalendarDate(2020, 2, 3)});
+
+ValidationStateInvalid.story = {
+  name: 'validationState: invalid'
+};
+
+export const ValidationStateValid = () => render({validationState: 'valid', value: new CalendarDate(2020, 2, 3)});
+
+ValidationStateValid.story = {
+  name: 'validationState: valid'
+};
+
+export const MinValue201011MaxValue202011 = () => render({minValue: new CalendarDate(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)});
+
+MinValue201011MaxValue202011.story = {
+  name: 'minValue: 2010/1/1, maxValue: 2020/1/1'
+};
+
+export const PlaceholderValue198011 = () => render({placeholderValue: new CalendarDate(1980, 1, 1)});
+
+PlaceholderValue198011.story = {
+  name: 'placeholderValue: 1980/1/1'
+};
+
+export const PlaceholderValue1980118Am = () => render({placeholderValue: new CalendarDateTime(1980, 1, 1, 8)});
+
+PlaceholderValue1980118Am.story = {
+  name: 'placeholderValue: 1980/1/1 8 AM'
+};
+
+export const PlaceholderValue198011Zoned = () => render({placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')});
+
+PlaceholderValue198011Zoned.story = {
+  name: 'placeholderValue: 1980/1/1, zoned'
+};
+
+export const VisibleMonths2 = () => render({visibleMonths: 2, granularity: 'minute'});
+
+VisibleMonths2.story = {
+  name: 'visibleMonths: 2'
+};
+
+export const VisibleMonths3 = () => render({visibleMonths: 3, granularity: 'minute'});
+
+VisibleMonths3.story = {
+  name: 'visibleMonths: 3'
+};
+
+export function render(props = {}) {
   return (
     <Example
       label="Date"
