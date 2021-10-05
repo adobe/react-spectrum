@@ -7,6 +7,8 @@ let util = require('util');
 let {walkObject} = require('walk-object');
 let chalk = require('chalk');
 
+let isVerbose = false;
+
 compare().catch(err => {
   console.error(err.stack);
   process.exit(1);
@@ -19,6 +21,7 @@ compare().catch(err => {
  * We can high level some of this information in a series of summary messages that are color coded at the tail of the run.
  */
 async function compare() {
+  isVerbose = process.argv.findIndex(arg => arg === '--verbose') >= 2;
   let branchDir = path.join(__dirname, '..', 'dist', 'branch-api');
   let publishedDir = path.join(__dirname, '..', 'dist', 'published-api');
   if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
@@ -29,6 +32,7 @@ async function compare() {
 
   let branchAPIs = fg.sync(`${branchDir}/**/api.json`);
   let publishedAPIs = fg.sync(`${publishedDir}/**/api.json`);
+  console.log(branchAPIs)
   let pairs = [];
   // we only care about changes to already published APIs, so find all matching pairs based on what's been published
   for (let pubApi of publishedAPIs) {
@@ -46,7 +50,8 @@ async function compare() {
       summaryMessages.push({msg: `removed module ${pubApi}`, severity: 'error'});
     }
   }
-  // don't care about not published APIs, but we do care if we're about to publish a new one
+  let privatePackages = [];
+  // don't care about not private APIs, but we do care if we're about to publish a new one
   for (let branchApi of branchAPIs) {
     let branchApiPath = branchApi.split(path.sep);
     let sharedPath = path.join(...branchApiPath.slice(branchApiPath.length - 4));
@@ -59,7 +64,12 @@ async function compare() {
       }
     }
     if (!matchingPubFile) {
-      summaryMessages.push({msg: `added module ${branchApi}`, severity: 'warn'});
+      let json = JSON.parse(fs.readFileSync(path.join(branchApi, '..', '..', 'package.json')), 'utf8');
+      if (!json.private) {
+        summaryMessages.push({msg: `added module ${branchApi}`, severity: 'warn'});
+      } else {
+        privatePackages.push(branchApi);
+      }
     }
   }
 
@@ -72,26 +82,44 @@ async function compare() {
       diffs[diff.name] = diff.diff;
     }
   }
-  analyzeDiff(summaryMessages, diffs);
-  summaryMessages.forEach(({msg, severity}) => {
-    console[severity](chalk[severity === 'warn' ? 'yellow' : 'red'](msg));
-  });
-  let modulesAdded = branchAPIs.length - publishedAPIs.length;
+  let modulesAdded = branchAPIs.length - privatePackages.length - publishedAPIs.length;
   if (modulesAdded !== 0) {
-    console.log(chalk[modulesAdded > 0 ? 'yellow' : 'red'](`${Math.abs(modulesAdded)} modules ${modulesAdded > 0 ? 'added' : 'removed'}`));
+    summaryMessages.push({msg: `${Math.abs(modulesAdded)} modules ${modulesAdded > 0 ? 'added' : 'removed'}`, severity: modulesAdded > 0 ? 'warn' : 'error'});
   } else {
-    console.log(chalk.green('no modules removed or added'));
+    summaryMessages.push({msg: 'no modules removed or added', severity: 'info'});
   }
   if (count !== 0) {
-    console.log(chalk.yellow(`${count} modules had changes to their API`));
+    summaryMessages.push({msg: `${count} modules had changes to their API`, severity: 'warn'});
   } else {
-    console.log(chalk.green('no modules changed their API'));
+    summaryMessages.push({msg: 'no modules changed their API', severity: 'info'});
   }
+  analyzeDiffs(summaryMessages, diffs);
+  summaryMessages.forEach(({msg, severity}) => {
+    let color = 'default';
+    switch (severity) {
+      case 'info':
+        color = 'green';
+        break;
+      case 'log':
+        color = 'blue';
+        break;
+      case 'warn':
+        color = 'yellow';
+        break;
+      case 'error':
+        color = 'red';
+        break;
+      default:
+        color = 'default';
+        break;
+    }
+    console[severity](chalk[color](msg));
+  });
 }
 
 function getDiff(summaryMessages, pair) {
   let name = pair.branchApi.replace(/.*branch-api/, '');
-  console.log(`diffing ${name}`);
+  // console.log(`diffing ${name}`);
   let publishedApi = fs.readJsonSync(pair.pubApi);
   delete publishedApi.links;
   walkObject(publishedApi, ({value, location, isLeaf}) => {
@@ -107,7 +135,8 @@ function getDiff(summaryMessages, pair) {
     }
   });
   let diff = changesets.diff(publishedApi, branchApi);
-  if (diff.length > 0) {
+  if (diff.length > 0 && isVerbose) {
+    console.log(`diff found in ${name}`);
     // for now print the whole diff
     console.log(util.inspect(diff, {depth: null}));
   }
@@ -126,8 +155,102 @@ function getDiff(summaryMessages, pair) {
 }
 
 function analyzeDiffs(summaryMessages, diffs) {
+  let matches = new Map();
+  let used = new Map();
   for (let [key, value] of Object.entries(diffs)) {
+    walkChanges(value, {
+      UPDATE: (change, path) => {
+        if (used.has(change) || !(change.key === 'type' && (change.value === 'link' || change.oldValue === 'link'))) {
+          return;
+        }
+        matches.set(change, [`${key}:${path}`]);
+        used.set(change, true);
+        for (let [name, diff] of Object.entries(diffs)) {
+          walkChanges(diff, {
+            UPDATE: (addChange, addPath) => {
+              let subDiff = changesets.diff(addChange, change);
+              if (subDiff.length === 0) {
+                // guaranteed to have the match because we added it before doing this walk
+                let match = matches.get(change);
+                if (name !== key && !used.has(addChange)) {
+                  match.push(`${name}:${addPath}`);
+                  used.set(addChange, true);
+                }
+              }
+            }
+          });
+        }
+      },
+      ADD: (change, path) => {
+        if (used.has(change)) {
+          return;
+        }
+        matches.set(change, [`${key}:${path}`]);
+        used.set(change, true);
+        for (let [name, diff] of Object.entries(diffs)) {
+          walkChanges(diff, {
+            ADD: (addChange, addPath) => {
+              let subDiff = changesets.diff(addChange, change);
+              if (subDiff.length === 0) {
+                // guaranteed to have the match because we added it before doing this walk
+                let match = matches.get(change);
+                if (name !== key && !used.has(addChange)) {
+                  match.push(`${name}:${addPath}`);
+                  used.set(addChange, true);
+                }
+              }
+            }
+          });
+        }
+      },
+      REMOVE: (change, path) => {
+        if (used.has(change)) {
+          return;
+        }
+        matches.set(change, [`${key}:${path}`]);
+        used.set(change, true);
+        for (let [name, diff] of Object.entries(diffs)) {
+          walkChanges(diff, {
+            REMOVE: (addChange, addPath) => {
+              let subDiff = changesets.diff(addChange, change);
+              if (subDiff.length === 0) {
+                // guaranteed to have the match because we added it before doing this walk
+                let match = matches.get(change);
+                if (name !== key && !used.has(addChange)) {
+                  match.push(`${name}:${addPath}`);
+                  used.set(addChange, true);
+                }
+              }
+            }
+          });
+        }
+      }
+    });
+  }
+  for (let [key, value] of matches) {
+    let targets = value.map(loc => loc.replace(/\/dist\/.*\.json/, '')).map(loc => `\n  - ${loc}`);
+    let severity = 'log';
+    let message = `${key.key} ${key.type} to:${targets}`;
+    if (key.type === 'REMOVE') {
+      message = `${key.key} ${key.type} from:${targets}`;
+      severity = 'warn';
+    }
+    if (key.type === 'UPDATE' && key.value === 'link' || key.oldValue === 'link') {
+      message = `type definition moved beyond tools ability to track, check manually:${targets}`;
+      severity = 'warn';
+    }
+    summaryMessages.push({msg: message, severity});
+  }
+}
 
+function walkChanges(changes, process, path = '') {
+  for (let change of changes) {
+    if (process[change.type]) {
+      process[change.type](change, path);
+    }
+    if (change.changes && change.changes.length >= 0) {
+      walkChanges(change.changes, process, `${path}${path.length > 0 ? `.${change.key}` : change.key}`);
+    }
   }
 }
 
