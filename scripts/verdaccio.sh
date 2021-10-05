@@ -1,6 +1,7 @@
 #!/bin/bash
 
 port=4000
+original_registry=`npm get registry`
 registry="http://localhost:$port"
 output="output.out"
 ci=false
@@ -17,6 +18,7 @@ function cleanup {
   git tag -d $(git tag -l)
   git fetch
   git reset --hard HEAD~1
+  npm set registry $original_registry
 }
 
 # Start verdaccio and send it to the background
@@ -33,6 +35,8 @@ yarn lerna version minor --force-publish --allow-branch `git branch --show-curre
 
 # Publish packages to verdaccio
 yarn lerna publish from-package --registry $registry --yes
+
+npm set registry $registry
 
 if [ "$ci" = true ];
 then
