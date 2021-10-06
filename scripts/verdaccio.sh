@@ -51,6 +51,8 @@ then
   # build prod docs
   make website-production
   # TODO: rename the dist folder from dist/production/docs to dist/verdaccio/docs
+  # If building the sample app, move the contents of the build folder to dist/verdaccio/build or something
+  mv */docs/production/ */docs/verdaccio/
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"
