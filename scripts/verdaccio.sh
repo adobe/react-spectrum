@@ -52,7 +52,7 @@ then
   make website-production
   # Rename the dist folder from dist/production/docs to dist/verdaccio/docs
   # If building the sample app, move the contents of the build folder to dist/verdaccio/build or something
-  mv dist/production/docs/ dist/verdaccio/docs/
+  mv dist/production/ dist/verdaccio/
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"

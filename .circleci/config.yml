@@ -264,10 +264,11 @@ jobs:
           at: /tmp/dist
       - run:
           name: deploy
-          command: |
-            if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              az storage blob upload-batch -d reactspectrum -s /tmp/dist/verdaccio --account-name reactspectrum
-            fi
+          command: ls /tmp/dist/verdaccio
+          # command: |
+          #   if [ $AZURE_STORAGE_SAS_TOKEN ]; then
+          #     az storage blob upload-batch -d reactspectrum -s /tmp/dist/verdaccio --account-name reactspectrum
+          #   fi
 
   deploy-production:
     executor: azure-cli/azure-docker
@@ -344,9 +345,9 @@ workflows:
             - install
       - verdaccio-test:
       # Approach: Only run on commits to main? This means we won't have a comment on a PR though.
-          filters:
-            branches:
-              only: main
+          # filters:
+          #   branches:
+          #     only: main
           requires:
             - install
       - deploy:
@@ -366,11 +367,11 @@ workflows:
           requires:
             - docs-production
       - deploy-verdaccio:
-          filters:
-            branches:
-              only: main
+          # filters:
+          #   branches:
+          #     only: main
           requires:
-            - docs-production
+            - verdaccio-test
       - comment:
           requires:
             - deploy
