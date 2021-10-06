@@ -65,11 +65,11 @@ if [ "$ci" = true ];
 then
   # build prod docs
   make website-production
-  # Rename the dist folder from dist/production/docs to dist/verdaccio/docs
+  # Rename the dist folder from dist/production/docs to dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   # If building the sample app, move the contents of the build folder to dist/verdaccio/build or something
-  mkdir dist/`git rev-parse HEAD`
-  mkdir dist/`git rev-parse HEAD`/verdaccio
-  mv dist/production/docs dist/`git rev-parse HEAD`/verdaccio
+  mkdir dist/`git rev-parse HEAD~1`
+  mkdir dist/`git rev-parse HEAD~1`/verdaccio
+  mv dist/production/docs dist/`git rev-parse HEAD~1`/verdaccio
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"
