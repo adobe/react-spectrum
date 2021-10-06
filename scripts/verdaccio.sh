@@ -29,7 +29,7 @@ function cleanup {
 }
 
 # Generate dists for the packages
-make build
+yarn parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-minify
 
 # Start verdaccio and send it to the background
 yarn verdaccio --listen $port &>${output}&
