@@ -8,6 +8,8 @@ let {walkObject} = require('walk-object');
 let chalk = require('chalk');
 
 let isVerbose = false;
+let organizedBy = 'type';
+let translateNames = true;
 
 compare().catch(err => {
   console.error(err.stack);
@@ -22,10 +24,12 @@ compare().catch(err => {
  */
 async function compare() {
   isVerbose = process.argv.findIndex(arg => arg === '--verbose') >= 2;
+  organizedBy = process.argv.findIndex(arg => arg === '--organizedBy="change"') >= 2 ? 'change' : 'type';
+  translateNames = process.argv.findIndex(arg => arg === '--translateNames="false"') >= 2;
   let branchDir = path.join(__dirname, '..', 'dist', 'branch-api');
   let publishedDir = path.join(__dirname, '..', 'dist', 'published-api');
   if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
-    console.log(chalk.red(`you must have both a branchDir ${branchDir} and publishedDir ${publishedDir}`));
+    console.log(chalk.redBright(`you must have both a branchDir ${branchDir} and publishedDir ${publishedDir}`));
     return;
   }
   let summaryMessages = [];
@@ -88,28 +92,33 @@ async function compare() {
     summaryMessages.push({msg: 'no modules removed or added', severity: 'info'});
   }
   if (count !== 0) {
-    summaryMessages.push({msg: `${count} modules had changes to their API`, severity: 'warn'});
+    summaryMessages.push({msg: `${count} modules had changes to their API ${Object.keys(diffs).map(key => `\n  - ${simplifyModuleName(key)}`)}`, severity: 'warn'});
   } else {
     summaryMessages.push({msg: 'no modules changed their API', severity: 'info'});
   }
-  analyzeDiffs(summaryMessages, diffs);
-  summaryMessages.forEach(({msg, severity}) => {
+  summaryMessages.push({});
+  let moreMessages = analyzeDiffs(diffs);
+  [...summaryMessages, ...moreMessages].forEach(({msg, severity}) => {
+    if (!msg) {
+      console.log('');
+      return;
+    }
     let color = 'default';
     switch (severity) {
       case 'info':
-        color = 'green';
+        color = 'greenBright';
         break;
       case 'log':
-        color = 'blue';
+        color = 'blueBright';
         break;
       case 'warn':
-        color = 'yellow';
+        color = 'yellowBright';
         break;
       case 'error':
-        color = 'red';
+        color = 'redBright';
         break;
       default:
-        color = 'default';
+        color = 'defaultBright';
         break;
     }
     console[severity](chalk[color](msg));
@@ -153,7 +162,8 @@ function getDiff(summaryMessages, pair) {
   return {diff, name};
 }
 
-function analyzeDiffs(summaryMessages, diffs) {
+function analyzeDiffs(diffs) {
+  let summaryMessages = [];
   let matches = new Map();
   let used = new Map();
   for (let [key, value] of Object.entries(diffs)) {
@@ -226,20 +236,71 @@ function analyzeDiffs(summaryMessages, diffs) {
       }
     });
   }
-  for (let [key, value] of matches) {
-    let targets = value.map(loc => loc.replace(/\/dist\/.*\.json/, '')).map(loc => `\n  - ${loc}`);
-    let severity = 'log';
-    let message = `${key.key} ${key.type} to:${targets}`;
-    if (key.type === 'REMOVE') {
-      message = `${key.key} ${key.type} from:${targets}`;
-      severity = 'warn';
+  if (organizedBy === 'change') {
+    for (let [key, value] of matches) {
+      let targets = value.map(loc => simplifyModuleName(loc)).map(loc => `\n  - ${loc}`);
+      let severity = 'log';
+      let message = `${key.key} ${key.type} to:${targets}`;
+      if (key.type === 'REMOVE') {
+        message = `${key.key} ${key.type} from:${targets}`;
+        severity = 'warn';
+      }
+      if (key.type === 'UPDATE') {
+        message = `${key.oldValue} UPDATED to ${key.value}:${targets}`;
+      }
+      summaryMessages.push({msg: message, severity});
     }
-    if (key.type === 'UPDATE' && key.value === 'link' || key.oldValue === 'link') {
-      message = `type definition moved beyond tools ability to track, check manually:${targets}`;
-      severity = 'warn';
+  } else {
+    let invertedMap = new Map();
+    for (let [key, value] of matches) {
+      for (let loc of value.map(simplifyModuleName)) {
+        let entry = invertedMap.get(loc);
+        if (entry) {
+          entry.push(key);
+        } else {
+          invertedMap.set(loc, [key]);
+        }
+      }
     }
-    summaryMessages.push({msg: message, severity});
+
+    for (let [key, value] of invertedMap) {
+      let realName = getRealName(key);
+      let targets = value.map(change => {
+        let message = '';
+        switch (change.type) {
+          case 'REMOVE':
+            message = chalk.redBright(`${change.key} ${change.type}D`);
+            break;
+          case 'UPDATE':
+            message = `${change.oldValue} UPDATED to ${change.value}`;
+            break;
+          default:
+            message = `${change.key} ${change.type}ED`;
+            break;
+        }
+        return `\n  - ${message}`;
+      });
+      let severity = 'log';
+      if (translateNames) {
+        summaryMessages.push({msg: `${key.split(':')[0]}:${realName}${targets}`, severity});
+      } else {
+        summaryMessages.push({msg: `${key}${targets}`, severity});
+      }
+    }
   }
+  return summaryMessages;
+}
+
+function getRealName(diffName, type = 'ADD') {
+  let [file, jsonPath] = diffName.split(':');
+  let filePath = path.join(__dirname, '..', 'dist', type === 'REMOVE' ? 'published-api' : 'branch-api', file, 'dist', 'api.json');
+  let json = JSON.parse(fs.readFileSync(filePath), 'utf8');
+  let name = [];
+  for (let property of jsonPath.split('.')) {
+    json = json[property];
+    name.push(json.name ?? property);
+  }
+  return name.join('.');
 }
 
 function walkChanges(changes, process, path = '') {
@@ -251,6 +312,10 @@ function walkChanges(changes, process, path = '') {
       walkChanges(change.changes, process, `${path}${path.length > 0 ? `.${change.key}` : change.key}`);
     }
   }
+}
+
+function simplifyModuleName(apiJsonPath) {
+  return apiJsonPath.replace(/\/dist\/.*\.json/, '');
 }
 
 function run(cmd, args, opts) {
