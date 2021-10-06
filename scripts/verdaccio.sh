@@ -12,10 +12,9 @@ then
 fi
 
 function cleanup {
-  lsof -ti tcp:4000 | xargs kill
-
   if [ "$ci" = false ];
   then
+    lsof -ti tcp:4000 | xargs kill
     # Clean up generated dists if run locally
     rm -rf **/dist
     rm -rf storage/ ~/.config/verdaccio/storage/ $output
@@ -23,6 +22,9 @@ function cleanup {
     git fetch
     git reset --hard HEAD~1
     npm set registry $original_registry
+  else
+    # lsof doesn't work in circleci
+    netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | kill
   fi
 }
 
@@ -37,6 +39,12 @@ grep -q 'http address' <(tail -f $output)
 
 # Login as test user
 yarn npm-cli-login -u abc -p abc -e 'abc@abc.com' -r $registry
+
+if [ "$ci" = true ];
+then
+  git config --global user.email octobot@github.com
+  git config --global user.name GitHub Actions
+fi
 
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
 yarn lerna version minor --force-publish --allow-branch `git branch --show-current` --no-push --yes
