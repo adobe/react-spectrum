@@ -54,7 +54,6 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       <ElementType
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
-        onClick={() => console.log('weagawe')}
         ref={domRef}
         className={
           classNames(

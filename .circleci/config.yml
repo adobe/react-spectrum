@@ -231,7 +231,7 @@ jobs:
       # Will need to test if the script can run properly
       - run:
           name: run verdaccio
-          command: ./scripts/verdaccio.sh
+          command: ./scripts/verdaccio.sh ci
 
       # Figure out if this works, aim is to persist the dist created by the script
       # I think this may conflict with the current deploy-production, may need to modify the script so it stores
