@@ -50,6 +50,7 @@ if [ "$ci" = true ];
 then
   # build prod docs
   make website-production
+  # TODO: rename the dist folder from dist/production/docs to dist/verdaccio/docs
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"

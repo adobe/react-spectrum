@@ -233,6 +233,21 @@ jobs:
               az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
             fi
 
+  # Double check the command below. The reason this is split out instead of using deploy-production is so we don't increase the chance
+  # of failure (deploy-production doesnt run a lot of the time cuz docs-production fails). Figure out if I can
+  # get rid of this and place verdaccio-test under deploy (prob don't wanna do that cuz verdaccio-test is basically doing docs-production and may fail a bunch)
+  deploy-verdaccio:
+    executor: azure-cli/azure-docker
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - run:
+          name: deploy
+          command: |
+            if [ $AZURE_STORAGE_SAS_TOKEN ]; then
+              az storage blob upload-batch -d reactspectrum -s /tmp/dist/verdaccio --account-name reactspectrum
+            fi
+
   deploy-production:
     executor: azure-cli/azure-docker
     steps:
@@ -270,6 +285,26 @@ jobs:
           name: Publish
           command: make publish-nightly
 
+  verdaccio-test:
+    executor: rsp-xlarge
+      # Figure out what exactly this cache contains.
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      # Will need to test if the script can run properly
+      - run:
+          name: run verdaccio
+          command: ./scripts/verdaccio.sh
+
+      # Figure out if this works, aim is to persist the dist created by the script
+      # I think this may conflict with the current deploy-production, may need to modify the script so it stores
+      # it somewhere else? Perhaps have the script run before the prod one and have it rename the dist/production/docs folder to dist/verdaccio/docs
+      # That way we have a unique link that doesn't conflict with the prod link?
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/docs/'
+
 workflows:
   version: 2
   commit:
@@ -306,6 +341,13 @@ workflows:
               only: main
           requires:
             - install
+      - verdaccio-test:
+      # Approach: Only run on commits to main? This means we won't have a comment on a PR though.
+          filters:
+            branches:
+              only: main
+          requires:
+            - install
       - deploy:
           requires:
             - lint
@@ -317,6 +359,12 @@ workflows:
             - storybook-17
             - docs
       - deploy-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - docs-production
+      - deploy-verdaccio:
           filters:
             branches:
               only: main
