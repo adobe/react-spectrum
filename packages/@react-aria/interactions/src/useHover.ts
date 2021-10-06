@@ -109,7 +109,7 @@ export function useHover(props: HoverProps): HoverResult {
       }
 
       state.isHovered = true;
-      let target = event.target;
+      let target = event.currentTarget;
       state.target = target;
 
       if (onHoverStart) {
