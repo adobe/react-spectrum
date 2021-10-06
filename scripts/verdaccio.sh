@@ -16,7 +16,7 @@ function cleanup {
   then
     lsof -ti tcp:4000 | xargs kill
     # Clean up generated dists if run locally
-    rm -rf **/dist
+    rm -rf packages/**/dist
     rm -rf storage/ ~/.config/verdaccio/storage/ $output
     git tag -d $(git tag -l)
     git fetch
@@ -29,7 +29,7 @@ function cleanup {
 }
 
 # Generate dists for the packages
-PARCEL_WORKERS=1 yarn parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-minify
+PARCEL_WORKERS=2 yarn parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-minify --log-level error
 
 # Start verdaccio and send it to the background
 yarn verdaccio --listen $port &>${output}&
@@ -65,11 +65,13 @@ if [ "$ci" = true ];
 then
   # build prod docs
   make website-production
-  # Rename the dist folder from dist/production/docs to dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
+  # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
+  # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
   # If building the sample app, move the contents of the build folder to dist/verdaccio/build or something
-  mkdir dist/`git rev-parse HEAD~1`
-  mkdir dist/`git rev-parse HEAD~1`/verdaccio
-  mv dist/production/docs dist/`git rev-parse HEAD~1`/verdaccio
+  mkdir verdaccio_dist
+  mkdir verdaccio_dist/`git rev-parse HEAD~1`
+  mkdir verdaccio_dist/`git rev-parse HEAD~1`/verdaccio
+  mv dist/production/docs verdaccio_dist/`git rev-parse HEAD~1`/verdaccio
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"

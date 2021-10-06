@@ -237,7 +237,7 @@ jobs:
       # it somewhere else? Perhaps have the script run before the prod one and have it rename the dist/production/docs folder to dist/verdaccio/docs
       # That way we have a unique link that doesn't conflict with the prod link?
       - persist_to_workspace:
-          root: dist
+          root: verdaccio_dist
           paths:
             - '*/verdaccio/docs/'
 
@@ -260,14 +260,13 @@ jobs:
     executor: azure-cli/azure-docker
     steps:
       - attach_workspace:
-          at: /tmp/dist
+          at: /tmp/verdaccio_dist
       - run:
           name: deploy
-          command: ls /tmp/dist/`git rev-parse HEAD`
-          # command: |
-          #   if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-          #     az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
-          #   fi
+          command: |
+            if [ $AZURE_STORAGE_SAS_TOKEN ]; then
+              az storage blob upload-batch -d reactspectrum -s /tmp/verdaccio_dist --account-name reactspectrum
+            fi
 
   deploy-production:
     executor: azure-cli/azure-docker
