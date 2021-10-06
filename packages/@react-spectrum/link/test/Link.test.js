@@ -10,9 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {Link} from '../';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {theme} from '@react-spectrum/theme-default';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import V2Link from '@react/react-spectrum/Link';
 
 // Triggers a "press" event on an element.
@@ -25,8 +28,18 @@ export function triggerPress(element) {
 
 describe('Link', function () {
   let onPressSpy = jest.fn();
+  let onOpenChange = jest.fn();
+
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
 
   afterEach(() => {
+    onOpenChange.mockClear();
     onPressSpy.mockClear();
   });
 
@@ -92,5 +105,42 @@ describe('Link', function () {
     let {getByRole} = render(<Link data-testid="test">Click me</Link>);
     let link = getByRole('link');
     expect(link).toHaveAttribute('data-testid', 'test');
+  });
+
+  it('supports autofocus', () => {
+    let {getByRole} = render(<Link autoFocus>Click me</Link>);
+
+    let link = getByRole('link');
+    expect(document.activeElement).toBe(link);
+  });
+
+  it('supports a wrapping tooltip trigger', () => {
+    let {getByRole, queryByRole} = render(
+      <Provider theme={theme}>
+        <TooltipTrigger onOpenChange={onOpenChange}>
+          <Link>Click me</Link>
+          <Tooltip>Helpful information.</Tooltip>
+        </TooltipTrigger>
+      </Provider>
+    );
+
+    expect(queryByRole('tooltip')).toBeNull();
+    let link = getByRole('link');
+    act(() => {
+      link.focus();
+    });
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+    act(() => {
+      link.blur();
+    });
+    expect(onOpenChange).toHaveBeenCalledTimes(2);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(onOpenChange).toHaveBeenCalledTimes(2);
+    expect(tooltip).not.toBeInTheDocument();
   });
 });
