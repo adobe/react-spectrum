@@ -224,6 +224,13 @@ jobs:
   verdaccio-test:
     executor: rsp-xlarge
     steps:
+      - setup_remote_docker
+      - run:
+          background: true
+          command: ssh remote-docker "sudo tail -f /var/log/dmesg"
+      - run:
+          background: true
+          command: ssh remote-docker "sudo tail -f /var/log/syslog"
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
