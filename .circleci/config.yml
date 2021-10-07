@@ -227,15 +227,12 @@ jobs:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
-      # Will need to test if the script can run properly
       - run:
           name: run verdaccio
           command: ./scripts/verdaccio.sh ci
 
-      # Figure out if this works, aim is to persist the dist created by the script
-      # I think this may conflict with the current deploy-production, may need to modify the script so it stores
-      # it somewhere else? Perhaps have the script run before the prod one and have it rename the dist/production/docs folder to dist/verdaccio/docs
-      # That way we have a unique link that doesn't conflict with the prod link?
+      # Store the prod docs website w/ verdaccio packages in a separate dist folder so it doesn't get deployed by "deploy" workflow
+      # This is because we have a separate deploy flow for the test prod docs website so it doesn't hold up the normal "deploy" workflow
       - persist_to_workspace:
           root: verdaccio_dist
           paths:
@@ -253,9 +250,7 @@ jobs:
               az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
             fi
 
-  # Double check the command below. The reason this is split out instead of using deploy-production is so we don't increase the chance
-  # of failure (deploy-production doesnt run a lot of the time cuz docs-production fails). Figure out if I can
-  # get rid of this and place verdaccio-test under deploy (prob don't wanna do that cuz verdaccio-test is basically doing docs-production and may fail a bunch)
+  # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
   deploy-verdaccio:
     executor: azure-cli/azure-docker
     steps:

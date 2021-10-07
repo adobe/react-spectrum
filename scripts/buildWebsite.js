@@ -52,7 +52,7 @@ async function build() {
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
-      // TODO: attempt to fix the built verdaccio docs since it doens't include the commit hash/verdaccio in the relative links. Will need to update buildWebsite so it doesn't do this on the prod docs build
+      // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
       build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' --no-scope-hoist --public-url ${publicUrl}`,
       postinstall: 'patch-package'
     }
