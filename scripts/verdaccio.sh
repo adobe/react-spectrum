@@ -64,6 +64,7 @@ npm set registry $registry
 if [ "$ci" = true ];
 then
   # build prod docs
+  # TODO: replace this with make website-verdaccio
   make website-production
   # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod

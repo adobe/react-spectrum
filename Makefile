@@ -92,3 +92,5 @@ website-production:
 	node scripts/buildWebsite.js
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
 	node scripts/brotli.js
+
+# TODO add website-verdaccio that does the same as above except it passes an option to buildWebsite
