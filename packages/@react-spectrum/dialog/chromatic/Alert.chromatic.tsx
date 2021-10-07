@@ -18,7 +18,6 @@ import {Text} from '@react-spectrum/text';
 
 export default {
   title: 'Dialog/Alert',
-
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}
   }
