@@ -28,6 +28,8 @@ function cleanup {
   fi
 }
 
+trap cleanup ERR EXIT
+
 # Generate dists for the packages
 PARCEL_WORKERS=2 yarn parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-minify --log-level error
 
@@ -78,5 +80,3 @@ else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"
 fi
-
-cleanup
