@@ -44,7 +44,7 @@
     "compare:apis": "node scripts/compareAPIs.js",
     "check-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
     "docs-differ": "docs-differ",
-    "docs-differ:released-local": "docs-differ -b https://react-spectrum.adobe.com/index.html -c http://localhost:1234/index.html -s 3"
+    "docs-differ:released-local": "docs-differ -b https://react-spectrum.adobe.com/index.html -c http://localhost:1234/index.html"
   },
   "workspaces": [
     "packages/react-stately",
