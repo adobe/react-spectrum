@@ -5,6 +5,7 @@ original_registry=`npm get registry`
 registry="http://localhost:$port"
 output="output.out"
 ci=false
+commit_to_revert="HEAD"
 
 if [ "$1" = "ci" ];
 then
@@ -20,7 +21,7 @@ function cleanup {
     rm -rf storage/ ~/.config/verdaccio/storage/ $output
     git tag -d $(git tag -l)
     git fetch
-    git reset --hard HEAD~1
+    git reset --hard $commit_to_revert
     npm set registry $original_registry
   else
     # lsof doesn't work in circleci
@@ -50,7 +51,7 @@ fi
 
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
 yarn lerna version minor --force-publish --allow-branch `git branch --show-current` --no-push --yes
-
+commit_to_revert="HEAD~1"
 
 if [ "$ci" = true ];
 then
