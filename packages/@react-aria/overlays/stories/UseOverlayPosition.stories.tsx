@@ -14,23 +14,23 @@ import {mergeProps} from '@react-aria/utils';
 import {Placement} from '@react-types/overlays';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {storiesOf} from '@storybook/react';
 import {useOverlayPosition, useOverlayTrigger} from '../src';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-function Trigger(props: {
-  withPortal: boolean,
-  placement: Placement
-}) {
+function Trigger(props: { withPortal: boolean, placement: Placement }) {
   const {withPortal, placement} = props;
   const targetRef = React.useRef<HTMLButtonElement>(null);
   const overlayRef = React.useRef<HTMLDivElement>(null);
   const state = useOverlayTriggerState({
     defaultOpen: false
   });
-  const {triggerProps, overlayProps} = useOverlayTrigger({
-    type: 'menu'
-  }, state, targetRef);
+  const {triggerProps, overlayProps} = useOverlayTrigger(
+    {
+      type: 'menu'
+    },
+    state,
+    targetRef
+  );
   const {overlayProps: overlayPositionProps} = useOverlayPosition({
     targetRef,
     overlayRef,
@@ -70,14 +70,38 @@ function Trigger(props: {
   }
   return (
     <div style={{position: 'relative', margin: 'auto'}}>
-      <button ref={targetRef} {...triggerProps} onClick={() => state.toggle()}>Trigger (open: {`${state.isOpen}`})</button>
+      <button ref={targetRef} {...triggerProps} onClick={() => state.toggle()}>
+        Trigger (open: {`${state.isOpen}`})
+      </button>
       {state.isOpen && overlay}
     </div>
   );
 }
 
-storiesOf('UseOverlayPosition', module)
-  .add('document.body container bottom', () => <Trigger withPortal placement="bottom" />)
-  .add('document.body container top', () => <Trigger withPortal placement="top" />)
-  .add('positioned container bottom', () => <Trigger withPortal={false} placement="bottom" />)
-  .add('positioned container top', () => <Trigger withPortal={false} placement="top" />);
+export default {
+  title: 'UseOverlayPosition'
+};
+
+export const DocumentBodyContainerBottom = () => <Trigger withPortal placement="bottom" />;
+
+DocumentBodyContainerBottom.story = {
+  name: 'document.body container bottom'
+};
+
+export const DocumentBodyContainerTop = () => <Trigger withPortal placement="top" />;
+
+DocumentBodyContainerTop.story = {
+  name: 'document.body container top'
+};
+
+export const PositionedContainerBottom = () => <Trigger withPortal={false} placement="bottom" />;
+
+PositionedContainerBottom.story = {
+  name: 'positioned container bottom'
+};
+
+export const PositionedContainerTop = () => <Trigger withPortal={false} placement="top" />;
+
+PositionedContainerTop.story = {
+  name: 'positioned container top'
+};

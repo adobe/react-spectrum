@@ -3,13 +3,14 @@ import {Item} from '@react-spectrum/actiongroup';
 import {ListState, useListState} from '@react-stately/list';
 import * as React from 'react';
 import {Section} from '@react-spectrum/menu';
-import {storiesOf} from '@storybook/react';
 import {useSelectableItem, useSelectableList} from '../src';
 
-function SelectableList(props: CollectionBase<any> & {
-  isSubUlRelativelyPositioned: boolean,
-  isUlRelativelyPositioned: boolean
-}) {
+function SelectableList(
+  props: CollectionBase<any> & {
+    isSubUlRelativelyPositioned: boolean,
+    isUlRelativelyPositioned: boolean
+  }
+) {
   const state = useListState(props);
   const listRef = React.useRef<HTMLUListElement>(null);
   const {listProps} = useSelectableList({
@@ -25,18 +26,21 @@ function SelectableList(props: CollectionBase<any> & {
 
   return (
     <ul
-      {...listProps} 
+      {...listProps}
       style={{
-        height: 200, overflow: 'auto', padding: 10, margin: 0, listStyle: 'none',
+        height: 200,
+        overflow: 'auto',
+        padding: 10,
+        margin: 0,
+        listStyle: 'none',
         position: props.isUlRelativelyPositioned ? 'relative' : 'static'
-      }} 
+      }}
       ref={listRef}>
-      {Array.from(state.collection).map(node => {
+      {Array.from(state.collection).map((node) => {
         if (node.hasChildNodes) {
           return (
             <>
-              <div
-                style={{textTransform: 'uppercase'}}>{node.rendered}</div>
+              <div style={{textTransform: 'uppercase'}}>{node.rendered}</div>
               <ul
                 key={node.key}
                 style={{
@@ -57,10 +61,7 @@ function SelectableList(props: CollectionBase<any> & {
   );
 }
 
-function SelectableItem(props: {
-  state: ListState<any>,
-  node: Node<any>
-}) {
+function SelectableItem(props: { state: ListState<any>, node: Node<any> }) {
   const {state, node} = props;
   const ref = React.useRef<HTMLLIElement>(null);
   const {itemProps} = useSelectableItem({
@@ -72,9 +73,9 @@ function SelectableItem(props: {
 
   const isFocused = node.key === state.selectionManager.focusedKey;
   return (
-    <li 
+    <li
       {...itemProps}
-      key={node.key} 
+      key={node.key}
       style={{
         backgroundColor: isFocused ? 'gray' : 'white',
         fontWeight: isFocused ? 'bold' : 'normal'
@@ -109,26 +110,46 @@ const options = [
   </Section>
 ];
 
-// Press up and down to focus on different items, and make sure the scroll
-// container scrolls to reveal as expected.
-storiesOf('useSelectableList', module)
-  .add('Static ul, static sub ul', () => (
-    <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned={false}>
-      {options}
-    </SelectableList>
-  ))
-  .add('Static ul, relative sub ul', () => (
-    <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned={false}>
-      {options}
-    </SelectableList>
-  ))
-  .add('Relative ul, static sub ul', () => (
-    <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned>
-      {options}
-    </SelectableList>
-  ))
-  .add('Relative ul, relative sub ul', () => (
-    <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned>
-      {options}
-    </SelectableList>
-  ));
+export default {
+  title: 'useSelectableList'
+};
+
+export const StaticUlStaticSubUl = () => (
+  <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned={false}>
+    {options}
+  </SelectableList>
+);
+
+StaticUlStaticSubUl.story = {
+  name: 'Static ul, static sub ul'
+};
+
+export const StaticUlRelativeSubUl = () => (
+  <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned={false}>
+    {options}
+  </SelectableList>
+);
+
+StaticUlRelativeSubUl.story = {
+  name: 'Static ul, relative sub ul'
+};
+
+export const RelativeUlStaticSubUl = () => (
+  <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned>
+    {options}
+  </SelectableList>
+);
+
+RelativeUlStaticSubUl.story = {
+  name: 'Relative ul, static sub ul'
+};
+
+export const RelativeUlRelativeSubUl = () => (
+  <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned>
+    {options}
+  </SelectableList>
+);
+
+RelativeUlRelativeSubUl.story = {
+  name: 'Relative ul, relative sub ul'
+};
