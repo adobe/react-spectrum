@@ -221,7 +221,7 @@ jobs:
           paths:
             - '*/docs/'
 
-  verdaccio-test:
+  docs-verdaccio:
     executor: rsp-xlarge
     steps:
       - restore_cache:
@@ -336,7 +336,7 @@ workflows:
               only: main
           requires:
             - install
-      - verdaccio-test:
+      - docs-verdaccio:
       # Approach: Only run on commits to main? This means we won't have a comment on a PR though.
           # filters:
           #   branches:
@@ -364,7 +364,7 @@ workflows:
           #   branches:
           #     only: main
           requires:
-            - verdaccio-test
+            - docs-verdaccio
       - comment:
           requires:
             - deploy
