@@ -63,16 +63,17 @@ npm set registry $registry
 
 if [ "$ci" = true ];
 then
-  # build prod docs
-  # TODO: replace this with make website-verdaccio
-  make website-production
+  # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
+  node scripts/buildWebsite.js /reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs
+  cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+  node scripts/brotli.js
+
   # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
   # If building the sample app, move the contents of the build folder to dist/verdaccio/build or something
-  mkdir verdaccio_dist
-  mkdir verdaccio_dist/`git rev-parse HEAD~1`
-  mkdir verdaccio_dist/`git rev-parse HEAD~1`/verdaccio
-  mv dist/production/docs verdaccio_dist/`git rev-parse HEAD~1`/verdaccio
+  verdaccio_path=verdaccio_dist/`git rev-parse HEAD~1`/verdaccio
+  mkdir -p $verdaccio_path
+  mv dist/production/docs $verdaccio_path
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"
