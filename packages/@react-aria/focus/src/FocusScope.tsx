@@ -23,6 +23,13 @@ interface FocusScopeProps {
   children: ReactNode,
 
   /**
+   * The position in the DOM where this component's descendants
+   * should be inserted into the tab order. This has no effect when
+   * focus is contained.
+   */
+  tabOrder?: 'replace-trigger' | 'after-trigger' | RefObject<HTMLElement | null>,
+
+  /**
    * Whether to contain focus inside the scope, so users cannot
    * move focus outside, for example in a modal dialog.
    */
@@ -82,7 +89,7 @@ let scopes: Map<Scope, Scope | null> = new Map();
  * to user events.
  */
 export function FocusScope(props: FocusScopeProps) {
-  let {children, contain, restoreFocus, autoFocus} = props;
+  let {children, tabOrder, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   // enforce immutability of the scope object as this component's hooks should not change
@@ -121,7 +128,9 @@ export function FocusScope(props: FocusScopeProps) {
 
   useAutoFocus(scopeRef.current, autoFocus);
   let nodeToRestoreRef = useRestoreFocus(scopeRef.current, restoreFocus);
-  useTabOrderSplice(scopeRef.current, contain, nodeToRestoreRef);
+  let domRef = typeof tabOrder === 'object' ? tabOrder : nodeToRestoreRef;
+  const tabStrategy = typeof tabOrder === 'string' ? tabOrder : 'replace-trigger';
+  useTabOrderSplice(scopeRef.current, contain ? 'contain' : tabStrategy, domRef);
 
   let focusManager = createFocusManagerForScope(scopeRef.current);
 
@@ -225,7 +234,7 @@ function getScopeRoot(scope: Scope) {
   return scope[0].parentElement;
 }
 
-function useTabOrderSplice(scope: Scope, contain: boolean, domRef: React.RefObject<HTMLElement> | undefined) {
+function useTabOrderSplice(scope: Scope, strategy: 'contain' | 'replace-trigger' | 'after-trigger', domRef: React.RefObject<HTMLElement> | undefined) {
   let focusedNode = useRef<HTMLElement>();
 
   let raf = useRef(null);
@@ -236,7 +245,7 @@ function useTabOrderSplice(scope: Scope, contain: boolean, domRef: React.RefObje
         return;
       }
 
-      if (contain && scope !== containedScope) {
+      if (strategy === 'contain' && scope !== containedScope) {
         return;
       }
 
@@ -246,13 +255,13 @@ function useTabOrderSplice(scope: Scope, contain: boolean, domRef: React.RefObje
       }
 
       // Create a DOM tree walker that matches all tabbable elements (and when contained, filtered to the current scope)
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, contain ? scope : undefined);
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, strategy === 'contain' ? scope : undefined);
 
       // Find the next tabbable element after the currently focused element
       walker.currentNode = focusedElement;
       let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
 
-      if (contain) {
+      if (strategy === 'contain') {
         if (!nextElement) {
           // wrap focus to the opposite end of the scope
           walker.currentNode = e.shiftKey ? scope[scope.length - 1].nextElementSibling : scope[0].previousElementSibling;
@@ -261,10 +270,16 @@ function useTabOrderSplice(scope: Scope, contain: boolean, domRef: React.RefObje
       } else if (domRef?.current) {
         walker.currentNode = domRef.current;
 
-        // Skip over elements within the scope, in case the scope immediately follows the domRef.
-        do {
+        if (strategy === 'after-trigger' && e.shiftKey) {
+          nextElement = walker.currentNode as HTMLElement;
+        } else {
           nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
-        } while (isElementInScope(nextElement, scope));
+        }
+
+        // Skip over elements within the scope, in case the scope immediately follows the domRef.
+        while (isElementInScope(nextElement, scope)) {
+          nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+        }
 
         // If there is no next element and the domRef isn't within a FocusScope (i.e. we are leaving the top level focus scope)
         // then move focus to the body.
@@ -315,18 +330,18 @@ function useTabOrderSplice(scope: Scope, contain: boolean, domRef: React.RefObje
     };
 
     document.addEventListener('keydown', onKeyDown, false);
-    if (contain) {
+    if (strategy === 'contain') {
       document.addEventListener('focusin', onFocus, false);
       document.addEventListener('focusout', onBlur, false);
     }
     return () => {
       document.removeEventListener('keydown', onKeyDown, false);
-      if (contain) {
+      if (strategy === 'contain') {
         document.removeEventListener('focusin', onFocus, false);
         document.removeEventListener('focusout', onBlur, false);
       }
     };
-  }, [scope, contain, domRef]);
+  }, [scope, strategy, domRef]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
