@@ -38,7 +38,9 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
    * The interaction required to display the ComboBox menu.
    * @default 'input'
    */
-  menuTrigger?: MenuTriggerAction
+  menuTrigger?: MenuTriggerAction,
+  /** Whether keyboard navigation is circular. */
+  shouldFocusWrap?: boolean
 }
 
 export interface SpectrumComboBoxProps<T> extends Omit<ComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
