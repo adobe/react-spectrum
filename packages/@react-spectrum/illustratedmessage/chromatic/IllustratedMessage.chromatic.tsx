@@ -15,31 +15,32 @@ import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
 import NotFound from '@spectrum-icons/illustrations/src/NotFound';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('IllustratedMessage', module)
-  .add(
-    'Not found',
-    () => render({
-      heading: 'Error 404: Page not found.',
-      description: 'This page isn’t available. Try checking the URL or visit a different page.',
-      illustration: <NotFound />
-    })
-  )
-  // don't need to test the other illustrations, they are svg's, so unless their definition changes
-  // they probably won't change other than color/position, in which case, one is enough to catch that
-  .add(
-    'No heading or description',
-    () => render({illustration: <NotFound aria-label="No Results" />})
-  );
+export default {
+  title: 'IllustratedMessage'
+};
+
+export const _NotFound = () =>
+  render({
+    heading: 'Error 404: Page not found.',
+    description:
+      'This page isn’t available. Try checking the URL or visit a different page.',
+    illustration: <NotFound />
+  });
+
+_NotFound.story = {
+  name: 'Not found'
+};
+
+export const NoHeadingOrDescription = () =>
+  render({illustration: <NotFound aria-label="No Results" />});
+
+NoHeadingOrDescription.story = {
+  name: 'No heading or description'
+};
 
 function render(props: any = {}) {
-  let {
-    illustration,
-    heading,
-    description,
-    ...otherProps
-  } = props;
+  let {illustration, heading, description, ...otherProps} = props;
   return (
     <IllustratedMessage {...otherProps}>
       {description && <Content>{description}</Content>}

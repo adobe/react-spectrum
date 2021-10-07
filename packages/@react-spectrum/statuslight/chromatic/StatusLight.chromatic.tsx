@@ -14,24 +14,47 @@ import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {SpectrumStatusLightProps} from '@react-types/statuslight';
 import {StatusLight} from '../';
-import {storiesOf} from '@storybook/react';
 import {View} from '@react-spectrum/view';
 
-let variants = ['celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse', 'magenta', 'purple', 'neutral', 'info', 'positive', 'notice', 'negative', 'positive'];
+let variants = [
+  'celery',
+  'yellow',
+  'fuchsia',
+  'indigo',
+  'seafoam',
+  'chartreuse',
+  'magenta',
+  'purple',
+  'neutral',
+  'info',
+  'positive',
+  'notice',
+  'negative',
+  'positive'
+];
 
-storiesOf('StatusLight', module)
-  .add(
-    'all variants',
-    () => render()
-  )
-  .add(
-    'multiline',
-    () => (
-      <View width="size-3000">
-        <StatusLight variant="celery">Super long status light label. Sample text. Arma virumque cano, Troiae qui primus ab oris.</StatusLight>
-      </View>
-    )
-  );
+export default {
+  title: 'StatusLight'
+};
+
+export const AllVariants = () => render();
+
+AllVariants.story = {
+  name: 'all variants'
+};
+
+export const Multiline = () => (
+  <View width="size-3000">
+    <StatusLight variant="celery">
+      Super long status light label. Sample text. Arma virumque cano, Troiae qui
+      primus ab oris.
+    </StatusLight>
+  </View>
+);
+
+Multiline.story = {
+  name: 'multiline'
+};
 
 function render() {
   return (
@@ -39,7 +62,9 @@ function render() {
       {variants.map((variant: SpectrumStatusLightProps['variant']) => (
         <>
           <StatusLight variant={variant}>Status light {variant}</StatusLight>
-          <StatusLight variant={variant} isDisabled>Disabled {variant}</StatusLight>
+          <StatusLight variant={variant} isDisabled>
+            Disabled {variant}
+          </StatusLight>
         </>
       ))}
     </Flex>

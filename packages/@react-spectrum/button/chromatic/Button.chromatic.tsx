@@ -14,113 +14,115 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 
-storiesOf('Button', module)
-  .addParameters({chromaticProvider: {locales: ['en-US', 'ar-AE', 'zh-TW']}})
-  .add(
-    'variant: cta',
-    () => render({variant: 'cta'})
-  )
-  .add(
-    'with icon',
-    () => (
-      <Flex gap="size-200">
-        <Button variant="primary">
-          <Bell />
-          <Text>Default</Text>
-        </Button>
-        <Button
-          isDisabled
-          variant="primary">
-          <Text>Disabled</Text>
-          <Bell />
-        </Button>
-        <Button
-          isQuiet
-          variant="primary">
-          <Bell />
-          <Text>Quiet</Text>
-        </Button>
-        <Button
-          isQuiet
-          variant="primary">
-          <Bell />
-          <Text>هادئ</Text>
-        </Button>
-      </Flex>
-    )
-  )
-  .add(
-    'double text node',
-    () => (
-      <Flex gap="size-200">
-        <Button
-          variant="primary">
-          {0} Dogs
-        </Button>
-        <Button
-          isDisabled
-          variant="primary">
-          {0} Dogs
-        </Button>
-        <Button
-          isQuiet
-          variant="primary">
-          {0} Dogs
-        </Button>
-      </Flex>
-    )
-  )
-  .add(
-    'variant: overBackground',
-    () => (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
-        {render({variant: 'overBackground'})}
-      </div>
-    )
-  )
-  .add(
-    'variant: primary',
-    () => render({variant: 'primary'})
-  )
-  .add(
-    'variant: secondary',
-    () => render({variant: 'secondary'})
-  )
-  .add(
-    'variant: negative',
-    () => render({variant: 'negative'})
-  )
-  .add(
-    'element: a',
-    () => render({elementType: 'a', variant: 'primary'})
-  );
+export default {
+  title: 'Button',
+  parameters: {
+    chromaticProvider: {locales: ['en-US', 'ar-AE', 'zh-TW']}
+  }
+};
+
+export const VariantCta = () => render({variant: 'cta'});
+
+VariantCta.story = {
+  name: 'variant: cta'
+};
+
+export const WithIcon = () => (
+  <Flex gap="size-200">
+    <Button variant="primary">
+      <Bell />
+      <Text>Default</Text>
+    </Button>
+    <Button isDisabled variant="primary">
+      <Text>Disabled</Text>
+      <Bell />
+    </Button>
+    <Button isQuiet variant="primary">
+      <Bell />
+      <Text>Quiet</Text>
+    </Button>
+    <Button isQuiet variant="primary">
+      <Bell />
+      <Text>هادئ</Text>
+    </Button>
+  </Flex>
+);
+
+WithIcon.story = {
+  name: 'with icon'
+};
+
+export const DoubleTextNode = () => (
+  <Flex gap="size-200">
+    <Button variant="primary">{0} Dogs</Button>
+    <Button isDisabled variant="primary">
+      {0} Dogs
+    </Button>
+    <Button isQuiet variant="primary">
+      {0} Dogs
+    </Button>
+  </Flex>
+);
+
+DoubleTextNode.story = {
+  name: 'double text node'
+};
+
+export const VariantOverBackground = () => (
+  <div
+    style={{
+      backgroundColor: 'rgb(15, 121, 125)',
+      color: 'rgb(15, 121, 125)',
+      padding: '15px 20px',
+      display: 'inline-block'
+    }}>
+    {render({variant: 'overBackground'})}
+  </div>
+);
+
+VariantOverBackground.story = {
+  name: 'variant: overBackground'
+};
+
+export const VariantPrimary = () => render({variant: 'primary'});
+
+VariantPrimary.story = {
+  name: 'variant: primary'
+};
+
+export const VariantSecondary = () => render({variant: 'secondary'});
+
+VariantSecondary.story = {
+  name: 'variant: secondary'
+};
+
+export const VariantNegative = () => render({variant: 'negative'});
+
+VariantNegative.story = {
+  name: 'variant: negative'
+};
+
+export const ElementA = () => render({elementType: 'a', variant: 'primary'});
+
+ElementA.story = {
+  name: 'element: a'
+};
 
 function render(props: any = {}) {
   return (
     <Flex gap="size-200">
-      <Button
-        {...props}>
-        Default
-      </Button>
-      <Button
-        isDisabled
-        {...props}>
+      <Button {...props}>Default</Button>
+      <Button isDisabled {...props}>
         Disabled
       </Button>
       {props.variant !== 'cta' && (
-      <Button
-        isQuiet
-        {...props}>
-        Quiet
-      </Button>
+        <Button isQuiet {...props}>
+          Quiet
+        </Button>
       )}
-      <Button
-        {...props}>
-        默認
-      </Button>
+      <Button {...props}>默認</Button>
     </Flex>
   );
 }
