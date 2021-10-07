@@ -42,7 +42,9 @@
     "build:api-published": "node scripts/buildPublishedAPI.js",
     "build:api-branch": "node scripts/buildBranchAPI.js",
     "compare:apis": "node scripts/compareAPIs.js",
-    "check-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis"
+    "check-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
+    "docs-differ": "docs-differ",
+    "docs-differ:released-local": "docs-differ -b https://react-spectrum.adobe.com/index.html -c http://localhost:1234/index.html -s 3"
   },
   "workspaces": [
     "packages/react-stately",
@@ -109,6 +111,7 @@
     "cross-env": "^7.0.2",
     "cross-spawn": "^7.0.3",
     "css-loader": "^2.1.1",
+    "docs-differ": "ktabors/docs-differ",
     "eslint": "^7.10.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.0.2",
