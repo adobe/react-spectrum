@@ -6,10 +6,13 @@ let changesets = require('json-diff-ts');
 let util = require('util');
 let {walkObject} = require('walk-object');
 let chalk = require('chalk');
+let yargs = require('yargs');
 
-let isVerbose = false;
-let organizedBy = 'type';
-let translateNames = true;
+let argv = yargs
+  .option('verbose', {alias: 'v', type: 'boolean'})
+  .option('organizedBy', {choices: ['type', 'change']})
+  .option('rawNames', {type: 'boolean'})
+  .argv;
 
 compare().catch(err => {
   console.error(err.stack);
@@ -23,9 +26,6 @@ compare().catch(err => {
  * We can high level some of this information in a series of summary messages that are color coded at the tail of the run.
  */
 async function compare() {
-  isVerbose = process.argv.findIndex(arg => arg === '--verbose') >= 2;
-  organizedBy = process.argv.findIndex(arg => arg === '--organizedBy="change"') >= 2 ? 'change' : 'type';
-  translateNames = process.argv.findIndex(arg => arg === '--translateNames="false"') >= 2;
   let branchDir = path.join(__dirname, '..', 'dist', 'branch-api');
   let publishedDir = path.join(__dirname, '..', 'dist', 'published-api');
   if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
@@ -97,7 +97,8 @@ async function compare() {
     summaryMessages.push({msg: 'no modules changed their API', severity: 'info'});
   }
   summaryMessages.push({});
-  let moreMessages = analyzeDiffs(diffs);
+  let matches = analyzeDiffs(diffs);
+  let moreMessages = generateMessages(matches);
   [...summaryMessages, ...moreMessages].forEach(({msg, severity}) => {
     if (!msg) {
       console.log('');
@@ -143,7 +144,7 @@ function getDiff(summaryMessages, pair) {
     }
   });
   let diff = changesets.diff(publishedApi, branchApi);
-  if (diff.length > 0 && isVerbose) {
+  if (diff.length > 0 && argv.verbose) {
     console.log(`diff found in ${name}`);
     // for now print the whole diff
     console.log(util.inspect(diff, {depth: null}));
@@ -163,7 +164,6 @@ function getDiff(summaryMessages, pair) {
 }
 
 function analyzeDiffs(diffs) {
-  let summaryMessages = [];
   let matches = new Map();
   let used = new Map();
   for (let [key, value] of Object.entries(diffs)) {
@@ -236,9 +236,37 @@ function analyzeDiffs(diffs) {
       }
     });
   }
-  if (organizedBy === 'change') {
+  return matches;
+}
+
+// Recursively walks a json object and calls a processing function on each node based on its type ["ADD", "REMOVE", "UPDATE"]
+// tracks the path it's taken through the json object and passes that to the processing function
+function walkChanges(changes, process, path = '') {
+  for (let change of changes) {
+    if (process[change.type]) {
+      process[change.type](change, path);
+    }
+    if (change.changes && change.changes.length >= 0) {
+      walkChanges(change.changes, process, `${path}${path.length > 0 ? `.${change.key}` : change.key}`);
+    }
+  }
+}
+
+function generateMessages(matches) {
+  let summaryMessages = [];
+
+  if (argv.organizedBy === 'change') {
     for (let [key, value] of matches) {
-      let targets = value.map(loc => simplifyModuleName(loc)).map(loc => `\n  - ${loc}`);
+      /** matches
+       * {"identifier UPDATED to link": ["/@react-aria/i18n:exports.useDateFormatter.return", "/@react-aria/textfield:exports.useTextField.parameters.1.value.base"]}
+       */
+      let targets = value.map(loc => simplifyModuleName(loc)).map(loc => {
+        if (!argv.rawNames) {
+          return `\n  - ${loc.split(':')[0]}:${getRealName(loc, loc.split(':')[1])}`;
+        } else {
+          return `\n  - ${loc}`;
+        }
+      });
       let severity = 'log';
       let message = `${key.key} ${key.type} to:${targets}`;
       if (key.type === 'REMOVE') {
@@ -252,6 +280,10 @@ function analyzeDiffs(diffs) {
     }
   } else {
     let invertedMap = new Map();
+    /** invertedMap
+     * {"/@react-aria/i18n:exports.useDateFormatter.return": ["identifier UPDATED to link"],
+     *  "exports.useTextField.parameters.1.value.base": ["identifier UPDATED to link"]}
+     */
     for (let [key, value] of matches) {
       for (let loc of value.map(simplifyModuleName)) {
         let entry = invertedMap.get(loc);
@@ -281,7 +313,7 @@ function analyzeDiffs(diffs) {
         return `\n  - ${message}`;
       });
       let severity = 'log';
-      if (translateNames) {
+      if (!argv.rawNames) {
         summaryMessages.push({msg: `${key.split(':')[0]}:${realName}${targets}`, severity});
       } else {
         summaryMessages.push({msg: `${key}${targets}`, severity});
@@ -291,6 +323,12 @@ function analyzeDiffs(diffs) {
   return summaryMessages;
 }
 
+/**
+ * Looks up the path through the json object and tries to replace hard to read values with easier to read ones
+ * @param diffName - /@react-aria/textfield:exports.useTextField.parameters.1.value.base
+ * @param type - ["ADD", "REMOVE", "UPDATE"]
+ * @returns {string} - /@react-aria/textfield:exports.useTextField.parameters.ref.value.base
+ */
 function getRealName(diffName, type = 'ADD') {
   let [file, jsonPath] = diffName.split(':');
   let filePath = path.join(__dirname, '..', 'dist', type === 'REMOVE' ? 'published-api' : 'branch-api', file, 'dist', 'api.json');
@@ -301,17 +339,6 @@ function getRealName(diffName, type = 'ADD') {
     name.push(json.name ?? property);
   }
   return name.join('.');
-}
-
-function walkChanges(changes, process, path = '') {
-  for (let change of changes) {
-    if (process[change.type]) {
-      process[change.type](change, path);
-    }
-    if (change.changes && change.changes.length >= 0) {
-      walkChanges(change.changes, process, `${path}${path.length > 0 ? `.${change.key}` : change.key}`);
-    }
-  }
 }
 
 function simplifyModuleName(apiJsonPath) {

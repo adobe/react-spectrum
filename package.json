@@ -169,7 +169,8 @@
     "webpack": "^4.44.2",
     "webpack-dev-middleware": "^3.6.1",
     "webpack-hot-middleware": "^2.24.3",
-    "wsrun": "^5.0.0"
+    "wsrun": "^5.0.0",
+    "yargs": "^17.2.1"
   },
   "resolutions": {
     "@babel/core": "7.12.10",
