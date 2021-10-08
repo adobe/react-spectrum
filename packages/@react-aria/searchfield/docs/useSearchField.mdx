@@ -52,6 +52,7 @@ search fields that can be styled as needed.
 * Keyboard submit handling via the <kbd>Enter</kbd> key
 * Keyboard support for clearing the search field with the <kbd>Escape</kbd> key
 * Custom clear button support with internationalized label for accessibility
+* Support for description and error message help text linked to the input via ARIA
 
 ## Anatomy
 
@@ -62,7 +63,11 @@ Search fields consist of an input element, a label, and an optional clear button
 and handles keyboard events. Users can press the <kbd>Escape</kbd> key to clear the search field, or
 the <kbd>Enter</kbd> key to trigger the `onSubmit` event.
 
-`useSearchField` returns two sets of props that you should spread onto the appropriate element:
+`useSearchField` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
+
+`useSearchField` returns props that you should spread onto the appropriate elements:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useSearchField.return.id].properties} />
@@ -75,6 +80,8 @@ If there is no visual label, an `aria-label` or `aria-labelledby` prop must be p
 to identify the element to screen readers.
 
 ## Example
+
+**Note**: This example does not show the optional description or error message elements. See [useTextField](useTextField.html) for an example of that.
 
 ```tsx example
 import {useSearchFieldState} from '@react-stately/searchfield';

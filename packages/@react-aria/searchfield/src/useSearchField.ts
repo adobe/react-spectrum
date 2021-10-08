@@ -23,12 +23,12 @@ interface SearchFieldAria {
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the clear button. */
   clearButtonProps: AriaButtonProps,
-  /** Props for the description element. */
+  /** Props for the searchfield's description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
-  /** Props for the error message element. */
+  /** Props for the searchfield's error message element, if any. */
   errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
@@ -41,7 +41,7 @@ interface SearchFieldAria {
 export function useSearchField(
   props: AriaSearchFieldProps,
   state: SearchFieldState,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>
+  inputRef: RefObject<HTMLInputElement>
 ): SearchFieldAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let {

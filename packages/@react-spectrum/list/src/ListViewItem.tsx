@@ -28,9 +28,11 @@ export function ListViewItem(props) {
   let {
     item
   } = props;
+  let cellNode = [...item.childNodes][0];
   let {state} = useContext(ListViewContext);
   let {direction} = useLocale();
-  let ref = useRef<HTMLDivElement>();
+  let rowRef = useRef<HTMLDivElement>();
+  let cellRef =  useRef<HTMLDivElement>();
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
@@ -41,11 +43,11 @@ export function ListViewItem(props) {
   let {rowProps} = useGridRow({
     node: item,
     isVirtualized: true
-  }, state, ref);
+  }, state, rowRef);
   let {gridCellProps} = useGridCell({
-    node: item,
+    node: cellNode,
     focusMode: 'cell'
-  }, state, ref);
+  }, state, cellRef);
   const mergedProps = mergeProps(
     gridCellProps,
     hoverProps,
@@ -72,7 +74,8 @@ export function ListViewItem(props) {
   let showCheckbox = state.selectionManager.selectionMode !== 'none';
   return (
     <div
-      {...rowProps}>
+      {...rowProps}
+      ref={rowRef}>
       <div
         className={
           classNames(
@@ -85,7 +88,7 @@ export function ListViewItem(props) {
             }
           )
         }
-        ref={ref}
+        ref={cellRef}
         {...mergedProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           {showCheckbox && (
