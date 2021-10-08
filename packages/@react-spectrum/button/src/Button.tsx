@@ -79,9 +79,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
               UNSAFE_className: classNames(styles, 'spectrum-Button-label')
             }
           }}>
-          {typeof children === 'string'
-            ? <Text>{children}</Text>
-            : children}
+            <Text>This is a new package update</Text>
         </SlotProvider>
       </ElementType>
     </FocusRing>

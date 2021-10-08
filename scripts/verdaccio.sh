@@ -77,11 +77,10 @@ then
   mkdir -p $verdaccio_path
   mv dist/production/docs $verdaccio_path
 
-  # Build test app
+  # Build test app and move to dist folder
   cd ../
   git clone https://$GITHUB_TOKEN@github.com/LFDanLu/rsp-cra-verdaccio-test.git
   cd rsp-cra-verdaccio-test
-  npm get registry
   npm install
   npm run-script build
   mv build ../react-spectrum/$verdaccio_path
