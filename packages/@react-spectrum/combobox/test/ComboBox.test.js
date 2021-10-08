@@ -3378,6 +3378,32 @@ describe('ComboBox', function () {
       expect(progressSpinner).toBeTruthy();
       expect(progressSpinner).toHaveAttribute('aria-label', 'Loading more…');
     });
+
+    it('should render "Loading..." placeholder in menu when loadingState="loading" and no items present', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Combobox" items={[]} inputValue="blah" loadingState="loading">
+            {(item) => <Item>{item.name}</Item>}
+          </ComboBox>
+        </Provider>
+      );
+      
+      let button = getByRole('button');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(1);
+
+      let placeholderText = within(items[0]).getByText('Loading...');
+      expect(placeholderText).toBeVisible();
+    });
   });
 
   describe('mobile combobox', function () {

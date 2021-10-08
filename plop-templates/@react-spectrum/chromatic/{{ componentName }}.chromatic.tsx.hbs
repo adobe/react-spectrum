@@ -23,9 +23,13 @@ interface Spectrum{{componentName}}Props {
 }
 {{/unless}}
 
+// see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
+const StoryFn = ({storyFn}) => storyFn();
+
 const meta: Meta<Spectrum{{componentName}}Props> = {
   title: '{{componentName}}',
-  component: {{componentName}}
+  component: {{componentName}},
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
 export default meta;
