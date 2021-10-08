@@ -9514,9 +9514,10 @@ dir-glob@^3.0.1:
 
 docs-differ@ktabors/docs-differ:
   version "1.0.0"
-  resolved "https://codeload.github.com/ktabors/docs-differ/tar.gz/1565db071111895ed0043de245778bdf4709d041"
+  resolved "https://codeload.github.com/ktabors/docs-differ/tar.gz/650066bc22619f85dd16134ca0fddc7568f0caf7"
   dependencies:
     puppeteer "^10.4.0"
+    puppeteer-cluster "^0.22.0"
     screenshots-diff "^1.2.6"
 
 doctrine@1.5.0:
@@ -18954,6 +18955,13 @@ punycode@^2.1.0, punycode@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
+
+puppeteer-cluster@^0.22.0:
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/puppeteer-cluster/-/puppeteer-cluster-0.22.0.tgz#4ab214671f414f15ad6a94a4b61ed0b4172e86e6"
+  integrity sha512-hmydtMwfVM+idFIDzS8OXetnujHGre7RY3BGL+3njy9+r8Dcu3VALkZHfuBEPf6byKssTCgzxU1BvLczifXd5w==
+  dependencies:
+    debug "^4.1.1"
 
 puppeteer@^10.4.0:
   version "10.4.0"
