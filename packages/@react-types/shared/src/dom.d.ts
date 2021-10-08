@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {ClipboardEventHandler, CompositionEventHandler, FormEventHandler, ReactEventHandler} from 'react';
+import {
+  ClipboardEventHandler,
+  CompositionEventHandler,
+  DOMFactory,
+  FormEventHandler,
+  HTMLAttributes,
+  ReactDOM,
+  ReactEventHandler
+} from 'react';
 
 export interface AriaLabelingProps {
   /**
@@ -125,7 +133,7 @@ export interface TextInputDOMProps extends DOMProps {
    * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
    */
   onCompositionStart?: CompositionEventHandler<HTMLInputElement>,
-  
+
   /**
    * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
    */
@@ -152,3 +160,19 @@ export interface TextInputDOMProps extends DOMProps {
    */
   onInput?: FormEventHandler<HTMLInputElement>
 }
+
+/**
+ * A map of HTML element names and their interface types.
+ * For example `'a'` -> `HTMLAnchorElement`.
+ */
+export type IntrinsicHTMLElements = {
+  [K in keyof IntrinsicHTMLAttributes]: IntrinsicHTMLAttributes[K] extends HTMLAttributes<infer T> ? T : never
+};
+
+/**
+ * A map of HTML element names and their attribute interface types.
+ * For example `'a'` -> `AnchorHTMLAttributes<HTMLAnchorElement>`.
+ */
+export type IntrinsicHTMLAttributes = {
+  [K in keyof ReactDOM]: ReactDOM[K] extends DOMFactory<infer T, any> ? T : never
+};
