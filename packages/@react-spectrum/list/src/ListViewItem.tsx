@@ -49,7 +49,7 @@ export function ListViewItem(props) {
     focusMode: 'cell'
   }, state, cellRef);
   const mergedProps = mergeProps(
-    rowProps,
+    gridCellProps,
     hoverProps,
     focusWithinProps,
     focusProps
@@ -74,7 +74,7 @@ export function ListViewItem(props) {
   let showCheckbox = state.selectionManager.selectionMode !== 'none';
   return (
     <div
-      {...mergedProps}
+      {...rowProps}
       ref={rowRef}>
       <div
         className={
@@ -89,7 +89,7 @@ export function ListViewItem(props) {
           )
         }
         ref={cellRef}
-        {...gridCellProps}>
+        {...mergedProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           {showCheckbox && (
             <Checkbox
