@@ -73,7 +73,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         errorMessage={errorMessage}
         validationState={validationState}
         isDisabled={isDisabled}
-        labelAlign={labelAlign}
         showErrorIcon={showErrorIcon} />
     );
 
