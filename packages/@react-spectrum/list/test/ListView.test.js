@@ -132,6 +132,22 @@ describe('ListView', function () {
 
     let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
+    describe('Type to select', function () {
+      it('focuses the correct cell when typing', function () {
+        let tree = renderList();
+        let target = getCell(tree, 'Baz');
+        let grid = tree.getByRole('grid');
+        act(() => grid.focus());
+        fireEvent.keyDown(grid, {key: 'B'});
+        fireEvent.keyUp(grid, {key: 'Enter'});
+        fireEvent.keyDown(grid, {key: 'A'});
+        fireEvent.keyUp(grid, {key: 'A'});
+        fireEvent.keyDown(grid, {key: 'Z'});
+        fireEvent.keyUp(grid, {key: 'Z'});
+        expect(document.activeElement).toBe(target);
+      });
+    });
+
     describe('ArrowRight', function () {
       it('should not move focus if no focusables present', function () {
         let tree = renderList();
@@ -157,11 +173,14 @@ describe('ListView', function () {
 
         it('should move focus to previous cell in RTL', function () {
           let tree = renderListWithFocusables('ar-AE');
-          let start = within(tree.getAllByRole('row')[0]).getAllByRole('button')[0];
-          let end = within(tree.getAllByRole('row')[0]).getAllByRole('button')[1];
+          // Should move from button two to button one
+          let start = within(tree.getAllByRole('row')[0]).getAllByRole('button')[1];
+          let end = within(tree.getAllByRole('row')[0]).getAllByRole('button')[0];
           act(() => start.focus());
+          expect(document.activeElement).toHaveTextContent('button2 Foo');
           moveFocus('ArrowRight');
           expect(document.activeElement).toBe(end);
+          expect(document.activeElement).toHaveTextContent('button1 Foo');
         });
       });
     });
@@ -192,11 +211,14 @@ describe('ListView', function () {
 
         it('should move focus to next cell in RTL', function () {
           let tree = renderListWithFocusables('ar-AE');
-          let start = within(tree.getAllByRole('row')[0]).getAllByRole('button')[1];
-          let end = within(tree.getAllByRole('row')[0]).getAllByRole('button')[0];
+          // Should move from button one to button two
+          let start = within(tree.getAllByRole('row')[0]).getAllByRole('button')[0];
+          let end = within(tree.getAllByRole('row')[0]).getAllByRole('button')[1];
           act(() => start.focus());
+          expect(document.activeElement).toHaveTextContent('button1 Foo');
           moveFocus('ArrowLeft');
           expect(document.activeElement).toBe(end);
+          expect(document.activeElement).toHaveTextContent('button2 Foo');
         });
       });
     });
@@ -294,6 +316,7 @@ describe('ListView', function () {
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
         fireEvent.keyDown(row, {key: ' '});
+        fireEvent.keyUp(row, {key: ' '});
 
         checkSelection(onSelectionChange, ['bar']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -306,6 +329,7 @@ describe('ListView', function () {
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
         fireEvent.keyDown(row, {key: 'Enter'});
+        fireEvent.keyUp(row, {key: 'Enter'});
 
         checkSelection(onSelectionChange, ['bar']);
         expect(row).toHaveAttribute('aria-selected', 'true');
