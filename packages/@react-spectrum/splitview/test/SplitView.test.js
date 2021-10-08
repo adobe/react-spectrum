@@ -15,7 +15,8 @@ import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils
 import React from 'react';
 import {SplitView} from '../';
 
-describe('SplitView tests', function () {
+// TODO: remove SplitView
+describe.skip('SplitView tests', function () {
   describe('use MouseEvent', function () {
 
 

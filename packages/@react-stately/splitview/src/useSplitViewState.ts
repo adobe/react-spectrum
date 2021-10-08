@@ -121,6 +121,8 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     }
   };
 
+  // We'll be removing SplitView at some point
+  // @ts-ignore
   let collapseToggle = () => setOffset(prevHandleOffset => {
     if (!allowsCollapsing) {
       return prevHandleOffset;

@@ -12,6 +12,7 @@
 
 import {CheckboxGroupProps} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
+import {useRef} from 'react';
 
 export interface CheckboxGroupState {
   /** Current selected values. */
@@ -45,6 +46,7 @@ export interface CheckboxGroupState {
  */
 export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxGroupState {
   let [selectedValues, setValue] = useControlledState(props.value, props.defaultValue || [], props.onChange);
+  let currValue = useRef(props.value || props.defaultValue || []);
 
   const state: CheckboxGroupState = {
     value: selectedValues,
@@ -53,27 +55,30 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         return;
       }
 
+      currValue.current = value;
       setValue(value);
     },
     isDisabled: props.isDisabled || false,
     isReadOnly: props.isReadOnly || false,
     isSelected(value) {
-      return selectedValues.includes(value);
+      return currValue.current.includes(value);
     },
     addValue(value) {
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      if (!selectedValues.includes(value)) {
-        setValue(selectedValues.concat(value));
+      if (!currValue.current.includes(value)) {
+        currValue.current = currValue.current.concat(value);
+        setValue(currValue.current);
       }
     },
     removeValue(value) {
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      if (selectedValues.includes(value)) {
-        setValue(selectedValues.filter(existingValue => existingValue !== value));
+      if (currValue.current.includes(value)) {
+        currValue.current = currValue.current.filter(existingValue => existingValue !== value);
+        setValue(currValue.current);
       }
     },
     toggleValue(value) {
@@ -81,9 +86,11 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         return;
       }
       if (selectedValues.includes(value)) {
-        setValue(selectedValues.filter(existingValue => existingValue !== value));
+        currValue.current = currValue.current.filter(existingValue => existingValue !== value);
+        setValue(currValue.current);
       } else {
-        setValue(selectedValues.concat(value));
+        currValue.current = currValue.current.concat(value);
+        setValue(currValue.current);
       }
     }
   };
