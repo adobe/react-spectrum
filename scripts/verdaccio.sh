@@ -31,11 +31,16 @@ function cleanup {
 
 trap cleanup ERR EXIT
 
+# todo remove the below
+verdaccio_path=verdaccio_dist/`git rev-parse HEAD~1`/verdaccio
+mkdir -p $verdaccio_path
+
 cd ../
 git clone https://$GITHUB_TOKEN@github.com/LFDanLu/rsp-cra-verdaccio-test.git
+cd rsp-cra-verdaccio-test
 npm install
 npm run-script build
-# mv build ../react-spectrum/$verdaccio_path
+mv build ../react-spectrum/$verdaccio_path
 cd ../react-spectrum
 
 
