@@ -31,9 +31,12 @@ function cleanup {
 
 trap cleanup ERR EXIT
 
-ls
-
-git clone git@github.com:LFDanLu/rsp-cra-verdaccio-test.git
+cd ../
+git clone https://$GITHUB_TOKEN@github.com/LFDanLu/rsp-cra-verdaccio-test.git
+npm install
+npm run-script build
+# mv build ../react-spectrum/$verdaccio_path
+cd ../react-spectrum
 
 
 # # Generate dists for the packages
