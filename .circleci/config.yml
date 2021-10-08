@@ -236,7 +236,7 @@ jobs:
       - persist_to_workspace:
           root: verdaccio_dist
           paths:
-            - '*/verdaccio/docs/'
+            - '*/verdaccio/'
 
   deploy:
     executor: azure-cli/azure-docker
