@@ -109,7 +109,7 @@ describe('useHover', function () {
       );
 
       let el = res.getByText('test');
-      let inner = res.getByTestId('inner-target')
+      let inner = res.getByTestId('inner-target');
       fireEvent(inner, pointerEvent('pointerover', {pointerType: 'mouse'}));
       fireEvent(inner, pointerEvent('pointerout', {pointerType: 'mouse'}));
 
