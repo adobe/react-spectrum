@@ -13,17 +13,21 @@
 import {classNames, SlotProvider, useFocusableRef, useResizeObserver, useStyleProps} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useField} from '@react-aria/label';
 import {useFormProps} from '@react-spectrum/form';
 import {useId, useLabels} from '@react-aria/utils';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
+  let formatMessage = useMessageFormatter(intlMessages);
   let {
     children,
     isDisabled,
@@ -31,7 +35,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     label
   } = props;
   let {styleProps} = useStyleProps(props);
-  let labels = useLabels(props, 'Search');
+  let labels = useLabels(props, formatMessage('search'));
   let {labelProps, fieldProps} = useField(props);
   let labelledBy = labels['aria-labelledby'] || labels.id;
   let pickerId = useId();
@@ -64,7 +68,11 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     isRequired,
     label: null,
     isQuiet: false,
-    validationState: null
+    validationState: null,
+    description: null,
+    errorMessage: null,
+    descriptionProps: null,
+    errorMessageProps: null
   };
 
   let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
@@ -83,7 +91,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
       UNSAFE_className: pickerClassName,
       menuWidth,
       align: 'end',
-      'aria-label': 'Search within',
+      'aria-label': formatMessage('searchWithin'),
       'aria-labelledby': `${labelledBy} ${pickerId}`
     }
   };

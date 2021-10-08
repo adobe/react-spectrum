@@ -34,7 +34,7 @@ function renderSearchWithin(props = {}, searchFieldProps = {}, pickerProps = {})
           <Item key="tags">Tags</Item>
         </Picker>
       </SearchWithin>
-    </Provider>  
+    </Provider>
   );
 }
 
