@@ -1,4 +1,9 @@
 {
+  "ascending": "stigande",
+  "ascendingSort": "sorterat på kolumn {columnName} i stigande ordning",
+  "descending": "fallande",
+  "descendingSort": "sorterat på kolumn {columnName} i fallande ordning",
   "select": "Markera",
-  "selectAll": "Markera allt"
+  "selectAll": "Markera allt",
+  "sortable": "sorterbar kolumn"
 }

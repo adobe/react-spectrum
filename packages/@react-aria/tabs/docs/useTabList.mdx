@@ -91,8 +91,6 @@ This example displays a basic list of tabs. The currently selected tab receives 
 
 ```tsx example export=true
 import {Item} from '@react-stately/collections';
-import {useFocus} from '@react-aria/interactions';
-import {mergeProps} from '@react-aria/utils';
 
 function Tabs(props) {
   let state = useTabListState(props);
@@ -125,7 +123,7 @@ function Tab({item, state}) {
         borderBottom: isSelected ? '3px solid var(--blue)' : undefined,
         opacity: isDisabled ? '0.5' : undefined
       }}>
-      {item.rendered}
+      {rendered}
     </div>
   );
 }

@@ -82,7 +82,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
   let unwrappedButtonRef = useUnwrapDOMRef(buttonRef);
   let listBoxRef = useRef();
-  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -95,7 +95,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   );
   let layout = useListBoxLayout(state);
 
-  let {buttonProps, inputProps, listBoxProps, labelProps} = useComboBox(
+  let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps} = useComboBox(
     {
       ...props,
       keyboardDelegate: layout,
@@ -156,7 +156,12 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   return (
     <>
-      <Field {...props} labelProps={labelProps} ref={domRef}>
+      <Field
+        {...props}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        labelProps={labelProps}
+        ref={domRef}>
         <ComboBoxInput
           {...props}
           isOpen={state.isOpen}
@@ -189,7 +194,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(comboboxStyles, 'no-results')}>
-              {formatMessage('noResults')}
+              {loadingState === 'loading' ? formatMessage('loading') :  formatMessage('noResults')}
             </span>
           )} />
         <DismissButton onDismiss={() => state.close()} />

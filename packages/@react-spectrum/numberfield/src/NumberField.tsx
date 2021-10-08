@@ -50,7 +50,9 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     labelProps,
     inputProps,
     incrementButtonProps,
-    decrementButtonProps
+    decrementButtonProps,
+    descriptionProps,
+    errorMessageProps
   } = useNumberField(props, state, inputRef);
   let isMobile = provider.scale === 'large';
   let showStepper = !hideStepper;
@@ -77,6 +79,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
   return (
     <Field
       {...props as Omit<SpectrumNumberFieldProps, 'onChange'>}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
       labelProps={labelProps}
       ref={domRef}
       wrapperClassName={classNames(

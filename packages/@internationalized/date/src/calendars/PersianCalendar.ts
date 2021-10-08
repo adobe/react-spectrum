@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar} from '../types';
+import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {mod} from '../utils';
 
@@ -62,7 +62,7 @@ export class PersianCalendar implements Calendar {
     return new CalendarDate(this, year, month, day);
   }
 
-  toJulianDay(date: CalendarDate): number {
+  toJulianDay(date: AnyCalendarDate): number {
     return persianToJulianDay(date.year, date.month, date.day);
   }
 
@@ -70,7 +70,7 @@ export class PersianCalendar implements Calendar {
     return 12;
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     if (date.month <= 6) {
       return 31;
     }
@@ -82,7 +82,11 @@ export class PersianCalendar implements Calendar {
     return isLeapYear(date.year) ? 30 : 29;
   }
 
-  getCurrentEra() {
-    return 'AP';
+  getEras() {
+    return ['AP'];
+  }
+
+  getYearsInEra(): number {
+    return 9999;
   }
 }

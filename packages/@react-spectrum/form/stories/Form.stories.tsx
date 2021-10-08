@@ -13,17 +13,21 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+import {ComboBox} from '@react-spectrum/combobox';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {Key, useState} from 'react';
+import React, {Key, useEffect, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '@react-spectrum/searchwithin';
+import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
+import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
 storiesOf('Form', module)
@@ -57,16 +61,16 @@ storiesOf('Form', module)
     () => (
       <Form>
         <Flex>
-          <TextField label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
-          <TextField label="Last Name" placeholder="Smith" flex={1} />
+          <TextField label="First Name" placeholder="John" marginEnd="size-100" flex={1} description="Please enter your first name." />
+          <TextField label="Last Name" placeholder="Smith" flex={1} description="Please enter your last name." />
         </Flex>
-        <TextField label="Street Address" placeholder="123 Any Street" />
+        <TextField label="Street Address" placeholder="123 Any Street" description="Please include apartment or suite number." />
         <Flex>
-          <TextField label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
+          <TextField label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} description="Please enter the city you live in." />
           <Picker label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
             {item => <Item key={item.abbr}>{item.name}</Item>}
           </Picker>
-          <TextField label="Zip code" placeholder="12345" flex={1} />
+          <TextField label="Zip code" placeholder="12345" flex={1} description="Please enter a five-digit zip code." />
         </Flex>
       </Form>
     )
@@ -112,6 +116,10 @@ storiesOf('Form', module)
     () => <FormWithControls />
   )
   .add(
+    'form with submit',
+    () => <FormWithSubmit />
+  )
+  .add(
     'form with numberfield and locale=ar-AE',
     () => (
       <Flex gap="size-100">
@@ -133,29 +141,25 @@ storiesOf('Form', module)
 function render(props: any = {}) {
   return (
     <Form {...props}>
-      <TextField label="First Name" placeholder="John" />
-      <TextField label="Last Name" placeholder="Smith" />
-      <TextField label="Street Address" placeholder="123 Any Street" />
-      <TextField label="City" placeholder="San Francisco" />
-      <NumberField label="Years lived there" />
-      <Picker label="State" placeholder="Select a state" items={states}>
-        {item => <Item key={item.abbr}>{item.name}</Item>}
-      </Picker>
-      <TextField label="Zip code" placeholder="12345" />
-      <Picker label="Country" placeholder="Select a country" items={countries}>
-        {item => <Item key={item.name}>{item.name}</Item>}
-      </Picker>
       <CheckboxGroup defaultValue={['dragons']} label="Pets">
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>
       </CheckboxGroup>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group">
-        <Radio value="dogs">Dogs</Radio>
-        <Radio value="cats">Cats</Radio>
-        <Radio value="dragons">Dragons</Radio>
-      </RadioGroup>
-      <Picker label="Favorite color">
+      <ComboBox label="More Animals">
+        <Item key="red panda">Red Panda</Item>
+        <Item key="aardvark">Aardvark</Item>
+        <Item key="kangaroo">Kangaroo</Item>
+        <Item key="snake">Snake</Item>
+      </ComboBox>
+      <NumberField label="Years lived there" />
+      <Picker label="State" placeholder="Select a state" items={states}>
+        {item => <Item key={item.abbr}>{item.name}</Item>}
+      </Picker>
+      <Picker label="Country" placeholder="Select a country" items={countries}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Picker>
+      <Picker label="Favorite color" description="Select any color you like." errorMessage="Please select a nicer color.">
         <Item>Red</Item>
         <Item>Orange</Item>
         <Item>Yellow</Item>
@@ -163,13 +167,22 @@ function render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
-      <TextArea label="Comments" placeholder="How do you feel?" />
-      <SearchWithin label="Search">
-        <SearchField placeholder="Search" />
+      <RadioGroup label="Favorite pet" name="favorite-pet-group">
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
+      </RadioGroup>
+      <SearchField label="Search" />
+      <SearchWithin label="Search cities">
+        <SearchField placeholder="City" />
         <Picker label="State" placeholder="Select a state" items={states}>
           {item => <Item key={item.abbr}>{item.name}</Item>}
         </Picker>
       </SearchWithin>
+      <Switch>Low power mode</Switch>
+      <TextArea label="Comments" placeholder="How do you feel?" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <TextField label="City" placeholder="San Francisco" />
+      <TextField label="Zip code" placeholder="12345" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
     </Form>
   );
 }
@@ -345,5 +358,152 @@ function FormWithControls(props: any = {}) {
         </Flex>
       </form>
     </Flex>
+  );
+}
+
+function FormWithSubmit() {
+  let [policies, setPolicies] = useState([]);
+  let [policiesDirty, setPoliciesDirty] = useState(false);
+  let [pet, setPet] = useState('');
+  let [petDirty, setPetDirty] = useState(false);
+  let [truth, setTruth] = useState(false);
+  let [truthDirty, setTruthDirty] = useState(false);
+  let [email, setEmail] = useState('');
+  let [emailDirty, setEmailDirty] = useState(false);
+
+  let [formStatus, setFormStatus] = useState<'progress' | 'invalid' | 'valid' | 'fixing'>('progress');
+  let [isSubmitted, setSubmitted] = useState(false); // TODO: really should be isSectionInvalid / 'fixing' for each form field. once form is submitted with mistakes, unchecking an unrelated, previously valid field should not make it look invalid.
+
+  let getValidationState = (isValid: boolean): 'invalid' | null =>
+    ['invalid', 'fixing'].includes(formStatus) && !isValid ? 'invalid' : null;
+
+  useEffect(() => {
+    let validate = (): boolean => policies.length === 3 && pet && truth && email.includes('@');
+    let formDirty = policiesDirty || petDirty || truthDirty || emailDirty;
+
+    if (isSubmitted) {
+      if (formDirty) {
+        setFormStatus('fixing');
+      } else {
+        setFormStatus(validate() ? 'valid' : 'invalid');
+      }
+    } else {
+      setFormStatus('progress');
+    }
+  }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, email, emailDirty, isSubmitted]);
+
+  let Status = ({formStatus}) => {
+    let [variant, setVariant] = useState<'info' | 'negative' | 'positive' | 'notice'>('info');
+
+    useEffect(() => {
+      switch (formStatus) {
+        case 'invalid':
+          return setVariant('negative');
+        case 'valid':
+          return setVariant('positive');
+        case 'fixing':
+          return setVariant('notice');
+        default:
+          return setVariant('info');
+      }
+    }, [formStatus]);
+
+    return (
+      <StatusLight variant={variant}>
+        {formStatus === 'progress' && 'In progress'}
+        {formStatus === 'valid' && 'Submitted successfully'}
+        {formStatus === 'invalid' && 'Error'}
+        {formStatus === 'fixing' && 'Fixing mistakes'}
+      </StatusLight>
+    );
+  };
+
+  let handleSubmit: React.FormEventHandler<Element> = (e) => {
+    e.preventDefault();
+    setPoliciesDirty(false);
+    setTruthDirty(false);
+    setPetDirty(false);
+    setEmailDirty(false);
+    setSubmitted(true);
+    action('onSubmit')(e);
+  };
+
+  let reset = () => {
+    setSubmitted(false);
+    setPolicies([]);
+    setPet('');
+    setTruth(false);
+    setPoliciesDirty(false);
+    setPetDirty(false);
+    setTruthDirty(false);
+    setEmail('');
+    setEmailDirty(false);
+    setFormStatus('progress');
+  };
+
+  return (
+    <Form onSubmit={handleSubmit} isReadOnly={formStatus === 'valid'}>
+      <TextField
+        label="Email address"
+        type="email"
+        value={email}
+        onChange={chain(() => setEmailDirty(true), setEmail)}
+        validationState={getValidationState(email.includes('@'))}
+        errorMessage="Email address must contain @" />
+      <CheckboxGroup
+        label="Agree to the following"
+        isRequired
+        value={policies}
+        onChange={chain(() => setPoliciesDirty(true), setPolicies)}>
+        <Checkbox
+          value="terms"
+          isRequired
+          validationState={getValidationState(policies.includes('terms'))}>
+          Terms and conditions
+        </Checkbox>
+        <Checkbox
+          value="privacy"
+          isRequired
+          validationState={getValidationState(policies.includes('privacy'))}>
+          Privacy policy
+        </Checkbox>
+        <Checkbox
+          value="cookies"
+          isRequired
+          validationState={getValidationState(policies.includes('cookies'))}>
+          Cookie policy
+        </Checkbox>
+      </CheckboxGroup>
+
+      <Checkbox
+        isRequired
+        value="truth"
+        isSelected={truth}
+        onChange={(chain(() => setTruthDirty(true), setTruth))}
+        validationState={getValidationState(truth)}>
+        I am telling the truth
+      </Checkbox>
+
+      <RadioGroup
+        label="Favorite pet"
+        isRequired
+        value={pet}
+        onChange={chain(() => setPetDirty(true), setPet)}
+        validationState={getValidationState(Boolean(pet))}>
+        <Radio value="dogs">
+          Dogs
+        </Radio>
+        <Radio value="cats">
+          Cats
+        </Radio>
+        <Radio value="dragons">
+          Dragons
+        </Radio>
+      </RadioGroup>
+
+      <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
+      <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>
+      <Status formStatus={formStatus} />
+    </Form>
   );
 }

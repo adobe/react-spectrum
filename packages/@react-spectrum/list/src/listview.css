@@ -1,4 +1,12 @@
+
+:root {
+  --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
+  --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-75);
+  --spectrum-listview-item-spacious-padding-y: var(--spectrum-global-dimension-size-100);
+}
+
 .react-spectrum-ListView {
+  box-sizing: border-box;
   border-color: var(--spectrum-table-border-color, var(--spectrum-alias-border-color-mid));
   border-style: solid;
   position: relative;
@@ -14,6 +22,11 @@
   outline: 0;
 }
 
+.react-spectrum-ListView--quiet {
+  background-color: var(--spectrum-alias-background-color-transparent);
+  border-width: 0;
+}
+
 .react-spectrum-ListViewItem {
   display: grid; /* TODO: define grid areas */
   border-bottom: 1px solid var(--spectrum-tabel-cell-border-color, var(--spectrum-global-color-gray-300));
@@ -21,23 +34,104 @@
   font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
   font-weight: var(--spectrum-table-cell-text-font-weight, var(--spectrum-global-font-weight-regular));
   line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
-  padding: var(--spectrum-global-dimension-size-125) var(--spectrum-table-cell-padding-x, var(--spectrum-global-dimension-size-200));
+  padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-150);
   transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
   position: relative;
-  background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+  /*background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));*/
   color: var(--spectrum-table-cell-text-color, var(--spectrum-alias-text-color));
   outline: 0;
 
+  .react-spectrum-ListView--quiet & {
+    border-bottom: 0;
+  }
+
   &.is-hovered,
   &.is-focused {
-     background-color: var(--spectrum-table-row-background-color-hover);
+    background-color: var(--spectrum-table-row-background-color-hover);
+
+    .react-spectrum-ListView--quiet & {
+      border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
+    }
   }
 
   &:focus-ring {
-     background-color: var(--spectrum-table-row-background-color-hover);
-     box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
-     border-radius: var(--spectrum-table-cell-border-radius-key-focus);
+    background-color: var(--spectrum-table-row-background-color-hover);
+    box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+    border-radius: var(--spectrum-table-cell-border-radius-key-focus);
   }
+}
+
+.react-spectrum-ListViewItem-selected {
+  background-color: var(--spectrum-table-row-background-color-selected, var(--spectrum-alias-highlight-selected));
+  &.is-hovered {
+    background-color: var(--spectrum-table-quiet-row-background-color-selected-hover);
+  }
+}
+
+.react-spectrum-ListView--compact .react-spectrum-ListViewItem {
+  padding-top: var(--spectrum-listview-item-compact-padding-y);
+  padding-bottom: var(--spectrum-listview-item-compact-padding-y);
+}
+
+.react-spectrum-ListView--spacious .react-spectrum-ListViewItem {
+  padding-top: var(--spectrum-listview-item-spacious-padding-y);
+  padding-bottom: var(--spectrum-listview-item-spacious-padding-y);
+}
+
+.react-spectrum-ListViewItem-grid {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr auto auto;
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    "checkbox icon image content actions chevron"
+    "checkbox icon image description actions chevron"
+  ;
+  align-items: center;
+}
+
+.react-spectrum-ListViewItem-checkbox {
+  grid-area: checkbox;
+  align-items: center;
+  justify-items: center;
+}
+
+.react-spectrum-ListViewItem-icon,
+.react-spectrum-ListViewItem-image {
+  grid-area: image;
+  align-items: center;
+  justify-items: center;
+
+  [dir="ltr"] & {
+    padding-right: var(--spectrum-global-dimension-size-100);
+  }
+  [dir="rtl"] & {
+    padding-left: var(--spectrum-global-dimension-size-100);
+  }
+}
+
+.react-spectrum-ListViewItem-image {
+  border-radius: var(--spectrum-global-dimension-size-25);
+  width: var(--spectrum-global-dimension-size-400);
+  height: var(--spectrum-global-dimension-size-400);
+}
+
+.react-spectrum-ListViewItem-content,
+.react-spectrum-ListViewItem-description {
+  flex-grow: 1;
+}
+
+.react-spectrum-ListViewItem-content {
+  grid-area: content;
+}
+
+.react-spectrum-ListViewItem-description {
+  grid-area: description;
+}
+
+.react-spectrum-ListViewItem-actions {
+  grid-area: actions;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
 .react-spectrum-ListView-centeredWrapper {
@@ -46,4 +140,15 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+}
+
+.react-spectrum-ListViewItem-parentIndicator {
+  grid-area: chevron;
+
+  [dir="ltr"] & {
+    padding-left: var(--spectrum-global-dimension-size-75);
+  }
+  [dir="rtl"] & {
+    padding-right: var(--spectrum-global-dimension-size-75);
+  }
 }
