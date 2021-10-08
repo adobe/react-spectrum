@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Flex} from '@react-spectrum/layout';
+import {Link} from '@react-spectrum/link';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Tooltip, TooltipTrigger} from '../src';
@@ -197,6 +198,10 @@ storiesOf('TooltipTrigger', module)
         </Flex>
       </Flex>
     )
+  )
+  .add(
+    'tooltip on link',
+    () => <LinkWithTooltip />
   );
 
 function render(props = {}) {
@@ -316,5 +321,21 @@ function ControlledButtons(props = {}) {
         </Tooltip>
       </TooltipTrigger>
     </Flex>
+  );
+}
+
+function LinkWithTooltip(props = {}) {
+  return (
+    <TooltipTrigger {...props}>
+      <Link>
+        <a
+          href="https://react-spectrum.adobe.com/"
+          target="_blank"
+          rel="noreferrer">
+          Link with tooltip
+        </a>
+      </Link>
+      <Tooltip>This is a link</Tooltip>
+    </TooltipTrigger>
   );
 }

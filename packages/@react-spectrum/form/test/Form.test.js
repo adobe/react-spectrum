@@ -30,6 +30,7 @@ describe('Form', function () {
 
     let form = getByRole('form');
     expect(form).toBeTruthy();
+    expect(form).toHaveAttribute('novalidate');
   });
 
   it('should render children inside the form', () => {

@@ -9,7 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaLabelingProps, CollectionBase, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  CollectionBase,
+  DOMProps,
+  DOMRef,
+  LoadingState,
+  MultipleSelection,
+  StyleProps
+} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
@@ -33,7 +41,7 @@ export function useListLayout<T>(state: ListState<T>) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
       new ListLayout<T>({
-        estimatedRowHeight: scale === 'large' ? 48 : 32,
+        estimatedRowHeight: scale === 'large' ? 40 : 32,
         padding: 0,
         collator
       })
@@ -44,14 +52,23 @@ export function useListLayout<T>(state: ListState<T>) {
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps {
-  isLoading?: boolean,
+interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection {
+  /**
+   * Sets the amount of vertical padding within each cell.
+   * @default 'regular'
+   */
+  density?: 'compact' | 'regular' | 'spacious',
+  isQuiet?: boolean,
+  loadingState?: LoadingState,
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number
 }
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
+    density = 'regular',
+    loadingState,
+    isQuiet,
     transitionDuration = 0
   } = props;
   let domRef = useDOMRef(ref);
@@ -64,11 +81,18 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
-      type: 'item',
+      ...item,
+      hasChildNodes: true,
       childNodes: [{
-        ...item,
+        key: `cell-${item.key}`,
+        type: 'cell',
         index: 0,
-        type: 'cell'
+        value: null,
+        level: 0,
+        rendered: null,
+        textValue: item.textValue,
+        hasChildNodes: false,
+        childNodes: []
       }]
     }))
   }), [collection]);
@@ -83,6 +107,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     ref: domRef,
     direction,
     collator,
+    // Focus the ListView cell instead of the row so that focus doesn't change with left/right arrow keys when there aren't any
+    // focusable children in the cell.
     focusMode: 'cell'
   }), [state, domRef, direction, collator]);
   let {gridProps} = useGrid({
@@ -92,7 +118,13 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }, state, domRef);
 
   // Sync loading state into the layout.
-  layout.isLoading = props.isLoading;
+  layout.isLoading = loadingState === 'loading';
+
+  let focusedKey = state.selectionManager.focusedKey;
+  let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
+  if (focusedItem?.parentKey != null) {
+    focusedKey = focusedItem.parentKey;
+  }
 
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate}}>
@@ -100,18 +132,21 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {...gridProps}
         {...styleProps}
         ref={domRef}
-        focusedKey={state.selectionManager.focusedKey}
-        sizeToFit="height"
+        focusedKey={focusedKey}
         scrollDirection="vertical"
         className={
           classNames(
             listStyles,
             'react-spectrum-ListView',
+            `react-spectrum-ListView--${density}`,
+            {
+              'react-spectrum-ListView--quiet': isQuiet
+            },
             styleProps.className
           )
         }
         layout={layout}
-        collection={collection}
+        collection={gridCollection}
         transitionDuration={transitionDuration}>
         {(type, item) => {
           if (type === 'item') {

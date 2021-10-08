@@ -22,6 +22,7 @@ import Anatomy from './TableAnatomy.svg';
 
 ```jsx import
 import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableHeaderRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import VisuallyHidden from '@react-aria/visually-hidden';
 ```
 
 ---
@@ -386,6 +387,9 @@ This is done using the <TypeLink links={docs.links} type={docs.exports.useTableS
 the checkbox will be shown as checked, and when only some rows are selected, the checkbox will be rendered in an indeterminate state.
 The user can check or uncheck the checkbox to select all or clear the selection, respectively.
 
+**Note**: Always ensure that the cell has accessible content, even when the checkbox is hidden (i.e. in single selection mode). The
+[VisuallyHidden](VisuallyHidden.html) component can be used to do this.
+
 ```tsx example export=true render=false
 function TableSelectAllCell({column, state}) {
   let ref = useRef();
@@ -400,10 +404,10 @@ function TableSelectAllCell({column, state}) {
     <th
       {...columnHeaderProps}
       ref={ref}>
-      <input
-        {...inputProps}
-        ref={inputRef}
-        style={{visibility: isSingleSelectionMode ? 'hidden' : 'visible'}} />
+      {state.selectionManager.selectionMode === 'single'
+        ? <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
+        : <input {...inputProps} ref={inputRef} />
+      }
     </th>
   );
 }

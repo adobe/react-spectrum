@@ -29,7 +29,7 @@ import {useTextField} from '@react-aria/textfield';
 
 interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
   popoverRef: RefObject<HTMLDivElement>,
   /** The ref for the list box. */
@@ -48,7 +48,11 @@ interface ComboBoxAria<T> {
   /** Props for the list box, to be passed to [useListBox](useListBox.html). */
   listBoxProps: AriaListBoxOptions<T>,
   /** Props for the optional trigger button, to be passed to [useButton](useButton.html). */
-  buttonProps: AriaButtonProps
+  buttonProps: AriaButtonProps,
+  /** Props for the combo box description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the combo box error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -65,6 +69,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     listBoxRef,
     keyboardDelegate,
     // completionMode = 'suggest',
+    shouldFocusWrap,
     isReadOnly,
     isDisabled
   } = props;
@@ -94,7 +99,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     keyboardDelegate: delegate,
     disallowTypeAhead: true,
     disallowEmptySelection: true,
-    ref: inputRef
+    shouldFocusWrap,
+    ref: inputRef,
+    // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
+    isVirtualized: true
   });
 
   // For textfield specific keydown operations
@@ -150,7 +158,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     state.setFocused(true);
   };
 
-  let {labelProps, inputProps} = useTextField({
+  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
     onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDown, onKeyDown),
@@ -314,6 +322,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true
-    })
+    }),
+    descriptionProps,
+    errorMessageProps
   };
 }

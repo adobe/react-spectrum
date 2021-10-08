@@ -1,0 +1,9 @@
+{
+  "ascending": "昇順",
+  "ascendingSort": "列 {columnName} を昇順で並べ替え",
+  "descending": "降順",
+  "descendingSort": "列 {columnName} を降順で並べ替え",
+  "select": "選択",
+  "selectAll": "すべて選択",
+  "sortable": "並べ替え可能な列"
+}

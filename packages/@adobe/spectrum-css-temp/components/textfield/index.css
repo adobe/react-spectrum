@@ -38,6 +38,10 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-textfield-min-width);
   width: var(--spectrum-component-single-line-width);
 
+  &:not(.spectrum-Textfield--quiet).spectrum-Textfield--multiline .spectrum-Textfield-input:not(:disabled) {
+    resize: vertical;
+  }
+
   &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input {
     height: var(--spectrum-textfield-height);
     min-height: var(--spectrum-textfield-height);
@@ -56,7 +60,7 @@ governing permissions and limitations under the License.
   /* Use padding instead of text-indent because text-indent does not left align the text in Edge browser  */
   text-indent: 0;
 
-  width: 100%;
+  inline-size: 100%;
   height: var(--spectrum-textfield-height);
 
   vertical-align: top; /* used to align them correctly in forms. */

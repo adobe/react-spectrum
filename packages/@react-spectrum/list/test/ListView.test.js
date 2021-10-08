@@ -15,6 +15,7 @@ import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 describe('ListView', function () {
   let offsetWidth, offsetHeight;
@@ -105,7 +106,7 @@ describe('ListView', function () {
       {key: 'bar', label: 'Bar'},
       {key: 'baz', label: 'Baz'}
     ];
-    let renderTable = () => render(
+    let renderList = () => render(
       <ListView items={items} aria-label="List">
         {item => (
           <Item textValue={item.key}>
@@ -115,7 +116,7 @@ describe('ListView', function () {
       </ListView>
     );
 
-    let renderTableWithFocusables = (locale, scale) => render(
+    let renderListWithFocusables = (locale, scale) => render(
       <ListView items={items} aria-label="List">
         {item => (
           <Item textValue={item.key}>
@@ -131,9 +132,25 @@ describe('ListView', function () {
 
     let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
+    describe('Type to select', function () {
+      it('focuses the correct cell when typing', function () {
+        let tree = renderList();
+        let target = getCell(tree, 'Baz');
+        let grid = tree.getByRole('grid');
+        act(() => grid.focus());
+        fireEvent.keyDown(grid, {key: 'B'});
+        fireEvent.keyUp(grid, {key: 'Enter'});
+        fireEvent.keyDown(grid, {key: 'A'});
+        fireEvent.keyUp(grid, {key: 'A'});
+        fireEvent.keyDown(grid, {key: 'Z'});
+        fireEvent.keyUp(grid, {key: 'Z'});
+        expect(document.activeElement).toBe(target);
+      });
+    });
+
     describe('ArrowRight', function () {
       it('should not move focus if no focusables present', function () {
-        let tree = renderTable();
+        let tree = renderList();
         let start = getCell(tree, 'Foo');
         act(() => start.focus());
         moveFocus('ArrowRight');
@@ -142,7 +159,7 @@ describe('ListView', function () {
 
       describe('with cell focusables', function () {
         it('should move focus to next cell and back to row', function () {
-          let tree = renderTableWithFocusables();
+          let tree = renderListWithFocusables();
           let focusables = within(tree.getAllByRole('row')[0]).getAllByRole('button');
           let start = getCell(tree, 'Foo');
           act(() => start.focus());
@@ -155,19 +172,22 @@ describe('ListView', function () {
         });
 
         it('should move focus to previous cell in RTL', function () {
-          let tree = renderTableWithFocusables('ar-AE');
-          let start = within(tree.getAllByRole('row')[0]).getAllByRole('button')[0];
-          let end = within(tree.getAllByRole('row')[0]).getAllByRole('button')[1];
+          let tree = renderListWithFocusables('ar-AE');
+          // Should move from button two to button one
+          let start = within(tree.getAllByRole('row')[0]).getAllByRole('button')[1];
+          let end = within(tree.getAllByRole('row')[0]).getAllByRole('button')[0];
           act(() => start.focus());
+          expect(document.activeElement).toHaveTextContent('button2 Foo');
           moveFocus('ArrowRight');
           expect(document.activeElement).toBe(end);
+          expect(document.activeElement).toHaveTextContent('button1 Foo');
         });
       });
     });
 
     describe('ArrowLeft', function () {
       it('should not move focus if no focusables present', function () {
-        let tree = renderTable();
+        let tree = renderList();
         let start = getCell(tree, 'Foo');
         act(() => start.focus());
         moveFocus('ArrowLeft');
@@ -176,7 +196,7 @@ describe('ListView', function () {
 
       describe('with cell focusables', function () {
         it('should move focus to previous cell and back to row', function () {
-          let tree = renderTableWithFocusables();
+          let tree = renderListWithFocusables();
           let focusables = within(tree.getAllByRole('row')[0]).getAllByRole('button');
           let start = getCell(tree, 'Foo');
           // console.log('start', start)
@@ -190,19 +210,22 @@ describe('ListView', function () {
         });
 
         it('should move focus to next cell in RTL', function () {
-          let tree = renderTableWithFocusables('ar-AE');
-          let start = within(tree.getAllByRole('row')[0]).getAllByRole('button')[1];
-          let end = within(tree.getAllByRole('row')[0]).getAllByRole('button')[0];
+          let tree = renderListWithFocusables('ar-AE');
+          // Should move from button one to button two
+          let start = within(tree.getAllByRole('row')[0]).getAllByRole('button')[0];
+          let end = within(tree.getAllByRole('row')[0]).getAllByRole('button')[1];
           act(() => start.focus());
+          expect(document.activeElement).toHaveTextContent('button1 Foo');
           moveFocus('ArrowLeft');
           expect(document.activeElement).toBe(end);
+          expect(document.activeElement).toHaveTextContent('button2 Foo');
         });
       });
     });
 
     describe('ArrowUp', function () {
       it('should not change focus from first item', function () {
-        let tree = renderTableWithFocusables();
+        let tree = renderListWithFocusables();
         let start = getCell(tree, 'Foo');
         act(() => start.focus());
         moveFocus('ArrowUp');
@@ -210,7 +233,7 @@ describe('ListView', function () {
       });
 
       it('should mov focus to above row', function () {
-        let tree = renderTableWithFocusables();
+        let tree = renderListWithFocusables();
         let start = getCell(tree, 'Bar');
         let end = getCell(tree, 'Foo');
         act(() => start.focus());
@@ -221,7 +244,7 @@ describe('ListView', function () {
 
     describe('ArrowDown', function () {
       it('should not change focus from first item', function () {
-        let tree = renderTableWithFocusables();
+        let tree = renderListWithFocusables();
         let start = getCell(tree, 'Baz');
         act(() => start.focus());
         moveFocus('ArrowDown');
@@ -229,7 +252,7 @@ describe('ListView', function () {
       });
 
       it('should move focus to below row', function () {
-        let tree = renderTableWithFocusables();
+        let tree = renderListWithFocusables();
         let start = getCell(tree, 'Foo');
         let end = getCell(tree, 'Bar');
         act(() => start.focus());
@@ -240,7 +263,7 @@ describe('ListView', function () {
   });
 
   it('should display loading affordance', function () {
-    let {getByRole} = render(<ListView aria-label="List" isLoading>{[]}</ListView>);
+    let {getByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
     expect(getByRole('progressbar')).toBeTruthy();
   });
 
@@ -250,5 +273,103 @@ describe('ListView', function () {
     }
     let {getByText} = render(<ListView aria-label="List" renderEmptyState={renderEmptyState} />);
     expect(getByText('No results')).toBeTruthy();
+  });
+
+  describe('selection', function () {
+    let checkSelection = (onSelectionChange, selectedKeys) => {
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
+    };
+
+    let items = [
+      {key: 'foo', label: 'Foo'},
+      {key: 'bar', label: 'Bar'},
+      {key: 'baz', label: 'Baz'}
+    ];
+    let renderSelectionList = (props) => render(
+      <ListView items={items} aria-label="List" {...props}>
+        {item => (
+          <Item key={item.key} textValue={item.key}>
+            {item.label}
+          </Item>
+        )}
+      </ListView>
+    );
+
+    describe('selection', function () {
+      it('should select an item from checkbox', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => userEvent.click(within(row).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, ['bar']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing the Space key on a row', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        fireEvent.keyDown(row, {key: ' '});
+        fireEvent.keyUp(row, {key: ' '});
+
+        checkSelection(onSelectionChange, ['bar']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing the Enter key on a row', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        fireEvent.keyDown(row, {key: 'Enter'});
+        fireEvent.keyUp(row, {key: 'Enter'});
+
+        checkSelection(onSelectionChange, ['bar']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should only allow one item to be selected in single selection', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'single'});
+
+        let rows = tree.getAllByRole('row');
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, ['bar']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+        onSelectionChange.mockClear();
+        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+        checkSelection(onSelectionChange, ['baz']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should allow multiple items to be selected in multiple selection', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+
+        let rows = tree.getAllByRole('row');
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, ['bar']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+        onSelectionChange.mockClear();
+        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+        checkSelection(onSelectionChange, ['bar', 'baz']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+      });
+    });
   });
 });

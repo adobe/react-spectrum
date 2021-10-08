@@ -96,7 +96,7 @@ function DirectionAlignment() {
     }
   };
 
-  return (<Flex alignItems="end" columnGap={10}>
+  return (<Flex alignItems="end" gap={10} wrap>
     <Picker label="Align" items={alignItems} selectedKey={align} onSelectionChange={handleAlignChange}>
       {(item) => <Item key={item.key}>{item.label}</Item>}
     </Picker>

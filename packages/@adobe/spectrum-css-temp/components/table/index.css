@@ -25,9 +25,11 @@ governing permissions and limitations under the License.
   isolation: isolate;
 }
 
-.spectrum-Table-sortedIcon {
+/* specificity must be higher than `.spectrum-Icon` */
+svg.spectrum-Table-sortedIcon {
   display: none;
   margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-arrow-down-small-width);
 
   vertical-align: middle;
 
@@ -157,6 +159,10 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-cellContents {
+  flex: 1 1 0%;
+  /* To ensure the flex child only takes up available width, see https://makandracards.com/makandra/66994-css-flex-and-min-width */
+  min-width: 0px;
+
   /* truncate text with ellipsis */
   overflow: hidden;
   white-space: nowrap;
@@ -284,6 +290,10 @@ governing permissions and limitations under the License.
   padding-top: 0px;
   padding-bottom: 0px;
   vertical-align: var(--spectrum-table-cell-checkbox-vertical-alignment);
+
+  .spectrum-Table-checkbox {
+    padding-inline-end: 0px;
+  }
 }
 
 .spectrum-Table-checkbox {
