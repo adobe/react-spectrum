@@ -9514,7 +9514,7 @@ dir-glob@^3.0.1:
 
 docs-differ@ktabors/docs-differ:
   version "1.0.0"
-  resolved "https://codeload.github.com/ktabors/docs-differ/tar.gz/650066bc22619f85dd16134ca0fddc7568f0caf7"
+  resolved "https://codeload.github.com/ktabors/docs-differ/tar.gz/26635b3e36cd828328513bfad3420a1d267be364"
   dependencies:
     puppeteer "^10.4.0"
     puppeteer-cluster "^0.22.0"
