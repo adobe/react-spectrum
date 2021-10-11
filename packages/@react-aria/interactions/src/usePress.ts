@@ -321,7 +321,7 @@ export function usePress(props: PressHookProps): PressResult {
             focusWithoutScrolling(e.currentTarget);
           }
 
-          if (isIOS) {
+          if (isIOS()) {
             disableTextSelection();
           }
 
@@ -529,7 +529,7 @@ export function usePress(props: PressHookProps): PressResult {
           focusWithoutScrolling(e.currentTarget);
         }
 
-        if (isIOS) {
+        if (isIOS()) {
           disableTextSelection();
         }
 
