@@ -2241,7 +2241,7 @@ describe('usePress', function () {
 
       let el = getByText('test');
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
-      expect(document.documentElement.style.webkitUserSelect).not.toBe('none');
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
 
     it('should remove user-select: none to html element when press end (iOS)', function () {
