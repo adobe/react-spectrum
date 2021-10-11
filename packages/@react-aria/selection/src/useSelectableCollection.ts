@@ -87,9 +87,9 @@ interface SelectableCollectionOptions {
    */
   scrollRef?: RefObject<HTMLElement>,
   /**
-   * Whether something in the collection is in edit mode and should disable typeahead and other collection keyboard behavior.
+   * Whether the collection is disabled.
    */
-  editModeEnabled?: boolean
+  isDisabled?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -116,7 +116,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     isVirtualized,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
-    editModeEnabled
+    isDisabled
   } = options;
   let {direction} = useLocale();
 
@@ -147,7 +147,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
     switch (e.key) {
       case 'ArrowDown': {
-        if (editModeEnabled) {
+        if (isDisabled) {
           // Prevent scrolling from happening if in edit mode
           e.preventDefault();
         } else if (delegate.getKeyBelow) {
@@ -163,7 +163,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowUp': {
-        if (editModeEnabled) {
+        if (isDisabled) {
           // Prevent scrolling from happening if in edit mode
           e.preventDefault();
         } else if (delegate.getKeyAbove) {
@@ -179,7 +179,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowLeft': {
-        if (editModeEnabled) {
+        if (isDisabled) {
           // Prevent scrolling from happening if in edit mode
           e.preventDefault();
         } else if (delegate.getKeyLeftOf) {
@@ -190,7 +190,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowRight': {
-        if (editModeEnabled) {
+        if (isDisabled) {
           // Prevent scrolling from happening if in edit mode
           e.preventDefault();
         } else if (delegate.getKeyRightOf) {
@@ -201,7 +201,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'Home':
-        if (editModeEnabled) {
+        if (isDisabled) {
           // Prevent scrolling from happening if in edit mode
           // TODO: not sure why this doesn't stop table scrolling when in a searchfield in editmode...
           e.preventDefault();
@@ -217,7 +217,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'End':
-        if (editModeEnabled) {
+        if (isDisabled) {
           // Prevent scrolling from happening if in edit mode
           // TODO: not sure why this doesn't stop table scrolling when in a searchfield in editmode...
           e.preventDefault();
@@ -233,7 +233,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'PageDown':
-        if (editModeEnabled) {
+        if (isDisabled) {
           // Prevent scrolling from happening if in edit mode
           // TODO: not sure why this doesn't stop table scrolling when in a searchfield in editmode...
           e.preventDefault();
@@ -244,7 +244,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'PageUp':
-        if (editModeEnabled) {
+        if (isDisabled) {
           // Prevent scrolling from happening if in edit mode
           // TODO: not sure why this doesn't stop table scrolling when in a searchfield in editmode...
           e.preventDefault();
@@ -255,19 +255,19 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'a':
-        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true && !editModeEnabled) {
+        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true && !isDisabled) {
           e.preventDefault();
           manager.selectAll();
         }
         break;
       case 'Escape':
         e.preventDefault();
-        if (!disallowEmptySelection && !editModeEnabled) {
+        if (!disallowEmptySelection && !isDisabled) {
           manager.clearSelection();
         }
         break;
       case 'Tab': {
-        if (!allowsTabNavigation && !editModeEnabled) {
+        if (!allowsTabNavigation && !isDisabled) {
           // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
           // However, collections should be treated as a single tab stop, with arrow key navigation internally.
           // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
@@ -404,7 +404,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       // Ignore events that bubbled through portals.
       // If we are in edit mode, clicking on the scrollbar will focus the collection,
       // but we need to NOT prevent default so that we can mouse select text in a editable cell's textfield.
-      if (e.currentTarget.contains(e.target) && !editModeEnabled) {
+      if (e.currentTarget.contains(e.target) && !isDisabled) {
         // Prevent focus going to the collection when clicking on the scrollbar.
         e.preventDefault();
       }
@@ -416,7 +416,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     selectionManager: manager
   });
 
-  if (!(disallowTypeAhead || editModeEnabled)) {
+  if (!(disallowTypeAhead || isDisabled)) {
     handlers = mergeProps(typeSelectProps, handlers);
   }
 
