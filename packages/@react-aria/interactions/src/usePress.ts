@@ -16,7 +16,7 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {disableTextSelection, restoreTextSelection} from './textSelection';
-import {focusWithoutScrolling, isIOS, mergeProps, useGlobalListeners, useSyncRef} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {isVirtualClick} from './utils';
 import {PointerType, PressEvents} from '@react-types/shared';
@@ -321,10 +321,7 @@ export function usePress(props: PressHookProps): PressResult {
             focusWithoutScrolling(e.currentTarget);
           }
 
-          if (isIOS()) {
-            disableTextSelection();
-          }
-
+          disableTextSelection();
           triggerPressStart(e, state.pointerType);
 
           addGlobalListener(document, 'pointermove', onPointerMove, false);
@@ -529,10 +526,7 @@ export function usePress(props: PressHookProps): PressResult {
           focusWithoutScrolling(e.currentTarget);
         }
 
-        if (isIOS()) {
-          disableTextSelection();
-        }
-
+        disableTextSelection();
         triggerPressStart(e, state.pointerType);
 
         addGlobalListener(window, 'scroll', onScroll, true);
