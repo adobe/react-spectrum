@@ -28,6 +28,7 @@ import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
+import {TableExample} from '../stories/Table.stories';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -2284,6 +2285,42 @@ describe('TableView', function () {
         triggerPress(columnheaders[0]);
         expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in descending order', 'assertive', 500);
       });
+    });
+
+    it('can announce deselect even when items are swapped out completely', () => {
+      let tree = render(<TableExample />);
+
+      let row = tree.getAllByRole('row')[2];
+      triggerPress(row);
+      expect(announce).toHaveBeenLastCalledWith('File B selected.');
+
+      let link = tree.getAllByRole('link')[1];
+      triggerPress(link);
+
+      expect(announce).toHaveBeenLastCalledWith('File B not selected.');
+    });
+
+    it('will not announce deselect caused by breadcrumb navigation', () => {
+      let tree = render(<TableExample />);
+
+      let link = tree.getAllByRole('link')[1];
+      triggerPress(link);
+
+      act(() => {
+        // TableExample has a setTimeout to load the results of the link navigation on Folder A
+        jest.runAllTimers();
+      });
+      let row = tree.getAllByRole('row')[1];
+      triggerPress(row);
+      expect(announce).toHaveBeenLastCalledWith('File C selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+
+      // breadcrumb root
+      link = tree.getAllByRole('link')[0];
+      triggerPress(link);
+
+      // focus isn't on the table, so we don't announce that it has been deselected
+      expect(announce).toHaveBeenCalledTimes(2);
     });
   });
 

@@ -113,6 +113,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   // We do this using an ARIA live region.
   let selection = state.selectionManager.rawSelection;
   let lastSelection = useRef(selection);
+  let lastSingleSelectionText = useRef<string>('');
   useUpdateEffect(() => {
     if (!state.selectionManager.isFocused) {
       return;
@@ -129,9 +130,14 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
         messages.push(formatMessage('selectedItem', {item: addedText}));
       }
     } else if (removedKeys.size === 1 && addedKeys.size === 0) {
-      let removedText = getRowText(removedKeys.keys().next().value);
-      if (removedText) {
-        messages.push(formatMessage('deselectedItem', {item: removedText}));
+      // if the last selection was only a single item, we stored that textvalue ahead of time
+      if (lastSingleSelectionText.current || (lastSelection.current !== 'all' && lastSelection.current.size === 1)) {
+        messages.push(formatMessage('deselectedItem', {item: lastSingleSelectionText.current}));
+      } else {
+        let removedText = getRowText(removedKeys.keys().next().value);
+        if (removedText) {
+          messages.push(formatMessage('deselectedItem', {item: removedText}));
+        }
       }
     }
 
@@ -150,6 +156,11 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     }
 
     lastSelection.current = selection;
+    if (selection !== 'all' && selection.size === 1) {
+      lastSingleSelectionText.current = getRowText(selection.keys().next().value);
+    } else {
+      lastSingleSelectionText.current = '';
+    }
   }, [selection]);
 
   return {
