@@ -92,7 +92,6 @@ describe('useMenuTrigger', function () {
 
     let preventDefault = jest.fn();
     let stopPropagation = jest.fn();
-    let isPropagationStopped = jest.fn();
 
     let {menuTriggerProps} = renderMenuTriggerHook(props, state, {current: {}});
     expect(typeof menuTriggerProps.onKeyDown).toBe('function');
@@ -121,8 +120,7 @@ describe('useMenuTrigger', function () {
       defaultPrevented: false,
       key: 'ArrowUp',
       preventDefault,
-      stopPropagation,
-      isPropagationStopped
+      stopPropagation
     });
     expect(setOpen).toHaveBeenCalledTimes(1);
     expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
