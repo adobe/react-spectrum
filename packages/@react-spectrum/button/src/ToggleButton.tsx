@@ -30,6 +30,7 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
     isDisabled,
     isEmphasized,
     staticColor,
+    children,
     autoFocus,
     ...otherProps
   } = props;
@@ -39,6 +40,7 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
   let {buttonProps, isPressed} = useToggleButton(props, state, domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
+  let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
@@ -74,7 +76,9 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
               UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')
             }
           }}>
-          <Text>Toggle Button test new package</Text>
+          {typeof children === 'string' || isTextOnly
+            ? <Text>{children}</Text>
+            : children}
         </SlotProvider>
       </button>
     </FocusRing>
