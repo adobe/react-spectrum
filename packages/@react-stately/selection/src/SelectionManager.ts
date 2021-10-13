@@ -193,6 +193,15 @@ export class SelectionManager implements MultipleSelectionManager {
    * Extends the selection to the given key.
    */
   extendSelection(toKey: Key) {
+    if (this.selectionMode === 'none') {
+      return;
+    }
+
+    if (this.selectionMode === 'single') {
+      this.replaceSelection(toKey);
+      return;
+    }
+
     toKey = this.getKey(toKey);
 
     let selection: Selection;
@@ -279,6 +288,15 @@ export class SelectionManager implements MultipleSelectionManager {
    * Toggles whether the given key is selected.
    */
   toggleSelection(key: Key) {
+    if (this.selectionMode === 'none') {
+      return;
+    }
+
+    if (this.selectionMode === 'single' && !this.isSelected(key)) {
+      this.replaceSelection(key);
+      return;
+    }
+
     key = this.getKey(key);
     if (key == null) {
       return;
@@ -306,6 +324,10 @@ export class SelectionManager implements MultipleSelectionManager {
    * Replaces the selection with only the given key.
    */
   replaceSelection(key: Key) {
+    if (this.selectionMode === 'none') {
+      return;
+    }
+
     key = this.getKey(key);
     if (key == null) {
       return;
