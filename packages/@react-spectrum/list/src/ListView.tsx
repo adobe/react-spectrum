@@ -16,6 +16,7 @@ import {
   DOMRef,
   LoadingState,
   MultipleSelection,
+  SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
@@ -67,7 +68,7 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection {
+interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -116,7 +117,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let state = useGridState({
     ...props,
     collection: gridCollection,
-    focusMode: 'cell'
+    focusMode: 'cell',
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let layout = useListLayout(state, props.density || 'regular');
   let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({

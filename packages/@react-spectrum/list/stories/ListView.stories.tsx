@@ -175,13 +175,13 @@ storiesOf('ListView', module)
       </ActionMenu>
     )))
   .add('dynamic items + renderEmptyState', () => (<EmptyTest />))
-  .add('selectionBehavior: replace', () => (
-    <ListView width="250px" height={400} selectionBehavior="replace" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+  .add('selectionStyle: highlight', () => (
+    <ListView width="250px" height={400} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))
-  .add('selectionBehavior: replace, onAction', () => (
-    <ListView width="250px" height={400} selectionBehavior="replace" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+  .add('selectionStyle: highlight, onAction', () => (
+    <ListView width="250px" height={400} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))

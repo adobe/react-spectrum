@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
@@ -21,7 +21,7 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
   disabledKeys?: Iterable<Key>
 }
 
-export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, AriaLabelingProps, StyleProps {
+export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'

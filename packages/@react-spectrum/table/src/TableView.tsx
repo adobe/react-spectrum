@@ -76,8 +76,12 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let {isQuiet, onAction} = props;
   let {styleProps} = useStyleProps(props);
 
-  let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionBehavior !== 'replace');
-  let state = useTableState({...props, showSelectionCheckboxes});
+  let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
+  let state = useTableState({
+    ...props,
+    showSelectionCheckboxes,
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  });
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';

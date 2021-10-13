@@ -56,8 +56,7 @@ export function ListViewItem(props) {
     gridCellProps,
     hoverProps,
     focusWithinProps,
-    focusProps,
-    pressProps
+    focusProps
   );
   let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
 
@@ -80,7 +79,7 @@ export function ListViewItem(props) {
   let isSelected = state.selectionManager.isSelected(item.key);
   return (
     <div
-      {...rowProps}
+      {...mergeProps(rowProps, pressProps)}
       ref={rowRef}>
       <div
         className={

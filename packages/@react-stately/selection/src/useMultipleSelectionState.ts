@@ -11,15 +11,20 @@
  */
 
 import {Key, useMemo, useRef, useState} from 'react';
-import {MultipleSelection, SelectionMode} from '@react-types/shared';
+import {MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
 
+export interface MultipleSelectionStateProps extends MultipleSelection {
+  /** How multiple selection should behave in the collection. */
+  selectionBehavior?: SelectionBehavior
+}
+
 /**
  * Manages state for multiple selection and focus in a collection.
  */
-export function useMultipleSelectionState(props: MultipleSelection): MultipleSelectionState {
+export function useMultipleSelectionState(props: MultipleSelectionStateProps): MultipleSelectionState {
   let {
     selectionMode = 'none' as SelectionMode,
     disallowEmptySelection

@@ -29,8 +29,6 @@ export type Selection = 'all' | Set<Key>;
 export interface MultipleSelection {
   /** The type of selection that is allowed in the collection. */
   selectionMode?: SelectionMode,
-  /** How multiple selection works in the collection. */
-  selectionBehavior?: SelectionBehavior,
   /** Whether the collection allows empty selection. */
   disallowEmptySelection?: boolean,
   /** The currently selected keys in the collection (controlled). */
@@ -41,6 +39,11 @@ export interface MultipleSelection {
   onSelectionChange?: (keys: Selection) => any,
   /** The currently disabled keys in the collection (controlled). */
   disabledKeys?: Iterable<Key>
+}
+
+export interface SpectrumSelectionProps {
+  /** How selection should be displayed. */
+  selectionStyle?: 'checkbox' | 'highlight'
 }
 
 export type FocusStrategy = 'first' | 'last';

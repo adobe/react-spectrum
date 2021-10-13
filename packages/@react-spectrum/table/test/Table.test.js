@@ -2280,12 +2280,12 @@ describe('TableView', function () {
       });
     });
 
-    describe('selectionBehavior replace', function () {
+    describe('selectionStyle highlight', function () {
       installPointerEvent();
 
-      it('selectionBehavior replace will replace the current selection with the new selection', function () {
+      it('will replace the current selection with the new selection', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionBehavior: 'replace'});
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
         expect(tree.queryByLabelText('Select All')).toBeNull();
 
@@ -2319,9 +2319,9 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(11), false);
       });
 
-      it('selectionBehavior replace will add to the current selection if the command key is pressed', function () {
+      it('will add to the current selection if the command key is pressed', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionBehavior: 'replace'});
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
         expect(tree.queryByLabelText('Select All')).toBeNull();
 
@@ -2347,9 +2347,9 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(21), false);
       });
 
-      it('selectionBehavior replace should toggle selection with touch', function () {
+      it('should toggle selection with touch', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionBehavior: 'replace'});
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
         expect(tree.queryByLabelText('Select All')).toBeNull();
 
@@ -2363,7 +2363,7 @@ describe('TableView', function () {
       it('should support double click to perform onAction with mouse', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionBehavior: 'replace', onAction});
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
 
         userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
         checkSelection(onSelectionChange, ['Foo 5']);
@@ -2377,7 +2377,7 @@ describe('TableView', function () {
       it('should support single tap to perform onAction with touch', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionBehavior: 'replace', onAction});
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
 
         userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
         expect(onSelectionChange).not.toHaveBeenCalled();
@@ -2388,7 +2388,7 @@ describe('TableView', function () {
       it('should support single tap to perform onAction with screen reader', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionBehavior: 'replace', onAction});
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
 
         userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch', width: 0, height: 0});
         expect(onSelectionChange).not.toHaveBeenCalled();
@@ -2399,7 +2399,7 @@ describe('TableView', function () {
       it('should support long press to enter selection mode on touch', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionBehavior: 'replace', onAction});
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
 
         fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
         expect(onSelectionChange).not.toHaveBeenCalled();
@@ -2430,7 +2430,7 @@ describe('TableView', function () {
       it('should support Enter to perform onAction with keyboard', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionBehavior: 'replace', onAction});
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
 
         fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
         fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
@@ -2458,7 +2458,7 @@ describe('TableView', function () {
 
       it('should move selection when using the arrow keys', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionBehavior: 'replace'});
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
         userEvent.click(getCell(tree, 'Baz 5'));
         checkSelection(onSelectionChange, ['Foo 5']);
@@ -2481,7 +2481,7 @@ describe('TableView', function () {
 
       it('should support non-contiguous selection with the keyboard', function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionBehavior: 'replace'});
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
         userEvent.click(getCell(tree, 'Baz 5'));
         checkSelection(onSelectionChange, ['Foo 5']);

@@ -3,7 +3,8 @@ import {
   AsyncLoadable,
   CollectionBase,
   MultipleSelection,
-  Node
+  Node,
+  SelectionBehavior
 } from '@react-types/shared';
 import {ListState, useListState} from '@react-stately/list';
 import React, {useRef} from 'react';
@@ -56,4 +57,6 @@ export function List<T extends object>(props: ListProps<T>) {
 export interface ListProps<T>
   extends CollectionBase<T>,
     AsyncLoadable,
-    MultipleSelection {}
+    MultipleSelection {
+      selectionBehavior?: SelectionBehavior
+    }
