@@ -2322,6 +2322,48 @@ describe('TableView', function () {
       // focus isn't on the table, so we don't announce that it has been deselected
       expect(announce).toHaveBeenCalledTimes(2);
     });
+
+    it('updates even if not focused', () => {
+      let tree = render(<TableExample />);
+
+      let link = tree.getAllByRole('link')[1];
+      triggerPress(link);
+
+      act(() => {
+        // TableExample has a setTimeout to load the results of the link navigation on Folder A
+        jest.runAllTimers();
+      });
+      let row = tree.getAllByRole('row')[1];
+      triggerPress(row);
+      expect(announce).toHaveBeenLastCalledWith('File C selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+      let button = tree.getAllByRole('button')[0];
+      triggerPress(button);
+      expect(announce).toHaveBeenCalledTimes(2);
+
+      // breadcrumb root
+      link = tree.getAllByRole('menuitemradio')[0];
+      triggerPress(link);
+
+      act(() => {
+        // TableExample has a setTimeout to load the results of the link navigation on Folder A
+        jest.runAllTimers();
+      });
+
+      // focus isn't on the table, so we don't announce that it has been deselected
+      expect(announce).toHaveBeenCalledTimes(2);
+
+      link = tree.getAllByRole('link')[1];
+      triggerPress(link);
+
+      act(() => {
+        // TableExample has a setTimeout to load the results of the link navigation on Folder A
+        jest.runAllTimers();
+      });
+
+      expect(announce).toHaveBeenCalledTimes(3);
+      expect(announce).toHaveBeenLastCalledWith('No items selected.');
+    });
   });
 
   describe('single selection', function () {

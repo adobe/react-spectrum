@@ -116,6 +116,13 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let lastSingleSelectionText = useRef<string>('');
   useUpdateEffect(() => {
     if (!state.selectionManager.isFocused) {
+      lastSelection.current = selection;
+      if (selection !== 'all' && selection.size === 1) {
+        lastSingleSelectionText.current = getRowText(selection.keys().next().value);
+      } else {
+        lastSingleSelectionText.current = '';
+      }
+
       return;
     }
 

@@ -1315,6 +1315,7 @@ export function TableExample() {
           )}
         </TableBody>
       </TableView>
+      <ActionButton onPress={() => setSelection(items.some(item => item.key === 'd') ? new Set(['d']) : new Set([]))}>Select D</ActionButton>
     </Flex>
   );
 }
