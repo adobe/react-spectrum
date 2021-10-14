@@ -14,7 +14,7 @@ import {createListActions, ListData, ListState} from './useListData';
 import {Key, Reducer, useEffect, useReducer} from 'react';
 import {LoadingState, Selection, SortDescriptor} from '@react-types/shared';
 
-interface AsyncListOptions<T, C> {
+export interface AsyncListOptions<T, C> {
   /** The keys for the initially selected items. */
   initialSelectedKeys?: Iterable<Key>,
   /** The initial sort descriptor. */
