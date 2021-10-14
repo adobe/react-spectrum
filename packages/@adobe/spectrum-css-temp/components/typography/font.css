@@ -13,4 +13,6 @@ governing permissions and limitations under the License.
 
 .spectrum {
   @extends %i18nFontFamily;
+  font-size: var(--spectrum-text-size);
+  color: var(--spectrum-body-text-color, var(--spectrum-global-color-gray-800));
 }
