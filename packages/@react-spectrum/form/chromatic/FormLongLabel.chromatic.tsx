@@ -22,7 +22,6 @@ import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '@react-spectrum/searchwithin';
 import {SpectrumFormProps} from '@react-types/form';
-import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
 const meta: Meta<SpectrumFormProps> = {
@@ -72,7 +71,6 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
         <Item key="tags">Tags</Item>
       </Picker>
     </SearchWithin>
-    <Switch>Toggle on and off all the oil rigs in the entire world</Switch>
     <TextArea label="Please write an epic story of fact and fantasy in the epic sci-fi genre of dinosaurs" placeholder="How do you feel?" />
     <TextField label="Cities of past, present, and future" placeholder="San Francisco" />
   </Form>
