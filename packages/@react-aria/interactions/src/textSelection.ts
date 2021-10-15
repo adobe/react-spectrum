@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {runAfterTransition} from '@react-aria/utils';
+import {isIOS, runAfterTransition} from '@react-aria/utils';
 
 // Safari on iOS starts selecting text on long press. The only way to avoid this, it seems,
 // is to add user-select: none to the entire page. Adding it to the pressable element prevents
@@ -27,6 +27,12 @@ let state: State = 'default';
 let savedUserSelect = '';
 
 export function disableTextSelection() {
+  // Limit this behavior to iOS only. Android devices don't text select nearby element
+  // when long pressing on a different element.
+  if (!isIOS()) {
+    return;
+  }
+
   if (state === 'default') {
     savedUserSelect = document.documentElement.style.webkitUserSelect;
     document.documentElement.style.webkitUserSelect = 'none';
@@ -38,7 +44,9 @@ export function disableTextSelection() {
 export function restoreTextSelection() {
   // If the state is already default, there's nothing to do.
   // If it is restoring, then there's no need to queue a second restore.
-  if (state !== 'disabled') {
+  // Limit this behavior to iOS only. Android devices don't text select nearby element
+  // when long pressing on a different element.
+  if (state !== 'disabled' || !isIOS()) {
     return;
   }
 
