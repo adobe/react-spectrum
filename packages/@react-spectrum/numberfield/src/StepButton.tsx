@@ -38,7 +38,6 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
    * Link https://bugs.webkit.org/show_bug.cgi?id=219188.
    */
   let {buttonProps, isPressed} = useButton({...props, elementType: 'div'}, ref);
-  buttonProps.tabIndex = isDisabled ? -1 : buttonProps.tabIndex;
   let {hoverProps, isHovered} = useHover(props);
   return (
     <FocusRing focusRingClass={classNames(stepperStyle, 'focus-ring')}>

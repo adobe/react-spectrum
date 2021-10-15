@@ -15,9 +15,7 @@ interface FocusRingProps {
   isTextInput?: boolean,
 
   /** Whether the element will be auto focused. */
-  autoFocus?: boolean,
-
-  isDisabled?: boolean
+  autoFocus?: boolean
 }
 
 interface FocusRingAria {
@@ -63,7 +61,7 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
   }, [], {isTextInput});
 
   let {focusProps} = useFocus({
-    isDisabled: within || props.isDisabled,
+    isDisabled: within,
     onFocusChange
   });
 

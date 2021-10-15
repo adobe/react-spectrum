@@ -54,6 +54,8 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
     onPressChange,
     // @ts-ignore - undocumented
     preventFocusOnPress,
+    // @ts-ignore - undocumented
+    allowFocusWhenDisabled,
     // @ts-ignore
     onClick: deprecatedOnClick,
     href,
@@ -91,6 +93,9 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
   });
 
   let {focusableProps} = useFocusable(props, ref);
+  if (allowFocusWhenDisabled) {
+    focusableProps.tabIndex = isDisabled ? -1 : focusableProps.tabIndex;
+  }
   let buttonProps = mergeProps(focusableProps, pressProps);
   buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
 
