@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {HelpTextProps} from '@react-types/shared';
+import {HelpTextProps, Validation} from '@react-types/shared';
 import {HTMLAttributes} from 'react';
 import {LabelAria, LabelAriaProps, useLabel} from './useLabel';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 
-interface AriaFieldProps extends LabelAriaProps, HelpTextProps {}
+interface AriaFieldProps extends LabelAriaProps, HelpTextProps, Omit<Validation, 'isRequired'> {}
 
 export interface FieldAria extends LabelAria {
   /** Props for the description element, if any. */

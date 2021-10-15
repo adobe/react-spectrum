@@ -62,8 +62,6 @@ export interface RangeInputBase<T> {
 }
 
 export interface HelpTextProps {
-  /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState,
   /** A description for the field. Provides a hint such as specific requirements for what to choose. */
   description?: ReactNode,
   /** An error message for the field. */
@@ -71,7 +69,7 @@ export interface HelpTextProps {
 }
 
 // Spectrum specific types. Extends `Validation` so that the `validationState` prop is available.
-export interface SpectrumHelpTextProps extends HelpTextProps, Validation {
+export interface SpectrumHelpTextProps extends HelpTextProps, Omit<Validation, 'isRequired'> {
   /** Whether the description is displayed with lighter text. */
   isDisabled?: boolean,
   /** Whether an error icon is rendered. */
