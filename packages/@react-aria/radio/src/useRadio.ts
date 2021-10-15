@@ -51,7 +51,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
   } = props;
 
   const isDisabled = props.isDisabled || state.isDisabled;
-  
+
   // Individual radios cannot be readonly
   const isReadOnly = state.isReadOnly;
 
@@ -90,7 +90,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       tabIndex,
       disabled: isDisabled,
       'aria-readonly': isReadOnly || undefined,
-      required: isRequired,
+      'aria-required': isRequired || undefined,
       checked,
       value,
       onChange

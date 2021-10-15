@@ -52,6 +52,7 @@ allowing for custom styling.
 * Visual and ARIA labeling support
 * Change, clipboard, composition, selection, and input event support
 * Required and invalid states exposed to assistive technology via ARIA
+* Support for description and error message help text linked to the input via ARIA
 
 ## Anatomy
 
@@ -61,10 +62,14 @@ Text fields consist of an input element and a label. `useTextField` automaticall
 the relationship between the two elements using the `for` attribute on the `<label>` element
 and the `aria-labelledby` attribute on the `<input>` element.
 
-`useTextField` returns two sets of props that you should spread onto the appropriate element:
+`useTextField` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
+
+`useTextField` returns props that you should spread onto the appropriate element:
 
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.links[docs.exports.useTextField.return.id].properties} />
+  <InterfaceType properties={docs.links[docs.exports.useTextField.return.base?.id ?? docs.exports.useTextField.return.id].properties} />
 </TypeContext.Provider>
 
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
@@ -72,16 +77,18 @@ to identify the element to screen readers.
 
 ## Example
 
-```tsx example
+```tsx example export=true
 function TextField(props) {
   let {label} = props;
   let ref = React.useRef();
-  let {labelProps, inputProps} = useTextField(props, ref);
+  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField(props, ref);
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
       <label {...labelProps}>{label}</label>
       <input {...inputProps} ref={ref} />
+      {props.description && <div {...descriptionProps} style={{fontSize: 12}}>{props.description}</div>}
+      {props.errorMessage && <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{props.errorMessage}</div>}
     </div>
   );
 }
@@ -89,6 +96,24 @@ function TextField(props) {
 <TextField
   label="Email"
   placeholder="abc@example.com" />
+```
+
+### Description
+
+```tsx example
+<TextField
+  label="Email"
+  placeholder="abc@example.com"
+  description="Enter an email for us to contact you about your order." />
+```
+
+### Error message
+
+```tsx example
+<TextField
+  label="Email"
+  placeholder="abc@example.com"
+  errorMessage="Please enter a valid email address." />
 ```
 
 ## Internationalization

@@ -55,13 +55,18 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
         case 'ArrowDown':
         case 'Enter':
         case ' ':
+          // Stop propagation, unless it would already be handled by useKeyboard.
+          if (!('continuePropagation' in e)) {
+            e.stopPropagation();
+          }
           e.preventDefault();
-          e.stopPropagation();
           state.toggle('first');
           break;
         case 'ArrowUp':
+          if (!('continuePropagation' in e)) {
+            e.stopPropagation();
+          }
           e.preventDefault();
-          e.stopPropagation();
           state.toggle('last');
           break;
       }

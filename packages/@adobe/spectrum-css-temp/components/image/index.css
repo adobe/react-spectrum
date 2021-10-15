@@ -10,8 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-let React = require('react');
+.spectrum-Image {
 
-module.exports = function(props) {
-  return React.createElement('svg', props, React.createElement('path', {d: 'M 10,150 L 70,10 L 130,150 z'}));
-};
+}
+
+.spectrum-Image-img {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  display: block;
+}

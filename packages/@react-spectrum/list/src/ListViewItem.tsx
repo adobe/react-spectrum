@@ -21,31 +21,37 @@ import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useFocusRing} from '@react-aria/focus';
 import {useGridCell, useGridRow, useGridSelectionCheckbox} from '@react-aria/grid';
-import {useHover} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
 export function ListViewItem(props) {
   let {
-    item
+    item,
+    onAction
   } = props;
+  let cellNode = [...item.childNodes][0];
   let {state} = useContext(ListViewContext);
   let {direction} = useLocale();
-  let ref = useRef<HTMLDivElement>();
+  let rowRef = useRef<HTMLDivElement>();
+  let cellRef =  useRef<HTMLDivElement>();
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let isDisabled = state.disabledKeys.has(item.key);
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
+  let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let {hoverProps, isHovered} = useHover({isDisabled});
+  let {pressProps, isPressed} = usePress({isDisabled});
   let {rowProps} = useGridRow({
     node: item,
-    isVirtualized: true
-  }, state, ref);
+    isVirtualized: true,
+    onAction: onAction ? () => onAction(item.key) : null
+  }, state, rowRef);
   let {gridCellProps} = useGridCell({
-    node: item,
+    node: cellNode,
     focusMode: 'cell'
-  }, state, ref);
+  }, state, cellRef);
   const mergedProps = mergeProps(
     gridCellProps,
     hoverProps,
@@ -69,23 +75,28 @@ export function ListViewItem(props) {
       );
   }
 
-  let showCheckbox = state.selectionManager.selectionMode !== 'none';
+  let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
+  let isSelected = state.selectionManager.isSelected(item.key);
   return (
     <div
-      {...rowProps}>
+      {...mergeProps(rowProps, pressProps)}
+      ref={rowRef}>
       <div
         className={
           classNames(
             listStyles,
             'react-spectrum-ListViewItem',
             {
+              'is-active': isPressed,
               'is-focused': isFocusVisibleWithin,
               'focus-ring': isFocusVisible,
-              'is-hovered': isHovered
+              'is-hovered': isHovered,
+              'is-selected': isSelected,
+              'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey))
             }
           )
         }
-        ref={ref}
+        ref={cellRef}
         {...mergedProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           {showCheckbox && (

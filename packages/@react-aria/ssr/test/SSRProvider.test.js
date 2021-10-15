@@ -29,16 +29,21 @@ describe('SSRProvider', function () {
     );
 
     let divs = tree.getAllByTestId('test');
-    expect(divs[0].id).toBe('react-aria-0-1');
-    expect(divs[1].id).toBe('react-aria-0-2');
+    expect(divs[0].id).toBe('react-aria-1');
+    expect(divs[1].id).toBe('react-aria-2');
   });
 
   it('it should generate consistent unique ids with nested SSR providers', function () {
     let tree = render(
       <SSRProvider>
+        <Test />
         <SSRProvider>
           <Test />
+          <SSRProvider>
+            <Test />
+          </SSRProvider>
         </SSRProvider>
+        <Test />
         <SSRProvider>
           <Test />
         </SSRProvider>
@@ -46,7 +51,14 @@ describe('SSRProvider', function () {
     );
 
     let divs = tree.getAllByTestId('test');
-    expect(divs[0].id).toBe('react-aria-1-1');
-    expect(divs[1].id).toBe('react-aria-2-1');
+    expect(divs.map((div) => div.id)).toMatchInlineSnapshot(`
+      Array [
+        "react-aria-1",
+        "react-aria-2-1",
+        "react-aria-2-2-1",
+        "react-aria-3",
+        "react-aria-4-1",
+      ]
+    `);
   });
 });

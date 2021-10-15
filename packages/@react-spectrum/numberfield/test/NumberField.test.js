@@ -58,11 +58,10 @@ describe('NumberField', function () {
 
     let root = props.label ? container.firstChild.firstChild : undefined;
     container = within(container).queryByRole('group');
-    let textField = container.firstChild;
+    let textField = within(container).queryByRole('textbox');
     let buttons = within(container).queryAllByRole('button');
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
-    textField = textField.firstChild;
     return {
       root,
       container,
@@ -1613,6 +1612,27 @@ describe('NumberField', function () {
       expect(decrementButton).toHaveAttribute('aria-label', 'Decrement');
       expect(decrementButton).not.toHaveAttribute('id');
       expect(decrementButton).not.toHaveAttribute('aria-labelledby');
+    });
+
+    it('error message', () => {
+      let {textField, root} = renderNumberField({
+        label: 'Width',
+        errorMessage: 'This is a error.',
+        validationState: 'invalid'
+      });
+
+      let errorText = within(root).getByText('This is a error.');
+      expect(textField).toHaveAttribute('aria-describedby', errorText.id);
+    });
+
+    it('description', () => {
+      let {textField, root} = renderNumberField({
+        label: 'Width',
+        description: 'This is a description.'
+      });
+
+      let description = within(root).getByText('This is a description.');
+      expect(textField).toHaveAttribute('aria-describedby', description.id);
     });
   });
 
