@@ -183,15 +183,25 @@ describe('useMove', function () {
   describe('user-select: none', () => {
     let mockUserSelect = 'contain';
     let oldUserSelect = document.documentElement.style.webkitUserSelect;
+    let platformGetter;
+
+    beforeAll(() => {
+      platformGetter = jest.spyOn(window.navigator, 'platform', 'get');
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
 
     beforeEach(() => {
       document.documentElement.style.webkitUserSelect = mockUserSelect;
+      platformGetter.mockReturnValue('iPhone');
     });
     afterEach(() => {
       document.documentElement.style.webkitUserSelect = oldUserSelect;
     });
 
-    it('adds and removes user-select: none to the body', function () {
+    it('adds and removes user-select: none to the body (iOS)', function () {
       let tree = render(
         <Example
           onMoveStart={() => {}}
@@ -209,6 +219,26 @@ describe('useMove', function () {
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
       act(() => {jest.advanceTimersByTime(300);});
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+    });
+
+    it('doesn\'t add user-select: none to the body (non-iOS)', function () {
+      platformGetter.mockReturnValue('Android');
+      let tree = render(
+        <Example
+          onMoveStart={() => {}}
+          onMove={() => {}}
+          onMoveEnd={() => {}} />
+      );
+
+      let el = tree.getByTestId(EXAMPLE_ELEMENT_TESTID);
+
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+      fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX: 1, pageY: 30}]});
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
   });
