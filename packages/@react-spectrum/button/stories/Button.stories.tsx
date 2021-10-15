@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {Flex} from '@react-spectrum/layout';
-import React, {ElementType, useRef, useState} from 'react';
+import React, {ElementType} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
