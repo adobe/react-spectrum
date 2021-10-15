@@ -48,6 +48,7 @@ interface SelectableItemOptions {
    * Whether the option should use virtual focus instead of being focused directly.
    */
   shouldUseVirtualFocus?: boolean,
+  /** Whether the item is disabled. */
   isDisabled?: boolean,
   /**
    * Handler that is called when a user performs an action on the cell. The exact user event depends on

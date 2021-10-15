@@ -2412,7 +2412,9 @@ describe('TableView', function () {
         expect(onAction).not.toHaveBeenCalled();
         expect(tree.queryByLabelText('Select All')).not.toBeNull();
 
+        fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
         onSelectionChange.mockReset();
+
         userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
         checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
