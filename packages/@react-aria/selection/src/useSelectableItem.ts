@@ -11,10 +11,12 @@
  */
 
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
+import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
+import {isNonContiguousSelectionModifier} from './utils';
+import {LongPressEvent, PressEvent} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {PressEvent} from '@react-types/shared';
-import {PressProps} from '@react-aria/interactions';
+import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
 interface SelectableItemOptions {
   /**
@@ -45,14 +47,23 @@ interface SelectableItemOptions {
   /**
    * Whether the option should use virtual focus instead of being focused directly.
    */
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the cell. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 interface SelectableItemAria {
   /**
    * Props to be spread on the item root node.
    */
-  itemProps: HTMLAttributes<HTMLElement> & PressProps
+  itemProps: HTMLAttributes<HTMLElement>,
+  /** Whether the item is currently in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -66,10 +77,18 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     shouldSelectOnPressUp,
     isVirtualized,
     shouldUseVirtualFocus,
-    focus
+    focus,
+    isDisabled,
+    onAction
   } = options;
 
-  let onSelect = (e: PressEvent | PointerEvent) => manager.select(key, e);
+  let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
+    if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {
+      manager.toggleSelection(key);
+    } else {
+      manager.select(key, e);
+    }
+  };
 
   // Focus the associated DOM node when this item becomes the focusedKey
   let isFocused = key === manager.focusedKey;
@@ -98,6 +117,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   }
 
+  let modality = useRef(null);
+  let hasPrimaryAction = onAction && manager.selectionMode === 'none';
+  let hasSecondaryAction = onAction && manager.selectionMode !== 'none' && manager.selectionBehavior === 'replace';
+  let allowsSelection = !isDisabled && manager.canSelectItem(key);
+
   // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
   // If shouldSelectOnPressUp is true, we use onPressUp instead of onPressStart.
@@ -105,29 +129,40 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // we want to be able to have the pointer down on the trigger that opens the menu and
   // the pointer up on the menu item rather than requiring a separate press.
   // For keyboard events, selection still occurs on key down.
+  let itemPressProps: PressProps = {};
   if (shouldSelectOnPressUp) {
-    itemProps.onPressStart = (e) => {
+    itemPressProps.onPressStart = (e) => {
+      modality.current = e.pointerType;
       if (e.pointerType === 'keyboard') {
         onSelect(e);
       }
     };
 
-    itemProps.onPressUp = (e) => {
+    itemPressProps.onPressUp = (e) => {
       if (e.pointerType !== 'keyboard') {
         onSelect(e);
       }
     };
+
+    itemPressProps.onPress = hasPrimaryAction ? () => onAction() : null;
   } else {
     // On touch, it feels strange to select on touch down, so we special case this.
-    itemProps.onPressStart = (e) => {
-      if (e.pointerType !== 'touch') {
+    itemPressProps.onPressStart = (e) => {
+      modality.current = e.pointerType;
+      if (e.pointerType !== 'touch' && e.pointerType !== 'virtual') {
         onSelect(e);
       }
     };
 
-    itemProps.onPress = (e) => {
-      if (e.pointerType === 'touch') {
-        onSelect(e);
+    itemPressProps.onPress = (e) => {
+      if (e.pointerType === 'touch' || e.pointerType === 'virtual' || hasPrimaryAction) {
+        // Single tap on touch with selectionBehavior = 'replace' performs an action, i.e. navigation.
+        // Also perform action on press up when selectionMode = 'none'.
+        if (hasPrimaryAction || hasSecondaryAction) {
+          onAction();
+        } else {
+          onSelect(e);
+        }
       }
     };
   }
@@ -136,7 +171,46 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     itemProps['data-key'] = key;
   }
 
+  itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
+  let {pressProps, isPressed} = usePress(itemPressProps);
+
+  // Double clicking with a mouse with selectionBehavior = 'replace' performs an action.
+  let onDoubleClick = hasSecondaryAction ? (e) => {
+    if (modality.current === 'mouse') {
+      e.stopPropagation();
+      e.preventDefault();
+      onAction();
+    }
+  } : undefined;
+
+  // Long pressing an item with touch when selectionBehavior = 'replace' switches the selection behavior
+  // to 'toggle'. This changes the single tap behavior from performing an action (i.e. navigating) to
+  // selecting, and may toggle the appearance of a UI affordance like checkboxes on each item.
+  // TODO: what about when drag and drop is also enabled??
+  let {longPressProps} = useLongPress({
+    isDisabled: !hasSecondaryAction,
+    onLongPress(e) {
+      if (e.pointerType === 'touch') {
+        onSelect(e);
+        manager.setSelectionBehavior('toggle');
+      }
+    }
+  });
+
+  // Pressing the Enter key with selectionBehavior = 'replace' performs an action (i.e. navigation).
+  let onKeyDown = hasSecondaryAction ? (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onAction();
+    }
+  } : undefined;
+
   return {
-    itemProps
+    itemProps: mergeProps(
+      itemProps,
+      allowsSelection || hasPrimaryAction ? pressProps : {},
+      hasSecondaryAction ? longPressProps : {},
+      {onKeyDown, onDoubleClick}
+    ),
+    isPressed
   };
 }
