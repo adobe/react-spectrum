@@ -35,7 +35,12 @@ export interface PressProps extends PressEvents {
    * still pressed, onPressStart will be fired again. If set to `true`, the press is canceled
    * when the pointer leaves the target and onPressStart will not be fired if the pointer returns.
    */
-  shouldCancelOnPointerExit?: boolean
+  shouldCancelOnPointerExit?: boolean,
+  /**
+   * Whether text selection should be disabled on the pressable element.
+   * @default true
+   */
+  preventTextSelectionOnPress?: boolean
 }
 
 export interface PressHookProps extends PressProps {
@@ -99,6 +104,7 @@ export function usePress(props: PressHookProps): PressResult {
     isPressed: isPressedProp,
     preventFocusOnPress,
     shouldCancelOnPointerExit,
+    preventTextSelectionOnPress = true,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb,
     ...domProps
@@ -321,7 +327,10 @@ export function usePress(props: PressHookProps): PressResult {
             focusWithoutScrolling(e.currentTarget);
           }
 
-          disableTextSelection();
+          if (preventTextSelectionOnPress) {
+            disableTextSelection();
+          }
+
           triggerPressStart(e, state.pointerType);
 
           addGlobalListener(document, 'pointermove', onPointerMove, false);
@@ -526,7 +535,10 @@ export function usePress(props: PressHookProps): PressResult {
           focusWithoutScrolling(e.currentTarget);
         }
 
-        disableTextSelection();
+        if (preventTextSelectionOnPress) {
+          disableTextSelection();
+        }
+
         triggerPressStart(e, state.pointerType);
 
         addGlobalListener(window, 'scroll', onScroll, true);
@@ -624,9 +636,11 @@ export function usePress(props: PressHookProps): PressResult {
     return () => restoreTextSelection();
   }, []);
 
+  let styles = preventTextSelectionOnPress ? {userSelect: 'none'} : null;
+
   return {
     isPressed: isPressedProp || isPressed,
-    pressProps: mergeProps(domProps, pressProps)
+    pressProps: mergeProps(domProps, pressProps, {style: styles})
   };
 }
 

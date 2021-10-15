@@ -2213,7 +2213,36 @@ describe('usePress', function () {
       document.documentElement.style.webkitUserSelect = oldUserSelect;
     });
 
-    it('should add user-select: none to html element when press start (iOS)', function () {
+    it('should add user-select: none to the pressable element by default', function () {
+      let {getByText} = render(
+        <Example
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />
+      );
+
+      let el = getByText('test');
+      expect(el).toHaveStyle('user-select: none');
+    });
+
+    it('should not add user-select: none to the pressable element if preventTextSelectionOnPress is false', function () {
+      let {getByText} = render(
+        <Example
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler}
+          preventTextSelectionOnPress={false} />
+      );
+
+      let el = getByText('test');
+      expect(el).not.toHaveStyle('user-select: none');
+    });
+
+    it('should add user-select: none to the page on press start (iOS)', function () {
       let {getByText} = render(
         <Example
           onPressStart={handler}
@@ -2228,7 +2257,7 @@ describe('usePress', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
     });
 
-    it('should not add user-select: none to html element when press start (non-iOS)', function () {
+    it('should not add user-select: none to the page when press start (non-iOS)', function () {
       platformGetter.mockReturnValue('Android');
       let {getByText} = render(
         <Example
@@ -2244,7 +2273,7 @@ describe('usePress', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
 
-    it('should remove user-select: none to html element when press end (iOS)', function () {
+    it('should remove user-select: none from the page when press end (iOS)', function () {
       let {getByText} = render(
         <Example
           onPressStart={handler}
@@ -2311,7 +2340,7 @@ describe('usePress', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
 
-    it('should remove user-select: none from html element if pressable component unmounts (iOS)', function () {
+    it('should remove user-select: none from the page if pressable component unmounts (iOS)', function () {
       let {getByText, unmount} = render(
         <Example
           onPressStart={handler}
