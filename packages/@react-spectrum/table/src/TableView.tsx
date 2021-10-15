@@ -21,7 +21,7 @@ import intlMessages from '../intl/*.json';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
+import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
@@ -73,9 +73,22 @@ function useTableContext() {
 
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let {isQuiet} = props;
+  let {isQuiet, onAction} = props;
   let {styleProps} = useStyleProps(props);
-  let state = useTableState({...props, showSelectionCheckboxes: true});
+
+  let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
+  let state = useTableState({
+    ...props,
+    showSelectionCheckboxes,
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  });
+
+  // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
+  let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
+  if (shouldShowCheckboxes !== showSelectionCheckboxes) {
+    setShowSelectionCheckboxes(shouldShowCheckboxes);
+  }
+
   let domRef = useDOMRef(ref);
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -146,7 +159,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         <TableRow
           key={reusableView.key}
           item={reusableView.content}
-          style={style}>
+          style={style}
+          onAction={onAction}>
           {renderChildren(children)}
         </TableRow>
       );
@@ -492,15 +506,16 @@ function TableRowGroup({children, ...otherProps}) {
   );
 }
 
-function TableRow({item, children, ...otherProps}) {
+function TableRow({item, children, onAction, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
-  let allowsSelection = state.selectionManager.selectionMode !== 'none';
-  let isDisabled = state.disabledKeys.has(item.key);
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
+  let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({
     node: item,
-    isVirtualized: true
+    isVirtualized: true,
+    onAction: onAction ? () => onAction(item.key) : null
   }, state, ref);
 
   let {pressProps, isPressed} = usePress({isDisabled});
@@ -519,7 +534,7 @@ function TableRow({item, children, ...otherProps}) {
     focusWithinProps,
     focusProps,
     hoverProps,
-    allowsSelection && pressProps
+    pressProps
   );
 
   return (
@@ -533,9 +548,10 @@ function TableRow({item, children, ...otherProps}) {
           {
             'is-active': isPressed,
             'is-selected': isSelected,
+            'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
-            'is-hovered': isHovered && allowsSelection,
+            'is-hovered': isHovered,
             'is-disabled': isDisabled
           }
         )

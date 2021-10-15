@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Pressable';
-export * from './PressResponder';
-export * from './useFocus';
-export * from './useFocusVisible';
-export * from './useFocusWithin';
-export * from './useHover';
-export * from './useInteractOutside';
-export * from './useKeyboard';
-export * from './useMove';
-export * from './usePress';
-export * from './useScrollWheel';
-export * from './useLongPress';
+import {isAppleDevice} from '@react-aria/utils';
+
+interface Event {
+  altKey: boolean,
+  ctrlKey: boolean
+}
+
+export function isNonContiguousSelectionModifier(e: Event) {
+  // Ctrl + Arrow Up/Arrow Down has a system wide meaning on macOS, so use Alt instead.
+  // On Windows and Ubuntu, Alt + Space has a system wide meaning.
+  return isAppleDevice() ? e.altKey : e.ctrlKey;
+}
