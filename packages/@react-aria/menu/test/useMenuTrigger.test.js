@@ -114,7 +114,7 @@ describe('useMenuTrigger', function () {
     expect(setOpen).toHaveBeenCalledTimes(0);
     expect(setFocusStrategy).toHaveBeenCalledTimes(0);
 
-     // triggers event if defaultPrevented is not true and it matches one of the keys
+    // triggers event if defaultPrevented is not true and it matches one of the keys
     menuTriggerProps.onKeyDown({
       pointerType: 'not keyboard',
       defaultPrevented: false,
