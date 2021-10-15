@@ -28,6 +28,7 @@ governing permissions and limitations under the License.
 /* specificity must be higher than `.spectrum-Icon` */
 svg.spectrum-Table-sortedIcon {
   display: none;
+  flex: 0 0 auto;
   margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
   min-inline-size: var(--spectrum-icon-arrow-down-small-width);
 
@@ -42,8 +43,16 @@ svg.spectrum-Table-sortedIcon {
   border-right-width: 1px;
   border-right-style: solid;
 }
+.spectrum-Table-headCellContents {
+  display: inline-block;
+  min-inline-size: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 .spectrum-Table-headCell {
+  display: flex;
   box-sizing: border-box;
   font-size: var(--spectrum-table-header-text-size);
   font-weight: var(--spectrum-table-header-text-font-weight);
