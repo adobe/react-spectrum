@@ -89,10 +89,6 @@ storiesOf('Button', module)
   .add(
     'element: a, rel: \'noopener noreferrer\'',
     () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
-  )
-  .add(
-    'remove focus ring on disable',
-    () => <Example />
   );
 
 function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
@@ -124,25 +120,5 @@ function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> 
       </Button>
       )}
     </Flex>
-  );
-}
-
-function Example() {
-  let [isDisabled, setDisabled] = useState(false);
-  let btn1 = useRef();
-  let disableOne = () => {
-    setDisabled(true);
-  };
-  return (
-    <>
-      <span>Tab to the button, press the space key, focus ring should be gone and focus should be on the body</span>
-      <Button
-        variant={'primary'}
-        isDisabled={isDisabled}
-        onPress={disableOne}
-        ref={btn1}>
-        Click Me
-      </Button>
-    </>
   );
 }
