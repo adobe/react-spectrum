@@ -14,7 +14,7 @@ import {createListActions, ListData, ListState} from './useListData';
 import {Key, Reducer, useEffect, useReducer} from 'react';
 import {LoadingState, Selection, SortDescriptor} from '@react-types/shared';
 
-interface AsyncListOptions<T, C> {
+export interface AsyncListOptions<T, C> {
   /** The keys for the initially selected items. */
   initialSelectedKeys?: Iterable<Key>,
   /** The initial sort descriptor. */
@@ -342,7 +342,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort(sortDescriptor: SortDescriptor) {
       dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
     },
-    ...createListActions({...options, getKey}, fn => {
+    ...createListActions({...options, getKey, cursor: data.cursor}, fn => {
       dispatch({type: 'update', updater: fn});
     }),
     setFilterText(filterText: string) {

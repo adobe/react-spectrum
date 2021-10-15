@@ -51,6 +51,14 @@ storiesOf('TextField', module)
     () => render({validationState: 'valid'})
   )
   .add(
+    'type: email',
+    () => render({type: 'email'})
+  )
+  .add(
+    'pattern: [0-9]+',
+    () => render({pattern: '[0-9]+'})
+  )
+  .add(
     'isReadOnly: true',
     () => render({isReadOnly: true})
   )
@@ -105,6 +113,14 @@ storiesOf('TextField', module)
   .add(
     'no visible label',
     () => render({label: null, 'aria-label': 'Street address'})
+  )
+  .add(
+    'with description',
+    () => render({description: 'Please enter your street address.'})
+  )
+  .add(
+    'with error message',
+    () => render({errorMessage: 'Please enter a valid street address.', validationState: 'invalid'})
   )
   .add('custom width',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px'})

@@ -28,7 +28,14 @@ export interface PressProps extends PressEvents {
   /** Whether the press events should be disabled. */
   isDisabled?: boolean,
   /** Whether the target should not receive focus on press. */
-  preventFocusOnPress?: boolean
+  preventFocusOnPress?: boolean,
+  /**
+   * Whether press events should be canceled when the pointer leaves the target while pressed.
+   * By default, this is `false`, which means if the pointer returns back over the target while
+   * still pressed, onPressStart will be fired again. If set to `true`, the press is canceled
+   * when the pointer leaves the target and onPressStart will not be fired if the pointer returns.
+   */
+  shouldCancelOnPointerExit?: boolean
 }
 
 export interface PressHookProps extends PressProps {
@@ -52,7 +59,8 @@ interface EventBase {
   currentTarget: EventTarget,
   shiftKey: boolean,
   ctrlKey: boolean,
-  metaKey: boolean
+  metaKey: boolean,
+  altKey: boolean
 }
 
 export interface PressResult {
@@ -90,12 +98,13 @@ export function usePress(props: PressHookProps): PressResult {
     isDisabled,
     isPressed: isPressedProp,
     preventFocusOnPress,
+    shouldCancelOnPointerExit,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb,
     ...domProps
   } = usePressResponderContext(props);
   let propsRef = useRef<PressHookProps>(null);
-  propsRef.current = {onPress, onPressChange, onPressStart, onPressEnd, onPressUp, isDisabled};
+  propsRef.current = {onPress, onPressChange, onPressStart, onPressEnd, onPressUp, isDisabled, shouldCancelOnPointerExit};
 
   let [isPressed, setPressed] = useState(false);
   let ref = useRef<PressState>({
@@ -126,7 +135,8 @@ export function usePress(props: PressHookProps): PressResult {
           target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
         });
       }
 
@@ -154,7 +164,8 @@ export function usePress(props: PressHookProps): PressResult {
           target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
         });
       }
 
@@ -171,7 +182,8 @@ export function usePress(props: PressHookProps): PressResult {
           target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
         });
       }
     };
@@ -189,7 +201,8 @@ export function usePress(props: PressHookProps): PressResult {
           target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
-          ctrlKey: originalEvent.ctrlKey
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
         });
       }
     };
@@ -343,7 +356,7 @@ export function usePress(props: PressHookProps): PressResult {
         // Safari on iOS sometimes fires pointerup events, even
         // when the touch isn't over the target, so double check.
         if (e.button === 0 && isOverTarget(e, e.currentTarget)) {
-          triggerPressUp(e, state.pointerType);
+          triggerPressUp(e, state.pointerType || (isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType));
         }
       };
 
@@ -363,6 +376,9 @@ export function usePress(props: PressHookProps): PressResult {
         } else if (state.isOverTarget) {
           state.isOverTarget = false;
           triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
+          if (propsRef.current.shouldCancelOnPointerExit) {
+            cancel(e);
+          }
         }
       };
 
@@ -448,6 +464,9 @@ export function usePress(props: PressHookProps): PressResult {
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
           state.isOverTarget = false;
           triggerPressEnd(e, state.pointerType, false);
+          if (propsRef.current.shouldCancelOnPointerExit) {
+            cancel(e);
+          }
         }
       };
 
@@ -532,6 +551,9 @@ export function usePress(props: PressHookProps): PressResult {
         } else if (state.isOverTarget) {
           state.isOverTarget = false;
           triggerPressEnd(e, state.pointerType, false);
+          if (propsRef.current.shouldCancelOnPointerExit) {
+            cancel(e);
+          }
         }
       };
 
@@ -578,7 +600,8 @@ export function usePress(props: PressHookProps): PressResult {
             currentTarget: state.target,
             shiftKey: false,
             ctrlKey: false,
-            metaKey: false
+            metaKey: false,
+            altKey: false
           });
         }
       };
@@ -658,7 +681,8 @@ function createEvent(target: HTMLElement, e: EventBase): EventBase {
     currentTarget: target,
     shiftKey: e.shiftKey,
     ctrlKey: e.ctrlKey,
-    metaKey: e.metaKey
+    metaKey: e.metaKey,
+    altKey: e.altKey
   };
 }
 
