@@ -5,6 +5,7 @@ import {ListState, useListState} from '@react-stately/list';
 import * as React from 'react';
 import {Section} from '@react-spectrum/menu';
 import {storiesOf} from '@storybook/react';
+import styles from './styles.css';
 import {useSelectableItem, useSelectableList} from '../src';
 
 function SelectableList(props: CollectionBase<any> & {
@@ -27,6 +28,7 @@ function SelectableList(props: CollectionBase<any> & {
   return (
     <ul
       {...listProps}
+      className={styles.list}
       style={{
         height: 200, overflow: 'auto', padding: 10, margin: 0, listStyle: 'none',
         position: props.isUlRelativelyPositioned ? 'relative' : 'static'
