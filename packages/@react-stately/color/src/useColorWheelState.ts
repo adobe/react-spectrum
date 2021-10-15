@@ -118,7 +118,9 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     }
     v = roundToStep(mod(v, 360), step);
     if (hue !== v) {
-      setValue(value.withChannelValue('hue', v));
+      let color = value.withChannelValue('hue', v);
+      valueRef.current = color;
+      setValue(color);
     }
   }
 
