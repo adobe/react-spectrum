@@ -437,7 +437,7 @@ function TableColumnHeader({column}) {
         }>
         {columnProps.hideHeader ?
           <VisuallyHidden>{column.rendered}</VisuallyHidden> :
-          column.rendered
+          <div className={classNames(styles, 'spectrum-Table-headCellContents')}>{column.rendered}</div>
         }
         {columnProps.allowsSorting &&
           <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
