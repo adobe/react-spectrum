@@ -20,6 +20,10 @@
   padding: 0;
   background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
   outline: 0;
+
+  [role="row"] {
+    outline: none;
+  }
 }
 
 .react-spectrum-ListView--quiet {
@@ -40,6 +44,7 @@
   /*background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));*/
   color: var(--spectrum-table-cell-text-color, var(--spectrum-alias-text-color));
   outline: 0;
+  min-height: var(--spectrum-global-dimension-size-500);
 
   .react-spectrum-ListView--quiet & {
     border-bottom: 0;
@@ -59,6 +64,29 @@
     box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
     border-radius: var(--spectrum-table-cell-border-radius-key-focus);
   }
+
+  &.is-active {
+    background-color: var(--spectrum-table-row-background-color-down);
+  }
+
+  &.is-selected {
+    background-color: var(--spectrum-table-row-background-color-selected);
+
+    &.is-hovered,
+    &.is-active {
+      background-color: var(--spectrum-table-row-background-color-selected-hover);
+    }
+  }
+
+  &.react-spectrum-ListViewItem--highlightSelection {
+    border-bottom-color: var(--spectrum-global-color-blue-500);
+  }
+
+  &.has-checkbox {
+    /* have to eliminate vertical padding to allow proper vertical alignment */
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
 }
 
 .react-spectrum-ListViewItem-selected {
@@ -71,11 +99,13 @@
 .react-spectrum-ListView--compact .react-spectrum-ListViewItem {
   padding-top: var(--spectrum-listview-item-compact-padding-y);
   padding-bottom: var(--spectrum-listview-item-compact-padding-y);
+  min-height: var(--spectrum-global-dimension-size-400);
 }
 
 .react-spectrum-ListView--spacious .react-spectrum-ListViewItem {
   padding-top: var(--spectrum-listview-item-spacious-padding-y);
   padding-bottom: var(--spectrum-listview-item-spacious-padding-y);
+  min-height: var(--spectrum-global-dimension-size-600);
 }
 
 .react-spectrum-ListViewItem-grid {
@@ -93,6 +123,11 @@
   grid-area: checkbox;
   align-items: center;
   justify-items: center;
+  min-height: 0;
+  height: 100%;
+  > span {
+    margin: 0;
+  }
 }
 
 .react-spectrum-ListViewItem-icon,

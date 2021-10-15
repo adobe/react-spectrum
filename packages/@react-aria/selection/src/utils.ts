@@ -10,6 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {useValueEffect} from '@react-aria/utils';
+import {isAppleDevice} from '@react-aria/utils';
 
-export {useValueEffect};
+interface Event {
+  altKey: boolean,
+  ctrlKey: boolean
+}
+
+export function isNonContiguousSelectionModifier(e: Event) {
+  // Ctrl + Arrow Up/Arrow Down has a system wide meaning on macOS, so use Alt instead.
+  // On Windows and Ubuntu, Alt + Space has a system wide meaning.
+  return isAppleDevice() ? e.altKey : e.ctrlKey;
+}

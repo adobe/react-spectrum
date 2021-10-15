@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy, PressEvent, Selection, SelectionMode} from '@react-types/shared';
+import {FocusStrategy, LongPressEvent, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 
 export interface FocusState {
@@ -38,6 +38,10 @@ export interface SingleSelectionState extends FocusState {
 export interface MultipleSelectionState extends FocusState {
   /** The type of selection that is allowed in the collection. */
   readonly selectionMode: SelectionMode,
+  /** The selection behavior for the collection. */
+  readonly selectionBehavior: SelectionBehavior,
+  /** Sets the selection behavior for the collection. */
+  setSelectionBehavior(selectionBehavior: SelectionBehavior): void,
   /** Whether the collection allows empty selection. */
   readonly disallowEmptySelection: boolean,
   /** The currently selected keys in the collection. */
@@ -51,6 +55,8 @@ export interface MultipleSelectionState extends FocusState {
 export interface MultipleSelectionManager extends FocusState {
   /** The type of selection that is allowed in the collection. */
   readonly selectionMode: SelectionMode,
+  /** The selection behavior for the collection. */
+  readonly selectionBehavior: SelectionBehavior,
   /** Whether the collection allows empty selection. */
   readonly disallowEmptySelection?: boolean,
   /** The currently selected keys in the collection. */
@@ -85,5 +91,9 @@ export interface MultipleSelectionManager extends FocusState {
    * Toggles, replaces, or extends selection to the given key depending
    * on the pointer event and collection's selection mode.
    */
-  select(key: Key, e?: PressEvent | PointerEvent): void
+  select(key: Key, e?: PressEvent | LongPressEvent | PointerEvent): void,
+  /** Returns whether the given key can be selected. */
+  canSelectItem(key: Key): boolean,
+  /** Sets the selection behavior for the collection. */
+  setSelectionBehavior(selectionBehavior: SelectionBehavior): void
 }
