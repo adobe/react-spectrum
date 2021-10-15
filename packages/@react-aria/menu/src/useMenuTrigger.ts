@@ -56,12 +56,10 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
         case 'Enter':
         case ' ':
           e.preventDefault();
-          e.stopPropagation();
           state.toggle('first');
           break;
         case 'ArrowUp':
           e.preventDefault();
-          e.stopPropagation();
           state.toggle('last');
           break;
       }
