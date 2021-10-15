@@ -114,7 +114,9 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let selection = state.selectionManager.rawSelection;
   let lastSelection = useRef(selection);
   useUpdateEffect(() => {
-    if (!state.selectionManager.isFocused) {
+    // Do not do this when using selectionBehavior = 'replace' to avoid selection announcements
+    // every time the user presses the arrow keys.
+    if (!state.selectionManager.isFocused || state.selectionManager.selectionBehavior === 'replace') {
       return;
     }
 
