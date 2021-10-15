@@ -335,7 +335,6 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ControlledHSL defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
-      let thumb = slider.parentElement;
       let container = _container.firstChild.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
@@ -345,7 +344,7 @@ describe('ColorWheel', () => {
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 90).toString('hsla'));
       expect(document.activeElement).toBe(slider);
 
-      end(thumb, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
+      end(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(document.activeElement).toBe(slider);
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
