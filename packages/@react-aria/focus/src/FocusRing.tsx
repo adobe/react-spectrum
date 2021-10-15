@@ -32,9 +32,7 @@ interface FocusRingProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
   /** Whether the element will be auto focused. */
-  autoFocus?: boolean,
-
-  isDisabled?: boolean
+  autoFocus?: boolean
 }
 
 /**
@@ -43,15 +41,15 @@ interface FocusRingProps {
  * not with a mouse, touch, or other input methods.
  */
 export function FocusRing(props: FocusRingProps) {
-  let {children, focusClass, focusRingClass, isDisabled} = props;
+  let {children, focusClass, focusRingClass} = props;
   let {isFocused, isFocusVisible, focusProps} = useFocusRing(props);
   let child = React.Children.only(children);
 
   return React.cloneElement(child, mergeProps(child.props, {
     ...focusProps,
     className: clsx({
-      [focusClass || '']: isFocused && !isDisabled,
-      [focusRingClass || '']: isFocusVisible && !isDisabled
+      [focusClass || '']: isFocused,
+      [focusRingClass || '']: isFocusVisible
     })
   }));
 }

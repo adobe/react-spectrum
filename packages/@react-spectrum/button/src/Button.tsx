@@ -50,7 +50,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   }
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus} isDisabled={isDisabled}>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
