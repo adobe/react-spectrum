@@ -83,49 +83,4 @@ describe('useMenuTrigger', function () {
     expect(setFocusStrategy).toHaveBeenCalledTimes(1);
     expect(setFocusStrategy).toHaveBeenCalledWith(null);
   });
-
-  // Comprehensive onKeyDown functionality is tested in MenuTrigger test
-  it('returns a onKeyDown that toggles the menu open state for specific key strokes', function () {
-    let props = {
-      type: 'menu'
-    };
-
-    let preventDefault = jest.fn();
-    let stopPropagation = jest.fn();
-
-    let {menuTriggerProps} = renderMenuTriggerHook(props, state, {current: {}});
-    expect(typeof menuTriggerProps.onKeyDown).toBe('function');
-
-    // doesn't trigger event if isDefaultPrevented returns true
-    menuTriggerProps.onKeyDown({
-      pointerType: 'not keyboard',
-      isDefaultPrevented: () => true,
-      key: 'ArrowUp'
-    });
-    expect(setOpen).toHaveBeenCalledTimes(0);
-    expect(setFocusStrategy).toHaveBeenCalledTimes(0);
-
-    // doesn't trigger event if defaultPrevented is true
-    menuTriggerProps.onKeyDown({
-      pointerType: 'not keyboard',
-      defaultPrevented: true,
-      key: 'ArrowUp'
-    });
-    expect(setOpen).toHaveBeenCalledTimes(0);
-    expect(setFocusStrategy).toHaveBeenCalledTimes(0);
-
-    // triggers event if defaultPrevented is not true and it matches one of the keys
-    menuTriggerProps.onKeyDown({
-      pointerType: 'not keyboard',
-      defaultPrevented: false,
-      key: 'ArrowUp',
-      preventDefault,
-      stopPropagation
-    });
-    expect(setOpen).toHaveBeenCalledTimes(1);
-    expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
-    expect(preventDefault).toHaveBeenCalledTimes(1);
-    expect(setFocusStrategy).toHaveBeenCalledTimes(1);
-    expect(setFocusStrategy).toHaveBeenLastCalledWith('last');
-  });
 });

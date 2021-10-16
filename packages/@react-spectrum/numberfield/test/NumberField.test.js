@@ -2133,6 +2133,12 @@ describe('NumberField', function () {
     expect(textField.selectionEnd).toBe(1);
   });
 
+  it('adds data attributes to textField', () => {
+    let {textField} = renderNumberField({'data-testid': '123'});
+
+    expect(textField).toHaveAttribute('data-testid', '123');
+  });
+
   describe('locale specific', () => {
     describe('spanish (spain)', () => {
       it('can determine the group symbol', () => {
