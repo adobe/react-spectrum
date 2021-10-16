@@ -16,7 +16,7 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {disableTextSelection, restoreTextSelection} from './textSelection';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners, useSyncRef} from '@react-aria/utils';
+import {focusWithoutScrolling, isIOS, mergeProps, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {isVirtualClick} from './utils';
 import {PointerType, PressEvents} from '@react-types/shared';
@@ -121,7 +121,8 @@ export function usePress(props: PressHookProps): PressResult {
     activePointerId: null,
     target: null,
     isOverTarget: false,
-    pointerType: null
+    pointerType: null,
+    userSelect: ''
   });
 
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
@@ -224,6 +225,13 @@ export function usePress(props: PressHookProps): PressResult {
         state.pointerType = null;
         removeAllGlobalListeners();
         restoreTextSelection();
+        // If non-iOS and we have modified the user-select of the target, revert to the original user-select value
+        if (!isIOS() && state.target.style.userSelect === 'none' && state.userSelect !== 'none' ) {
+          state.target.style.userSelect = state.userSelect;
+          if (state.target.getAttribute('style') == '') {
+            state.target.removeAttribute('style');
+          }
+        }
       }
     };
 
@@ -329,6 +337,10 @@ export function usePress(props: PressHookProps): PressResult {
 
           if (preventTextSelectionOnPress) {
             disableTextSelection();
+            if (!isIOS()) {
+              state.userSelect = state.target.style.userSelect;
+              state.target.style.userSelect = 'none';
+            }
           }
 
           triggerPressStart(e, state.pointerType);
@@ -405,6 +417,13 @@ export function usePress(props: PressHookProps): PressResult {
           state.pointerType = null;
           removeAllGlobalListeners();
           restoreTextSelection();
+          // If non-iOS and we have modified the user-select of the target, revert to the original user-select value
+          if (!isIOS() && state.target.style.userSelect === 'none' && state.userSelect !== 'none' ) {
+            state.target.style.userSelect = state.userSelect;
+            if (state.target.getAttribute('style') == '') {
+              state.target.removeAttribute('style');
+            }
+          }
         }
       };
 
@@ -537,6 +556,10 @@ export function usePress(props: PressHookProps): PressResult {
 
         if (preventTextSelectionOnPress) {
           disableTextSelection();
+          if (!isIOS()) {
+            state.userSelect = state.target.style.userSelect;
+            state.target.style.userSelect = 'none';
+          }
         }
 
         triggerPressStart(e, state.pointerType);
@@ -593,6 +616,13 @@ export function usePress(props: PressHookProps): PressResult {
         state.ignoreEmulatedMouseEvents = true;
         restoreTextSelection();
         removeAllGlobalListeners();
+        // If non-iOS and we have modified the user-select of the target, revert to the original user-select value
+        if (!isIOS() && state.target.style.userSelect === 'none' && state.userSelect !== 'none' ) {
+          state.target.style.userSelect = state.userSelect;
+          if (state.target.getAttribute('style') == '') {
+            state.target.removeAttribute('style');
+          }
+        }
       };
 
       pressProps.onTouchCancel = (e) => {
@@ -628,7 +658,7 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [addGlobalListener, isDisabled, preventFocusOnPress, removeAllGlobalListeners]);
+  }, [addGlobalListener, isDisabled, preventFocusOnPress, removeAllGlobalListeners, preventTextSelectionOnPress]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
   // eslint-disable-next-line arrow-body-style
@@ -636,11 +666,9 @@ export function usePress(props: PressHookProps): PressResult {
     return () => restoreTextSelection();
   }, []);
 
-  let styles = preventTextSelectionOnPress ? {userSelect: 'none'} : null;
-
   return {
     isPressed: isPressedProp || isPressed,
-    pressProps: mergeProps(domProps, pressProps, {style: styles})
+    pressProps: mergeProps(domProps, pressProps)
   };
 }
 

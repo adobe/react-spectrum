@@ -21,9 +21,9 @@ import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
 function Example(props) {
-  let {elementType: ElementType = 'div', ...otherProps} = props;
+  let {elementType: ElementType = 'div', style, ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...pressProps} tabIndex="0">test</ElementType>;
+  return <ElementType {...pressProps} style={style} tabIndex="0">test</ElementType>;
 }
 
 function pointerEvent(type, opts) {
@@ -2213,35 +2213,6 @@ describe('usePress', function () {
       document.documentElement.style.webkitUserSelect = oldUserSelect;
     });
 
-    it('should add user-select: none to the pressable element by default', function () {
-      let {getByText} = render(
-        <Example
-          onPressStart={handler}
-          onPressEnd={handler}
-          onPressChange={handler}
-          onPress={handler}
-          onPressUp={handler} />
-      );
-
-      let el = getByText('test');
-      expect(el).toHaveStyle('user-select: none');
-    });
-
-    it('should not add user-select: none to the pressable element if preventTextSelectionOnPress is false', function () {
-      let {getByText} = render(
-        <Example
-          onPressStart={handler}
-          onPressEnd={handler}
-          onPressChange={handler}
-          onPress={handler}
-          onPressUp={handler}
-          preventTextSelectionOnPress={false} />
-      );
-
-      let el = getByText('test');
-      expect(el).not.toHaveStyle('user-select: none');
-    });
-
     it('should add user-select: none to the page on press start (iOS)', function () {
       let {getByText} = render(
         <Example
@@ -2255,6 +2226,8 @@ describe('usePress', function () {
       let el = getByText('test');
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
+      expect(el).not.toHaveStyle('user-select: none');
+      fireEvent.touchEnd(el, {targetTouches: [{identifier: 1}]});
     });
 
     it('should not add user-select: none to the page when press start (non-iOS)', function () {
@@ -2271,6 +2244,7 @@ describe('usePress', function () {
       let el = getByText('test');
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+      expect(el).toHaveStyle('user-select: none');
     });
 
     it('should remove user-select: none from the page when press end (iOS)', function () {
@@ -2302,6 +2276,35 @@ describe('usePress', function () {
       act(() => {jest.advanceTimersByTime(300);});
 
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+    });
+
+    it('should remove user-select: none from the element when press end (non-iOS)', function () {
+      platformGetter.mockReturnValue('Android');
+      let {getByText} = render(
+        <Example
+          style={{userSelect: 'text'}}
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />
+      );
+
+      let el = getByText('test');
+
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle('user-select: none');
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle('user-select: text');
+
+      // Checkbox doesn't remove `user-select: none;` style from HTML Element issue
+      // see https://github.com/adobe/react-spectrum/issues/862
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
+      expect(el).toHaveStyle('user-select: text');
     });
 
     it('should not remove user-select: none when pressing two different elements quickly (iOS)', function () {
