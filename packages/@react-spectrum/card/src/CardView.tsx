@@ -121,7 +121,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         collection={gridCollection}
         isLoading={isLoading}
         onLoadMore={onLoadMore}
-        renderWrapper={renderWrapper}>
+        renderWrapper={renderWrapper}
+        transitionDuration={isLoading ? 160 : 220}>
         {(type, item) => {
           if (type === 'item') {
             return (
