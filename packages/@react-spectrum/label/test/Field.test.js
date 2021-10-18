@@ -52,7 +52,7 @@ describe('Field', function () {
     let {getByRole} = renderField({ref});
     let field = getByRole('textbox').closest('div');
 
-    expect(ref.current).toBe(field);
+    expect(ref.current).toBe(field.parentNode);
   });
   describe('help text', function () {
     describe('description', function () {
