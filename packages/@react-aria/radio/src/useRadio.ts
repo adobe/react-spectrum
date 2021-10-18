@@ -18,17 +18,6 @@ import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
-interface RadioAriaProps extends AriaRadioProps {
-  /**
-   * Whether the Radio is required. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/required).
-   */
-  isRequired?: boolean,
-  /**
-   * Whether the Radio can be interacted with but cannot have its selection state changed.
-   */
-  isReadOnly?: boolean
-}
-
 interface RadioAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLElement>
@@ -41,19 +30,15 @@ interface RadioAria {
  * @param state - State for the radio group, as returned by `useRadioGroupState`.
  * @param ref - Ref to the HTML input element.
  */
-export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: RefObject<HTMLElement>): RadioAria {
+export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: RefObject<HTMLElement>): RadioAria {
   let {
     value,
-    isRequired,
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
 
   const isDisabled = props.isDisabled || state.isDisabled;
-  
-  // Individual radios cannot be readonly
-  const isReadOnly = state.isReadOnly;
 
   let hasChildren = children != null;
   let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
@@ -89,8 +74,6 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       name: radioGroupNames.get(state),
       tabIndex,
       disabled: isDisabled,
-      'aria-readonly': isReadOnly || undefined,
-      required: isRequired,
       checked,
       value,
       onChange
