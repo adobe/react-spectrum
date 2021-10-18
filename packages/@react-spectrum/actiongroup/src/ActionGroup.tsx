@@ -456,6 +456,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
       </SlotProvider>
       <Menu
         items={items}
+        disabledKeys={state.disabledKeys}
         selectionMode={state.selectionManager.selectionMode}
         selectedKeys={state.selectionManager.selectedKeys}
         disallowEmptySelection={state.selectionManager.disallowEmptySelection}
