@@ -14,6 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render, screen, waitFor, within} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
+import {chain} from '@react-aria/utils';
 import {ComboBox, Item, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -37,6 +38,7 @@ let onInputChange = jest.fn();
 let outerBlur = jest.fn();
 let onFocus = jest.fn();
 let onBlur = jest.fn();
+let onLoadMore = jest.fn();
 
 let defaultProps = {
   label: 'Test',
@@ -193,7 +195,8 @@ let AsyncComboBox = () => {
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
       loadingState={list.loadingState}
-      onLoadMore={list.loadMore}>
+      onLoadMore={chain(list.loadMore, onLoadMore)}
+      onOpenChange={onOpenChange}>
       {(item) => <Item>{item.name}</Item>}
     </ComboBox>
   );
@@ -1975,6 +1978,82 @@ describe('ComboBox', function () {
     });
   });
 
+  describe('async', function () {
+    it('onLoadMore is called on initial open', async () => {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <AsyncComboBox />
+        </Provider>
+      );
+
+      let button = getByRole('button');
+
+      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+      expect(onOpenChange).toHaveBeenCalledTimes(0);
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      await act(async () => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
+      expect(onLoadMore).toHaveBeenCalledTimes(6);
+      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+
+    });
+
+    it('onLoadMore is not called on when previously opened', async () => {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <AsyncComboBox />
+        </Provider>
+      );
+
+      let button = getByRole('button');
+      let combobox = getByRole('combobox');
+      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+      expect(onOpenChange).toHaveBeenCalledTimes(0);
+      expect(onLoadMore).toHaveBeenCalledTimes(0);
+
+      // open menu
+      await act(async () => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
+      expect(onLoadMore).toHaveBeenCalledTimes(6);
+
+      // open menu
+      act(() => {
+        combobox.blur();
+        jest.runAllTimers();
+      });
+
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
+      expect(onLoadMore).toHaveBeenCalledTimes(6);
+
+      // reopen menu
+      await act(async () => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+
+      expect(onOpenChange).toHaveBeenCalledTimes(3);
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
+      expect(onLoadMore).toHaveBeenCalledTimes(10);
+      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+    });
+  });
+
   describe('controlled combobox', function () {
     describe('controlled by both selectedKey and inputValue', function () {
       it('does not update state', function () {
@@ -3387,7 +3466,7 @@ describe('ComboBox', function () {
           </ComboBox>
         </Provider>
       );
-      
+
       let button = getByRole('button');
 
       act(() => {
