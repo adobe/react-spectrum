@@ -11,17 +11,14 @@
  */
 
 import {CardBase} from './CardBase';
-import {DOMRef, ItemProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, ItemProps} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, ForwardRefExoticComponent, PropsWithoutRef, RefAttributes} from 'react';
 import {SpectrumCardProps} from '@react-types/card';
 import {useCardViewContext} from './CardViewContext';
 
-interface ForwardRefWithCollectionNode<T> extends React.ForwardRefExoticComponent<T> {
-  getCollectionNode?: <P>(props: any) => Generator<PartialNode<P>>
-}
 
-let Card: ForwardRefWithCollectionNode<React.RefAttributes<any>> = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
+let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
   let context = useCardViewContext();
   if (context !== null) {
     return null;
@@ -32,6 +29,7 @@ let Card: ForwardRefWithCollectionNode<React.RefAttributes<any>> = forwardRef((p
   }
 });
 
+// @ts-ignore
 Card.getCollectionNode = function* getCollectionNode<T>(props: any): Generator<PartialNode<T>> {
   let {children, textValue} = props;
 
@@ -45,5 +43,5 @@ Card.getCollectionNode = function* getCollectionNode<T>(props: any): Generator<P
   };
 };
 
-let _Card = Card as <T>(props: ItemProps<T> & SpectrumCardProps) => JSX.Element;
+let _Card = Card as ForwardRefExoticComponent<ItemProps<SpectrumCardProps> & PropsWithoutRef<SpectrumCardProps> & RefAttributes<DOMRefValue<HTMLDivElement>>>;
 export {_Card as Card};
