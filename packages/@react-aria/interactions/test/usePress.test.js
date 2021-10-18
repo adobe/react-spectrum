@@ -2343,6 +2343,80 @@ describe('usePress', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
 
+    it('should not remove user-select: none when pressing two different elements quickly (iOS)', function () {
+      let {getAllByText} = render(
+        <>
+          <Example
+            onPressStart={handler}
+            onPressEnd={handler}
+            onPressChange={handler}
+            onPress={handler}
+            onPressUp={handler} />
+          <Example
+            onPressStart={handler}
+            onPressEnd={handler}
+            onPressChange={handler}
+            onPress={handler}
+            onPressUp={handler} />
+        </>
+      );
+
+      let els = getAllByText('test');
+
+      fireEvent.touchStart(els[0], {targetTouches: [{identifier: 1}]});
+      fireEvent.touchEnd(els[0], {changedTouches: [{identifier: 1}]});
+
+      expect(document.documentElement.style.webkitUserSelect).toBe('none');
+
+      fireEvent.touchStart(els[1], {targetTouches: [{identifier: 1}]});
+
+      act(() => {jest.advanceTimersByTime(300);});
+      expect(document.documentElement.style.webkitUserSelect).toBe('none');
+
+      fireEvent.touchEnd(els[1], {changedTouches: [{identifier: 1}]});
+
+      act(() => {jest.advanceTimersByTime(300);});
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+    });
+
+    it('should clean up user-select: none when pressing and releasing two different elements (non-iOS)', function () {
+      platformGetter.mockReturnValue('Android');
+      let {getAllByText} = render(
+        <>
+          <Example
+            style={{userSelect: 'text'}}
+            onPressStart={handler}
+            onPressEnd={handler}
+            onPressChange={handler}
+            onPress={handler}
+            onPressUp={handler} />
+          <Example
+            style={{userSelect: 'text'}}
+            onPressStart={handler}
+            onPressEnd={handler}
+            onPressChange={handler}
+            onPress={handler}
+            onPressUp={handler} />
+        </>
+      );
+
+      let els = getAllByText('test');
+
+      fireEvent.touchStart(els[0], {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(els[1], {targetTouches: [{identifier: 1}]});
+
+      expect(els[0]).toHaveStyle('user-select: none');
+      expect(els[1]).toHaveStyle('user-select: none');
+
+      fireEvent.touchEnd(els[0], {changedTouches: [{identifier: 1}]});
+      expect(els[0]).toHaveStyle('user-select: text');
+      expect(els[1]).toHaveStyle('user-select: none');
+
+      fireEvent.touchEnd(els[1], {changedTouches: [{identifier: 1}]});
+      expect(els[0]).toHaveStyle('user-select: text');
+      expect(els[1]).toHaveStyle('user-select: text');
+    });
+
     it('should remove user-select: none from the page if pressable component unmounts (iOS)', function () {
       let {getByText, unmount} = render(
         <Example

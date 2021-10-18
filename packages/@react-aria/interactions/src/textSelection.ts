@@ -32,40 +32,30 @@ let savedUserSelect = '';
 let modifiedElementMap = new WeakMap<HTMLElement, string>();
 
 export function disableTextSelection(target?: HTMLElement) {
-  if (state === 'default') {
-    if (isIOS()) {
+  if (isIOS()) {
+    if (state === 'default') {
       savedUserSelect = document.documentElement.style.webkitUserSelect;
       document.documentElement.style.webkitUserSelect = 'none';
-    } else if (target) {
-      modifiedElementMap.set(target, target.style.userSelect);
-      target.style.userSelect = 'none';
     }
-  }
 
-  state = 'disabled';
+    state = 'disabled';
+  } else if (target) {
+    // If not iOS, store the target's original user-select and change to user-select: none
+    modifiedElementMap.set(target, target.style.userSelect);
+    target.style.userSelect = 'none';
+  }
 }
 
 export function restoreTextSelection(target?: HTMLElement) {
-  // If the state is already default, there's nothing to do.
-  // If it is restoring, then there's no need to queue a second restore.
-  if (state !== 'disabled') {
-    return;
-  }
-
-  state = 'restoring';
-
-  if (!isIOS()) {
-    if (target) {
-      let targetOldUserSelect = modifiedElementMap.get(target);
-      target.style.userSelect = targetOldUserSelect;
-      if (target.getAttribute('style') === '') {
-        target.removeAttribute('style');
-      }
-      modifiedElementMap.delete(target);
+  if (isIOS()) {
+    // If the state is already default, there's nothing to do.
+    // If it is restoring, then there's no need to queue a second restore.
+    if (state !== 'disabled') {
+      return;
     }
 
-    state = 'default';
-  } else {
+    state = 'restoring';
+
     // There appears to be a delay on iOS where selection still might occur
     // after pointer up, so wait a bit before removing user-select.
     setTimeout(() => {
@@ -77,10 +67,21 @@ export function restoreTextSelection(target?: HTMLElement) {
           if (document.documentElement.style.webkitUserSelect === 'none') {
             document.documentElement.style.webkitUserSelect = savedUserSelect || '';
           }
+
           savedUserSelect = '';
           state = 'default';
         }
       });
     }, 300);
+  } else {
+    // If not iOS, restore the target's original user-select if any
+    if (target && modifiedElementMap.has(target)) {
+      let targetOldUserSelect = modifiedElementMap.get(target);
+      target.style.userSelect = targetOldUserSelect;
+      if (target.getAttribute('style') === '') {
+        target.removeAttribute('style');
+      }
+      modifiedElementMap.delete(target);
+    }
   }
 }

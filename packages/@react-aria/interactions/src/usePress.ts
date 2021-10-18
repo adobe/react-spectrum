@@ -223,7 +223,9 @@ export function usePress(props: PressHookProps): PressResult {
         state.activePointerId = null;
         state.pointerType = null;
         removeAllGlobalListeners();
-        restoreTextSelection(state.target);
+        if (preventTextSelectionOnPress) {
+          restoreTextSelection(state.target);
+        }
       }
     };
 
@@ -405,7 +407,9 @@ export function usePress(props: PressHookProps): PressResult {
           state.activePointerId = null;
           state.pointerType = null;
           removeAllGlobalListeners();
-          restoreTextSelection(state.target);
+          if (preventTextSelectionOnPress) {
+            restoreTextSelection(state.target);
+          }
         }
       };
 
@@ -592,7 +596,9 @@ export function usePress(props: PressHookProps): PressResult {
         state.activePointerId = null;
         state.isOverTarget = false;
         state.ignoreEmulatedMouseEvents = true;
-        restoreTextSelection(state.target);
+        if (preventTextSelectionOnPress) {
+          restoreTextSelection(state.target);
+        }
         removeAllGlobalListeners();
       };
 
@@ -634,8 +640,12 @@ export function usePress(props: PressHookProps): PressResult {
   // Remove user-select: none in case component unmounts immediately after pressStart
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
-    return () => restoreTextSelection(ref.current.target);
-  }, []);
+    return () => {
+      if (preventTextSelectionOnPress) {
+        restoreTextSelection(ref.current.target);
+      }
+    };
+  }, [preventTextSelectionOnPress]);
 
   return {
     isPressed: isPressedProp || isPressed,
