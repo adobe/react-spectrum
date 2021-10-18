@@ -282,12 +282,13 @@ export function usePress(props: PressHookProps): PressResult {
         e.stopPropagation();
 
         state.isPressed = false;
-        triggerPressEnd(createEvent(state.target, e), 'keyboard', e.target === state.target);
+        let target = e.target as HTMLElement;
+        triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
 
         // If the target is a link, trigger the click method to open the URL,
         // but defer triggering pressEnd until onClick event handler.
-        if (e.target === state.target && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link') {
+        if (state.target.contains(target) && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link') {
           state.target.click();
         }
       }
@@ -635,14 +636,14 @@ function isHTMLAnchorLink(target: HTMLElement): boolean {
 }
 
 function isValidKeyboardEvent(event: KeyboardEvent): boolean {
-  const {key, target} = event;
+  const {key, code, target} = event;
   const element = target as HTMLElement;
   const {tagName, isContentEditable} = element;
   const role = element.getAttribute('role');
   // Accessibility for keyboards. Space and Enter only.
   // "Spacebar" is for IE 11
   return (
-    (key === 'Enter' || key === ' ' || key === 'Spacebar') &&
+    (key === 'Enter' || key === ' ' || key === 'Spacebar' || code === 'Space') &&
     (tagName !== 'INPUT' &&
       tagName !== 'TEXTAREA' &&
       isContentEditable !== true) &&

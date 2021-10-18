@@ -10,8 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-let React = require('react');
+import {isAppleDevice} from '@react-aria/utils';
 
-module.exports = function(props) {
-  return React.createElement('svg', props, React.createElement('path', {d: 'M 10,150 L 70,10 L 130,150 z'}));
-};
+interface Event {
+  altKey: boolean,
+  ctrlKey: boolean
+}
+
+export function isNonContiguousSelectionModifier(e: Event) {
+  // Ctrl + Arrow Up/Arrow Down has a system wide meaning on macOS, so use Alt instead.
+  // On Windows and Ubuntu, Alt + Space has a system wide meaning.
+  return isAppleDevice() ? e.altKey : e.ctrlKey;
+}

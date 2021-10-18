@@ -20,10 +20,9 @@ import {
   SlotProvider,
   useDOMRef,
   useSlotProps,
-  useStyleProps,
-  useValueEffect
+  useStyleProps
 } from '@react-spectrum/utils';
-import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
