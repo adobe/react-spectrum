@@ -25,48 +25,58 @@ type State = 'default' | 'disabled' | 'restoring';
 
 let state: State = 'default';
 let savedUserSelect = '';
+let modifiedElementMap = new WeakMap<HTMLElement, string>();
 
-export function disableTextSelection() {
-  // Limit this behavior to iOS only. Android devices don't text select nearby element
-  // when long pressing on a different element.
-  if (!isIOS()) {
-    return;
-  }
-
+export function disableTextSelection(target?: HTMLElement) {
   if (state === 'default') {
-    savedUserSelect = document.documentElement.style.webkitUserSelect;
-    document.documentElement.style.webkitUserSelect = 'none';
+    if (isIOS()) {
+      savedUserSelect = document.documentElement.style.webkitUserSelect;
+      document.documentElement.style.webkitUserSelect = 'none';
+    } else if (target) {
+      modifiedElementMap.set(target, target.style.userSelect);
+      target.style.userSelect = 'none';
+    }
   }
 
   state = 'disabled';
 }
 
-export function restoreTextSelection() {
+export function restoreTextSelection(target?: HTMLElement) {
   // If the state is already default, there's nothing to do.
   // If it is restoring, then there's no need to queue a second restore.
-  // Limit this behavior to iOS only. Android devices don't text select nearby element
-  // when long pressing on a different element.
-  if (state !== 'disabled' || !isIOS()) {
+  if (state !== 'disabled') {
     return;
   }
 
   state = 'restoring';
 
-  // There appears to be a delay on iOS where selection still might occur
-  // after pointer up, so wait a bit before removing user-select.
-  setTimeout(() => {
-    // Wait for any CSS transitions to complete so we don't recompute style
-    // for the whole page in the middle of the animation and cause jank.
-    runAfterTransition(() => {
-      // Avoid race conditions
-      if (state === 'restoring') {
-        if (document.documentElement.style.webkitUserSelect === 'none') {
-          document.documentElement.style.webkitUserSelect = savedUserSelect || '';
-        }
-
-        savedUserSelect = '';
-        state = 'default';
+  if (!isIOS()) {
+    if (target) {
+      let targetOldUserSelect = modifiedElementMap.get(target);
+      target.style.userSelect = targetOldUserSelect;
+      if (target.getAttribute('style') === '') {
+        target.removeAttribute('style');
       }
-    });
-  }, 300);
+      modifiedElementMap.delete(target);
+    }
+
+    state = 'default';
+  } else {
+    // There appears to be a delay on iOS where selection still might occur
+    // after pointer up, so wait a bit before removing user-select.
+    setTimeout(() => {
+      // Wait for any CSS transitions to complete so we don't recompute style
+      // for the whole page in the middle of the animation and cause jank.
+      runAfterTransition(() => {
+        // Avoid race conditions
+        if (state === 'restoring') {
+          if (document.documentElement.style.webkitUserSelect === 'none') {
+            document.documentElement.style.webkitUserSelect = savedUserSelect || '';
+          }
+          savedUserSelect = '';
+          state = 'default';
+        }
+      });
+    }, 300);
+  }
 }
