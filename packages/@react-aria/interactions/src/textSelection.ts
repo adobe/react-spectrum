@@ -21,6 +21,10 @@ import {isIOS, runAfterTransition} from '@react-aria/utils';
 // There are three possible states due to the delay before removing user-select: none after
 // pointer up. The 'default' state always transitions to the 'disabled' state, which transitions
 // to 'restoring'. The 'restoring' state can either transition back to 'disabled' or 'default'.
+
+// For non-iOS devices, we apply user-select: none to the pressed element instead to avoid possible
+// performance issues that arise from applying and removing user-select: none to the entire page
+// (see https://github.com/adobe/react-spectrum/issues/1609).
 type State = 'default' | 'disabled' | 'restoring';
 
 let state: State = 'default';
