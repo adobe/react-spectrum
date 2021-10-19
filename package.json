@@ -42,7 +42,9 @@
     "build:api-published": "node scripts/buildPublishedAPI.js",
     "build:api-branch": "node scripts/buildBranchAPI.js",
     "compare:apis": "node scripts/compareAPIs.js",
-    "check-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis"
+    "check-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
+    "blc:local": "blc http://localhost:1234/ -ro",
+    "blc:prod": "blc https://react-spectrum.adobe.com/ -ro"
   },
   "workspaces": [
     "packages/react-stately",
@@ -101,6 +103,7 @@
     "babel-plugin-react-remove-properties": "^0.3.0",
     "babel-plugin-transform-glob-import": "^1.0.1",
     "babelify": "^10.0.0",
+    "broken-link-checker": "^0.7.8",
     "chalk": "^4.1.2",
     "chromatic": "^5.4.0",
     "clsx": "^1.1.1",
