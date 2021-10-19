@@ -37,11 +37,13 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     renderEmptyState,
     layout,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    cardOrientation = 'vertical'
   } = props;
+
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator}) : layout, [layout, collator]);
+  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation}) : layout, [layout, collator]);
   let layoutType = cardViewLayout.layoutType;
 
   if (typeof layout === 'function') {
@@ -109,7 +111,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
-    <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout}}>
+    <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout, cardOrientation}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -194,6 +196,10 @@ function InternalCard(props) {
 
   if (layoutType === 'grid' || layoutType === 'gallery') {
     isQuiet = true;
+  }
+
+  if (layoutType !== 'grid') {
+    cardOrientation = 'vertical';
   }
 
   return (

@@ -88,6 +88,9 @@ DefaultGrid.storyName = 'default Grid layout with initialized layout';
 export const DefaultGridConstructor = () => DynamicCardView({layout: GridLayout, items});
 DefaultGridConstructor.storyName = 'default Grid layout w/ layout constructor';
 
+export const HorizontalGrid = () => DynamicCardView({items, cardOrientation: 'horizontal'});
+HorizontalGrid.storyName = ' Grid layout with horizontal cards';
+
 export const DisabledKeys = () => DynamicCardView({items, disabledKeys: ['Joe 2', 'Bob 4']});
 DisabledKeys.storyName = 'disabled keys, Joe2, Bob 4';
 
@@ -127,7 +130,8 @@ export function DynamicCardView(props) {
   let gridLayout = useMemo(() =>
     new GridLayout({
       itemPadding: scale === 'large' ? 116 : 95,
-      collator
+      collator,
+      cardOrientation: props.cardOrientation
     })
   , [collator, scale]);
   let {
@@ -179,7 +183,8 @@ export function ControlledCardView(props) {
   let gridLayout = useMemo(() =>
     new GridLayout({
       itemPadding: scale === 'large' ? 116 : 95,
-      collator
+      collator,
+      cardOrientation: props.cardOrientation
     })
   , [collator, scale]);
   let {
@@ -233,7 +238,8 @@ export function NoItemCardView(props) {
   let gridLayout = useMemo(() =>
     new GridLayout({
       itemPadding: scale === 'large' ? 116 : 95,
-      collator
+      collator,
+      cardOrientation: props.cardOrientation
     })
   , [collator, scale]);
   let {
@@ -271,7 +277,8 @@ export function StaticCardView(props) {
   let gridLayout = useMemo(() =>
     new GridLayout({
       itemPadding: scale === 'large' ? 116 : 95,
-      collator
+      collator,
+      cardOrientation: props.cardOrientation
     })
   , [collator, scale]);
   let {
@@ -351,7 +358,8 @@ export function AsyncLoadingCardView(props) {
   let gridLayout = useMemo(() =>
     new GridLayout({
       itemPadding: scale === 'large' ? 116 : 95,
-      collator
+      collator,
+      cardOrientation: props.cardOrientation
     })
   , [collator, scale]);
   let {
@@ -406,6 +414,7 @@ export function CustomLayout(props, layoutOptions) {
     new GridLayout({
       itemPadding: scale === 'large' ? 116 : 95,
       collator,
+      cardOrientation: props.cardOrientation,
       ...layoutOptions
     })
   , [collator, scale, layoutOptions]);

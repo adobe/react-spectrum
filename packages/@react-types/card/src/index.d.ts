@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, Collection, CollectionBase, Direction, DOMProps, KeyboardDelegate, LoadingState, MultipleSelection, Node, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, Collection, CollectionBase, Direction, DOMProps, KeyboardDelegate, LoadingState, MultipleSelection, Node, Orientation, StyleProps} from '@react-types/shared';
 import {Layout} from '@react-stately/virtualizer';
 import {ReactNode} from 'react';
 
@@ -22,12 +22,12 @@ interface SpectrumCardProps extends AriaCardProps, StyleProps, DOMProps {
   layout?: 'grid' | 'waterfall' | 'gallery',
   // TODO: readd size when we get updated designs from spectrum
   // size?: 'S' | 'M' | 'L',
-  orientation?: 'horizontal' | 'vertical'
+  orientation?: Orientation
 }
 
 interface LayoutOptions {
   // cardSize?: 'S' | 'M' | 'L',
-  // cardOrientation?: 'horizontal' | 'vertical',
+  cardOrientation?: Orientation,
   collator?: Intl.Collator
 }
 
@@ -51,8 +51,8 @@ interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, Omit<As
   layout: CardViewLayoutConstructor<T> | CardViewLayout<T>,
   // TODO: readd size when we get updated designs from spectrum
   // cardSize?: 'S' | 'M' | 'L',
-  // TODO: readd when we support horizontal cards in the layouts
-  // cardOrientation?: 'horizontal' | 'vertical',
+  // TODO: Keep this in the CardViewProps even though it only applies for grid layout?
+  cardOrientation?: Orientation,
   isQuiet?: boolean,
   renderEmptyState?: () => ReactNode,
   loadingState?: LoadingState

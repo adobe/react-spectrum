@@ -13,7 +13,7 @@
 import {BaseLayout, BaseLayoutOptions} from './BaseLayout';
 import {Key} from 'react';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import {Node} from '@react-types/shared';
+import {Node, Orientation} from '@react-types/shared';
 
 export interface GridLayoutOptions extends BaseLayoutOptions {
   // /**
@@ -45,11 +45,17 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
    * @default Infinity
    */
   maxColumns?: number,
+  // TODO: Should the below apply as horizontal item padding if cardOrientation is horizontal or should there be two separate options?
   /**
    * The vertical padding for an item.
    * @default 95
    */
-  itemPadding?: number
+  itemPadding?: number,
+  /**
+   * The orientation of the cards withn the grid.
+   * @default vertical
+   */
+  cardOrientation?: Orientation,
 }
 
 // TODO: copied from V2, update this with the proper spectrum values
@@ -84,6 +90,7 @@ export class GridLayout<T> extends BaseLayout<T> {
   protected minSpace: Size;
   protected maxColumns: number;
   itemPadding: number;
+  cardOrientation: Orientation;
   protected itemSize: Size;
   protected numColumns: number;
   protected numRows: number;
@@ -103,6 +110,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     this.numColumns = 0;
     this.numRows = 0;
     this.horizontalSpacing = 0;
+    this.cardOrientation = options.cardOrientation || 'vertical';
   }
 
   get layoutType() {
@@ -159,10 +167,14 @@ export class GridLayout<T> extends BaseLayout<T> {
   buildCollection() {
     let visibleWidth = this.virtualizer.visibleRect.width;
     let visibleHeight = this.virtualizer.visibleRect.height;
+    // TODO: change the 50 to this.itemPadding?
+    let horizontalItemPadding = this.cardOrientation === 'horizontal' ? this.itemPadding : 0;
+    let verticalItemPadding = this.cardOrientation === 'vertical' ? this.itemPadding : 0;
+    let minCardWidth = this.minItemSize.width + horizontalItemPadding;
 
     // Compute the number of rows and columns needed to display the content
     let availableWidth = visibleWidth - this.margin * 2;
-    let columns = Math.floor((availableWidth + this.minSpace.width) / (this.minItemSize.width + this.minSpace.width));
+    let columns = Math.floor((availableWidth + this.minSpace.width) / (minCardWidth + this.minSpace.width));
     this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
     this.numRows = Math.ceil(this.collection.size / this.numColumns);
 
@@ -171,13 +183,11 @@ export class GridLayout<T> extends BaseLayout<T> {
 
     // Compute the item width based on the space available
     let itemWidth = Math.floor(width / this.numColumns);
-    itemWidth = Math.max(this.minItemSize.width, Math.min(this.maxItemSize.width, itemWidth));
-
+    itemWidth = Math.max(minCardWidth, Math.min(this.maxItemSize.width, itemWidth));
     // Compute the item height, which is proportional to the item width
-    let t = ((itemWidth - this.minItemSize.width) / this.minItemSize.width);
+    let t = ((itemWidth - minCardWidth) / minCardWidth);
     let itemHeight = this.minItemSize.height + this.minItemSize.height * t;
-    itemHeight = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, itemHeight)) + this.itemPadding;
-
+    itemHeight = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, itemHeight)) + verticalItemPadding;
     this.itemSize = new Size(itemWidth, itemHeight);
 
     // Compute the horizontal spacing and content height
