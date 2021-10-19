@@ -1076,7 +1076,7 @@ describe('CardView', function () {
       let cards = tree.getAllByRole('gridcell');
       expect(cards).toBeTruthy();
       // Virtualizer calls onLoadMore twice due to initial layout
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
       triggerPress(cards[1]);
 
       act(() => {
@@ -1088,7 +1088,7 @@ describe('CardView', function () {
       let grid = tree.getByRole('grid');
       grid.scrollTop = 3000;
       fireEvent.scroll(grid);
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
 
     it.each`
