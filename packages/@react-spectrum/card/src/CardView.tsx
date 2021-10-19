@@ -12,7 +12,6 @@
 
 import {CardBase} from './CardBase';
 import {CardViewContext, useCardViewContext} from './CardViewContext';
-import cardViewStyles from './cardview.css';
 import {classNames, useDOMRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, DOMRefValue, Node} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
@@ -22,6 +21,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
+import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
@@ -97,7 +97,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   type View = ReusableView<Node<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View) => (
     <VirtualizerItem
-      className={classNames(cardViewStyles, 'react-spectrum-CardView-CardWrapper')}
+      className={classNames(styles, 'spectrum-CardView-CardWrapper')}
       key={reusableView.key}
       reusableView={reusableView}
       parent={parent} />
@@ -115,7 +115,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
       <Virtualizer
         {...gridProps}
         {...styleProps}
-        className={classNames(cardViewStyles, 'react-spectrum-CardView')}
+        className={classNames(styles, 'spectrum-CardView')}
         ref={domRef}
         focusedKey={focusedKey}
         scrollDirection="vertical"
@@ -163,7 +163,7 @@ function CenteredWrapper({children}) {
     <div
       role="row"
       aria-rowindex={state.collection.size + 1}
-      className={classNames(cardViewStyles, 'react-spectrum-CardView-centeredWrapper')}>
+      className={classNames(styles, 'spectrum-CardView-centeredWrapper')}>
       <div role="gridcell">
         {children}
       </div>
@@ -203,7 +203,7 @@ function InternalCard(props) {
   }
 
   return (
-    <div {...rowProps} ref={rowRef} style={{height: '100%'}}>
+    <div {...rowProps} ref={rowRef} className={classNames(styles, 'spectrum-CardView-row')}>
       <CardBase
         ref={cellRef}
         articleProps={gridCellProps}

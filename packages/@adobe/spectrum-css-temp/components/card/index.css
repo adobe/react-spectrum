@@ -1241,3 +1241,26 @@ For now working around it with a useLayoutEffect in CardBase.
   }
 }
 /** END Standard Horizontal **/
+
+/* CardView styles */
+.spectrum-CardView {
+  outline: none;
+
+  .spectrum-CardView-centeredWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .spectrum-CardView-CardWrapper {
+    overflow: visible !important;
+    contain: size layout style !important;
+  }
+
+  .spectrum-CardView-row {
+    outline: none;
+    height: 100%
+  }
+}
