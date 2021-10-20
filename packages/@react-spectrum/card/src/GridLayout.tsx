@@ -77,9 +77,16 @@ const DEFAULT_OPTIONS = {
     // TODO: for now bumping this higher since the new cards have more stuff in the content area.
     // Will need to ask Spectrum what these values should be. Used to be 52. Do the same for S above
     itemPadding: {
-      'vertical': 95,
-      'horizontal': 150
+      'vertical': {
+        'medium': 95,
+        'large': 116
+      },
+      'horizontal': {
+        'medium': 150,
+        'large': 170
+      }
     },
+    // TODO: should these change with scale?
     minItemSize: {
       'vertical': new Size(208, 208),
       'horizontal': new Size(102, 102)
@@ -115,7 +122,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
     this.minSpace = options.minSpace || DEFAULT_OPTIONS[cardSize].minSpace;
     this.maxColumns = options.maxColumns || DEFAULT_OPTIONS[cardSize].maxColumns;
-    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding[this.cardOrientation];
+    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding[this.cardOrientation][this.scale];
     this.itemSize = null;
     this.numColumns = 0;
     this.numRows = 0;

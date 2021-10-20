@@ -14,9 +14,12 @@ import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
 import {GridCollection} from '@react-stately/grid';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
+import {Scale} from '@react-types/provider';
 
 export interface BaseLayoutOptions {
-  collator?: Intl.Collator
+  collator?: Intl.Collator,
+  // TODO: is this valid or is scale a spectrum specific thing that should be left out of the layouts?
+  scale?: Scale
 }
 
 export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
@@ -28,12 +31,14 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   isLoading: boolean;
   disabledKeys: Set<Key> = new Set();
   direction: Direction;
+  scale: Scale;
 
   constructor(options: BaseLayoutOptions = {}) {
     super();
     this.layoutInfos = new Map();
     this.collator = options.collator;
     this.lastCollection = null;
+    this.scale = options.scale || 'medium';
   }
 
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {

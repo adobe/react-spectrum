@@ -58,7 +58,7 @@ const DEFAULT_OPTIONS = {
     idealRowHeight: 112,
     minItemSize: new Size(96, 96),
     itemSpacing: new Size(8, 16),
-    // TODO: will need to update as well
+    // TODO: will need to update as well, add scale values when we support small cards
     itemPadding: 24,
     dropSpacing: 50,
     margin: 8
@@ -68,7 +68,10 @@ const DEFAULT_OPTIONS = {
     minItemSize: new Size(136, 136),
     itemSpacing: new Size(18, 18),
     // TODO: updated to work with new v3 cards (there is additional space required for the descriptions if there is a description)
-    itemPadding: 114,
+    itemPadding: {
+      'medium': 114,
+      'large': 143
+    },
     dropSpacing: 100,
     margin: 24
   }
@@ -88,7 +91,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
     let cardSize = 'L';
     this.idealRowHeight = options.idealRowHeight || DEFAULT_OPTIONS[cardSize].idealRowHeight;
     this.itemSpacing = options.itemSpacing || DEFAULT_OPTIONS[cardSize].itemSpacing;
-    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
+    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding[this.scale];
     this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
     this.threshold = options.threshold || 1;
     this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;

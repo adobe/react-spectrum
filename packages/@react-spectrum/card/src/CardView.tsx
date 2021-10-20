@@ -43,16 +43,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation}) : layout, [layout, collator, cardOrientation]);
+  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout, [layout, collator, cardOrientation, scale]);
   let layoutType = cardViewLayout.layoutType;
-
-  if (typeof layout === 'function') {
-    if (layoutType === 'grid') {
-      cardViewLayout.itemPadding = scale === 'large' ? 116 : 95;
-    } else if (layoutType === 'gallery') {
-      cardViewLayout.itemPadding = scale === 'large' ? 143 : 114;
-    }
-  }
 
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();

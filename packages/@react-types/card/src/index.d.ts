@@ -13,6 +13,7 @@
 import {AriaLabelingProps, AsyncLoadable, Collection, CollectionBase, Direction, DOMProps, KeyboardDelegate, LoadingState, MultipleSelection, Node, Orientation, StyleProps} from '@react-types/shared';
 import {Layout} from '@react-stately/virtualizer';
 import {ReactNode} from 'react';
+import {Scale} from '@react-types/provider';
 
 interface AriaCardProps extends AriaLabelingProps {}
 
@@ -28,7 +29,11 @@ interface SpectrumCardProps extends AriaCardProps, StyleProps, DOMProps {
 interface LayoutOptions {
   // cardSize?: 'S' | 'M' | 'L',
   cardOrientation?: Orientation,
-  collator?: Intl.Collator
+  collator?: Intl.Collator,
+  // TODO: is this valid or is scale a spectrum specific thing that should be left out of the layouts?
+  // Added here so we can keep the default item padding options within the layouts instead of having to
+  // do extra work in CardView to accomodate different sizing for scales
+  scale?: Scale
 }
 
 // TODO: double check if this is the best way to type the layout provided to the CardView

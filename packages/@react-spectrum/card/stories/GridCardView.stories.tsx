@@ -71,7 +71,7 @@ const StoryFn = ({storyFn}) => storyFn();
 
 export default {
   title: 'CardView/Grid layout',
-  excludeStories: ['NoCards', 'customLayout'],
+  excludeStories: ['NoCards', 'CustomLayout'],
   decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
@@ -172,25 +172,13 @@ CustomLayoutOptions.args = {
 };
 CustomLayoutOptions.storyName = 'Custom layout options';
 
-
-const ITEM_PADDING = {
-  'vertical': {
-    'medium': 95,
-    'large': 116
-  },
-  'horizontal': {
-    'medium': 150,
-    'large': 170
-  }
-};
-
 function DynamicCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: ITEM_PADDING[cardOrientation][scale],
+      scale,
       collator,
       cardOrientation
     })
@@ -243,7 +231,7 @@ function ControlledCardView(props: SpectrumCardViewProps<object>) {
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: ITEM_PADDING[cardOrientation][scale],
+      scale,
       collator,
       cardOrientation
     })
@@ -298,7 +286,7 @@ function NoItemCardView(props: SpectrumCardViewProps<object>) {
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: ITEM_PADDING[cardOrientation][scale],
+      scale,
       collator,
       cardOrientation
     })
@@ -338,7 +326,7 @@ function StaticCardView(props: SpectrumCardViewProps<object>) {
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: ITEM_PADDING[cardOrientation][scale],
+      scale,
       collator,
       cardOrientation
     })
@@ -421,7 +409,7 @@ function AsyncLoadingCardView(props: SpectrumCardViewProps<object>) {
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: ITEM_PADDING[cardOrientation][scale],
+      scale,
       collator,
       cardOrientation
     })
@@ -482,7 +470,7 @@ export function CustomLayout(props: SpectrumCardViewProps<object> & LayoutOption
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: ITEM_PADDING[cardOrientation][scale],
+      scale,
       collator,
       cardOrientation,
       ...layoutOptions
