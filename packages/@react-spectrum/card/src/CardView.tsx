@@ -43,7 +43,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation}) : layout, [layout, collator]);
+  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation}) : layout, [layout, collator, cardOrientation]);
   let layoutType = cardViewLayout.layoutType;
 
   if (typeof layout === 'function') {
@@ -79,6 +79,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   let state = useGridState({
     ...props,
+    selectionMode: cardOrientation === 'horizontal' && layoutType === 'grid' ? 'none' : props.selectionMode,
     collection: gridCollection,
     focusMode: 'cell'
   });

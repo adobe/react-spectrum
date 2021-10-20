@@ -172,16 +172,29 @@ CustomLayoutOptions.args = {
 };
 CustomLayoutOptions.storyName = 'Custom layout options';
 
+
+const ITEM_PADDING = {
+  'vertical': {
+    'medium': 95,
+    'large': 116
+  },
+  'horizontal': {
+    'medium': 150,
+    'large': 170
+  }
+};
+
 function DynamicCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
+      itemPadding: ITEM_PADDING[cardOrientation][scale],
       collator,
-      cardOrientation: props.cardOrientation
+      cardOrientation
     })
-  , [collator, scale, props.cardOrientation]);
+  , [collator, scale, cardOrientation]);
   let {
     layout = gridLayout,
     ...otherProps
@@ -227,13 +240,14 @@ function DynamicCardView(props: SpectrumCardViewProps<object>) {
 function ControlledCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
+      itemPadding: ITEM_PADDING[cardOrientation][scale],
       collator,
-      cardOrientation: props.cardOrientation
+      cardOrientation
     })
-  , [collator, scale, props.cardOrientation]);
+  , [collator, scale, cardOrientation]);
   let {
     layout = gridLayout,
     ...otherProps
@@ -281,13 +295,14 @@ function ControlledCardView(props: SpectrumCardViewProps<object>) {
 function NoItemCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
+      itemPadding: ITEM_PADDING[cardOrientation][scale],
       collator,
-      cardOrientation: props.cardOrientation
+      cardOrientation
     })
-  , [collator, scale, props.cardOrientation]);
+  , [collator, scale, cardOrientation]);
   let {
     layout = gridLayout
   } = props;
@@ -320,13 +335,14 @@ function NoItemCardView(props: SpectrumCardViewProps<object>) {
 function StaticCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
+      itemPadding: ITEM_PADDING[cardOrientation][scale],
       collator,
-      cardOrientation: props.cardOrientation
+      cardOrientation
     })
-  , [collator, scale, props.cardOrientation]);
+  , [collator, scale, cardOrientation]);
   let {
     layout = gridLayout
   } = props;
@@ -402,13 +418,14 @@ function AsyncLoadingCardView(props: SpectrumCardViewProps<object>) {
 
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
+      itemPadding: ITEM_PADDING[cardOrientation][scale],
       collator,
-      cardOrientation: props.cardOrientation
+      cardOrientation
     })
-  , [collator, scale, props.cardOrientation]);
+  , [collator, scale, cardOrientation]);
   let {
     layout = gridLayout
   } = props;
@@ -462,14 +479,15 @@ export function CustomLayout(props: SpectrumCardViewProps<object> & LayoutOption
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layoutOptions = props.layoutOptions;
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
+      itemPadding: ITEM_PADDING[cardOrientation][scale],
       collator,
-      cardOrientation: props.cardOrientation,
+      cardOrientation,
       ...layoutOptions
     })
-  , [collator, scale, layoutOptions, props.cardOrientation]);
+  , [collator, scale, layoutOptions, cardOrientation]);
   let {
     layout = gridLayout,
     ...otherProps

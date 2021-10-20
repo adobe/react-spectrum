@@ -22,7 +22,7 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
   // cardSize?: 'S' | 'M' | 'L',
   /**
    * The minimum item size.
-   * @default 208 x 208
+   * @default 208 x 208 for horizontal card orientation. 102 x 102 for vertical card orientation.
    */
   minItemSize?: Size,
   /**
@@ -62,8 +62,11 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
 // Should these be affected by Scale as well?
 const DEFAULT_OPTIONS = {
   S: {
+    // TODO: add defaults for horizontal cards when we support small card sizes
     itemPadding: 20,
-    minItemSize: new Size(96, 96),
+    minItemSize: {
+      'vertical': new Size(96, 96)
+    },
     maxItemSize: new Size(Infinity, Infinity),
     margin: 8,
     minSpace: new Size(6, 6),
@@ -73,8 +76,14 @@ const DEFAULT_OPTIONS = {
   L: {
     // TODO: for now bumping this higher since the new cards have more stuff in the content area.
     // Will need to ask Spectrum what these values should be. Used to be 52. Do the same for S above
-    itemPadding: 95,
-    minItemSize: new Size(208, 208),
+    itemPadding: {
+      'vertical': 95,
+      'horizontal': 150
+    },
+    minItemSize: {
+      'vertical': new Size(208, 208),
+      'horizontal': new Size(102, 102)
+    },
     maxItemSize: new Size(Infinity, Infinity),
     margin: 24,
     minSpace: new Size(18, 18),
@@ -100,17 +109,17 @@ export class GridLayout<T> extends BaseLayout<T> {
     super(options);
     // TODO: restore cardSize option when we support different size cards
     let cardSize = 'L';
-    this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
+    this.cardOrientation = options.cardOrientation || 'vertical';
+    this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize[this.cardOrientation];
     this.maxItemSize = options.maxItemSize || DEFAULT_OPTIONS[cardSize].maxItemSize;
     this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
     this.minSpace = options.minSpace || DEFAULT_OPTIONS[cardSize].minSpace;
     this.maxColumns = options.maxColumns || DEFAULT_OPTIONS[cardSize].maxColumns;
-    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
+    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding[this.cardOrientation];
     this.itemSize = null;
     this.numColumns = 0;
     this.numRows = 0;
     this.horizontalSpacing = 0;
-    this.cardOrientation = options.cardOrientation || 'vertical';
   }
 
   get layoutType() {
