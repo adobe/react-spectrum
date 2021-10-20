@@ -295,7 +295,7 @@ function NoItemCardView(props: SpectrumCardViewProps<object>) {
     layout = gridLayout
   } = props;
   let [show, setShow] = useState(false);
-  console.log('props', props);
+
   return (
     <>
       <ActionButton onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
