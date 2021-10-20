@@ -55,7 +55,7 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
    * The orientation of the cards withn the grid.
    * @default vertical
    */
-  cardOrientation?: Orientation,
+  cardOrientation?: Orientation
 }
 
 // TODO: copied from V2, update this with the proper spectrum values
