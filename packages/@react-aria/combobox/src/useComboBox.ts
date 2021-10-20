@@ -80,7 +80,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       type: 'listbox'
     },
     state,
-    buttonRef
+    buttonRef,
+    isDisabled
   );
 
   // Set listbox id so it can be used when calling getItemId later
