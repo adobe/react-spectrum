@@ -20,7 +20,9 @@ interface TableCellProps {
   /** An object representing the table cell. Contains all the relevant information that makes up the row header. */
   node: GridNode<unknown>,
   /** Whether the cell is contained in a virtual scroller. */
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  /** Handler that is called when a user performs an action on the cell. */
+  onAction?: () => void
 }
 
 interface TableCellAria {
