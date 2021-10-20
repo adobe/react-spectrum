@@ -29,6 +29,14 @@ export function parseColor(value: string): IColor {
   throw new Error('Invalid color value: ' + value);
 }
 
+export function normalizeColor(v: string | Color) {
+  if (typeof v === 'string') {
+    return parseColor(v);
+  } else {
+    return v;
+  }
+}
+
 abstract class Color implements IColor {
   abstract toFormat(format: ColorFormat): IColor;
   abstract toString(format: ColorFormat | 'css'): string;

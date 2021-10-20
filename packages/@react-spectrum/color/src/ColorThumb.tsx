@@ -33,6 +33,7 @@ function ColorThumb(props: ColorThumbProps) {
   let patternId = useId();
 
   let valueCSS = value.toString('css');
+  console.log('otherProps', otherProps)
 
   return (
     <div className={classNames(stylesHandle, 'spectrum-ColorHandle', {'is-focused': isFocused, 'is-disabled': isDisabled}) + ' ' + className} {...otherProps}>

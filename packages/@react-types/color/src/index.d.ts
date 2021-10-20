@@ -134,3 +134,32 @@ export interface SpectrumColorSliderProps extends AriaColorSliderProps, StylePro
   /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
   showValueLabel?: boolean
 }
+
+export interface ColorAreaProps extends ValueBase<string | Color> {
+  /** Color channel for the horizontal axis. */
+  xChannel?: ColorChannel,
+  /** Color channel for the vertical axis. */
+  yChannel?: ColorChannel,
+  /** Whether the ColorArea is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the value changes, as the user drags. */
+  onChange?: (value: Color) => void,
+  /** Handler that is called when the user stops dragging. */
+  onChangeEnd?: (value: Color) => void,
+  /**
+   * The step value for the xChannel.
+   * @default 1
+   */
+  xChannelStep?: number,
+  /**
+   * The step value for the yChannel.
+   * @default 1
+   */
+  yChannelStep?: number
+}
+
+export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumColorAreaProps extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {
+  size?: DimensionValue
+}

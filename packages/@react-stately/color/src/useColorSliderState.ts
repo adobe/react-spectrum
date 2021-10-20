@@ -11,7 +11,7 @@
  */
 
 import {Color, ColorSliderProps} from '@react-types/color';
-import {parseColor} from './Color';
+import {normalizeColor, parseColor} from './Color';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {useControlledState} from '@react-stately/utils';
 
@@ -28,14 +28,6 @@ export interface ColorSliderState extends SliderState {
 interface ColorSliderStateOptions extends ColorSliderProps {
   /** The locale to use for formatting the color channel value. */
   locale: string
-}
-
-function normalizeColor(v: string | Color) {
-  if (typeof v === 'string') {
-    return parseColor(v);
-  } else {
-    return v;
-  }
 }
 
 /**
