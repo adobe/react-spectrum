@@ -45,6 +45,7 @@ export function Tag(props) {
     <div
       {...styleProps}
       {...mergeProps(tagProps, hoverProps, focusProps, labelProps)}
+      role={tagProps.role}
       className={classNames(
         styles,
         'spectrum-Tags-item',
@@ -63,7 +64,7 @@ export function Tag(props) {
           text: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-content')},
           tagRemoveButton: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-action')}
         }}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+        {typeof props.children === 'string' ? <Text><span role="gridcell">{props.children}</span></Text> : props.children}
         {isRemovable && <TagRemoveButton item={item} state={state} {...clearButtonProps} />}
       </SlotProvider>
     </div>
@@ -83,7 +84,7 @@ function TagRemoveButton(props) {
 
   return (
     <span
-      {...mergeProps(props, gridCellProps, styleProps)}
+      {...mergeProps(gridCellProps, styleProps)}
       ref={clearBtnRef}>
       <ClearButton
         focusClassName={classNames(styles, 'focus-ring')}

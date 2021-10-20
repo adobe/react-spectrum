@@ -68,9 +68,9 @@ storiesOf('TagGroup', module)
 function render(props: any = {}) {
   return (
     <TagGroup {...props}>
-      <Item>Cool Tag 1</Item>
-      <Item>Cool Tag 2</Item>
-      <Item>Cool Tag 3</Item>
+      <Item key="1" textValue="Cool Tag 1">Cool Tag 1</Item>
+      <Item key="2" textValue="Cool Tag 2">Cool Tag 2</Item>
+      <Item key="3" textValue="Cool Tag 3">Cool Tag 3</Item>
     </TagGroup>
   );
 }

@@ -68,18 +68,20 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       };
     })
   }), []);
+
   let state = useGridState({
     ...props,
     collection: gridCollection,
     focusMode: 'cell'
   });
+
   let keyboardDelegate = new GridKeyboardDelegate({
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     ref: domRef,
     direction,
-    focusMode: 'cell',
-    cycleMode: 'between'
+    focusMode: 'cell'
+    // cycleMode: 'between'
   });
   let {gridProps} = useGrid({
     ...props,
@@ -104,6 +106,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       ref={domRef}>
       {[...gridCollection].map(item => (
         <Tag
+          key={item.key}
           item={item}
           state={state}
           isDisabled={isDisabled}
