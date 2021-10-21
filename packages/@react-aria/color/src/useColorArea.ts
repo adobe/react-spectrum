@@ -80,7 +80,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
 
   let stateRef = useRef<ColorAreaState>(null);
   stateRef.current = state;
-  let {xChannel, yChannel, zChannel} = stateRef.current.channels;
+  let {xChannel, yChannel} = stateRef.current.channels;
   let xChannelStep = stateRef.current.xChannelStep;
   let yChannelStep = stateRef.current.xChannelStep;
 
@@ -321,11 +321,6 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       })
   }, movePropsThumb, keyboardProps);
 
-  let {x, y} = stateRef.current.getThumbPosition();
-
-  if (direction === 'rtl') {
-    x = 1 - x;
-  }
 
   let inputLabellingProps = useLabels({
     ...props,
@@ -350,8 +345,6 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   }});
 
   return {
-    x,
-    y,
     colorAreaProps: {
       ...colorAriaLabellingProps,
       ...colorAreaInteractions,

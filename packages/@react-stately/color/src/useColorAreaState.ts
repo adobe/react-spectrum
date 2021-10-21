@@ -14,7 +14,7 @@ import {clamp, snapValueToStep} from '@react-aria/utils';
 import {Color, ColorAreaProps, ColorChannel} from '@react-types/color';
 import {normalizeColor, parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
-import {useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 export interface ColorAreaState {
   /** The current color value displayed by the color area. */
@@ -53,7 +53,9 @@ export interface ColorAreaState {
   setDragging(value: boolean): void,
 
   /** Returns the xChannel, yChannel and zChannel names based on the color value. */
-  getChannels(): {xChannel: ColorChannel, yChannel: ColorChannel, zChannel: ColorChannel},
+  channels: {xChannel: ColorChannel, yChannel: ColorChannel, zChannel: ColorChannel},
+  xChannelStep: number,
+  yChannelStep: number,
 
   /** Returns the color that should be displayed in the color area thumb instead of `value`. */
   getDisplayColor(): Color
@@ -61,7 +63,7 @@ export interface ColorAreaState {
 
 const DEFAULT_COLOR = parseColor('hsb(0, 100%, 100%)');
 const RGBSet: Set<ColorChannel> = new Set(['red', 'green', 'blue']);
-let difference = (a: Set<ColorChannel>, b: Set<ColorChannel>): Set<ColorChannel> => new Set([...a].filter(x => !b.has(x)));
+let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x => !b.has(x)));
 /**
  * Provides state management for a color area component.
  * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
@@ -77,41 +79,38 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let valueRef = useRef(color);
   valueRef.current = color;
 
-  if (!xChannel) {
-    switch (yChannel) {
-      case 'red':
-      case 'green':
-        xChannel = 'blue';
-        break;
-      case 'blue':
-        xChannel = 'red';
-        break;
-      default:
-        xChannel = 'blue';
-        yChannel = 'green';
+  let channels = useMemo(() => {
+    if (!xChannel) {
+      switch (yChannel) {
+        case 'red':
+        case 'green':
+          xChannel = 'blue';
+          break;
+        case 'blue':
+          xChannel = 'red';
+          break;
+        default:
+          xChannel = 'blue';
+          yChannel = 'green';
+      }
+    } else if (!yChannel) {
+      switch (xChannel) {
+        case 'red':
+          yChannel = 'green';
+          break;
+        case 'blue':
+          yChannel = 'red';
+          break;
+        default:
+          xChannel = 'blue';
+          yChannel = 'green';
+      }
     }
-  } else if (!yChannel) {
-    switch (xChannel) {
-      case 'red':
-        yChannel = 'green';
-        break;
-      case 'blue':
-        yChannel = 'red';
-        break;
-      default:
-        xChannel = 'blue';
-        yChannel = 'green';
-    }
-  }
-  let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
-  let zChannel = difference(RGBSet, xyChannels).values().next().value as ColorChannel;
-  console.log('zChannel', zChannel)
+    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
+    let zChannel = difference(RGBSet, xyChannels).values().next().value;
 
-  let channels = {xChannel, yChannel, zChannel};
-  if (!xChannel || !yChannel) {
-    xChannel = channels.xChannel;
-    yChannel = channels.yChannel;
-  }
+    return {xChannel, yChannel, zChannel};
+  }, [xChannel, yChannel]);
 
   if (!xChannelStep) {
     xChannelStep = color.getChannelRange(xChannel).step;
@@ -206,7 +205,6 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
         onChangeEnd(valueRef.current);
       }
 
-      console.log('setDragging', isDragging)
       setDragging(isDragging);
     },
     isDragging,

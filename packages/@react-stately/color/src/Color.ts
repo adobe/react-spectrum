@@ -29,7 +29,7 @@ export function parseColor(value: string): IColor {
   throw new Error('Invalid color value: ' + value);
 }
 
-export function normalizeColor(v: string | Color) {
+export function normalizeColor(v: string | IColor) {
   if (typeof v === 'string') {
     return parseColor(v);
   } else {
