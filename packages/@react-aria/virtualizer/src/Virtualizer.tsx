@@ -142,7 +142,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   let onFocus = useCallback((e: FocusEvent) => {
     // If the focused item is scrolled out of view and is not in the DOM, the collection
     // will have tabIndex={0}. When tabbing in from outside, scroll the focused item into view.
-    if (!isFocusWithin.current) {
+    if (!isFocusWithin.current && ref.current.contains(e.target)) {
       if (scrollToItem) {
         scrollToItem(focusedKey);
       } else {
