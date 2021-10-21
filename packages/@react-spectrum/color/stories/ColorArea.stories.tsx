@@ -43,13 +43,12 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
     <Flex gap="size-500" alignItems="center">
       <Flex direction="column" gap="size-50" width={'size-2000'}>
         <ColorArea
+          {...props}
           value={color}
           onChange={(e) => {
             action('change')(e);
             setColor(e);
-          }}
-          xChannel={xChannel}
-          yChannel={yChannel} />
+          }} />
         <ColorSlider value={color} onChange={setColor} channel={zChannel} />
       </Flex>
       <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
@@ -83,3 +82,7 @@ XRedYGreen.args = {xChannel: 'red', yChannel: 'green'};
 export let XGreenYRed = Template.bind({});
 XGreenYRed.title = 'RGB xChannel="green", yChannel="red"';
 XGreenYRed.args = {xChannel: 'green', yChannel: 'red'};
+
+export let XBlueYGreenStep16 = Template.bind({});
+XBlueYGreenStep16.title = 'RGB xChannel="blue", yChannel="green" step="16"';
+XBlueYGreenStep16.args = {...XBlueYGreen.args, xChannelStep: 16, yChannelStep: 16};

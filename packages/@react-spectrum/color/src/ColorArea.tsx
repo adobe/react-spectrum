@@ -36,7 +36,7 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
 
   let state = useColorAreaState(props);
 
-  let {channels: {xChannel, yChannel, zChannel}} = state;
+  let {channels: {xChannel, zChannel}} = state;
   let {
     colorAreaProps,
     gradientProps,
@@ -45,7 +45,7 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
     thumbProps
   } = useColorArea(props, state, xInputRef, yInputRef, containerRef);
   let {direction} = useLocale();
-  let {colorAreaStyleProps, gradientStyleProps, thumbStyleProps} = useGradients({direction, state, xChannel, yChannel, zChannel});
+  let {colorAreaStyleProps, gradientStyleProps, thumbStyleProps} = useGradients({direction, state, xChannel, zChannel});
 
   let {focusProps, isFocusVisible} = useFocusRing();
 
@@ -104,7 +104,7 @@ interface Gradients {
 }
 
 // this function looks scary, but it's actually pretty quick, just generates some strings
-function useGradients({direction, state, zChannel, xChannel, yChannel}): Gradients {
+function useGradients({direction, state, zChannel, xChannel}): Gradients {
 
   let orientation = ['top', direction === 'rtl' ? 'left' : 'right'];
   let dir = false;

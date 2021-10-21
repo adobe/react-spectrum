@@ -11,8 +11,8 @@
  */
 
 import {AriaColorAreaProps} from '@react-types/color';
-import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 import {ColorAreaState} from '@react-stately/color';
+import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MessageDictionary} from '@internationalized/message';
@@ -35,19 +35,6 @@ interface ColorAreaAria {
   /** Props for the visually hidden vertical range input element. */
   yInputProps: InputHTMLAttributes<HTMLInputElement>
 }
-
-const PERCENT_STEP_SIZE = 10;
-const HUE_STEP_SIZE = 15;
-const RGB_STEP_SIZE = 16;
-const CHANNEL_STEP_SIZE = {
-  hue: HUE_STEP_SIZE,
-  saturation: PERCENT_STEP_SIZE,
-  brightness: PERCENT_STEP_SIZE,
-  lightness: PERCENT_STEP_SIZE,
-  red: RGB_STEP_SIZE,
-  green: RGB_STEP_SIZE,
-  blue: RGB_STEP_SIZE
-};
 
 
 function maxMinOrZero(value1: number, value2: number): number {
@@ -91,55 +78,25 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       if (!e.shiftKey && /^Arrow(?:Right|Left|Up|Down)$/.test(e.key)) {
         return;
       }
-      let stepSize = Math.max(xChannelStep, CHANNEL_STEP_SIZE[xChannel]);
-      let range = stateRef.current.value.getChannelRange(xChannel);
       switch (e.key) {
         case 'PageUp':
         case 'ArrowUp':
-          range = stateRef.current.value.getChannelRange(yChannel);
-          stepSize = Math.max(yChannelStep, CHANNEL_STEP_SIZE[yChannel]);
-          stateRef.current.setYValue(
-            clamp(
-              (Math.floor(stateRef.current.yValue / stepSize) + 1) * stepSize,
-              range.minValue,
-              range.maxValue
-            )
-          );
+          stateRef.current.incrementY();
           focusedInputRef.current = inputYRef.current;
           break;
         case 'PageDown':
         case 'ArrowDown':
-          range = stateRef.current.value.getChannelRange(yChannel);
-          stepSize = Math.max(yChannelStep, CHANNEL_STEP_SIZE[yChannel]);
-          stateRef.current.setYValue(
-            clamp(
-              (Math.ceil(stateRef.current.yValue / stepSize) - 1) * stepSize,
-              range.minValue,
-              range.maxValue
-            )
-          );
+          stateRef.current.decrementY();
           focusedInputRef.current = inputYRef.current;
           break;
         case 'Home':
         case 'ArrowLeft':
-          stateRef.current.setXValue(
-            clamp(
-              (Math[direction === 'rtl' ? 'floor' : 'ceil'](stateRef.current.xValue / stepSize) + (direction === 'rtl' ? 1 : -1)) * stepSize,
-              range.minValue,
-              range.maxValue
-            )
-          );
+          direction === 'rtl' ? stateRef.current.incrementY() : stateRef.current.decrementY();
           focusedInputRef.current = inputXRef.current;
           break;
         case 'End':
         case 'ArrowRight':
-          stateRef.current.setXValue(
-            clamp(
-              (Math[direction === 'rtl' ? 'floor' : 'ceil'](stateRef.current.xValue / stepSize) + (direction === 'rtl' ? -1 : 1)) * stepSize,
-              range.minValue,
-              range.maxValue
-            )
-          );
+          direction === 'rtl' ? stateRef.current.decrementY() : stateRef.current.incrementY();
           focusedInputRef.current = inputXRef.current;
           break;
       }

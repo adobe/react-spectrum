@@ -146,15 +146,9 @@ export interface ColorAreaProps extends ValueBase<string | Color> {
   onChange?: (value: Color) => void,
   /** Handler that is called when the user stops dragging. */
   onChangeEnd?: (value: Color) => void,
-  /**
-   * The step value for the xChannel.
-   * @default 1
-   */
+  /** The step value for the xChannel. */
   xChannelStep?: number,
-  /**
-   * The step value for the yChannel.
-   * @default 1
-   */
+  /** The step value for the yChannel. */
   yChannelStep?: number
 }
 
