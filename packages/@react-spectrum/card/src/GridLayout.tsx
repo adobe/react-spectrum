@@ -183,7 +183,6 @@ export class GridLayout<T> extends BaseLayout<T> {
   buildCollection() {
     let visibleWidth = this.virtualizer.visibleRect.width;
     let visibleHeight = this.virtualizer.visibleRect.height;
-    // TODO: change the 50 to this.itemPadding?
     let horizontalItemPadding = this.cardOrientation === 'horizontal' ? this.itemPadding : 0;
     let verticalItemPadding = this.cardOrientation === 'vertical' ? this.itemPadding : 0;
     let minCardWidth = this.minItemSize.width + horizontalItemPadding;

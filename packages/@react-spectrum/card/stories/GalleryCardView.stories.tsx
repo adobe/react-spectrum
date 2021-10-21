@@ -34,7 +34,6 @@ import {Story} from '@storybook/react';
 import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
-
 let itemsLowVariance = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 1, title: 'Bob 1'},
   {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', id: 2, title: 'Joe 1'},
