@@ -1025,6 +1025,10 @@ describe('CardView', function () {
       expect(row.parentNode.style.height).toBe(`${mockHeight}px`);
 
       tree.rerender(<DynamicCardView layout={layout} />);
+      // Run timers for transitions
+      act(() => {
+        jest.runAllTimers();
+      });
       let grid = tree.getByRole('grid');
       expect(within(grid).queryByRole('progressbar')).toBeNull();
       expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
