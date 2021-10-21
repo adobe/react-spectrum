@@ -122,10 +122,10 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
         deltaX = maxMinOrZero(deltaX, xChannelStep);
         deltaY = maxMinOrZero(deltaY, yChannelStep);
         if (deltaX !== 0) {
-          stateRef.current[`${deltaX > 0 ? 'increment' : 'decrement'}X`](Math.abs(deltaX));
+          stateRef.current[`${deltaX > 0 ? 'increment' : 'decrement'}X`]();
         }
         if (deltaY !== 0) {
-          stateRef.current[`${deltaY < 0 ? 'increment' : 'decrement'}Y`](Math.abs(deltaY));
+          stateRef.current[`${deltaY < 0 ? 'increment' : 'decrement'}Y`]();
         }
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
@@ -279,7 +279,12 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   }, movePropsThumb, keyboardProps);
 
 
-  let inputLabellingProps = useLabels({
+  let xInputLabellingProps = useLabels({
+    ...props,
+    'aria-label': `${state.value.getChannelName(xChannel, locale)} / ${state.value.getChannelName(yChannel, locale)}`
+  });
+
+  let yInputLabellingProps = useLabels({
     ...props,
     'aria-label': `${state.value.getChannelName(xChannel, locale)} / ${state.value.getChannelName(yChannel, locale)}`
   });
@@ -312,7 +317,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       ...thumbInteractions
     },
     xInputProps: {
-      ...inputLabellingProps,
+      ...xInputLabellingProps,
       ...visuallyHiddenProps,
       type: 'range',
       min: state.value.getChannelRange(xChannel).minValue,
@@ -332,7 +337,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       }
     },
     yInputProps: {
-      ...inputLabellingProps,
+      ...yInputLabellingProps,
       ...visuallyHiddenProps,
       type: 'range',
       min: state.value.getChannelRange(yChannel).minValue,

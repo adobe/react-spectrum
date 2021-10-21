@@ -114,20 +114,26 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   }, [xChannel, yChannel]);
 
   if (isNaN(xChannelStep)) {
-    xChannelStep = color.getChannelRange(xChannel).step;
+    xChannelStep = color.getChannelRange(channels.xChannel).step;
   }
 
   if (isNaN(yChannelStep)) {
-    yChannelStep = color.getChannelRange(yChannel).step;
+    yChannelStep = color.getChannelRange(channels.yChannel).step;
   }
 
   let [isDragging, setDragging] = useState(false);
   let isDraggingRef = useRef(false).current;
 
-  let xValue = color.getChannelValue(xChannel);
-  let yValue = color.getChannelValue(yChannel);
-  let setXValue = (v: number) => setColor(color.withChannelValue(xChannel, v));
-  let setYValue = (v: number) => setColor(color.withChannelValue(yChannel, v));
+  let xValue = color.getChannelValue(channels.xChannel);
+  let yValue = color.getChannelValue(channels.yChannel);
+  let setXValue = (v: number) => {
+    valueRef.current = color.withChannelValue(channels.xChannel, v);
+    setColor(valueRef.current);
+  };
+  let setYValue = (v: number) => {
+    valueRef.current = color.withChannelValue(channels.yChannel, v);
+    setColor(valueRef.current);
+  };
 
   return {
     channels,
@@ -144,34 +150,34 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     yValue,
     setYValue,
     setColorFromPoint(x: number, y: number) {
-      let {minValue: minValueX, maxValue: maxValueX} = color.getChannelRange(xChannel);
-      let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(yChannel);
+      let {minValue: minValueX, maxValue: maxValueX} = color.getChannelRange(channels.xChannel);
+      let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(channels.yChannel);
       let newXValue = minValueX + clamp(x, 0, 1) * (maxValueX - minValueX);
       let newYValue = minValueY + (1 - clamp(y, 0, 1)) * (maxValueY - minValueY);
       let newColor:Color;
       if (newXValue !== xValue) {
         // Round new value to multiple of step, clamp value between min and max
         newXValue = snapValueToStep(newXValue, minValueX, maxValueX, xChannelStep);
-        newColor = color.withChannelValue(xChannel, newXValue);
+        newColor = color.withChannelValue(channels.xChannel, newXValue);
       }
       if (newYValue !== yValue) {
         // Round new value to multiple of step, clamp value between min and max
         newYValue = snapValueToStep(newYValue, minValueY, maxValueY, yChannelStep);
-        newColor = (newColor || color).withChannelValue(yChannel, newYValue);
+        newColor = (newColor || color).withChannelValue(channels.yChannel, newYValue);
       }
       if (newColor) {
         setColor(newColor);
       }
     },
     getThumbPosition() {
-      let {minValue, maxValue} = color.getChannelRange(xChannel);
-      let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(yChannel);
-      let x = (xValue - minValue) / (maxValue - minValue);
+      let {minValue: minValueX, maxValue: maxValueX} = color.getChannelRange(channels.xChannel);
+      let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(channels.yChannel);
+      let x = (xValue - minValueX) / (maxValueX - minValueX);
       let y = 1 - (yValue - minValueY) / (maxValueY - minValueY);
       return {x, y};
     },
     incrementX() {
-      let range = color.getChannelRange(xChannel);
+      let range = color.getChannelRange(channels.xChannel);
       let stepSize = xChannelStep;
       setXValue(
         clamp(
@@ -182,7 +188,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       );
     },
     incrementY() {
-      let range = color.getChannelRange(yChannel);
+      let range = color.getChannelRange(channels.yChannel);
       let stepSize = yChannelStep;
       setYValue(
         clamp(
@@ -193,7 +199,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       );
     },
     decrementX() {
-      let range = color.getChannelRange(xChannel);
+      let range = color.getChannelRange(channels.xChannel);
       let stepSize = xChannelStep;
       setXValue(
         clamp(
@@ -204,7 +210,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       );
     },
     decrementY() {
-      let range = color.getChannelRange(yChannel);
+      let range = color.getChannelRange(channels.yChannel);
       let stepSize = yChannelStep;
       setYValue(
         clamp(
