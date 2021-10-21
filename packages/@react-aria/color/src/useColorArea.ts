@@ -553,6 +553,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     xInputProps: {
       ...inputLabellingProps,
       ...visuallyHiddenProps,
+      id: `${inputLabellingProps.id}-x`,
       type: 'range',
       min: state.value.getChannelRange(xChannel).minValue,
       max: state.value.getChannelRange(xChannel).maxValue,
@@ -573,6 +574,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     yInputProps: {
       ...inputLabellingProps,
       ...visuallyHiddenProps,
+      id: `${inputLabellingProps.id}-y`,
       type: 'range',
       min: state.value.getChannelRange(yChannel).minValue,
       max: state.value.getChannelRange(yChannel).maxValue,
