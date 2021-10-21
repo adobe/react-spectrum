@@ -60,7 +60,8 @@ export interface ColorAreaState {
 }
 
 const DEFAULT_COLOR = parseColor('hsb(0, 100%, 100%)');
-
+const RGBSet: Set<ColorChannel> = new Set(['red', 'green', 'blue']);
+let difference = (a: Set<ColorChannel>, b: Set<ColorChannel>): Set<ColorChannel> => new Set([...a].filter(x => !b.has(x)));
 /**
  * Provides state management for a color area component.
  * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
@@ -76,53 +77,48 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let valueRef = useRef(color);
   valueRef.current = color;
 
-  let getChannels = () => {
-    // determine the color space from the color value
-    let zChannel: ColorChannel;
-    let xyChannels: Array<ColorChannel>;
-
-    if (!xChannel) {
-      switch (yChannel) {
-        case 'red':
-        case 'green':
-          xChannel = 'blue';
-          break;
-        case 'blue':
-          xChannel = 'red';
-          break;
-        default:
-          xChannel = 'blue';
-          yChannel = 'green';
-      }
-    } else if (!yChannel) {
-      switch (xChannel) {
-        case 'red':
-          yChannel = 'green';
-          break;
-        case 'blue':
-          yChannel = 'red';
-          break;
-        default:
-          xChannel = 'blue';
-          yChannel = 'green';
-      }
+  if (!xChannel) {
+    switch (yChannel) {
+      case 'red':
+      case 'green':
+        xChannel = 'blue';
+        break;
+      case 'blue':
+        xChannel = 'red';
+        break;
+      default:
+        xChannel = 'blue';
+        yChannel = 'green';
     }
-    xyChannels = [xChannel, yChannel];
-    if (xyChannels.includes('red')) {
-      zChannel = xyChannels.includes('green') ? 'blue' : 'green';
-    } else if (xyChannels.includes('green')) {
-      zChannel = xyChannels.includes('blue') ? 'red' : 'blue';
-    } else if (xyChannels.includes('blue')) {
-      zChannel = xyChannels.includes('green') ? 'red' : 'green';
+  } else if (!yChannel) {
+    switch (xChannel) {
+      case 'red':
+        yChannel = 'green';
+        break;
+      case 'blue':
+        yChannel = 'red';
+        break;
+      default:
+        xChannel = 'blue';
+        yChannel = 'green';
     }
+  }
+  let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
+  let zChannel = difference(RGBSet, xyChannels).values().next().value as ColorChannel;
+  console.log('zChannel', zChannel)
 
-    return {xChannel, yChannel, zChannel};
-  };
-
-  let channels = getChannels();
+  let channels = {xChannel, yChannel, zChannel};
   if (!xChannel || !yChannel) {
     xChannel = channels.xChannel;
     yChannel = channels.yChannel;
+  }
+
+  if (!xChannelStep) {
+    xChannelStep = color.getChannelRange(xChannel).step;
+  }
+
+  if (!yChannelStep) {
+    yChannelStep = color.getChannelRange(yChannel).step;
   }
 
   let [isDragging, setDragging] = useState(false);
@@ -134,6 +130,9 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let setYValue = (v: number) => setColor(color.withChannelValue(yChannel, v));
 
   return {
+    channels,
+    xChannelStep,
+    yChannelStep,
     value: color,
     setValue(value) {
       let c = normalizeColor(value);
@@ -211,7 +210,6 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       setDragging(isDragging);
     },
     isDragging,
-    getChannels,
     getDisplayColor() {
       return color.withChannelValue('alpha', 1);
     }

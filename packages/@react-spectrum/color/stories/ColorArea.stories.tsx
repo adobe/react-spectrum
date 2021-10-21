@@ -14,10 +14,22 @@ import {action} from '@storybook/addon-actions';
 import {ColorArea, ColorSlider} from '../';
 import {ColorChannel, SpectrumColorAreaProps} from '@react-types/color';
 import {Flex} from '@adobe/react-spectrum';
+import {Meta, Story} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+
+
+const meta: Meta<SpectrumColorAreaProps> = {
+  title: 'ColorArea',
+  component: ColorArea
+};
+
+export default meta;
+
+const Template: Story<SpectrumColorAreaProps> = (args) => (
+  <ColorAreaExample {...args} />
+);
 
 let RGB: Set<ColorChannel> = new Set(['red', 'green', 'blue']);
 let difference = (a, b): Set<ColorChannel> => new Set([...a].filter(x => !b.has(x)));
@@ -48,28 +60,26 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
   </div>);
 }
 
-storiesOf('ColorArea', module)
-  .add(
-    'RGB xChannel="blue", yChannel="green"',
-    () => <ColorAreaExample xChannel={'blue'} yChannel={'green'} />
-  )
-  .add(
-    'RGB xChannel="green", yChannel="blue"',
-    () => <ColorAreaExample xChannel={'green'} yChannel={'blue'} />
-  )
-  .add(
-    'RGB xChannel="blue", yChannel="red"',
-    () => <ColorAreaExample xChannel={'blue'} yChannel={'red'} />
-  )
-  .add(
-    'RGB xChannel="red", yChannel="blue"',
-    () => <ColorAreaExample xChannel={'red'} yChannel={'blue'} />
-  )
-  .add(
-    'RGB xChannel="red", yChannel="green"',
-    () => <ColorAreaExample xChannel={'red'} yChannel={'green'} />
-  )
-  .add(
-    'RGB xChannel="green", yChannel="red"',
-    () => <ColorAreaExample xChannel={'green'} yChannel={'red'} />
-  );
+export let XBlueYGreen = Template.bind({});
+XBlueYGreen.title = 'RGB xChannel="blue", yChannel="green"';
+XBlueYGreen.args = {xChannel: 'blue', yChannel: 'green'};
+
+export let XGreenYBlue = Template.bind({});
+XGreenYBlue.title = 'RGB xChannel="green", yChannel="blue"';
+XGreenYBlue.args = {xChannel: 'green', yChannel: 'blue'};
+
+export let XBlueYRed = Template.bind({});
+XBlueYRed.title = 'RGB xChannel="blue", yChannel="red"';
+XBlueYRed.args = {xChannel: 'blue', yChannel: 'red'};
+
+export let XRedYBlue = Template.bind({});
+XRedYBlue.title = 'GB xChannel="red", yChannel="blue"';
+XRedYBlue.args = {xChannel: 'red', yChannel: 'blue'};
+
+export let XRedYGreen = Template.bind({});
+XRedYGreen.title = 'RGB xChannel="red", yChannel="green"';
+XRedYGreen.args = {xChannel: 'red', yChannel: 'green'};
+
+export let XGreenYRed = Template.bind({});
+XGreenYRed.title = 'RGB xChannel="green", yChannel="red"';
+XGreenYRed.args = {xChannel: 'green', yChannel: 'red'};

@@ -36,10 +36,8 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
 
   let state = useColorAreaState(props);
 
+  let {channels: {xChannel, yChannel, zChannel}} = state;
   let {
-    xChannel,
-    yChannel,
-    zChannel,
     x,
     y,
     colorAreaProps,

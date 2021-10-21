@@ -63,11 +63,7 @@ function maxMinOrZero(value1: number, value2: number): number {
  */
 export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, inputXRef: RefObject<HTMLElement>, inputYRef: RefObject<HTMLElement>, containerRef: RefObject<HTMLElement>): ColorAreaAria {
   let {
-    isDisabled,
-    xChannel,
-    yChannel,
-    xChannelStep,
-    yChannelStep
+    isDisabled
   } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -84,20 +80,9 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
 
   let stateRef = useRef<ColorAreaState>(null);
   stateRef.current = state;
-  let channels = stateRef.current.getChannels();
-  if (!xChannel || !yChannel) {
-    xChannel = channels.xChannel;
-    yChannel = channels.yChannel;
-  }
-  let zChannel = channels.zChannel;
-
-  if (!xChannelStep) {
-    xChannelStep = stateRef.current.value.getChannelRange(xChannel).step;
-  }
-
-  if (!yChannelStep) {
-    yChannelStep = stateRef.current.value.getChannelRange(yChannel).step;
-  }
+  let {xChannel, yChannel, zChannel} = stateRef.current.channels;
+  let xChannelStep = stateRef.current.xChannelStep;
+  let yChannelStep = stateRef.current.xChannelStep;
 
   let currentPosition = useRef<{x: number, y: number}>(null);
 
@@ -365,9 +350,6 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   }});
 
   return {
-    xChannel,
-    yChannel,
-    zChannel,
     x,
     y,
     colorAreaProps: {
