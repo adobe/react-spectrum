@@ -295,6 +295,9 @@ governing permissions and limitations under the License.
 }
 
 @media screen and (max-width: 700px) {
+  .spectrum-Dialog {
+    --spectrum-dialog-padding: var(--spectrum-global-dimension-static-size-300);
+  }
 
   .spectrum-Dialog .spectrum-Dialog-grid {
     grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
