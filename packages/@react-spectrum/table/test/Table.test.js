@@ -29,7 +29,7 @@ import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
-import {TableExample} from '../stories/Table.stories';
+import {TableWithBreadcrumbs} from '../stories/Table.stories';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import {typeText} from '@react-spectrum/test-utils';
@@ -2282,7 +2282,7 @@ describe('TableView', function () {
     });
 
     it('can announce deselect even when items are swapped out completely', () => {
-      let tree = render(<TableExample />);
+      let tree = render(<TableWithBreadcrumbs />);
 
       let row = tree.getAllByRole('row')[2];
       triggerPress(row);
@@ -2296,13 +2296,13 @@ describe('TableView', function () {
     });
 
     it('will not announce deselect caused by breadcrumb navigation', () => {
-      let tree = render(<TableExample />);
+      let tree = render(<TableWithBreadcrumbs />);
 
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
 
       act(() => {
-        // TableExample has a setTimeout to load the results of the link navigation on Folder A
+        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
         jest.runAllTimers();
       });
       let row = tree.getAllByRole('row')[1];
@@ -2319,13 +2319,13 @@ describe('TableView', function () {
     });
 
     it('updates even if not focused', () => {
-      let tree = render(<TableExample />);
+      let tree = render(<TableWithBreadcrumbs />);
 
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
 
       act(() => {
-        // TableExample has a setTimeout to load the results of the link navigation on Folder A
+        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
         jest.runAllTimers();
       });
       let row = tree.getAllByRole('row')[1];
@@ -2341,7 +2341,7 @@ describe('TableView', function () {
       triggerPress(link);
 
       act(() => {
-        // TableExample has a setTimeout to load the results of the link navigation on Folder A
+        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
         jest.runAllTimers();
       });
 
@@ -2352,7 +2352,7 @@ describe('TableView', function () {
       triggerPress(link);
 
       act(() => {
-        // TableExample has a setTimeout to load the results of the link navigation on Folder A
+        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
         jest.runAllTimers();
       });
 
@@ -2827,7 +2827,7 @@ describe('TableView', function () {
   });
 
   describe('press/hover interactions and selection mode', function () {
-    let TableExample = (props) => (
+    let TableWithBreadcrumbs = (props) => (
       <TableView aria-label="Table" {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
@@ -2843,7 +2843,7 @@ describe('TableView', function () {
     );
 
     it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', function () {
-      let tree = render(<TableExample selectionMode="multiple" />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let row = tree.getAllByRole('row')[1];
       fireEvent.mouseDown(row, {detail: 1});
@@ -2851,7 +2851,7 @@ describe('TableView', function () {
       fireEvent.mouseEnter(row);
       expect(row.className.includes('is-hovered')).toBeTruthy();
 
-      rerender(tree, <TableExample selectionMode="single" />);
+      rerender(tree, <TableWithBreadcrumbs selectionMode="single" />);
       row = tree.getAllByRole('row')[1];
       fireEvent.mouseDown(row, {detail: 1});
       expect(row.className.includes('is-active')).toBeTruthy();
@@ -2860,7 +2860,7 @@ describe('TableView', function () {
     });
 
     it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none"', function () {
-      let tree = render(<TableExample selectionMode="none" />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="none" />);
 
       let row = tree.getAllByRole('row')[1];
       fireEvent.mouseDown(row, {detail: 1});
@@ -3164,7 +3164,7 @@ describe('TableView', function () {
   });
 
   describe('with dialog trigger', function () {
-    let TableExample = (props) => (
+    let TableWithBreadcrumbs = (props) => (
       <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} {...props}>
         <TableHeader>
           <Column key="foo">Foo</Column>
@@ -3199,7 +3199,7 @@ describe('TableView', function () {
     );
 
     it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
-      let tree = render(<TableExample />);
+      let tree = render(<TableWithBreadcrumbs />);
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(2);

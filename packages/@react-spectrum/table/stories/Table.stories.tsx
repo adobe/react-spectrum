@@ -1022,7 +1022,7 @@ storiesOf('TableView', module)
       </TableView>
     )
   )
-  .add('table example', () => <TableExample />);
+  .add('table with breadcrumb navigation', () => <TableWithBreadcrumbs />);
 
 function AsyncLoadingExample() {
   interface Item {
@@ -1302,7 +1302,7 @@ function ChangableSelectionMode() {
   );
 }
 
-export function TableExample() {
+export function TableWithBreadcrumbs() {
   const fs = [
     {key: 'a', name: 'Folder A', type: 'folder'},
     {key: 'b', name: 'File B', value: '10 MB'},
@@ -1327,7 +1327,8 @@ export function TableExample() {
   };
 
   return (
-    <Flex direction="column">
+    <Flex direction="column" width="400px">
+      <div>The TableView should not error if row selection changes due to items changes from external navigation (breadcrumbs).</div>
       <Breadcrumbs
         onAction={item => {
           if (item === 'root') {
