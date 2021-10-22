@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-// import {ColorArea} from '../';
+import {ColorArea} from '../';
 import {XBlueYGreen as DefaultColorArea} from '../stories/ColorArea.stories';
 import {fireEvent, render} from '@testing-library/react';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
@@ -52,7 +52,425 @@ describe('ColorArea', () => {
     onChangeEndSpy.mockClear();
   });
 
-  describe('attributes', () => {
+  // get group corresponds to the index returned by getAllByRole('group')
+  describe.each`
+  Name              | Component           | groupIndex
+  ${'Controlled'}   | ${DefaultColorArea} | ${1}
+  ${'Uncontrolled'} | ${ColorArea}        | ${0}
+  `('$Name', ({Component, groupIndex}) => {
+    describe('attributes', () => {
+      it('sets input props', () => {
+        let {getAllByRole} = render(<Component defaultValue={'#ff00ff'} />);
+        let sliders = getAllByRole('slider');
+
+        let [xSlider, ySlider] = sliders;
+
+        expect(xSlider).toHaveAttribute('type', 'range');
+        expect(xSlider).toHaveAttribute('aria-label', 'Blue / Green');
+        expect(xSlider).toHaveAttribute('min', '0');
+        expect(xSlider).toHaveAttribute('max', '255');
+        expect(xSlider).toHaveAttribute('step', '1');
+        expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 0');
+
+        expect(ySlider).toHaveAttribute('type', 'range');
+        expect(ySlider).toHaveAttribute('aria-label', 'Blue / Green');
+        expect(ySlider).toHaveAttribute('min', '0');
+        expect(ySlider).toHaveAttribute('max', '255');
+        expect(ySlider).toHaveAttribute('step', '1');
+        expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Blue: 255');
+      });
+
+      it('disabled', () => {
+        let {getAllByRole} = render(<div>
+          <button>A</button>
+          <Component defaultValue={'#ff00ff'} isDisabled />
+          <button>B</button>
+        </div>);
+        let sliders = getAllByRole('slider');
+        let [buttonA, buttonB] = getAllByRole('button');
+        sliders.forEach(slider => {
+          expect(slider).toHaveAttribute('disabled');
+        });
+
+        userEvent.tab();
+        expect(document.activeElement).toBe(buttonA);
+        userEvent.tab();
+        expect(document.activeElement).toBe(buttonB);
+        userEvent.tab({shift: true});
+        expect(document.activeElement).toBe(buttonA);
+      });
+
+      // TODO: don't know how to do this yet
+      describe.skip('labelling', () => {
+        it('should support a custom aria-label', () => {
+          let {getAllByRole} = render(<Component defaultValue={'#ff00ff'} aria-label="Color hue" />);
+          let slider = getAllByRole('slider');
+
+          expect(slider).toHaveAttribute('aria-label', 'Color hue');
+          expect(slider).not.toHaveAttribute('aria-labelledby');
+        });
+
+        it('should support a custom aria-labelledby', () => {
+          let {getAllByRole} = render(<Component defaultValue={'#ff00ff'} aria-labelledby="label-id" />);
+          let slider = getAllByRole('slider');
+
+          expect(slider).not.toHaveAttribute('aria-label');
+          expect(slider).toHaveAttribute('aria-labelledby', 'label-id');
+        });
+      });
+    });
+
+    describe('behaviors', () => {
+      let pressKey = (element, options) => {
+        fireEvent.keyDown(element, options);
+        fireEvent.keyUp(element, options);
+      };
+      describe('keyboard events', () => {
+        it.each`
+          Name            | props                                          | actions                                                                                                                   | result
+          ${'left/right'} | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Left'}), backward: (elem) => pressKey(elem, {key: 'Right'})}} | ${parseColor('#ff00fe')}
+          ${'up/down'}    | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Up'}), backward: (elem) => pressKey(elem, {key: 'Down'})}}    | ${parseColor('#ff01ff')}
+        `('$Name', ({props, actions: {forward, backward}, result}) => {
+          let {getAllByRole} = render(
+            <Component
+              {...props}
+              defaultValue={'#ff00ff'}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          );
+          let sliders = getAllByRole('slider');
+          userEvent.tab();
+
+          forward(sliders[0], {key: 'Left'});
+          expect(onChangeSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
+
+          backward(sliders[0], {key: 'Right'});
+          expect(onChangeSpy).toHaveBeenCalledTimes(2);
+          expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+          expect(onChangeEndSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
+        });
+
+        it('no events when disabled', () => {
+          let defaultColor = parseColor('#ff00ff');
+          let {getAllByRole, getByRole} = render(<div>
+            <Component
+              isDisabled
+              defaultValue={defaultColor}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+            <button>B</button>
+          </div>);
+          let buttonA = getByRole('button');
+          let sliders = getAllByRole('slider');
+          userEvent.tab();
+          expect(buttonA).toBe(document.activeElement);
+
+          pressKey(sliders[0], {key: 'Left'});
+          expect(onChangeSpy).not.toHaveBeenCalled();
+          expect(onChangeEndSpy).not.toHaveBeenCalled();
+          pressKey(sliders[0], {key: 'Right'});
+          expect(onChangeSpy).not.toHaveBeenCalled();
+          expect(onChangeEndSpy).not.toHaveBeenCalled();
+        });
+
+        it.each`
+          Name            | props                                          | actions                                                                                                                   | result
+          ${'left/right'} | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Left'}), backward: (elem) => pressKey(elem, {key: 'Right'})}} | ${parseColor('#ff00f0')}
+          ${'up/down'}    | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Up'}), backward: (elem) => pressKey(elem, {key: 'Down'})}}    | ${parseColor('#ff0fff')}
+        `('$Name with step', ({props, actions: {forward, backward}, result}) => {
+          let {getAllByRole} = render(
+            <Component
+              {...props}
+              xChannelStep={0xf}
+              yChannelStep={0xf}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          );
+          let sliders = getAllByRole('slider');
+          userEvent.tab();
+
+          forward(sliders[0], {key: 'Left'});
+          expect(onChangeSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
+
+          backward(sliders[0], {key: 'Right'});
+          expect(onChangeSpy).toHaveBeenCalledTimes(2);
+          expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+          expect(onChangeEndSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
+        });
+      });
+
+      describe.each`
+        type                | prepare               | actions
+        ${'Mouse Events'}   | ${installMouseEvent}  | ${[
+          (el, {pageX, pageY}) => fireEvent.mouseDown(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY}),
+          (el, {pageX, pageY}) => fireEvent.mouseMove(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY}),
+          (el, {pageX, pageY}) => fireEvent.mouseUp(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY})
+        ]}
+        ${'Pointer Events'} | ${installPointerEvent}| ${[
+          (el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY}),
+          (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY}),
+          (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY})
+        ]}
+        ${'Touch Events'}   | ${() => {}}           | ${[
+          (el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]}),
+          (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]}),
+          (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]})
+        ]}
+      `('$type', ({actions: [start, move, end], prepare}) => {
+        prepare();
+
+        it('clicking on the area chooses the color at that point', () => {
+          let defaultColor = parseColor('#ff00ff');
+          let {getAllByRole} = render(
+            <Component
+              defaultValue={defaultColor}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          );
+          let sliders = getAllByRole('slider');
+          let groups = getAllByRole('group');
+          let container = groups[groupIndex];
+          container.getBoundingClientRect = getBoundingClientRect;
+
+          expect(document.activeElement).not.toBe(sliders[0]);
+          start(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
+          expect(onChangeSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
+          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80EC').toString('rgba'));
+          expect(document.activeElement).toBe(sliders[0]);
+
+          end(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
+          expect(onChangeSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80EC').toString('rgba'));
+          expect(document.activeElement).toBe(sliders[0]);
+        });
+
+        it('dragging the thumb works', () => {
+          let defaultColor = parseColor('#ff00ff');
+          let {getAllByRole} = render(
+            <Component
+              defaultValue={defaultColor}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          );
+          let sliders = getAllByRole('slider');
+          let groups = getAllByRole('group');
+          let thumb = sliders[0].parentElement;
+          let container = groups[groupIndex];
+          container.getBoundingClientRect = getBoundingClientRect;
+
+          expect(document.activeElement).not.toBe(sliders[0]);
+          start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
+          expect(onChangeSpy).toHaveBeenCalledTimes(0);
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
+          expect(document.activeElement).toBe(sliders[0]);
+
+          move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff0093').toString('rgba'));
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
+          expect(document.activeElement).toBe(sliders[0]);
+
+          end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff0093').toString('rgba'));
+          expect(document.activeElement).toBe(sliders[0]);
+        });
+
+        it('dragging the thumb doesn\'t works when disabled', () => {
+          let defaultColor = parseColor('#ff00ff');
+          let {getAllByRole} = render(
+            <Component
+              isDisabled
+              defaultValue={defaultColor}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          );
+          let sliders = getAllByRole('slider');
+          let groups = getAllByRole('group');
+          let thumb = sliders[0].parentElement;
+          let container = groups[groupIndex];
+          container.getBoundingClientRect = getBoundingClientRect;
+
+          expect(document.activeElement).not.toBe(sliders[0]);
+          start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
+          expect(onChangeSpy).toHaveBeenCalledTimes(0);
+
+          move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(0);
+
+          end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(0);
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
+        });
+
+        // TODO: Should it?
+        it('dragging the thumb respects the step', () => {
+          let defaultColor = parseColor('#ff00ff');
+          let {getAllByRole} = render(
+            <Component
+              xChannelStep={16}
+              yChannelStep={16}
+              defaultValue={defaultColor}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          );
+          let sliders = getAllByRole('slider');
+          let groups = getAllByRole('group');
+          let thumb = sliders[0].parentElement;
+          let container = groups[groupIndex];
+          container.getBoundingClientRect = getBoundingClientRect;
+
+          start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
+          expect(onChangeSpy).toHaveBeenCalledTimes(0);
+
+          move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff0090').toString('rgba'));
+
+          end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it('clicking and dragging on the track works', () => {
+          let defaultColor = parseColor('#ff00ff');
+          let {getAllByRole} = render(
+            <Component
+              defaultValue={defaultColor}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          );
+          let sliders = getAllByRole('slider');
+          let groups = getAllByRole('group');
+          let container = groups[groupIndex];
+          container.getBoundingClientRect = getBoundingClientRect;
+
+          expect(document.activeElement).not.toBe(sliders[0]);
+          start(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
+          expect(onChangeSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
+          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80EC').toString('rgba'));
+          expect(document.activeElement).toBe(sliders[0]);
+
+          move(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(2);
+          expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(parseColor('#ff1480').toString('rgba'));
+          expect(document.activeElement).toBe(sliders[0]);
+
+          end(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(2);
+          expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff1480').toString('rgba'));
+          expect(document.activeElement).toBe(sliders[0]);
+        });
+
+        it('clicking and dragging on the track doesn\'t work when disabled', () => {
+          let defaultColor = parseColor('#ff00ff');
+          let {getAllByRole} = render(
+            <Component
+              isDisabled
+              defaultValue={defaultColor}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          );
+          let sliders = getAllByRole('slider');
+          let groups = getAllByRole('group');
+          let container = groups[groupIndex];
+          container.getBoundingClientRect = getBoundingClientRect;
+
+          expect(document.activeElement).not.toBe(sliders[0]);
+          start(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(0);
+          expect(document.activeElement).not.toBe(sliders[0]);
+
+          move(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
+          expect(onChangeSpy).toHaveBeenCalledTimes(0);
+          expect(document.activeElement).not.toBe(sliders[0]);
+
+          end(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
+          expect(onChangeSpy).toHaveBeenCalledTimes(0);
+          expect(document.activeElement).not.toBe(sliders[0]);
+        });
+
+        it('clicking and dragging on the track respects the step', () => {
+          let defaultColor = parseColor('#ff00ff');
+          let {getAllByRole} = render(
+            <Component
+              xChannelStep={16}
+              yChannelStep={16}
+              defaultValue={defaultColor}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          );
+          let groups = getAllByRole('group');
+          let container = groups[groupIndex];
+          container.getBoundingClientRect = getBoundingClientRect;
+
+          start(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
+          expect(onChangeSpy).toHaveBeenCalledTimes(1);
+
+          move(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(2);
+          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80f0').toString('rgba'));
+
+          end(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+          expect(onChangeSpy).toHaveBeenCalledTimes(2);
+        });
+      });
+    });
+  });
+  describe('defaults uncontrolled', () => {
+    it('sets input props', () => {
+      let {getAllByRole} = render(<ColorArea />);
+      let sliders = getAllByRole('slider');
+
+      let [xSlider, ySlider] = sliders;
+
+      expect(xSlider).toHaveAttribute('type', 'range');
+      expect(xSlider).toHaveAttribute('aria-label', 'Blue / Green');
+      expect(xSlider).toHaveAttribute('min', '0');
+      expect(xSlider).toHaveAttribute('max', '255');
+      expect(xSlider).toHaveAttribute('step', '1');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 255');
+
+      expect(ySlider).toHaveAttribute('type', 'range');
+      expect(ySlider).toHaveAttribute('aria-label', 'Blue / Green');
+      expect(ySlider).toHaveAttribute('min', '0');
+      expect(ySlider).toHaveAttribute('max', '255');
+      expect(ySlider).toHaveAttribute('step', '1');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Blue: 255');
+    });
+
+    it('the slider is focusable', () => {
+      let {getAllByRole} = render(<div>
+        <button>A</button>
+        <ColorArea defaultValue={'#ff00ff'} />
+        <button>B</button>
+      </div>);
+      let sliders = getAllByRole('slider');
+      let [buttonA, buttonB] = getAllByRole('button');
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(buttonA);
+      userEvent.tab();
+      expect(document.activeElement).toBe(sliders[0]);
+      userEvent.tab();
+      expect(document.activeElement).toBe(buttonB);
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(sliders[0]);
+    });
+  });
+  describe('full implementation controlled', () => {
     it('sets input props', () => {
       let {getAllByRole, getByLabelText} = render(<DefaultColorArea />);
       let sliders = getAllByRole('slider');
@@ -87,7 +505,7 @@ describe('ColorArea', () => {
     it('the slider is focusable', () => {
       let {getAllByRole} = render(<div>
         <button>A</button>
-        <DefaultColorArea />
+        <DefaultColorArea defaultValue={'#ff00ff'} />
         <button>B</button>
       </div>);
       let sliders = getAllByRole('slider');
@@ -103,353 +521,6 @@ describe('ColorArea', () => {
       expect(document.activeElement).toBe(buttonB);
       userEvent.tab({shift: true});
       expect(document.activeElement).toBe(sliders[2]);
-    });
-
-    it('disabled', () => {
-      let {getAllByRole} = render(<div>
-        <button>A</button>
-        <DefaultColorArea isDisabled />
-        <button>B</button>
-      </div>);
-      let sliders = getAllByRole('slider');
-      let [buttonA, buttonB] = getAllByRole('button');
-      sliders.forEach(slider => {
-        expect(slider).toHaveAttribute('disabled');
-      });
-
-      userEvent.tab();
-      expect(document.activeElement).toBe(buttonA);
-      userEvent.tab();
-      expect(document.activeElement).toBe(buttonB);
-      userEvent.tab({shift: true});
-      expect(document.activeElement).toBe(buttonA);
-    });
-
-    // TODO: don't know how to do this yet
-    describe.skip('labelling', () => {
-      it('should support a custom aria-label', () => {
-        let {getAllByRole} = render(<DefaultColorArea aria-label="Color hue" />);
-        let slider = getAllByRole('slider');
-
-        expect(slider).toHaveAttribute('aria-label', 'Color hue');
-        expect(slider).not.toHaveAttribute('aria-labelledby');
-      });
-
-      it('should support a custom aria-labelledby', () => {
-        let {getAllByRole} = render(<DefaultColorArea aria-labelledby="label-id" />);
-        let slider = getAllByRole('slider');
-
-        expect(slider).not.toHaveAttribute('aria-label');
-        expect(slider).toHaveAttribute('aria-labelledby', 'label-id');
-      });
-    });
-  });
-
-  describe('behaviors', () => {
-    let pressKey = (element, options) => {
-      fireEvent.keyDown(element, options);
-      fireEvent.keyUp(element, options);
-    };
-    describe('keyboard events', () => {
-      it.each`
-        Name            | props                                          | actions                                                                                                                   | result
-        ${'left/right'} | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Left'}), backward: (elem) => pressKey(elem, {key: 'Right'})}} | ${parseColor('#ff00fe')}
-        ${'up/down'}    | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Up'}), backward: (elem) => pressKey(elem, {key: 'Down'})}}    | ${parseColor('#ff01ff')}
-      `('$Name', ({props, actions: {forward, backward}, result}) => {
-        let {getAllByRole} = render(
-          <DefaultColorArea
-            {...props}
-            onChange={onChangeSpy}
-            onChangeEnd={onChangeEndSpy} />
-        );
-        let sliders = getAllByRole('slider');
-        userEvent.tab();
-
-        forward(sliders[0], {key: 'Left'});
-        expect(onChangeSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
-
-        backward(sliders[0], {key: 'Right'});
-        expect(onChangeSpy).toHaveBeenCalledTimes(2);
-        expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
-        expect(onChangeEndSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
-      });
-
-      it('no events when disabled', () => {
-        let defaultColor = parseColor('#ff00ff');
-        let {getAllByRole, getByRole} = render(<div>
-          <DefaultColorArea
-            isDisabled
-            defaultValue={defaultColor}
-            onChange={onChangeSpy}
-            onChangeEnd={onChangeEndSpy} />
-          <button>B</button>
-        </div>);
-        let buttonA = getByRole('button');
-        let sliders = getAllByRole('slider');
-        userEvent.tab();
-        expect(buttonA).toBe(document.activeElement);
-
-        pressKey(sliders[0], {key: 'Left'});
-        expect(onChangeSpy).not.toHaveBeenCalled();
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
-        pressKey(sliders[0], {key: 'Right'});
-        expect(onChangeSpy).not.toHaveBeenCalled();
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
-      });
-
-      it.each`
-        Name            | props                                          | actions                                                                                                                   | result
-        ${'left/right'} | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Left'}), backward: (elem) => pressKey(elem, {key: 'Right'})}} | ${parseColor('#ff00f0')}
-        ${'up/down'}    | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Up'}), backward: (elem) => pressKey(elem, {key: 'Down'})}}    | ${parseColor('#ff0fff')}
-      `('$Name with step', ({props, actions: {forward, backward}, result}) => {
-        let {getAllByRole} = render(
-          <DefaultColorArea
-            {...props}
-            xChannelStep={0xf}
-            yChannelStep={0xf}
-            onChange={onChangeSpy}
-            onChangeEnd={onChangeEndSpy} />
-        );
-        let sliders = getAllByRole('slider');
-        userEvent.tab();
-
-        forward(sliders[0], {key: 'Left'});
-        expect(onChangeSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
-
-        backward(sliders[0], {key: 'Right'});
-        expect(onChangeSpy).toHaveBeenCalledTimes(2);
-        expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
-        expect(onChangeEndSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
-      });
-    });
-
-    describe.each`
-      type                | prepare               | actions
-      ${'Mouse Events'}   | ${installMouseEvent}  | ${[
-        (el, {pageX, pageY}) => fireEvent.mouseDown(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY}),
-        (el, {pageX, pageY}) => fireEvent.mouseMove(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY}),
-        (el, {pageX, pageY}) => fireEvent.mouseUp(el, {button: 0, pageX, pageY, clientX: pageX, clientY: pageY})
-      ]}
-      ${'Pointer Events'} | ${installPointerEvent}| ${[
-        (el, {pageX, pageY}) => fireEvent.pointerDown(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY}),
-        (el, {pageX, pageY}) => fireEvent.pointerMove(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY}),
-        (el, {pageX, pageY}) => fireEvent.pointerUp(el, {button: 0, pointerId: 1, pageX, pageY, clientX: pageX, clientY: pageY})
-      ]}
-      ${'Touch Events'}   | ${() => {}}           | ${[
-        (el, {pageX, pageY}) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]}),
-        (el, {pageX, pageY}) => fireEvent.touchMove(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]}),
-        (el, {pageX, pageY}) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX, pageY, clientX: pageX, clientY: pageY}]})
-      ]}
-    `('$type', ({actions: [start, move, end], prepare}) => {
-      prepare();
-
-      it('clicking on the area chooses the color at that point', () => {
-        let defaultColor = parseColor('#ff00ff');
-        let {getAllByRole} = render(
-          <DefaultColorArea
-            defaultValue={defaultColor}
-            onChange={onChangeSpy}
-            onChangeEnd={onChangeEndSpy} />
-        );
-        let sliders = getAllByRole('slider');
-        let groups = getAllByRole('group');
-        let container = groups[1];
-        container.getBoundingClientRect = getBoundingClientRect;
-
-        expect(document.activeElement).not.toBe(sliders[0]);
-        start(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-        expect(onChangeSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
-        expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80EC').toString('rgba'));
-        expect(document.activeElement).toBe(sliders[0]);
-
-        end(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-        expect(onChangeSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80EC').toString('rgba'));
-        expect(document.activeElement).toBe(sliders[0]);
-      });
-
-      it('dragging the thumb works', () => {
-        let defaultColor = parseColor('#ff00ff');
-        let {getAllByRole} = render(
-          <DefaultColorArea
-            defaultValue={defaultColor}
-            onChange={onChangeSpy}
-            onChangeEnd={onChangeEndSpy} />
-        );
-        let sliders = getAllByRole('slider');
-        let groups = getAllByRole('group');
-        let thumb = sliders[0].parentElement;
-        let container = groups[1];
-        container.getBoundingClientRect = getBoundingClientRect;
-
-        expect(document.activeElement).not.toBe(sliders[0]);
-        start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-        expect(onChangeSpy).toHaveBeenCalledTimes(0);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
-        expect(document.activeElement).toBe(sliders[0]);
-
-        move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff0093').toString('rgba'));
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
-        expect(document.activeElement).toBe(sliders[0]);
-
-        end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff0093').toString('rgba'));
-        expect(document.activeElement).toBe(sliders[0]);
-      });
-
-      it('dragging the thumb doesn\'t works when disabled', () => {
-        let defaultColor = parseColor('#ff00ff');
-        let {getAllByRole} = render(
-          <DefaultColorArea
-            isDisabled
-            defaultValue={defaultColor}
-            onChange={onChangeSpy}
-            onChangeEnd={onChangeEndSpy} />
-        );
-        let sliders = getAllByRole('slider');
-        let groups = getAllByRole('group');
-        let thumb = sliders[0].parentElement;
-        let container = groups[1];
-        container.getBoundingClientRect = getBoundingClientRect;
-
-        expect(document.activeElement).not.toBe(sliders[0]);
-        start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-        expect(onChangeSpy).toHaveBeenCalledTimes(0);
-
-        move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(0);
-
-        end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(0);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
-      });
-
-      // TODO: Should it?
-      it('dragging the thumb respects the step', () => {
-        let defaultColor = parseColor('#ff00ff');
-        let {getAllByRole} = render(
-          <DefaultColorArea
-            xChannelStep={16}
-            yChannelStep={16}
-            defaultValue={defaultColor}
-            onChange={onChangeSpy}
-            onChangeEnd={onChangeEndSpy} />
-        );
-        let sliders = getAllByRole('slider');
-        let groups = getAllByRole('group');
-        let thumb = sliders[0].parentElement;
-        let container = groups[1];
-        container.getBoundingClientRect = getBoundingClientRect;
-
-        start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-        expect(onChangeSpy).toHaveBeenCalledTimes(0);
-
-        move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff0090').toString('rgba'));
-
-        end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      });
-
-      it('clicking and dragging on the track works', () => {
-        let defaultColor = parseColor('#ff00ff');
-        let {getAllByRole} = render(
-          <DefaultColorArea
-            defaultValue={defaultColor}
-            onChange={onChangeSpy}
-            onChangeEnd={onChangeEndSpy} />
-        );
-        let sliders = getAllByRole('slider');
-        let groups = getAllByRole('group');
-        let container = groups[1];
-        container.getBoundingClientRect = getBoundingClientRect;
-
-        expect(document.activeElement).not.toBe(sliders[0]);
-        start(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-        expect(onChangeSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
-        expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80EC').toString('rgba'));
-        expect(document.activeElement).toBe(sliders[0]);
-
-        move(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(2);
-        expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(parseColor('#ff1480').toString('rgba'));
-        expect(document.activeElement).toBe(sliders[0]);
-
-        end(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(2);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-        expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff1480').toString('rgba'));
-        expect(document.activeElement).toBe(sliders[0]);
-      });
-
-      it('clicking and dragging on the track doesn\'t work when disabled', () => {
-        let defaultColor = parseColor('#ff00ff');
-        let {getAllByRole} = render(
-          <DefaultColorArea
-            isDisabled
-            defaultValue={defaultColor}
-            onChange={onChangeSpy}
-            onChangeEnd={onChangeEndSpy} />
-        );
-        let sliders = getAllByRole('slider');
-        let groups = getAllByRole('group');
-        let container = groups[1];
-        container.getBoundingClientRect = getBoundingClientRect;
-
-        expect(document.activeElement).not.toBe(sliders[0]);
-        start(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(0);
-        expect(document.activeElement).not.toBe(sliders[0]);
-
-        move(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
-        expect(onChangeSpy).toHaveBeenCalledTimes(0);
-        expect(document.activeElement).not.toBe(sliders[0]);
-
-        end(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
-        expect(onChangeSpy).toHaveBeenCalledTimes(0);
-        expect(document.activeElement).not.toBe(sliders[0]);
-      });
-
-      it('clicking and dragging on the track respects the step', () => {
-        let defaultColor = parseColor('#ff00ff');
-        let {getAllByRole} = render(
-          <DefaultColorArea
-            xChannelStep={16}
-            yChannelStep={16}
-            defaultValue={defaultColor}
-            onChange={onChangeSpy}
-            onChangeEnd={onChangeEndSpy} />
-        );
-        let groups = getAllByRole('group');
-        let container = groups[1];
-        container.getBoundingClientRect = getBoundingClientRect;
-
-        start(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-        expect(onChangeSpy).toHaveBeenCalledTimes(1);
-
-        move(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(2);
-        expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80f0').toString('rgba'));
-
-        end(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-        expect(onChangeSpy).toHaveBeenCalledTimes(2);
-      });
     });
   });
 });

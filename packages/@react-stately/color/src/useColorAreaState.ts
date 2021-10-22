@@ -61,7 +61,7 @@ export interface ColorAreaState {
   getDisplayColor(): Color
 }
 
-const DEFAULT_COLOR = parseColor('hsb(0, 100%, 100%)');
+const DEFAULT_COLOR = parseColor('#ffffff');
 const RGBSet: Set<ColorChannel> = new Set(['red', 'green', 'blue']);
 let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x => !b.has(x)));
 

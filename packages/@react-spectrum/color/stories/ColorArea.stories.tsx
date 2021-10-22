@@ -37,8 +37,8 @@ let difference = (a, b): Set<ColorChannel> => new Set([...a].filter(x => !b.has(
 function ColorAreaExample(props: SpectrumColorAreaProps) {
   let {xChannel, yChannel, isDisabled} = props;
   let channels = new Set([xChannel, yChannel]);
-  let zChannel: ColorChannel = difference(RGB, channels).keys().next().value as ColorChannel;
-  let [color, setColor] = useState(parseColor('#ff00ff'));
+  let zChannel: ColorChannel = difference(RGB, channels).keys().next().value;
+  let [color, setColor] = useState(props.defaultValue || parseColor('#ff00ff'));
   return (<div role="group" aria-label="RGB Color Picker">
     <Flex gap="size-500" alignItems="center">
       <Flex direction="column" gap="size-50" width={'size-2000'}>
