@@ -151,7 +151,7 @@ storiesOf('ListView', module)
     renderActionsExample(props => <ActionButton {...props}><Copy /></ActionButton>))
   .add('actions: ActionGroup', () =>
     renderActionsExample(props => (
-      <ActionGroup buttonLabelBehavior="hide" {...props} slot="actionGroup">
+      <ActionGroup buttonLabelBehavior="hide" {...props}>
         <Item key="add">
           <Add />
           <Text>Add</Text>
