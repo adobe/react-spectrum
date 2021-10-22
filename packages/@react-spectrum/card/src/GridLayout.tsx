@@ -201,7 +201,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     itemWidth = Math.max(minCardWidth, Math.min(this.maxItemSize.width, itemWidth));
     // Compute the item height, which is proportional to the item width
     let t = ((itemWidth - minCardWidth) / minCardWidth);
-    let itemHeight = this.minItemSize.height + this.minItemSize.height * t;
+    let itemHeight = Math.floor(this.minItemSize.height + this.minItemSize.height * t);
     itemHeight = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, itemHeight)) + verticalItemPadding;
     this.itemSize = new Size(itemWidth, itemHeight);
 

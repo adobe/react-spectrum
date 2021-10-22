@@ -104,7 +104,11 @@ DefaultGridConstructor.storyName = 'default Grid layout w/ layout constructor';
 
 export const HorizontalGrid = DynamicTemplate().bind({});
 HorizontalGrid.args = {...DynamicCards.args, cardOrientation: 'horizontal'};
-HorizontalGrid.storyName = ' Grid layout with horizontal cards';
+HorizontalGrid.storyName = ' Grid layout with horizontal cards, initialized layout';
+
+export const HorizontalGridConstructor = DynamicTemplate().bind({});
+HorizontalGridConstructor.args = {...DynamicCards.args, cardOrientation: 'horizontal', layout: GridLayout};
+HorizontalGridConstructor.storyName = ' Grid layout with horizontal cards, layout constructor';
 
 export const DisabledKeys = DynamicTemplate().bind({});
 DisabledKeys.args = {...DynamicCards.args, disabledKeys: ['Joe 2', 'Bob 4']};
