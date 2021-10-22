@@ -119,7 +119,7 @@ export function ListViewItem(props) {
                 isQuiet: true,
                 density: 'compact'
               },
-              actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true},
+              actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
             }}>
             {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
             <ClearSlots>
