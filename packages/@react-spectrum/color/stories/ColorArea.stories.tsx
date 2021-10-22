@@ -41,7 +41,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
   let [color, setColor] = useState(props.defaultValue || parseColor('#ff00ff'));
   return (<div role="group" aria-label="RGB Color Picker">
     <Flex gap="size-500" alignItems="center">
-      <Flex direction="column" gap="size-50" width={'size-2000'}>
+      <Flex direction="column" gap="size-50" alignItems="center">
         <ColorArea
           {...props}
           value={color}
@@ -98,3 +98,7 @@ XBlueYGreenisDisabled.args = {...XBlueYGreen.args, isDisabled: true};
 export let XBlueYGreenAriaLabelled = Template.bind({});
 XBlueYGreenAriaLabelled.storyName = 'RGB xChannel="blue", yChannel="green", aria-label="foo"';
 XBlueYGreenAriaLabelled.args = {...XBlueYGreen.args, label: undefined, ariaLabel: 'foo'};
+
+export let XBlueYGreenSize3000 = Template.bind({});
+XBlueYGreenSize3000.storyName = 'RGB xChannel="blue", yChannel="green", size="size-3000"';
+XBlueYGreenSize3000.args = {...XBlueYGreen.args, size: 'size-3000'};
