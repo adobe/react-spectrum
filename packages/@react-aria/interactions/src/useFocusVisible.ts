@@ -23,6 +23,7 @@ type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
 type FocusVisibleHandler = (isFocusVisible: boolean) => void;
+type ModalityHandler = (modality: Modality) => void;
 interface FocusVisibleProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
@@ -181,19 +182,29 @@ export function setInteractionModality(modality: Modality) {
 export function useInteractionModality(): Modality {
   setupGlobalFocusEvents();
 
-  let [modality, setModality] = useState(currentModality);
+  let [modalityState, setModality] = useState(currentModality);
+
+  useInteractionModalityListener((modality) => {
+    setModality(modality);
+  });
+
+  return modalityState;
+}
+
+/**
+ * Listens for changes in current modality.
+ */
+export function useInteractionModalityListener(fn: ModalityHandler) {
+  setupGlobalFocusEvents();
+
   useEffect(() => {
     let handler = () => {
-      setModality(currentModality);
+      fn(currentModality);
     };
 
     changeHandlers.add(handler);
-    return () => {
-      changeHandlers.delete(handler);
-    };
-  }, []);
-
-  return modality;
+    return () => changeHandlers.delete(handler);
+  }, [fn]);
 }
 
 /**

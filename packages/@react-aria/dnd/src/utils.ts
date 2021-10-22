@@ -13,8 +13,9 @@
 import {CUSTOM_DRAG_TYPE, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
 import {DirectoryItem, DragItem, DropItem, FileItem, DragTypes as IDragTypes} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
+import {getInteractionModality, useInteractionModalityListener} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
+import {useRef} from 'react';
 
 const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();
 
@@ -61,7 +62,13 @@ function mapModality(modality: string) {
 }
 
 export function useDragModality() {
-  return mapModality(useInteractionModality());
+  let modalityRef = useRef(getInteractionModality());
+  
+  useInteractionModalityListener((modality) => {
+    modalityRef.current = modality;
+  });
+  
+  return mapModality(modalityRef.current);
 }
 
 export function getDragModality() {
