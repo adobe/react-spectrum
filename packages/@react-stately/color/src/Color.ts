@@ -145,9 +145,9 @@ class RGBColor extends Color {
       case 'red':
       case 'green':
       case 'blue':
-        return {minValue: 0, maxValue: 255, step: 1};
+        return {minValue: 0, maxValue: 255, step: 1, pageSize: 0x10};
       case 'alpha':
-        return {minValue: 0, maxValue: 1, step: 0.01};
+        return {minValue: 0, maxValue: 1, step: 0.01, pageSize: 0.1};
       default:
         throw new Error('Unknown color channel: ' + channel);
     }
@@ -241,12 +241,12 @@ class HSBColor extends Color {
   getChannelRange(channel: ColorChannel): ColorChannelRange {
     switch (channel) {
       case 'hue':
-        return {minValue: 0, maxValue: 360, step: 1};
+        return {minValue: 0, maxValue: 360, step: 1, pageSize: 15};
       case 'saturation':
       case 'brightness':
-        return {minValue: 0, maxValue: 100, step: 1};
+        return {minValue: 0, maxValue: 100, step: 1, pageSize: 10};
       case 'alpha':
-        return {minValue: 0, maxValue: 1, step: 0.01};
+        return {minValue: 0, maxValue: 1, step: 0.01, pageSize: 0.1};
       default:
         throw new Error('Unknown color channel: ' + channel);
     }
@@ -328,12 +328,12 @@ class HSLColor extends Color {
   getChannelRange(channel: ColorChannel): ColorChannelRange {
     switch (channel) {
       case 'hue':
-        return {minValue: 0, maxValue: 360, step: 1};
+        return {minValue: 0, maxValue: 360, step: 1, pageSize: 15};
       case 'saturation':
       case 'lightness':
-        return {minValue: 0, maxValue: 100, step: 1};
+        return {minValue: 0, maxValue: 100, step: 1, pageSize: 10};
       case 'alpha':
-        return {minValue: 0, maxValue: 1, step: 0.01};
+        return {minValue: 0, maxValue: 1, step: 0.01, pageSize: 0.1};
       default:
         throw new Error('Unknown color channel: ' + channel);
     }

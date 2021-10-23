@@ -75,28 +75,34 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
 
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
-      if (!e.shiftKey && /^Arrow(?:Right|Left|Up|Down)$/.test(e.key)) {
-        return;
-      }
+      let isPage = e.shiftKey;
       switch (e.key) {
         case 'PageUp':
+          isPage = true;
         case 'ArrowUp':
-          stateRef.current.incrementY();
+        case 'Up':
+          stateRef.current.incrementY(isPage);
           focusedInputRef.current = inputYRef.current;
           break;
         case 'PageDown':
+          isPage = true;
         case 'ArrowDown':
-          stateRef.current.decrementY();
+        case 'Down':
+          stateRef.current.decrementY(isPage);
           focusedInputRef.current = inputYRef.current;
           break;
         case 'Home':
+          isPage = true;
         case 'ArrowLeft':
-          direction === 'rtl' ? stateRef.current.incrementY() : stateRef.current.decrementY();
+        case 'Left':
+          direction === 'rtl' ? stateRef.current.incrementX(isPage) : stateRef.current.decrementX(isPage);
           focusedInputRef.current = inputXRef.current;
           break;
         case 'End':
+          isPage = true;
         case 'ArrowRight':
-          direction === 'rtl' ? stateRef.current.decrementY() : stateRef.current.incrementY();
+        case 'Right':
+          direction === 'rtl' ? stateRef.current.decrementX(isPage) : stateRef.current.incrementX(isPage);
           focusedInputRef.current = inputXRef.current;
           break;
       }
@@ -111,7 +117,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
-      state.setDragging(true);
+      stateRef.current .setDragging(true);
     },
     onMove({deltaX, deltaY, pointerType}) {
       if (currentPosition.current == null) {
@@ -119,14 +125,6 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       }
       let {width, height} = containerRef.current.getBoundingClientRect();
       if (pointerType === 'keyboard') {
-        deltaX = maxMinOrZero(deltaX, xChannelStep);
-        deltaY = maxMinOrZero(deltaY, yChannelStep);
-        if (deltaX !== 0) {
-          stateRef.current[`${deltaX > 0 ? 'increment' : 'decrement'}X`]();
-        }
-        if (deltaY !== 0) {
-          stateRef.current[`${deltaY < 0 ? 'increment' : 'decrement'}Y`]();
-        }
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
       }
@@ -138,7 +136,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     },
     onMoveEnd() {
       isOnColorArea.current = undefined;
-      state.setDragging(false);
+      stateRef.current .setDragging(false);
       focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
       focusedInputRef.current = undefined;
     }
@@ -276,7 +274,9 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
           onThumbDown(e.changedTouches[0].identifier);
         }
       })
-  }, movePropsThumb, keyboardProps);
+  }, keyboardProps, movePropsThumb);
+  // order matters, keyboard need to finish before move so that onChangeEnd is fired last
+  // after valueRef in stately has been updated
 
 
   let xInputLabellingProps = useLabels({

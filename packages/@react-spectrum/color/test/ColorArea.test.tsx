@@ -128,26 +128,29 @@ describe('ColorArea', () => {
       describe('keyboard events', () => {
         it.each`
           Name            | props                                          | actions                                                                                                                   | result
-          ${'left/right'} | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Left'}), backward: (elem) => pressKey(elem, {key: 'Right'})}} | ${parseColor('#ff00fe')}
-          ${'up/down'}    | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Up'}), backward: (elem) => pressKey(elem, {key: 'Down'})}}    | ${parseColor('#ff01ff')}
+          ${'left/right'} | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft'}), backward: (elem) => pressKey(elem, {key: 'ArrowRight'})}} | ${parseColor('#ff00fe')}
+          ${'up/down'}    | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp'}), backward: (elem) => pressKey(elem, {key: 'ArrowDown'})}}    | ${parseColor('#ff01ff')}
+          ${'shiftleft/shiftright'} | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowRight', shiftKey: true})}} | ${parseColor('#f000e0')}
+          ${'shiftup/shiftdown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowDown', shiftKey: true})}}    | ${parseColor('#f010f0')}
+          ${'pageup/pagedown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'PageUp'}), backward: (elem) => pressKey(elem, {key: 'PageDown'})}}    | ${parseColor('#f010f0')}
+          ${'home/end'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'Home'}), backward: (elem) => pressKey(elem, {key: 'End'})}}    | ${parseColor('#f000e0')}
         `('$Name', ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
             <Component
               {...props}
-              defaultValue={'#ff00ff'}
               onChange={onChangeSpy}
               onChangeEnd={onChangeEndSpy} />
           );
           let sliders = getAllByRole('slider');
           userEvent.tab();
 
-          forward(sliders[0], {key: 'Left'});
+          forward(sliders[0]);
           expect(onChangeSpy).toHaveBeenCalledTimes(1);
           expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
           expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
           expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
 
-          backward(sliders[0], {key: 'Right'});
+          backward(sliders[0]);
           expect(onChangeSpy).toHaveBeenCalledTimes(2);
           expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
           expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
@@ -169,18 +172,18 @@ describe('ColorArea', () => {
           userEvent.tab();
           expect(buttonA).toBe(document.activeElement);
 
-          pressKey(sliders[0], {key: 'Left'});
+          pressKey(sliders[0], {key: 'LeftArrow'});
           expect(onChangeSpy).not.toHaveBeenCalled();
           expect(onChangeEndSpy).not.toHaveBeenCalled();
-          pressKey(sliders[0], {key: 'Right'});
+          pressKey(sliders[0], {key: 'RightArrow'});
           expect(onChangeSpy).not.toHaveBeenCalled();
           expect(onChangeEndSpy).not.toHaveBeenCalled();
         });
 
         it.each`
           Name            | props                                          | actions                                                                                                                   | result
-          ${'left/right'} | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Left'}), backward: (elem) => pressKey(elem, {key: 'Right'})}} | ${parseColor('#ff00f0')}
-          ${'up/down'}    | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'Up'}), backward: (elem) => pressKey(elem, {key: 'Down'})}}    | ${parseColor('#ff0fff')}
+          ${'left/right'} | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft'}), backward: (elem) => pressKey(elem, {key: 'ArrowRight'})}} | ${parseColor('#ff00f0')}
+          ${'up/down'}    | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp'}), backward: (elem) => pressKey(elem, {key: 'ArrowDown'})}}    | ${parseColor('#ff0fff')}
         `('$Name with step', ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
             <Component
@@ -193,13 +196,13 @@ describe('ColorArea', () => {
           let sliders = getAllByRole('slider');
           userEvent.tab();
 
-          forward(sliders[0], {key: 'Left'});
+          forward(sliders[0]);
           expect(onChangeSpy).toHaveBeenCalledTimes(1);
           expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
           expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
           expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
 
-          backward(sliders[0], {key: 'Right'});
+          backward(sliders[0]);
           expect(onChangeSpy).toHaveBeenCalledTimes(2);
           expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
           expect(onChangeEndSpy).toHaveBeenCalledTimes(2);

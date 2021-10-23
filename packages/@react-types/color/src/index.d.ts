@@ -40,7 +40,9 @@ export interface ColorChannelRange {
   /** The maximum value of the color channel. */
   maxValue: number,
   /** The step value of the color channel, used when incrementing and decrementing. */
-  step: number
+  step: number,
+  /** The page step value of the color channel, used when incrementing and decrementing. */
+  pageSize: number
 }
 
 /** Represents a color value. */

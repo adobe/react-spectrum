@@ -51,7 +51,17 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
             }
             setColor(e);
           }} />
-        <ColorSlider value={color} onChange={setColor} channel={zChannel} isDisabled={isDisabled} />
+        <ColorSlider
+          value={color}
+          onChange={(e) => {
+            if (props.onChange) {
+              props.onChange(e);
+            }
+            setColor(e);
+          }}
+          onChangeEnd={props.onChangeEnd}
+          channel={zChannel}
+          isDisabled={isDisabled} />
       </Flex>
       <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
         <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} title={`${color.toString('hex')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
@@ -63,7 +73,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
 
 export let XBlueYGreen = Template.bind({});
 XBlueYGreen.storyName = 'RGB xChannel="blue", yChannel="green"';
-XBlueYGreen.args = {xChannel: 'blue', yChannel: 'green', onChange: action('onChange')};
+XBlueYGreen.args = {xChannel: 'blue', yChannel: 'green', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XGreenYBlue = Template.bind({});
 XGreenYBlue.storyName = 'RGB xChannel="green", yChannel="blue"';

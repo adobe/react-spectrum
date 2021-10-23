@@ -38,14 +38,14 @@ export interface ColorAreaState {
   getThumbPosition(): {x: number, y: number},
 
   /** Increments the value of the horizontal axis channel by the given amount (defaults to 1). */
-  incrementX(): void,
+  incrementX(isMultistep?: boolean): void,
   /** Decrements the value of the horizontal axis channel by the given amount (defaults to 1). */
-  decrementX(): void,
+  decrementX(isMultistep?: boolean): void,
 
   /** Increments the value of the vertical axis channel by the given amount (defaults to 1). */
-  incrementY(): void,
+  incrementY(isMultistep?: boolean): void,
   /** Decrements the value of the vertical axis channel by the given amount (defaults to 1). */
-  decrementY(): void,
+  decrementY(isMultistep?: boolean): void,
 
   /** Whether the color area is currently being dragged. */
   readonly isDragging: boolean,
@@ -70,6 +70,7 @@ let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x =>
  * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
  */
 export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
+  // TODO: docs say the step props should be one, but should it be two different values?
   let {value, defaultValue, xChannel, yChannel, onChange, onChangeEnd, xChannelStep, yChannelStep} = props;
 
   if (!value && !defaultValue) {
@@ -176,49 +177,25 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       let y = 1 - (yValue - minValueY) / (maxValueY - minValueY);
       return {x, y};
     },
-    incrementX() {
+    incrementX(isMultistep) {
       let range = color.getChannelRange(channels.xChannel);
-      let stepSize = xChannelStep;
-      setXValue(
-        clamp(
-          (Math.floor(xValue / stepSize) + 1) * stepSize,
-          range.minValue,
-          range.maxValue
-        )
-      );
+      let stepSize =  isMultistep ? Math.max(range.pageSize, xChannelStep) : xChannelStep;
+      setXValue(snapValueToStep(xValue + stepSize, range.minValue, range.maxValue, stepSize));
     },
-    incrementY() {
+    incrementY(isMultistep) {
       let range = color.getChannelRange(channels.yChannel);
-      let stepSize = yChannelStep;
-      setYValue(
-        clamp(
-          (Math.floor(yValue / stepSize) + 1) * stepSize,
-          range.minValue,
-          range.maxValue
-        )
-      );
+      let stepSize = isMultistep ? Math.max(range.pageSize, yChannelStep) : yChannelStep;
+      setYValue(snapValueToStep(yValue + stepSize, range.minValue, range.maxValue, stepSize));
     },
-    decrementX() {
+    decrementX(isMultistep) {
       let range = color.getChannelRange(channels.xChannel);
-      let stepSize = xChannelStep;
-      setXValue(
-        clamp(
-          (Math.ceil(xValue / stepSize) - 1) * stepSize,
-          range.minValue,
-          range.maxValue
-        )
-      );
+      let stepSize = isMultistep ? Math.max(range.pageSize, xChannelStep) : xChannelStep;
+      setXValue(snapValueToStep(xValue - stepSize, range.minValue, range.maxValue, stepSize));
     },
-    decrementY() {
+    decrementY(isMultistep) {
       let range = color.getChannelRange(channels.yChannel);
-      let stepSize = yChannelStep;
-      setYValue(
-        clamp(
-          (Math.ceil(yValue / stepSize) - 1) * stepSize,
-          range.minValue,
-          range.maxValue
-        )
-      );
+      let stepSize = isMultistep ? Math.max(range.pageSize, yChannelStep) : yChannelStep;
+      setYValue(snapValueToStep(yValue - stepSize, range.minValue, range.maxValue, stepSize));
     },
     setDragging(isDragging) {
       let wasDragging = isDraggingRef;
