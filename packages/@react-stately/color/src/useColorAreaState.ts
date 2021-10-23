@@ -37,15 +37,15 @@ export interface ColorAreaState {
   /** Returns the coordinates of the thumb relative to the upper left corner of the color area as a percentage. */
   getThumbPosition(): {x: number, y: number},
 
-  /** Increments the value of the horizontal axis channel by the given amount (defaults to 1). */
-  incrementX(isMultistep?: boolean): void,
-  /** Decrements the value of the horizontal axis channel by the given amount (defaults to 1). */
-  decrementX(isMultistep?: boolean): void,
+  /** Increments the value of the horizontal axis channel by the channel step or page amount. */
+  incrementX(isPageStep?: boolean): void,
+  /** Decrements the value of the horizontal axis channel by the channel step or page amount. */
+  decrementX(isPageStep?: boolean): void,
 
-  /** Increments the value of the vertical axis channel by the given amount (defaults to 1). */
-  incrementY(isMultistep?: boolean): void,
-  /** Decrements the value of the vertical axis channel by the given amount (defaults to 1). */
-  decrementY(isMultistep?: boolean): void,
+  /** Increments the value of the vertical axis channel by the channel step or page amount. */
+  incrementY(isPageStep?: boolean): void,
+  /** Decrements the value of the vertical axis channel by the channel step or page amount. */
+  decrementY(isPageStep?: boolean): void,
 
   /** Whether the color area is currently being dragged. */
   readonly isDragging: boolean,
@@ -177,24 +177,24 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       let y = 1 - (yValue - minValueY) / (maxValueY - minValueY);
       return {x, y};
     },
-    incrementX(isMultistep) {
+    incrementX(isPageStep) {
       let range = color.getChannelRange(channels.xChannel);
-      let stepSize =  isMultistep ? Math.max(range.pageSize, xChannelStep) : xChannelStep;
+      let stepSize =  isPageStep ? Math.max(range.pageSize, xChannelStep) : xChannelStep;
       setXValue(snapValueToStep(xValue + stepSize, range.minValue, range.maxValue, stepSize));
     },
-    incrementY(isMultistep) {
+    incrementY(isPageStep) {
       let range = color.getChannelRange(channels.yChannel);
-      let stepSize = isMultistep ? Math.max(range.pageSize, yChannelStep) : yChannelStep;
+      let stepSize = isPageStep ? Math.max(range.pageSize, yChannelStep) : yChannelStep;
       setYValue(snapValueToStep(yValue + stepSize, range.minValue, range.maxValue, stepSize));
     },
-    decrementX(isMultistep) {
+    decrementX(isPageStep) {
       let range = color.getChannelRange(channels.xChannel);
-      let stepSize = isMultistep ? Math.max(range.pageSize, xChannelStep) : xChannelStep;
+      let stepSize = isPageStep ? Math.max(range.pageSize, xChannelStep) : xChannelStep;
       setXValue(snapValueToStep(xValue - stepSize, range.minValue, range.maxValue, stepSize));
     },
-    decrementY(isMultistep) {
+    decrementY(isPageStep) {
       let range = color.getChannelRange(channels.yChannel);
-      let stepSize = isMultistep ? Math.max(range.pageSize, yChannelStep) : yChannelStep;
+      let stepSize = isPageStep ? Math.max(range.pageSize, yChannelStep) : yChannelStep;
       setYValue(snapValueToStep(yValue - stepSize, range.minValue, range.maxValue, stepSize));
     },
     setDragging(isDragging) {
