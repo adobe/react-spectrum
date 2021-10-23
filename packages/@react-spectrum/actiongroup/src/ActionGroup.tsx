@@ -228,21 +228,23 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
             otherProps.UNSAFE_className
           )
         }>
-        <Provider {...providerProps}>
-          {children.map((item) => (
-            <ActionGroupItem
-              key={item.key}
-              onAction={onAction}
-              isDisabled={isDisabled}
-              isEmphasized={isEmphasized}
-              staticColor={staticColor}
-              item={item}
-              state={state}
-              hideButtonText={hideButtonText}
-              orientation={orientation} />
-          ))}
-          {menuItem}
-        </Provider>
+        <ClearSlots>
+          <Provider {...providerProps}>
+            {children.map((item) => (
+              <ActionGroupItem
+                key={item.key}
+                onAction={onAction}
+                isDisabled={isDisabled}
+                isEmphasized={isEmphasized}
+                staticColor={staticColor}
+                item={item}
+                state={state}
+                hideButtonText={hideButtonText}
+                orientation={orientation} />
+            ))}
+            {menuItem}
+          </Provider>
+        </ClearSlots>
       </div>
     </div>
   );

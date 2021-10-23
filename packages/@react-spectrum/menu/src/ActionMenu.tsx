@@ -11,6 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {ClearSlots, useSlotProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {FocusableRef} from '@react-types/shared';
 // @ts-ignore
@@ -21,7 +22,6 @@ import More from '@spectrum-icons/workflow/More';
 import React from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   props = useSlotProps(props, 'actionmenu');
@@ -32,23 +32,25 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
   }
 
   return (
-    <MenuTrigger
-      isOpen={props.isOpen}
-      align={props.align}
-      direction={props.direction}
-      shouldFlip={props.shouldFlip}>
-      <ActionButton
-        ref={ref}
-        {...props}
-        {...buttonProps}>
-        <More />
-      </ActionButton>
-      <Menu
-        children={props.children}
-        items={props.items}
-        disabledKeys={props.disabledKeys}
-        onAction={props.onAction} />
-    </MenuTrigger>
+    <ClearSlots>
+      <MenuTrigger
+        isOpen={props.isOpen}
+        align={props.align}
+        direction={props.direction}
+        shouldFlip={props.shouldFlip}>
+        <ActionButton
+          ref={ref}
+          {...props}
+          {...buttonProps}>
+          <More />
+        </ActionButton>
+        <Menu
+          children={props.children}
+          items={props.items}
+          disabledKeys={props.disabledKeys}
+          onAction={props.onAction} />
+      </MenuTrigger>
+    </ClearSlots>
   );
 }
 
