@@ -36,14 +36,6 @@ interface ColorAreaAria {
   yInputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-
-function maxMinOrZero(value1: number, value2: number): number {
-  if (value1 === 0) {
-    return 0;
-  }
-  return value1 < 0 ? Math.min(value1, -1 * value2) : Math.max(value1, value2);
-}
-
 /**
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
