@@ -14,8 +14,8 @@ import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
-import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
+import {useMove} from '@react-aria/interactions';
 
 interface ColorWheelAriaProps extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */
@@ -32,8 +32,6 @@ interface ColorWheelAria {
   /** Props for the visually hidden range input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
-
-const PAGE_MIN_STEP_SIZE = 6;
 
 /**
  * Provides the behavior and accessibility implementation for a color wheel component.
@@ -67,7 +65,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPosition.current = null;
       state.setDragging(true);
     },
-    onMove({deltaX, deltaY, pointerType}) {
+    onMove({deltaX, deltaY, pointerType, isPage = false}) {
       if (currentPosition.current == null) {
         currentPosition.current = stateRef.current.getThumbPosition(thumbRadius);
       }
@@ -75,9 +73,9 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPosition.current.y += deltaY;
       if (pointerType === 'keyboard') {
         if (deltaX > 0 || deltaY < 0) {
-          state.increment();
+          state.increment(isPage);
         } else if (deltaX < 0 || deltaY > 0) {
-          state.decrement();
+          state.decrement(isPage);
         }
       } else {
         stateRef.current.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);
@@ -169,21 +167,6 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     }
   };
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      switch (e.key) {
-        case 'PageUp':
-          e.preventDefault();
-          state.increment(PAGE_MIN_STEP_SIZE);
-          break;
-        case 'PageDown':
-          e.preventDefault();
-          state.decrement(PAGE_MIN_STEP_SIZE);
-          break;
-      }
-    }
-  });
-
   let trackInteractions = isDisabled ? {} : mergeProps({
     onMouseDown: (e: React.MouseEvent) => {
       if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
@@ -218,7 +201,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     onTouchStart: (e: React.TouchEvent) => {
       onThumbDown(e.changedTouches[0].identifier);
     }
-  }, movePropsThumb, keyboardProps);
+  }, movePropsThumb);
   let {x, y} = state.getThumbPosition(thumbRadius);
 
   // Provide a default aria-label if none is given

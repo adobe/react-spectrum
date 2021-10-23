@@ -17,8 +17,8 @@ import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '
 import intlMessages from '../intl/*.json';
 import {MessageDictionary} from '@internationalized/message';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
-import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
+import {useMove} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 const messages = new MessageDictionary(intlMessages);
@@ -65,58 +65,26 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
 
   let currentPosition = useRef<{x: number, y: number}>(null);
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      let isPage = e.shiftKey;
-      switch (e.key) {
-        case 'PageUp':
-          isPage = true;
-        case 'ArrowUp':
-        case 'Up':
-          stateRef.current.incrementY(isPage);
-          focusedInputRef.current = inputYRef.current;
-          break;
-        case 'PageDown':
-          isPage = true;
-        case 'ArrowDown':
-        case 'Down':
-          stateRef.current.decrementY(isPage);
-          focusedInputRef.current = inputYRef.current;
-          break;
-        case 'Home':
-          isPage = true;
-        case 'ArrowLeft':
-        case 'Left':
-          direction === 'rtl' ? stateRef.current.incrementX(isPage) : stateRef.current.decrementX(isPage);
-          focusedInputRef.current = inputXRef.current;
-          break;
-        case 'End':
-          isPage = true;
-        case 'ArrowRight':
-        case 'Right':
-          direction === 'rtl' ? stateRef.current.decrementX(isPage) : stateRef.current.incrementX(isPage);
-          focusedInputRef.current = inputXRef.current;
-          break;
-      }
-      if (focusedInputRef.current) {
-        e.preventDefault();
-        focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
-        focusedInputRef.current = undefined;
-      }
-    }
-  });
-
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
       stateRef.current .setDragging(true);
     },
-    onMove({deltaX, deltaY, pointerType}) {
+    onMove({deltaX, deltaY, pointerType, isPage = false}) {
       if (currentPosition.current == null) {
         currentPosition.current = stateRef.current.getThumbPosition();
       }
       let {width, height} = containerRef.current.getBoundingClientRect();
       if (pointerType === 'keyboard') {
+        if (deltaX > 0) {
+          stateRef.current.incrementX(isPage);
+        } else if (deltaX < 0) {
+          stateRef.current.decrementX(isPage);
+        } else if (deltaY > 0) {
+          stateRef.current.decrementY(isPage);
+        } else if (deltaY < 0) {
+          stateRef.current.incrementY(isPage);
+        }
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
       }
@@ -266,9 +234,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
           onThumbDown(e.changedTouches[0].identifier);
         }
       })
-  }, keyboardProps, movePropsThumb);
-  // order matters, keyboard need to finish before move so that onChangeEnd is fired last
-  // after valueRef in stately has been updated
+  }, movePropsThumb);
 
 
   let xInputLabellingProps = useLabels({
