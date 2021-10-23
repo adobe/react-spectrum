@@ -157,5 +157,6 @@ export interface ColorAreaProps extends ValueBase<string | Color> {
 export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumColorAreaProps extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {
+  /** Size of the Color Area. */
   size?: DimensionValue
 }
