@@ -112,3 +112,7 @@ XBlueYGreenAriaLabelled.args = {...XBlueYGreen.args, label: undefined, ariaLabel
 export let XBlueYGreenSize3000 = Template.bind({});
 XBlueYGreenSize3000.storyName = 'RGB xChannel="blue", yChannel="green", size="size-3000"';
 XBlueYGreenSize3000.args = {...XBlueYGreen.args, size: 'size-3000'};
+
+export let XBlueYGreenSize600 = Template.bind({});
+XBlueYGreenSize600.storyName = 'RGB xChannel="blue", yChannel="green", size="size-600"';
+XBlueYGreenSize600.args = {...XBlueYGreen.args, size: 'size-600'};

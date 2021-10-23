@@ -1,8 +1,10 @@
 .spectrum-ColorArea {
   position: relative;
   display: inline-block;
-  width: var(--spectrum-colorarea-default-width);
-  height: var(--spectrum-colorarea-default-height);
+  inline-size: var(--spectrum-colorarea-default-width);
+  block-size: var(--spectrum-colorarea-default-height);
+  min-inline-size: var(--spectrum-colorarea-min-width);
+  min-block-size: var(--spectrum-colorarea-min-height);
 
   border-radius: var(--spectrum-colorarea-border-radius);
 
