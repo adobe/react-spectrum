@@ -188,10 +188,20 @@ ReactDOM.render(<>
 </>, document.querySelector('.' + docsStyle.pageHeader));
 
 let pathToPage = document.querySelector('[data-github-src]').getAttribute('data-github-src');
-ReactDOM.render(<Button variant="primary" isQuiet elementType="a" href={encodeURI(`https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`)} target="_blank">
-  <LinkOut />
-  <Text>Edit this page</Text>
-</Button>, document.querySelector('#edit-page'));
+if (pathToPage) {
+  ReactDOM.render(
+    <Button
+      variant="primary"
+      isQuiet
+      elementType="a"
+      href={encodeURI(`https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`)}
+      target="_blank">
+      <LinkOut />
+      <Text>Edit this page</Text>
+    </Button>,
+    document.querySelector('#edit-page')
+  );
+}
 
 document.addEventListener('mousedown', (e) => {
   // Prevent focusing on links to other pages with the mouse to avoid flash of focus ring during navigation.

@@ -404,7 +404,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
             </MDXProvider>
           </article>
           {toc.length ? <ToC toc={toc} /> : null}
-          <div id="edit-page" className={docStyles.editPageContainer} />
+          {!pathToPage.includes('index.html') && <div id="edit-page" className={docStyles.editPageContainer} />}
           <Footer />
         </main>
       </div>
