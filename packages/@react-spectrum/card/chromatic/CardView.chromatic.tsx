@@ -12,13 +12,13 @@
 
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Button} from '@react-spectrum/button';
-import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
+import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '..';
 import {Content, Footer} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React, {useMemo} from 'react';
-import {SpectrumCardViewProps} from '@react-types/cards';
+import {SpectrumCardViewProps} from '@react-types/card';
 import {useCollator} from '@react-aria/i18n';
 
 const meta: Meta<SpectrumCardViewProps<object>> = {

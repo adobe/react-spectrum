@@ -358,6 +358,7 @@ footer li:last-child:after {
 
 .propTable td {
   background: none !important;
+  display: table-cell;
 }
 
 .type-description {

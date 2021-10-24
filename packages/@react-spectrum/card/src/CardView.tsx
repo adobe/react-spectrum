@@ -21,7 +21,7 @@ import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
-import {SpectrumCardViewProps} from '@react-types/cards';
+import {SpectrumCardViewProps} from '@react-types/card';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
@@ -77,7 +77,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   let state = useGridState({
     ...props,
-    collection: gridCollection
+    collection: gridCollection,
+    focusMode: 'cell'
   });
 
   cardViewLayout.collection = gridCollection;

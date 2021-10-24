@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Adobe. All rights reserved.
+ * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,23 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Card} from '@react-spectrum/cards';
-import {Meta, Story} from '@storybook/react';
-import React from 'react';
-import {SpectrumCardProps} from '@react-types/cards';
+import {isAppleDevice} from '@react-aria/utils';
 
-const meta: Meta<SpectrumCardProps> = {
-  title: 'Card',
-  component: Card
-};
+interface Event {
+  altKey: boolean,
+  ctrlKey: boolean
+}
 
-export default meta;
-
-
-const Template = (): Story<SpectrumCardProps> => (args) => (
-  <Card {...args} />
-);
-
-
-export const Default = Template().bind({});
-Default.args = {};
+export function isNonContiguousSelectionModifier(e: Event) {
+  // Ctrl + Arrow Up/Arrow Down has a system wide meaning on macOS, so use Alt instead.
+  // On Windows and Ubuntu, Alt + Space has a system wide meaning.
+  return isAppleDevice() ? e.altKey : e.ctrlKey;
+}

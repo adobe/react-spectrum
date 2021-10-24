@@ -43,6 +43,22 @@ storiesOf('HelpText', module)
     }
   )
   .add(
+    'error message with no description',
+    () => {
+      let [value, setValue] = useState('');
+
+      return (
+        <TextField
+          label="Empty field"
+          placeholder="Don't type here!"
+          errorMessage="Remove input."
+          value={value}
+          onChange={setValue}
+          validationState={value.length ? 'invalid' : 'valid'} />
+      );
+    }
+  )
+  .add(
     'description, validationState: valid',
     () => render({
       label: 'Nickname',
@@ -122,6 +138,15 @@ storiesOf('HelpText', module)
   .add(
     'description and custom description',
     () => renderCustomDescription({description: 'Password must be at least 8 characters.'})
+  )
+  .add(
+    'container with text alignment set',
+    () => (
+      <Flex direction="column" gap="size-200" UNSAFE_style={{textAlign: 'center'}}>
+        <TextField label="Password" description="Enter a single digit number." />
+        <TextField label="Password 2" errorMessage="Create a password with at least 8 characters." validationState="invalid" />
+      </Flex>
+    )
   );
 
 function render(props: SpectrumTextFieldProps = {}) {

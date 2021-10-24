@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,8 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-let React = require('react');
+import {Card} from '@react-spectrum/card';
+import {Meta, Story} from '@storybook/react';
+import React from 'react';
+import {SpectrumCardProps} from '@react-types/card';
 
-module.exports = function(props) {
-  return React.createElement('svg', props, React.createElement('path', {d: 'M 10,150 L 70,10 L 130,150 z'}));
+const meta: Meta<SpectrumCardProps> = {
+  title: 'Card',
+  component: Card
 };
+
+export default meta;
+
+
+const Template = (): Story<SpectrumCardProps> => (args) => (
+  <Card {...args} />
+);
+
+
+export const Default = Template().bind({});
+Default.args = {};

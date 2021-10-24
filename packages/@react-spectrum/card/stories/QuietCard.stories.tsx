@@ -12,7 +12,7 @@
 
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
-import {Card} from '../';
+import {Card} from '..';
 import {CardBase} from '../src/CardBase';
 import {CardViewContext} from '../src/CardViewContext';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
@@ -36,7 +36,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React, {Dispatch, SetStateAction, useState} from 'react';
-import {SpectrumCardProps} from '@react-types/cards';
+import {SpectrumCardProps} from '@react-types/card';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {usePress} from '@react-aria/interactions';
 
