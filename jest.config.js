@@ -13,14 +13,6 @@
 // For a detailed explanation regarding each configuration property, visit:
 // https://jestjs.io/docs/en/configuration.html
 
-// Mock v2 if not installed
-let mocks = {};
-try {
-  require.resolve('@react/react-spectrum/Button');
-} catch (err) {
-  mocks['^@react/.*'] = 'identity-obj-proxy';
-}
-
 module.exports = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
