@@ -171,8 +171,6 @@
 
 .react-spectrum-ListViewItem-actionmenu {
   grid-area: actionmenu;
-  flex-grow: 0;
-  flex-shrink: 0;
 }
 
 .react-spectrum-ListView-centeredWrapper {
