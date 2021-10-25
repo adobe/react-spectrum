@@ -271,10 +271,11 @@ describe('Radios', function () {
     let radioGroup = getByRole('radiogroup');
     let radios = getAllByRole('radio');
     expect(radioGroup).toBeTruthy();
+    expect(radioGroup).toHaveAttribute('aria-readonly', 'true');
     expect(radios.length).toBe(3);
-    expect(radios[0]).toHaveAttribute('aria-readonly', 'true');
-    expect(radios[1]).toHaveAttribute('aria-readonly', 'true');
-    expect(radios[2]).toHaveAttribute('aria-readonly', 'true');
+    for (let radio of radios) {
+      expect(radio).not.toHaveAttribute('aria-readonly');
+    }
 
     let cats = getByLabelText('Cats');
     userEvent.click(cats);
@@ -416,9 +417,14 @@ describe('Radios', function () {
   });
 
   it('v3 RadioGroup sets aria-required when isRequired is true', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isRequired: true}, []);
+    let {getByRole, getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isRequired: true}, []);
     let radioGroup = getByRole('radiogroup');
     expect(radioGroup).toHaveAttribute('aria-required', 'true');
+
+    let radios = getAllByRole('radio');
+    for (let radio of radios) {
+      expect(radio).not.toHaveAttribute('aria-required');
+    }
   });
 
   it('v3 RadioGroup sets aria-disabled when isDisabled is true', () => {

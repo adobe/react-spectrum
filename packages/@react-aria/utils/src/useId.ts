@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '@react-aria/ssr';
+import {useValueEffect} from './';
 
 let idsUpdaterMap: Map<string, (v: string) => void> = new Map();
 
@@ -87,18 +88,20 @@ export function mergeIds(idA: string, idB: string): string {
 /**
  * Used to generate an id, and after render, check if that id is rendered so we know
  * if we can use it in places such as labelledby.
+ * @param depArray - When to recalculate if the id is in the DOM.
  */
-export function useSlotId(): string {
+export function useSlotId(depArray: ReadonlyArray<any> = []): string {
   let id = useId();
-  let [resolvedId, setResolvedId] = useState(id);
-  useLayoutEffect(() => {
-    let setCurr = idsUpdaterMap.get(id);
-    if (setCurr && !document.getElementById(id)) {
-      setResolvedId(null);
-    } else {
-      setResolvedId(id);
-    }
-  }, [id]);
+  let [resolvedId, setResolvedId] = useValueEffect(id);
+  let updateId = useCallback(() => {
+    setResolvedId(function *() {
+      yield id;
+
+      yield document.getElementById(id) ? id : null;
+    });
+  }, [id, setResolvedId]);
+
+  useLayoutEffect(updateId, [id, updateId, ...depArray]);
 
   return resolvedId;
 }
