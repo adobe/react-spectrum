@@ -68,7 +68,6 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
-      stateRef.current .setDragging(true);
     },
     onMove({deltaX, deltaY, pointerType, isPage = false}) {
       if (currentPosition.current == null) {
@@ -96,7 +95,6 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     },
     onMoveEnd() {
       isOnColorArea.current = undefined;
-      stateRef.current .setDragging(false);
       focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
       focusedInputRef.current = undefined;
     }
