@@ -1979,6 +1979,20 @@ describe('ComboBox', function () {
   });
 
   describe('async', function () {
+    let clientHeightSpy;
+    let scrollHeightSpy;
+    beforeEach(() => {
+      // clientHeight is needed for ScrollView's updateSize()
+      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
+      // scrollHeight is for useVirutalizerItem to mock its getSize()
+      scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 32);
+    });
+    afterEach(() => {
+      clientHeightSpy.mockRestore();
+      scrollHeightSpy.mockRestore();
+      // This returns this to the value used by all the other tests
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    });
     it('onLoadMore is called on initial open', async () => {
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -2002,9 +2016,8 @@ describe('ComboBox', function () {
 
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
-      expect(onLoadMore).toHaveBeenCalledTimes(6);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
       await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
-
     });
 
     it('onLoadMore is not called on when previously opened', async () => {
@@ -2020,6 +2033,10 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenCalledTimes(0);
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
+      // this call and the one below are more correct for how the code should
+      // behave, the inital call would have a height of zero and after that a measureable height
+      clientHeightSpy.mockRestore();
+      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
       // open menu
       await act(async () => {
         triggerPress(button);
@@ -2028,9 +2045,9 @@ describe('ComboBox', function () {
 
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
-      expect(onLoadMore).toHaveBeenCalledTimes(6);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
 
-      // open menu
+      // close menu
       act(() => {
         combobox.blur();
         jest.runAllTimers();
@@ -2038,18 +2055,23 @@ describe('ComboBox', function () {
 
       expect(onOpenChange).toHaveBeenCalledTimes(2);
       expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
-      expect(onLoadMore).toHaveBeenCalledTimes(6);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
 
+      clientHeightSpy.mockRestore();
+      clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
       // reopen menu
       await act(async () => {
         triggerPress(button);
         jest.runAllTimers();
       });
 
-
       expect(onOpenChange).toHaveBeenCalledTimes(3);
       expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
-      expect(onLoadMore).toHaveBeenCalledTimes(10);
+      // Please test this in storybook.
+      // In virtualizer.tsx the onVisibleRectChange() causes this to be called twice
+      // because the browser limits the popover height via calculatePosition(),
+      // while the test doesn't, causing virtualizer to try to load more
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
       await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
     });
   });
@@ -4551,9 +4573,13 @@ describe('ComboBox', function () {
           trayInput.focus();
           fireEvent.change(trayInput, {target: {value: 'aard'}});
           jest.advanceTimersByTime(500);
-          let trayInputProgress = within(tray).getByRole('progressbar', {hidden: true});
-          expect(trayInputProgress).toBeTruthy();
-          expect(within(listbox).queryByRole('progressbar')).toBeNull();
+        });
+
+        let trayInputProgress = within(tray).getByRole('progressbar', {hidden: true});
+        expect(trayInputProgress).toBeTruthy();
+        expect(within(listbox).queryByRole('progressbar')).toBeNull();
+
+        await act(async () => {
           jest.runAllTimers();
         });
 
