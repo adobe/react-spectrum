@@ -165,7 +165,7 @@ export class GridLayout<T> extends BaseLayout<T> {
       for (let index = firstVisibleItem; index <= lastVisibleItem; index++) {
         let keyFromIndex = this.collection.rows[index].key;
         let layoutInfo = this.layoutInfos.get(keyFromIndex);
-        if (this.isVisible(layoutInfo, rect)) {
+        if (layoutInfo && this.isVisible(layoutInfo, rect)) {
           res.push(layoutInfo);
         }
       }

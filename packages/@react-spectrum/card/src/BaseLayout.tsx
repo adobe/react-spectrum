@@ -89,7 +89,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   isVisible(layoutInfo: LayoutInfo, rect: Rect) {
-    return layoutInfo?.rect.intersects(rect);
+    return layoutInfo.rect.intersects(rect);
   }
 
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
