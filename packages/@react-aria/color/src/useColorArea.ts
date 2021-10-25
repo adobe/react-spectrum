@@ -67,6 +67,11 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
 
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
+      // these are the cases that useMove doesn't handle
+      if (!((e.shiftKey && /^Arrow(?:Right|Left|Up|Down)$/.test(e.key)) || /^(PageUp|PageDown|Home|End)$/.test(e.key))) {
+        return;
+      }
+      stateRef.current.setDragging(true);
       let isPage = e.shiftKey;
       switch (e.key) {
         case 'PageUp':
@@ -98,6 +103,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
           focusedInputRef.current = inputXRef.current;
           break;
       }
+      stateRef.current.setDragging(false);
       if (focusedInputRef.current) {
         e.preventDefault();
         focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
@@ -109,7 +115,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
-      stateRef.current .setDragging(true);
+      stateRef.current.setDragging(true);
     },
     onMove({deltaX, deltaY, pointerType}) {
       if (currentPosition.current == null) {
@@ -117,6 +123,12 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       }
       let {width, height} = containerRef.current.getBoundingClientRect();
       if (pointerType === 'keyboard') {
+        if (deltaX > 0 || deltaX < 0) {
+          stateRef.current[`${deltaX > 0 ? 'increment' : 'decrement'}X`]();
+        }
+        if (deltaY > 0 || deltaY < 0) {
+          stateRef.current[`${deltaY < 0 ? 'increment' : 'decrement'}Y`]();
+        }
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
       }
@@ -128,7 +140,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     },
     onMoveEnd() {
       isOnColorArea.current = undefined;
-      stateRef.current .setDragging(false);
+      stateRef.current.setDragging(false);
       focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
       focusedInputRef.current = undefined;
     }
