@@ -10,33 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import React from 'react';
-import {render} from '@testing-library/react';
+import React, {useEffect, useLayoutEffect} from 'react';
+import {render, screen} from '@testing-library/react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useObjectRef} from '../';
 
 describe('useObjectRef', () => {
-  it('should return an object ref by default', () => {
+  it('returns an empty object ref by default', () => {
     const {result} = renderHook(() => useObjectRef());
 
-    expect(result.current.current).not.toBe(null);
-  });
-
-  it('should return an object ref for an object ref', () => {
-    const ref = React.createRef();
-
-    const {result} = renderHook(() => useObjectRef(ref));
-
-    expect(result.current.current).toBe(ref.current);
-  });
-
-  it('should return an object ref for a function ref', () => {
-    let inputElem;
-    const ref = (el) => inputElem = el;
-
-    const {result} = renderHook(() => useObjectRef(ref));
-
-    expect(result.current.current).toBe(inputElem);
+    expect(result.current).toBeDefined();
+    expect(result.current).not.toBeNull();
+    expect(result.current.current).toBeUndefined();
   });
 
   it('should support React.forwardRef for an object ref', () => {
@@ -65,5 +50,89 @@ describe('useObjectRef', () => {
     render(<TextField placeholder="Foo" ref={el => inputElem = el} />);
 
     expect(inputElem.placeholder).toBe('Foo');
+  });
+
+  /**
+   * This describe would completely fail if `useObjectRef` did not account
+   * for order of execution and rendering, especially when other components
+   * or Hooks utilize the `useLayoutEffect` Hook. In other words, it guards
+   * against use-cases where the returned `ref` value may not be up to date.
+   */
+  describe('when considering rendering order', () => {
+    const LeaderTextField = React.forwardRef((props, forwardedRef) => {
+      const inputRef = useObjectRef(forwardedRef);
+
+      return <input {...props} ref={inputRef} />;
+    });
+
+    it('takes precedence over useEffect', () => {
+      const FollowerTextField = React.forwardRef((props, forwardedRef) => {
+        const inputRef = React.useRef();
+
+        useEffect(() => {
+          forwardedRef.current && (inputRef.current.placeholder = forwardedRef.current.placeholder);
+        }, [forwardedRef]);
+
+        return <input {...props} ref={inputRef} />;
+      });
+
+      const Example = () => {
+        const outerRef = React.useRef();
+
+        /**
+         * Order of the following should not matter. So, even though the first
+         * component has a "Bar" placeholder, both will end up having the same
+         * placeholder text "Foo" because `outerRef` was forwarded to
+         * `LeaderTextField` and got updated by `useObjectRef` before
+         * `FollowerTextField` executed its `useEffect`.
+         */
+        return (
+          <>
+            <FollowerTextField placeholder="Bar" ref={outerRef} />
+            <LeaderTextField placeholder="Foo" ref={outerRef} />
+          </>
+        );
+      };
+
+      render(<Example />);
+
+      expect(screen.getAllByPlaceholderText(/foo/i)).toHaveLength(2);
+    });
+
+    it('batches up with useLayoutEffect', () => {
+      const FollowerTextField = React.forwardRef((props, forwardedRef) => {
+        const inputRef = React.useRef();
+
+        useLayoutEffect(() => {
+          forwardedRef.current && (inputRef.current.placeholder = forwardedRef.current.placeholder);
+        }, [forwardedRef]);
+
+        return <input {...props} ref={inputRef} />;
+      });
+
+      const Example = () => {
+        const outerRef = React.useRef();
+
+        /**
+         * Order of the following _does_ matter because `FollowerTextField`
+         * this time has a `useLayoutEffect`, which is synchronous and is
+         * executed in the order it was called. But, still, both will end
+         * up having the same placeholder text "Foo" because `outerRef` is
+         * forwarded to `LeaderTextField`, which, in this test, comes _before_
+         * `FollowerTextField`. Hence, `outerRef` gets updated by
+         * `useObjectRef`, so `FollowerTextField` gets the updated `ref` value.
+         */
+        return (
+          <>
+            <LeaderTextField placeholder="Foo" ref={outerRef} />
+            <FollowerTextField placeholder="Bar" ref={outerRef} />
+          </>
+        );
+      };
+
+      render(<Example />);
+
+      expect(screen.getAllByPlaceholderText(/foo/i)).toHaveLength(2);
+    });
   });
 });

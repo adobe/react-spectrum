@@ -85,7 +85,7 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
 
   useLayoutEffect(() => {
     if (!isLoading && onLoadMore && !state.isAnimating) {
-      if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
+      if (state.contentSize.height > 0 && state.contentSize.height <= state.virtualizer.visibleRect.height) {
         onLoadMore();
       }
     }
