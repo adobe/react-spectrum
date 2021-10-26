@@ -45,6 +45,11 @@ export interface PressEvent {
   altKey: boolean
 }
 
+export interface LongPressEvent extends Omit<PressEvent, 'type'> {
+  /** The type of long press event being fired. */
+  type: 'longpressstart' | 'longpressend' | 'longpress'
+}
+
 export interface HoverEvent {
   /** The type of hover event being fired. */
   type: 'hoverstart' | 'hoverend',

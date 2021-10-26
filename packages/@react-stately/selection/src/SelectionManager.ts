@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, Selection as ISelection, Node, PressEvent, SelectionMode} from '@react-types/shared';
+import {
+  Collection,
+  FocusStrategy,
+  Selection as ISelection,
+  LongPressEvent,
+  Node,
+  PressEvent,
+  SelectionBehavior,
+  SelectionMode
+} from '@react-types/shared';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
@@ -47,6 +56,20 @@ export class SelectionManager implements MultipleSelectionManager {
    */
   get disallowEmptySelection(): boolean {
     return this.state.disallowEmptySelection;
+  }
+
+  /**
+   * The selection behavior for the collection.
+   */
+  get selectionBehavior(): SelectionBehavior {
+    return this.state.selectionBehavior;
+  }
+
+  /**
+   * Sets the selection behavior for the collection.
+   */
+  setSelectionBehavior(selectionBehavior: SelectionBehavior) {
+    this.state.setSelectionBehavior(selectionBehavior);
   }
 
   /**
@@ -170,6 +193,15 @@ export class SelectionManager implements MultipleSelectionManager {
    * Extends the selection to the given key.
    */
   extendSelection(toKey: Key) {
+    if (this.selectionMode === 'none') {
+      return;
+    }
+
+    if (this.selectionMode === 'single') {
+      this.replaceSelection(toKey);
+      return;
+    }
+
     toKey = this.getKey(toKey);
 
     let selection: Selection;
@@ -241,7 +273,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     // Find a parent item to select
-    while (item.type !== 'item' && item.parentKey) {
+    while (item.type !== 'item' && item.parentKey != null) {
       item = this.collection.getItem(item.parentKey);
     }
 
@@ -256,6 +288,15 @@ export class SelectionManager implements MultipleSelectionManager {
    * Toggles whether the given key is selected.
    */
   toggleSelection(key: Key) {
+    if (this.selectionMode === 'none') {
+      return;
+    }
+
+    if (this.selectionMode === 'single' && !this.isSelected(key)) {
+      this.replaceSelection(key);
+      return;
+    }
+
     key = this.getKey(key);
     if (key == null) {
       return;
@@ -283,6 +324,10 @@ export class SelectionManager implements MultipleSelectionManager {
    * Replaces the selection with only the given key.
    */
   replaceSelection(key: Key) {
+    if (this.selectionMode === 'none') {
+      return;
+    }
+
     key = this.getKey(key);
     if (key == null) {
       return;
@@ -366,7 +411,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
   }
 
-  select(key: Key, e?: PressEvent | PointerEvent) {
+  select(key: Key, e?: PressEvent | LongPressEvent | PointerEvent) {
     if (this.selectionMode === 'none') {
       return;
     }
@@ -379,8 +424,11 @@ export class SelectionManager implements MultipleSelectionManager {
       }
     } else if (e && e.shiftKey) {
       this.extendSelection(key);
-    } else {
+    } else if (this.selectionBehavior === 'toggle' || (e && (e.metaKey || e.pointerType === 'touch' || e.pointerType === 'virtual'))) {
+      // if touch or virtual (VO) then we just want to toggle, otherwise it's impossible to multi select because they don't have modifier keys
       this.toggleSelection(key);
+    } else {
+      this.replaceSelection(key);
     }
   }
 
@@ -408,6 +456,19 @@ export class SelectionManager implements MultipleSelectionManager {
       if (!selection.has(key)) {
         return false;
       }
+    }
+
+    return true;
+  }
+
+  canSelectItem(key: Key) {
+    if (this.state.selectionMode === 'none' || this.state.disabledKeys.has(key)) {
+      return false;
+    }
+
+    let item = this.collection.getItem(key);
+    if (!item || (item.type === 'cell' && !this.allowsCellSelection)) {
+      return false;
     }
 
     return true;
