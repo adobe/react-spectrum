@@ -27,6 +27,8 @@ import {isIOS, runAfterTransition} from '@react-aria/utils';
 // (see https://github.com/adobe/react-spectrum/issues/1609).
 type State = 'default' | 'disabled' | 'restoring';
 
+// Note that state only matters here for iOS. Non-iOS gets user-select: none applied to the target element
+// rather than at the document level so we just need to apply/remove user-select: none for each pressed element individually
 let state: State = 'default';
 let savedUserSelect = '';
 let modifiedElementMap = new WeakMap<HTMLElement, string>();
@@ -41,6 +43,7 @@ export function disableTextSelection(target?: HTMLElement) {
     state = 'disabled';
   } else if (target) {
     // If not iOS, store the target's original user-select and change to user-select: none
+    // Ignore state since it doesn't apply for non iOS
     modifiedElementMap.set(target, target.style.userSelect);
     target.style.userSelect = 'none';
   }
@@ -75,6 +78,7 @@ export function restoreTextSelection(target?: HTMLElement) {
     }, 300);
   } else {
     // If not iOS, restore the target's original user-select if any
+    // Ignore state since it doesn't apply for non iOS
     if (target && modifiedElementMap.has(target)) {
       let targetOldUserSelect = modifiedElementMap.get(target);
       target.style.userSelect = targetOldUserSelect;

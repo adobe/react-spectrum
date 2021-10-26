@@ -2403,7 +2403,7 @@ describe('usePress', function () {
       let els = getAllByText('test');
 
       fireEvent.touchStart(els[0], {targetTouches: [{identifier: 1}]});
-      fireEvent.touchStart(els[1], {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(els[1], {targetTouches: [{identifier: 2}]});
 
       expect(els[0]).toHaveStyle('user-select: none');
       expect(els[1]).toHaveStyle('user-select: none');
@@ -2412,7 +2412,7 @@ describe('usePress', function () {
       expect(els[0]).toHaveStyle('user-select: text');
       expect(els[1]).toHaveStyle('user-select: none');
 
-      fireEvent.touchEnd(els[1], {changedTouches: [{identifier: 1}]});
+      fireEvent.touchEnd(els[1], {changedTouches: [{identifier: 2}]});
       expect(els[0]).toHaveStyle('user-select: text');
       expect(els[1]).toHaveStyle('user-select: text');
     });
