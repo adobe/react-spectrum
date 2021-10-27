@@ -38,7 +38,7 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-textfield-min-width);
   width: var(--spectrum-component-single-line-width);
 
-  &:not(.spectrum-Textfield--quiet).spectrum-Textfield--multiline .spectrum-Textfield-input {
+  &:not(.spectrum-Textfield--quiet).spectrum-Textfield--multiline .spectrum-Textfield-input:not(:disabled) {
     resize: vertical;
   }
 

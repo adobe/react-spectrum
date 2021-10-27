@@ -132,6 +132,22 @@ describe('ListView', function () {
 
     let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
+    describe('Type to select', function () {
+      it('focuses the correct cell when typing', function () {
+        let tree = renderList();
+        let target = getCell(tree, 'Baz');
+        let grid = tree.getByRole('grid');
+        act(() => grid.focus());
+        fireEvent.keyDown(grid, {key: 'B'});
+        fireEvent.keyUp(grid, {key: 'Enter'});
+        fireEvent.keyDown(grid, {key: 'A'});
+        fireEvent.keyUp(grid, {key: 'A'});
+        fireEvent.keyDown(grid, {key: 'Z'});
+        fireEvent.keyUp(grid, {key: 'Z'});
+        expect(document.activeElement).toBe(target);
+      });
+    });
+
     describe('ArrowRight', function () {
       it('should not move focus if no focusables present', function () {
         let tree = renderList();
@@ -300,6 +316,7 @@ describe('ListView', function () {
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
         fireEvent.keyDown(row, {key: ' '});
+        fireEvent.keyUp(row, {key: ' '});
 
         checkSelection(onSelectionChange, ['bar']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -312,6 +329,7 @@ describe('ListView', function () {
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
         fireEvent.keyDown(row, {key: 'Enter'});
+        fireEvent.keyUp(row, {key: 'Enter'});
 
         checkSelection(onSelectionChange, ['bar']);
         expect(row).toHaveAttribute('aria-selected', 'true');
