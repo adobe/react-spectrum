@@ -42,12 +42,12 @@
 }
 
 .react-spectrum-TimeField.react-spectrum-TimeField.react-spectrum-TimeField.react-spectrum-TimeField {
-  min-width: var(--spectrum-global-dimension-size-1600);
+  min-width: var(--spectrum-global-dimension-size-1250);
 }
 
 .react-spectrum-TimeField-fieldWrapper.react-spectrum-TimeField-fieldWrapper {
   width: auto;
-  min-width: var(--spectrum-global-dimension-size-1600);
+  min-width: var(--spectrum-global-dimension-size-1250);
 }
 
 .react-spectrum-Datepicker-input.react-spectrum-Datepicker-input {
@@ -132,6 +132,21 @@
   width: auto;
 }
 
+/* when displayed in a tray, reduce the padding of the dialog */
+@media (max-width: 700px) {
+  .react-spectrum-Datepicker-dialog {
+    --spectrum-dialog-padding-x: 8px;
+
+    .react-spectrum-Datepicker-dialogContent {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+}
+
 .react-spectrum-Datepicker-timeFields {
-  width: calc((var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12));
+  width: 100%;
+  min-width: calc(var(--spectrum-calendar-day-width) * 7);
+  max-width: calc((var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12));
 }

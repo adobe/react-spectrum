@@ -172,7 +172,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
-            <Content>
+            <Content UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
               <RangeCalendar
                 autoFocus
                 value={state.dateRange}
