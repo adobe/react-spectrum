@@ -399,13 +399,11 @@ function mod(n, m) {
   return ((n % m) + m) % m;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 class HSLColor extends Color {
   constructor(private hue: number, private saturation: number, private lightness: number, private alpha: number) {
     super();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static parse(value: string): HSLColor | void {
     let m: RegExpMatchArray | void;
     if ((m = value.match(HSL_REGEX))) {

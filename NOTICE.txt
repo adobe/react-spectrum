@@ -214,3 +214,13 @@ This codebase contains a modified portion of code from the TC39 Temporal proposa
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
     OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
     SUCH DAMAGE.
+
+-------------------------------------------------------------------------------
+This codebase contains a portion of code from Wikipedia which can be obtained at:
+  * SOURCE:
+    * https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_HSL
+    * https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_HSV
+    * https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB_alternative
+
+  * License:
+    * https://en.wikipedia.org/wiki/Wikipedia:Copyrights
