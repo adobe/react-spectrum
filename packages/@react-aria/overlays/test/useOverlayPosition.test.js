@@ -172,7 +172,7 @@ describe('useOverlayPosition', function () {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should not throw or close when target is window in a scroll event', function () {
+  it('should close the overlay when target is window in a scroll event', function () {
     // Cypress triggers an artificial scroll event in `screenshot` command:
     // https://github.com/cypress-io/cypress/blob/develop/packages/driver/src/cy/commands/screenshot.ts#L106
     // More info: https://github.com/adobe/react-spectrum/issues/2340
@@ -180,7 +180,7 @@ describe('useOverlayPosition', function () {
     render(<Example isOpen onClose={onClose} />);
 
     fireEvent.scroll(window);
-    expect(onClose).toHaveBeenCalledTimes(0);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
 
