@@ -173,6 +173,9 @@ governing permissions and limitations under the License.
   */
   padding: calc(var(--spectrum-global-dimension-size-25) * 2);
   margin: calc(var(--spectrum-global-dimension-size-25) * -2);
+
+  /* for zoom (a11y) and short windows */
+  min-height: var(--spectrum-alias-single-line-height);
 }
 
 
@@ -295,6 +298,7 @@ governing permissions and limitations under the License.
 }
 
 @media screen and (max-width: 700px) {
+  /* for zoom (a11y) */
   .spectrum-Dialog {
     --spectrum-dialog-padding: var(--spectrum-global-dimension-static-size-300);
   }
