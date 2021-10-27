@@ -51,16 +51,6 @@ governing permissions and limitations under the License.
     margin-inline-end: var(--spectrum-tag-icon-padding-x);
     margin-inline-start: calc(var(--spectrum-tag-deletable-border-size-key-focus) * -1);
   }
-
-  .spectrum-Tags-itemClearButton {
-    display: flex;
-    width: 100%;
-    margin-inline-end: calc(-0.5 * var(--spectrum-tag-padding-x));
-    margin-inline-start: var(--spectrum-tag-deletable-border-size-key-focus);
-    block-size: var(--spectrum-alias-font-size-default);
-    inline-size: var(--spectrum-alias-font-size-default);
-    border-radius: var(--spectrum-alias-border-radius-small);
-  }
 }
 
 .react-spectrum-Tag-icon {
@@ -91,8 +81,9 @@ governing permissions and limitations under the License.
 
 .react-spectrum-Tag-action {
   grid-area: action;
-  height: 100%;
+  height: 75%;
   width: var(--spectrum-global-dimension-size-100);
+  padding-top: var(--spectrum-global-dimension-size-25);
 
   [dir="ltr"] & {
     padding-left: var(--spectrum-global-dimension-size-100);

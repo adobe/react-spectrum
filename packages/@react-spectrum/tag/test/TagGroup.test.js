@@ -37,13 +37,12 @@ describe('TagGroup', function () {
 
     fireEvent.keyDown(tags[1], {key: 'Delete'});
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
-    expect(onRemoveSpy).toHaveBeenCalledWith(tags[1]);
   });
 
   it.each`
    Name           | Component     | TagComponent | props
-   ${'TagGroup'}  | ${TagGroup}   | ${Item}       | ${{isReadOnly: true, isRemovable: true, onRemove: onRemoveSpy}}
-  `('$Name can be read only', ({Component, TagComponent, props}) => {
+   ${'TagGroup'}  | ${TagGroup}   | ${Item}       | ${{isDisabled: true, isRemovable: true, onRemove: onRemoveSpy}}
+  `('$Name can be disabled', ({Component, TagComponent, props}) => {
     let {getByText} = render(
       <Component
         {...props}
@@ -54,6 +53,21 @@ describe('TagGroup', function () {
     let tag = getByText('Tag 1');
     fireEvent.keyDown(tag, {key: 'Delete', keyCode: 46});
     expect(onRemoveSpy).not.toHaveBeenCalledWith('Tag 1', expect.anything());
+  });
+
+  it.each`
+   Name          | Component         | TagComponent     | props
+   ${'Tag'}      | ${TagGroup}       | ${Item}          | ${{}}
+  `('$Name allows custom props to be passed through to the tag', function ({Component, TagComponent, props}) {
+    let {getByRole} = render(
+      <Component aria-label="tag group">
+        <TagComponent {...props} aria-label="Tag 1" data-foo="bar">
+          Cool Tag
+        </TagComponent>
+      </Component>);
+
+    let tag = getByRole('row');
+    expect(tag).toHaveAttribute('data-foo', 'bar');
   });
 
   it.each`
@@ -74,4 +88,41 @@ describe('TagGroup', function () {
     let tagContent = getByText('Tag 1');
     expect(tagContent).toHaveAttribute('role', 'gridcell');
   });
+
+  // Commented out until spectrum can provide use case for these scenarios
+  // it.each`
+  //  Name           | Component     | TagComponent | props
+  //  ${'TagGroup'}  | ${TagGroup}   | ${Item}       | ${{isReadOnly: true, isRemovable: true, onRemove: onRemoveSpy}}
+  // `('$Name is read only', ({Component, TagComponent, props}) => {
+  //   let {getByText} = render(
+  //     <Component
+  //       {...props}
+  //       aria-label="tag group">
+  //       <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
+  //     </Component>
+  //   );
+  //   let tag = getByText('Tag 1');
+  //   fireEvent.keyDown(tag, {key: 'Delete', keyCode: 46});
+  //   expect(onRemoveSpy).not.toHaveBeenCalledWith('Tag 1', expect.anything());
+  // });
+  //
+  // it.each`
+  //  Name          | Component         | TagComponent     | props
+  //  ${'Tag'}      | ${TagGroup}       | ${Item}          | ${{validationState: 'invalid'}}
+  // `('$Name can be invalid', function ({Component, TagComponent, props}) {
+  //   let {getByRole, debug} = render(
+  //     <Component
+  //       {...props}
+  //       aria-label="tag group">
+  //       <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
+  //     </Component>
+  //   );
+  //
+  //   debug();
+  //
+  //   let tag = getByRole('row');
+  //   expect(tag).toHaveAttribute('aria-invalid', 'true');
+  // });
 });
+
+// need to add test for focus after onremove

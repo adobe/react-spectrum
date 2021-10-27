@@ -43,6 +43,7 @@ export function Tag(props) {
 
   return (
     <div
+      {...otherProps}
       {...styleProps}
       {...mergeProps(tagProps, hoverProps, focusProps, labelProps)}
       role={tagProps.role}
@@ -78,9 +79,8 @@ function TagRemoveButton(props) {
 
   let clearBtnRef = useRef();
   let {gridCellProps} = useGridCell({
-    node: item.childNodes[1],
-    ref: clearBtnRef
-  }, state);
+    node: item.childNodes[1]
+  }, state, clearBtnRef);
 
   return (
     <span
