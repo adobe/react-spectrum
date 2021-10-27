@@ -173,9 +173,6 @@ describe('useOverlayPosition', function () {
   });
 
   it('should close the overlay when target is window in a scroll event', function () {
-    // Cypress triggers an artificial scroll event in `screenshot` command:
-    // https://github.com/cypress-io/cypress/blob/develop/packages/driver/src/cy/commands/screenshot.ts#L106
-    // More info: https://github.com/adobe/react-spectrum/issues/2340
     let onClose = jest.fn();
     render(<Example isOpen onClose={onClose} />);
 
