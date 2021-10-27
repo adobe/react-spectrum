@@ -148,7 +148,8 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-table-row-background-color-selected);
     }
 
-    &.is-hovered .spectrum-Table-cell {
+    &.is-hovered .spectrum-Table-cell,
+    &.is-active .spectrum-Table-cell:not(.is-disabled) {
       background-color: var(--spectrum-table-row-background-color-selected-hover);
     }
 
@@ -156,6 +157,10 @@ tbody.spectrum-Table-body {
     &.is-focused .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected-key-focus);
     }
+  }
+
+  &.spectrum-Table-row--highlightSelection {
+    border-bottom-color: var(--spectrum-global-color-blue-500);
   }
 
   &.is-drop-target {

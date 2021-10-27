@@ -24,13 +24,13 @@ import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from '../stories/HidingColumns';
+import {installPointerEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -1340,12 +1340,6 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
       });
 
-      it('should marshall focus to the child on press of the cell', function () {
-        let tree = renderFocusable();
-        triggerPress(tree.getAllByRole('rowheader')[0]);
-        expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
-      });
-
       it('should move focus to the first row when tabbing into the table from the start', function () {
         let tree = renderFocusable();
 
@@ -2283,6 +2277,236 @@ describe('TableView', function () {
         expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in ascending order', 'assertive', 500);
         triggerPress(columnheaders[0]);
         expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in descending order', 'assertive', 500);
+      });
+    });
+
+    describe('selectionStyle highlight', function () {
+      installPointerEvent();
+
+      it('will replace the current selection with the new selection', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        userEvent.click(getCell(tree, 'Baz 10'));
+
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Baz 20'), {shiftKey: true});
+
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Foo 5'));
+
+        checkSelection(onSelectionChange, [
+          'Foo 5'
+        ]);
+
+        checkRowSelection(rows.slice(1, 5), false);
+        checkRowSelection(rows.slice(5, 6), true);
+        checkRowSelection(rows.slice(6), false);
+
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Foo 10'), {shiftKey: true});
+
+        checkSelection(onSelectionChange, [
+          'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10'
+        ]);
+
+        checkRowSelection(rows.slice(1, 5), false);
+        checkRowSelection(rows.slice(5, 11), true);
+        checkRowSelection(rows.slice(11), false);
+      });
+
+      it('will add to the current selection if the command key is pressed', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        userEvent.click(getCell(tree, 'Baz 10'));
+
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Baz 20'), {shiftKey: true});
+
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Foo 5'), {metaKey: true});
+
+        checkSelection(onSelectionChange, [
+          'Foo 5', 'Foo 10', 'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15',
+          'Foo 16', 'Foo 17', 'Foo 18', 'Foo 19', 'Foo 20'
+        ]);
+
+        checkRowSelection(rows.slice(1, 5), false);
+        checkRowSelection(rows.slice(5, 6), true);
+        checkRowSelection(rows.slice(6, 10), false);
+        checkRowSelection(rows.slice(10, 21), true);
+        checkRowSelection(rows.slice(21), false);
+      });
+
+      it('should toggle selection with touch', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
+      });
+
+      it('should support double click to perform onAction with mouse', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
+        checkSelection(onSelectionChange, ['Foo 5']);
+        expect(onAction).not.toHaveBeenCalled();
+
+        userEvent.dblClick(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 5');
+      });
+
+      it('should support single tap to perform onAction with touch', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 5');
+      });
+
+      it('should support single tap to perform onAction with screen reader', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch', width: 0, height: 0});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 5');
+      });
+
+      it('should support long press to enter selection mode on touch', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).not.toHaveBeenCalled();
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+
+        act(() => jest.advanceTimersByTime(800));
+
+        checkSelection(onSelectionChange, ['Foo 5']);
+        expect(onAction).not.toHaveBeenCalled();
+        expect(tree.queryByLabelText('Select All')).not.toBeNull();
+
+        fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+
+        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
+
+        // Deselect all to exit selection mode
+        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+
+        act(() => jest.runAllTimers());
+        checkSelection(onSelectionChange, []);
+        expect(onAction).not.toHaveBeenCalled();
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+      });
+
+      it('should support Enter to perform onAction with keyboard', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        checkSelection(onSelectionChange, ['Foo 10']);
+        expect(onAction).not.toHaveBeenCalled();
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(getCell(tree, 'Baz 5'), {key: 'Enter'});
+        fireEvent.keyUp(getCell(tree, 'Baz 5'), {key: 'Enter'});
+        checkSelection(onSelectionChange, ['Foo 5']);
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 5');
+      });
+
+      it('should perform onAction on single click with selectionMode: none', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionMode: 'none', onAction});
+
+        userEvent.click(getCell(tree, 'Baz 10'));
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 10');
+      });
+
+      it('should move selection when using the arrow keys', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        userEvent.click(getCell(tree, 'Baz 5'));
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        checkSelection(onSelectionChange, ['Foo 6']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 6']);
+      });
+
+      it('should support non-contiguous selection with the keyboard', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        userEvent.click(getCell(tree, 'Baz 5'));
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 6').closest('[role="row"]'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 7').closest('[role="row"]'));
+
+        fireEvent.keyDown(document.activeElement, {key: ' ', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: ' ', ctrlKey: true});
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 7']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: ' '});
+        fireEvent.keyUp(document.activeElement, {key: ' '});
+        checkSelection(onSelectionChange, ['Foo 7']);
       });
     });
   });

@@ -281,6 +281,57 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'selectionStyle: highlight',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+     )
+   )
+  .add(
+    'selectionStyle: highlight, onAction',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+     )
+   )
+   .add(
+    'selectionMode: none, onAction',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+     )
+   )
+  .add(
     // For testing https://github.com/adobe/react-spectrum/issues/1885
     'swap selection mode',
     () => (

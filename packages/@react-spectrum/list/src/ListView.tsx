@@ -16,6 +16,7 @@ import {
   DOMRef,
   LoadingState,
   MultipleSelection,
+  SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
@@ -36,23 +37,38 @@ import {Virtualizer} from '@react-aria/virtualizer';
 
 export const ListViewContext = React.createContext(null);
 
-export function useListLayout<T>(state: ListState<T>) {
+const ROW_HEIGHTS = {
+  compact: {
+    medium: 32,
+    large: 40
+  },
+  regular: {
+    medium: 40,
+    large: 50
+  },
+  spacious: {
+    medium: 48,
+    large: 60
+  }
+};
+
+export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
       new ListLayout<T>({
-        estimatedRowHeight: scale === 'large' ? 40 : 32,
+        estimatedRowHeight: ROW_HEIGHTS[density][scale],
         padding: 0,
         collator
       })
-    , [collator, scale]);
+    , [collator, scale, density]);
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection {
+interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -61,7 +77,8 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   isQuiet?: boolean,
   loadingState?: LoadingState,
   renderEmptyState?: () => JSX.Element,
-  transitionDuration?: number
+  transitionDuration?: number,
+  onAction?: (key: string) => void
 }
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -69,7 +86,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     density = 'regular',
     loadingState,
     isQuiet,
-    transitionDuration = 0
+    transitionDuration = 0,
+    onAction
   } = props;
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
@@ -98,9 +116,11 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }), [collection]);
   let state = useGridState({
     ...props,
-    collection: gridCollection
+    collection: gridCollection,
+    focusMode: 'cell',
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
-  let layout = useListLayout(state);
+  let layout = useListLayout(state, props.density || 'regular');
   let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({
     collection: state.collection,
     disabledKeys: state.disabledKeys,
@@ -151,7 +171,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} />
+              <ListViewItem item={item} onAction={onAction} />
             );
           } else if (type === 'loader') {
             return (
