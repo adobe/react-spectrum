@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import fc from 'fast-check';
+import {getDeltaE00} from 'delta-e';
 import {parseColor} from '../src/Color';
+import space from 'color-space';
 
 describe('Color', function () {
   describe('hex', function () {
@@ -155,8 +158,56 @@ describe('Color', function () {
   });
 
   describe('conversions', () => {
-    // Can't test round trips with color spaces because they can represent different values that
-    // don't exist in any other color space. For example: hsl 0, 1%, 0 -> rgb is 0, 0, 0 -> hsl 0, 0%, 0%
+    // Since color spaces can represent unique values that don't exist in other spaces we can't test round trips easily.
+    // For example: hsl 0, 1%, 0 -> rgb is 0, 0, 0 -> hsl 0, 0%, 0%
+    // In order to test round trips, we can use delta-e, a way of telling the difference/distance between two colors.
+    // We can use a conversion to LAB as the common ground to get the delta-e.
+    // One other note: HSB is the same as HSV, most libraries only recognize HSV. Our HSB calculations either aren't
+    // working correctly or the conversion to LAB isn't working great because the delta-e's for it are well above
+    // acceptable limits.
+
+    let rgb = fc.tuple(fc.integer({min: 0, max: 255}), fc.integer({min: 0, max: 255}), fc.integer({min: 0, max: 255}))
+      .map(([r, g, b]) => (['rgb', `rgb(${r}, ${g}, ${b})`, [r, g, b]]));
+    let hsl = fc.tuple(fc.integer({min: 0, max: 360}), fc.integer({min: 0, max: 100}), fc.integer({min: 0, max: 100}))
+      .map(([h, s, l]) => (['hsl', `hsl(${h}, ${s}%, ${l}%)`, [h, s, l]]));
+    // let hsb = fc.tuple(fc.integer({min: 0, max: 360}), fc.integer({min: 0, max: 100}), fc.integer({min: 0, max: 100}))
+    //   .map(([h, s, b]) => (['hsb', `hsb(${h}, ${s}%, ${b}%)`, [h, s, b]]));
+    let options = fc.record({
+      colorSpace: fc.oneof(fc.constant('rgb'), fc.constant('hsl')),
+      color: fc.oneof(rgb, hsl)
+    });
+    let parse = {
+      rgb: (rgbString) => {
+        let rgbRegex = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/;
+        return rgbString.match(rgbRegex).slice(1).map(Number);
+      },
+      hsl: (hslString) => {
+        let hslRegex = /^hsl\(([\d.]+),\s*(\d+)%,\s*(\d+)%\)$/;
+        return hslString.match(hslRegex).slice(1).map(Number);
+      },
+      hsb: (hsbString) => {
+        let hsbRegex = /^hsb\(([\d.]+),\s*(\d+)%,\s*(\d+)%\)$/;
+        return hsbString.match(hsbRegex).slice(1).map(Number);
+      }
+    };
+    let positionMap = {0: 'L', 1: 'A', 2: 'B'};
+    let arrayToLab = (acc, item, index) => {
+      acc[positionMap[index]] = item;
+      return acc;
+    };
+
+    it('can perform round trips', () => {
+      fc.assert(fc.property(options, ({colorSpace, color}) => {
+        let testColor = parseColor(color[1]);
+        let convertedColor = testColor.toString(colorSpace);
+        let convertedColorObj = parse[colorSpace](convertedColor);
+        let labConvertedResult = space[colorSpace === 'hsb' ? 'hsv' : colorSpace].lab(convertedColorObj).reduce(arrayToLab, {});
+        let labConvertedStart = space[color[0] === 'hsb' ? 'hsv' : color[0]].lab(color[2]).reduce(arrayToLab, {});
+        // 2 chosen because that's about the limit of what humans can detect
+        expect(getDeltaE00(labConvertedStart, labConvertedResult)).toBeLessThan(2);
+      }));
+    });
+
 
     // check a bare minimum that it won't blow up
     it('hsl to rgb', () => {
