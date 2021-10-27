@@ -14,7 +14,6 @@ import {GridCollection} from '@react-types/grid';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {Node} from '@react-types/shared';
-import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 export interface GridRowProps<T> {
@@ -23,7 +22,9 @@ export interface GridRowProps<T> {
   /** Whether the grid row is contained in a virtual scroller. */
   isVirtualized?: boolean,
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean,
+  /** Handler that is called when a user performs an action on the row. */
+  onAction?: () => void
 }
 
 export interface GridRowAria {
@@ -40,7 +41,8 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   let {
     node,
     isVirtualized,
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    onAction
   } = props;
 
   let {itemProps} = useSelectableItem({
@@ -48,19 +50,16 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     key: node.key,
     ref,
     isVirtualized,
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    onAction
   });
 
   let isSelected = state.selectionManager.isSelected(node.key);
-  let isDisabled = state.disabledKeys.has(node.key);
-
-  // TODO: move into useSelectableItem?
-  let {pressProps} = usePress({...itemProps, isDisabled});
 
   let rowProps: HTMLAttributes<HTMLElement> = {
     role: 'row',
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
-    ...pressProps
+    ...itemProps
   };
 
   if (isVirtualized) {
