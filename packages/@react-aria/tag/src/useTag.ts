@@ -40,14 +40,12 @@ export function useTag(props, state): TagAria {
   let labelRef = useRef();
 
   let {rowProps} = useGridRow({
-    node: item,
-    ref: tagRef
-  }, state);
+    node: item
+  }, state, tagRef);
   let {gridCellProps} = useGridCell({
     node: item.childNodes[0],
-    ref: labelRef,
     focusMode: 'cell'
-  }, state);
+  }, state, labelRef);
 
   function onKeyDown(e: KeyboardEvent<HTMLElement>) {
     if (e.key === 'Delete' || e.key === 'Backspace') {
