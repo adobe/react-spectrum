@@ -153,4 +153,42 @@ describe('Color', function () {
       expect(color.toString('hsba')).toBe('hsba(320, 100%, 0%, 0)');
     });
   });
+
+  describe('conversions', () => {
+    // Can't test round trips with color spaces because they can represent different values that
+    // don't exist in any other color space. For example: hsl 0, 1%, 0 -> rgb is 0, 0, 0 -> hsl 0, 0%, 0%
+
+    // check a bare minimum that it won't blow up
+    it('hsl to rgb', () => {
+      expect(parseColor('hsl(0, 0%, 0%)').toString('rgb')).toBe('rgb(0, 0, 0)');
+      expect(parseColor('hsl(0, 1%, 0%)').toString('rgb')).toBe('rgb(0, 0, 0)');
+      expect(parseColor('hsl(0, 0%, 100%)').toString('rgb')).toBe('rgb(255, 255, 255)');
+    });
+
+    it('hsb to rgb', () => {
+      expect(parseColor('hsb(0, 0%, 0%)').toString('rgb')).toBe('rgb(0, 0, 0)');
+      expect(parseColor('hsb(0, 1%, 0%)').toString('rgb')).toBe('rgb(0, 0, 0)');
+      expect(parseColor('hsb(0, 0%, 100%)').toString('rgb')).toBe('rgb(255, 255, 255)');
+    });
+
+    it('rgb to hsl', () => {
+      expect(parseColor('rgb(0, 0, 0)').toString('hsl')).toBe('hsl(0, 0%, 0%)');
+      expect(parseColor('rgb(0, 1, 0)').toString('hsl')).toBe('hsl(120, 100%, 0%)');
+    });
+
+    it('rgb to hsb', () => {
+      expect(parseColor('rgb(0, 0, 0)').toString('hsb')).toBe('hsb(0, 0%, 0%)');
+      expect(parseColor('rgb(0, 1, 0)').toString('hsb')).toBe('hsb(120, 100%, 0%)');
+    });
+
+    it('hsl to hsb', () => {
+      expect(parseColor('hsl(0, 0%, 0%)').toString('hsb')).toBe('hsb(0, 0%, 0%)');
+      expect(parseColor('hsl(0, 1%, 0%)').toString('hsb')).toBe('hsb(0, 0%, 0%)');
+    });
+
+    it('hsb to hsl', () => {
+      expect(parseColor('hsb(0, 0%, 0%)').toString('hsl')).toBe('hsl(0, 0%, 0%)');
+      expect(parseColor('hsb(0, 1%, 0%)').toString('hsl')).toBe('hsl(0, 0%, 0%)');
+    });
+  });
 });

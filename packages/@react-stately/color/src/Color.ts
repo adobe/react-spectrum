@@ -61,6 +61,10 @@ abstract class Color implements IColor {
   getChannelName(channel: ColorChannel, locale: string) {
     return messages.getStringForLocale(channel, locale);
   }
+
+  getColorSpace(): ColorFormat {
+    return null;
+  }
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
@@ -90,7 +94,9 @@ class RGBColor extends Color {
         let b = parseInt(m[2][4] + m[2][5], 16);
         return new RGBColor(r, g, b, 1);
       }
-    } if ((m = value.match(RGB_REGEX))) {
+    }
+
+    if ((m = value.match(RGB_REGEX))) {
       const [r, g, b, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim()));
       return new RGBColor(clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255), clamp(a ?? 1, 0, 1));
     }
@@ -119,6 +125,12 @@ class RGBColor extends Color {
       case 'rgb':
       case 'rgba':
         return this;
+      case 'hsb':
+      case 'hsba':
+        return this.toHSB();
+      case 'hsl':
+      case 'hsla':
+        return this.toHSL();
       default:
         throw new Error('Unsupported color conversion: rgb -> ' + format);
     }
@@ -126,6 +138,82 @@ class RGBColor extends Color {
 
   toHexInt(): number {
     return this.red << 16 | this.green << 8 | this.blue;
+  }
+
+  private toHSB(): Color {
+    let r = this.red / 255;
+    let g = this.green / 255;
+    let b = this.blue / 255;
+    let max = Math.max(r, g, b);
+    let min = Math.min(r, g, b);
+    let h: number;
+    let s: number;
+    let d = max - min;
+
+    s = max === 0 ? 0 : d / max;
+
+    if (d === 0) {
+      h = 0; // achromatic
+    } else {
+      switch (max) {
+        case r:
+          h = (g - b) / d + (g < b ? 6 : 0);
+          break;
+        case g:
+          h = (b - r) / d + 2;
+          break;
+        case b:
+          h = (r - g) / d + 4;
+          break;
+      }
+
+      h /= 6;
+    }
+
+    return new HSBColor(
+      h * 360,
+      s * 100,
+      b * 100,
+      this.alpha
+    );
+  }
+
+  private toHSL(): Color {
+    let r = this.red / 255;
+    let g = this.green / 255;
+    let b = this.blue / 255;
+    let max = Math.max(r, g, b);
+    let min = Math.min(r, g, b);
+    let h: number;
+    let s: number;
+    let l = (max + min) / 2;
+
+    if (max === min) {
+      h = s = 0; // achromatic
+    } else {
+      let d = max - min;
+      s = d / (l < .5 ? max + min : 2 - max - min);
+
+      switch (max) {
+        case r:
+          h = (g - b) / d + (g < b ? 6 : 0);
+          break;
+        case g:
+          h = (b - r) / d + 2;
+          break;
+        case b:
+          h = (r - g) / d + 4;
+          break;
+      }
+
+      h /= 6;
+    }
+
+    return new HSLColor(
+      h * 360,
+      s * 100,
+      l * 100,
+      this.alpha);
   }
 
   clone(): Color {
@@ -162,6 +250,10 @@ class RGBColor extends Color {
     }
     return new NumberFormatter(locale, options).format(value);
   }
+
+  getColorSpace(): ColorFormat {
+    return 'rgb';
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -187,10 +279,14 @@ class HSBColor extends Color {
     switch (format) {
       case 'css':
         return this.toHSL().toString('css');
+      case 'hex':
+        return this.toRGB().toString('hex');
+      case 'hexa':
+        return this.toRGB().toString('hexa');
       case 'hsb':
-        return `hsb(${this.hue}, ${this.saturation}%, ${this.brightness}%)`;
+        return `hsb(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.brightness)}%)`;
       case 'hsba':
-        return `hsba(${this.hue}, ${this.saturation}%, ${this.brightness}%, ${this.alpha})`;
+        return `hsba(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.brightness)}%, ${this.alpha})`;
       default:
         return this.toFormat(format).toString(format);
     }
@@ -204,26 +300,49 @@ class HSBColor extends Color {
       case 'hsl':
       case 'hsla':
         return this.toHSL();
+      case 'rgb':
+      case 'rgba':
+        return this.toRGB();
       default:
         throw new Error('Unsupported color conversion: hsb -> ' + format);
     }
   }
 
+  /**
+   * Converts a HSB color to HSL.
+   * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_HSL.
+   * @returns An HSLColor object.
+   */
   private toHSL(): Color {
-    // determine the lightness in the range [0,100]
-    var l = (2 - this.saturation / 100) * this.brightness / 2;
+    let saturation = this.saturation / 100;
+    let brightness = this.brightness / 100;
+    let lightness = brightness * (1 - saturation / 2);
+    saturation = lightness === 0 || lightness === 1 ? 0 : (brightness - lightness) / Math.min(lightness, 1 - lightness);
 
-    // store the HSL components
+    return new HSLColor(
+      this.hue,
+      saturation * 100,
+      lightness * 100,
+      this.alpha
+    );
+  }
+
+  /**
+   * Converts a HSV color value to RGB.
+   * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB_alternative.
+   * @returns An RGBColor object.
+   */
+  private toRGB(): Color {
     let hue = this.hue;
-    let saturation = this.saturation * this.brightness / (l < 50 ? l * 2 : 200 - l * 2);
-    let lightness = l;
-
-    // correct a division-by-zero error
-    if (isNaN(saturation)) {
-      saturation = 0;
-    }
-
-    return new HSLColor(hue, saturation, lightness, this.alpha);
+    let saturation = this.saturation / 100;
+    let brightness = this.brightness / 100;
+    let fn = (n: number, k = (n + hue / 60) % 6) => brightness - saturation * brightness * Math.max(Math.min(k, 4 - k, 1), 0);
+    return new RGBColor(
+      Math.round(fn(5) * 255),
+      Math.round(fn(3) * 255),
+      Math.round(fn(1) * 255),
+      this.alpha
+    );
   }
 
   clone(): Color {
@@ -264,6 +383,10 @@ class HSBColor extends Color {
     }
     return new NumberFormatter(locale, options).format(value);
   }
+
+  getColorSpace(): ColorFormat {
+    return 'hsb';
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -293,24 +416,70 @@ class HSLColor extends Color {
 
   toString(format: ColorFormat | 'css') {
     switch (format) {
+      case 'hex':
+        return this.toRGB().toString('hex');
+      case 'hexa':
+        return this.toRGB().toString('hexa');
       case 'hsl':
-        return `hsl(${this.hue}, ${this.saturation}%, ${this.lightness}%)`;
+        return `hsl(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.lightness)}%)`;
       case 'css':
       case 'hsla':
-        return `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, ${this.alpha})`;
+        return `hsla(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.lightness)}%, ${this.alpha})`;
       default:
         return this.toFormat(format).toString(format);
     }
   }
-
   toFormat(format: ColorFormat): IColor {
     switch (format) {
       case 'hsl':
       case 'hsla':
         return this;
+      case 'hsb':
+      case 'hsba':
+        return this.toHSB();
+      case 'rgb':
+      case 'rgba':
+        return this.toRGB();
       default:
         throw new Error('Unsupported color conversion: hsl -> ' + format);
     }
+  }
+
+  /**
+   * Converts a HSL color to HSB.
+   * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_HSV.
+   * @returns An HSBColor object.
+   */
+  private toHSB(): Color {
+    let saturation = this.saturation / 100;
+    let lightness = this.lightness / 100;
+    let brightness = lightness + saturation * Math.min(lightness, 1 - lightness);
+    saturation = brightness === 0 ? 0 : 2 * (1 - lightness / brightness);
+    return new HSBColor(
+      this.hue,
+      saturation * 100,
+      brightness * 100,
+      this.alpha
+    );
+  }
+
+  /**
+   * Converts a HSL color to RGB.
+   * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB_alternative.
+   * @returns An RGBColor object.
+   */
+  private toRGB(): Color {
+    let hue = this.hue;
+    let saturation = this.saturation / 100;
+    let lightness = this.lightness / 100;
+    let a = saturation * Math.min(lightness, 1 - lightness);
+    let fn = (n: number, k = (n + hue / 30) % 12) => lightness - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return new RGBColor(
+      Math.round(fn(0) * 255),
+      Math.round(fn(8) * 255),
+      Math.round(fn(4) * 255),
+      this.alpha
+    );
   }
 
   clone(): Color {
@@ -350,5 +519,9 @@ class HSLColor extends Color {
         throw new Error('Unknown color channel: ' + channel);
     }
     return new NumberFormatter(locale, options).format(value);
+  }
+
+  getColorSpace(): ColorFormat {
+    return 'hsl';
   }
 }
