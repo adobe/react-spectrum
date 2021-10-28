@@ -124,9 +124,7 @@ export interface MoveMoveEvent extends BaseMoveEvent {
   /** The amount moved in the X direction since the last event. */
   deltaX: number,
   /** The amount moved in the Y direction since the last event. */
-  deltaY: number,
-  /** If it's a page movement, such as Shift+ArrowRight. */
-  isPage?: boolean
+  deltaY: number
 }
 
 export interface MoveEndEvent extends BaseMoveEvent {

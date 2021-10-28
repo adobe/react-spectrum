@@ -43,7 +43,7 @@ export function useMove(props: MoveEvents): MoveResult {
       disableTextSelection();
       state.current.didMove = false;
     };
-    let move = (pointerType: PointerType, deltaX: number, deltaY: number, isPage?: boolean) => {
+    let move = (pointerType: PointerType, deltaX: number, deltaY: number) => {
       if (deltaX === 0 && deltaY === 0) {
         return;
       }
@@ -59,8 +59,7 @@ export function useMove(props: MoveEvents): MoveResult {
         type: 'move',
         pointerType,
         deltaX: deltaX,
-        deltaY: deltaY,
-        isPage
+        deltaY: deltaY
       });
     };
     let end = (pointerType: PointerType) => {
@@ -173,61 +172,41 @@ export function useMove(props: MoveEvents): MoveResult {
       };
     }
 
-    let triggerKeyboardMove = (deltaX: number, deltaY: number, isPage?: boolean) => {
+    let triggerKeyboardMove = (deltaX: number, deltaY: number) => {
       start();
-      move('keyboard', deltaX, deltaY, isPage);
+      move('keyboard', deltaX, deltaY);
       end('keyboard');
     };
 
     moveProps.onKeyDown = (e) => {
+      // don't want useMove to handle shift key + arrow events because it doesn't do anything
+      if (e.shiftKey) {
+        return;
+      }
       switch (e.key) {
         case 'Left':
         case 'ArrowLeft':
           e.preventDefault();
           e.stopPropagation();
-          triggerKeyboardMove(-1, 0, e.shiftKey);
+          triggerKeyboardMove(-1, 0);
           break;
         case 'Right':
         case 'ArrowRight':
           e.preventDefault();
           e.stopPropagation();
-          triggerKeyboardMove(1, 0, e.shiftKey);
+          triggerKeyboardMove(1, 0);
           break;
         case 'Up':
         case 'ArrowUp':
           e.preventDefault();
           e.stopPropagation();
-          triggerKeyboardMove(0, -1, e.shiftKey);
+          triggerKeyboardMove(0, -1);
           break;
         case 'Down':
         case 'ArrowDown':
           e.preventDefault();
           e.stopPropagation();
-          triggerKeyboardMove(0, 1, e.shiftKey);
-          break;
-          // TODO: include page size as an option? these are page movements, also Shift + arrows count for that
-          // it can be different depending on the slider/s 2D sliders home/end&pageup/down are on two axis
-          // in 1D sliders, home/end go to min/max, vs pageup/down are page size increments
-          // should triggerKeyboardMove include an is PageMove? include a key?
-        case 'PageUp':
-          e.preventDefault();
-          e.stopPropagation();
-          triggerKeyboardMove(0, -1, true);
-          break;
-        case 'PageDown':
-          e.preventDefault();
-          e.stopPropagation();
-          triggerKeyboardMove(0, 1, true);
-          break;
-        case 'Home':
-          e.preventDefault();
-          e.stopPropagation();
-          triggerKeyboardMove(-1, 0, true);
-          break;
-        case 'End':
-          e.preventDefault();
-          e.stopPropagation();
-          triggerKeyboardMove(1, 0, true);
+          triggerKeyboardMove(0, 1);
           break;
       }
     };
