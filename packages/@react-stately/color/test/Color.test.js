@@ -208,7 +208,6 @@ describe('Color', function () {
       }));
     });
 
-
     // check a bare minimum that it won't blow up
     it('hsl to rgb', () => {
       expect(parseColor('hsl(0, 0%, 0%)').toString('rgb')).toBe('rgb(0, 0, 0)');
@@ -225,11 +224,13 @@ describe('Color', function () {
     it('rgb to hsl', () => {
       expect(parseColor('rgb(0, 0, 0)').toString('hsl')).toBe('hsl(0, 0%, 0%)');
       expect(parseColor('rgb(0, 1, 0)').toString('hsl')).toBe('hsl(120, 100%, 0%)');
+      expect(parseColor('rgb(20, 40, 60)').toString('hsl')).toBe('hsl(210, 50%, 16%)');
     });
 
     it('rgb to hsb', () => {
       expect(parseColor('rgb(0, 0, 0)').toString('hsb')).toBe('hsb(0, 0%, 0%)');
       expect(parseColor('rgb(0, 1, 0)').toString('hsb')).toBe('hsb(120, 100%, 0%)');
+      expect(parseColor('rgb(20, 40, 60)').toString('hsb')).toBe('hsb(210, 67%, 24%)');
     });
 
     it('hsl to hsb', () => {

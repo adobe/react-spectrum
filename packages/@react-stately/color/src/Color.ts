@@ -62,9 +62,7 @@ abstract class Color implements IColor {
     return messages.getStringForLocale(channel, locale);
   }
 
-  getColorSpace(): ColorFormat {
-    return null;
-  }
+  abstract getColorSpace(): ColorFormat
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
