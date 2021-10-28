@@ -77,7 +77,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   let state = useGridState({
     ...props,
-    collection: gridCollection
+    collection: gridCollection,
+    focusMode: 'cell'
   });
 
   cardViewLayout.collection = gridCollection;

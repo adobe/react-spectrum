@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, MultipleSelection, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {CollectionBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key, useMemo} from 'react';
+import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
 
@@ -34,7 +35,7 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelection, Sortable {
+export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean
 }

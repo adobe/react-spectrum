@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
@@ -21,7 +21,7 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
   disabledKeys?: Iterable<Key>
 }
 
-export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, AriaLabelingProps, StyleProps {
+export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -35,7 +35,9 @@ export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, AriaLabe
   /** Whether the TableView should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Sets what the TableView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element
+  renderEmptyState?: () => JSX.Element,
+  /** Handler that is called when a user performs an action on a row. */
+  onAction?: (key: Key) => void
 }
 
 export interface TableHeaderProps<T> {

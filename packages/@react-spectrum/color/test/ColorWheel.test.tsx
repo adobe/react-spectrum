@@ -12,6 +12,7 @@
 
 import {act, fireEvent, render} from '@testing-library/react';
 import {ColorWheel} from '../';
+import {ControlledHSL} from '../stories/ColorWheel.stories';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import {parseColor} from '@react-stately/color';
 import React from 'react';
@@ -328,6 +329,25 @@ describe('ColorWheel', () => {
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 240).toString('hsla'));
       end(thumb, {pageX: CENTER, pageY: CENTER - THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('clicking on the track works', () => {
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
+      let {container: _container, getByRole} = render(<ControlledHSL defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
+      let slider = getByRole('slider');
+      let container = _container.firstChild.firstChild as HTMLElement;
+      container.getBoundingClientRect = getBoundingClientRect;
+
+      expect(document.activeElement).not.toBe(slider);
+      start(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 90).toString('hsla'));
+      expect(document.activeElement).toBe(slider);
+
+      end(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(document.activeElement).toBe(slider);
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
     });
   });
 });
