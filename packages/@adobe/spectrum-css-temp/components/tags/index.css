@@ -53,20 +53,14 @@ governing permissions and limitations under the License.
   }
 }
 
-.react-spectrum-Tag-icon {
+.spectrum-Tag-icon {
   grid-area: icon;
   align-items: center;
   justify-items: center;
-
-  [dir="ltr"] & {
-    padding-right: var(--spectrum-global-dimension-size-100);
-  }
-  [dir="rtl"] & {
-    padding-left: var(--spectrum-global-dimension-size-100);
-  }
+  padding-inline-end: var(--spectrum-global-dimension-size-100);
 }
 
-.react-spectrum-Tag-content {
+.spectrum-Tag-content {
   grid-area: content;
   block-size: 100%;
   line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
@@ -79,22 +73,16 @@ governing permissions and limitations under the License.
   outline: none;
 }
 
-.react-spectrum-Tag-action {
+.spectrum-Tag-action {
   grid-area: action;
   height: 75%;
   width: var(--spectrum-global-dimension-size-100);
   padding-top: var(--spectrum-global-dimension-size-25);
-
-  [dir="ltr"] & {
-    padding-left: var(--spectrum-global-dimension-size-100);
-  }
-  [dir="rtl"] & {
-    padding-right: var(--spectrum-global-dimension-size-100);
-  }
+  padding-inline-start: var(--spectrum-global-dimension-size-100);
 
   &:focus-ring {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
-    border-radius: inherit;
+    border-radius: 20%;
   }
 }

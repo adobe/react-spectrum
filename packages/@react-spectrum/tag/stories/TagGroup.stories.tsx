@@ -27,17 +27,17 @@ storiesOf('TagGroup', module)
   .add(
     'items',
     () => (
-      <TagGroup items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
+      <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
         {item =>
-          <Item key={item.key} textValue={item.label}><Text>{item.label}</Text></Item>
+          <Item key={item.key} aria-label={item.label}><Text>{item.label}</Text></Item>
         }
       </TagGroup>
     )
   )
   .add('icons', () => (
-    <TagGroup items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
+    <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
       {item => (
-        <Item key={item.key} textValue={item.label}>
+        <Item key={item.key} aria-label={item.label}>
           <Icon>
             <Audio />
           </Icon>
@@ -67,8 +67,8 @@ storiesOf('TagGroup', module)
 
 function render(props: any = {}) {
   return (
-    <TagGroup {...props}>
-      <Item key="1">Cool Tag 1</Item>
+    <TagGroup {...props} aria-label="tag group">
+      <Item key="1" >Cool Tag 1</Item>
       <Item key="2">Cool Tag 2</Item>
       <Item key="3">Cool Tag 3</Item>
     </TagGroup>
@@ -88,7 +88,7 @@ function WithAnnouncing() {
     <React.Fragment>
       {/*
         // @ts-ignore */}
-      <TagGroup onKeyDown={handleKeyDown}>
+      <TagGroup onKeyDown={handleKeyDown} aria-label="tag group">
         {tags.map((t, index) => <Item key={index}>{t}</Item>)}
       </TagGroup>
     </React.Fragment>

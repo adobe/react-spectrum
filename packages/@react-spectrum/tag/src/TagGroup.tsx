@@ -81,7 +81,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     ref: domRef,
     direction,
     focusMode: 'cell',
-    cycleMode: 'between'
+    cycleMode: 'within'
   });
   let {gridProps} = useGrid({
     ...props,

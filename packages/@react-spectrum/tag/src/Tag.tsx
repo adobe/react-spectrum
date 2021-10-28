@@ -17,7 +17,6 @@ import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
-import {useGridCell} from '@react-aria/grid';
 import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
 
@@ -61,9 +60,9 @@ export function Tag(props) {
       )}>
       <SlotProvider
         slots={{
-          icon: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-icon'), size: 'XS'},
-          text: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-content')},
-          tagRemoveButton: {UNSAFE_className: classNames(styles, 'react-spectrum-Tag-action')}
+          icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
+          text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content')},
+          tagRemoveButton: {UNSAFE_className: classNames(styles, 'spectrum-Tag-action')}
         }}>
         {typeof props.children === 'string' ? <Text><span role="gridcell">{props.children}</span></Text> : props.children}
         {isRemovable && <TagRemoveButton item={item} state={state} {...clearButtonProps} />}
@@ -74,22 +73,16 @@ export function Tag(props) {
 
 function TagRemoveButton(props) {
   props = useSlotProps(props, 'tagRemoveButton');
-  let {item, state, ...otherProps} = props;
-  let {styleProps} = useStyleProps(otherProps);
-
+  let {styleProps} = useStyleProps(props);
   let clearBtnRef = useRef();
-  let {gridCellProps} = useGridCell({
-    node: item.childNodes[1]
-  }, state, clearBtnRef);
 
   return (
     <span
-      {...mergeProps(gridCellProps, styleProps)}
+      {...styleProps}
       ref={clearBtnRef}>
       <ClearButton
         focusClassName={classNames(styles, 'focus-ring')}
-        UNSAFE_className={classNames(styles, 'spectrum-Tags-itemClearButton')}
-        {...otherProps} />
+        {...props} />
     </span>
   );
 }
