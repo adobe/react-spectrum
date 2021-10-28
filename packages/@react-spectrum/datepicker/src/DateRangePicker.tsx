@@ -86,6 +86,9 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   // Note: this description is intentionally not passed to useDatePicker.
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
+  if (description && !props.description) {
+    descriptionProps.id = null;
+  }
 
   let v = state.value?.start || props.placeholderValue;
   let placeholder: DateValue = placeholderValue;

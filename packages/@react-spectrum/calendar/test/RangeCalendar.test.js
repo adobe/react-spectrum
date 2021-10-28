@@ -11,9 +11,9 @@
  */
 
 jest.mock('@react-aria/live-announcer');
+import {act, fireEvent, render} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
 import {CalendarDate} from '@internationalized/date';
-import {fireEvent, render} from '@testing-library/react';
 import {RangeCalendar} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -373,7 +373,7 @@ describe('RangeCalendar', () => {
           onChange={onChange} />
       );
 
-      userEvent.click(getByText('17'));
+      act(() => userEvent.click(getByText('17')));
 
       let selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('17');
@@ -381,13 +381,13 @@ describe('RangeCalendar', () => {
       expect(onChange).toHaveBeenCalledTimes(0);
 
       // hovering updates the highlighted dates
-      fireEvent.pointerEnter(getByText('10'));
+      fireEvent.pointerEnter(getByText('10').parentElement);
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('10');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('17');
       expect(onChange).toHaveBeenCalledTimes(0);
 
-      fireEvent.pointerEnter(getByText('7'));
+      fireEvent.pointerEnter(getByText('7').parentElement);
       userEvent.click(getByText('7'));
 
       selectedDates = getAllByLabelText('selected', {exact: false});
@@ -411,7 +411,7 @@ describe('RangeCalendar', () => {
           onChange={onChange} />
       );
 
-      userEvent.click(getByText('17'));
+      act(() => userEvent.click(getByText('17')));
 
       let selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('17');
@@ -582,7 +582,7 @@ describe('RangeCalendar', () => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
 
-      userEvent.click(getByText('22'));
+      act(() => userEvent.click(getByText('22')));
 
       let selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('22');
@@ -596,7 +596,7 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('25');
       expect(onChange).toHaveBeenCalledTimes(0);
 
-      userEvent.click(document.body);
+      act(() => userEvent.click(document.body));
 
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('22');
@@ -612,7 +612,7 @@ describe('RangeCalendar', () => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
 
-      userEvent.click(getByText('22'));
+      act(() => userEvent.click(getByText('22')));
 
       let selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('22');
@@ -627,7 +627,7 @@ describe('RangeCalendar', () => {
       expect(onChange).toHaveBeenCalledTimes(0);
 
       let next = getByLabelText('Next');
-      userEvent.click(next);
+      act(() => userEvent.click(next));
 
       selectedDates = getAllByLabelText('selected', {exact: false}).filter(d => !d.hasAttribute('aria-disabled'));
       expect(selectedDates[0].textContent).toBe('1');
@@ -640,7 +640,7 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
       expect(onChange).toHaveBeenCalledTimes(0);
 
-      userEvent.click(getByText('10'));
+      userEvent.click(getByText('10').parentElement);
       selectedDates = getAllByLabelText('selected', {exact: false}).filter(d => !d.hasAttribute('aria-disabled'));
       expect(selectedDates[0].textContent).toBe('1');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
@@ -786,8 +786,8 @@ describe('RangeCalendar', () => {
       expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
-      cell = getByText('17');
-      userEvent.click(cell);
+      cell = getByText('17').parentElement;
+      act(() => userEvent.click(cell));
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell.parentElement).not.toHaveAttribute('aria-selected');
       expect(document.activeElement).toBe(cell);
@@ -866,7 +866,7 @@ describe('RangeCalendar', () => {
       );
 
       // start a selection
-      userEvent.click(getByText('17'));
+      act(() => userEvent.click(getByText('17')));
 
       let selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('17');
@@ -906,8 +906,8 @@ describe('RangeCalendar', () => {
     it('announces when the selected date range changes', () => {
       let {getByText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
 
-      userEvent.click(getByText('17'));
-      userEvent.click(getByText('10'));
+      act(() => userEvent.click(getByText('17')));
+      act(() => userEvent.click(getByText('10')));
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('Selected Range: June 10, 2019 to June 17, 2019', 'polite', 4000);
@@ -931,12 +931,12 @@ describe('RangeCalendar', () => {
       let caption = document.getElementById(grid.getAttribute('aria-describedby'));
       expect(caption).toHaveTextContent('Selected Range: June 5, 2019 to June 10, 2019');
 
-      userEvent.click(getByText('17'));
+      act(() => userEvent.click(getByText('17')));
 
       // in selection mode, the caption should be empty
       expect(grid).not.toHaveAttribute('aria-describedby');
 
-      userEvent.click(getByText('10'));
+      act(() => userEvent.click(getByText('10')));
 
       caption = document.getElementById(grid.getAttribute('aria-describedby'));
       expect(grid).toHaveAttribute('aria-describedby', caption.id);
