@@ -314,6 +314,17 @@ storiesOf('ActionGroup', module)
     )
   )
   .add(
+    'overflowMode: collapse, disabledKeys',
+    () => (
+      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsible({disabledKeys: ['edit', 'duplicate']})}
+        {renderCollapsible({density: 'compact', disabledKeys: ['edit', 'duplicate']})}
+        {renderCollapsible({density: 'compact', disabledKeys: ['edit', 'duplicate'], isJustified: true})}
+        {renderCollapsible({disabledKeys: ['edit', 'duplicate'], isQuiet: true})}
+      </div>
+    )
+  )
+  .add(
     'buttonLabelBehavior: hide',
     () => (
       <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>

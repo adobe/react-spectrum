@@ -16,13 +16,11 @@ import {FocusableRef} from '@react-types/shared';
 import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
-import {useFormProps} from '@react-spectrum/form';
 import {useLabel} from '@react-aria/label';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
-  props = useFormProps(props);
   let {styleProps} = useStyleProps(props);
   let {labelProps, fieldProps} = useLabel(props);
   let {
