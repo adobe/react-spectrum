@@ -337,10 +337,9 @@ workflows:
           requires:
             - install
       - docs-verdaccio:
-      # Approach: Only run on commits to main? This means we won't have a comment on a PR though.
-          # filters:
-          #   branches:
-          #     only: main
+          filters:
+            branches:
+              only: main
           requires:
             - install
       - deploy:
@@ -360,9 +359,6 @@ workflows:
           requires:
             - docs-production
       - deploy-verdaccio:
-          # filters:
-          #   branches:
-          #     only: main
           requires:
             - docs-verdaccio
       - comment:
