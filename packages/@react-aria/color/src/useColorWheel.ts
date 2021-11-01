@@ -116,9 +116,13 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPointer.current = id;
       focusInput();
       state.setDragging(true);
-      addGlobalListener(window, 'mouseup', onThumbUp, false);
-      addGlobalListener(window, 'touchend', onThumbUp, false);
-      addGlobalListener(window, 'pointerup', onThumbUp, false);
+
+      if (typeof PointerEvent !== 'undefined') {
+        addGlobalListener(window, 'pointerup', onThumbUp, false);
+      } else {
+        addGlobalListener(window, 'mouseup', onThumbUp, false);
+        addGlobalListener(window, 'touchend', onThumbUp, false);
+      }
     }
   };
 
@@ -130,9 +134,12 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPointer.current = undefined;
       isOnTrack.current = false;
 
-      removeGlobalListener(window, 'mouseup', onThumbUp, false);
-      removeGlobalListener(window, 'touchend', onThumbUp, false);
-      removeGlobalListener(window, 'pointerup', onThumbUp, false);
+      if (typeof PointerEvent !== 'undefined') {
+        removeGlobalListener(window, 'pointerup', onThumbUp, false);
+      } else {
+        removeGlobalListener(window, 'mouseup', onThumbUp, false);
+        removeGlobalListener(window, 'touchend', onThumbUp, false);
+      }
     }
   };
 
@@ -149,9 +156,12 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       focusInput();
       state.setDragging(true);
 
-      addGlobalListener(window, 'mouseup', onTrackUp, false);
-      addGlobalListener(window, 'touchend', onTrackUp, false);
-      addGlobalListener(window, 'pointerup', onTrackUp, false);
+      if (typeof PointerEvent !== 'undefined') {
+        addGlobalListener(window, 'pointerup', onTrackUp, false);
+      } else {
+        addGlobalListener(window, 'mouseup', onTrackUp, false);
+        addGlobalListener(window, 'touchend', onTrackUp, false);
+      }
     }
   };
 
@@ -163,9 +173,13 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       state.setDragging(false);
       focusInput();
 
-      removeGlobalListener(window, 'mouseup', onTrackUp, false);
-      removeGlobalListener(window, 'touchend', onTrackUp, false);
-      removeGlobalListener(window, 'pointerup', onTrackUp, false);
+
+      if (typeof PointerEvent !== 'undefined') {
+        removeGlobalListener(window, 'pointerup', onTrackUp, false);
+      } else {
+        removeGlobalListener(window, 'mouseup', onTrackUp, false);
+        removeGlobalListener(window, 'touchend', onTrackUp, false);
+      }
     }
   };
 
@@ -185,21 +199,23 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   });
 
   let trackInteractions = isDisabled ? {} : mergeProps({
-    onMouseDown: (e: React.MouseEvent) => {
-      if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-        return;
-      }
-      onTrackDown(e.currentTarget, undefined, e.clientX, e.clientY);
-    },
-    onPointerDown: (e: React.PointerEvent) => {
-      if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
-        return;
-      }
-      onTrackDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
-    },
-    onTouchStart: (e: React.TouchEvent) => {
-      onTrackDown(e.currentTarget, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-    }
+    ...(typeof PointerEvent !== 'undefined' ? {
+      onPointerDown: (e: React.PointerEvent) => {
+        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        onTrackDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
+      }} : {
+        onMouseDown: (e: React.MouseEvent) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onTrackDown(e.currentTarget, undefined, e.clientX, e.clientY);
+        },
+        onTouchStart: (e: React.TouchEvent) => {
+          onTrackDown(e.currentTarget, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+        }
+      })
   }, movePropsContainer);
 
   let thumbInteractions = isDisabled ? {} : mergeProps({

@@ -54,4 +54,27 @@ storiesOf('ColorWheel', module)
         <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />
       </Flex>);
     }
+  )
+  .add(
+    'controlled hsl',
+    () => <Flex gap={'size-500'} direction="row" alignItems="center"><ControlledHSL onChangeEnd={action('onChangeEnd')} /></Flex>
   );
+
+export function ControlledHSL(props) {
+  let [color, setColor] = useState(props.defaultValue || parseColor('hsl(0, 100%, 50%)'));
+  let colorCSS = color.toString('css');
+  let onChangeEnd = (color) => {
+    props.onChangeEnd && props.onChangeEnd(color);
+    setColor(color);
+  };
+  let onChange = (color) => {
+    props.onChange && props.onChange(color);
+    setColor(color);
+  };
+  return (
+    <>
+      <ColorWheel onChange={onChange} onChangeEnd={onChangeEnd} value={color.toString('hsl')} />
+      <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />
+    </>
+  );
+}
