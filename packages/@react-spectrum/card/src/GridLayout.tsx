@@ -78,8 +78,8 @@ const DEFAULT_OPTIONS = {
     // Will need to ask Spectrum what these values should be. Used to be 52. Do the same for S above
     itemPadding: {
       'vertical': {
-        'medium': 95,
-        'large': 116
+        'medium': 78,
+        'large': 98
       },
       'horizontal': {
         'medium': 150,

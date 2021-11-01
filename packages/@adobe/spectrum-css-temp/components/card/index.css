@@ -828,7 +828,7 @@ user-provided
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
-    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) 1fr var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) var(--spectrum-alias-single-line-height) 1fr;
     grid-template-areas:
       "preview preview preview"
       ".       .       ."
