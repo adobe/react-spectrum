@@ -110,7 +110,15 @@ export interface FocusableProps extends FocusEvents, KeyboardEvents {
 
 interface BaseMoveEvent {
   /** The pointer type that triggered the move event. */
-  pointerType: PointerType
+  pointerType: PointerType,
+  /** Whether the shift keyboard modifier was held during the move event. */
+  shiftKey: boolean,
+  /** Whether the ctrl keyboard modifier was held during the move event. */
+  ctrlKey: boolean,
+  /** Whether the meta keyboard modifier was held during the move event. */
+  metaKey: boolean,
+  /** Whether the alt keyboard modifier was held during the move event. */
+  altKey: boolean
 }
 
 export interface MoveStartEvent extends BaseMoveEvent {
@@ -124,9 +132,8 @@ export interface MoveMoveEvent extends BaseMoveEvent {
   /** The amount moved in the X direction since the last event. */
   deltaX: number,
   /** The amount moved in the Y direction since the last event. */
-  deltaY: number,
-  /** If it's a page movement, such as Shift+ArrowRight. */
-  isPage?: boolean
+  deltaY: number
+
 }
 
 export interface MoveEndEvent extends BaseMoveEvent {

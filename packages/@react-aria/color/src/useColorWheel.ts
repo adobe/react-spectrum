@@ -14,8 +14,8 @@ import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {useMove} from '@react-aria/interactions';
 
 interface ColorWheelAriaProps extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */
@@ -60,12 +60,37 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   stateRef.current = state;
 
   let currentPosition = useRef<{x: number, y: number}>(null);
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown(e) {
+      // these are the cases that useMove doesn't handle
+      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
+        return;
+      }
+      // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
+      e.preventDefault();
+      // remember to set this and unset it so that onChangeEnd is fired
+      stateRef.current.setDragging(true);
+      switch (e.key) {
+        case 'PageUp':
+          e.preventDefault();
+          state.increment(true);
+          break;
+        case 'PageDown':
+          e.preventDefault();
+          state.decrement(true);
+          break;
+      }
+      stateRef.current.setDragging(false);
+    }
+  });
+
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
       state.setDragging(true);
     },
-    onMove({deltaX, deltaY, pointerType, isPage = false}) {
+    onMove({deltaX, deltaY, pointerType, shiftKey}) {
       if (currentPosition.current == null) {
         currentPosition.current = stateRef.current.getThumbPosition(thumbRadius);
       }
@@ -73,9 +98,9 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPosition.current.y += deltaY;
       if (pointerType === 'keyboard') {
         if (deltaX > 0 || deltaY < 0) {
-          state.increment(isPage);
+          state.increment(shiftKey);
         } else if (deltaX < 0 || deltaY > 0) {
-          state.decrement(isPage);
+          state.decrement(shiftKey);
         }
       } else {
         stateRef.current.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);
@@ -201,7 +226,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     onTouchStart: (e: React.TouchEvent) => {
       onThumbDown(e.changedTouches[0].identifier);
     }
-  }, movePropsThumb);
+  }, keyboardProps, movePropsThumb);
   let {x, y} = state.getThumbPosition(thumbRadius);
 
   // Provide a default aria-label if none is given

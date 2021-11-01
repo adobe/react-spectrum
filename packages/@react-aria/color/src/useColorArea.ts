@@ -17,8 +17,8 @@ import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '
 import intlMessages from '../intl/*.json';
 import {MessageDictionary} from '@internationalized/message';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {useMove} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 const messages = new MessageDictionary(intlMessages);
@@ -65,32 +65,67 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
 
   let currentPosition = useRef<{x: number, y: number}>(null);
 
+  let {keyboardProps} = useKeyboard({
+    onKeyDown(e) {
+      // these are the cases that useMove doesn't handle
+      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
+        return;
+      }
+      // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
+      e.preventDefault();
+      // remember to set this and unset it so that onChangeEnd is fired
+      stateRef.current.setDragging(true);
+      switch (e.key) {
+        case 'PageUp':
+          stateRef.current.incrementY(true);
+          focusedInputRef.current = inputYRef.current;
+          break;
+        case 'PageDown':
+          stateRef.current.decrementY(true);
+          focusedInputRef.current = inputYRef.current;
+          break;
+        case 'Home':
+          direction === 'rtl' ? stateRef.current.incrementX(true) : stateRef.current.decrementX(true);
+          focusedInputRef.current = inputXRef.current;
+          break;
+        case 'End':
+          direction === 'rtl' ? stateRef.current.decrementX(true) : stateRef.current.incrementX(true);
+          focusedInputRef.current = inputXRef.current;
+          break;
+      }
+      stateRef.current.setDragging(false);
+      if (focusedInputRef.current) {
+        focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
+        focusedInputRef.current = undefined;
+      }
+    }
+  });
+
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
       stateRef.current.setDragging(true);
     },
-    onMove({deltaX, deltaY, pointerType, isPage = false}) {
+    onMove({deltaX, deltaY, pointerType, shiftKey}) {
       if (currentPosition.current == null) {
         currentPosition.current = stateRef.current.getThumbPosition();
       }
       let {width, height} = containerRef.current.getBoundingClientRect();
       if (pointerType === 'keyboard') {
         if (deltaX > 0) {
-          stateRef.current.incrementX(isPage);
+          stateRef.current.incrementX(shiftKey);
         } else if (deltaX < 0) {
-          stateRef.current.decrementX(isPage);
+          stateRef.current.decrementX(shiftKey);
         } else if (deltaY > 0) {
-          stateRef.current.decrementY(isPage);
+          stateRef.current.decrementY(shiftKey);
         } else if (deltaY < 0) {
-          stateRef.current.incrementY(isPage);
+          stateRef.current.incrementY(shiftKey);
         }
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
-      }
-      currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
-      currentPosition.current.y += deltaY / height;
-      if (pointerType !== 'keyboard') {
+      } else {
+        currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
+        currentPosition.current.y += deltaY / height;
         stateRef.current.setColorFromPoint(currentPosition.current.x, currentPosition.current.y);
       }
     },
@@ -234,7 +269,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
           onThumbDown(e.changedTouches[0].identifier);
         }
       })
-  }, movePropsThumb);
+  }, keyboardProps, movePropsThumb);
 
 
   let xInputLabellingProps = useLabels({
