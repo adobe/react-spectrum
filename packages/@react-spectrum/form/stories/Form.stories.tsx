@@ -100,7 +100,7 @@ storiesOf('Form', module)
               <TextField autoComplete="billing postal-code" name="zip" isRequired label="Zip code" placeholder="12345" flex={1} />
             </Flex>
             <Flex>
-              <Picker autoComplete="billinf country" name="country" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100" flex={1}>
+              <Picker autoComplete="billing country" name="country" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100" flex={1}>
                 {item => <Item key={item.code}>{item.name}</Item>}
               </Picker>
             </Flex>
