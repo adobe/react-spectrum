@@ -341,6 +341,13 @@ export function calculatePositionInternal(
   let arrowPosition: Position = {};
   arrowPosition[crossAxis] = (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
 
+  if ((crossAxis === 'left' || crossAxis === 'top') && padding > arrowPosition[crossAxis]) {
+    arrowPosition[crossAxis] = padding;
+  }
+  if ((crossAxis === 'left' || crossAxis === 'top') && arrowPosition[crossAxis] > overlaySize[crossSize] - padding) {
+    arrowPosition[crossAxis] = overlaySize[crossSize] - padding;
+  }
+
   return {
     position,
     maxHeight: maxHeight,
