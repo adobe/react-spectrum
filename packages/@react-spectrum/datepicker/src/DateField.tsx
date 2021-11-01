@@ -47,6 +47,9 @@ export function DateField<T extends DateValue>(props: SpectrumDatePickerProps<T>
   // Note: this description is intentionally not passed to useDatePicker.
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
+  if (description && !props.description) {
+    descriptionProps.id = null;
+  }
 
   return (
     <Field
