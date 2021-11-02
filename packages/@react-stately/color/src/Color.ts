@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-stately/utils';
+import {clamp, toFixedNumber} from '@react-stately/utils';
 import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -170,9 +170,9 @@ class RGBColor extends Color {
     }
 
     return new HSBColor(
-      hue * 360,
-      saturation * 100,
-      brightness * 100,
+      toFixedNumber(hue * 360, 2),
+      toFixedNumber(saturation * 100, 2),
+      toFixedNumber(brightness * 100, 2),
       this.alpha
     );
   }
@@ -214,9 +214,9 @@ class RGBColor extends Color {
     }
 
     return new HSLColor(
-      hue * 360,
-      saturation * 100,
-      lightness * 100,
+      toFixedNumber(hue * 360, 2),
+      toFixedNumber(saturation * 100, 2),
+      toFixedNumber(lightness * 100, 2),
       this.alpha);
   }
 
@@ -288,9 +288,9 @@ class HSBColor extends Color {
       case 'hexa':
         return this.toRGB().toString('hexa');
       case 'hsb':
-        return `hsb(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.brightness)}%)`;
+        return `hsb(${this.hue}, ${toFixedNumber(this.saturation, 2)}%, ${toFixedNumber(this.brightness, 2)}%)`;
       case 'hsba':
-        return `hsba(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.brightness)}%, ${this.alpha})`;
+        return `hsba(${this.hue}, ${toFixedNumber(this.saturation, 2)}%, ${toFixedNumber(this.brightness, 2)}%, ${this.alpha})`;
       default:
         return this.toFormat(format).toString(format);
     }
@@ -423,10 +423,10 @@ class HSLColor extends Color {
       case 'hexa':
         return this.toRGB().toString('hexa');
       case 'hsl':
-        return `hsl(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.lightness)}%)`;
+        return `hsl(${this.hue}, ${toFixedNumber(this.saturation, 2)}%, ${toFixedNumber(this.lightness, 2)}%)`;
       case 'css':
       case 'hsla':
-        return `hsla(${this.hue}, ${Math.round(this.saturation)}%, ${Math.round(this.lightness)}%, ${this.alpha})`;
+        return `hsla(${this.hue}, ${toFixedNumber(this.saturation, 2)}%, ${toFixedNumber(this.lightness, 2)}%, ${this.alpha})`;
       default:
         return this.toFormat(format).toString(format);
     }

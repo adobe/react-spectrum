@@ -221,6 +221,7 @@ This codebase contains a portion of code from Wikipedia which can be obtained at
     * https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_HSL
     * https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_HSV
     * https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB_alternative
+    * https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
 
   * License:
     * https://en.wikipedia.org/wiki/Wikipedia:Copyrights

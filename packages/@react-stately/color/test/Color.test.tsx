@@ -181,11 +181,11 @@ describe('Color', function () {
         return rgbString.match(rgbRegex).slice(1).map(Number);
       },
       hsl: (hslString) => {
-        let hslRegex = /^hsl\(([\d.]+),\s*(\d+)%,\s*(\d+)%\)$/;
+        let hslRegex = /^hsl\(([\d.]+),\s*([\d.]+)%,\s*([\d.]+)%\)$/;
         return hslString.match(hslRegex).slice(1).map(Number);
       },
       hsb: (hsbString) => {
-        let hsbRegex = /^hsb\(([\d.]+),\s*(\d+)%,\s*(\d+)%\)$/;
+        let hsbRegex = /^hsb\(([\d.]+),\s*([\d.]+)%,\s*([\d.]+)%\)$/;
         return hsbString.match(hsbRegex).slice(1).map(Number);
       }
     };
@@ -202,8 +202,9 @@ describe('Color', function () {
         let convertedColorObj = parse[colorSpace](convertedColor);
         let labConvertedResult = space[colorSpace === 'hsb' ? 'hsv' : colorSpace].lab(convertedColorObj).reduce(arrayToLab, {});
         let labConvertedStart = space[color[0] === 'hsb' ? 'hsv' : color[0]].lab(color[2]).reduce(arrayToLab, {});
-        // 2 chosen because that's about the limit of what humans can detect
-        expect(getDeltaE00(labConvertedStart, labConvertedResult)).toBeLessThan(2);
+        // 1.5 chosen because that's about the limit of what humans can detect and 1.1 was the largest I found when running 100k runs of this
+        // gives us a little over 30% tolerance to changes
+        expect(getDeltaE00(labConvertedStart, labConvertedResult)).toBeLessThan(1.5);
       }));
     });
 
@@ -222,14 +223,14 @@ describe('Color', function () {
 
     it('rgb to hsl', () => {
       expect(parseColor('rgb(0, 0, 0)').toString('hsl')).toBe('hsl(0, 0%, 0%)');
-      expect(parseColor('rgb(0, 1, 0)').toString('hsl')).toBe('hsl(120, 100%, 0%)');
-      expect(parseColor('rgb(20, 40, 60)').toString('hsl')).toBe('hsl(210, 50%, 16%)');
+      expect(parseColor('rgb(0, 1, 0)').toString('hsl')).toBe('hsl(120, 100%, 0.2%)');
+      expect(parseColor('rgb(20, 40, 60)').toString('hsl')).toBe('hsl(210, 50%, 15.69%)');
     });
 
     it('rgb to hsb', () => {
       expect(parseColor('rgb(0, 0, 0)').toString('hsb')).toBe('hsb(0, 0%, 0%)');
-      expect(parseColor('rgb(0, 1, 0)').toString('hsb')).toBe('hsb(120, 100%, 0%)');
-      expect(parseColor('rgb(20, 40, 60)').toString('hsb')).toBe('hsb(210, 67%, 24%)');
+      expect(parseColor('rgb(0, 1, 0)').toString('hsb')).toBe('hsb(120, 100%, 0.39%)');
+      expect(parseColor('rgb(20, 40, 60)').toString('hsb')).toBe('hsb(210, 66.67%, 23.53%)');
     });
 
     it('hsl to hsb', () => {
