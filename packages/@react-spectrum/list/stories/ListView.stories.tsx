@@ -141,8 +141,26 @@ storiesOf('ListView', module)
   .add('selection: single, checkbox, disabled', () => (
     <Example selectionMode="single" disabledKeys={['row1']} />
   ))
+  .add('selection: single, checkbox, isEmphasized', () => (
+    <Example selectionMode="single" isEmphasized />
+  ))
+  .add('selection: single, checkbox, isQuiet', () => (
+    <Example selectionMode="single" isQuiet />
+  ))
+  .add('selection: single, checkbox, isQuiet, isEmphasized', () => (
+    <Example selectionMode="single" isQuiet isEmphasized />
+  ))
   .add('selection: multiple, checkbox', () => (
     <Example selectionMode="multiple" />
+  ))
+  .add('selection: multiple, checkbox, isEmphasized', () => (
+    <Example selectionMode="multiple" isEmphasized />
+  ))
+  .add('selection: multiple, checkbox, isQuiet', () => (
+    <Example selectionMode="multiple" isQuiet />
+  ))
+  .add('selection: multiple, checkbox, isQuiet isEmphasized', () => (
+    <Example selectionMode="multiple" isQuiet isEmphasized />
   ))
   .add('parent link example', () => (
     <Example2 selectionMode="multiple" />
@@ -199,6 +217,11 @@ storiesOf('ListView', module)
   .add('dynamic items + renderEmptyState', () => (<EmptyTest />))
   .add('selectionStyle: highlight', () => (
     <ListView width="250px" height={400} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+      {item => <Item>{item.name}</Item>}
+    </ListView>
+  ))
+  .add('selectionStyle: highlight, isEmphasized', () => (
+    <ListView width="250px" height={400} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} isEmphasized>
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))
