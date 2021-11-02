@@ -29,6 +29,8 @@ import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import {Well} from '@react-spectrum/well';
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -74,6 +76,74 @@ storiesOf('Form', module)
         </Flex>
       </Form>
     )
+  )
+  .add(
+    'fields with autoComplete property',
+    () => {
+      const [checked, setChecked] = useState(true);
+      return (
+        <Form>
+          <Well role="group" aria-labelledby="billing-legend">
+            <h2 id="billing-legend" className={typographyStyles['spectrum-Heading4']}>Billing address</h2>
+            <Flex>
+              <TextField autoComplete="billing given-name" name="firstName" isRequired label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
+              <TextField autoComplete="billing family-name" name="lastName" isRequired label="Last Name" placeholder="Smith" flex={1} />
+            </Flex>
+            <Flex>
+              <TextArea autoComplete="billing street-address" name="streetAddress" isRequired label="Street Address" placeholder="123 Any Street" flex={1} />
+            </Flex>
+            <Flex>
+              <TextField autoComplete="billing address-level2" name="city" isRequired label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
+              <Picker autoComplete="billing address-level1" name="state" isRequired label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+                {item => <Item key={item.abbr}>{item.name}</Item>}
+              </Picker>
+              <TextField autoComplete="billing postal-code" name="zip" isRequired label="Zip code" placeholder="12345" flex={1} />
+            </Flex>
+            <Flex>
+              <Picker autoComplete="billing country" name="country" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100" flex={1}>
+                {item => <Item key={item.code}>{item.name}</Item>}
+              </Picker>
+            </Flex>
+            <Flex>
+              <TextField autoComplete="billing tel" type="tel" name="phone" label="Phone number" placeholder="123-456-7890" marginEnd="size-100" flex={1} />
+              <TextField autoComplete="billing email" type="email" name="email" isRequired label="Email address" placeholder="me@example.org" marginEnd="size-100" flex={1} />
+            </Flex>
+          </Well>
+          <Well role="group" aria-labelledby="shipping-legend">
+            <h2 id="shipping-legend" className={typographyStyles['spectrum-Heading4']}>Shipping address</h2>
+            <Checkbox isSelected={checked} onChange={setChecked} >Same as billing address</Checkbox>
+            {
+              !checked &&
+              <>
+                <Flex>
+                  <TextField autoComplete="shipping given-name" name="shippingFirstName" isRequired label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
+                  <TextField autoComplete="shipping family-name" name="shippingLastName" isRequired label="Last Name" placeholder="Smith" flex={1} />
+                </Flex>
+                <Flex>
+                  <TextArea autoComplete="shipping street-address" name="shippingStreetAddress" isRequired label="Street Address" placeholder="123 Any Street" flex={1} />
+                </Flex>
+                <Flex>
+                  <TextField autoComplete="shipping address-level2" name="shippingCity" isRequired label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
+                  <Picker autoComplete="shipping address-level1" name="shippingState" isRequired label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+                    {item => <Item key={item.abbr}>{item.name}</Item>}
+                  </Picker>
+                  <TextField autoComplete="shipping postal-code" name="shippingZip" isRequired label="Zip code" placeholder="12345" flex={1} />
+                </Flex>
+                <Flex>
+                  <Picker autoComplete="shipping country" name="shippingCountry" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100" flex={1}>
+                    {item => <Item key={item.code}>{item.name}</Item>}
+                  </Picker>
+                </Flex>
+                <Flex>
+                  <TextField autoComplete="shipping tel" type="tel" name="shippingPhone" label="Phone number" placeholder="123-456-7890" marginEnd="size-100" flex={1} />
+                  <TextField autoComplete="shipping email" type="email" name="shippingEmail" isRequired label="Email address" placeholder="me@example.org" marginEnd="size-100" flex={1} />
+                </Flex>
+              </>
+            }
+          </Well>
+        </Form>
+      );
+    }
   )
   .add(
     'isRequired: true',
