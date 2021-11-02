@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ColorFormat} from '@react-types/color';
 import fc from 'fast-check';
 import {getDeltaE00} from 'delta-e';
 import {parseColor} from '../src/Color';
@@ -195,7 +196,7 @@ describe('Color', function () {
     };
 
     it('can perform round trips', () => {
-      fc.assert(fc.property(options, ({colorSpace, color}) => {
+      fc.assert(fc.property(options, ({colorSpace, color}: {colorSpace: ColorFormat, color: [string, string, number[]]}) => {
         let testColor = parseColor(color[1]);
         let convertedColor = testColor.toString(colorSpace);
         let convertedColorObj = parse[colorSpace](convertedColor);
