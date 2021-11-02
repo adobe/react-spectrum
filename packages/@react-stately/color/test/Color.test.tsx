@@ -162,19 +162,17 @@ describe('Color', function () {
     // For example: hsl 0, 1%, 0 -> rgb is 0, 0, 0 -> hsl 0, 0%, 0%
     // In order to test round trips, we can use delta-e, a way of telling the difference/distance between two colors.
     // We can use a conversion to LAB as the common ground to get the delta-e.
-    // One other note: HSB is the same as HSV, most libraries only recognize HSV. Our HSB calculations either aren't
-    // working correctly or the conversion to LAB isn't working great because the delta-e's for it are well above
-    // acceptable limits.
+
 
     let rgb = fc.tuple(fc.integer({min: 0, max: 255}), fc.integer({min: 0, max: 255}), fc.integer({min: 0, max: 255}))
       .map(([r, g, b]) => (['rgb', `rgb(${r}, ${g}, ${b})`, [r, g, b]]));
     let hsl = fc.tuple(fc.integer({min: 0, max: 360}), fc.integer({min: 0, max: 100}), fc.integer({min: 0, max: 100}))
       .map(([h, s, l]) => (['hsl', `hsl(${h}, ${s}%, ${l}%)`, [h, s, l]]));
-    // let hsb = fc.tuple(fc.integer({min: 0, max: 360}), fc.integer({min: 0, max: 100}), fc.integer({min: 0, max: 100}))
-    //   .map(([h, s, b]) => (['hsb', `hsb(${h}, ${s}%, ${b}%)`, [h, s, b]]));
+    let hsb = fc.tuple(fc.integer({min: 0, max: 360}), fc.integer({min: 0, max: 100}), fc.integer({min: 0, max: 100}))
+      .map(([h, s, b]) => (['hsb', `hsb(${h}, ${s}%, ${b}%)`, [h, s, b]]));
     let options = fc.record({
-      colorSpace: fc.oneof(fc.constant('rgb'), fc.constant('hsl')),
-      color: fc.oneof(rgb, hsl)
+      colorSpace: fc.oneof(fc.constant('rgb'), fc.constant('hsl'), fc.constant('hsb')),
+      color: fc.oneof(rgb, hsl, hsb)
     });
     let parse = {
       rgb: (rgbString) => {

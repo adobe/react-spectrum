@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
+import {clamp} from '@react-stately/utils';
 import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -138,79 +138,85 @@ class RGBColor extends Color {
     return this.red << 16 | this.green << 8 | this.blue;
   }
 
+  /**
+   * Converts an RGB color value to HSB.
+   * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB.
+   * @returns An HSBColor object.
+   */
   private toHSB(): Color {
-    let r = this.red / 255;
-    let g = this.green / 255;
-    let b = this.blue / 255;
-    let max = Math.max(r, g, b);
-    let min = Math.min(r, g, b);
-    let h: number;
-    let s: number;
-    let d = max - min;
+    const red = this.red / 255;
+    const green = this.green / 255;
+    const blue = this.blue / 255;
+    const min = Math.min(red, green, blue);
+    const brightness = Math.max(red, green, blue);
+    const chroma = brightness - min;
+    const saturation = brightness === 0 ? 0 : chroma / brightness;
+    let hue = 0; // achromatic
 
-    s = max === 0 ? 0 : d / max;
-
-    if (d === 0) {
-      h = 0; // achromatic
-    } else {
-      switch (max) {
-        case r:
-          h = (g - b) / d + (g < b ? 6 : 0);
+    if (chroma !== 0) {
+      switch (brightness) {
+        case red:
+          hue = (green - blue) / chroma + (green < blue ? 6 : 0);
           break;
-        case g:
-          h = (b - r) / d + 2;
+        case green:
+          hue = (blue - red) / chroma + 2;
           break;
-        case b:
-          h = (r - g) / d + 4;
+        case blue:
+          hue = (red - green) / chroma + 4;
           break;
       }
 
-      h /= 6;
+      hue /= 6;
     }
 
     return new HSBColor(
-      h * 360,
-      s * 100,
-      b * 100,
+      hue * 360,
+      saturation * 100,
+      brightness * 100,
       this.alpha
     );
   }
 
+  /**
+   * Converts an RGB color value to HSL.
+   * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB.
+   * @returns An HSLColor object.
+   */
   private toHSL(): Color {
-    let r = this.red / 255;
-    let g = this.green / 255;
-    let b = this.blue / 255;
-    let max = Math.max(r, g, b);
-    let min = Math.min(r, g, b);
-    let h: number;
-    let s: number;
-    let l = (max + min) / 2;
+    const red = this.red / 255;
+    const green = this.green / 255;
+    const blue = this.blue / 255;
+    const min = Math.min(red, green, blue);
+    const max = Math.max(red, green, blue);
+    const lightness = (max + min) / 2;
+    const chroma = max - min;
+    let hue: number;
+    let saturation: number;
 
-    if (max === min) {
-      h = s = 0; // achromatic
+    if (chroma === 0) {
+      hue = saturation = 0; // achromatic
     } else {
-      let d = max - min;
-      s = d / (l < .5 ? max + min : 2 - max - min);
+      saturation = chroma / (lightness < .5 ? max + min : 2 - max - min);
 
       switch (max) {
-        case r:
-          h = (g - b) / d + (g < b ? 6 : 0);
+        case red:
+          hue = (green - blue) / chroma + (green < blue ? 6 : 0);
           break;
-        case g:
-          h = (b - r) / d + 2;
+        case green:
+          hue = (blue - red) / chroma + 2;
           break;
-        case b:
-          h = (r - g) / d + 4;
+        case blue:
+          hue = (red - green) / chroma + 4;
           break;
       }
 
-      h /= 6;
+      hue /= 6;
     }
 
     return new HSLColor(
-      h * 360,
-      s * 100,
-      l * 100,
+      hue * 360,
+      saturation * 100,
+      lightness * 100,
       this.alpha);
   }
 
