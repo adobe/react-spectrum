@@ -11,8 +11,8 @@
  */
 
 import {Calendar, CalendarDateTime, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
-import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid} from './utils';
-import {DatePickerProps, DateValue} from '@react-types/datepicker';
+import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid, useDefaultProps} from './utils';
+import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
@@ -34,6 +34,7 @@ export interface DatePickerFieldState {
   segments: DateSegment[],
   dateFormatter: DateFormatter,
   validationState: ValidationState,
+  granularity: Granularity,
   increment: (type: Intl.DateTimeFormatPartTypes) => void,
   decrement: (type: Intl.DateTimeFormatPartTypes) => void,
   incrementPage: (type: Intl.DateTimeFormatPartTypes) => void,
@@ -83,16 +84,8 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
   } = props;
 
   let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
-  let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
+  let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let timeZone = defaultTimeZone || 'UTC';
-
-  // Compute default granularity from the value. If the value becomes null, keep the last granularity.
-  let defaultGranularity: DatePickerProps<T>['granularity'] = (v && 'minute' in v ? 'minute' : 'day');
-  let lastGranularity = useRef(defaultGranularity);
-  if (v) {
-    lastGranularity.current = defaultGranularity;
-  }
-  let granularity = props.granularity || lastGranularity.current;
 
   // props.granularity must actually exist in the value if one is provided.
   if (v && !(granularity in v)) {
@@ -227,6 +220,7 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
     segments,
     dateFormatter,
     validationState,
+    granularity,
     increment(part) {
       adjustSegment(part, 1);
     },

@@ -87,13 +87,12 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
     descriptionProps.id = null;
   }
 
-  let v = state.value || props.placeholderValue;
   let placeholder: DateValue = placeholderValue;
   let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : null;
   let timeMinValue = props.minValue && 'hour' in props.minValue ? props.minValue : null;
   let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
-  let timeGranularity = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second' || props.granularity === 'millisecond' ? props.granularity : null;
-  let showTimeField = (v && 'hour' in v) || !!timeGranularity;
+  let timeGranularity = state.granularity === 'hour' || state.granularity === 'minute' || state.granularity === 'second' || state.granularity === 'millisecond' ? state.granularity : null;
+  let showTimeField = !!timeGranularity;
 
   let visibleMonths = useVisibleMonths(maxVisibleMonths);
 

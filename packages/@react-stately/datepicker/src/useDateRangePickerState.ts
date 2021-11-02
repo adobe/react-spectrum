@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {createPlaceholderDate, FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid} from './utils';
+import {createPlaceholderDate, FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
 import {DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
-import {DateRange, DateRangePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
+import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useRef, useState} from 'react';
@@ -32,7 +32,8 @@ export interface DateRangePickerState {
   setOpen: (isOpen: boolean) => void,
   validationState: ValidationState,
   formatValue(locale: string, fieldOptions: FieldOptions): string,
-  confirmPlaceholder(): void
+  confirmPlaceholder(): void,
+  granularity: Granularity
 }
 
 export function useDateRangePickerState<T extends DateValue>(props: DateRangePickerProps<T>): DateRangePickerState {
@@ -61,9 +62,8 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
   };
 
   let v = (value?.start || value?.end || props.placeholderValue);
-  let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
+  let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
-  let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
 
   let [dateRange, setSelectedDateRange] = useState<DateRange>(null);
   let [timeRange, setSelectedTimeRange] = useState<TimeRange>(null);
@@ -121,6 +121,7 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     setValue,
     dateRange,
     timeRange,
+    granularity,
     setDate(part, date) {
       setDateRange({...dateRange, [part]: date});
     },

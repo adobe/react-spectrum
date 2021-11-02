@@ -25,7 +25,8 @@ export function useTimeFieldState<T extends TimeValue>(props: TimeFieldProps<T>)
   let {
     placeholderValue = new Time(),
     minValue,
-    maxValue
+    maxValue,
+    granularity
   } = props;
 
   let [value, setValue] = useControlledState<TimeValue>(
@@ -52,6 +53,7 @@ export function useTimeFieldState<T extends TimeValue>(props: TimeFieldProps<T>)
     minValue: minDate,
     maxValue: maxDate,
     onChange,
+    granularity: granularity || 'minute',
     maxGranularity: 'hour',
     placeholderValue: placeholderDate
   });

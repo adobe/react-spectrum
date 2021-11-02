@@ -11,7 +11,8 @@
  */
 
 import {Calendar, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
-import {DatePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
+import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
+import {useRef} from 'react';
 
 export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
   return value != null && (
@@ -120,4 +121,23 @@ export function createPlaceholderDate(placeholderValue: DateValue, granularity: 
   }
 
   return date;
+}
+
+export function useDefaultProps(v: DateValue, granularity: Granularity): [Granularity, string] {
+  // Compute default granularity and time zone from the value. If the value becomes null, keep the last values.
+  let lastValue = useRef(v);
+  if (v) {
+    lastValue.current = v;
+  }
+
+  v = lastValue.current;
+  let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
+  granularity = granularity || (v && 'minute' in v ? 'minute' : 'day');
+
+  // props.granularity must actually exist in the value if one is provided.
+  if (v && !(granularity in v)) {
+    throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
+  }
+
+  return [granularity, defaultTimeZone];
 }
