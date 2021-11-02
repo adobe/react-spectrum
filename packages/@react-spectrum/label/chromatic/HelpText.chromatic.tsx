@@ -13,7 +13,7 @@
 import React from 'react';
 import {SpectrumTextFieldProps} from '@react-types/textfield';
 import {storiesOf} from '@storybook/react';
-import {TextField} from '@react-spectrum/textfield';
+import {TextArea, TextField} from '@react-spectrum/textfield';
 
 storiesOf('HelpText', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -67,10 +67,33 @@ storiesOf('HelpText', module)
       width: '440px',
       labelPosition: 'side'
     })
+  )
+  .add(
+    'custom height',
+    () => renderTextArea({
+      label: 'Password',
+      description: 'Password must be at least 8 characters.',
+      height: 'size-2000'
+    })
+  )
+  .add(
+    'custom height, labelPosition: side',
+    () => renderTextArea({
+      label: 'Password',
+      description: 'Password must be at least 8 characters.',
+      height: 'size-2000',
+      labelPosition: 'side'
+    })
   );
 
 function render(props: SpectrumTextFieldProps = {}) {
   return (
     <TextField label="Password" {...props} />
+  );
+}
+
+function renderTextArea(props: SpectrumTextFieldProps = {}) {
+  return (
+    <TextArea label="Password" {...props} />
   );
 }
