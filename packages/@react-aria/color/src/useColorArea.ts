@@ -69,6 +69,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     onKeyDown(e) {
       // these are the cases that useMove doesn't handle
       if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
+        e.continuePropagation();
         return;
       }
       // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us

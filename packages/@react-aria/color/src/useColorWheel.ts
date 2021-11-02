@@ -64,7 +64,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
       // these are the cases that useMove doesn't handle
-      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
+      if (!/^(PageUp|PageDown)$/.test(e.key)) {
+        e.continuePropagation();
         return;
       }
       // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
