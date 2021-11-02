@@ -27,7 +27,8 @@ import {useLocale} from '@react-aria/i18n';
 export function ListViewItem(props) {
   let {
     item,
-    onAction
+    onAction,
+    isEmphasized
   } = props;
   let cellNode = [...item.childNodes][0];
   let {state} = useContext(ListViewContext);
@@ -103,7 +104,7 @@ export function ListViewItem(props) {
             <Checkbox
               UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
               {...checkboxProps}
-              isEmphasized />
+              isEmphasized={isEmphasized} />
           )}
           <SlotProvider
             slots={{

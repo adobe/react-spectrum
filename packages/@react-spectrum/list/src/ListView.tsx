@@ -75,6 +75,7 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
    */
   density?: 'compact' | 'regular' | 'spacious',
   isQuiet?: boolean,
+  isEmphasized?: boolean,
   loadingState?: LoadingState,
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number,
@@ -86,6 +87,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     density = 'regular',
     loadingState,
     isQuiet,
+    isEmphasized,
     transitionDuration = 0,
     onAction
   } = props;
@@ -160,7 +162,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             'react-spectrum-ListView',
             `react-spectrum-ListView--${density}`,
             {
-              'react-spectrum-ListView--quiet': isQuiet
+              'react-spectrum-ListView--quiet': isQuiet,
+              'react-spectrum-ListView--emphasized': isEmphasized
             },
             styleProps.className
           )
@@ -171,7 +174,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} onAction={onAction} />
+              <ListViewItem item={item} onAction={onAction} isEmphasized={isEmphasized} />
             );
           } else if (type === 'loader') {
             return (
