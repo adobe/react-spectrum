@@ -15,7 +15,6 @@ import React, {useState} from 'react';
 import {SpectrumTextFieldProps} from '@react-types/textfield';
 import {storiesOf} from '@storybook/react';
 import {TextArea, TextField} from '@react-spectrum/textfield';
-import { Form } from '@react-spectrum/form';
 
 storiesOf('HelpText', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
