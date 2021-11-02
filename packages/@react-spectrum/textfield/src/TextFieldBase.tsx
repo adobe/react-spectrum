@@ -15,6 +15,7 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, createFocusableRef} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
 import {FocusRing} from '@react-aria/focus';
+import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import {PressEvents} from '@react-types/shared';
 import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
@@ -140,7 +141,13 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
 
   if (label) {
     textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: multiLine ? 'spectrum-Field-field--multiline' : ''
+      className: classNames(
+        labelStyles,
+        'spectrum-Field-field',
+        {
+          'spectrum-Field-field--multiline': multiLine
+        }
+      )
     }));
   }
 

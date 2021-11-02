@@ -97,6 +97,9 @@ governing permissions and limitations under the License.
        * Should default to form field's default width and and allow users to override with custom width. */
       width: var(--spectrum-field-default-width);
 
+      /* If the user overrides the height of the field, propagate to the inner wrapper element */
+      height: 100%;
+
       .spectrum-Field-field {
         /* If the user overrides the width of the field, propagate to the inner component */
         width: 100%;
