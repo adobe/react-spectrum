@@ -18,11 +18,13 @@ import {chain} from '@react-aria/utils';
 import {Content, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
+import {Grid} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {View} from '@react-spectrum/view';
 
 storiesOf('DialogTrigger', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -354,6 +356,155 @@ storiesOf('DialogTrigger', module)
           <Dialog><Content>Hi!</Content></Dialog>
         </DialogTrigger>
       </Flex>
+    )
+  )
+  .add(
+    'edges',
+    () => (
+      <Grid
+        areas={[
+          'top    top',
+          'start  end',
+          'bottom bottom'
+        ]}
+        columns={['auto', 'auto']}
+        rows={['size-1000', 'auto', 'size-1000']}
+        height="800px"
+        width="100%"
+        gap="size-100">
+        <View gridArea="top" justifySelf="center">
+          <DialogTrigger type="popover" placement="end" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement Start</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="end top" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement End Top</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="end bottom" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement End Bottom</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="start" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement End</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="start top" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement Start Top</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="start bottom" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement Start Bottom</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="bottom" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement Bottom</Content></Dialog>
+          </DialogTrigger>
+        </View>
+        <View gridArea="start" justifySelf="start" alignSelf="center">
+          <DialogTrigger type="popover" placement="top" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Top</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="top start" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Top Start</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="top end" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Top End</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="bottom" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Bottom</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="bottom start" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Bottom Start</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="bottom end" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Bottom End</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="end" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement End</Content></Dialog>
+          </DialogTrigger>
+        </View>
+        <View gridArea="end" justifySelf="end" alignSelf="center">
+          <DialogTrigger type="popover" placement="top" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Top</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="top end" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Top End</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="top start" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Top Start</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="bottom" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Bottom</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="bottom end" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Bottom End</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="bottom start" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Bottom Start</Content></Dialog>
+          </DialogTrigger>
+          <br />
+          <DialogTrigger type="popover" placement="start" shouldFlip={false}>
+            <ActionButton>T</ActionButton>
+            <Dialog><Content>Placement Start</Content></Dialog>
+          </DialogTrigger>
+        </View>
+        <View gridArea="bottom" justifySelf="center">
+          <DialogTrigger type="popover" placement="end" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement End</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="end bottom" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement End Bottom</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="end top" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement End Top</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="start" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement Start</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="start bottom" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement Start Bottom</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="start top" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement Start top</Content></Dialog>
+          </DialogTrigger>
+          <DialogTrigger type="popover" placement="top" shouldFlip={false}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog><Content>Placement top</Content></Dialog>
+          </DialogTrigger>
+        </View>
+      </Grid>
     )
   );
 

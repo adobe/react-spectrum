@@ -338,8 +338,28 @@ export function calculatePositionInternal(
   delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
   position[crossAxis] += delta;
 
+  // this doesn't really work great for top and bottom
+  if (crossAxis === 'left' || crossAxis === 'top') {
+    if (padding >= position[crossAxis]) {
+      position[crossAxis] = 0;
+    }
+    if (padding >= containerOffsetWithBoundary[crossSize] - position[crossAxis] - overlaySize[crossSize]) {
+      position[crossAxis] = position[crossAxis] + padding;
+    }
+  }
+
   let arrowPosition: Position = {};
   arrowPosition[crossAxis] = (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
+
+  // This was added from the arrow fix for the buttons at the top and bottom, start and end are good
+  if (crossAxis === 'left' || crossAxis === 'top') {
+    if (padding > arrowPosition[crossAxis]) {
+      arrowPosition[crossAxis] = padding;
+    }
+    if (arrowPosition[crossAxis] > overlaySize[crossSize] - padding) {
+      arrowPosition[crossAxis] = overlaySize[crossSize] - padding;
+    }
+  }
 
   return {
     position,
