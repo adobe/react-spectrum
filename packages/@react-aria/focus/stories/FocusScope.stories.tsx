@@ -18,7 +18,8 @@ import ReactDOM from 'react-dom';
 const dialogsRoot = 'dialogsRoot';
 
 interface StoryProps {
-  usePortal: boolean
+  usePortal: boolean,
+  contain: boolean
 }
 
 const meta: Meta<StoryProps> = {
@@ -28,7 +29,7 @@ const meta: Meta<StoryProps> = {
 
 export default meta;
 
-const Template = (): Story<StoryProps> => ({usePortal}) => <Example usePortal={usePortal} />;
+const Template = (): Story<StoryProps> => ({usePortal, contain = true}) => <Example usePortal={usePortal} contain={contain} />;
 
 function MaybePortal({children, usePortal}: { children: ReactNode, usePortal: boolean}) {
   if (!usePortal) {
@@ -41,35 +42,46 @@ function MaybePortal({children, usePortal}: { children: ReactNode, usePortal: bo
   );
 }
 
-function NestedDialog({onClose, usePortal}: {onClose: VoidFunction, usePortal: boolean}) {
+function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, usePortal: boolean, contain: boolean}) {
   let [open, setOpen] = useState(false);
-
+  let [showNew, setShowNew] = useState(false);
+  let onKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      onClose();
+    }
+  };
   return (
     <MaybePortal usePortal={usePortal}>
-      <FocusScope contain restoreFocus autoFocus>
-        <div>
-          <input />
-
-          <input />
-
-          <input />
-
-          <button type="button" onClick={() => setOpen(true)}>
-            Open dialog
-          </button>
-
-          <button type="button" onClick={onClose}>
-            close
-          </button>
-
-          {open && <NestedDialog onClose={() => setOpen(false)} usePortal={usePortal} />}
-        </div>
+      <FocusScope contain={contain} restoreFocus autoFocus>
+        {!showNew && (
+          <div role="dialog" onKeyDown={onKeyDown}>
+            <input />
+            <input />
+            <input />
+            <button onClick={() => setShowNew(true)}>replace focusscope children</button>
+            <button type="button" onClick={() => setOpen(true)}>
+              Open dialog
+            </button>
+            <button type="button" onClick={onClose}>
+              close
+            </button>
+            {open && <NestedDialog contain={contain} onClose={() => setOpen(false)} usePortal={usePortal} />}
+          </div>
+        )}
+        {showNew && (
+          <div role="dialog" onKeyDown={onKeyDown}>
+            <input />
+            <input autoFocus />
+            <input />
+          </div>
+        )}
       </FocusScope>
     </MaybePortal>
   );
 }
 
-function Example({usePortal}: StoryProps) {
+function Example({usePortal, contain}: StoryProps) {
   let [open, setOpen] = useState(false);
 
   return (
@@ -79,8 +91,8 @@ function Example({usePortal}: StoryProps) {
       <button type="button" onClick={() => setOpen(true)}>
         Open dialog
       </button>
-
-      {open && <NestedDialog onClose={() => setOpen(false)} usePortal={usePortal} />}
+      <input />
+      {open && <NestedDialog onClose={() => setOpen(false)} usePortal={usePortal} contain={contain} />}
 
       <div id={dialogsRoot} />
     </div>
@@ -92,3 +104,9 @@ KeyboardNavigation.args = {usePortal: false};
 
 export const KeyboardNavigationInsidePortal = Template().bind({});
 KeyboardNavigationInsidePortal.args = {usePortal: true};
+
+export const KeyboardNavigationNoContain = Template().bind({});
+KeyboardNavigationNoContain.args = {usePortal: false, contain: false};
+
+export const KeyboardNavigationInsidePortalNoContain = Template().bind({});
+KeyboardNavigationInsidePortalNoContain.args = {usePortal: true, contain: false};
