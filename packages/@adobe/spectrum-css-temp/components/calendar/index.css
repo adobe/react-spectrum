@@ -251,9 +251,14 @@ governing permissions and limitations under the License.
       margin-inline-start: var(--margin-start);
       width: calc(100% - var(--margin-start));
 
+      &:before,
       &:after,
       .spectrum-Calendar-dateText {
         inset-inline-start: 0;
+      }
+
+      &:after,
+      .spectrum-Calendar-dateText {
         margin-inline-start: 0;
       }
     }
@@ -271,6 +276,10 @@ governing permissions and limitations under the License.
       .spectrum-Calendar-dateText {
         inset-inline-start: auto;
         inset-inline-end: 0;
+      }
+
+      &:after,
+      .spectrum-Calendar-dateText {
         margin-inline-end: 0;
       }
     }
