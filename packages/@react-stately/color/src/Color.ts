@@ -324,9 +324,9 @@ class HSBColor extends Color {
     saturation = lightness === 0 || lightness === 1 ? 0 : (brightness - lightness) / Math.min(lightness, 1 - lightness);
 
     return new HSLColor(
-      this.hue,
-      saturation * 100,
-      lightness * 100,
+      toFixedNumber(this.hue, 2),
+      toFixedNumber(saturation * 100, 2),
+        toFixedNumber(lightness * 100, 2),
       this.alpha
     );
   }
@@ -458,9 +458,9 @@ class HSLColor extends Color {
     let brightness = lightness + saturation * Math.min(lightness, 1 - lightness);
     saturation = brightness === 0 ? 0 : 2 * (1 - lightness / brightness);
     return new HSBColor(
-      this.hue,
-      saturation * 100,
-      brightness * 100,
+      toFixedNumber(this.hue, 2),
+      toFixedNumber(saturation * 100, 2),
+      toFixedNumber(brightness * 100, 2),
       this.alpha
     );
   }
