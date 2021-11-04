@@ -18,9 +18,9 @@ import intlMessages from '../intl/*.json';
 import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
-import {useField} from '@react-aria/label';
 import {useFormProps} from '@react-spectrum/form';
 import {useId, useLabels} from '@react-aria/utils';
+import {useLabel} from '@react-aria/label';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
@@ -28,15 +28,15 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   props = useProviderProps(props);
   props = useFormProps(props);
   let formatMessage = useMessageFormatter(intlMessages);
+  let {styleProps} = useStyleProps(props);
+  let {labelProps, fieldProps} = useLabel(props);
   let {
     children,
     isDisabled,
     isRequired,
     label
   } = props;
-  let {styleProps} = useStyleProps(props);
   let labels = useLabels(props, formatMessage('search'));
-  let {labelProps, fieldProps} = useField(props);
   let labelledBy = labels['aria-labelledby'] || labels.id;
   let pickerId = useId();
 
