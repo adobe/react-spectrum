@@ -81,9 +81,10 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let slots = {
     searchfield: {
       ...defaultSlotValues,
+      ...fieldProps,
       UNSAFE_className: searchFieldClassName,
       'aria-labelledby': labelledBy,
-      ...fieldProps
+      'aria-label': labels['aria-label']
     },
     picker: {
       ...defaultSlotValues,
@@ -107,7 +108,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
       )}>
       <div
         {...labels}
-        aria-labelledby={labelProps.id || fieldProps.id}
+        aria-labelledby={labelProps.id}
         role="group"
         className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
         ref={groupRef}>
