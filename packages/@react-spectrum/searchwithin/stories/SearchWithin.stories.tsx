@@ -121,6 +121,8 @@ LabelPositionSide.storyName = 'labelPosition: side';
 
 export const NoVisibleLabel = () => render({label: undefined, 'aria-label': 'Search'});
 
+export const NoLabels = () => render({label: undefined});
+
 export const AutoFocusSearchField = () => render({}, {autoFocus: true});
 AutoFocusSearchField.storyName = 'autoFocus: true on SearchField';
 
