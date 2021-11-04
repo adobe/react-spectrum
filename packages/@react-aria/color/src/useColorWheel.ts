@@ -75,11 +75,11 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       switch (e.key) {
         case 'PageUp':
           e.preventDefault();
-          state.increment(true);
+          state.increment(stateRef.current.pageStep);
           break;
         case 'PageDown':
           e.preventDefault();
-          state.decrement(true);
+          state.decrement(stateRef.current.pageStep);
           break;
       }
       stateRef.current.setDragging(false);
@@ -99,9 +99,9 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPosition.current.y += deltaY;
       if (pointerType === 'keyboard') {
         if (deltaX > 0 || deltaY < 0) {
-          state.increment(shiftKey);
+          state.increment(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
         } else if (deltaX < 0 || deltaY > 0) {
-          state.decrement(shiftKey);
+          state.decrement(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
         }
       } else {
         stateRef.current.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);

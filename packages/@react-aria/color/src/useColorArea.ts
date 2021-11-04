@@ -78,19 +78,19 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       stateRef.current.setDragging(true);
       switch (e.key) {
         case 'PageUp':
-          stateRef.current.incrementY(true);
+          stateRef.current.incrementY(stateRef.current.yChannelPageStep);
           focusedInputRef.current = inputYRef.current;
           break;
         case 'PageDown':
-          stateRef.current.decrementY(true);
+          stateRef.current.decrementY(stateRef.current.yChannelPageStep);
           focusedInputRef.current = inputYRef.current;
           break;
         case 'Home':
-          direction === 'rtl' ? stateRef.current.incrementX(true) : stateRef.current.decrementX(true);
+          direction === 'rtl' ? stateRef.current.incrementX(stateRef.current.xChannelPageStep) : stateRef.current.decrementX(stateRef.current.xChannelPageStep);
           focusedInputRef.current = inputXRef.current;
           break;
         case 'End':
-          direction === 'rtl' ? stateRef.current.decrementX(true) : stateRef.current.incrementX(true);
+          direction === 'rtl' ? stateRef.current.decrementX(stateRef.current.xChannelPageStep) : stateRef.current.incrementX(stateRef.current.xChannelPageStep);
           focusedInputRef.current = inputXRef.current;
           break;
       }
@@ -114,13 +114,13 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       let {width, height} = containerRef.current.getBoundingClientRect();
       if (pointerType === 'keyboard') {
         if (deltaX > 0) {
-          stateRef.current.incrementX(shiftKey);
+          stateRef.current.incrementX(shiftKey ? stateRef.current.xChannelPageStep : stateRef.current.xChannelStep);
         } else if (deltaX < 0) {
-          stateRef.current.decrementX(shiftKey);
+          stateRef.current.decrementX(shiftKey ? stateRef.current.xChannelPageStep : stateRef.current.xChannelStep);
         } else if (deltaY > 0) {
-          stateRef.current.decrementY(shiftKey);
+          stateRef.current.decrementY(shiftKey ? stateRef.current.yChannelPageStep : stateRef.current.yChannelStep);
         } else if (deltaY < 0) {
-          stateRef.current.incrementY(shiftKey);
+          stateRef.current.incrementY(shiftKey ? stateRef.current.yChannelPageStep : stateRef.current.yChannelStep);
         }
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;

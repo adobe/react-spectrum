@@ -32,16 +32,18 @@ export interface ColorWheelState {
   getThumbPosition(radius: number): {x: number, y: number},
 
   /** Increments the hue by the given amount (defaults to 1). */
-  increment(isPage?: boolean): void,
+  increment(stepSize?: number): void,
   /** Decrements the hue by the given amount (defaults to 1). */
-  decrement(isPage?: boolean): void,
+  decrement(stepSize?: number): void,
 
   /** Whether the color wheel is currently being dragged. */
   readonly isDragging: boolean,
   /** Sets whether the color wheel is being dragged. */
   setDragging(value: boolean): void,
   /** Returns the color that should be displayed in the color wheel instead of `value`. */
-  getDisplayColor(): Color
+  getDisplayColor(): Color,
+  step: number,
+  pageStep: number
 }
 
 const DEFAULT_COLOR = parseColor('hsl(0, 100%, 50%)');
@@ -114,8 +116,11 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     }
   }
 
+  let pageStep = PAGE_MIN_STEP_SIZE;
   return {
     value,
+    step,
+    pageStep,
     setValue(v) {
       let color = normalizeColor(v);
       valueRef.current = color;
@@ -129,16 +134,16 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     getThumbPosition(radius) {
       return angleToCartesian(value.getChannelValue('hue'), radius);
     },
-    increment(isPage: boolean) {
-      let newValue = hue + Math.max(isPage ? PAGE_MIN_STEP_SIZE : 0, step);
+    increment(stepSize) {
+      let newValue = hue + Math.max(stepSize, step);
       if (newValue > 360) {
         // Make sure you can always get back to 0.
         newValue = 0;
       }
       setHue(newValue);
     },
-    decrement(isPage: boolean) {
-      let s = Math.max(isPage ? PAGE_MIN_STEP_SIZE : 0, step);
+    decrement(stepSize) {
+      let s = Math.max(stepSize, step);
       if (hue === 0) {
         // We can't just subtract step because this might be the case:
         // |(previous step) - 0| < step size
