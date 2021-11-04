@@ -597,10 +597,38 @@ describe('usePress', function () {
       // Android TalkBack will occasionally fire a pointer down event with "width: 1, height: 1" instead of "width: 0, height: 0".
       // Make sure we can still determine that this is a virtual event by checking the pressure and buttons.
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 1}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 0}));
 
       expect(events).toEqual([
         {
           type: 'pressstart',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
           target: el,
           pointerType: 'virtual',
           ctrlKey: false,
