@@ -25,7 +25,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Calendar {
   display: block;
-  touch-action: none;
   isolation: isolate;
 }
 

@@ -120,7 +120,10 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     },
     focusedDate,
     timeZone,
-    setFocusedDate,
+    setFocusedDate(date) {
+      setFocusedDate(date);
+      setFocused(true);
+    },
     focusNextDay() {
       focusCell(focusedDate.add({days: 1}));
     },
