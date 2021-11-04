@@ -306,6 +306,7 @@ export function usePress(props: PressHookProps): PressResult {
         // https://bugs.webkit.org/show_bug.cgi?id=222627
         // https://bugs.webkit.org/show_bug.cgi?id=223202
         if (isVirtualPointerEvent(e.nativeEvent)) {
+          state.pointerType = 'virtual';
           return;
         }
 
@@ -355,7 +356,8 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onPointerUp = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement) || isVirtualPointerEvent(e.nativeEvent)) {
+        // iOS fires pointerup with zero width and height, so check the pointerType recorded during pointerdown.
+        if (!e.currentTarget.contains(e.target as HTMLElement) || state.pointerType === 'virtual') {
           return;
         }
 
