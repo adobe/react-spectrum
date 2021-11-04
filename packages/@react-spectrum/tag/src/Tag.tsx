@@ -30,7 +30,6 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
     onRemove,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {isFocusVisible, focusProps} = useFocusRing({within: true});
   let {clearButtonProps, labelProps, tagProps} = useTag({
@@ -43,9 +42,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
 
   return (
     <div
-      {...otherProps}
-      {...styleProps}
-      {...mergeProps(tagProps, hoverProps, focusProps, labelProps)}
+      {...mergeProps(tagProps, hoverProps, focusProps, labelProps, otherProps)}
       role={tagProps.role}
       className={classNames(
         styles,
@@ -56,8 +53,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
           'is-focused': isFocusVisible,
           'spectrum-Tags-item--removable': isRemovable,
           'is-hovered': isHovered
-        },
-        styleProps.className
+        }
       )}>
       <SlotProvider
         slots={{
