@@ -12,8 +12,10 @@
 
 import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent, useRef} from 'react';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {GridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {TagProps} from '@react-types/tag';
 import {useGridCell, useGridRow} from '@react-aria/grid';
 import {useMessageFormatter} from '@react-aria/i18n';
 
@@ -24,7 +26,7 @@ export interface TagAria {
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
 }
 
-export function useTag(props, state): TagAria {
+export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAria {
   const {
     isDisabled,
     isRemovable,
@@ -43,7 +45,7 @@ export function useTag(props, state): TagAria {
     node: item
   }, state, tagRef);
   let {gridCellProps} = useGridCell({
-    node: item.childNodes[0],
+    node: [...item.childNodes][0],
     focusMode: 'cell'
   }, state, labelRef);
 
@@ -54,7 +56,7 @@ export function useTag(props, state): TagAria {
     }
   }
   const pressProps = {
-    onPress: e => onRemove && onRemove(children, e)
+    onPress: e => onRemove?.(children, e)
   };
 
   let domProps = filterDOMProps(props);

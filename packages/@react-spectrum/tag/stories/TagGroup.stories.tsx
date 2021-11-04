@@ -59,6 +59,11 @@ storiesOf('TagGroup', module)
     isDisabled: true
   }))
   .add(
+    'disable individual tag',
+    () => render({
+      disabledKeys: ['2']
+    }))
+  .add(
     'with announcing',
     () => (
       <WithAnnouncing />

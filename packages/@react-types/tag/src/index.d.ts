@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
+import {CollectionBase, DOMProps, ItemProps, MultipleSelection, Node, StyleProps} from '@react-types/shared';
+import {GridState} from '@react-stately/grid';
 
 export interface TagGroupProps<T> extends CollectionBase<T>, MultipleSelection {
   isDisabled?: boolean,
@@ -19,3 +20,14 @@ export interface TagGroupProps<T> extends CollectionBase<T>, MultipleSelection {
 }
 
 export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, StyleProps {}
+
+export interface TagProps<T> extends ItemProps<any> {
+  isDisabled?: boolean,
+  isRemovable?: boolean,
+  item: Node<T>,
+  onRemove?: (item, e) => void
+}
+
+export interface SpectrumTagProps<T> extends TagProps<T> {
+  state: GridState<any, any>
+}

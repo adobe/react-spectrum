@@ -28,7 +28,7 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
 
   margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
-  padding: 0 calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
+  padding: 0 0 0 calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
   block-size: var(--spectrum-tag-height);
   max-inline-size: 100%;
 
@@ -55,8 +55,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Tag-icon {
   grid-area: icon;
-  align-items: center;
-  justify-items: center;
   padding-inline-end: var(--spectrum-global-dimension-size-100);
 }
 
@@ -64,6 +62,7 @@ governing permissions and limitations under the License.
   grid-area: content;
   block-size: 100%;
   line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
+  padding-inline-end: calc(var(--spectrum-tag-padding-x) / 2);
   flex: 1 1 auto;
   font-size: var(--spectrum-tag-text-size);
   cursor: default;
@@ -75,14 +74,15 @@ governing permissions and limitations under the License.
 
 .spectrum-Tag-action {
   grid-area: action;
-  height: 75%;
-  width: var(--spectrum-global-dimension-size-100);
-  padding-top: var(--spectrum-global-dimension-size-25);
-  padding-inline-start: var(--spectrum-global-dimension-size-100);
+  height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
+  width: var(--spectrum-global-dimension-size-250);
+  padding-inline-start: calc(var(--spectrum-tag-padding-x) / 4);
+ /*padding-inline-start: var(--spectrum-tag-icon-padding-x);*/
+  /*padding-inline-end: var(--spectrum-tag-icon-padding-x);*/
 
   &:focus-ring {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
-    border-radius: 20%;
+    border-radius: var(--spectrum-global-dimension-size-25);
   }
 }

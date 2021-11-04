@@ -62,6 +62,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           childNodes: []
         });
       }
+
       return {
         type: 'item',
         childNodes
@@ -109,7 +110,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           key={item.key}
           item={item}
           state={state}
-          isDisabled={isDisabled}
+          isDisabled={isDisabled || state.disabledKeys.has(item?.childNodes[0]?.key)}
           isRemovable={isRemovable}
           onRemove={onRemove}>
           {item.childNodes[0].rendered}

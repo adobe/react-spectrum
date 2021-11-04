@@ -4214,43 +4214,6 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@react-stately/grid@3.0.0-alpha.2":
-  version "3.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@react-stately/grid/-/grid-3.0.0-alpha.2.tgz#1f5452a13b57f0e0b702650f13b929871db61e72"
-  integrity sha512-dJbLSp6az7dLpLhzpGxGsMunhHwYFMARLL8DtKOI62Nc/gIC0PTRZW+vWhAKIQuqWWOksBNmkXrTn5EJuDGcxQ==
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    "@react-stately/selection" "^3.5.0"
-    "@react-types/grid" "3.0.0-alpha.0"
-    "@react-types/shared" "^3.6.0"
-
-"@react-stately/table@3.0.0-alpha.10":
-  version "3.0.0-alpha.10"
-  resolved "https://registry.yarnpkg.com/@react-stately/table/-/table-3.0.0-alpha.10.tgz#b06a2ce76918cb7cdc5fc9db4f93d0bd5ffcbe5e"
-  integrity sha512-WcrOvExA9nqGGvDs0xO//Pg5+8Yj+VcGmRhh1s961C5C9/Q2wV1reTok7N1KfXkDRstM5DzH+QzRNWSL8/wwcg==
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    "@react-stately/collections" "^3.3.2"
-    "@react-stately/grid" "3.0.0-alpha.2"
-    "@react-types/grid" "3.0.0-alpha.0"
-    "@react-types/shared" "^3.6.0"
-    "@react-types/table" "3.0.0-alpha.0"
-
-"@react-types/grid@3.0.0-alpha.0":
-  version "3.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@react-types/grid/-/grid-3.0.0-alpha.0.tgz#76b199e4a9dea7ceae290d6a283d99c12ca442e9"
-  integrity sha512-3O2S4osi3iCuLTU3rLMfax2Zim07W7EELzyoxMIrG6t3N4fNJwUMstGzlwi1BWIfa7NGJqKRcc+g9IwyYowzag==
-  dependencies:
-    "@react-types/shared" "^3.5.0"
-
-"@react-types/table@3.0.0-alpha.0":
-  version "3.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@react-types/table/-/table-3.0.0-alpha.0.tgz#dc4e2b13b9ae178655789fc964cd843f2e19455c"
-  integrity sha512-nYu5H+EnnQWxbZih4M2lSgY7dnVwNU+zAhMV+GxsDlssXpaXziJ2EfTMvsE7giAu6Bp5bce3XqpPDaFNpsTmPA==
-  dependencies:
-    "@react-types/grid" "3.0.0-alpha.0"
-    "@react-types/shared" "^3.5.0"
-
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"

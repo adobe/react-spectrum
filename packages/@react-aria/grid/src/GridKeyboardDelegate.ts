@@ -174,11 +174,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       if (this.cycleMode === 'within') {
         return this.direction === 'rtl' ? this.getLastKey(key) : this.getFirstKey(key);
       } else if (this.cycleMode === 'between') {
-        // let parent = this.collection.getItem(item.parentKey);
         let nextKey = this.getKeyBelow(item.key);
         if (nextKey) {
-          // let next = this.collection.getItem(nextKey);
-          // let nextChildren = [...next.childNodes];
           return this.direction === 'rtl' ? this.getLastKey(nextKey, false) : this.getFirstKey(nextKey, false);
         }
       }

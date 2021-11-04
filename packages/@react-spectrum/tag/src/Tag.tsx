@@ -14,13 +14,14 @@ import {classNames, SlotProvider, useSlotProps, useStyleProps} from '@react-spec
 import {ClearButton} from '@react-spectrum/button';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
+import {SpectrumTagProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
 
-export function Tag(props) {
+export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
     isDisabled,
     isRemovable,
@@ -61,11 +62,10 @@ export function Tag(props) {
       <SlotProvider
         slots={{
           icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-          text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content')},
-          tagRemoveButton: {UNSAFE_className: classNames(styles, 'spectrum-Tag-action')}
+          text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content')}
         }}>
         {typeof props.children === 'string' ? <Text><span role="gridcell">{props.children}</span></Text> : props.children}
-        {isRemovable && <TagRemoveButton item={item} state={state} {...clearButtonProps} />}
+        {isRemovable && <TagRemoveButton item={item} state={state} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
       </SlotProvider>
     </div>
   );
