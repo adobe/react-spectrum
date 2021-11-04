@@ -62,7 +62,7 @@ governing permissions and limitations under the License.
   grid-area: content;
   block-size: 100%;
   line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
-  padding-inline-end: calc(var(--spectrum-tag-padding-x) / 2);
+  padding-inline-end: var(--spectrum-tag-padding-x);
   flex: 1 1 auto;
   font-size: var(--spectrum-tag-text-size);
   cursor: default;
@@ -76,9 +76,6 @@ governing permissions and limitations under the License.
   grid-area: action;
   height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
   width: var(--spectrum-global-dimension-size-250);
-  padding-inline-start: calc(var(--spectrum-tag-padding-x) / 4);
- /*padding-inline-start: var(--spectrum-tag-icon-padding-x);*/
-  /*padding-inline-end: var(--spectrum-tag-icon-padding-x);*/
 
   &:focus-ring {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);

@@ -81,19 +81,11 @@ function render(props: any = {}) {
 }
 
 function WithAnnouncing() {
-  let [tags, setTags] = useState(['Tag']);
+  let tags = ['Testing tag', 'Other testing label'];
 
-  function handleKeyDown(e) {
-    if (e.ctrlKey && e.key === 'd') {
-      e.preventDefault();
-      setTags([...tags, 'New Tag']);
-    }
-  }
   return (
     <React.Fragment>
-      {/*
-        // @ts-ignore */}
-      <TagGroup onKeyDown={handleKeyDown} aria-label="tag group">
+      <TagGroup aria-label="tag group">
         {tags.map((t, index) => <Item key={index}>{t}</Item>)}
       </TagGroup>
     </React.Fragment>
