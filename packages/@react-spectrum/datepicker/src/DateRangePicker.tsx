@@ -102,6 +102,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   return (
     <Field
       {...props}
+      ref={targetRef}
       description={description}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
@@ -111,8 +112,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
       <div
         {...styleProps}
         {...mergeProps(groupProps, hoverProps, focusProps)}
-        className={className}
-        ref={targetRef}>
+        className={className}>
         <Input
           isDisabled={isDisabled}
           isQuiet={isQuiet}

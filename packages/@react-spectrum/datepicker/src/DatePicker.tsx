@@ -99,6 +99,7 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
   return (
     <Field
       {...props}
+      ref={targetRef}
       description={description}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
@@ -107,8 +108,7 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
       UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <div
         {...mergeProps(groupProps, hoverProps, focusProps)}
-        className={className}
-        ref={targetRef}>
+        className={className}>
         <Input
           isDisabled={isDisabled}
           isQuiet={isQuiet}
