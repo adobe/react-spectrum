@@ -20,6 +20,7 @@ import {Item, Picker, Section} from '../src';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {states} from './data';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -1740,10 +1741,8 @@ describe('Picker', function () {
     it('should have a hidden select element for form autocomplete', function () {
       let {getByText, getByRole} = render(
         <Provider theme={theme}>
-          <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
+          <Picker label="Test" autoComplete="address-level1" items={states} onSelectionChange={onSelectionChange}>
+            {item => <Item key={item.abbr}>{item.name}</Item>}
           </Picker>
         </Provider>
       );
@@ -1766,18 +1765,16 @@ describe('Picker', function () {
       let hiddenSelect = getByRole('listbox', {hidden: true});
       expect(hiddenSelect.parentElement).toBe(hiddenLabel);
       expect(hiddenSelect).toHaveAttribute('tabIndex', '-1');
+      expect(hiddenSelect).toHaveAttribute('autoComplete', 'address-level1');
 
       let options = within(hiddenSelect).getAllByRole('option', {hidden: true});
-      expect(options.length).toBe(4);
-      expect(options[0]).toHaveTextContent('');
-      expect(options[1]).toHaveTextContent('One');
-      expect(options[2]).toHaveTextContent('Two');
-      expect(options[3]).toHaveTextContent('Three');
+      expect(options.length).toBe(60);
+      options.forEach((option, index) => index > 0 && expect(option).toHaveTextContent(states[index - 1].name));
 
-      fireEvent.change(hiddenSelect, {target: {value: 'two'}});
+      fireEvent.change(hiddenSelect, {target: {value: 'CA'}});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      expect(onSelectionChange).toHaveBeenLastCalledWith('two');
-      expect(picker).toHaveTextContent('Two');
+      expect(onSelectionChange).toHaveBeenLastCalledWith('CA');
+      expect(picker).toHaveTextContent('California');
     });
 
     it('should have a hidden input to marshall focus to the button', function () {
