@@ -199,7 +199,7 @@ jobs:
 
       - run:
           name: build docs
-          command: make website &> results.txt
+          command: make website | tee results.txt
 
       - run:
           name: Rerun once on out of memory
