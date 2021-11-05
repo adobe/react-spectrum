@@ -199,7 +199,18 @@ jobs:
 
       - run:
           name: build docs
-          command: make website
+          command: make website &> results.txt
+
+      - run:
+          name: Rerun once on out of memory
+          command: |
+              if grep -q "error: ENOMEM: not enough memory, read" results.txt; then
+                rm -rf dist/*/docs
+                make website
+              else
+                exit 1
+              fi
+          when: on_fail
 
       - persist_to_workspace:
           root: dist
