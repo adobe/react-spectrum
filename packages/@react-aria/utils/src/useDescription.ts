@@ -54,3 +54,16 @@ export function useDescription(description: string): AriaLabelingProps {
     'aria-describedby': description ? id : undefined
   };
 }
+
+export function mergeDescriptions(...args: AriaLabelingProps[]): AriaLabelingProps {
+  let key = 'aria-describedby';
+  let ids = args.reduce((acc, id) => {
+    if (acc.length === 0) {
+      return id[key] ? `${id[key]}` : acc;
+    }
+    return id[key] ? `${acc} ${id[key]}` : acc;
+  }, '');
+  return {
+    'aria-describedby': ids ? ids : undefined
+  };
+}

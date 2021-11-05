@@ -16,13 +16,14 @@ import {gridIds} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Layout} from '@react-stately/virtualizer';
-import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
+import {mergeDescriptions, mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
-import {RefObject, useMemo} from 'react';
+import React, {RefObject, useEffect, useMemo, useState} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useInteractionModality} from '@react-aria/interactions';
 
 interface TableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
@@ -37,7 +38,7 @@ interface TableProps<T> extends GridProps {
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
+export function useTable<T>(props: TableProps<T> & {onAction: (key: React.Key) => void}, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
   let {
     keyboardDelegate,
     isVirtualized,
@@ -106,7 +107,46 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
     return sortDirection && column ? formatMessage(`${sortDirection}Sort`, {columnName}) : undefined;
   }, [sortDirection, column, state.collection.columns]);
 
-  let descriptionProps = useDescription(sortDescription);
+
+  // do we have something that might be better suited for this?
+  let [interactionType, setInteractionType] = useState('');
+  useEffect(() => {
+    let onPointerDown = (e) => {
+      setInteractionType(e.pointerType);
+    };
+    let onKeyDown = () => {
+      setInteractionType('keyboard');
+    };
+    let tableRef = ref.current;
+    tableRef.addEventListener('pointerdown', onPointerDown, true);
+    tableRef.addEventListener('pointerup', onPointerDown, true);
+    tableRef.addEventListener('keydown', onKeyDown, true);
+    tableRef.addEventListener('keyup', onKeyDown, true);
+    return () => {
+      tableRef.removeEventListener('pointerdown', onPointerDown, true);
+      tableRef.removeEventListener('pointerup', onPointerDown, true);
+      tableRef.removeEventListener('keydown', onKeyDown, true);
+      tableRef.removeEventListener('keyup', onKeyDown, true);
+    };
+  });
+  let interactionDescription = useMemo(() => {
+    let selectionMode = state.selectionManager.selectionMode;
+    let selectionBehavior = state.selectionManager.selectionBehavior;
+    // if we're in replace but can select multiple, then when using touch it's long press to enter selection mode
+    let message = undefined;
+    if (interactionType === 'touch') {
+      message = formatMessage('longPressToSelect');
+    } else if (interactionType === 'mouse' || interactionType === 'pen') {
+      message = formatMessage('cmdPressToSelect');
+    }
+    return selectionBehavior === 'replace' && selectionMode === 'multiple' ? message : undefined;
+  }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, formatMessage, interactionType]);
+
+  let sortDescriptionProps = useDescription(sortDescription);
+  let longPressDescriptionProps = useDescription(interactionDescription);
+  // todo: should mergeprops append describedby's?
+  let descriptionProps = mergeDescriptions(sortDescriptionProps, longPressDescriptionProps);
+
 
   // Only announce after initial render, tabbing to the table will tell you the initial sort info already
   useUpdateEffect(() => {
