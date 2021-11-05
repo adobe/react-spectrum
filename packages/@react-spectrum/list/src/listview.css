@@ -71,7 +71,6 @@
   &:focus-ring {
     background-color: var(--spectrum-table-row-background-color-hover);
     box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
-    border-radius: var(--spectrum-table-cell-border-radius-key-focus);
   }
 
   &.is-active {
