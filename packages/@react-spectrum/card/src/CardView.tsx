@@ -90,7 +90,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   type View = ReusableView<Node<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View) => (
     <VirtualizerItem
-      className={classNames(styles, 'spectrum-CardView-CardWrapper')}
       key={reusableView.key}
       reusableView={reusableView}
       parent={parent} />

@@ -1253,12 +1253,6 @@ For now working around it with a useLayoutEffect in CardBase.
     width: 100%;
     height: 100%;
   }
-
-  .spectrum-CardView-CardWrapper {
-    overflow: visible !important;
-    contain: size layout style !important;
-  }
-
   .spectrum-CardView-row {
     outline: none;
     height: 100%

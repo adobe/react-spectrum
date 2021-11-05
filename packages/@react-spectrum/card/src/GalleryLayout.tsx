@@ -216,6 +216,8 @@ export class GalleryLayout<T> extends BaseLayout<T> {
         let itemWidth = Math.max(widths[j - index][1], this.minItemSize.width);
         let rect = new Rect(x, y, itemWidth, itemHeight);
         let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+        layoutInfo.overflow = 'visible';
+        layoutInfo.contain = 'size layout style';
         this.layoutInfos.set(node.key, layoutInfo);
         x += itemWidth + this.itemSpacing.width;
       }

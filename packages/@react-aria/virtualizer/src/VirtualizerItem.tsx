@@ -57,7 +57,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
 
   let style: CSSProperties = {
     position: layoutInfo.isSticky ? 'sticky' : 'absolute',
-    overflow: 'hidden',
+    overflow: layoutInfo.overflow,
     top: layoutInfo.rect.y - (parent ? parent.rect.y : 0),
     [xProperty]: layoutInfo.rect.x - (parent ? parent.rect.x : 0),
     transition: 'all',
@@ -69,7 +69,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,
-    contain: 'size layout style paint'
+    contain: layoutInfo.contain
   };
 
   cache.set(layoutInfo, style);
