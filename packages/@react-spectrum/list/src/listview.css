@@ -66,10 +66,6 @@
   &.is-hovered,
   &.is-focused {
     background-color: var(--spectrum-table-row-background-color-hover);
-
-    .react-spectrum-ListView--quiet & {
-      border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
-    }
   }
 
   &:focus-ring {
