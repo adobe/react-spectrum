@@ -61,6 +61,7 @@ describe('DatePickerBase', function () {
         expect(segment).not.toHaveAttribute('aria-disabled');
         expect(segment).toHaveAttribute('contentEditable', 'true');
         expect(segment).toHaveAttribute('inputMode', 'numeric');
+        expect(segment).not.toHaveAttribute('aria-readonly', 'true');
       }
 
       let button = getAllByRole('button')[0];

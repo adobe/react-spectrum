@@ -338,7 +338,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       'aria-label': segment.type !== 'literal' ? displayNames.of(segment.type) : undefined,
       'aria-labelledby': `${fieldLabelId} ${id}`,
       'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
-      'aria-readonly': props.isReadOnly || segment.isEditable ? 'true' : undefined,
+      'aria-readonly': props.isReadOnly || !segment.isEditable ? 'true' : undefined,
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,
       spellCheck: isEditable ? 'false' : undefined,
