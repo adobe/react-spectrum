@@ -170,10 +170,15 @@ governing permissions and limitations under the License.
       color var(--spectrum-global-animation-duration-100) ease-in-out,
       border-color var(--spectrum-global-animation-duration-100) ease-in-out;
 
+  /* compute the "auto" margin to center the date text manually rather than using the keyword to ensure consistent rounding. */
+  --margin: calc((100% - var(--spectrum-calendar-day-width)) / 2);
+
   .spectrum-Calendar-dateText {
     display: block;
     width: var(--spectrum-calendar-day-width);
     margin: 0 auto;
+    margin-inline-start: auto;
+    margin-inline-end: var(--margin);
   }
 
   &:focus {
@@ -239,16 +244,15 @@ governing permissions and limitations under the License.
     border-width: var(--spectrum-calendar-border-width-reset);
     line-height: var(--spectrum-calendar-day-height);
     border-radius: var(--spectrum-calendar-border-radius-reset);
-    /* this is the computed value of the "auto" margin that the non-selected cells have. */
-    --margin-start: calc((100% - var(--spectrum-calendar-day-width)) / 2);
 
     &.is-range-start,
     &.is-selection-start {
       border-start-start-radius: var(--spectrum-calendar-day-width);
       border-end-start-radius: var(--spectrum-calendar-day-width);
-      /* push over by the "auto" margin so the background doesn't extend to the left */
-      margin-inline-start: var(--margin-start);
-      width: calc(100% - var(--margin-start));
+      /* reduce the width by the "auto" margin and end align so the background doesn't extend to the left */
+      inset-inline-start: auto;
+      inset-inline-end: 0;
+      width: calc(100% - var(--margin));
 
       &:before,
       &:after,
@@ -266,9 +270,11 @@ governing permissions and limitations under the License.
     &.is-selection-end {
       border-start-end-radius: var(--spectrum-calendar-day-width);
       border-end-end-radius: var(--spectrum-calendar-day-width);
-      /* push to the left by the "auto" margin so the background doesn't extend to the right */
-      margin-inline-start: 0;
-      width: calc(100% - var(--margin-start));
+      /* reduce the width by the "auto" margin and start align so the background doesn't extend to the right */
+      /* this must be measured from the right rather than using width to avoid rounding errors in Safari */
+      width: auto;
+      inset-inline-start: 0;
+      inset-inline-end: var(--margin);
 
       &:before,
       &:after,
@@ -288,12 +294,16 @@ governing permissions and limitations under the License.
     &.is-selection-end.is-range-start,
     &.is-range-start.is-range-end {
       width: var(--spectrum-calendar-day-width);
-      margin-inline-start: var(--margin-start);
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      margin-inline-start: auto;
+      margin-inline-end: var(--margin);
       border-radius: var(--spectrum-calendar-day-width);
 
       &:after,
       .spectrum-Calendar-dateText {
-        margin: 0 auto;
+        margin-inline-start: auto;
+        margin-inline-end: var(--margin);
       }
     }
   }
