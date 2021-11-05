@@ -101,6 +101,13 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     focusedKey = focusedItem.parentKey;
   }
 
+  let scrollToItem = (key) => {
+    cardViewLayout.virtualizer.scrollToItem(key, {
+      duration: 0,
+      offsetY: 24
+    });
+  };
+
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
     <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout, cardOrientation}}>
@@ -116,7 +123,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         isLoading={isLoading}
         onLoadMore={onLoadMore}
         renderWrapper={renderWrapper}
-        transitionDuration={isLoading ? 160 : 220}>
+        transitionDuration={isLoading ? 160 : 220}
+        scrollToItem={scrollToItem}>
         {(type, item) => {
           if (type === 'item') {
             return (
