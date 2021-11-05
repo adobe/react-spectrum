@@ -3,6 +3,9 @@
   --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
   --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-75);
   --spectrum-listview-item-spacious-padding-y: var(--spectrum-global-dimension-size-100);
+  --spectrum-listview-border-width: var(--spectrum-table-border-size, var(--spectrum-alias-border-size-thin));
+  --spectrum-listview-border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
+  --spectrum-listview-item-start-end-border-radius: calc(var(--spectrum-listview-border-radius) - var(--spectrum-listview-border-width));
 }
 
 .react-spectrum-ListView {
@@ -10,8 +13,8 @@
   border-color: var(--spectrum-table-border-color, var(--spectrum-alias-border-color-mid));
   border-style: solid;
   position: relative;
-  border-width: var(--spectrum-table-border-size, var(--spectrum-alias-border-size-thin));
-  border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
+  border-width: var(--spectrum-listview-border-width);
+  border-radius: var(--spectrum-listview-border-radius);
   overflow: auto;
   vertical-align: var(--spectrum-table-cell-vertical-alignment);
   border-collapse: separate;
@@ -94,6 +97,16 @@
     /* have to eliminate vertical padding to allow proper vertical alignment */
     padding-top: 0px;
     padding-bottom: 0px;
+  }
+  
+  /* give first and last items border-radius to match listview container */
+  div:first-child > div[role="row"] > & {
+    border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
+    border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
+  }
+  div:last-child > div[role="row"] > & {
+    border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
+    border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
 }
 
