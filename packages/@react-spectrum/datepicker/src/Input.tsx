@@ -30,7 +30,8 @@ export function Input(props) {
     fieldProps,
     inputRef = defaultRef,
     className,
-    autoFocus
+    autoFocus,
+    style
   } = props;
 
   // Reserve padding for the error icon when the width of the input is unconstrained.
@@ -112,7 +113,7 @@ export function Input(props) {
   }
 
   return (
-    <div {...mergeProps(fieldProps)} className={textfieldClass}>
+    <div {...mergeProps(fieldProps)} className={textfieldClass} style={style}>
       <FocusRing focusClass={classNames(textfieldStyles, 'is-focused')} focusRingClass={classNames(textfieldStyles, 'focus-ring')} isTextInput within>
         <div role="presentation" className={inputClass}>
           <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={inputRef}>
