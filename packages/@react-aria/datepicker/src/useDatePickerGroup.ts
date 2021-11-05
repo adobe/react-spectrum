@@ -16,7 +16,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
 
   // Focus the first placeholder segment from the end on mouse down/touch up in the field.
   let focusLast = () => {
-    let elements = ref.current.querySelectorAll('[tabindex]');
+    let elements = ref.current.querySelectorAll('[tabindex="0"]');
     let index = elements.length - 1;
     while (index >= 0 && elements[index].getAttribute('aria-placeholder')) {
       index--;

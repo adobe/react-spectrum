@@ -88,6 +88,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     buttonProps: {
       ...descProps,
       id: buttonId,
+      excludeFromTabOrder: true,
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,

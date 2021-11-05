@@ -73,6 +73,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     buttonProps: {
       ...descProps,
       id: buttonId,
+      excludeFromTabOrder: true,
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,
