@@ -43,12 +43,7 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
    * will be targeted.
    * @type {number}
    */
-  threshold?: number,
-  /**
-   * The margin around the grid view between the edges and the items.
-   * @default 24
-   */
-  margin?: number // TODO: Perhaps should accept Responsive<DimensionValue>
+  threshold?: number
 }
 
 // TODO: copied from V2, update this with the proper spectrum values
@@ -79,7 +74,6 @@ const DEFAULT_OPTIONS = {
 
 export class GalleryLayout<T> extends BaseLayout<T> {
   protected idealRowHeight: number;
-  protected margin: number;
   protected itemSpacing: Size;
   itemPadding: number;
   protected minItemSize: Size;

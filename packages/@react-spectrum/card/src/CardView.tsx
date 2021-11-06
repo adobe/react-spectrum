@@ -18,7 +18,7 @@ import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useMemo, useRef} from 'react';
+import React, {ReactElement, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
@@ -101,12 +101,14 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     focusedKey = focusedItem.parentKey;
   }
 
-  let scrollToItem = (key) => {
-    cardViewLayout.virtualizer.scrollToItem(key, {
+  let margin = cardViewLayout.margin || 0;
+  let virtualizer = cardViewLayout.virtualizer;
+  let scrollToItem = useCallback((key) => {
+    virtualizer && virtualizer.scrollToItem(key, {
       duration: 0,
-      offsetY: 24
+      offsetY: margin
     });
-  };
+  }, [margin, virtualizer]);
 
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (

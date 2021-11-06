@@ -43,7 +43,7 @@ interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate {
   isLoading: boolean,
   direction: Direction,
   layoutType: string,
-  itemPadding: number
+  margin?: number
 }
 
 export interface CardViewLayoutConstructor<T> {

@@ -19,7 +19,12 @@ import {Scale} from '@react-types/provider';
 export interface BaseLayoutOptions {
   collator?: Intl.Collator,
   // TODO: is this valid or is scale a spectrum specific thing that should be left out of the layouts?
-  scale?: Scale
+  scale?: Scale,
+  /**
+   * The margin around the grid view between the edges and the items.
+   * @default 24
+   */
+  margin?: number // TODO: Perhaps should accept Responsive<DimensionValue>
 }
 
 export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
@@ -32,6 +37,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   disabledKeys: Set<Key> = new Set();
   direction: Direction;
   scale: Scale;
+  margin: number;
 
   constructor(options: BaseLayoutOptions = {}) {
     super();
@@ -39,6 +45,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.collator = options.collator;
     this.lastCollection = null;
     this.scale = options.scale || 'medium';
+    this.margin = options.margin || 24;
   }
 
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {

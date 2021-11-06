@@ -27,11 +27,6 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
    */
   maxItemSize?: Size,
   /**
-   * The margin around the grid view between the edges and the items.
-   * @default 24
-   */
-  margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
-  /**
    * The minimum space required between items.
    * @default 18 x 18
    */
@@ -52,7 +47,6 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
 export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   protected minItemSize: Size;
   protected maxItemSize: Size;
-  protected margin: number;
   protected minSpace: Size;
   protected maxColumns: number;
   itemPadding: number;

@@ -31,11 +31,6 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
    */
   maxItemSize?: Size,
   /**
-   * The margin around the grid view between the edges and the items.
-   * @default 24
-   */
-  margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
-  /**
    * The minimum space required between items.
    * @default 18 x 18
    */
@@ -102,7 +97,6 @@ const DEFAULT_OPTIONS = {
 export class GridLayout<T> extends BaseLayout<T> {
   protected minItemSize: Size;
   protected maxItemSize: Size;
-  protected margin: number;
   protected minSpace: Size;
   protected maxColumns: number;
   itemPadding: number;

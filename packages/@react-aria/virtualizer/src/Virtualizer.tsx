@@ -53,6 +53,8 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     focusedKey,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     shouldUseVirtualFocus,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    scrollToItem,
     ...otherProps
   } = props;
 
