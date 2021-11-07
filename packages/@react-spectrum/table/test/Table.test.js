@@ -3118,7 +3118,7 @@ describe('TableView', function () {
       </TableView>
     );
 
-    it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
+    it.only('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
       let tree = render(<TableExample />);
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
@@ -3151,9 +3151,9 @@ describe('TableView', function () {
 
       expect(document.activeElement).toEqual(input);
 
+      fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+      fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
       act(() => {
-        fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
-        fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
         jest.runAllTimers();
       });
 

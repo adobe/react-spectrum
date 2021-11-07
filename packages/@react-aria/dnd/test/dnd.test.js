@@ -2096,7 +2096,7 @@ describe('useDrag and useDrop', function () {
 
       expect(() => tree.getAllByRole('textbox')).toThrow();
 
-      act(() => setShowInput2(true));
+      await act(async () => setShowInput2(true));
       // MutationObserver is async
       await waitFor(() => expect(() => tree.getAllByRole('textbox')).toThrow());
 

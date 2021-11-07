@@ -12,7 +12,7 @@
 
 import React, {useEffect, useLayoutEffect} from 'react';
 import {render, screen} from '@testing-library/react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@testing-library/react';
 import {useObjectRef} from '../';
 
 describe('useObjectRef', () => {
