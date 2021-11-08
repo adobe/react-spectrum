@@ -2416,8 +2416,8 @@ describe('TableView', function () {
         onSelectionChange.mockReset();
 
         // Android TalkBack double tap test
-        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 1}));
-        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 0}));
+        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 1, detail: 0}));
+        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 0, detail: 0}));
         checkSelection(onSelectionChange, [
           'Foo 5', 'Foo 8', 'Foo 10'
         ]);
@@ -2434,8 +2434,8 @@ describe('TableView', function () {
         expect(onAction).toHaveBeenCalledWith('Foo 5');
 
         // Android TalkBack double tap test
-        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 1}));
-        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 0}));
+        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 1, detail: 0}));
+        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 0, detail: 0}));
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(2);
         expect(onAction).toHaveBeenCalledWith('Foo 10');

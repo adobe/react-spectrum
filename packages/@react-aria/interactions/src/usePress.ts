@@ -740,9 +740,17 @@ function shouldPreventDefault(target: Element) {
 
 function isVirtualPointerEvent(event: PointerEvent) {
   // If the pointer size is zero, then we assume it's from a screen reader.
-  // Android TalkBack double tap will sometimes return a event with width and height of 1 so we need to check for a specific combo of buttons, type, and pressure.
-  // According to https://w3c.github.io/pointerevents/#dom-pointerevent-pressure, devices that don't support pressure measures will always return .5 if there is an active button
-  // so this check will return false for mouse clicks. Touch events have a pressure of 1 so this will return false as well so TalkBack double tap is the only combo that will
-  // have pressure = 0 and buttons = 1.
-  return (event.width === 0 && event.height === 0) || (event.buttons === 1 && event.type === 'pointerdown' && event.pressure === 0);
+  // Android TalkBack double tap will sometimes return a event with width and height of 1
+  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
+  return (
+    (event.width === 0 && event.height === 0) ||
+    (event.buttons === 1 &&
+      event.width === 1 &&
+      event.height === 1 &&
+      event.type === 'pointerdown' &&
+      event.pressure === 0 &&
+      event.pointerType === 'mouse' &&
+      event.detail === 0
+    )
+  );
 }
