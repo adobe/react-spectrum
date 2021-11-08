@@ -406,8 +406,7 @@ describe('Picker', function () {
   });
 
   describe('closing', function () {
-    // FIXME(react18)
-    it.skip('can be closed by clicking on the button', function () {
+    it('can be closed by clicking on the button', function () {
       let onOpenChange = jest.fn();
       let {getByRole, queryByRole} = render(
         <Provider theme={theme}>
@@ -441,6 +440,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -479,8 +480,7 @@ describe('Picker', function () {
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
 
-    // FIXME(react18)
-    it.skip('can be closed by pressing the Escape key', function () {
+    it('can be closed by pressing the Escape key', function () {
       let onOpenChange = jest.fn();
       let {getByRole, queryByRole} = render(
         <Provider theme={theme}>
@@ -514,6 +514,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -554,8 +556,7 @@ describe('Picker', function () {
       expect(document.activeElement).not.toBe(picker);
     });
 
-    // FIXME(react18)
-    it.skip('closes on scroll on a parent element', function () {
+    it('closes on scroll on a parent element', function () {
       let onOpenChange = jest.fn();
       let {getByRole, getByTestId, queryByRole} = render(
         <Provider theme={theme}>
@@ -592,6 +593,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -670,8 +673,7 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(getByTestId('before-input'));
     });
 
-    // FIXME(react18)
-    it.skip('should have a hidden dismiss button for screen readers', async function () {
+    it('should have a hidden dismiss button for screen readers', async function () {
       let onOpenChange = jest.fn();
       let {getByRole, getAllByLabelText, getAllByRole} = render(
         <Provider theme={theme}>
@@ -710,6 +712,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -976,8 +980,7 @@ describe('Picker', function () {
   });
 
   describe('selection', function () {
-    // FIXME(react18)
-    it.skip('can select items on press', function () {
+    it('can select items on press', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
@@ -1008,12 +1011,13 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
 
-    // FIXME(react18)
-    it.skip('can select items with falsy keys', function () {
+    it('can select items with falsy keys', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
@@ -1044,6 +1048,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Empty');
 
@@ -1059,6 +1065,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Zero');
 
@@ -1074,13 +1082,13 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('False');
     });
 
-
-    // FIXME(react18)
-    it.skip('can select items with the Space key', function () {
+    it('can select items with the Space key', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
@@ -1120,12 +1128,13 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
 
-    // FIXME(react18)
-    it.skip('can select items with the Enter key', function () {
+    it('can select items with the Enter key', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
@@ -1164,12 +1173,13 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
 
-    // FIXME(react18)
-    it.skip('focuses items on hover', function () {
+    it('focuses items on hover', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
@@ -1208,12 +1218,13 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
 
-    // FIXME(react18)
-    it.skip('does not clear selection on escape closing the listbox', function () {
+    it('does not clear selection on escape closing the listbox', function () {
       let onOpenChangeSpy = jest.fn();
       let {getAllByText, getByRole, queryByRole} = render(
         <Provider theme={theme}>
@@ -1267,12 +1278,13 @@ describe('Picker', function () {
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(4);
       expect(queryByRole('listbox')).toBeNull();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
 
-    // FIXME(react18)
-    it.skip('supports controlled selection', function () {
+    it('supports controlled selection', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" selectedKey="two" onSelectionChange={onSelectionChange}>
@@ -1310,12 +1322,13 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
 
-    // FIXME(react18)
-    it.skip('supports default selection', function () {
+    it('supports default selection', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" defaultSelectedKey="two" onSelectionChange={onSelectionChange}>
@@ -1353,12 +1366,13 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('One');
     });
 
-    // FIXME(react18)
-    it.skip('skips disabled items', function () {
+    it('skips disabled items', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange} disabledKeys={['two']}>
@@ -1399,12 +1413,13 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
 
-    // FIXME(react18)
-    it.skip('supports sections and complex items', function () {
+    it('supports sections and complex items', function () {
       let {getAllByRole, getByRole, getByText} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
@@ -1489,6 +1504,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Cut');
       expect(getAllByRole('img', {hidden: true})).toHaveLength(2);
@@ -1520,14 +1537,15 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Puppy');
       expect(getAllByRole('img', {hidden: true})).toHaveLength(2);
       expect(getByText('Puppy description super long as well geez')).not.toBeVisible();
     });
 
-    // FIXME(react18)
-    it.skip('supports type to select', function () {
+    it('supports type to select', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
@@ -1569,6 +1587,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
 
@@ -1589,8 +1609,7 @@ describe('Picker', function () {
       expect(onSelectionChange).toHaveBeenLastCalledWith('');
     });
 
-    // FIXME(react18)
-    it.skip('does not deselect when pressing an already selected item', function () {
+    it('does not deselect when pressing an already selected item', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" defaultSelectedKey="two" onSelectionChange={onSelectionChange}>
@@ -1617,6 +1636,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });

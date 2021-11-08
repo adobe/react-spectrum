@@ -1501,8 +1501,7 @@ describe('SearchAutocomplete', function () {
       testSearchAutocompleteTrayOpen(trayInput, tray, listbox);
     });
 
-    // FIXME(react18)
-    it.skip('closing the tray autofocuses the button', function () {
+    it('closing the tray autofocuses the button', function () {
       let {getByRole, getByTestId} = renderSearchAutocomplete();
       let button = getByRole('button');
 
@@ -1523,6 +1522,8 @@ describe('SearchAutocomplete', function () {
       });
 
       expect(() => getByTestId('tray')).toThrow();
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(button);
     });
 

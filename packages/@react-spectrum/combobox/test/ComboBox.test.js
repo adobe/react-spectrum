@@ -4015,8 +4015,7 @@ describe('ComboBox', function () {
       expect(document.activeElement).not.toBe(trayInput);
     });
 
-    // FIXME(react18)
-    it.skip('value of the button mirrors the tray input', function () {
+    it('value of the button mirrors the tray input', function () {
       let {getByRole, getByText, getByTestId} = renderComboBox({allowsCustomValue: true});
       let button = getByRole('button');
 
@@ -4047,6 +4046,8 @@ describe('ComboBox', function () {
       act(() => {
         jest.runAllTimers();
       });
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
 
       expect(onOpenChange).toHaveBeenCalledWith(false, undefined);
       expect(onOpenChange).toHaveBeenCalledTimes(2);
@@ -5077,7 +5078,7 @@ describe('ComboBox', function () {
         });
         fireEvent.keyDown(combobox, {key: 'ArrowDown'});
         fireEvent.keyUp(combobox, {key: 'ArrowDown'});
-        act(()=>{
+        act(() => {
           jest.runAllTimers();
         });
 
