@@ -4774,10 +4774,9 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
-"@testing-library/react@v13.0.0-alpha.4":
-  version "13.0.0-alpha.4"
-  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-13.0.0-alpha.4.tgz#00cf104f3a9b90d07691497abc50ade74e534d98"
-  integrity sha512-SY+sz4juZDcMlAaEI8kYpdi4qv+fGjvqLHETVAcL13Q+N9PFtsdmNJnVu3Ez4V1dJuR59y4vZlSJa/U69YyYBg==
+"@testing-library/react@https://pkg.csb.dev/testing-library/react-testing-library/commit/0f93c987/@testing-library/react":
+  version "0.0.0-semantically-released"
+  resolved "https://pkg.csb.dev/testing-library/react-testing-library/commit/0f93c987/@testing-library/react#8f56030388395cde2ab0ca1ad6e06a64b71dfb9f"
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@testing-library/dom" "^8.5.0"
