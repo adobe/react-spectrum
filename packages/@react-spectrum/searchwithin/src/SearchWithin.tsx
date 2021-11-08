@@ -29,7 +29,6 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   props = useFormProps(props);
   let formatMessage = useMessageFormatter(intlMessages);
   let {styleProps} = useStyleProps(props);
-  let {labelProps, fieldProps} = useLabel(props);
   let {
     children,
     isDisabled,
@@ -37,6 +36,10 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     label
   } = props;
   let labels = useLabels(props, formatMessage('search'));
+  let {labelProps, fieldProps} = useLabel({
+    ...props,
+    ...labels
+  });
   let labelledBy = labels['aria-labelledby'] || labels.id;
   let pickerId = useId();
 
