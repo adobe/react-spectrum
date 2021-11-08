@@ -38,14 +38,14 @@ export interface ColorAreaState {
   getThumbPosition(): {x: number, y: number},
 
   /** Increments the value of the horizontal axis channel by the channel step or page amount. */
-  incrementX(isPageStep?: boolean): void,
+  incrementX(stepSize?: number): void,
   /** Decrements the value of the horizontal axis channel by the channel step or page amount. */
-  decrementX(isPageStep?: boolean): void,
+  decrementX(stepSize?: number): void,
 
   /** Increments the value of the vertical axis channel by the channel step or page amount. */
-  incrementY(isPageStep?: boolean): void,
+  incrementY(stepSize?: number): void,
   /** Decrements the value of the vertical axis channel by the channel step or page amount. */
-  decrementY(isPageStep?: boolean): void,
+  decrementY(stepSize?: number): void,
 
   /** Whether the color area is currently being dragged. */
   readonly isDragging: boolean,
@@ -56,6 +56,8 @@ export interface ColorAreaState {
   channels: {xChannel: ColorChannel, yChannel: ColorChannel, zChannel: ColorChannel},
   xChannelStep: number,
   yChannelStep: number,
+  xChannelPageStep: number,
+  yChannelPageStep: number,
 
   /** Returns the color that should be displayed in the color area thumb instead of `value`. */
   getDisplayColor(): Color
@@ -135,11 +137,15 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     valueRef.current = color.withChannelValue(channels.yChannel, v);
     setColor(valueRef.current);
   };
+  let xChannelPageStep = Math.max(color.getChannelRange(channels.xChannel).pageSize, xChannelStep);
+  let yChannelPageStep = Math.max(color.getChannelRange(channels.yChannel).pageSize, yChannelStep);
 
   return {
     channels,
     xChannelStep,
     yChannelStep,
+    xChannelPageStep,
+    yChannelPageStep,
     value: color,
     setValue(value) {
       let c = normalizeColor(value);
@@ -177,24 +183,20 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       let y = 1 - (yValue - minValueY) / (maxValueY - minValueY);
       return {x, y};
     },
-    incrementX(isPageStep) {
+    incrementX(stepSize) {
       let range = color.getChannelRange(channels.xChannel);
-      let stepSize =  isPageStep ? Math.max(range.pageSize, xChannelStep) : xChannelStep;
       setXValue(snapValueToStep(xValue + stepSize, range.minValue, range.maxValue, stepSize));
     },
-    incrementY(isPageStep) {
+    incrementY(stepSize) {
       let range = color.getChannelRange(channels.yChannel);
-      let stepSize = isPageStep ? Math.max(range.pageSize, yChannelStep) : yChannelStep;
       setYValue(snapValueToStep(yValue + stepSize, range.minValue, range.maxValue, stepSize));
     },
-    decrementX(isPageStep) {
+    decrementX(stepSize) {
       let range = color.getChannelRange(channels.xChannel);
-      let stepSize = isPageStep ? Math.max(range.pageSize, xChannelStep) : xChannelStep;
       setXValue(snapValueToStep(xValue - stepSize, range.minValue, range.maxValue, stepSize));
     },
-    decrementY(isPageStep) {
+    decrementY(stepSize) {
       let range = color.getChannelRange(channels.yChannel);
-      let stepSize = isPageStep ? Math.max(range.pageSize, yChannelStep) : yChannelStep;
       setYValue(snapValueToStep(yValue - stepSize, range.minValue, range.maxValue, stepSize));
     },
     setDragging(isDragging) {

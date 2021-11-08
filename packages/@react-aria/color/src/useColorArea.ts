@@ -68,44 +68,34 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
       // these are the cases that useMove doesn't handle
-      if (!((e.shiftKey && /^Arrow(?:Right|Left|Up|Down)$/.test(e.key)) || /^(PageUp|PageDown|Home|End)$/.test(e.key))) {
+      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
+        e.continuePropagation();
         return;
       }
+      // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
+      e.preventDefault();
+      // remember to set this and unset it so that onChangeEnd is fired
       stateRef.current.setDragging(true);
-      let isPage = e.shiftKey;
       switch (e.key) {
         case 'PageUp':
-          isPage = true;
-        case 'ArrowUp':
-        case 'Up':
-          stateRef.current.incrementY(isPage);
+          stateRef.current.incrementY(stateRef.current.yChannelPageStep);
           focusedInputRef.current = inputYRef.current;
           break;
         case 'PageDown':
-          isPage = true;
-        case 'ArrowDown':
-        case 'Down':
-          stateRef.current.decrementY(isPage);
+          stateRef.current.decrementY(stateRef.current.yChannelPageStep);
           focusedInputRef.current = inputYRef.current;
           break;
         case 'Home':
-          isPage = true;
-        case 'ArrowLeft':
-        case 'Left':
-          direction === 'rtl' ? stateRef.current.incrementX(isPage) : stateRef.current.decrementX(isPage);
+          direction === 'rtl' ? stateRef.current.incrementX(stateRef.current.xChannelPageStep) : stateRef.current.decrementX(stateRef.current.xChannelPageStep);
           focusedInputRef.current = inputXRef.current;
           break;
         case 'End':
-          isPage = true;
-        case 'ArrowRight':
-        case 'Right':
-          direction === 'rtl' ? stateRef.current.decrementX(isPage) : stateRef.current.incrementX(isPage);
+          direction === 'rtl' ? stateRef.current.decrementX(stateRef.current.xChannelPageStep) : stateRef.current.incrementX(stateRef.current.xChannelPageStep);
           focusedInputRef.current = inputXRef.current;
           break;
       }
       stateRef.current.setDragging(false);
       if (focusedInputRef.current) {
-        e.preventDefault();
         focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
         focusedInputRef.current = undefined;
       }
@@ -117,24 +107,26 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       currentPosition.current = null;
       stateRef.current.setDragging(true);
     },
-    onMove({deltaX, deltaY, pointerType}) {
+    onMove({deltaX, deltaY, pointerType, shiftKey}) {
       if (currentPosition.current == null) {
         currentPosition.current = stateRef.current.getThumbPosition();
       }
       let {width, height} = containerRef.current.getBoundingClientRect();
       if (pointerType === 'keyboard') {
-        if (deltaX > 0 || deltaX < 0) {
-          stateRef.current[`${deltaX > 0 ? 'increment' : 'decrement'}X`]();
-        }
-        if (deltaY > 0 || deltaY < 0) {
-          stateRef.current[`${deltaY < 0 ? 'increment' : 'decrement'}Y`]();
+        if (deltaX > 0) {
+          stateRef.current.incrementX(shiftKey ? stateRef.current.xChannelPageStep : stateRef.current.xChannelStep);
+        } else if (deltaX < 0) {
+          stateRef.current.decrementX(shiftKey ? stateRef.current.xChannelPageStep : stateRef.current.xChannelStep);
+        } else if (deltaY > 0) {
+          stateRef.current.decrementY(shiftKey ? stateRef.current.yChannelPageStep : stateRef.current.yChannelStep);
+        } else if (deltaY < 0) {
+          stateRef.current.incrementY(shiftKey ? stateRef.current.yChannelPageStep : stateRef.current.yChannelStep);
         }
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
-      }
-      currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
-      currentPosition.current.y += deltaY / height;
-      if (pointerType !== 'keyboard') {
+      } else {
+        currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
+        currentPosition.current.y += deltaY / height;
         stateRef.current.setColorFromPoint(currentPosition.current.x, currentPosition.current.y);
       }
     },
@@ -279,8 +271,6 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
         }
       })
   }, keyboardProps, movePropsThumb);
-  // order matters, keyboard need to finish before move so that onChangeEnd is fired last
-  // after valueRef in stately has been updated
 
 
   let xInputLabellingProps = useLabels({

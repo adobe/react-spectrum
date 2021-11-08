@@ -33,28 +33,22 @@ describe('ColorWheel', () => {
   let onChangeSpy = jest.fn();
   let onChangeEndSpy = jest.fn();
 
-  afterEach(() => {
-    onChangeSpy.mockClear();
-    onChangeEndSpy.mockClear();
-  });
-
   beforeAll(() => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
     // @ts-ignore
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
-    jest.useFakeTimers();
+    jest.useFakeTimers('modern');
   });
   afterAll(() => {
     // @ts-ignore
     window.HTMLElement.prototype.offsetWidth.mockReset();
     jest.useRealTimers();
-    // @ts-ignore
-    window.requestAnimationFrame.mockReset();
   });
 
   afterEach(() => {
     // for restoreTextSelection
     jest.runAllTimers();
+    onChangeSpy.mockClear();
+    onChangeEndSpy.mockClear();
   });
 
   it('sets input props', () => {
@@ -168,16 +162,60 @@ describe('ColorWheel', () => {
 
     it('respects step', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={45} />);
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} step={45} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
       fireEvent.keyDown(slider, {key: 'Right'});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 45).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 45).toString('hsla'));
       fireEvent.keyDown(slider, {key: 'Left'});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+    });
+
+    it('respects page steps', () => {
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
+      let slider = getByRole('slider');
+      act(() => {slider.focus();});
+
+      fireEvent.keyDown(slider, {key: 'PageUp'});
+      fireEvent.keyUp(slider, {key: 'PageUp'});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 6).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 6).toString('hsla'));
+      fireEvent.keyDown(slider, {key: 'PageDown'});
+      fireEvent.keyUp(slider, {key: 'PageDown'});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+    });
+
+    it('respects page steps from shift arrow', () => {
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
+      let slider = getByRole('slider');
+      act(() => {slider.focus();});
+
+      fireEvent.keyDown(slider, {key: 'Right', shiftKey: true});
+      fireEvent.keyUp(slider, {key: 'Right', shiftKey: true});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 6).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 6).toString('hsla'));
+      fireEvent.keyDown(slider, {key: 'Left', shiftKey: true});
+      fireEvent.keyUp(slider, {key: 'Left', shiftKey: true});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
     });
   });
 
