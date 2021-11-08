@@ -53,9 +53,9 @@ describe('SearchWithin', function () {
   });
 
   it('renders correctly', function () {
-    let {getAllByText, getByRole, getByPlaceholderText} = renderSearchWithin();
+    let {getAllByText, getByRole} = renderSearchWithin();
 
-    let searchfield = getByPlaceholderText('Search');
+    let searchfield = getByRole('searchbox');
     expect(searchfield).toBeVisible();
     expect(searchfield).toHaveAttribute('type', 'search');
 
@@ -69,8 +69,8 @@ describe('SearchWithin', function () {
 
   it('can type in search and get onChange', function () {
     let onChange = jest.fn();
-    let {getByPlaceholderText} = renderSearchWithin({}, {onChange});
-    let searchfield = getByPlaceholderText('Search');
+    let {getByRole} = renderSearchWithin({}, {onChange});
+    let searchfield = getByRole('searchbox');
     expect(searchfield).toHaveAttribute('value', '');
 
     act(() => {searchfield.focus();});
@@ -94,9 +94,9 @@ describe('SearchWithin', function () {
   });
 
   it('searchfield and picker are labelled correctly', function () {
-    let {getByRole, getAllByText, getByPlaceholderText} = renderSearchWithin();
+    let {getByRole, getAllByText} = renderSearchWithin();
 
-    let searchfield = getByPlaceholderText('Search');
+    let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let group = getByRole('group');
     triggerPress(picker);
@@ -109,9 +109,9 @@ describe('SearchWithin', function () {
   });
 
   it('isDisabled=true disables both the searchfield and picker', function () {
-    let {getByRole, getByPlaceholderText} = renderSearchWithin({isDisabled: true});
+    let {getByRole} = renderSearchWithin({isDisabled: true});
 
-    let searchfield = getByPlaceholderText('Search');
+    let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
 
     expect(searchfield).toHaveAttribute('disabled');
@@ -119,9 +119,9 @@ describe('SearchWithin', function () {
   });
 
   it('autoFocus=true on searchfield will automatically focus the input', function () {
-    let {getByPlaceholderText} = renderSearchWithin({}, {autoFocus: true});
+    let {getByRole} = renderSearchWithin({}, {autoFocus: true});
 
-    let searchfield = getByPlaceholderText('Search');
+    let searchfield = getByRole('searchbox');
 
     expect(searchfield).toHaveFocus();
   });
@@ -135,13 +135,13 @@ describe('SearchWithin', function () {
   });
 
   it('slot props override props provided to children', function () {
-    let {getByRole, getAllByText, getByPlaceholderText} = renderSearchWithin(
+    let {getByRole, getAllByText} = renderSearchWithin(
       {isDisabled: true, isRequired: false, label: 'Test1'},
       {isDisabled: false, isRequired: true, label: 'Test2', isQuiet: true},
       {isDisabled: false, isRequired: true, label: 'Test3', isQuiet: true}
     );
 
-    let searchfield = getByPlaceholderText('Search');
+    let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let group = getByRole('group');
     triggerPress(picker);
@@ -160,10 +160,10 @@ describe('SearchWithin', function () {
   });
 
   it('Should handle aria-labels without visible label', function () {
-    let {getByRole, getByPlaceholderText} = renderSearchWithin({label: undefined, 'aria-label': 'Aria Label'});
+    let {getByRole} = renderSearchWithin({label: undefined, 'aria-label': 'Aria Label'});
 
     let group = getByRole('group');
-    let searchfield = getByPlaceholderText('Search');
+    let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
 
     expect(group).toHaveAttribute('aria-label', 'Aria Label');
@@ -177,10 +177,10 @@ describe('SearchWithin', function () {
 
   it('Should use default aria-labels if no aria-label provided', function () {
     let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    let {getByRole, getByPlaceholderText} = renderSearchWithin({label: undefined});
+    let {getByRole} = renderSearchWithin({label: undefined});
 
     let group = getByRole('group');
-    let searchfield = getByPlaceholderText('Search');
+    let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
 
     expect(group).toHaveAttribute('aria-label', 'Search');
