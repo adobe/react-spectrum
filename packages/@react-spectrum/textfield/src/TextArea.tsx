@@ -16,6 +16,7 @@ import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useStyleProps} from '@react-spectrum/utils';
 import {useTextField} from '@react-aria/textfield';
 
 function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
@@ -29,21 +30,51 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     ...otherProps
   } = props;
 
+  let fallbackRef = useRef<TextFieldRef>(null);
+  if (!ref) {
+    ref = fallbackRef;
+  }
+
   // not in stately because this is so we know when to re-measure, which is a spectrum design
   let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue, () => {});
 
   let inputRef = useRef<HTMLTextAreaElement>();
 
+  // Store styleProps to apply styles appropriately on height change.
+  let {styleProps} = useStyleProps(props);
+
   let onHeightChange = useCallback(() => {
+    let input = inputRef.current;
+    let field = ref.current.UNSAFE_getDOMNode();
     if (isQuiet) {
-      let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       input.style.alignSelf = 'start';
       input.style.height = 'auto';
       input.style.height = `${input.scrollHeight}px`;
       input.style.alignSelf = prevAlignment;
+      if (styleProps.style.height || styleProps.style.minHeight) {
+        field.style.minHeight = `${styleProps.style.height || field.style.minHeight}`;
+        field.style.height = '';
+        field.style.maxHeight = '';
+      } 
+    } else {
+      // So that resizing the textarea will resize its container, height, minHeight and maxHeight 
+      // should be applied directly to the textarea element, and we should remove those properties 
+      // from the Field container.
+      for (const [key, value] of Object.entries(styleProps.style)) {
+        switch (key) {
+          case 'height':
+          case 'maxHeight':
+          case 'minHeight':
+            if (field.style[key] === value) {
+              input.style[key] = value;
+              field.style[key] = '';
+            }
+            break;
+        }
+      }
     }
-  }, [isQuiet, inputRef]);
+  }, [isQuiet, inputRef, ref, styleProps]);
 
   useLayoutEffect(() => {
     if (inputRef.current) {
