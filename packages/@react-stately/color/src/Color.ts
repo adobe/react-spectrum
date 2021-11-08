@@ -317,7 +317,7 @@ class HSBColor extends Color {
    * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_HSL.
    * @returns An HSLColor object.
    */
-  private toHSL(): Color {
+  private toHSL(): IColor {
     let saturation = this.saturation / 100;
     let brightness = this.brightness / 100;
     let lightness = brightness * (1 - saturation / 2);
@@ -452,7 +452,7 @@ class HSLColor extends Color {
    * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_HSV.
    * @returns An HSBColor object.
    */
-  private toHSB(): Color {
+  private toHSB(): IColor {
     let saturation = this.saturation / 100;
     let lightness = this.lightness / 100;
     let brightness = lightness + saturation * Math.min(lightness, 1 - lightness);
