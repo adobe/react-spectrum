@@ -56,7 +56,6 @@ interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, Omit<As
   layout: CardViewLayoutConstructor<T> | CardViewLayout<T>,
   // TODO: readd size when we get updated designs from spectrum
   // cardSize?: 'S' | 'M' | 'L',
-  // TODO: Keep this in the CardViewProps even though it only applies for grid layout?
   cardOrientation?: Orientation,
   isQuiet?: boolean,
   renderEmptyState?: () => ReactNode,
