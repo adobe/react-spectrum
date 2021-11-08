@@ -46,14 +46,11 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
   threshold?: number
 }
 
-// TODO: copied from V2, update this with the proper spectrum values
-// Should these be affected by Scale as well?
 const DEFAULT_OPTIONS = {
   S: {
     idealRowHeight: 112,
     minItemSize: new Size(96, 96),
     itemSpacing: new Size(8, 16),
-    // TODO: will need to update as well, add scale values when we support small cards
     itemPadding: 24,
     dropSpacing: 50,
     margin: 8
@@ -62,7 +59,6 @@ const DEFAULT_OPTIONS = {
     idealRowHeight: 208,
     minItemSize: new Size(136, 136),
     itemSpacing: new Size(18, 18),
-    // TODO: updated to work with new v3 cards (there is additional space required for the descriptions if there is a description)
     itemPadding: {
       'medium': 114,
       'large': 143
@@ -81,7 +77,6 @@ export class GalleryLayout<T> extends BaseLayout<T> {
 
   constructor(options: GalleryLayoutOptions = {}) {
     super(options);
-    // TODO: restore cardSize option when we support different size cards
     let cardSize = 'L';
     this.idealRowHeight = options.idealRowHeight || DEFAULT_OPTIONS[cardSize].idealRowHeight;
     this.itemSpacing = options.itemSpacing || DEFAULT_OPTIONS[cardSize].itemSpacing;

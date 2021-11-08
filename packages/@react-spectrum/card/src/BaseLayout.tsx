@@ -24,7 +24,7 @@ export interface BaseLayoutOptions {
    * The margin around the grid view between the edges and the items.
    * @default 24
    */
-  margin?: number // TODO: Perhaps should accept Responsive<DimensionValue>
+  margin?: number
 }
 
 export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {

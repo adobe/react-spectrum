@@ -53,11 +53,8 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
   cardOrientation?: Orientation
 }
 
-// TODO: copied from V2, update this with the proper spectrum values
-// Should these be affected by Scale as well?
 const DEFAULT_OPTIONS = {
   S: {
-    // TODO: add defaults for horizontal cards when we support small card sizes
     itemPadding: 20,
     minItemSize: {
       'vertical': new Size(96, 96)
@@ -69,8 +66,6 @@ const DEFAULT_OPTIONS = {
     dropSpacing: 50
   },
   L: {
-    // TODO: for now bumping this higher since the new cards have more stuff in the content area.
-    // Will need to ask Spectrum what these values should be. Used to be 52. Do the same for S above
     itemPadding: {
       'vertical': {
         'medium': 78,
@@ -81,7 +76,6 @@ const DEFAULT_OPTIONS = {
         'large': 170
       }
     },
-    // TODO: should these change with scale?
     minItemSize: {
       'vertical': new Size(208, 208),
       'horizontal': new Size(102, 102)
@@ -108,7 +102,6 @@ export class GridLayout<T> extends BaseLayout<T> {
 
   constructor(options: GridLayoutOptions = {}) {
     super(options);
-    // TODO: restore cardSize option when we support different size cards
     let cardSize = 'L';
     this.cardOrientation = options.cardOrientation || 'vertical';
     this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize[this.cardOrientation];
@@ -127,7 +120,6 @@ export class GridLayout<T> extends BaseLayout<T> {
     return 'grid';
   }
 
-  // TODO: Below functions From V2 Maybe don't need this? Might be a short cut for getting all visible rects since otherwise we'd have to iterate across all nodes
   getIndexAtPoint(x, y, allowInsertingAtEnd = false) {
     let itemHeight = this.itemSize.height + this.minSpace.height;
     let itemWidth = this.itemSize.width + this.horizontalSpacing;

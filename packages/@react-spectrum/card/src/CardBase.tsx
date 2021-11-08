@@ -30,7 +30,6 @@ interface CardBaseProps<T> extends SpectrumCardProps {
 
 function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  // TODO: Don't send in articleProps via context (unless we want to make another context for InternalCard)? Pass it in via props since it will only be provided via CardView's InternalCard
   let context = useCardViewContext() || {}; // we can call again here, won't change from Card.tsx
   let {state} = context;
   let manager = state?.selectionManager;
