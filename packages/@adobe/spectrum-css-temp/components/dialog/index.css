@@ -36,6 +36,7 @@ governing permissions and limitations under the License.
 
   --spectrum-dialog-button-margin: var(--spectrum-global-dimension-size-200);
   --spectrum-dialog-content-margin-bottom: var(--spectrum-global-dimension-size-450);
+  --spectrum-dialog-content-min-height: var(--spectrum-component-single-line-height);
 
   /* 12px desktop (medium scale) and 8px mobile (large scale) */
   --spectrum-dialog-close-button-padding: calc(26px - var(--spectrum-global-dimension-size-175));
@@ -173,6 +174,9 @@ governing permissions and limitations under the License.
   */
   padding: calc(var(--spectrum-global-dimension-size-25) * 2);
   margin: calc(var(--spectrum-global-dimension-size-25) * -2);
+
+  /* for zoom (a11y) and short windows */
+  min-height: var(--spectrum-dialog-content-min-height);
 }
 
 
@@ -295,6 +299,10 @@ governing permissions and limitations under the License.
 }
 
 @media screen and (max-width: 700px) {
+  /* for zoom (a11y) */
+  .spectrum-Dialog {
+    --spectrum-dialog-padding: var(--spectrum-global-dimension-static-size-300);
+  }
 
   .spectrum-Dialog .spectrum-Dialog-grid {
     grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
