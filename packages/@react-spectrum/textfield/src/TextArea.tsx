@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, useLayoutEffect} from '@react-aria/utils';
+import {chain, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import React, {RefObject, useCallback, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
@@ -27,6 +27,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     isReadOnly = false,
     isRequired = false,
     onChange,
+    labelPosition,
     ...otherProps
   } = props;
 
@@ -42,39 +43,52 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
   // Store styleProps to apply styles appropriately on height change.
   let {styleProps} = useStyleProps(props);
+  let initialHeightsRef = useRef(null);
 
   let onHeightChange = useCallback(() => {
     let input = inputRef.current;
     let field = ref.current.UNSAFE_getDOMNode();
+    if (initialHeightsRef.current === null) {
+      initialHeightsRef.current = {
+        inputHeight: input.offsetHeight,
+        fieldHeight: field.offsetHeight,
+        diff: field.offsetHeight - input.offsetHeight
+      };
+    }
+    let {inputHeight, fieldHeight, diff} = initialHeightsRef.current;
+
+    // label or helptext height might change so we have to recalculate
+    let labelHeight = labelPosition !== 'side' && !field.firstElementChild.contains(input) ? (field.firstElementChild as HTMLElement).offsetHeight : 0;
+    let helpTextHeight = !field.lastElementChild.contains(input) ? (field.lastElementChild as HTMLElement).offsetHeight : 0;
+    
     if (isQuiet) {
       let prevAlignment = input.style.alignSelf;
       input.style.alignSelf = 'start';
       input.style.height = 'auto';
-      input.style.height = `${input.scrollHeight}px`;
+      input.style.height = `${Math.max(input.scrollHeight, inputHeight)}px`;
       input.style.alignSelf = prevAlignment;
-      if (styleProps.style.height || styleProps.style.minHeight) {
-        field.style.minHeight = `${styleProps.style.height || field.style.minHeight}`;
-        field.style.height = '';
-        field.style.maxHeight = '';
-      } 
-    } else {
-      // So that resizing the textarea will resize its container, height, minHeight and maxHeight 
-      // should be applied directly to the textarea element, and we should remove those properties 
-      // from the Field container.
       for (const [key, value] of Object.entries(styleProps.style)) {
         switch (key) {
           case 'height':
           case 'maxHeight':
+            field.style[key] = input.offsetHeight + labelHeight + helpTextHeight <= fieldHeight ? value : '';
+            break;
+        }
+      }
+    } else {  
+      for (const [key, value] of Object.entries(styleProps.style)) {
+        switch (key) {
+          case 'height':
+            field.style[key] = input.offsetHeight + labelHeight + helpTextHeight <= fieldHeight ? value : `calc(${value} - ${fieldHeight - (Math.max(inputHeight, input.offsetHeight) + labelHeight + helpTextHeight)}px)`;
+            break;
           case 'minHeight':
-            if (field.style[key] === value) {
-              input.style[key] = value;
-              field.style[key] = '';
-            }
+          case 'maxHeight':
+            input.style[key] = `calc(${value} - ${diff}px)`;
             break;
         }
       }
     }
-  }, [isQuiet, inputRef, ref, styleProps]);
+  }, [isQuiet, inputRef, ref, styleProps, labelPosition]);
 
   useLayoutEffect(() => {
     if (inputRef.current) {
@@ -82,6 +96,11 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     }
   }, [onHeightChange, inputValue, inputRef]);
 
+  // captures drag to resize events user events
+  useResizeObserver({
+    ref: inputRef,
+    onResize: onHeightChange
+  });
 
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
@@ -95,6 +114,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       ref={ref}
       inputRef={inputRef}
       labelProps={labelProps}
+      labelPosition={labelPosition}
       inputProps={inputProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}

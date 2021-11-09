@@ -42,7 +42,8 @@
     "@react-stately/utils": "^3.3.0",
     "@react-types/shared": "^3.10.0",
     "@react-types/textfield": "^3.3.0",
-    "@spectrum-icons/ui": "^3.2.1"
+    "@spectrum-icons/ui": "^3.2.1",
+    "@spectrum-icons/workflow": "^3.2.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
