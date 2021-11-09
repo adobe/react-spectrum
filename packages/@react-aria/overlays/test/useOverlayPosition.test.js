@@ -165,7 +165,7 @@ describe.skip('useOverlayPosition', function () {
   });
 });
 
-describe('useOverlayPosition with positioned container', () => {
+describe.skip('useOverlayPosition with positioned container', () => {
   let stubs = [];
   let realGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
   let realGetComputedStyle = window.getComputedStyle;
