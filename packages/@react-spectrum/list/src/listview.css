@@ -57,12 +57,16 @@
     &.is-selected {
       background-color: var(--spectrum-table-row-background-color-selected);
       border: 1px solid var(--spectrum-global-color-blue-500);
-  
+ 
       &.is-hovered,
       &.is-active {
         background-color: var(--spectrum-table-row-background-color-selected);
         border-color: var(--spectrum-global-color-blue-500);
       }
+    }
+
+    &.is-previous-selected {
+      border-top: 1px solid var(--spectrum-global-color-blue-500);
     }
   }
 
@@ -107,6 +111,11 @@
   div:last-child > div[role="row"] > & {
     border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
+  }
+
+  /* when an item is selected, we use the top border of the next item to avoid double borders for adjacent selected items, so we want to hide bottom borders except for the last item */
+  div:not(:last-child) > div[role="row"] > & {
+    border-bottom: none;
   }
 }
 
