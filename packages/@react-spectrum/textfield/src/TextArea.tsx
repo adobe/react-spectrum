@@ -64,11 +64,10 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     if (initialHeightsRef.current === null) {
       initialHeightsRef.current = {
         inputHeight: inputOffsetHeight,
-        fieldHeight: field.offsetHeight,
-        diff: field.offsetHeight - inputOffsetHeight
+        fieldHeight: field.offsetHeight
       };
     }
-    let {inputHeight, fieldHeight, diff} = initialHeightsRef.current;
+    let {inputHeight, fieldHeight} = initialHeightsRef.current;
     let calculatedFieldHeight = Math.max(inputHeight, inputOffsetHeight) + labelHeight + helpTextHeight;
     if (isQuiet) {
       let prevAlignment = input.style.alignSelf;
