@@ -32,7 +32,7 @@ export function parseColor(value: string): IColor {
 abstract class Color implements IColor {
   abstract toFormat(format: ColorFormat): IColor;
   abstract toString(format: ColorFormat | 'css'): string;
-  abstract clone(): Color;
+  abstract clone(): IColor;
   abstract getChannelRange(channel: ColorChannel): ColorChannelRange;
   abstract formatChannelValue(channel: ColorChannel, locale: string): string;
 
@@ -143,7 +143,7 @@ class RGBColor extends Color {
    * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB.
    * @returns An HSBColor object.
    */
-  private toHSB(): Color {
+  private toHSB(): IColor {
     const red = this.red / 255;
     const green = this.green / 255;
     const blue = this.blue / 255;
@@ -182,7 +182,7 @@ class RGBColor extends Color {
    * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB.
    * @returns An HSLColor object.
    */
-  private toHSL(): Color {
+  private toHSL(): IColor {
     const red = this.red / 255;
     const green = this.green / 255;
     const blue = this.blue / 255;
@@ -220,7 +220,7 @@ class RGBColor extends Color {
       this.alpha);
   }
 
-  clone(): Color {
+  clone(): IColor {
     return new RGBColor(this.red, this.green, this.blue, this.alpha);
   }
 
@@ -336,7 +336,7 @@ class HSBColor extends Color {
    * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB_alternative.
    * @returns An RGBColor object.
    */
-  private toRGB(): Color {
+  private toRGB(): IColor {
     let hue = this.hue;
     let saturation = this.saturation / 100;
     let brightness = this.brightness / 100;
@@ -349,7 +349,7 @@ class HSBColor extends Color {
     );
   }
 
-  clone(): Color {
+  clone(): IColor {
     return new HSBColor(this.hue, this.saturation, this.brightness, this.alpha);
   }
 
@@ -470,7 +470,7 @@ class HSLColor extends Color {
    * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB_alternative.
    * @returns An RGBColor object.
    */
-  private toRGB(): Color {
+  private toRGB(): IColor {
     let hue = this.hue;
     let saturation = this.saturation / 100;
     let lightness = this.lightness / 100;
@@ -484,7 +484,7 @@ class HSLColor extends Color {
     );
   }
 
-  clone(): Color {
+  clone(): IColor {
     return new HSLColor(this.hue, this.saturation, this.lightness, this.alpha);
   }
 
