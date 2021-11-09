@@ -61,7 +61,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
           text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content')}
         }}>
         {typeof props.children === 'string' ? <Text><span role="gridcell">{props.children}</span></Text> : props.children}
-        {isRemovable && <TagRemoveButton item={item} state={state} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
+        {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
       </SlotProvider>
     </div>
   );
@@ -77,7 +77,7 @@ function TagRemoveButton(props) {
       {...styleProps}
       ref={clearBtnRef}>
       <ClearButton
-        focusClassName={classNames(styles, 'focus-ring')}
+        preventFocus
         {...props} />
     </span>
   );

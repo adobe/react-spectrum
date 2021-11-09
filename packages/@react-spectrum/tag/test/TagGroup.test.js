@@ -73,7 +73,7 @@ describe('TagGroup', function () {
   it.each`
    Name           | Component         | TagComponent | props
    ${'TagGroup'}  | ${TagGroup}       | ${Item}      |${{}}
-  `('$Name have correct accessibility roles', ({Component, TagComponent, props}) => {
+  `('$Name has correct accessibility roles', ({Component, TagComponent, props}) => {
     let {container, getByText} = render(
       <Component
         {...props}
@@ -87,6 +87,38 @@ describe('TagGroup', function () {
     expect(tag).toHaveAttribute('role', 'row');
     let tagContent = getByText('Tag 1');
     expect(tagContent).toHaveAttribute('role', 'gridcell');
+  });
+
+  it.each`
+   Name           | Component         | TagComponent | props
+   ${'TagGroup'}  | ${TagGroup}       | ${Item}      |${{}}
+  `('$Name has correct tab index when not disabled', ({Component, TagComponent, props}) => {
+    let {getByRole} = render(
+      <Component
+        {...props}
+        aria-label="tag group">
+        <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
+      </Component>
+    );
+
+    let tagGroup = getByRole('grid');
+    expect(tagGroup).toHaveAttribute('tabIndex', '0');
+  });
+
+  it.each`
+   Name           | Component         | TagComponent | props
+   ${'TagGroup'}  | ${TagGroup}       | ${Item}      |${{isDisabled: true}}
+  `('$Name has correct tab index when disabled', ({Component, TagComponent, props}) => {
+    let {getByRole} = render(
+      <Component
+        {...props}
+        aria-label="tag group">
+        <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
+      </Component>
+    );
+
+    let tagGroup = getByRole('grid');
+    expect(tagGroup).toHaveAttribute('tabIndex', '-1');
   });
 
   // Commented out until spectrum can provide use case for these scenarios

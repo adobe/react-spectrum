@@ -140,6 +140,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   }
 
   getKeyRightOf(key: Key) {
+    if (this.focusMode === 'row' && this.cycleMode === 'between') {
+      return this.getKeyBelow(key);
+    }
+
     let item = this.collection.getItem(key);
     if (!item) {
       return;
@@ -185,6 +189,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   }
 
   getKeyLeftOf(key: Key) {
+    if (this.focusMode === 'row' && this.cycleMode === 'between') {
+      return this.getKeyAbove(key);
+    }
+
     let item = this.collection.getItem(key);
     if (!item) {
       return;

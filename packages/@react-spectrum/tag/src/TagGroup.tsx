@@ -81,12 +81,11 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     disabledKeys: state.disabledKeys,
     ref: domRef,
     direction,
-    focusMode: 'cell',
-    cycleMode: 'within'
+    focusMode: 'row',
+    cycleMode: 'between'
   });
   let {gridProps} = useGrid({
     ...props,
-    isVirtualized: true,
     keyboardDelegate
   }, state, domRef);
 
@@ -103,6 +102,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           styleProps.className
         )
       }
+      tabIndex={isDisabled ? -1 : 0}
       ref={domRef}>
       {[...gridCollection].map(item => (
         <Tag
@@ -115,7 +115,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           onRemove={onRemove}>
           {item.childNodes[0].rendered}
         </Tag>
-      ))}
+        ))}
     </div>
   );
 }

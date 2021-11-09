@@ -76,10 +76,4 @@ governing permissions and limitations under the License.
   grid-area: action;
   height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
   width: var(--spectrum-global-dimension-size-250);
-
-  &:focus-ring {
-    border-color: var(--spectrum-dropzone-border-color-selected-hover);
-    box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
-    border-radius: var(--spectrum-global-dimension-size-25);
-  }
 }
