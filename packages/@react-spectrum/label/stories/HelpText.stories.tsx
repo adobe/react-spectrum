@@ -136,7 +136,7 @@ storiesOf('HelpText', module)
     })
   )
   .add(
-    'custom height size-2000,  labelPosition: side',
+    'custom height size-2000, maxHeight 400px, labelPosition: side',
     () => {
       let [value, setValue] = useState('');
       return (
@@ -144,6 +144,7 @@ storiesOf('HelpText', module)
           labelPosition="side"
           label="Empty field"
           height="size-2000"
+          maxHeight="400px"
           description="This input is only valid when it's empty."
           errorMessage="Remove input."
           value={value}

@@ -98,7 +98,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
             break;
           case 'minHeight':
           case 'maxHeight':
-            input.style[key] = `calc(${value} - ${diff + (key === 'minHeight' ? -1 : 0) * helpTextHeight}px)`;
+            input.style[key] = `calc(${value} - ${labelHeight + helpTextHeight}px)`;
             break;
         }
       }
