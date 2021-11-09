@@ -103,9 +103,9 @@ describe('SearchWithin', function () {
 
     let listbox = getByRole('listbox');
     let label = getAllByText('Test')[0];
-    expect(listbox).toHaveAttribute('aria-labelledby', `${group.id} ${picker.id}`);
-    expect(searchfield).toHaveAttribute('aria-labelledby', group.id);
-    expect(group).toHaveAttribute('aria-labelledby', label.id);
+    expect(listbox).toHaveAttribute('aria-labelledby', `${label.id} ${group.id} ${picker.id}`);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${group.id}`);
+    expect(group).toHaveAttribute('aria-labelledby', `${label.id} ${group.id}`);
   });
 
   it('isDisabled=true disables both the searchfield and picker', function () {
@@ -152,8 +152,8 @@ describe('SearchWithin', function () {
 
     expect(searchfield).not.toHaveAttribute('aria-required');
 
-    expect(searchfield).toHaveAttribute('aria-labelledby', group.id);
-    expect(group).toHaveAttribute('aria-labelledby', label.id);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${group.id}`);
+    expect(group).toHaveAttribute('aria-labelledby', `${label.id} ${group.id}`);
 
     expect(searchfield.classList.contains('is-quiet')).toBeFalsy();
     expect(picker.classList.contains('spectrum-Dropdown--quiet')).toBeFalsy();
@@ -167,7 +167,6 @@ describe('SearchWithin', function () {
     let picker = getByRole('button');
 
     expect(group).toHaveAttribute('aria-label', 'Aria Label');
-    expect(searchfield).toHaveAttribute('aria-label', 'Aria Label');
     expect(picker).toHaveAttribute('aria-label', 'Search within');
 
     expect(group).not.toHaveAttribute('aria-labelledby');
@@ -176,6 +175,7 @@ describe('SearchWithin', function () {
   });
 
   it('Should use default aria-labels if no aria-label provided', function () {
+    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole} = renderSearchWithin({label: undefined});
 
     let group = getByRole('group');
@@ -183,11 +183,11 @@ describe('SearchWithin', function () {
     let picker = getByRole('button');
 
     expect(group).toHaveAttribute('aria-label', 'Search');
-    expect(searchfield).toHaveAttribute('aria-label', 'Search');
     expect(picker).toHaveAttribute('aria-label', 'Search within');
 
     expect(group).not.toHaveAttribute('aria-labelledby');
     expect(searchfield).toHaveAttribute('aria-labelledby');
     expect(picker).toHaveAttribute('aria-labelledby', `${group.id} ${picker.id} ${picker.childNodes[0].id}`);
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
   });
 });
