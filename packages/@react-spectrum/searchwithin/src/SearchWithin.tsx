@@ -35,12 +35,19 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     isRequired,
     label
   } = props;
-  let labels = useLabels(props, formatMessage('search'));
-  let {labelProps, fieldProps} = useLabel({
-    ...props,
-    ...labels
+
+  let defaultAriaLabel = formatMessage('search');
+  // Get label and group props (aka fieldProps)
+  let {labelProps, fieldProps} = useLabel(props);
+  // Add a default aria-label to the group if user doesn't provide an aria-label or aria-labelledby
+  let groupProps = useLabels({
+    id: fieldProps.id,
+    'aria-labelledby': fieldProps['aria-labelledby'],
+    'aria-label': !props['aria-label'] && !props['aria-labelledby'] ? defaultAriaLabel : fieldProps['aria-label']
   });
-  let labelledBy = labels['aria-labelledby'] || labels.id;
+  // Grab aria-labelledby for the search input. Will need the entire concatted aria-labelledby if it exists since pointing at the group id doesn't
+  // suffice if there is a external label
+  let labelledBy = groupProps['aria-labelledby'] || groupProps.id;
   let pickerId = useId();
 
   let domRef = useFocusableRef(ref);
@@ -84,10 +91,9 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let slots = {
     searchfield: {
       ...defaultSlotValues,
-      ...fieldProps,
       UNSAFE_className: searchFieldClassName,
-      'aria-labelledby': labelledBy,
-      'aria-label': labels['aria-label']
+      // Apply aria-labelledby of group or the group id to searchfield. No need to pass the group id (we want a new one) and aria-label (aria-labelledby will suffice)
+      'aria-labelledby': labelledBy
     },
     picker: {
       ...defaultSlotValues,
@@ -110,8 +116,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
         'spectrum-SearchWithin-container'
       )}>
       <div
-        {...labels}
-        aria-labelledby={labelProps.id}
+        {...groupProps}
         role="group"
         className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
         ref={groupRef}>

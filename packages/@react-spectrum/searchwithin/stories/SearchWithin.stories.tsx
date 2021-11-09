@@ -26,7 +26,7 @@ export default {
 
 function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
-    <SearchWithin label="Search" {...props}>
+    <SearchWithin label="This is label" {...props}>
       <SearchField placeholder="Search" {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
@@ -41,7 +41,7 @@ function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchF
 
 function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
-    <SearchWithin label="Search" {...props}>
+    <SearchWithin label="Search within" {...props}>
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
@@ -119,7 +119,7 @@ CustomWidth30.storyName = 'Custom width: 30';
 export const LabelPositionSide = () => render({labelPosition: 'side'});
 LabelPositionSide.storyName = 'labelPosition: side';
 
-export const NoVisibleLabel = () => render({label: undefined, 'aria-label': 'Search'});
+export const NoVisibleLabel = () => render({label: undefined, 'aria-label': 'blahhaw'});
 
 export const NoLabels = () => render({label: undefined});
 
