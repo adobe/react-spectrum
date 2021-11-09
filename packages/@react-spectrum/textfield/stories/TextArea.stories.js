@@ -136,10 +136,10 @@ storiesOf('TextArea', module)
     'custom height with label',
     () => (
       <Form>
-        <TextArea label="custom height" height="size-2000" minHeight="size-675" maxHeight="50vh" />
-        <TextArea label="custom height" height="size-2000" minHeight="size-675" maxHeight="50vh" isQuiet />
-        <TextArea labelPosition="side" label="custom height" height="size-2000" minHeight="size-675" maxHeight="50vh" />
-        <TextArea labelPosition="side" label="custom height" height="size-2000" minHeight="size-675" maxHeight="50vh" isQuiet />
+        <TextArea label="custom height" description="height: size-2000, minHeight: size-675, maxHeight: 50vh" height="size-2000" minHeight="size-675" maxHeight="50vh" />
+        <TextArea label="custom height" description="height: size-2000, minHeight: size-675, maxHeight: 50vh" height="size-2000" minHeight="size-675" maxHeight="50vh" isQuiet />
+        <TextArea labelPosition="side" label="custom height" description="height: size-2000, minHeight: size-675, maxHeight: 50vh" height="size-2000" minHeight="size-675" maxHeight="50vh" />
+        <TextArea labelPosition="side" label="custom height" description="height: size-2000, minHeight: size-675, maxHeight: 50vh" height="size-2000" minHeight="size-675" maxHeight="50vh" isQuiet />
       </Form>
     )
   )

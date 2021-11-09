@@ -47,31 +47,41 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
   let onHeightChange = useCallback(() => {
     let input = inputRef.current;
+    let inputContainer = input.parentElement;
     let field = ref.current.UNSAFE_getDOMNode();
+
+    // current offsetHeight of the textarea
+    let inputOffsetHeight = input.offsetHeight;
+
+    // Label or helpText height might change, so we have to recalculate
+    let labelHeight = labelPosition !== 'side' && !field.firstElementChild.contains(input) ? (field.firstElementChild as HTMLElement).offsetHeight : 0;
+    
+    // With labelPosition === 'side', the TextArea and HelpText will be contained within a wrapper.
+    let fieldWrapper = labelPosition === 'side' ? field.lastElementChild : field;
+    let helpTextHeight = !fieldWrapper.lastElementChild.contains(input) ? (fieldWrapper.lastElementChild as HTMLElement).offsetHeight : 0;
+
+    // store a ref containing the initial size values for comparison
     if (initialHeightsRef.current === null) {
       initialHeightsRef.current = {
-        inputHeight: input.offsetHeight,
+        inputHeight: inputOffsetHeight,
         fieldHeight: field.offsetHeight,
-        diff: field.offsetHeight - input.offsetHeight
+        diff: field.offsetHeight - inputOffsetHeight
       };
     }
     let {inputHeight, fieldHeight, diff} = initialHeightsRef.current;
-
-    // label or helptext height might change so we have to recalculate
-    let labelHeight = labelPosition !== 'side' && !field.firstElementChild.contains(input) ? (field.firstElementChild as HTMLElement).offsetHeight : 0;
-    let helpTextHeight = !field.lastElementChild.contains(input) ? (field.lastElementChild as HTMLElement).offsetHeight : 0;
-    
+    let calculatedFieldHeight = Math.max(inputHeight, inputOffsetHeight) + labelHeight + helpTextHeight;
     if (isQuiet) {
       let prevAlignment = input.style.alignSelf;
       input.style.alignSelf = 'start';
       input.style.height = 'auto';
       input.style.height = `${Math.max(input.scrollHeight, inputHeight)}px`;
       input.style.alignSelf = prevAlignment;
+      inputContainer.style.flexGrow = '0';
       for (const [key, value] of Object.entries(styleProps.style)) {
         switch (key) {
           case 'height':
           case 'maxHeight':
-            field.style[key] = input.offsetHeight + labelHeight + helpTextHeight <= fieldHeight ? value : '';
+            field.style[key] = calculatedFieldHeight <= fieldHeight ? value : '';
             break;
         }
       }
@@ -79,11 +89,16 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       for (const [key, value] of Object.entries(styleProps.style)) {
         switch (key) {
           case 'height':
-            field.style[key] = input.offsetHeight + labelHeight + helpTextHeight <= fieldHeight ? value : `calc(${value} - ${fieldHeight - (Math.max(inputHeight, input.offsetHeight) + labelHeight + helpTextHeight)}px)`;
+            field.style[key] = calculatedFieldHeight <= fieldHeight ? value : `${calculatedFieldHeight}px`;
+            
+            // When the textarea resizes smaller than the initial height, 
+            // its container should shrink, so that any helpText will align 
+            // to the bottom of the textarea.
+            inputContainer.style.flexGrow = inputOffsetHeight < inputHeight ? '0' : '';
             break;
           case 'minHeight':
           case 'maxHeight':
-            input.style[key] = `calc(${value} - ${diff}px)`;
+            input.style[key] = `calc(${value} - ${diff + (key === 'minHeight' ? -1 : 0) * helpTextHeight}px)`;
             break;
         }
       }
