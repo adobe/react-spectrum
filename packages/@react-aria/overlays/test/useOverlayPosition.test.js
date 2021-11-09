@@ -42,7 +42,7 @@ HTMLElement.prototype.getBoundingClientRect = function () {
   };
 };
 
-describe('useOverlayPosition', function () {
+describe.skip('useOverlayPosition', function () {
   beforeEach(() => {
     Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
