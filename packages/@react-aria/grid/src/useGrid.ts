@@ -117,6 +117,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     // Do not do this when using selectionBehavior = 'replace' to avoid selection announcements
     // every time the user presses the arrow keys.
     if (!state.selectionManager.isFocused || state.selectionManager.selectionBehavior === 'replace') {
+      lastSelection.current = selection;
+
       return;
     }
 
@@ -131,9 +133,11 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
         messages.push(formatMessage('selectedItem', {item: addedText}));
       }
     } else if (removedKeys.size === 1 && addedKeys.size === 0) {
-      let removedText = getRowText(removedKeys.keys().next().value);
-      if (removedText) {
-        messages.push(formatMessage('deselectedItem', {item: removedText}));
+      if (state.collection.getItem(removedKeys.keys().next().value)) {
+        let removedText = getRowText(removedKeys.keys().next().value);
+        if (removedText) {
+          messages.push(formatMessage('deselectedItem', {item: removedText}));
+        }
       }
     }
 
