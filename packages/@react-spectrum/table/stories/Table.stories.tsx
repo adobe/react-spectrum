@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
+import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
@@ -25,10 +26,10 @@ import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
+import {LoadingState, SelectionMode} from '@react-types/shared';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SelectionMode} from '@react-types/shared';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -1020,7 +1021,8 @@ storiesOf('TableView', module)
         </TableBody>
       </TableView>
     )
-  );
+  )
+  .add('table with breadcrumb navigation', () => <TableWithBreadcrumbs />);
 
 function AsyncLoadingExample() {
   interface Item {
@@ -1296,6 +1298,76 @@ function ChangableSelectionMode() {
           }
         </TableBody>
       </TableView>
+    </Flex>
+  );
+}
+
+export function TableWithBreadcrumbs() {
+  const fs = [
+    {key: 'a', name: 'Folder A', type: 'folder'},
+    {key: 'b', name: 'File B', value: '10 MB'},
+    {key: 'c', name: 'File C', value: '10 MB', parent: 'a'},
+    {key: 'd', name: 'File D', value: '10 MB', parent: 'a'}
+  ];
+
+  const [loadingState, setLoadingState] = useState<LoadingState>('idle' as 'idle');
+  const [selection, setSelection] = useState<'all' | Iterable<Key>>(new Set([]));
+  const [items, setItems] = useState(() => fs.filter(item => !item.parent));
+
+  const changeFolder = (folder) => {
+    setItems([]);
+    setLoadingState('loading' as 'loading');
+
+    // mimic loading behavior
+    setTimeout(() => {
+      setLoadingState('idle');
+      setItems(fs.filter(item =>  folder ? item.parent === folder : !item.parent));
+    }, 700);
+    setSelection(new Set([]));
+  };
+
+  return (
+    <Flex direction="column" width="400px">
+      <div>The TableView should not error if row selection changes due to items changes from external navigation (breadcrumbs).</div>
+      <Breadcrumbs
+        onAction={item => {
+          if (item === 'root') {
+            changeFolder('');
+          }
+        }}>
+        <Item key="root">root</Item>
+        <Item>a</Item>
+      </Breadcrumbs>
+      <TableView
+        width="400px"
+        aria-label="table"
+        selectedKeys={selection}
+        selectionMode="multiple"
+        onSelectionChange={(sel) => setSelection(sel)}>
+        <TableHeader>
+          <Column key="name" isRowHeader>Name</Column>
+          <Column key="value">Value</Column>
+        </TableHeader>
+        <TableBody items={items} loadingState={loadingState}>
+          {(item) => (
+            <Row key={item.key}>
+              {(column) => {
+                if (item.type === 'folder' && column === 'name') {
+                  return (
+                    <Cell textValue={item[column]}>
+                      <Link onPress={() => changeFolder(item.key)}>
+                        {item[column]}
+                      </Link>
+                    </Cell>
+                  );
+                }
+                return <Cell>{item[column]}</Cell>;
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+      <ActionButton onPress={() => setSelection(items.some(item => item.key === 'd') ? new Set(['d']) : new Set([]))}>Select D</ActionButton>
     </Flex>
   );
 }
