@@ -385,7 +385,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         onScroll={onScroll}>
         {state.visibleViews[1]}
       </ScrollView>
-      <VisuallyHidden><div id="foo"></div></VisuallyHidden>
     </div>
   );
 }
