@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render, cleanup} from '@testing-library/react';
 import {FocusScope, useFocusManager} from '../';
+import {getActiveElement} from '../src/getActiveElement';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import userEvent from '@testing-library/user-event';
@@ -1123,5 +1124,66 @@ describe('FocusScope', function () {
       userEvent.tab({shift: true});
       expect(document.activeElement).toBe(beforeScope);
     });
+  });
+});
+
+
+describe('focus scope within shadow dom', function () {
+
+  beforeEach(() => {
+    function Test() {
+      React.useEffect(() => {
+        const host = document.getElementById('shadowHost');
+        if (!!host.shadowRoot && !!(host.shadowRoot).getElementById('mountDiv')) {
+          return;
+        }
+
+        host.attachShadow({ mode: 'open' });
+        const mountDiv = document.createElement('div');
+        host.shadowRoot.appendChild(mountDiv);
+
+        ReactDOM.render(
+          <FocusScope autoFocus contain>
+            <input id="input1" />
+            <input id="input2" />
+            <input id="input3" />
+          </FocusScope>,
+          mountDiv
+        );
+      }, []);
+
+      return (<div id="shadowHost" />);
+    }
+    render(<Test />);
+  })
+
+  afterEach(cleanup);
+
+  it('should find the true active element via getActiveElement', function () {
+    const shadowDom = document.getElementById('shadowHost').shadowRoot;
+
+    const input2 = shadowDom.querySelector('#input2');
+    fireEvent.focus(input2);
+    expect(getActiveElement()).toBe(input2);
+
+    const input3 = shadowDom.querySelector('#input3');
+    fireEvent.focus(input3);
+    expect(getActiveElement()).toBe(input3);
+  });
+
+  it('should autofocus and lock tab navigation', function () {
+    expect(getActiveElement().id).toBe('input1');
+
+    fireEvent.keyDown(getActiveElement(), {key: 'Tab'});
+    expect(getActiveElement().id).toBe('input2');
+
+    fireEvent.keyDown(getActiveElement(), {key: 'Tab'});
+    expect(getActiveElement().id).toBe('input3');
+
+    fireEvent.keyDown(getActiveElement(), {key: 'Tab'});
+    expect(getActiveElement().id).toBe('input1');
+
+    fireEvent.keyDown(getActiveElement(), {key: 'Tab', shiftKey: true});
+    expect(getActiveElement().id).toBe('input3');
   });
 });

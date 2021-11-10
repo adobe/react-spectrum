@@ -265,7 +265,6 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     let onFocus = (e) => {
-      console.log('Focus e.target', e.target);
       // If focusing an element in a child scope of the currently active scope, the child becomes active.
       // Moving out of the active scope to an ancestor is not allowed.
       if (!activeScope || isAncestorScope(activeScope, scopeRef)) {
@@ -290,7 +289,6 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         // Use getActiveElement() instead of e.relatedTarget so we can tell if user clicked into iframe
         if (scopeRef === activeScope && !isElementInChildScope(getActiveElement(), scopeRef)) {
           activeScope = scopeRef;
-          console.log('Blur e.target', e.target);
           focusedNode.current = e.target;
           focusedNode.current.focus();
         }
