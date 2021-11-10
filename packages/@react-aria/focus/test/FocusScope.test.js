@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, cleanup} from '@testing-library/react';
+import {act, cleanup, fireEvent, render} from '@testing-library/react';
 import {FocusScope, useFocusManager} from '../';
 import {getActiveElement} from '../src/getActiveElement';
 import React from 'react';
@@ -1138,7 +1138,7 @@ describe('focus scope within shadow dom', function () {
           return;
         }
 
-        host.attachShadow({ mode: 'open' });
+        host.attachShadow({mode: 'open'});
         const mountDiv = document.createElement('div');
         host.shadowRoot.appendChild(mountDiv);
 
@@ -1155,7 +1155,7 @@ describe('focus scope within shadow dom', function () {
       return (<div id="shadowHost" />);
     }
     render(<Test />);
-  })
+  });
 
   afterEach(cleanup);
 

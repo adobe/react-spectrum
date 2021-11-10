@@ -11,10 +11,10 @@
  */
 
 import {focusSafely} from './focusSafely';
+import {getActiveElement} from './getActiveElement';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
-import {getActiveElement} from './getActiveElement';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
 // export {FocusScope};
