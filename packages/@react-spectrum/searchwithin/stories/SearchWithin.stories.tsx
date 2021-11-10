@@ -41,7 +41,7 @@ function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchF
 
 function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
-    <SearchWithin label="Search within" {...props}>
+    <SearchWithin label="Test label" {...props}>
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
@@ -60,7 +60,7 @@ function ResizeSearchWithinApp(props) {
   return (
     <Flex direction="column" gap="size-200" alignItems="start">
       <div style={{width: state ? '300px' : '400px'}}>
-        <SearchWithin label="Search" {...props} width="100%">
+        <SearchWithin label="Test label" {...props} width="100%">
           <SearchField placeholder="Search" onChange={action('change')} onSubmit={action('submit')} />
           <Picker defaultSelectedKey="all" onSelectionChange={action('selectionChange')}>
             <Item key="all">All</Item>
@@ -119,7 +119,7 @@ CustomWidth30.storyName = 'Custom width: 30';
 export const LabelPositionSide = () => render({labelPosition: 'side'});
 LabelPositionSide.storyName = 'labelPosition: side';
 
-export const NoVisibleLabel = () => render({label: undefined, 'aria-label': 'blahhaw'});
+export const NoVisibleLabel = () => render({label: undefined, 'aria-label': 'Test aria label'});
 
 export const NoLabels = () => render({label: undefined});
 
