@@ -26,7 +26,8 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
     type = 'modal',
     onDismiss,
     isDismissable,
-    isKeyboardDismissDisabled
+    isKeyboardDismissDisabled,
+    ...otherProps
   } = props;
 
   let childArray = React.Children.toArray(children);
@@ -52,7 +53,8 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
       onClose={onDismiss}
       type={type}
       isDismissable={isDismissable}
-      isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+      isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+      {...otherProps}>
       <DialogContext.Provider value={context}>
         {lastChild.current}
       </DialogContext.Provider>

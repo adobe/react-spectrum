@@ -51,7 +51,9 @@ export interface SpectrumDialogContainerProps {
   /** Whether the Dialog is dismissable. See the [Dialog docs](Dialog.html#dismissable-dialogs) for more details. */
   isDismissable?: boolean,
   /** Whether pressing the escape key to close the dialog should be disabled. */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean,
+  /** Element under which the DOM for Dialog should be added */
+  container?: Element,
 }
 
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
