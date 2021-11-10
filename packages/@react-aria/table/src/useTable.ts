@@ -23,7 +23,6 @@ import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useInteractionModality} from '@react-aria/interactions';
 
 interface TableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
