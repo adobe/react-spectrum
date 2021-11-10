@@ -181,7 +181,7 @@ describe('DialogContainer', function () {
   });
 
   it('should accept input container for portal', function () {
-    render( <div id="myDialogContainer" />);
+    render(<div id="myDialogContainer" />);
 
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
