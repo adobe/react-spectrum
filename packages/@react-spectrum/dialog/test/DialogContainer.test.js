@@ -179,4 +179,26 @@ describe('DialogContainer', function () {
 
     expect(queryByRole('dialog')).toBeNull();
   });
+
+  it('should accept input container for portal', function () {
+    render( <div id="myDialogContainer" />);
+
+    let {getByRole, queryByRole} = render(
+      <Provider theme={theme}>
+        <div id="myDialogContainer" />
+        <DialogContainerExample container={document.getElementById('myDialogContainer')} />
+      </Provider>
+    );
+    const container = document.getElementById('myDialogContainer');
+    expect(container.hasChildNodes()).toBeFalsy();
+
+    let button = getByRole('button');
+    expect(queryByRole('dialog')).toBeNull();
+
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
+
+    expect(getByRole('dialog')).toBeVisible();
+    expect(container.hasChildNodes()).toBeTruthy();
+  });
 });
