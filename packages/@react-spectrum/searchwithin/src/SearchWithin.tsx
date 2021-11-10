@@ -19,7 +19,7 @@ import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useFormProps} from '@react-spectrum/form';
-import {useId, useLabels} from '@react-aria/utils';
+import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
@@ -42,15 +42,10 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   }
   // Get label and group props (aka fieldProps)
   let {labelProps, fieldProps} = useLabel(props);
-  // Add a default aria-label to the group if user doesn't provide an aria-label or aria-labelledby
-  let groupProps = useLabels({
-    id: fieldProps.id,
-    'aria-labelledby': fieldProps['aria-labelledby'],
-    'aria-label': !props['aria-label'] && !props['aria-labelledby'] ? defaultAriaLabel : fieldProps['aria-label']
-  });
+
   // Grab aria-labelledby for the search input. Will need the entire concatted aria-labelledby if it exists since pointing at the group id doesn't
   // suffice if there is a external label
-  let labelledBy = groupProps['aria-labelledby'] || groupProps.id;
+  let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
   let pickerId = useId();
 
   let domRef = useFocusableRef(ref);
@@ -119,7 +114,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
         'spectrum-SearchWithin-container'
       )}>
       <div
-        {...groupProps}
+        {...fieldProps}
         role="group"
         className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
         ref={groupRef}>
