@@ -368,8 +368,8 @@ storiesOf('DialogTrigger', module)
           'bottom bottom'
         ]}
         columns={['auto', 'auto']}
-        rows={['size-1000', 'auto', 'size-1000']}
-        height="800px"
+        rows={['size-450', 'auto', 'size-450']}
+        height="1600px"
         width="100%"
         gap="size-100">
         <View gridArea="top" justifySelf="center">
