@@ -356,7 +356,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   return (
     <div
       {...mergeProps(otherProps, virtualizerProps)}
-      aria-labelledby="foo"
       ref={domRef}>
       <div
         role="presentation"
