@@ -53,7 +53,7 @@ export interface SpectrumDialogContainerProps {
   /** Whether pressing the escape key to close the dialog should be disabled. */
   isKeyboardDismissDisabled?: boolean,
   /** Element under which the DOM for Dialog should be added */
-  container?: Element,
+  container?: Element
 }
 
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
