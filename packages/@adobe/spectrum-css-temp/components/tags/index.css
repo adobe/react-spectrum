@@ -75,5 +75,5 @@ governing permissions and limitations under the License.
 .spectrum-Tag-action {
   grid-area: action;
   height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
-  width: var(--spectrum-global-dimension-size-250);
+  width: var(--spectrum-global-dimension-size-200);
 }
