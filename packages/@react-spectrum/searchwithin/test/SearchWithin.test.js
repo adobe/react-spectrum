@@ -175,7 +175,6 @@ describe('SearchWithin', function () {
   });
 
   it('Should use default aria-labels if no aria-label provided', function () {
-    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole} = renderSearchWithin({label: undefined});
 
     let group = getByRole('group');
@@ -188,6 +187,5 @@ describe('SearchWithin', function () {
     expect(group).not.toHaveAttribute('aria-labelledby');
     expect(searchfield).toHaveAttribute('aria-labelledby');
     expect(picker).toHaveAttribute('aria-labelledby', `${group.id} ${picker.id} ${picker.childNodes[0].id}`);
-    expect(consoleWarnSpy).toHaveBeenLastCalledWith('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
   });
 });

@@ -37,6 +37,9 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   } = props;
 
   let defaultAriaLabel = formatMessage('search');
+  if (!props['aria-label'] && !props['aria-labelledby']) {
+    props['aria-label'] = defaultAriaLabel;
+  }
   // Get label and group props (aka fieldProps)
   let {labelProps, fieldProps} = useLabel(props);
   // Add a default aria-label to the group if user doesn't provide an aria-label or aria-labelledby
