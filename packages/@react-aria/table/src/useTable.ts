@@ -18,7 +18,7 @@ import intlMessages from '../intl/*.json';
 import {Layout} from '@react-stately/virtualizer';
 import {mergeDescriptions, mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
-import React, {RefObject, useEffect, useMemo, useState} from 'react';
+import {RefObject, useEffect, useMemo, useState} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
@@ -37,7 +37,7 @@ interface TableProps<T> extends GridProps {
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: TableProps<T> & {onAction: (key: React.Key) => void}, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
+export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
   let {
     keyboardDelegate,
     isVirtualized,
