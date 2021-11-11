@@ -14,13 +14,14 @@ import {ActionButton} from '@react-spectrum/button';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
-import intlMessages from '../intl';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {PaginationBase} from '@react-types/pagination';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/pagination/vars.css';
 import {TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {usePagination} from '@react-aria/pagination';
 import {usePaginationState} from '@react-stately/pagination';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -31,6 +32,7 @@ export function PaginationInput(props: PaginationBase) {
   let state = usePaginationState(props);
   let {prevButtonProps, nextButtonProps, textProps} = usePagination(props, state);
   let formatMessage = useMessageFormatter(intlMessages);
+  let {direction} = useLocale();
   const {maxValue} = props;
 
   return (
@@ -39,7 +41,7 @@ export function PaginationInput(props: PaginationBase) {
       <ActionButton
         {...prevButtonProps}
         isQuiet>
-        <ChevronLeftMedium />
+        {direction === 'rtl' ? <ChevronRightMedium /> : <ChevronLeftMedium />}
       </ActionButton>
       <TextField
         {...textProps}
@@ -53,7 +55,7 @@ export function PaginationInput(props: PaginationBase) {
       <ActionButton
         {...nextButtonProps}
         isQuiet>
-        <ChevronRightMedium />
+        {direction === 'rtl' ? <ChevronLeftMedium /> : <ChevronRightMedium />}
       </ActionButton>
     </nav>
   );

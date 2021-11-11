@@ -46,3 +46,10 @@ export function snapValueToStep(value: number, min: number, max: number, step: n
 
   return snappedValue;
 }
+
+/* Takes a value and rounds off to the number of digits. */
+export function toFixedNumber(value: number, digits: number, base: number = 10): number {
+  const pow = Math.pow(base, digits);
+
+  return Math.round(value * pow) / pow;
+}
