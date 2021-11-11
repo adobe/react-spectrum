@@ -39,7 +39,14 @@ export class MessageFormatter {
       message = new IntlMessageFormat(msg, this.locale);
       this.cache[key] = message;
     }
+    let varCopy;
+    if (variables) {
+      varCopy = Object.keys(variables).reduce((acc, key) => ({
+        ...acc,
+        [key]: variables[key] == null ? false : variables[key]
+      }), {});
+    }
 
-    return message.format(variables);
+    return message.format(varCopy);
   }
 }
