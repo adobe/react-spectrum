@@ -277,20 +277,20 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
 
   let xInputLabellingProps = useLabels({
     ...props,
-    'aria-label': isMobile  ? state.value.getChannelName(xChannel, locale) : `${state.value.getChannelName(xChannel, locale)} / ${state.value.getChannelName(yChannel, locale)}`
+    'aria-label': isMobile  ? state.value.getChannelName(xChannel, locale) : formatMessage('x/y', {x: state.value.getChannelName(xChannel, locale), y: state.value.getChannelName(yChannel, locale)})
   });
 
   let yInputLabellingProps = useLabels({
     ...props,
-    'aria-label': isMobile ? state.value.getChannelName(yChannel, locale) : `${state.value.getChannelName(xChannel, locale)} / ${state.value.getChannelName(yChannel, locale)}`
+    'aria-label': isMobile ? state.value.getChannelName(yChannel, locale) : formatMessage('x/y', {x: state.value.getChannelName(xChannel, locale), y: state.value.getChannelName(yChannel, locale)})
   });
 
   let colorAriaLabellingProps = useLabels(props);
 
   let getValueTitle = () =>  [
-    `${state.value.getChannelName('red', locale)}: ${state.value.formatChannelValue('red', locale)}`,
-    `${state.value.getChannelName('green', locale)}: ${state.value.formatChannelValue('green', locale)}`,
-    `${state.value.getChannelName('blue', locale)}: ${state.value.formatChannelValue('blue', locale)}`
+    formatMessage('colorNameAndValue', {name: state.value.getChannelName('red', locale), value: state.value.formatChannelValue('red', locale)}),
+    formatMessage('colorNameAndValue', {name: state.value.getChannelName('green', locale), value: state.value.formatChannelValue('green', locale)}),
+    formatMessage('colorNameAndValue', {name: state.value.getChannelName('blue', locale), value: state.value.formatChannelValue('blue', locale)})
   ].join(', ');
 
   let ariaRoleDescription = isMobile ? null : formatMessage('twoDimensionalSlider');

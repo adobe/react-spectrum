@@ -1,4 +1,5 @@
 {
   "twoDimensionalSlider": "2D slider",
-  "colorNameAndValue": "{name}: {value}"
+  "colorNameAndValue": "{name}: {value}",
+  "x/y": "{x} / {y}"
 }
