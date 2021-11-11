@@ -158,11 +158,6 @@ describe('useComboBox', function () {
     buttonProps.onKeyDown(event({key: 'ArrowUp'}));
     expect(openSpy).toHaveBeenCalledTimes(0);
     expect(toggleSpy).toHaveBeenCalledTimes(0);
-    buttonProps.onPress(event({pointerType: 'touch'}));
-    expect(openSpy).toHaveBeenCalledTimes(0);
-    expect(toggleSpy).toHaveBeenCalledTimes(0);
-    buttonProps.onPressStart(event({pointerType: 'mouse'}));
-    expect(openSpy).toHaveBeenCalledTimes(0);
-    expect(toggleSpy).toHaveBeenCalledTimes(0);
+    expect(buttonProps.isDisabled).toBeTruthy();
   });
 });
