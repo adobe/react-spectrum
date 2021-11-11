@@ -40,9 +40,8 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
    * @default Infinity
    */
   maxColumns?: number,
-  // TODO: Should the below apply as horizontal item padding if cardOrientation is horizontal or should there be two separate options?
   /**
-   * The vertical padding for an item.
+   * The additional padding along the card's main axis. Affects the sizing of the content area following the card image.
    * @default 95
    */
   itemPadding?: number,
