@@ -17,7 +17,7 @@ import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridKeyboardDelegates} from './utils';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
+import {HTMLAttributes, Key, RefObject, useCallback, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
@@ -73,6 +73,19 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
   }
 
+  let keyboardNavigated = useRef(false);
+  // thought to wrap all delegate functions such that any keyboard events it handled would set this to true
+  // could create my own onKeyDown/onKeyUp handler that matches what keys useSelectableCollection does, but that's brittle
+  // could pass an onKeyHandled to useSelectableCollection, but it's a possibly break in API
+  let onKeyDown = useCallback((e: KeyboardEvent) => {
+    if (/^Arrow(?:Right|Left|Up|Down)$/.test(e.key) || /^(PageUp|PageDown|Home|End)$/.test(e.key)) {
+      keyboardNavigated.current = true;
+    }
+  }, [keyboardNavigated]);
+  let keyboardHandlers = {
+    onKeyDown
+  };
+
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -85,6 +98,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     collator,
     focusMode
   }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, focusMode]);
+
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: state.selectionManager,
@@ -97,12 +111,16 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   gridKeyboardDelegates.set(state, delegate);
 
   let domProps = filterDOMProps(props, {labelable: true});
-  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(domProps, {
-    role: 'grid',
-    id,
-    'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
-    ...collectionProps
-  });
+  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(
+    domProps,
+    {
+      role: 'grid',
+      id,
+      'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
+    },
+    collectionProps,
+    keyboardHandlers
+  );
 
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size;
@@ -116,7 +134,9 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   useUpdateEffect(() => {
     // Do not do this when using selectionBehavior = 'replace' to avoid selection announcements
     // every time the user presses the arrow keys.
-    if (!state.selectionManager.isFocused || state.selectionManager.selectionBehavior === 'replace') {
+    let wasKeyboardNavigated = keyboardNavigated.current;
+    keyboardNavigated.current = false;
+    if (!state.selectionManager.isFocused || wasKeyboardNavigated) {
       return;
     }
 
