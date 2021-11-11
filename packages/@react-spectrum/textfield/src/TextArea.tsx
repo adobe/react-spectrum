@@ -27,9 +27,10 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     isReadOnly = false,
     isRequired = false,
     onChange,
-    labelPosition,
     ...otherProps
   } = props;
+
+  let {labelPosition} = otherProps;
 
   let fallbackRef = useRef<TextFieldRef>(null);
   if (!ref) {
@@ -128,7 +129,6 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       ref={ref}
       inputRef={inputRef}
       labelProps={labelProps}
-      labelPosition={labelPosition}
       inputProps={inputProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
