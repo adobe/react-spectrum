@@ -12,7 +12,7 @@
 
 import {AriaColorAreaProps} from '@react-types/color';
 import {ColorAreaState} from '@react-stately/color';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
+import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MessageDictionary} from '@internationalized/message';
@@ -272,15 +272,16 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       })
   }, keyboardProps, movePropsThumb);
 
+  let isMobile = isIOS() || isAndroid();
 
   let xInputLabellingProps = useLabels({
     ...props,
-    'aria-label': `${state.value.getChannelName(xChannel, locale)} / ${state.value.getChannelName(yChannel, locale)}`
+    'aria-label': isMobile  ? state.value.getChannelName(xChannel, locale) : `${state.value.getChannelName(xChannel, locale)} / ${state.value.getChannelName(yChannel, locale)}`
   });
 
   let yInputLabellingProps = useLabels({
     ...props,
-    'aria-label': `${state.value.getChannelName(xChannel, locale)} / ${state.value.getChannelName(yChannel, locale)}`
+    'aria-label': isMobile ? state.value.getChannelName(yChannel, locale) : `${state.value.getChannelName(xChannel, locale)} / ${state.value.getChannelName(yChannel, locale)}`
   });
 
   let colorAriaLabellingProps = useLabels(props);
@@ -291,7 +292,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     `${state.value.getChannelName('blue', locale)}: ${state.value.formatChannelValue('blue', locale)}`
   ].join(', ');
 
-  let ariaRoleDescription = messages.getStringForLocale('twoDimensionalSlider', locale);
+  let ariaRoleDescription = isMobile ? null : messages.getStringForLocale('twoDimensionalSlider', locale);
 
   let {visuallyHiddenProps} = useVisuallyHidden({style: {
     opacity: '0.0001',
