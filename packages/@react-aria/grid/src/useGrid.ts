@@ -130,8 +130,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let selection = state.selectionManager.rawSelection;
   let lastSelection = useRef(selection);
   useUpdateEffect(() => {
-    // Do not do this when using selectionBehavior = 'replace' to avoid selection announcements
-    // every time the user presses the arrow keys.
+    // Do not announce every time the user presses the arrow keys.
     let wasKeyboardNavigated = keyboardNavigated.current;
     keyboardNavigated.current = false;
     if (!state.selectionManager.isFocused || wasKeyboardNavigated) {
@@ -149,9 +148,11 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
         messages.push(formatMessage('selectedItem', {item: addedText}));
       }
     } else if (removedKeys.size === 1 && addedKeys.size === 0) {
-      let removedText = getRowText(removedKeys.keys().next().value);
-      if (removedText) {
-        messages.push(formatMessage('deselectedItem', {item: removedText}));
+      if (state.collection.getItem(removedKeys.keys().next().value)) {
+        let removedText = getRowText(removedKeys.keys().next().value);
+        if (removedText) {
+          messages.push(formatMessage('deselectedItem', {item: removedText}));
+        }
       }
     }
 
