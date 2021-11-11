@@ -1,3 +1,4 @@
 {
-  "twoDimensionalSlider": "2D slider"
+  "twoDimensionalSlider": "2D slider",
+  "colorNameAndValue": "{name}: {value}"
 }
