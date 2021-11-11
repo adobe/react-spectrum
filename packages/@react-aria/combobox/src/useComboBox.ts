@@ -77,11 +77,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let formatMessage = useMessageFormatter(intlMessages);
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      type: 'listbox'
+      type: 'listbox',
+      isDisabled: isDisabled || isReadOnly
     },
     state,
-    buttonRef,
-    isDisabled
+    buttonRef
   );
 
   // Set listbox id so it can be used when calling getItemId later
@@ -171,7 +171,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   // Press handlers for the ComboBox button
   let onPress = (e: PressEvent) => {
-    if (e.pointerType === 'touch') {
+    if (e.pointerType === 'touch' && !(isDisabled || isReadOnly)) {
       // Focus the input field in case it isn't focused yet
       inputRef.current.focus();
       state.toggle(null, 'manual');
@@ -179,7 +179,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   };
 
   let onPressStart = (e: PressEvent) => {
-    if (e.pointerType !== 'touch') {
+    if (e.pointerType !== 'touch' && !(isDisabled || isReadOnly)) {
       inputRef.current.focus();
       state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, 'manual');
     }
