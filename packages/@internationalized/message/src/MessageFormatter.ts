@@ -41,10 +41,10 @@ export class MessageFormatter {
     }
     let varCopy: Record<string, PrimitiveType | T | FormatXMLElementFn<T, string | T | (string | T)[]>> | undefined;
     if (variables) {
-      varCopy = Object.keys(variables).reduce((acc, key) => ({
-        ...acc,
-        [key]: variables[key] == null ? false : variables[key]
-      }), {});
+      varCopy = Object.keys(variables).reduce((acc, key) => {
+        acc[key] = variables[key] == null ? false : variables[key];
+        return acc;
+      }, {});
     }
 
     return message.format(varCopy);
