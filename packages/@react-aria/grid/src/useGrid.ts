@@ -73,10 +73,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
   }
 
+  // track keyboard navigation for blocking announcements in "replace" mode
   let keyboardNavigated = useRef(false);
-  // thought to wrap all delegate functions such that any keyboard events it handled would set this to true
-  // could create my own onKeyDown/onKeyUp handler that matches what keys useSelectableCollection does, but that's brittle
-  // could pass an onKeyHandled to useSelectableCollection, but it's a possibly break in API
   let onKeyDown = useCallback((e: KeyboardEvent) => {
     if (/^Arrow(?:Right|Left|Up|Down)$/.test(e.key) || /^(PageUp|PageDown|Home|End)$/.test(e.key)) {
       keyboardNavigated.current = true;
