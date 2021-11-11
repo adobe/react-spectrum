@@ -39,7 +39,7 @@ export class MessageFormatter {
       message = new IntlMessageFormat(msg, this.locale);
       this.cache[key] = message;
     }
-    let varCopy;
+    let varCopy: Record<string, PrimitiveType | T | FormatXMLElementFn<T, string | T | (string | T)[]>> | undefined;
     if (variables) {
       varCopy = Object.keys(variables).reduce((acc, key) => ({
         ...acc,
