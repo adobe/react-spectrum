@@ -319,7 +319,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       max: state.value.getChannelRange(xChannel).maxValue,
       step: xChannelStep,
       'aria-roledescription': ariaRoleDescription,
-      'aria-valuetext': (isMobile ? state.value.formatChannelValue(xChannel, locale) : [
+      'aria-valuetext': (isMobile ? `${state.value.getChannelName(xChannel, locale)}: ${state.value.formatChannelValue(xChannel, locale)}` : [
         `${state.value.getChannelName(xChannel, locale)}: ${state.value.formatChannelValue(xChannel, locale)}`,
         `${state.value.getChannelName(yChannel, locale)}: ${state.value.formatChannelValue(yChannel, locale)}`
       ].join(', ')),
@@ -339,7 +339,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       max: state.value.getChannelRange(yChannel).maxValue,
       step: yChannelStep,
       'aria-roledescription': ariaRoleDescription,
-      'aria-valuetext': (isMobile ? state.value.formatChannelValue(yChannel, locale) : [
+      'aria-valuetext': (isMobile ? `${state.value.getChannelName(yChannel, locale)}: ${state.value.formatChannelValue(yChannel, locale)}` : [
         `${state.value.getChannelName(yChannel, locale)}: ${state.value.formatChannelValue(yChannel, locale)}`,
         `${state.value.getChannelName(xChannel, locale)}: ${state.value.formatChannelValue(xChannel, locale)}`
       ].join(', ')),
