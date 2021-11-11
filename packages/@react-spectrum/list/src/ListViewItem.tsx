@@ -14,12 +14,15 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
+import DragHandle from '@spectrum-icons/workflow/DragHandle';
+import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import listStyles from './listview.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
-import {useFocusRing} from '@react-aria/focus';
+import {useButton} from '@react-aria/button';
+import {useDraggableItem} from '../../../@react-aria/dnd';
 import {useGridCell, useGridRow, useGridSelectionCheckbox} from '@react-aria/grid';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -27,7 +30,8 @@ import {useLocale} from '@react-aria/i18n';
 export function ListViewItem(props) {
   let {
     item,
-    onAction
+    onAction,
+    dragState
   } = props;
   let cellNode = [...item.childNodes][0];
   let {state} = useContext(ListViewContext);
@@ -52,13 +56,21 @@ export function ListViewItem(props) {
     node: cellNode,
     focusMode: 'cell'
   }, state, cellRef);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
   const mergedProps = mergeProps(
     gridCellProps,
     hoverProps,
     focusWithinProps,
-    focusProps
+    focusProps,
+    dragProps
   );
   let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
+
+  let dragButtonRef = React.useRef();
+  let {buttonProps} = useButton({
+    ...dragButtonProps,
+    elementType: 'div'
+  }, dragButtonRef);
 
   let chevron = null;
   if (item.props.hasChildItems) {
@@ -121,6 +133,14 @@ export function ListViewItem(props) {
               },
               actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
             }}>
+            <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
+              <div
+                {...buttonProps as React.HTMLAttributes<HTMLElement>}
+                ref={dragButtonRef}
+                className={classNames(listStyles, 'drag-handle')}>
+                <DragHandle size="XS" />
+              </div>
+            </FocusRing>
             {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
             <ClearSlots>
               {chevron}

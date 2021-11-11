@@ -20,6 +20,7 @@ import {
   StyleProps
 } from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import DragHandle from '@spectrum-icons/workflow/DragHandle';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 // @ts-ignore
@@ -29,9 +30,10 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
+import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {ReactElement, useContext, useMemo} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useProvider} from '@react-spectrum/provider';
+import {useDraggableCollectionState} from '@react-stately/dnd';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 
@@ -131,6 +133,42 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     // focusable children in the cell.
     focusMode: 'cell'
   }), [state, domRef, direction, collator]);
+
+  let provider = useProvider();
+  let dragState = useDraggableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = state.collection.getItem(key);
+
+        return {
+          // @ts-ignore
+          [item.value.type]: item.textValue,
+          'text/plain': item.textValue
+        };
+      });
+    },
+    renderPreview(selectedKeys, draggedKey) {
+      let item = state.collection.getItem(draggedKey);
+      return (
+        <Provider {...provider}>
+          <div className={classNames(listStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
+            <div className={classNames(listStyles, 'drag-handle')}>
+              <DragHandle size="XS" />
+            </div>
+            <span>{item.rendered}</span>
+            {selectedKeys.size > 1 &&
+              <div className={classNames(listStyles, 'badge')}>{selectedKeys.size}</div>
+            }
+          </div>
+        </Provider>
+      );
+    },
+    onDragStart: () => console.log('onDragStart'),
+    onDragEnd: () => console.log('onDragEnd')
+  });
+
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
@@ -171,7 +209,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} onAction={onAction} />
+              <ListViewItem item={item} onAction={onAction} dragState={dragState} />
             );
           } else if (type === 'loader') {
             return (
