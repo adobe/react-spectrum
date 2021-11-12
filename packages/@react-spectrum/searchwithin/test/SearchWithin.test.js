@@ -185,7 +185,7 @@ describe('SearchWithin', function () {
     expect(picker).toHaveAttribute('aria-label', 'Search within');
 
     expect(group).not.toHaveAttribute('aria-labelledby');
-    expect(searchfield).toHaveAttribute('aria-labelledby');
+    expect(searchfield).toHaveAttribute('aria-labelledby', group.id);
     expect(picker).toHaveAttribute('aria-labelledby', `${group.id} ${picker.id} ${picker.childNodes[0].id}`);
   });
 });
