@@ -89,12 +89,11 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       for (const [key, value] of Object.entries(styleProps.style)) {
         switch (key) {
           case 'height':
-            field.style[key] = calculatedFieldHeight <= fieldHeight ? value : `${calculatedFieldHeight}px`;
-            
-            // When the textarea resizes smaller than the initial height, 
-            // its container should shrink, so that any helpText will align 
-            // to the bottom of the textarea.
-            inputContainer.style.flexGrow = inputOffsetHeight < inputHeight ? '0' : '';
+            if (inputOffsetHeight < inputHeight) {
+              field.style[key] = `${helpTextHeight + inputOffsetHeight + labelHeight}px`;
+            } else {
+              field.style[key] = calculatedFieldHeight <= fieldHeight ? value : `${calculatedFieldHeight}px`;
+            }
             break;
           case 'minHeight':
           case 'maxHeight':
