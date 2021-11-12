@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@testing-library/react';
 import {Field} from '../';
 import React from 'react';
-import {render} from '@testing-library/react';
 import {useField} from '@react-aria/label';
 
 let defaultProps = {
@@ -134,6 +134,26 @@ describe('Field', function () {
         let input = getByRole('textbox');
         expect(input).not.toHaveAttribute('aria-describedby');
       });
+    });
+  });
+  describe('focus', () => {
+    it('does not lose focus if helptext is added', () => {
+      let {getByRole, rerender} = renderField();
+      let input = getByRole('textbox');
+      act(() => {
+        input.focus();
+      });
+      rerender(<ExampleField description="Help text" />);
+      expect(document.activeElement).toBe(input);
+    });
+    it('does not lose focus if helptext is removed', () => {
+      let {getByRole, rerender} = renderField({description: 'Help text'});
+      let input = getByRole('textbox');
+      act(() => {
+        input.focus();
+      });
+      rerender(<ExampleField />);
+      expect(document.activeElement).toBe(input);
     });
   });
 });
