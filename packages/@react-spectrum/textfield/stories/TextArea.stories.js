@@ -147,7 +147,15 @@ storiesOf('TextArea', module)
     () => <ControlledTextArea />
   )
   .add('in flex', () => renderInFlexRowAndBlock())
-  .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}));
+  .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}))
+  .add(
+    'resize with changeable helptext',
+    () => <ValidationExample />,
+    {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}})
+  .add(
+    'resize with changeable helptext custom height',
+    () => <ValidationExample height="175px" />,
+    {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}});
 
 function render(props = {}) {
   return (
@@ -227,5 +235,22 @@ function renderInFlexRowAndBlock(props = {}) {
           {...props} />
       </div>
     </Flex>
+  );
+}
+
+function ValidationExample(props) {
+  let [value, setValue] = React.useState('0');
+  let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+
+  return (
+    <TextArea
+      {...props}
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Favorite number"
+      maxLength={1}
+      description="Enter a single digit number."
+      errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9. Lorem ipsum dolor.'} />
   );
 }
