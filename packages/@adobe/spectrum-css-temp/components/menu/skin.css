@@ -69,3 +69,19 @@ governing permissions and limitations under the License.
 .spectrum-Menu-description {
   color: var(--spectrum-global-color-gray-700);
 }
+@media (forced-colors: active) {
+  .spectrum-Menu-divider {
+    background-color: CanvasText;
+    forced-color-adjust: none;
+  }
+  .spectrum-Menu-item {
+    --spectrum-selectlist-option-icon-color-selected: Highlight;
+    --spectrum-selectlist-option-text-color-disabled: GrayText;
+    --spectrum-alias-border-color-focus: Highlight; 
+    &:focus-ring,
+    &.is-focused {
+      outline: 2px solid CanvasText;
+      outline-offset: -2px;
+    }
+  }
+}
