@@ -14,6 +14,7 @@ import {
   CollectionBase,
   DOMProps,
   DOMRef,
+  DraggableCollectionProps,
   LoadingState,
   MultipleSelection,
   SpectrumSelectionProps,
@@ -70,7 +71,7 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps {
+interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps, DraggableCollectionProps {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -89,7 +90,10 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     loadingState,
     isQuiet,
     transitionDuration = 0,
-    onAction
+    onAction,
+    getItems,
+    onDragStart,
+    onDragEnd
   } = props;
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
@@ -138,17 +142,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let dragState = useDraggableCollectionState({
     collection: state.collection,
     selectionManager: state.selectionManager,
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = state.collection.getItem(key);
-
-        return {
-          // @ts-ignore
-          [item.value.type]: item.textValue,
-          'text/plain': item.textValue
-        };
-      });
-    },
+    getItems: getItems,
+    // TODO: support user provided renderPreview
     renderPreview(selectedKeys, draggedKey) {
       let item = state.collection.getItem(draggedKey);
       return (
@@ -165,8 +160,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         </Provider>
       );
     },
-    onDragStart: () => console.log('onDragStart'),
-    onDragEnd: () => console.log('onDragEnd')
+    onDragStart: onDragStart,
+    onDragEnd: onDragEnd
   });
 
   let {gridProps} = useGrid({

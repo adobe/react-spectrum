@@ -22,7 +22,7 @@ import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
-import {useDraggableItem} from '../../../@react-aria/dnd';
+import {useDraggableItem} from '@react-aria/dnd';
 import {useGridCell, useGridRow, useGridSelectionCheckbox} from '@react-aria/grid';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -67,6 +67,7 @@ export function ListViewItem(props) {
   let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
 
   let dragButtonRef = React.useRef();
+  // TODO: don't pass dragButtonProps if the item isn't draggable. How to determine this? Check props passed to the ListView Item?
   let {buttonProps} = useButton({
     ...dragButtonProps,
     elementType: 'div'
