@@ -25,11 +25,14 @@ for (let i = 0; i < 50; i++) {
   lotsOfItems.push({name: 'Item ' + i});
 }
 
-const Template = () => () => (
-  <ComboBox label="Example" defaultItems={lotsOfItems}>
+const Template = () => (args) => (
+  <ComboBox {...args} label="Example" defaultItems={lotsOfItems}>
     {(item: any) => <Item key={item.name}>{item.name}</Item>}
   </ComboBox>
 );
 
 export const ScrollTesting = Template().bind({});
 ScrollTesting.args = {};
+
+export const Disabled = Template().bind({});
+Disabled.args = {isDisabled: true};
