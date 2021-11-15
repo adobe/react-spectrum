@@ -31,7 +31,8 @@ export function ListViewItem(props) {
   let {
     item,
     onAction,
-    dragState
+    dragState,
+    isDraggable
   } = props;
   let cellNode = [...item.childNodes][0];
   let {state} = useContext(ListViewContext);
@@ -62,7 +63,7 @@ export function ListViewItem(props) {
     hoverProps,
     focusWithinProps,
     focusProps,
-    dragProps
+    isDraggable && dragProps
   );
   let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
 
@@ -134,14 +135,16 @@ export function ListViewItem(props) {
               },
               actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
             }}>
-            <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
-              <div
-                {...buttonProps as React.HTMLAttributes<HTMLElement>}
-                ref={dragButtonRef}
-                className={classNames(listStyles, 'drag-handle')}>
-                <DragHandle size="XS" />
-              </div>
-            </FocusRing>
+            {isDraggable && (
+              <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
+                <div
+                  {...buttonProps as React.HTMLAttributes<HTMLElement>}
+                  ref={dragButtonRef}
+                  className={classNames(listStyles, 'drag-handle')}>
+                  <DragHandle size="XS" />
+                </div>
+              </FocusRing>
+            )}
             {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
             <ClearSlots>
               {chevron}

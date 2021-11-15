@@ -6,6 +6,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Content, View} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/workflow/Folder';
@@ -19,6 +20,22 @@ import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
+const items = [
+  {key: 'a', textValue: 'Item a', isDraggable: true},
+  {key: 'b', textValue: 'Item b', isDraggable: true},
+  {key: 'c', textValue: 'Item c', isDraggable: false},
+  {key: 'd', textValue: 'Item d', isDraggable: true},
+  {key: 'e', textValue: 'Item e', isDraggable: false},
+  {key: 'f', textValue: 'Item f', isDraggable: true},
+  {key: 'g', textValue: 'Item g', isDraggable: true},
+  {key: 'h', textValue: 'Item h', isDraggable: true},
+  {key: 'i', textValue: 'Item i', isDraggable: true},
+  {key: 'j', textValue: 'Item j', isDraggable: true},
+  {key: 'k', textValue: 'Item k', isDraggable: true},
+  {key: 'l', textValue: 'Item l', isDraggable: true},
+  {key: 'm', textValue: 'Item m', isDraggable: false},
+  {key: 'n', textValue: 'Item n', isDraggable: true}
+];
 
 function renderEmptyState() {
   return (
@@ -64,26 +81,10 @@ storiesOf('ListView', module)
     </ListView>
   ))
   .add('dynamic items', () => {
-    const items = [
-      {key: 'a'},
-      {key: 'b'},
-      {key: 'c'},
-      {key: 'd'},
-      {key: 'e'},
-      {key: 'f'},
-      {key: 'g'},
-      {key: 'h'},
-      {key: 'i'},
-      {key: 'j'},
-      {key: 'k'},
-      {key: 'l'},
-      {key: 'm'},
-      {key: 'n'}
-    ];
     return (
       <ListView items={items} width="300px" height="250px">
         {(item) => (
-          <Item key={item.key} textValue={`Item ${item.key}`}>
+          <Item key={item.key} textValue={item.textValue}>
             <Content>
               <Flex alignItems="center" gap="10px">
                 <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
@@ -211,7 +212,13 @@ storiesOf('ListView', module)
     <ListView width="250px" height={400} selectionMode="none" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
       {item => <Item>{item.name}</Item>}
     </ListView>
-  ));
+  ))
+  .add(
+    'draggable rows',
+    () => (
+      <DragExample />
+    )
+  );
 
 function Example(props?) {
   return (
@@ -342,5 +349,54 @@ function EmptyTest() {
         </div>
       </Flex>
     </div>
+  );
+}
+
+
+function DragExample(props?) {
+  let getItems = (keys) => {
+    return [...keys].map(key => {
+      let item = items.find(item => item.key === key);
+      return {
+        'text/plain': item.textValue
+      };
+    });
+  };
+
+  // TODO: Figure out multiple selection for drag and drop
+  // TODO: Figure out how to better handle click to drag operation clashing with selection.
+  // Right now it will toggle selection when you click to start dragging. Maybe selection should only be toggled
+  // on press up?
+  return (
+    <>
+      <input />
+      <Droppable />
+      <ListView width="300px" selectionMode="multiple" items={items} getItems={getItems} isDraggable {...props}>
+        {(item: any) => (
+          // TODO: Add draggable to Item props? Create a separate Item/DraggableItem that is exported by ListView/TableView?
+          <Item key={item.key} textValue={item.textValue} isDraggable={item.isDraggable}>
+            <Content>
+              <Flex alignItems="center" gap="10px">
+                <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
+                <ActionButton><Add /></ActionButton>
+                <MenuTrigger>
+                  <ActionButton><MoreSmall /></ActionButton>
+                  <Menu>
+                    <Item>
+                      <Edit />
+                      <Text>Edit</Text>
+                    </Item>
+                    <Item>
+                      <Delete />
+                      <Text>Delete</Text>
+                    </Item>
+                  </Menu>
+                </MenuTrigger>
+              </Flex>
+            </Content>
+          </Item>
+        )}
+      </ListView>
+    </>
   );
 }

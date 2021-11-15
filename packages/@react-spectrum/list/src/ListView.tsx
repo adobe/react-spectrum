@@ -14,6 +14,7 @@ import {
   CollectionBase,
   DOMProps,
   DOMRef,
+  DragItem,
   DraggableCollectionProps,
   LoadingState,
   MultipleSelection,
@@ -32,7 +33,7 @@ import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
-import React, {ReactElement, useContext, useMemo} from 'react';
+import React, {Key, ReactElement, useContext, useMemo} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useDraggableCollectionState} from '@react-stately/dnd';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -71,7 +72,7 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps, DraggableCollectionProps {
+interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps, Omit<DraggableCollectionProps, 'getItems'> {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -81,7 +82,11 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   loadingState?: LoadingState,
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number,
-  onAction?: (key: string) => void
+  onAction?: (key: string) => void,
+  // TODO: should this support an extra input arg for collection/state in case the user want do collection.getItem(key) in their getItems function?
+  getItems?: (keys: Set<Key>) => DragItem[],
+  // TODO: prop to control if the stuff inside the ListView is draggable. Perhaps should be added to DragCollection state? Or perhaps GridState should track drag stuff within it like it does selection?
+  isDraggable?: boolean
 }
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -93,7 +98,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     onAction,
     getItems,
     onDragStart,
-    onDragEnd
+    onDragEnd,
+    isDraggable = false
   } = props;
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
@@ -204,7 +210,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} onAction={onAction} dragState={dragState} />
+              <ListViewItem item={item} onAction={onAction} isDraggable={isDraggable && item.props.isDraggable !== false} dragState={dragState} />
             );
           } else if (type === 'loader') {
             return (
