@@ -70,6 +70,16 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     }
     let {inputHeight, fieldHeight} = initialHeightsRef.current;
     let calculatedFieldHeight = Math.max(inputHeight, inputOffsetHeight) + labelHeight + helpTextHeight;
+    let heightStyles = Object.entries(
+      ['height', 'maxHeight', 'minHeight']
+      .reduce((obj, key) => {
+        let value = styleProps.style[key];
+        if (value && value !== '') {
+          obj[key] = value;
+        }
+        return obj;
+      }, {})
+    );
     if (isQuiet) {
       let prevAlignment = input.style.alignSelf;
       input.style.alignSelf = 'start';
@@ -77,17 +87,17 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       input.style.height = `${Math.max(input.scrollHeight, inputHeight)}px`;
       input.style.alignSelf = prevAlignment;
       inputContainer.style.flexGrow = '0';
-      for (const [key, value] of Object.entries(styleProps.style)) {
-        switch (key) {
+      for (const [key, value] of heightStyles) {
+        switch (key as string) {
           case 'height':
           case 'maxHeight':
-            field.style[key] = calculatedFieldHeight <= fieldHeight ? value : '';
+            field.style[key as string] = calculatedFieldHeight <= fieldHeight ? value : '';
             break;
         }
       }
-    } else {  
-      for (const [key, value] of Object.entries(styleProps.style)) {
-        switch (key) {
+    } else {
+      for (const [key, value] of heightStyles) {
+        switch (key as string) {
           case 'height':
             if (inputOffsetHeight < inputHeight) {
               field.style[key] = `${helpTextHeight + inputOffsetHeight + labelHeight}px`;
