@@ -1,4 +1,3 @@
-
 :root {
   --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
   --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-75);
@@ -123,6 +122,12 @@
   position: absolute;
   left: var(--spectrum-global-dimension-size-25);
   height: 32px;
+  border-radius: var(--spectrum-global-dimension-size-50);
+
+  &:focus-ring {
+    box-shadow: 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+    outline: none;
+  }
 }
 
 .react-spectrum-ListViewItem-checkbox {
