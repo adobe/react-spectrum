@@ -11,7 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, toZoned} from '@internationalized/date';
+import {chain} from '@react-aria/utils';
 import {DatePicker} from '../';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
@@ -34,7 +36,7 @@ storiesOf('Date and Time/DatePicker', module)
   )
   .add(
     'controlled value',
-    () => render({value: new CalendarDate(2020, 2, 3)})
+    () => <ControlledExample />
   )
   .add(
     'defaultValue, zoned',
@@ -119,12 +121,16 @@ storiesOf('Date and Time/DatePicker', module)
     () => render({placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')})
   )
   .add(
-    'visibleMonths: 2',
-    () => render({visibleMonths: 2, granularity: 'minute'})
+    'maxVisibleMonths: 2',
+    () => render({maxVisibleMonths: 2, granularity: 'minute'})
   )
   .add(
-    'visibleMonths: 3',
-    () => render({visibleMonths: 3, granularity: 'minute'})
+    'maxVisibleMonths: 3',
+    () => render({maxVisibleMonths: 3, granularity: 'minute'})
+  )
+  .add(
+    'showFormatHelpText',
+    () => render({showFormatHelpText: true})
   );
 
 storiesOf('Date and Time/DatePicker/styling', module)
@@ -176,6 +182,14 @@ storiesOf('Date and Time/DatePicker/styling', module)
   .add(
     'custom width, labelPosition=side',
     () => render({width: 'size-3000', labelPosition: 'side'})
+  )
+  .add(
+    'description',
+    () => render({description: 'Help text'})
+  )
+  .add(
+    'errorMessage',
+    () => render({errorMessage: 'Enter a date after today', validationState: 'invalid'})
   );
 
 function render(props = {}) {
@@ -183,6 +197,7 @@ function render(props = {}) {
     <Example
       label="Date"
       onChange={action('change')}
+      maxWidth="calc(100vw - 40px)"
       {...props} />
   );
 }
@@ -256,6 +271,18 @@ function Example(props) {
       <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
         <DatePicker {...props} />
       </Provider>
+    </Flex>
+  );
+}
+
+function ControlledExample(props) {
+  let [value, setValue] = React.useState(null);
+
+  return (
+    <Flex direction="column" alignItems="center" gap="size-150">
+      <Example label="Controlled" {...props} value={value} onChange={chain(setValue, action('onChange'))} />
+      <ActionButton onPress={() => setValue(new CalendarDate(2020, 2, 3))}>Change value</ActionButton>
+      <ActionButton onPress={() => setValue(null)}>Clear</ActionButton>
     </Flex>
   );
 }
