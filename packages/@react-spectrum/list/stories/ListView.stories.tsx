@@ -374,6 +374,7 @@ function DragExample(props?) {
       <ListView width="300px" selectionMode="multiple" items={items} getItems={getItems} isDraggable {...props}>
         {(item: any) => (
           // TODO: Add draggable to Item props? Create a separate Item/DraggableItem that is exported by ListView/TableView?
+          // TODO: is this the right api or do we wanna do something more top level? Should useDraggableCollectionState track was keys are draggable/not draggable
           <Item key={item.key} textValue={item.textValue} isDraggable={item.isDraggable}>
             <Content>
               <Flex alignItems="center" gap="10px">
