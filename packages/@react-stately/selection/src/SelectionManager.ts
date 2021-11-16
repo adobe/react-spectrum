@@ -20,6 +20,7 @@ import {
   SelectionBehavior,
   SelectionMode
 } from '@react-types/shared';
+import {isWindows} from '@react-aria/utils';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
@@ -424,7 +425,9 @@ export class SelectionManager implements MultipleSelectionManager {
       }
     } else if (e && e.shiftKey) {
       this.extendSelection(key);
-    } else if (this.selectionBehavior === 'toggle' || (e && (e.metaKey || e.pointerType === 'touch' || e.pointerType === 'virtual'))) {
+    } else if (this.selectionBehavior === 'toggle' ||
+      (e && (e.metaKey || e.pointerType === 'touch' || e.pointerType === 'virtual'))
+      || (e && e.ctrlKey && isWindows())) {
       // if touch or virtual (VO) then we just want to toggle, otherwise it's impossible to multi select because they don't have modifier keys
       this.toggleSelection(key);
     } else {

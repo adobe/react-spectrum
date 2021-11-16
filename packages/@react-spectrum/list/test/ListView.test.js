@@ -17,6 +17,18 @@ import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
+// borrowed from Table tests - only using for the gridcell role portion
+// I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
+let getCell = (tree, text) => {
+  // Find by text, then go up to the element with the cell role.
+  let el = tree.getByText(text);
+  while (el && !/gridcell|rowheader|columnheader/.test(el.getAttribute('role'))) {
+    el = el.parentElement;
+  }
+
+  return el;
+};
+
 describe('ListView', function () {
   let offsetWidth, offsetHeight;
 
@@ -369,6 +381,52 @@ describe('ListView', function () {
         checkSelection(onSelectionChange, ['bar', 'baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should toggle items in selection highlight with ctrl+click on Mac', function () {
+        let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Mac');
+        let onSelectionChange = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+
+        let rows = tree.getAllByRole('row');
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        act(() => userEvent.click(getCell(tree, 'Bar'), {ctrlKey: true}));
+
+        checkSelection(onSelectionChange, ['bar']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+        onSelectionChange.mockClear();
+        act(() => userEvent.click(getCell(tree, 'Baz'), {ctrlKey: true}));
+        checkSelection(onSelectionChange, ['baz']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+        uaMock.mockRestore();
+      });
+
+      it('should allow multiple items to be selected in selection highlight with ctrl+click on Windows', function () {
+        let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
+        let onSelectionChange = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+
+        let rows = tree.getAllByRole('row');
+        expect(rows[0]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        act(() => userEvent.click(getCell(tree, 'Foo'), {ctrlKey: true}));
+
+        checkSelection(onSelectionChange, ['foo']);
+        expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+
+        onSelectionChange.mockClear();
+        act(() => userEvent.click(getCell(tree, 'Baz'), {ctrlKey: true}));
+        checkSelection(onSelectionChange, ['foo', 'baz']);
+        expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+        uaMock.mockRestore();
       });
     });
   });

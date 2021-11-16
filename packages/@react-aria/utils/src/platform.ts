@@ -55,3 +55,7 @@ export function isChrome() {
 export function isAndroid() {
   return testUserAgent(/Android/);
 }
+
+export function isWindows() {
+  return testUserAgent(/Windows/);
+}
