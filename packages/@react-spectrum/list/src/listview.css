@@ -113,8 +113,8 @@
   grid-template-columns: auto auto auto 1fr auto auto;
   grid-template-rows: 1fr auto;
   grid-template-areas:
-    "checkbox icon image content actions chevron"
-    "checkbox icon image description actions chevron"
+    "checkbox icon image content actions actionmenu chevron"
+    "checkbox icon image description actions actionmenu chevron"
   ;
   align-items: center;
 }
@@ -167,6 +167,10 @@
   grid-area: actions;
   flex-grow: 0;
   flex-shrink: 0;
+}
+
+.react-spectrum-ListViewItem-actionmenu {
+  grid-area: actionmenu;
 }
 
 .react-spectrum-ListView-centeredWrapper {

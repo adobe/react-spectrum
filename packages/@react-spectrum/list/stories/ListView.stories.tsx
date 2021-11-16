@@ -11,6 +11,7 @@ import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {Link} from '@react-spectrum/link';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
@@ -173,6 +174,27 @@ storiesOf('ListView', module)
           <Text>Delete</Text>
         </Item>
       </ActionMenu>
+    )))
+  .add('actions: ActionGroup + ActionMenu', () =>
+    renderActionsExample(props => (
+      <>
+        <ActionGroup buttonLabelBehavior="hide" {...props} slot="actionGroup">
+          <Item key="info">
+            <Info />
+            <Text>Info</Text>
+          </Item>
+        </ActionGroup>
+        <ActionMenu {...props} slot="actionMenu">
+          <Item key="add">
+            <Add />
+            <Text>Add</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionMenu>
+      </>
     )))
   .add('dynamic items + renderEmptyState', () => (<EmptyTest />))
   .add('selectionStyle: highlight', () => (
