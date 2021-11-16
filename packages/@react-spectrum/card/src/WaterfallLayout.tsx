@@ -127,8 +127,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       let rect = new Rect(x, y, itemWidth, height);
       let layoutInfo = new LayoutInfo(node.type, key, rect);
       layoutInfo.estimatedSize = estimatedSize;
-      layoutInfo.overflow = 'visible';
-      layoutInfo.contain = 'size layout style';
+      layoutInfo.allowOverflow = true;
       this.layoutInfos.set(key, layoutInfo);
 
       // TODO: From v2 figure out this bit, when does this get called and what to replace this.collectionView._transaction with?

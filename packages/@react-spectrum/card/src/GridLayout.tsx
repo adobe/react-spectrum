@@ -236,8 +236,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     let rect = new Rect(x, y, this.itemSize.width, this.itemSize.height);
     // TODO: Perhaps have it so that the child key for each row is stored with the layoutInfo?
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.overflow = 'visible';
-    layoutInfo.contain = 'size layout style';
+    layoutInfo.allowOverflow = true;
     this.layoutInfos.set(node.key, layoutInfo);
     return layoutInfo;
   }

@@ -67,16 +67,10 @@ export class LayoutInfo {
   zIndex: number;
 
   /**
-   * The view's overflow style.
-   * @default 'hidden'
+   * Whether the layout info allows its contents to overflow its container.
+   * @default false
    */
-  overflow: 'hidden' | 'visible';
-
-  /**
-   * The view's contain style.
-   * @default 'size layout style paint'
-   */
-  contain: string
+  allowOverflow: boolean;
 
   /**
    * @param type A string representing the view type. Should be `'item'` for item views.
@@ -94,8 +88,7 @@ export class LayoutInfo {
     this.opacity = 1;
     this.transform = null;
     this.zIndex = 0;
-    this.overflow = 'hidden';
-    this.contain = 'size layout style paint';
+    this.allowOverflow = false;
   }
 
   /**
@@ -109,8 +102,7 @@ export class LayoutInfo {
     res.parentKey = this.parentKey;
     res.isSticky = this.isSticky;
     res.zIndex = this.zIndex;
-    res.overflow = this.overflow;
-    res.contain = this.contain;
+    res.allowOverflow = this.allowOverflow;
     return res;
   }
 }

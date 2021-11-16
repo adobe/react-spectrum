@@ -12,10 +12,10 @@
 
 import {Collection} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
-import {useInteractionModality} from '@react-aria/interactions';
 import {VirtualizerItem} from './VirtualizerItem';
 
 interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
@@ -125,12 +125,11 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   // is up to the implementation using Virtualizer since we don't have refs
   // to all of the item DOM nodes.
   let lastFocusedKey = useRef(null);
-  let modality = useInteractionModality();
   useEffect(() => {
     if (virtualizer.visibleRect.height === 0) {
       return;
     }
-
+    let modality = getInteractionModality();
     if (focusedKey !== lastFocusedKey.current && modality !== 'pointer') {
       if (scrollToItem) {
         scrollToItem(focusedKey);
@@ -140,7 +139,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     }
 
     lastFocusedKey.current = focusedKey;
-  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem, modality]);
+  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
 
   let isFocusWithin = useRef(false);
   let onFocus = useCallback((e: FocusEvent) => {
