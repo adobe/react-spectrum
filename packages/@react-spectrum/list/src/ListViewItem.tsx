@@ -14,7 +14,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import DragHandle from '@spectrum-icons/workflow/DragHandle';
+import DragHandle from './DragHandle';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import listStyles from './listview.css';
@@ -88,6 +88,7 @@ export function ListViewItem(props) {
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
+  let showDragHandle = isDraggable  && isFocusVisibleWithin || isHovered || isPressed;
   return (
     <div
       {...mergeProps(rowProps, pressProps)}
@@ -110,12 +111,22 @@ export function ListViewItem(props) {
         ref={cellRef}
         {...mergedProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
+          {showDragHandle && (
+          <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
+            <div
+              {...buttonProps as React.HTMLAttributes<HTMLElement>}
+              ref={dragButtonRef}
+              className={listStyles['react-spectrum-ListViewItem-draghandle']}>
+              <DragHandle />
+            </div>
+          </FocusRing>
+            )}
           {showCheckbox && (
-            <Checkbox
-              UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
-              {...checkboxProps}
-              isEmphasized />
-          )}
+          <Checkbox
+            UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
+            {...checkboxProps}
+            isEmphasized />
+            )}
           <SlotProvider
             slots={{
               content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
@@ -132,16 +143,6 @@ export function ListViewItem(props) {
               },
               actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
             }}>
-            {isDraggable && (
-              <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
-                <div
-                  {...buttonProps as React.HTMLAttributes<HTMLElement>}
-                  ref={dragButtonRef}
-                  className={classNames(listStyles, 'drag-handle')}>
-                  <DragHandle size="XS" />
-                </div>
-              </FocusRing>
-            )}
             {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
             <ClearSlots>
               {chevron}

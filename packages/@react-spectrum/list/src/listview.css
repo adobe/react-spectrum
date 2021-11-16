@@ -119,6 +119,12 @@
   align-items: center;
 }
 
+.react-spectrum-ListViewItem-draghandle {
+  position: absolute;
+  left: var(--spectrum-global-dimension-size-25);
+  height: 32px;
+}
+
 .react-spectrum-ListViewItem-checkbox {
   grid-area: checkbox;
   align-items: center;
@@ -128,6 +134,7 @@
   > span {
     margin: 0;
   }
+  padding-left: var(--spectrum-global-dimension-size-100);
 }
 
 .react-spectrum-ListViewItem-icon,

@@ -33,6 +33,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/button": "^3.3.4",
+    "@react-aria/dnd": "3.0.0-alpha.3",
     "@react-aria/focus": "^3.4.1",
     "@react-aria/grid": "^3.0.0",
     "@react-aria/i18n": "^3.3.2",
