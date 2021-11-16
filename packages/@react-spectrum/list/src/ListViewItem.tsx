@@ -30,12 +30,11 @@ import {useLocale} from '@react-aria/i18n';
 export function ListViewItem(props) {
   let {
     item,
-    onAction,
-    dragState,
     isDraggable
   } = props;
   let cellNode = [...item.childNodes][0];
-  let {state} = useContext(ListViewContext);
+  let {state, dragState, onAction, isDraggable: isListDraggable} = useContext(ListViewContext);
+  isDraggable = isListDraggable && isDraggable !== false;
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();

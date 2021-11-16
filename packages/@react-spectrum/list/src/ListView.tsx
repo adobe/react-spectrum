@@ -108,6 +108,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let {styleProps} = useStyleProps(props);
   let {direction} = useLocale();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
@@ -146,6 +147,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   let provider = useProvider();
   let dragState = useDraggableCollectionState({
+    state: state,
     collection: state.collection,
     selectionManager: state.selectionManager,
     getItems: getItems,
@@ -186,7 +188,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isDraggable}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -210,7 +212,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} onAction={onAction} isDraggable={isDraggable && item.props.isDraggable !== false} dragState={dragState} />
+              // TODO: moved most of the item props to ListViewContext since Virtualizer won't rerender w/ a memoized collection unless
+              <ListViewItem item={item} />
             );
           } else if (type === 'loader') {
             return (
