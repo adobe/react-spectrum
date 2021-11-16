@@ -17,18 +17,6 @@ import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
-// borrowed from Table tests - only using for the gridcell role portion
-// I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
-let getCell = (tree, text) => {
-  // Find by text, then go up to the element with the cell role.
-  let el = tree.getByText(text);
-  while (el && !/gridcell|rowheader|columnheader/.test(el.getAttribute('role'))) {
-    el = el.parentElement;
-  }
-
-  return el;
-};
-
 describe('ListView', function () {
   let offsetWidth, offsetHeight;
 
