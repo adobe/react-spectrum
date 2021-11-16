@@ -88,7 +88,7 @@ export function ListViewItem(props) {
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
-  let showDragHandle = isDraggable  && isFocusVisibleWithin || isHovered || isPressed;
+  let showDragHandle = isDraggable && isFocusVisibleWithin || isHovered || isPressed;
   return (
     <div
       {...mergeProps(rowProps, pressProps)}
@@ -111,22 +111,22 @@ export function ListViewItem(props) {
         ref={cellRef}
         {...mergedProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
-          {showDragHandle && (
-          <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
-            <div
-              {...buttonProps as React.HTMLAttributes<HTMLElement>}
-              ref={dragButtonRef}
-              className={listStyles['react-spectrum-ListViewItem-draghandle']}>
-              <DragHandle />
-            </div>
-          </FocusRing>
-            )}
-          {showCheckbox && (
-          <Checkbox
-            UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
-            {...checkboxProps}
-            isEmphasized />
-            )}
+          {showDragHandle &&
+            <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
+              <div
+                {...buttonProps as React.HTMLAttributes<HTMLElement>}
+                ref={dragButtonRef}
+                className={listStyles['react-spectrum-ListViewItem-draghandle']}>
+                <DragHandle />
+              </div>
+            </FocusRing>
+          }
+          {showCheckbox && 
+            <Checkbox
+              UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
+              {...checkboxProps}
+              isEmphasized />
+          }
           <SlotProvider
             slots={{
               content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
