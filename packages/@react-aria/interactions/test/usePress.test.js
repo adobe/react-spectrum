@@ -2195,6 +2195,7 @@ describe('usePress', function () {
     let mockUserSelect = 'contain';
     let oldUserSelect = document.documentElement.style.webkitUserSelect;
     let platformGetter;
+
     function TestStyleChange(props) {
       let {styleToApply, ...otherProps} = props;
       let [show, setShow] = React.useState(false);
@@ -2202,7 +2203,7 @@ describe('usePress', function () {
       return (
         <div style={show ? styleToApply : {}} {...pressProps}>test</div>
       );
-    };
+    }
 
     beforeAll(() => {
       platformGetter = jest.spyOn(window.navigator, 'platform', 'get');
