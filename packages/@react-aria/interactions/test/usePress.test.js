@@ -601,7 +601,10 @@ describe('usePress', function () {
       // Make sure we can still determine that this is a virtual event by checking the pressure, detail, and height/width.
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      expect(events).toEqual([]);
 
+      // Virtual pointer event sets pointerType and onClick handles the rest
+      fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
       expect(events).toEqual([
         {
           type: 'pressstart',
