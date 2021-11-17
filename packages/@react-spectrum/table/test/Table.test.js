@@ -2495,9 +2495,11 @@ describe('TableView', function () {
         ]);
         onSelectionChange.mockReset();
 
-        // Android TalkBack double tap test
-        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
+        let cell = getCell(tree, 'Foo 10');
+        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
         checkSelection(onSelectionChange, [
           'Foo 5', 'Foo 8', 'Foo 10'
         ]);
@@ -2513,9 +2515,11 @@ describe('TableView', function () {
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledWith('Foo 5');
 
-        // Android TalkBack double tap test
-        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-        fireEvent(getCell(tree, 'Foo 10'), pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
+        let cell = getCell(tree, 'Foo 10');
+        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(2);
         expect(onAction).toHaveBeenCalledWith('Foo 10');
