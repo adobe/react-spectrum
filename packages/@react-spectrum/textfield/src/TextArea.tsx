@@ -111,9 +111,6 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
             break;
         }
       }
-      if (styleProps.style.height && !input.style.height) {
-        input.style.height = `${inputHeight}px`;
-      }
     }
   }, [isQuiet, inputRef, ref, styleProps, labelPosition]);
 
