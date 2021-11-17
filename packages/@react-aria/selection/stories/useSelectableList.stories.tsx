@@ -119,7 +119,7 @@ storiesOf('useSelectableList', module)
     <SelectableList isSubUlRelativelyPositioned={false} isUlRelativelyPositioned={false}>
       {options}
     </SelectableList>
-  ))
+  ), {description: {data: 'Built to test if focusing an element scrolls into view.'}})
   .add('Static ul, relative sub ul', () => (
     <SelectableList isSubUlRelativelyPositioned isUlRelativelyPositioned={false}>
       {options}
