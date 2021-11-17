@@ -132,8 +132,8 @@ function Example() {
   let [show2, setShow2] = React.useState(false);
   return (
     <>
-     <Button variant="cta" UNSAFE_style={show && {background: 'red', userSelect: 'text'}} onPressStart={() => setTimeout(() => setShow(true), 3000)}>Press and hold (overwrite)</Button>
-     <Button variant="cta" UNSAFE_style={show2 && {background: 'red'}} onPressStart={() => setTimeout(() => setShow2(true), 3000)}>Press and hold (no overwrite)</Button>
+      <Button variant="cta" UNSAFE_style={show && {background: 'red', userSelect: 'text'}} onPressStart={() => setTimeout(() => setShow(true), 3000)}>Press and hold (overwrite)</Button>
+      <Button variant="cta" UNSAFE_style={show2 && {background: 'red'}} onPressStart={() => setTimeout(() => setShow2(true), 3000)}>Press and hold (no overwrite)</Button>
     </>
   );
 }
