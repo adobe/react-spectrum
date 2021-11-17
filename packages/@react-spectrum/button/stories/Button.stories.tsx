@@ -18,7 +18,6 @@ import React, {ElementType} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
-import {useButton} from '@react-aria/button';
 
 storiesOf('Button', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -130,8 +129,11 @@ function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> 
 
 function Example() {
   let [show, setShow] = React.useState(false);
-
+  let [show2, setShow2] = React.useState(false);
   return (
-    <Button variant="cta" UNSAFE_style={show && {background: 'red', userSelect: 'text'}} onPressStart={() => setTimeout(() => setShow(true), 3000)}>Press and hold</Button>
+    <>
+     <Button variant="cta" UNSAFE_style={show && {background: 'red', userSelect: 'text'}} onPressStart={() => setTimeout(() => setShow(true), 3000)}>Press and hold (overwrite)</Button>
+     <Button variant="cta" UNSAFE_style={show2 && {background: 'red'}} onPressStart={() => setTimeout(() => setShow2(true), 3000)}>Press and hold (no overwrite)</Button>
+    </>
   );
 }
