@@ -28,3 +28,10 @@ governing permissions and limitations under the License.
   /* Don't catch clicks or hover, otherwise they may not escape the SVG */
   pointer-events: none;
 }
+@media (forced-colors: active) {
+  .spectrum-Icon,
+  .spectrum-UIIcon {
+    /* Automatically adjust the SVG to pick up the text color for High Contrast mode */
+    forced-color-adjust: auto;
+  }
+}
