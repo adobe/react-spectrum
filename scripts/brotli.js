@@ -22,7 +22,7 @@ function compress(file) {
     fs.createReadStream(file)
       .pipe(zlib.createBrotliCompress())
       .pipe(fs.createWriteStream(file + '.br'))
-      .on("error', (err) => reject(err))
+      .on('error', (err) => reject(err))
       .on('close', () => resolve());
   });
 }
