@@ -10,25 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-const fs = require('fs');
-const glob = require('fast-glob');
-const PQueue = require('p-queue').default;
-const zlib = require('zlib');
+const fs = require("fs");
+const glob = require("fast-glob");
+const zlib = require("zlib");
+const pqueue = async (...args) =>
+  import("p-queue").then(({ default: PQueue }) => new PQueue(...args));
 
 function compress(file) {
   return new Promise((resolve, reject) => {
     fs.createReadStream(file)
       .pipe(zlib.createBrotliCompress())
-      .pipe(fs.createWriteStream(file + '.br'))
-      .on('error', (err) => reject(err))
-      .on('close', () => resolve());
+      .pipe(fs.createWriteStream(file + ".br"))
+      .on("error", (err) => reject(err))
+      .on("close", () => resolve());
   });
 }
 
 async function run() {
-  const files = glob.sync('dist/production/**.{js,css,html,map}');
-
-  let queue = new PQueue({concurrency: 10});
+  const files = glob.sync("dist/production/**.{js,css,html,map}");
+  const queue = await pqueue({ concurrency: 10 });
   for (let file of files) {
     queue.add(() => compress(file));
   }
@@ -36,7 +36,7 @@ async function run() {
   await queue.onEmpty();
 }
 
-run().catch(err => {
+run().catch((err) => {
   console.error(err);
   process.exit(1);
 });
