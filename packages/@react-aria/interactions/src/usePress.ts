@@ -746,12 +746,9 @@ function isVirtualPointerEvent(event: PointerEvent) {
   // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
   return (
     (event.width === 0 && event.height === 0) ||
-    (event.buttons === 1 &&
-      event.width === 1 &&
+    (event.width === 1 &&
       event.height === 1 &&
-      event.type === 'pointerdown' &&
       event.pressure === 0 &&
-      event.pointerType === 'mouse' &&
       event.detail === 0
     )
   );

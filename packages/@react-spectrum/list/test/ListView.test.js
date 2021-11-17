@@ -405,8 +405,8 @@ describe('ListView', function () {
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
         act(() => {
           let el = within(rows[2]).getByText('Baz');
-          fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 1, detail: 0}));
-          fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 0, detail: 0}));
+          fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
         });
         checkSelection(onSelectionChange, [
           'bar', 'baz'
@@ -429,8 +429,8 @@ describe('ListView', function () {
         // Android TalkBack double tap test
         act(() => {
           let el = within(rows[2]).getByText('Baz');
-          fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 1, detail: 0}));
-          fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 1, height: 1, pressure: 0, buttons: 0, detail: 0}));
+          fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
         });
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(2);
