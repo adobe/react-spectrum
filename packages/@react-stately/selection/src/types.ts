@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy, LongPressEvent, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
+import {FocusStrategy, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 
 export interface SelectEventType {
