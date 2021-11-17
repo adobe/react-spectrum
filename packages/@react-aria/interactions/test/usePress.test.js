@@ -2195,6 +2195,14 @@ describe('usePress', function () {
     let mockUserSelect = 'contain';
     let oldUserSelect = document.documentElement.style.webkitUserSelect;
     let platformGetter;
+    function TestStyleChange(props) {
+      let {styleToApply, ...otherProps} = props;
+      let [show, setShow] = React.useState(false);
+      let {pressProps} = usePress({...otherProps, onPressStart: () => setTimeout(() => setShow(true), 3000)});
+      return (
+        <div style={show ? styleToApply : {}} {...pressProps}>test</div>
+      );
+    };
 
     beforeAll(() => {
       platformGetter = jest.spyOn(window.navigator, 'platform', 'get');
@@ -2434,6 +2442,69 @@ describe('usePress', function () {
       unmount();
       act(() => {jest.advanceTimersByTime(300);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+    });
+
+    it('non related style changes during press down shouldn\'t overwrite user-select on press end (non-iOS)', function () {
+      platformGetter.mockReturnValue('Android');
+      let {getByText} = render(
+        <TestStyleChange
+          styleToApply={{background: 'red'}}
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />
+      );
+
+      let el = getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle(`
+        user-select: none;
+      `);
+
+      act(() => jest.runAllTimers());
+
+      expect(el).toHaveStyle(`
+        user-select: none;
+        background: red;
+      `);
+
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle(`
+        background: red;
+      `);
+    });
+
+    it('changes to user-select during press down remain on press end (non-iOS)', function () {
+      platformGetter.mockReturnValue('Android');
+      let {getByText} = render(
+        <TestStyleChange
+          styleToApply={{background: 'red', userSelect: 'text'}}
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />
+      );
+
+      let el = getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle(`
+        user-select: none;
+      `);
+
+      act(() => jest.runAllTimers());
+
+      expect(el).toHaveStyle(`
+        user-select: text;
+        background: red;
+      `);
+
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle(`
+        user-select: text;
+        background: red;
+      `);
     });
   });
 

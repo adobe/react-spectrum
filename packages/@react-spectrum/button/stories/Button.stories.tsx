@@ -91,7 +91,7 @@ storiesOf('Button', module)
     () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
   )
   .add(
-    'user-select test',
+    'user-select:none on press test',
     () => <Example />
   );
 
@@ -130,10 +130,21 @@ function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> 
 function Example() {
   let [show, setShow] = React.useState(false);
   let [show2, setShow2] = React.useState(false);
+
   return (
-    <>
-      <Button variant="cta" UNSAFE_style={show && {background: 'red', userSelect: 'text'}} onPressStart={() => setTimeout(() => setShow(true), 3000)}>Press and hold (overwrite)</Button>
-      <Button variant="cta" UNSAFE_style={show2 && {background: 'red'}} onPressStart={() => setTimeout(() => setShow2(true), 3000)}>Press and hold (no overwrite)</Button>
-    </>
+    <Flex gap="size-200">
+      <Button
+        variant="cta"
+        UNSAFE_style={show && {background: 'red', userSelect: 'text'}}
+        onPressStart={() => setTimeout(() => setShow(true), 3000)}>
+        Press and hold (overwrite)
+      </Button>
+      <Button
+        variant="cta"
+        UNSAFE_style={show2 && {background: 'red'}}
+        onPressStart={() => setTimeout(() => setShow2(true), 3000)}>
+        Press and hold (no overwrite)
+      </Button>
+    </Flex>
   );
 }
