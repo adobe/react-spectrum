@@ -56,7 +56,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
     // Label or helpText height might change, so we have to recalculate
     let labelHeight = labelPosition !== 'side' && !field.firstElementChild.contains(input) ? (field.firstElementChild as HTMLElement).offsetHeight : 0;
-    
+
     // With labelPosition === 'side', the TextArea and HelpText will be contained within a wrapper.
     let fieldWrapper = labelPosition === 'side' ? field.lastElementChild : field;
     let helpTextHeight = !fieldWrapper.lastElementChild.contains(input) ? (fieldWrapper.lastElementChild as HTMLElement).offsetHeight : 0;
@@ -110,6 +110,9 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
             input.style[key] = `calc(${value} - ${labelHeight + helpTextHeight}px)`;
             break;
         }
+      }
+      if (styleProps.style.height && !input.style.height) {
+        input.style.height = `${inputHeight}px`;
       }
     }
   }, [isQuiet, inputRef, ref, styleProps, labelPosition]);
