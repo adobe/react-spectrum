@@ -13,9 +13,9 @@
 import {focusSafely} from '@react-aria/focus';
 import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {isNonContiguousSelectionModifier} from './utils';
+import {isWindows, mergeProps} from '@react-aria/utils';
 import {LongPressEvent, PressEvent} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
-import {MultipleSelectionManager} from '@react-stately/selection';
+import {MultipleSelectionManager, SelectEventType} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
 interface SelectableItemOptions {
@@ -86,7 +86,13 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {
       manager.toggleSelection(key);
     } else {
-      manager.select(key, e);
+      let eventType: SelectEventType = {};
+      if (e && e.shiftKey) {
+        eventType.extend = true;
+      } else if (e && (((e.metaKey && !isWindows()) || e.pointerType === 'touch' || e.pointerType === 'virtual') || (e.ctrlKey && isWindows()))) {
+        eventType.toggle = true;
+      }
+      manager.select(key, eventType);
     }
   };
 

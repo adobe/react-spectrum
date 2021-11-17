@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/utils": "^3.9.0",
     "@react-stately/collections": "^3.3.3",
     "@react-stately/utils": "^3.2.2",
     "@react-types/shared": "^3.8.0"
