@@ -18,6 +18,7 @@ import React, {ElementType} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {useButton} from '@react-aria/button';
 
 storiesOf('Button', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -89,6 +90,10 @@ storiesOf('Button', module)
   .add(
     'element: a, rel: \'noopener noreferrer\'',
     () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
+  )
+  .add(
+    'user-select test',
+    () => <Example />
   );
 
 function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
@@ -120,5 +125,13 @@ function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> 
       </Button>
       )}
     </Flex>
+  );
+}
+
+function Example() {
+  let [show, setShow] = React.useState(false);
+
+  return (
+    <Button variant="cta" UNSAFE_style={show && {background: 'red', userSelect: 'text'}} onPressStart={() => setTimeout(() => setShow(true), 3000)}>Press and hold</Button>
   );
 }
