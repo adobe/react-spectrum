@@ -11,8 +11,8 @@
  */
 
 import {CalendarDate, DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
-import {DatePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions} from './utils';
+import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, useDefaultProps} from './utils';
 import {isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
@@ -28,7 +28,8 @@ export interface DatePickerState {
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
   validationState: ValidationState,
-  formatValue(locale: string, fieldOptions: FieldOptions): string
+  formatValue(locale: string, fieldOptions: FieldOptions): string,
+  granularity: Granularity
 }
 
 export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T>): DatePickerState {
@@ -36,8 +37,7 @@ export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T
   let [value, setValue] = useControlledState<DateValue>(props.value, props.defaultValue || null, props.onChange);
 
   let v = (value || props.placeholderValue);
-  let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
-  let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
+  let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let dateValue = value != null ? value.toDate(defaultTimeZone ?? 'UTC') : null;
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
 
@@ -95,8 +95,18 @@ export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T
     timeValue: selectedTime,
     setDateValue: selectDate,
     setTimeValue: selectTime,
+    granularity,
     isOpen,
-    setOpen,
+    setOpen(isOpen) {
+      // Commit the selected date when the calendar is closed. Use a placeholder time if one wasn't set.
+      // If only the time was set and not the date, don't commit. The state will be preserved until
+      // the user opens the popover again.
+      if (!isOpen && !value && selectedDate && hasTime) {
+        commitValue(selectedDate, selectedTime || getPlaceholderTime(props.placeholderValue));
+      }
+
+      setOpen(isOpen);
+    },
     validationState,
     formatValue(locale, fieldOptions) {
       if (!dateValue) {

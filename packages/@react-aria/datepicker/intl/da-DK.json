@@ -4,14 +4,16 @@
   "currentDateRange": "{start, date, long} til {end, date, long}",
   "date": "Dato",
   "dateRange": "Datointerval",
-  "day": "Dag",
-  "dayPeriod": "Dagsperiode",
+  "day": "dag",
+  "dayPeriod": "AM/PM",
   "endDate": "Slutdato",
   "era": "æra",
-  "hour": "Time",
-  "minute": "Minut",
-  "month": "Måned",
-  "second": "Sekund",
+  "hour": "time",
+  "minute": "minut",
+  "month": "måned",
+  "second": "sekund",
   "startDate": "Startdato",
-  "year": "År"
+  "year": "år",
+  "weekday": "ugedag",
+  "timeZoneName": "tidszone"
 }
