@@ -154,15 +154,16 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       let item = state.collection.getItem(draggedKey);
       let itemWidth = domRef.current.offsetWidth;
       return (
-        <Provider {...provider}>
-          <div className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')} style={{width: itemWidth}}>
-            <div className={listStyles['react-spectrum-ListViewItem-grid']}>
-              <div className={listStyles['react-spectrum-ListViewItem-draghandle']}>
-                <DragHandle />
-              </div>
-              <div className={listStyles['react-spectrum-ListViewItem-content']}>
-                {item.rendered}
-              </div>
+        <Provider
+          {...provider}
+          UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')}
+          UNSAFE_style={{width: itemWidth}}>
+          <div className={listStyles['react-spectrum-ListViewItem-grid']}>
+            <div className={listStyles['react-spectrum-ListViewItem-draghandle']}>
+              <DragHandle />
+            </div>
+            <div className={listStyles['react-spectrum-ListViewItem-content']}>
+              {item.rendered}
             </div>
           </div>
         </Provider>
