@@ -422,8 +422,6 @@ describe('ListView', function () {
       expect(rowWrappers[0].style.height).toBe('40px');
       expect(rowWrappers[1].style.top).toBe('40px');
       expect(rowWrappers[1].style.height).toBe('40px');
-      expect(rowWrappers[2].style.top).toBe('80px');
-      expect(rowWrappers[2].style.height).toBe('40px');
 
       // scroll us down far enough that item 0 isn't in the view
       moveFocus('ArrowDown');
