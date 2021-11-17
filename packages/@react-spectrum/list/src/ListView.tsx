@@ -14,15 +14,15 @@ import {
   CollectionBase,
   DOMProps,
   DOMRef,
-  DragItem,
   DraggableCollectionProps,
+  DragItem,
   LoadingState,
   MultipleSelection,
   SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import DragHandle from '@spectrum-icons/workflow/DragHandle';
+import DragHandle from './DragHandle';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 // @ts-ignore
@@ -154,14 +154,13 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       let item = state.collection.getItem(draggedKey);
       return (
         <Provider {...provider}>
-          <div className={classNames(listStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
-            <div className={classNames(listStyles, 'drag-handle')}>
-              <DragHandle size="XS" />
+          <div className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')}>
+            <div className={listStyles['react-spectrum-ListViewItem-grid']}>
+              <div className={listStyles['react-spectrum-ListViewItem-draghandle']}>
+                <DragHandle />
+              </div>
+              {item.rendered}
             </div>
-            <span>{item.rendered}</span>
-            {selectedKeys.size > 1 &&
-              <div className={classNames(listStyles, 'badge')}>{selectedKeys.size}</div>
-            }
           </div>
         </Provider>
       );

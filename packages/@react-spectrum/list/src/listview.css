@@ -86,6 +86,11 @@
     padding-top: 0px;
     padding-bottom: 0px;
   }
+
+  &.is-dragging {
+    border: 1px solid var(--spectrum-global-color-blue-500);
+    border-radius: var(--spectrum-global-dimension-size-50);
+  }
 }
 
 .react-spectrum-ListViewItem-selected {
