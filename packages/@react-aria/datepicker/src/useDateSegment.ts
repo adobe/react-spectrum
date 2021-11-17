@@ -13,13 +13,12 @@
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {isIOS, mergeProps, useEvent, useId} from '@react-aria/utils';
 import {labelIds} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
-import {useDateFormatter, useFilter, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
+import {useDisplayNames} from './useDisplayNames';
 import {useFocusManager} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
@@ -31,7 +30,7 @@ interface DateSegmentAria {
 export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & DOMProps, segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
   let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
-  let messageFormatter = useMessageFormatter(intlMessages);
+  let displayNames = useDisplayNames();
   let focusManager = useFocusManager();
 
   let textValue = segment.text;
@@ -56,7 +55,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     minValue: segment.minValue,
     maxValue: segment.maxValue,
     isDisabled: props.isDisabled,
-    isReadOnly: props.isReadOnly,
+    isReadOnly: props.isReadOnly || !segment.isEditable,
     isRequired: props.isRequired,
     onIncrement: () => {
       enteredKeys.current = '';
@@ -85,6 +84,21 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
   });
 
   let parser = useMemo(() => new NumberParser(locale, {maximumFractionDigits: 0}), [locale]);
+
+  let backspace = () => {
+    if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly && !segment.isPlaceholder) {
+      let newValue = segment.text.slice(0, -1);
+      let parsed = parser.parse(newValue);
+      if (newValue.length === 0 || parsed === 0) {
+        state.clearSegment(segment.type);
+      } else {
+        state.setSegment(segment.type, parsed);
+      }
+      enteredKeys.current = newValue;
+    } else if (segment.type === 'dayPeriod') {
+      state.clearSegment(segment.type);
+    }
+  };
 
   let onKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
@@ -120,15 +134,12 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
         break;
       case 'Tab':
         break;
-      case 'Backspace': {
+      case 'Backspace':
+      case 'Delete': {
         // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
         e.preventDefault();
         e.stopPropagation();
-        if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly) {
-          let newValue = segment.text.slice(0, -1);
-          state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
-          enteredKeys.current = newValue;
-        }
+        backspace();
         break;
       }
     }
@@ -179,6 +190,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
 
         let numberValue = parser.parse(newValue);
         let segmentValue = numberValue;
+        let allowsZero = segment.minValue === 0;
         if (segment.type === 'hour' && state.dateFormatter.resolvedOptions().hour12) {
           switch (state.dateFormatter.resolvedOptions().hourCycle) {
             case 'h11':
@@ -187,10 +199,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
               }
               break;
             case 'h12':
-              if (numberValue === 0) {
-                return;
-              }
-
+              allowsZero = false;
               if (numberValue > 12) {
                 segmentValue = parser.parse(key);
               }
@@ -208,11 +217,16 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
           return;
         }
 
-        state.setSegment(segment.type, segmentValue);
+        let shouldSetValue = segmentValue !== 0 || allowsZero;
+        if (shouldSetValue) {
+          state.setSegment(segment.type, segmentValue);
+        }
 
-        if (Number(numberValue + '0') > segment.maxValue) {
+        if (Number(numberValue + '0') > segment.maxValue || newValue.length >= String(segment.maxValue).length) {
           enteredKeys.current = '';
-          focusManager.focusNext();
+          if (shouldSetValue) {
+            focusManager.focusNext();
+          }
         } else {
           enteredKeys.current = newValue;
         }
@@ -244,9 +258,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       case 'deleteContentBackward':
       case 'deleteContentForward':
         if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly) {
-          let newValue = segment.text.slice(0, -1);
-          state.setSegment(segment.type, newValue.length === 0 ? segment.minValue : parser.parse(newValue));
-          enteredKeys.current = newValue;
+          backspace();
         }
         break;
       case 'insertCompositionText':
@@ -304,7 +316,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
   });
 
   // spinbuttons cannot be focused with VoiceOver on iOS.
-  let touchPropOverrides = isIOS() ? {
+  let touchPropOverrides = isIOS() || segment.type === 'timeZoneName' ? {
     role: 'textbox',
     'aria-valuemax': null,
     'aria-valuemin': null,
@@ -315,6 +327,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
   let fieldLabelId = labelIds.get(state);
 
   let id = useId(props.id);
+  let isEditable = !props.isDisabled && !props.isReadOnly && segment.isEditable;
   return {
     segmentProps: mergeProps(spinButtonProps, pressProps, {
       id,
@@ -322,16 +335,18 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       'aria-controls': props['aria-controls'],
       // 'aria-haspopup': props['aria-haspopup'], // deprecated in ARIA 1.2
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
-      'aria-label': messageFormatter(segment.type),
+      'aria-label': segment.type !== 'literal' ? displayNames.of(segment.type) : undefined,
       'aria-labelledby': `${fieldLabelId} ${id}`,
-      contentEditable: !props.isDisabled,
-      suppressContentEditableWarning: !props.isDisabled,
-      spellCheck: 'false',
-      autoCapitalize: 'off',
-      autoCorrect: 'off',
+      'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
+      'aria-readonly': props.isReadOnly || !segment.isEditable ? 'true' : undefined,
+      contentEditable: isEditable,
+      suppressContentEditableWarning: isEditable,
+      spellCheck: isEditable ? 'false' : undefined,
+      autoCapitalize: isEditable ? 'off' : undefined,
+      autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
-      [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: 'next',
-      inputMode: props.isDisabled || segment.type === 'dayPeriod' ? undefined : 'numeric',
+      [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,
+      inputMode: props.isDisabled || segment.type === 'dayPeriod' || !isEditable ? undefined : 'numeric',
       tabIndex: props.isDisabled ? undefined : 0,
       onKeyDown,
       onFocus
