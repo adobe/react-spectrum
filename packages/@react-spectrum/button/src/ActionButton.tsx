@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -24,9 +24,11 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
+  props = useSlotProps(props, 'actionButton');
   let {
     isQuiet,
     isDisabled,
+    staticColor,
     children,
     autoFocus,
     ...otherProps
@@ -50,6 +52,9 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
             'spectrum-ActionButton',
             {
               'spectrum-ActionButton--quiet': isQuiet,
+              'spectrum-ActionButton--staticColor': !!staticColor,
+              'spectrum-ActionButton--staticWhite': staticColor === 'white',
+              'spectrum-ActionButton--staticBlack': staticColor === 'black',
               'is-active': isPressed,
               'is-disabled': isDisabled,
               'is-hovered': isHovered

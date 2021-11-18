@@ -64,6 +64,25 @@ class VersionManager {
       this.addReleasedPackage(pkg, bump);
     }
 
+    let all = process.argv.findIndex(arg => arg === '--all');
+    if (all >= 0) {
+      let bump = process.argv[all + 1] ?? 'patch';
+      for (let name in this.workspacePackages) {
+        if (this.versionBumps[name]) {
+          continue;
+        }
+
+        let filePath = this.workspacePackages[name].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (!pkg.private) {
+          let prerelease = semver.parse(pkg.version).prerelease;
+          let b = prerelease.length === 0 ? bump : prerelease[0];
+          this.changedPackages.add(name);
+          this.addReleasedPackage(name, b);
+        }
+      }
+    }
+
     let versions = this.getVersions();
     await this.promptVersions(versions);
     this.bumpVersions(versions);
@@ -74,6 +93,12 @@ class VersionManager {
     // Find what packages already exist on npm
     let promises = [];
     for (let name in this.workspacePackages) {
+      let filePath = this.workspacePackages[name].location + '/package.json';
+      let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (pkg.private) {
+        continue;
+      }
+
       promises.push(
         fetch(`https://registry.npmjs.com/${name}`)
           .then(res => {
@@ -127,17 +152,6 @@ class VersionManager {
     // Always bump monopackages
     for (let pkg of monopackages) {
       this.changedPackages.add(pkg);
-    }
-
-    let all = process.argv.find(arg => arg === '--all');
-    if (all) {
-      for (let name in this.workspacePackages) {
-        let filePath = this.workspacePackages[name].location + '/package.json';
-        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        if (!pkg.private) {
-          this.changedPackages.add(name);
-        }
-      }
     }
   }
 
@@ -263,7 +277,13 @@ class VersionManager {
 
         if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
           if (this.existingPackages.has(p)) {
-            this.addReleasedPackage(p, bump, true);
+            // Bump a patch version of the dependent package if it's not also a prerelease.
+            // Otherwise, bump to the next prerelease in the existing status.
+            let filePath = this.workspacePackages[p].location + '/package.json';
+            let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            let prerelease = semver.parse(pkg.version).prerelease;
+            let b = prerelease.length === 0 ? 'patch' : prerelease[0];
+            this.addReleasedPackage(p, b, true);
           }
         }
       }

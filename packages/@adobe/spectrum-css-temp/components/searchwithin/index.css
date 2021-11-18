@@ -11,49 +11,66 @@ governing permissions and limitations under the License.
 */
 
 @import '../commons/index.css';
-
-:root {
-  --spectrum-searchwithin-width: 250px;
+.spectrum-SearchWithin {
+  --spectrum-searchwithin-width: var(--spectrum-global-dimension-size-3000);
+  --spectrum-searchwithin-searchfield-width: var(--spectrum-global-dimension-size-1600);
 
   /* Force override */
   --spectrum-searchwithin-border-radius: 0;
-  --spectrum-searchwithin-dropdown-min-width: 0;
+  --spectrum-searchwithin-picker-min-width: 0;
 }
 
 .spectrum-SearchWithin {
-  width: var(--spectrum-searchwithin-width);
+  inline-size: var(--spectrum-searchwithin-width);
+  min-inline-size: var(--spectrum-searchwithin-width);
   display: inline-flex;
   position: relative;
+}
 
-  .spectrum-Dropdown {
-    width: auto;
-    min-width: 0;
+.spectrum-SearchWithin-picker {
+  inline-size: auto;
+  min-inline-size: var(--spectrum-global-dimension-size-1000);
+  flex-shrink: 1;
+
+  > button {
+    contain: unset;
+    border-end-start-radius: var(--spectrum-searchwithin-border-radius);
+    border-start-start-radius: var(--spectrum-searchwithin-border-radius);
+  }
+}
+
+.spectrum-SearchWithin-searchfield {
+  min-inline-size: var(--spectrum-searchwithin-searchfield-width);
+  flex-grow: 1;
+  order: -1;
+  margin-inline-end: calc(
+    -1 * var(--spectrum-textfield-border-size)
+  ); /* hides right border */
+
+  &:focus-within {
+    z-index: 1; /* shows entire focus ring */
   }
 
-  .spectrum-Dropdown-trigger {
-    border-top-right-radius: var(--spectrum-searchwithin-border-radius);
-    border-bottom-right-radius: var(--spectrum-searchwithin-border-radius);
-  }
-
-  .spectrum-Dropdown-label {
-    /* Override dropdown's min-width and be tiny */
-    min-width: var(--spectrum-searchwithin-dropdown-min-width);
-  }
-
-  .spectrum-Textfield {
+  > input {
+    border-end-end-radius: var(--spectrum-searchwithin-border-radius);
+    border-start-end-radius: var(--spectrum-searchwithin-border-radius);
     flex: 1;
-    margin-left: calc(var(--spectrum-textfield-border-size) * -1); /* hides left border */
-    border-top-left-radius: var(--spectrum-searchwithin-border-radius);
-    border-bottom-left-radius: var(--spectrum-searchwithin-border-radius);
+    box-sizing: border-box;
+    min-inline-size: inherit;
 
-    &:hover, &:focus {
-      position: relative; /* shows left border */
+    &:hover,
+    &:focus {
+      position: relative; /* shows right border */
     }
   }
+}
 
-  .spectrum-ClearButton {
-    position: absolute;
-    top: 0;
-    right: 0;
+/* this is specific to handling default width */
+.spectrum-SearchWithin-container {
+  /* ensure we have higher specificity than .spectrum-Field */
+  &.spectrum-SearchWithin-container {
+     /* override the default width of the field container, only with labelPosition=top. */
+     --spectrum-field-default-width: var(--spectrum-global-dimension-size-3000);
+    min-inline-size: var(--spectrum-global-dimension-size-3000);
   }
 }

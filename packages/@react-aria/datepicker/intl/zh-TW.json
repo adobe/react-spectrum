@@ -1,14 +1,19 @@
 {
   "calendar": "日曆",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long}至 {end, date, long}",
   "date": "日期",
   "dateRange": "日期範圍",
   "day": "日",
-  "dayPeriod": "日期間",
+  "dayPeriod": "上午/下午",
   "endDate": "結束日期",
-  "hour": "小時",
-  "minute": "分鐘",
+  "era": "纪元",
+  "hour": "小时",
+  "minute": "分钟",
   "month": "月",
   "second": "秒",
   "startDate": "開始日期",
-  "year": "年"
+  "year": "年",
+  "weekday": "工作日",
+  "timeZoneName": "时区"
 }

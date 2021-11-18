@@ -204,10 +204,9 @@ function ReorderableGrid(props) {
 
   let {gridProps} = useGrid({
     ...props,
-    ref,
     'aria-label': 'Reorderable list',
     focusMode: 'cell'
-  }, gridState);
+  }, gridState, ref);
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
   let dropRef = React.useRef();
@@ -260,19 +259,13 @@ function CollectionItem({item, state, dragState, dropState}) {
   let rowRef = React.useRef();
   let cellRef = React.useRef();
   let cellNode = [...item.childNodes][0];
-  let isSelected = state.selectionManager.isSelected(item.key);
 
-  let {rowProps} = useGridRow({
-    node: item,
-    ref: rowRef,
-    isSelected
-  }, state);
+  let {rowProps} = useGridRow({node: item}, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
-    ref: cellRef,
     focusMode: 'cell',
     shouldSelectOnPressUp: true
-  }, state);
+  }, state, cellRef);
 
   let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
 

@@ -1,14 +1,19 @@
 {
   "calendar": "Kalendár",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} do {end, date, long}",
   "date": "Dátum",
   "dateRange": "Rozsah dátumov",
-  "day": "Deň",
-  "dayPeriod": "Časť dňa",
+  "day": "deň",
+  "dayPeriod": "AM/PM",
   "endDate": "Dátum ukončenia",
-  "hour": "Hodina",
-  "minute": "Minúta",
-  "month": "Mesiac",
-  "second": "Sekunda",
+  "era": "letopočet",
+  "hour": "hodina",
+  "minute": "minúta",
+  "month": "mesiac",
+  "second": "sekunda",
   "startDate": "Dátum začatia",
-  "year": "Rok"
+  "year": "rok",
+  "weekday": "deň týždňa",
+  "timeZoneName": "časové pásmo"
 }

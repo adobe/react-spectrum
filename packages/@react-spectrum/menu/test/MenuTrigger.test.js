@@ -211,6 +211,7 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isOpen: true}}
   `('$Name supports a controlled open state ', function ({Component, props}) {
     let tree = renderComponent(Component, props);
+    act(() => {jest.runAllTimers();});
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
@@ -222,7 +223,7 @@ describe('MenuTrigger', function () {
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
-    expect(onOpenChange).toBeCalledTimes(2); // once for press, once for blur :/
+    expect(onOpenChange).toBeCalledTimes(1);
   });
 
   // New functionality in v3
@@ -231,6 +232,7 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, defaultOpen: true}}
   `('$Name supports a uncontrolled default open state ', function ({Component, props}) {
     let tree = renderComponent(Component, props);
+    act(() => {jest.runAllTimers();});
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
@@ -263,6 +265,7 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
     `('$Name autofocuses the selected item on menu open', function ({Component, props}) {
       let tree = renderComponent(Component, props, {selectedKeys: ['Bar']});
+      act(() => {jest.runAllTimers();});
       let button = tree.getByRole('button');
       triggerPress(button);
       act(() => {jest.runAllTimers();});
@@ -278,6 +281,8 @@ describe('MenuTrigger', function () {
 
       // Opening menu via down arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      act(() => {jest.runAllTimers();});
       menu = tree.getByRole('menu');
       menuItems = within(menu).getAllByRole('menuitem');
       selectedItem = menuItems[1];
@@ -525,8 +530,19 @@ describe('MenuTrigger', function () {
 
     it.each`
       Name                      | Component      | props | menuProps
-      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
       ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+    `('$Name doesn\'t close menu on item selection via mouse with multiple selection', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => triggerPress(item));
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+    });
+
+    it.each`
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{closeOnSelect: true}} | ${{selectionMode: 'multiple'}}
       ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
       ${'V2Dropdown single'}    | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'single'}}
       ${'V2Dropdown multiple'}  | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'multiple'}}
@@ -758,5 +774,49 @@ describe('MenuTrigger', function () {
     );
     let checkmark = queryByRole('img', {hidden: true});
     expect(checkmark).toBeNull();
+  });
+
+  it('two menus can not be open at the same time', function () {
+    let {getAllByRole, getByRole, queryByRole} = render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <Button>
+            {triggerText}
+          </Button>
+          <Menu items={withSection}>
+            <Item key="alpha">Alpha</Item>
+            <Item key="bravo">Bravo</Item>
+          </Menu>
+        </MenuTrigger>
+        <MenuTrigger>
+          <Button>
+            {triggerText}
+          </Button>
+          <Menu items={withSection}>
+            <Item key="whiskey">Whiskey</Item>
+            <Item key="tango">Tango</Item>
+            <Item key="foxtrot">Foxtrot</Item>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    );
+    let [button1, button2] = getAllByRole('button');
+    triggerPress(button1);
+    act(() => jest.runAllTimers());
+    let menu = getByRole('menu');
+    let menuItem1 = within(menu).getByText('Alpha');
+    expect(menuItem1).toBeInTheDocument();
+
+    // pressing once on button 2 should close menu1, but not open menu2 yet
+    triggerPress(button2);
+    act(() => jest.runAllTimers());
+    expect(queryByRole('menu')).toBeNull();
+
+    // second press of button2 should open menu2
+    triggerPress(button2);
+    act(() => jest.runAllTimers());
+    let menu2 = getByRole('menu');
+    let menu2Item1 = within(menu2).getByText('Whiskey');
+    expect(menu2Item1).toBeInTheDocument();
   });
 });

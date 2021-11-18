@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
@@ -53,7 +53,7 @@ export function HidingColumns() {
           <Checkbox key={c.key} isSelected={visibleColumns.has(c.key)} onChange={() => toggleColumn(c.key)}>{c.title}</Checkbox>
         )}
       </Form>
-      <Table aria-label="Table with hideable columns" width={900} height={500} isQuiet selectionMode="single">
+      <TableView aria-label="Table with hideable columns" width={900} height={500} isQuiet selectionMode="single">
         <TableHeader columns={columns.filter(c => visibleColumns.has(c.key))}>
           {column => <Column>{column.title}</Column>}
         </TableHeader>
@@ -64,7 +64,7 @@ export function HidingColumns() {
             </Row>
           )}
         </TableBody>
-      </Table>
+      </TableView>
     </Flex>
   );
 }

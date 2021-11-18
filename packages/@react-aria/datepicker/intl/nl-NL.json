@@ -1,14 +1,19 @@
 {
   "calendar": "Kalender",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} t/m {end, date, long}",
   "date": "Datum",
   "dateRange": "Datumbereik",
-  "day": "Dag",
-  "dayPeriod": "Dagdeel",
+  "day": "dag",
+  "dayPeriod": "a.m./p.m.",
   "endDate": "Einddatum",
-  "hour": "Uur",
-  "minute": "Minuut",
-  "month": "Maand",
-  "second": "Seconde",
+  "era": "tijdperk",
+  "hour": "uur",
+  "minute": "minuut",
+  "month": "maand",
+  "second": "seconde",
   "startDate": "Startdatum",
-  "year": "Jaar"
+  "year": "jaar",
+  "weekday": "dag van de week",
+  "timeZoneName": "tijdzone"
 }

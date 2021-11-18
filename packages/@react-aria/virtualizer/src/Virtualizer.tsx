@@ -12,6 +12,7 @@
 
 import {Collection} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
@@ -33,7 +34,8 @@ interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLEleme
   transitionDuration?: number,
   isLoading?: boolean,
   onLoadMore?: () => void,
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  scrollToItem?: (key: Key) => void
 }
 
 function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
@@ -51,6 +53,8 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     focusedKey,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     shouldUseVirtualFocus,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    scrollToItem,
     ...otherProps
   } = props;
 
@@ -85,7 +89,7 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
 
   useLayoutEffect(() => {
     if (!isLoading && onLoadMore && !state.isAnimating) {
-      if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
+      if (state.contentSize.height > 0 && state.contentSize.height <= state.virtualizer.visibleRect.height) {
         onLoadMore();
       }
     }
@@ -125,8 +129,8 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     if (virtualizer.visibleRect.height === 0) {
       return;
     }
-
-    if (focusedKey !== lastFocusedKey.current) {
+    let modality = getInteractionModality();
+    if (focusedKey !== lastFocusedKey.current && modality !== 'pointer') {
       if (scrollToItem) {
         scrollToItem(focusedKey);
       } else {
@@ -141,14 +145,17 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   let onFocus = useCallback((e: FocusEvent) => {
     // If the focused item is scrolled out of view and is not in the DOM, the collection
     // will have tabIndex={0}. When tabbing in from outside, scroll the focused item into view.
-    // We only want to do this if the collection itself is receiving focus, not a child
-    // element, and we aren't moving focus to the collection from within (see below).
-    if (e.target === ref.current && !isFocusWithin.current) {
-      virtualizer.scrollToItem(focusedKey, {duration: 0});
+    // Ignore focus events that bubble through portals (e.g. focus that happens on a menu popover child of the virtualizer)
+    if (!isFocusWithin.current && ref.current.contains(e.target)) {
+      if (scrollToItem) {
+        scrollToItem(focusedKey);
+      } else {
+        virtualizer.scrollToItem(focusedKey, {duration: 0});
+      }
     }
 
     isFocusWithin.current = e.target !== ref.current;
-  }, [ref, virtualizer, focusedKey]);
+  }, [ref, virtualizer, focusedKey, scrollToItem]);
 
   let onBlur = useCallback((e: FocusEvent) => {
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);

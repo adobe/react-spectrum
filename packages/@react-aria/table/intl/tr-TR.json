@@ -1,0 +1,9 @@
+{
+  "ascending": "artan sırada",
+  "ascendingSort": "{columnName} sütuna göre artan düzende sırala",
+  "descending": "azalan sırada",
+  "descendingSort": "{columnName} sütuna göre azalan düzende sırala",
+  "select": "Seç",
+  "selectAll": "Tümünü Seç",
+  "sortable": "Sıralanabilir sütun"
+}

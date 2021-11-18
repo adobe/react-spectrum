@@ -73,7 +73,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     isDisabled,
     key,
     onClose,
-    closeOnSelect = true,
+    closeOnSelect,
     isVirtualized,
     onAction
   } = props;
@@ -115,12 +115,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
     switch (e.key) {
       case ' ':
-        if (!isDisabled && state.selectionManager.selectionMode === 'none' && closeOnSelect && onClose) {
+        if (!isDisabled && state.selectionManager.selectionMode === 'none' && closeOnSelect !== false && onClose) {
           onClose();
         }
         break;
       case 'Enter':
-        if (!isDisabled && closeOnSelect && onClose) {
+        // The Enter key should always close on select, except if overridden.
+        if (!isDisabled && closeOnSelect !== false && onClose) {
           onClose();
         }
         break;
@@ -139,7 +140,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         onAction(key);
       }
 
-      if (closeOnSelect && onClose) {
+      // Pressing a menu item should close by default in single selection mode but not multiple
+      // selection mode, except if overridden by the closeOnSelect prop.
+      if (onClose && (closeOnSelect ?? state.selectionManager.selectionMode !== 'multiple')) {
         onClose();
       }
     }
@@ -152,7 +155,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     shouldSelectOnPressUp: true
   });
 
-  let {pressProps} = usePress(mergeProps({onPressStart, onPressUp, onKeyDown, isDisabled}, itemProps));
+  let {pressProps} = usePress({onPressStart, onPressUp, isDisabled});
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
@@ -166,7 +169,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(pressProps, hoverProps)
+      ...mergeProps(itemProps, pressProps, hoverProps, {onKeyDown})
     },
     labelProps: {
       id: labelId

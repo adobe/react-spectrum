@@ -77,6 +77,10 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
             ? input.value.slice(0, input.selectionStart - 1) + input.value.slice(input.selectionStart)
             : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
           break;
+        case 'deleteSoftLineBackward':
+        case 'deleteHardLineBackward':
+          nextValue = input.value.slice(input.selectionStart);
+          break;
         default:
           if (e.data != null) {
             nextValue =
@@ -114,7 +118,7 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
     }
     : null;
 
-  let {labelProps, inputProps: textFieldProps} = useTextField(props, inputRef);
+  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useTextField(props, inputRef);
 
   let compositionStartState = useRef(null);
   return {
@@ -150,6 +154,8 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
         }
       }
     ),
-    labelProps
+    labelProps,
+    descriptionProps,
+    errorMessageProps
   };
 }

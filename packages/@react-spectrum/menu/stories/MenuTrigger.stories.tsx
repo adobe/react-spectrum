@@ -328,6 +328,42 @@ storiesOf('MenuTrigger', module)
     () => render(defaultMenu, {direction: 'top'})
   )
   .add(
+    'direction="bottom"',
+    () => render(defaultMenu, {direction: 'bottom'})
+  )
+  .add(
+    'direction="start"',
+    () => render(defaultMenu, {direction: 'start'})
+  )
+  .add(
+    'direction="start", align="end"',
+    () => render(defaultMenu, {direction: 'start', align: 'end'})
+  )
+  .add(
+    'direction="end"',
+    () => render(defaultMenu, {direction: 'end'})
+  )
+  .add(
+    'direction="end", align="end"',
+    () => render(defaultMenu, {direction: 'end', align: 'end'})
+  )
+  .add(
+    'direction="left"',
+    () => render(defaultMenu, {direction: 'left'})
+  )
+  .add(
+    'direction="left", align="end"',
+    () => render(defaultMenu, {direction: 'left', align: 'end'})
+  )
+  .add(
+    'direction="right"',
+    () => render(defaultMenu, {direction: 'right'})
+  )
+  .add(
+    'direction="right", align="end"',
+    () => render(defaultMenu, {direction: 'right', align: 'end'})
+  )
+  .add(
     'shouldFlip',
     () => render(defaultMenu, {shouldFlip: true})
   )
@@ -354,6 +390,10 @@ storiesOf('MenuTrigger', module)
   .add(
     'closeOnSelect=false',
     () => render(defaultMenu, {closeOnSelect: false}, {})
+  )
+  .add(
+    'closeOnSelect=true, multiselect menu',
+    () => render(defaultMenu, {closeOnSelect: true}, {selectionMode: 'multiple'})
   )
   .add(
     'menu with semantic elements (static)',

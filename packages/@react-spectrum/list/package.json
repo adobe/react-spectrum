@@ -1,0 +1,72 @@
+{
+  "name": "@react-spectrum/list",
+  "version": "3.0.0-alpha.3",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "targets": {
+    "main": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "module": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/focus": "^3.4.1",
+    "@react-aria/grid": "^3.0.0",
+    "@react-aria/i18n": "^3.3.2",
+    "@react-aria/interactions": "^3.5.1",
+    "@react-aria/listbox": "^3.3.1",
+    "@react-aria/separator": "^3.1.3",
+    "@react-aria/utils": "^3.8.2",
+    "@react-aria/virtualizer": "^3.3.4",
+    "@react-spectrum/button": "^3.5.1",
+    "@react-spectrum/checkbox": "^3.2.3",
+    "@react-spectrum/layout": "^3.2.1",
+    "@react-spectrum/listbox": "^3.5.3",
+    "@react-spectrum/progress": "^3.1.3",
+    "@react-spectrum/text": "^3.1.3",
+    "@react-spectrum/textfield": "^3.1.7",
+    "@react-spectrum/utils": "^3.6.2",
+    "@react-spectrum/view": "^3.1.3",
+    "@react-stately/collections": "^3.3.4",
+    "@react-stately/grid": "^3.0.0",
+    "@react-stately/layout": "^3.4.0",
+    "@react-stately/list": "^3.3.0",
+    "@react-stately/virtualizer": "^3.1.5",
+    "@react-types/listbox": "^3.2.1",
+    "@react-types/shared": "^3.8.0",
+    "@spectrum-icons/ui": "^3.2.1"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0-rc.1",
+    "@react-spectrum/provider": "^3.2.0",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

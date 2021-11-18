@@ -867,7 +867,8 @@ export class Virtualizer<T extends object, V, W> {
 
       let layoutInfo = this.layout.getLayoutInfo(cur.key);
       if (
-        !cur.rect.pointEquals(layoutInfo.rect) ||
+        // Uses equals rather than pointEquals so that width/height changes are taken into account
+        !cur.rect.equals(layoutInfo.rect) ||
         cur.opacity !== layoutInfo.opacity ||
         cur.transform !== layoutInfo.transform
       ) {
@@ -934,7 +935,8 @@ export class Virtualizer<T extends object, V, W> {
    * @param duration The duration of the scroll animation.
    */
   scrollToItem(key: Key, options?: ScrollToItemOptions) {
-    if (!key) {
+    // key can be 0, so check if null or undefined
+    if (key == null) {
       return;
     }
 

@@ -97,6 +97,7 @@ export class CollectionBuilder<T extends object> {
       let cached = this.cache.get(partialNode.value);
       if (cached && (!cached.shouldInvalidate || !cached.shouldInvalidate(this.context))) {
         cached.index = partialNode.index;
+        cached.parentKey = parentNode ? parentNode.key : null;
         yield cached;
         return;
       }
@@ -108,7 +109,7 @@ export class CollectionBuilder<T extends object> {
     // Call this function to get a partial node, and recursively build a full node from there.
     if (React.isValidElement(element)) {
       let type = element.type as any;
-      if (typeof type !== 'function' || typeof type.getCollectionNode !== 'function') {
+      if (typeof type !== 'function' && typeof type.getCollectionNode !== 'function') {
         let name = typeof element.type === 'function' ? element.type.name : element.type;
         throw new Error(`Unknown element <${name}> in collection.`);
       }

@@ -38,7 +38,7 @@ keywords: [tooltip]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Tooltip']}
+  componentNames={['Tooltip, TooltipTrigger']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/tooltip/'}
   ]} />
@@ -53,7 +53,7 @@ keywords: [tooltip]
 
 ## Content
 
-Tooltips accept content as children. All content should be internationalized.
+The TooltipTrigger accepts exactly two children: the element which triggers the display of the Tooltip and the Tooltip itself. The trigger element must be the first child passed into the TooltipTrigger. All content should be internationalized.
 
 ### Accessibility
 

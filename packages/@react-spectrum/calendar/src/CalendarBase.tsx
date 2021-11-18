@@ -12,80 +12,95 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarAria} from '@react-aria/calendar';
+import {CalendarMonth} from './CalendarMonth';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {CalendarTableBody} from './CalendarTableBody';
-import {CalendarTableHeader} from './CalendarTableHeader';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
-import React from 'react';
+import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface CalendarBaseProps extends CalendarPropsBase, DOMProps, StyleProps {
-  state: CalendarState | RangeCalendarState,
-  aria: CalendarAria
+interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
+  state: T,
+  useCalendar: (props: CalendarPropsBase, state: T, ref?: RefObject<HTMLElement>) => CalendarAria,
+  visibleMonths?: number
 }
 
-export function CalendarBase(props: CalendarBaseProps) {
+export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>) {
   props = useProviderProps(props);
   let {
     state,
-    aria,
-    ...otherProps
+    useCalendar,
+    visibleMonths = 1
   } = props;
-  let monthDateFormatter = useDateFormatter({month: 'long', year: 'numeric'});
-  let {
-    calendarProps,
-    calendarTitleProps,
-    nextButtonProps,
-    prevButtonProps,
-    calendarBodyProps,
-    captionProps
-  } = aria;
   let {direction} = useLocale();
-  let {styleProps} = useStyleProps(otherProps);
+  let currentMonth = state.visibleRange.start;
+  let monthDateFormatter = useDateFormatter({
+    month: 'long',
+    year: 'numeric',
+    era: currentMonth.calendar.identifier !== 'gregory' ? 'long' : undefined,
+    calendar: currentMonth.calendar.identifier
+  });
+  let ref = useRef(null);
+  let {calendarProps, prevButtonProps, nextButtonProps} = useCalendar(props, state, ref);
+
+  let titles = [];
+  let calendars = [];
+  for (let i = 0; i < visibleMonths; i++) {
+    titles.push(
+      <div key={i} className={classNames(styles, 'spectrum-Calendar-monthHeader')}>
+        {i === 0 &&
+          <ActionButton
+            {...prevButtonProps}
+            UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
+            isQuiet>
+            {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
+          </ActionButton>
+        }
+        <h2
+          className={classNames(styles, 'spectrum-Calendar-title')}>
+          {monthDateFormatter.format(currentMonth.add({months: i}).toDate(state.timeZone))}
+        </h2>
+        {i === visibleMonths - 1 &&
+          <ActionButton
+            {...nextButtonProps}
+            UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
+            isQuiet>
+            {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
+          </ActionButton>
+        }
+      </div>
+    );
+
+    let d = currentMonth.add({months: i});
+    calendars.push(
+      <CalendarMonth
+        {...props}
+        key={`${d.year}-${d.month}-${d.day}`}
+        state={state}
+        startDate={d} />
+    );
+  }
 
   return (
     <div
-      {...styleProps}
       {...calendarProps}
+      ref={ref}
       className={
         classNames(styles,
-          'spectrum-Calendar',
-          styleProps.className
+          'spectrum-Calendar'
         )
       }>
       <div className={classNames(styles, 'spectrum-Calendar-header')}>
-        <h2
-          {...calendarTitleProps}
-          className={classNames(styles, 'spectrum-Calendar-title')}>
-          {monthDateFormatter.format(state.currentMonth)}
-        </h2>
-        <ActionButton
-          {...prevButtonProps}
-          UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
-          isQuiet>
-          {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
-        </ActionButton>
-        <ActionButton
-          {...nextButtonProps}
-          UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
-          isQuiet>
-          {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
-        </ActionButton>
+        {titles}
       </div>
-      <table
-        {...calendarBodyProps}
-        className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table')}>
-        <VisuallyHidden elementType="caption" {...captionProps} />
-        <CalendarTableHeader weekDays={state.weekDays} />
-        <CalendarTableBody state={state} />
-      </table>
+      <div className={classNames(styles, 'spectrum-Calendar-months')}>
+        {calendars}
+      </div>
     </div>
   );
 }

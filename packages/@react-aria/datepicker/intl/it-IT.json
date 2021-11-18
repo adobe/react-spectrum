@@ -1,14 +1,19 @@
 {
   "calendar": "Calendario",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "Da {start, date, long} a {end, date, long}",
   "date": "Data",
   "dateRange": "Intervallo date",
-  "day": "Giorno",
-  "dayPeriod": "Periodo di giorni",
+  "day": "giorno",
+  "dayPeriod": "AM/PM",
   "endDate": "Data finale",
-  "hour": "Ora",
-  "minute": "Minuti",
-  "month": "Mese",
-  "second": "Secondi",
+  "era": "era",
+  "hour": "ora",
+  "minute": "minuto",
+  "month": "mese",
+  "second": "secondo",
   "startDate": "Data iniziale",
-  "year": "Anno"
+  "year": "anno",
+  "weekday": "giorno della settimana",
+  "timeZoneName": "fuso orario"
 }

@@ -58,7 +58,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: Focusa
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {
-    return <MobileComboBox {...props} ref={ref} />;
+    // menuTrigger=focus/manual don't apply to mobile combobox
+    return <MobileComboBox {...props} menuTrigger="input" ref={ref} />;
   } else {
     return <ComboBoxBase {...props} ref={ref} />;
   }
@@ -81,7 +82,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
   let unwrappedButtonRef = useUnwrapDOMRef(buttonRef);
   let listBoxRef = useRef();
-  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -94,7 +95,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   );
   let layout = useListBoxLayout(state);
 
-  let {buttonProps, inputProps, listBoxProps, labelProps} = useComboBox(
+  let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps} = useComboBox(
     {
       ...props,
       keyboardDelegate: layout,
@@ -107,7 +108,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     state
   );
 
-  let {overlayProps, placement} = useOverlayPosition({
+  let {overlayProps, placement, updatePosition} = useOverlayPosition({
     targetRef: unwrappedButtonRef,
     overlayRef: unwrappedPopoverRef,
     scrollRef: listBoxRef,
@@ -136,6 +137,17 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   useLayoutEffect(onResize, [scale, onResize]);
 
+  // Update position once the ListBox has rendered. This ensures that
+  // it flips properly when it doesn't fit in the available space.
+  // TODO: add ResizeObserver to useOverlayPosition so we don't need this.
+  useLayoutEffect(() => {
+    if (state.isOpen) {
+      requestAnimationFrame(() => {
+        updatePosition();
+      });
+    }
+  }, [state.isOpen, updatePosition]);
+
   let style = {
     ...overlayProps.style,
     width: isQuiet ? null : menuWidth,
@@ -144,7 +156,12 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   return (
     <>
-      <Field {...props} labelProps={labelProps} ref={domRef}>
+      <Field
+        {...props}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        labelProps={labelProps}
+        ref={domRef}>
         <ComboBoxInput
           {...props}
           isOpen={state.isOpen}
@@ -161,10 +178,11 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         ref={popoverRef}
         placement={placement}
         hideArrow
-        isNonModal>
+        isNonModal
+        isDismissable={false}>
         <ListBoxBase
+          {...listBoxProps}
           ref={listBoxRef}
-          domProps={listBoxProps}
           disallowEmptySelection
           autoFocus={state.focusStrategy}
           shouldSelectOnPressUp
@@ -176,7 +194,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(comboboxStyles, 'no-results')}>
-              {formatMessage('noResults')}
+              {loadingState === 'loading' ? formatMessage('loading') :  formatMessage('noResults')}
             </span>
           )} />
         <DismissButton onDismiss={() => state.close()} />
@@ -191,14 +209,14 @@ interface ComboBoxInputProps extends SpectrumComboBoxProps<unknown> {
   triggerProps: AriaButtonProps,
   triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
   style?: React.CSSProperties,
-  className?: string
+  className?: string,
+  isOpen?: boolean
 }
 
 const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInputProps, ref: RefObject<HTMLElement>) {
   let {
     isQuiet,
     isDisabled,
-    isReadOnly,
     validationState,
     inputProps,
     inputRef,
@@ -321,7 +339,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
                 'spectrum-FieldButton'
               )
             }
-            isDisabled={isDisabled || isReadOnly}
             isQuiet={isQuiet}
             validationState={validationState}>
             <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />

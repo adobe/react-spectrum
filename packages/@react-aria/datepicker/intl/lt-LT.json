@@ -1,14 +1,19 @@
 {
   "calendar": "Kalendorius",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "Nuo {start, date, long} iki {end, date, long}",
   "date": "Data",
   "dateRange": "Datų intervalas",
-  "day": "Diena",
-  "dayPeriod": "Dienos laikotarpis",
+  "day": "diena",
+  "dayPeriod": "iki pietų / po pietų",
   "endDate": "Pabaigos data",
-  "hour": "Valanda",
-  "minute": "Minutė",
-  "month": "Mėnuo",
-  "second": "Sekundė",
+  "era": "era",
+  "hour": "valanda",
+  "minute": "minutė",
+  "month": "mėnuo",
+  "second": "sekundė",
   "startDate": "Pradžios data",
-  "year": "Metai"
+  "year": "metai",
+  "weekday": "savaitės diena",
+  "timeZoneName": "laiko juosta"
 }

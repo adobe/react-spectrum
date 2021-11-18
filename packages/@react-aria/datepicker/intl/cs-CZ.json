@@ -1,14 +1,19 @@
 {
   "calendar": "Kalendář",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} až {end, date, long}",
   "date": "Datum",
   "dateRange": "Rozsah dat",
-  "day": "Den",
-  "dayPeriod": "Denní doba",
+  "day": "den",
+  "dayPeriod": "část dne",
   "endDate": "Konečné datum",
-  "hour": "Hodina",
-  "minute": "Minuta",
-  "month": "Měsíc",
-  "second": "Sekunda",
+  "era": "letopočet",
+  "hour": "hodina",
+  "minute": "minuta",
+  "month": "měsíc",
+  "second": "sekunda",
   "startDate": "Počáteční datum",
-  "year": "Rok"
+  "year": "rok",
+  "weekday": "den v týdnu",
+  "timeZoneName": "časové pásmo"
 }

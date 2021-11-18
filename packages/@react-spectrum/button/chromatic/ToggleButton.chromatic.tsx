@@ -11,8 +11,8 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {Grid, repeat} from '@adobe/react-spectrum';
-import {mergeProps} from '@react-aria/utils';
+import {generatePowerset} from '@react-spectrum/story-utils';
+import {Grid, repeat, View} from '@adobe/react-spectrum';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
@@ -28,26 +28,31 @@ let states = [
   {UNSAFE_className: classNames(styles, 'focus-ring')}
 ];
 
-// Generate a powerset of the options
-let combinations: any[] = [{}];
-for (let i = 0; i < states.length; i++) {
-  let len = combinations.length;
-  for (let j = 0; j < len; j++) {
-    let merged = mergeProps(combinations[j], states[i]);
-
-    // Ignore disabled combined with interactive states.
-    if (merged.isDisabled && merged.UNSAFE_className) {
-      continue;
-    }
-
-    combinations.push(merged);
-  }
-}
+let combinations = generatePowerset(states, (merged) => merged.isDisabled && merged.UNSAFE_className);
 
 storiesOf('Button/ToggleButton', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
   .add('all possible states', () => (
     <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
       {combinations.map(c => <ToggleButton {...c}>Button</ToggleButton>)}
+    </Grid>
+  ))
+  .add('staticColor = white', () => (
+    <View backgroundColor="static-seafoam-600" padding="size-1000">
+      <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+        {combinations.map(c => <ToggleButton {...c} staticColor="white">Button</ToggleButton>)}
+      </Grid>
+    </View>
+  ))
+  .add('staticColor = black', () => (
+    <View backgroundColor="static-yellow-400" padding="size-1000">
+      <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+        {combinations.map(c => <ToggleButton {...c} staticColor="black">Button</ToggleButton>)}
+      </Grid>
+    </View>
+  ))
+  .add('Arabic', () => (
+    <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+      {combinations.map(c => <ToggleButton {...c}>زر</ToggleButton>)}
     </Grid>
   ));

@@ -11,52 +11,78 @@
  */
 
 import {AriaCalendarCellProps, useCalendarCell} from '@react-aria/calendar';
+import {CalendarDate, getDayOfWeek, isEqualDay, isSameDay, isSameMonth, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
-import {isSameDay, isSameMonth, isToday} from 'date-fns';
-import React, {useRef} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
-import {useDateFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useLocale} from '@react-aria/i18n';
+import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 
 interface CalendarCellProps extends AriaCalendarCellProps {
-  state: CalendarState | RangeCalendarState
+  state: CalendarState | RangeCalendarState,
+  currentMonth: CalendarDate
 }
 
-export function CalendarCell({state, ...props}: CalendarCellProps) {
+export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps) {
   let ref = useRef<HTMLElement>();
-  let {cellProps, buttonProps} = useCalendarCell(props, state, ref);
+  let {cellProps, buttonProps, isPressed} = useCalendarCell({
+    ...props,
+    isDisabled: !isSameMonth(props.date, currentMonth)
+  }, state, ref);
   let {hoverProps, isHovered} = useHover({});
-  let dateFormatter = useDateFormatter({day: 'numeric'});
+  let dateFormatter = useDateFormatter({
+    day: 'numeric',
+    timeZone: state.timeZone,
+    calendar: currentMonth.calendar.identifier
+  });
   let isSelected = state.isSelected(props.date);
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
   let isSelectionStart = highlightedRange && isSameDay(props.date, highlightedRange.start);
   let isSelectionEnd = highlightedRange && isSameDay(props.date, highlightedRange.end);
-  let isRangeStart = isSelected && (props.date.getDay() === 0 || props.date.getDate() === 1);
-  let isRangeEnd = isSelected && (props.date.getDay() === 6 || props.date.getDate() === state.daysInMonth);
+  let {locale} = useLocale();
+  let dayOfWeek = getDayOfWeek(props.date, locale);
+  let isRangeStart = isSelected && (dayOfWeek === 0 || props.date.day === 1);
+  let isRangeEnd = isSelected && (dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  // For performance, reuse the same date object as before if the new date prop is the same.
+  // This allows subsequent useMemo results to be reused.
+  let date = props.date;
+  let lastDate = useRef(null);
+  if (lastDate.current && isEqualDay(date, lastDate.current)) {
+    date = lastDate.current;
+  }
+
+  lastDate.current = date;
+
+  let nativeDate = useMemo(() => date.toDate(state.timeZone), [date, state.timeZone]);
+  let formatted = useMemo(() => dateFormatter.format(nativeDate), [dateFormatter, nativeDate]);
 
   return (
     <td
       {...cellProps}
       className={classNames(styles, 'spectrum-Calendar-tableCell')}>
       <span
-        {...buttonProps}
-        {...hoverProps}
+        {...mergeProps(buttonProps, hoverProps, focusProps)}
         ref={ref}
         className={classNames(styles, 'spectrum-Calendar-date', {
-          'is-today': isToday(props.date),
+          'is-today': isToday(props.date, state.timeZone),
           'is-selected': isSelected,
-          'is-focused': state.isCellFocused(props.date),
+          'is-focused': state.isCellFocused(props.date) && isFocusVisible,
           'is-disabled': state.isCellDisabled(props.date),
-          'is-outsideMonth': !isSameMonth(props.date, state.currentMonth),
+          'is-outsideMonth': !isSameMonth(props.date, currentMonth),
           'is-range-start': isRangeStart,
           'is-range-end': isRangeEnd,
           'is-range-selection': isSelected && 'highlightedRange' in state,
           'is-selection-start': isSelectionStart,
           'is-selection-end': isSelectionEnd,
-          'is-hovered': isHovered
+          'is-hovered': isHovered,
+          'is-pressed': isPressed
         })}>
-        {dateFormatter.format(props.date)}
+        <span className={classNames(styles, 'spectrum-Calendar-dateText')}>{formatted}</span>
       </span>
     </td>
   );

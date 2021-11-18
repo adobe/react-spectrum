@@ -51,6 +51,14 @@ storiesOf('TextField', module)
     () => render({validationState: 'valid'})
   )
   .add(
+    'type: email',
+    () => render({type: 'email'})
+  )
+  .add(
+    'pattern: [0-9]+',
+    () => render({pattern: '[0-9]+'})
+  )
+  .add(
     'isReadOnly: true',
     () => render({isReadOnly: true})
   )
@@ -106,6 +114,18 @@ storiesOf('TextField', module)
     'no visible label',
     () => render({label: null, 'aria-label': 'Street address'})
   )
+  .add(
+    'with description',
+    () => render({description: 'Please enter your street address.'})
+  )
+  .add(
+    'with error message',
+    () => render({errorMessage: 'Please enter a valid street address.', validationState: 'invalid'})
+  )
+  .add(
+    'with description, error message and validation',
+    () => renderWithDescriptionErrorMessageAndValidation()
+  )
   .add('custom width',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px'})
   )
@@ -136,4 +156,28 @@ function render(props = {}) {
       UNSAFE_className="custom_classname"
       {...props} />
   );
+}
+
+function renderWithDescriptionErrorMessageAndValidation() {
+  function Example() {
+    let [value, setValue] = React.useState('0');
+    let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+  
+    return (
+      <TextField
+        validationState={isValid ? 'valid' : 'invalid'}
+        value={value}
+        onChange={setValue}
+        label="Favorite number"
+        maxLength={1}
+        description="Enter a single digit number."
+        errorMessage={
+          value === ''
+            ? 'Empty input not allowed.'
+            : 'Single digit numbers are 0-9.'
+        } />
+    );
+  }
+
+  return <Example />;
 }

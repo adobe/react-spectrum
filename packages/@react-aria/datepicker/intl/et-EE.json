@@ -1,14 +1,19 @@
 {
   "calendar": "Kalender",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} kuni {end, date, long}",
   "date": "Kuupäev",
   "dateRange": "Kuupäevavahemik",
-  "day": "Päev",
-  "dayPeriod": "Päeva periood",
+  "day": "päev",
+  "dayPeriod": "enne/pärast lõunat",
   "endDate": "Lõppkuupäev",
-  "hour": "Tund",
-  "minute": "Minut",
-  "month": "Kuu",
-  "second": "Sekund",
+  "era": "ajastu",
+  "hour": "tund",
+  "minute": "minut",
+  "month": "kuu",
+  "second": "sekund",
   "startDate": "Alguskuupäev",
-  "year": "Aasta"
+  "year": "aasta",
+  "weekday": "nädalapäev",
+  "timeZoneName": "ajavöönd"
 }

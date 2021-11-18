@@ -5,7 +5,7 @@ let rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = './bin';
 
 module.exports = {
-  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'monorepo', 'eslint-plugin-test-act'],
+  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'monorepo', 'eslint-plugin-rsp-rules'],
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -35,6 +35,8 @@ module.exports = {
       // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
       // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
       'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
+      'no-redeclare': OFF,
+      '@typescript-eslint/no-redeclare': ERROR,
       'no-unused-vars': OFF,
       '@typescript-eslint/no-unused-vars': ERROR,
       '@typescript-eslint/member-delimiter-style': [ERROR, {
@@ -51,7 +53,8 @@ module.exports = {
   }, {
     files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
     rules: {
-      'test-act/act-events-test': ERROR,
+      'rsp-rules/act-events-test': ERROR,
+      'rsp-rules/no-getByRole-toThrow': ERROR,
       'rulesdir/imports': OFF,
       'monorepo/no-internal-import': OFF,
       'jsdoc/require-jsdoc': OFF

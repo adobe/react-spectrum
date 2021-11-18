@@ -331,6 +331,30 @@ storiesOf('DialogTrigger', module)
         </Flex>
       </Flex>
     )
+  )
+  .add(
+    'trigger visible through underlay',
+    () => renderTriggerNotCentered({})
+  )
+  .add(
+    '2 popovers',
+    () => (
+      <Flex gap="size-200">
+        <DialogTrigger type="popover">
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>
+            <Content>
+              <input />
+              <input />
+            </Content>
+          </Dialog>
+        </DialogTrigger>
+        <DialogTrigger type="popover">
+          <ActionButton>Trigger</ActionButton>
+          <Dialog><Content>Hi!</Content></Dialog>
+        </DialogTrigger>
+      </Flex>
+    )
   );
 
 function render({width = 'auto', ...props}) {
@@ -340,7 +364,7 @@ function render({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog>
-            <Heading>The Heading</Heading>
+            <Heading id="foo">The Heading</Heading>
             <Header>The Header</Header>
             <Divider />
             <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
@@ -351,6 +375,23 @@ function render({width = 'auto', ...props}) {
               </ButtonGroup>}
           </Dialog>
         )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderTriggerNotCentered(props) {
+  return (
+    <div style={{position: 'absolute', top: '100px', left: '100px'}}>
+      <div>action button shouldn't get any events if the underlay is up and you try to click it through the underlay</div>
+      <DialogTrigger {...props} isDismissable onOpenChange={action('open change')}>
+        <ActionButton onPressStart={action('onPressStart')} onPress={action('onPress')} onPressEnd={action('onPressEnd')}>Trigger</ActionButton>
+        <Dialog>
+          <Heading>The Heading</Heading>
+          <Header>The Header</Header>
+          <Divider />
+          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+        </Dialog>
       </DialogTrigger>
     </div>
   );

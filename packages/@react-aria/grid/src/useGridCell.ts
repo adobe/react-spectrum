@@ -15,35 +15,42 @@ import {GridCollection} from '@react-types/grid';
 import {gridKeyboardDelegates} from './utils';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
-import {isFocusVisible, usePress} from '@react-aria/interactions';
+import {isFocusVisible} from '@react-aria/interactions';
 import {mergeProps} from '@react-aria/utils';
 import {Node as RSNode} from '@react-types/shared';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface GridCellProps {
+  /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */
   node: RSNode<unknown>,
-  ref: RefObject<HTMLElement>,
+  /** Whether the grid cell is contained in a virtual scroller. */
   isVirtualized?: boolean,
-  isDisabled?: boolean,
-
-  /* when a cell is focused, should the cell or it's first focusable item be focused */
+  /** Whether the cell or its first focusable child element should be focused when the grid cell is focused. */
   focusMode?: 'child' | 'cell',
-  shouldSelectOnPressUp?: boolean
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
+  /** Handler that is called when a user performs an action on the cell. */
+  onAction?: () => void
 }
 
 interface GridCellAria {
+  /** Props for the grid cell element. */
   gridCellProps: HTMLAttributes<HTMLElement>
 }
 
-export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>): GridCellAria {
+/**
+ * Provides the behavior and accessibility implementation for a cell in a grid.
+ * @param props - Props for the cell.
+ * @param state - State of the parent grid, as returned by `useGridState`.
+ */
+export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>, ref: RefObject<HTMLElement>): GridCellAria {
   let {
     node,
-    ref,
     isVirtualized,
-    isDisabled,
     focusMode = 'child',
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    onAction
   } = props;
 
   let {direction} = useLocale();
@@ -74,13 +81,15 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     ref,
     isVirtualized,
     focus,
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    onAction
   });
 
-  // TODO: move into useSelectableItem?
-  let {pressProps} = usePress({...itemProps, isDisabled});
-
   let onKeyDown = (e: ReactKeyboardEvent) => {
+    if (!e.currentTarget.contains(e.target as HTMLElement)) {
+      return;
+    }
+
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
 
@@ -203,7 +212,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     });
   };
 
-  let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
+  let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(itemProps, {
     role: 'gridcell',
     onKeyDownCapture: onKeyDown,
     onFocus

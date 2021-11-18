@@ -10,43 +10,63 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerProps} from '@react-types/datepicker';
-import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, useLabels} from '@react-aria/utils';
-import {HTMLAttributes, MouseEvent} from 'react';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {useFocusManager} from '@react-aria/focus';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
+import {createFocusManager} from '@react-aria/focus';
+import {DatePickerFieldState} from '@react-stately/datepicker';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {mergeProps, useDescription} from '@react-aria/utils';
+import {useDateFormatter} from '@react-aria/i18n';
+import {useDatePickerGroup} from './useDatePickerGroup';
+import {useField} from '@react-aria/label';
+import {useFocusWithin} from '@react-aria/interactions';
+
+// Allows this hook to also be used with TimeField
+interface DateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
 
 interface DateFieldAria {
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   fieldProps: HTMLAttributes<HTMLElement>,
-  segmentProps: HTMLAttributes<HTMLElement>
+  /** Props for the description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
-export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
-  let domProps = filterDOMProps(props, {labelable: true});
-  let formatMessage = useMessageFormatter(intlMessages);
-  let fieldProps = useLabels(props, formatMessage('date'));
-  let focusManager = useFocusManager();
+export const labelIds = new WeakMap<DatePickerFieldState, string>();
 
-  // This is specifically for mouse events, not touch or keyboard.
-  // Focus the last segment on mouse down in the field.
-  let onMouseDown = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    focusManager.focusNext({from: e.target as HTMLElement});
-  };
+export function useDateField<T extends DateValue>(props: DateFieldProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+    ...props,
+    labelElementType: 'span'
+  });
+
+  let groupProps = useDatePickerGroup(state, ref);
+
+  let {focusWithinProps} = useFocusWithin({
+    onBlurWithin() {
+      state.confirmPlaceholder();
+    }
+  });
+
+  let formatter = useDateFormatter(state.getFormatOptions({month: 'long'}));
+  let descProps = useDescription(state.value ? formatter.format(state.dateValue) : null);
+
+  labelIds.set(state, fieldProps['aria-labelledby'] || fieldProps.id);
 
   return {
-    fieldProps: {
-      ...domProps,
-      ...fieldProps,
-      onMouseDown
+    labelProps: {
+      ...labelProps,
+      onClick: () => {
+        let focusManager = createFocusManager(ref);
+        focusManager.focusFirst();
+      }
     },
-    segmentProps: {
-      // Segments should be labeled by the input id if provided, otherwise the field itself
-      'aria-labelledby': fieldProps['aria-labelledby'] || fieldProps.id
-    }
+    fieldProps: mergeProps(fieldProps, descProps, groupProps, focusWithinProps, {
+      role: 'group',
+      'aria-disabled': props.isDisabled || undefined,
+      'aria-describedby': [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined
+    }),
+    descriptionProps,
+    errorMessageProps
   };
 }

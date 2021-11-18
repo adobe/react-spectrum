@@ -20,7 +20,7 @@ export interface Breakpoints {
   M?: number,
   L?: number,
   // Currently, it only deals with pixels, but we need to fix it to accept em or rem as well.
-  [custom: string]: number
+  [custom: string]: number | undefined
 }
 
 export type CSSModule = {
