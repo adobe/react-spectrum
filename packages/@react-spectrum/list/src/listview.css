@@ -37,7 +37,7 @@
 .react-spectrum-ListViewItem {
   display: grid; /* TODO: define grid areas */
   border: 1px solid transparent;
-  border-bottom-color: var(--spectrum-tabel-cell-border-color, var(--spectrum-global-color-gray-300));
+  border-bottom-color: var(--spectrum-table-cell-border-color, var(--spectrum-global-color-gray-300));
   box-sizing: border-box;
   font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
   font-weight: var(--spectrum-table-cell-text-font-weight, var(--spectrum-global-font-weight-regular));
