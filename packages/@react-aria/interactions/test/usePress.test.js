@@ -585,6 +585,66 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should detect Android TalkBack double tap', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      // Android TalkBack will occasionally fire a pointer down event with "width: 1, height: 1" instead of "width: 0, height: 0".
+      // Make sure we can still determine that this is a virtual event by checking the pressure, detail, and height/width.
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      expect(events).toEqual([]);
+
+      // Virtual pointer event sets pointerType and onClick handles the rest
+      fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
     it('should not fire press events for disabled elements', function () {
       let events = [];
       let addEvent = (e) => events.push(e);

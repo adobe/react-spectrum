@@ -86,6 +86,20 @@ function ExampleSortTable() {
   );
 }
 
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    altKey: false,
+    button: opts.button || 0,
+    width: 1,
+    height: 1
+  }, opts);
+  return evt;
+}
+
 describe('TableView', function () {
   let offsetWidth, offsetHeight;
 
@@ -2465,6 +2479,32 @@ describe('TableView', function () {
         expect(onAction).toHaveBeenCalledWith('Foo 5');
       });
 
+      it('should support single tap to perform row selection with screen reader if onAction isn\'t provided', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch', width: 0, height: 0});
+        checkSelection(onSelectionChange, [
+          'Foo 5'
+        ]);
+        onSelectionChange.mockReset();
+
+        userEvent.click(getCell(tree, 'Foo 8'), {pointerType: 'touch', width: 0, height: 0});
+        checkSelection(onSelectionChange, [
+          'Foo 5', 'Foo 8'
+        ]);
+        onSelectionChange.mockReset();
+
+        // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
+        let cell = getCell(tree, 'Foo 10');
+        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+        checkSelection(onSelectionChange, [
+          'Foo 5', 'Foo 8', 'Foo 10'
+        ]);
+      });
+
       it('should support single tap to perform onAction with screen reader', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
@@ -2474,6 +2514,15 @@ describe('TableView', function () {
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledWith('Foo 5');
+
+        // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
+        let cell = getCell(tree, 'Foo 10');
+        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(2);
+        expect(onAction).toHaveBeenCalledWith('Foo 10');
       });
 
       it('should support long press to enter selection mode on touch', function () {

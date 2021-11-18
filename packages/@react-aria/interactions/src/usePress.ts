@@ -264,7 +264,7 @@ export function usePress(props: PressHookProps): PressResult {
 
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
-          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && isVirtualClick(e.nativeEvent)) {
+          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))) {
             // Ensure the element receives focus (VoiceOver on iOS does not do this)
             if (!isDisabled && !preventFocusOnPress) {
               focusWithoutScrolling(e.currentTarget);
@@ -767,5 +767,16 @@ function shouldPreventDefault(target: Element) {
 
 function isVirtualPointerEvent(event: PointerEvent) {
   // If the pointer size is zero, then we assume it's from a screen reader.
-  return event.width === 0 && event.height === 0;
+  // Android TalkBack double tap will sometimes return a event with width and height of 1
+  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
+  // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
+  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
+  return (
+    (event.width === 0 && event.height === 0) ||
+    (event.width === 1 &&
+      event.height === 1 &&
+      event.pressure === 0 &&
+      event.detail === 0
+    )
+  );
 }
