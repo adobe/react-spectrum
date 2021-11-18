@@ -2470,7 +2470,7 @@ describe('TableView', function () {
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
 
-        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch', width: 0, height: 0});
+        fireEvent.click(getCell(tree, 'Baz 5'), {detail: 0});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledWith('Foo 5');
