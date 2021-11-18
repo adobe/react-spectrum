@@ -83,4 +83,16 @@ describe('useMenuTrigger', function () {
     expect(setFocusStrategy).toHaveBeenCalledTimes(1);
     expect(setFocusStrategy).toHaveBeenCalledWith(null);
   });
+
+  it('doesn\'t toggle the menu if isDisabled', function () {
+    let {menuTriggerProps} = renderMenuTriggerHook({isDisabled: true}, state);
+    expect(typeof menuTriggerProps.onPressStart).toBe('function');
+    menuTriggerProps.onPressStart({pointerType: 'mouse'});
+    expect(setOpen).toHaveBeenCalledTimes(0);
+    expect(setFocusStrategy).toHaveBeenCalledTimes(0);
+
+    menuTriggerProps.onPress({pointerType: 'touch'});
+    expect(setOpen).toHaveBeenCalledTimes(0);
+    expect(setFocusStrategy).toHaveBeenCalledTimes(0);
+  });
 });
