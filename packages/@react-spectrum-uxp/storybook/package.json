@@ -5,16 +5,18 @@
   "license": "MIT",
   "browser": "dist/index.html",
   "scripts": {
-    "watch:parcel": "rm -rf ../../../.parcel-cache && parcel serve src/index.html --target main --no-content-hash --no-cache --log-level verbose",
-    "watch-:uxp": "sleep 20 && yarn uxp",
+    "watch:parcel": "rm -rf ../../../.parcel-cache && parcel serve src/index.html --target browser --no-content-hash --no-cache --log-level verbose",
+    "watch:uxp": "sleep 20 && yarn uxp",
+    "watch:copy": "nodemon -w src -e json -x yarn copy",
     "watch": "run-p watch:*",
-    "uxp": "../../../../torq-native/build/out/bin/macos/v8/nativeui/Debug/demo.app/Contents/MacOS/demo --extension dist"
+    "copy": "cp src/*.json dist/",
+    "uxp": "../../../../torq-native/dist/xcode_macos/Debug/x64/build/uxp/demo/uxp_demo/uxp_demo.app/Contents/MacOS/uxp_demo --extension ./dist"
   },
   "sideEffects": [
     "*.css"
   ],
   "targets": {
-    "main": {
+    "browser": {
       "minify": false
     }
   },
