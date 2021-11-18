@@ -124,7 +124,8 @@ function StaticCardView(props) {
 
 function DynamicCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
+  let cardOrientation = props.cardOrientation || 'vertical';
+  let gridLayout = useMemo(() => new GridLayout({collator, cardOrientation}), [collator, cardOrientation]);
   let {
     layout = gridLayout,
     selectionMode = 'multiple',
@@ -263,8 +264,12 @@ describe('CardView', function () {
   });
 
   describe('Grid layout and some shared gallery layout behavior', function () {
-    it('renders each card with the same height and width', function () {
-      let tree = render(<DynamicCardView />);
+    it.each`
+      cardOrientation
+      ${'vertical'}
+      ${'horizontal'}
+    `('grid layout CardView renders each card with the same height and width (card orientation: $cardOrientation)', function ({cardOrientation}) {
+      let tree = render(<DynamicCardView cardOrientation={cardOrientation} />);
       act(() => {
         jest.runAllTimers();
       });
@@ -275,6 +280,7 @@ describe('CardView', function () {
       let currentLeft;
       let expectedWidth;
       let expectedHeight;
+      let expectedSpacing;
       for (let [index, div] of wrappers.entries()) {
         if (index === 0) {
           continue;
@@ -285,6 +291,17 @@ describe('CardView', function () {
           currentLeft = div.style.left;
           expectedWidth = div.style.width;
           expectedHeight = div.style.height;
+
+          // Calculate the horizontal spacing between the cards based off the available width and number of cards
+          if (!expectedSpacing) {
+            let cardsInRow = Math.floor((mockWidth - 24 * 2) /  parseInt(expectedWidth, 10));
+            if (cardsInRow > 1) {
+              expectedSpacing = (mockWidth - (24 * 2) - (cardsInRow *  parseInt(expectedWidth, 10))) / (cardsInRow - 1);
+            } else {
+              expectedSpacing = 0;
+            }
+          }
+
           // default margin size is 24px
           expect(div.style.top).toEqual('24px');
           expect(div.style.left).toEqual('24px');
@@ -292,8 +309,7 @@ describe('CardView', function () {
           expect(div.style.width).toEqual(expectedWidth);
           expect(div.style.height).toEqual(expectedHeight);
           if (currentTop === div.style.top) {
-            // 19px due to how horizontal spacing is calculated in the layout
-            currentLeft = `${parseInt(currentLeft, 10) + parseInt(expectedWidth, 10) + 19}px`;
+            currentLeft = `${parseInt(currentLeft, 10) + parseInt(expectedWidth, 10) + expectedSpacing}px`;
           } else {
             // default space between the two cards vertically is 18px
             currentTop = `${parseInt(currentTop, 10) + parseInt(expectedHeight, 10) + 18}px`;
@@ -302,6 +318,12 @@ describe('CardView', function () {
           }
           expect(div.style.left).toEqual(currentLeft);
         }
+      }
+
+      if (cardOrientation === 'horizontal') {
+        expect(expectedWidth > expectedHeight).toBeTruthy();
+      } else {
+        expect(expectedHeight > expectedWidth).toBeTruthy();
       }
     });
 
@@ -1025,6 +1047,10 @@ describe('CardView', function () {
       expect(row.parentNode.style.height).toBe(`${mockHeight}px`);
 
       tree.rerender(<DynamicCardView layout={layout} />);
+      // Run timers for transitions
+      act(() => {
+        jest.runAllTimers();
+      });
       let grid = tree.getByRole('grid');
       expect(within(grid).queryByRole('progressbar')).toBeNull();
       expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
