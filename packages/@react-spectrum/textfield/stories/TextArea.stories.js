@@ -154,7 +154,7 @@ storiesOf('TextArea', module)
     {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}})
   .add(
     'resize with changeable helptext custom height',
-    () => <ValidationExample height="175px" />,
+    () => <ValidationExample height="175px" minHeight="100px" maxHeight="50vh" />,
     {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}});
 
 function render(props = {}) {

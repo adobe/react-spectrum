@@ -45,6 +45,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
   // Store styleProps to apply styles appropriately on height change.
   let {styleProps} = useStyleProps(props);
   let initialHeightsRef = useRef(null);
+  let helpTextHeightRef = useRef(null);
 
   let onHeightChange = useCallback(() => {
     let input = inputRef.current;
@@ -96,6 +97,16 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
         }
       }
     } else {
+      // If the textarea has been explicitly resized by the user,
+      // and the helpText has resized to a new height after validation, 
+      // adjust the input.style.height by the change in the helpText height.
+      if (helpTextHeightRef.current !== helpTextHeight) {
+        if (input.style.height) {
+          inputOffsetHeight = parseFloat(input.style.height) - (helpTextHeight - helpTextHeightRef.current);
+          input.style.height = `${inputOffsetHeight}px`;
+        }
+        helpTextHeightRef.current = helpTextHeight;
+      }
       for (const [key, value] of heightStyles) {
         switch (key as string) {
           case 'height':
