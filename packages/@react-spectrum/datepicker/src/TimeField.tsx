@@ -10,64 +10,65 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerField} from './DatePickerField';
-import {DateValue, SpectrumTimePickerProps, TimeValue} from '@react-types/datepicker';
-import {FocusScope} from '@react-aria/focus';
-import {getLocalTimeZone, Time, toCalendarDateTime, today, toTime} from '@internationalized/date';
-import React, {useMemo} from 'react';
-import {useControlledState} from '@react-stately/utils';
+import {classNames} from '@react-spectrum/utils';
+import {createCalendar} from '@internationalized/date';
+import {DatePickerSegment} from './DatePickerSegment';
+import datepickerStyles from './index.css';
+import {Field} from '@react-spectrum/label';
+import {Input} from './Input';
+import React, {useRef} from 'react';
+import {SpectrumTimePickerProps, TimeValue} from '@react-types/datepicker';
+import {useDateField} from '@react-aria/datepicker';
+import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useTimeFieldState} from '@react-stately/datepicker';
 
 export function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>) {
   props = useProviderProps(props);
   let {
     autoFocus,
-    placeholderValue = new Time(12),
-    minValue,
-    maxValue
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    isQuiet
   } = props;
 
-  let [value, setValue] = useControlledState<TimeValue>(
-    props.value,
-    props.defaultValue,
-    props.onChange
-  );
+  let ref = useRef();
+  let {locale} = useLocale();
+  let state = useTimeFieldState({
+    ...props,
+    locale,
+    createCalendar
+  });
 
-  let v = value || placeholderValue;
-  let day = v && 'day' in v ? v : undefined;
-  let placeholderDate = useMemo(() => convertValue(placeholderValue), [placeholderValue]);
-  let minDate = useMemo(() => convertValue(minValue, day), [minValue, day]);
-  let maxDate = useMemo(() => convertValue(maxValue, day), [maxValue, day]);
-
-  let dateTime = useMemo(() => value == null ? null : convertValue(value), [value]);
-  let onChange = newValue => {
-    setValue(v && 'day' in v ? newValue : toTime(newValue));
-  };
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useDateField(props, state, ref);
 
   return (
-    <FocusScope autoFocus={autoFocus}>
-      <DatePickerField
-        {...props}
-        data-testid="date-field"
-        value={dateTime}
-        defaultValue={undefined}
-        minValue={minDate}
-        maxValue={maxDate}
-        onChange={onChange}
-        maxGranularity="hour"
-        placeholderValue={placeholderDate} />
-    </FocusScope>
+    <Field
+      {...props}
+      labelProps={labelProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      validationState={state.validationState}
+      UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-TimeField-fieldWrapper')}>
+      <Input
+        fieldProps={fieldProps}
+        isDisabled={isDisabled}
+        isQuiet={isQuiet}
+        autoFocus={autoFocus}
+        validationState={state.validationState}
+        inputRef={ref}
+        className={classNames(datepickerStyles, 'react-spectrum-TimeField')}>
+        {state.segments.map((segment, i) =>
+          (<DatePickerSegment
+            key={i}
+            segment={segment}
+            state={state}
+            isDisabled={isDisabled}
+            isReadOnly={isReadOnly}
+            isRequired={isRequired} />)
+        )}
+      </Input>
+    </Field>
   );
-}
-
-function convertValue(value: TimeValue, date: DateValue = today(getLocalTimeZone())) {
-  if (!value) {
-    return null;
-  }
-
-  if ('day' in value) {
-    return value;
-  }
-
-  return toCalendarDateTime(date, value);
 }
