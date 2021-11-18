@@ -32,14 +32,14 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
     isRemovable,
     onRemove,
     children,
-    item
+    item,
+    tagRef,
+    labelRef
   } = props;
   const formatMessage = useMessageFormatter(intlMessages);
   const removeString = formatMessage('remove');
   const tagId = useId();
   const buttonId = useId();
-  let tagRef = useRef();
-  let labelRef = useRef();
 
   let {rowProps} = useGridRow({
     node: item

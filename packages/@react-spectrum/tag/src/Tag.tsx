@@ -32,12 +32,16 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {isFocusVisible, focusProps} = useFocusRing({within: true});
+  let tagRef = useRef();
+  let labelRef = useRef();
   let {clearButtonProps, labelProps, tagProps} = useTag({
     ...props,
     isRemovable,
     isDisabled,
     item,
-    onRemove
+    onRemove,
+    tagRef,
+    labelRef
   }, state);
 
   return (
