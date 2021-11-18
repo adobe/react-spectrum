@@ -224,3 +224,76 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-ToggleSwitch {
+    forced-color-adjust: none;
+    --spectrum-switch-emphasized-handle-background-color: ButtonFace;
+    --spectrum-switch-emphasized-handle-border-color: ButtonText;
+    --spectrum-switch-emphasized-handle-border-color-disabled: GrayText;
+    --spectrum-switch-emphasized-handle-border-color-down: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-hover: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-key-focus: ButtonText;
+    --spectrum-switch-emphasized-handle-border-color-selected: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-selected-disabled: GrayText;
+    --spectrum-switch-emphasized-handle-border-color-selected-down: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-selected-hover: Highlight;
+    --spectrum-switch-emphasized-handle-border-color-selected-key-focus: Highlight;
+    --spectrum-switch-emphasized-text-color: CanvasText;
+    --spectrum-switch-emphasized-text-color-disabled: GrayText;
+    --spectrum-switch-emphasized-text-color-down: CanvasText;
+    --spectrum-switch-emphasized-text-color-hover: CanvasText;
+    --spectrum-switch-emphasized-text-color-selected-disabled: GrayText;
+    --spectrum-switch-emphasized-track-color: ButtonFace;
+    --spectrum-switch-emphasized-track-color-disabled: ButtonFace;
+    --spectrum-switch-emphasized-track-color-selected: Highlight;
+    --spectrum-switch-emphasized-track-color-selected-disabled: GrayText;
+    --spectrum-switch-emphasized-track-color-selected-down: Highlight;
+    --spectrum-switch-emphasized-track-color-selected-hover: Highlight;
+    --spectrum-switch-emphasized-track-color-selected-key-focus: Highlight;
+    --spectrum-switch-focus-ring-color-key-focus: ButtonText;
+    --spectrum-switch-handle-border-color: ButtonText;
+    --spectrum-switch-handle-border-color-selected: Highlight;
+    --spectrum-switch-quiet-handle-border-color-selected: Highlight;
+    --spectrum-switch-quiet-handle-border-color-selected-down: Highlight;
+    --spectrum-switch-quiet-handle-border-color-selected-hover: Highlight;
+    --spectrum-switch-quiet-handle-border-color-selected-key-focus: Highlight;
+    --spectrum-switch-quiet-track-color-selected: Highlight;
+    --spectrum-switch-quiet-track-color-selected-down: Highlight;
+    --spectrum-switch-quiet-track-color-selected-hover: Highlight;
+    --spectrum-switch-quiet-track-color-selected-key-focus: Highlight;
+    --spectrum-switch-track-color: ButtonFace;
+    --spectrum-switch-track-color-disabled: ButtonFace;
+    .spectrum-ToggleSwitch-switch {
+      &:after {
+        border-color: var(--spectrum-switch-handle-border-color);
+        border-style: solid;
+      }
+    }
+    
+  }
+  .spectrum-ToggleSwitch .spectrum-ToggleSwitch-input:disabled {
+    & + .spectrum-ToggleSwitch-switch {
+      &:after {
+        border-color: var(--spectrum-switch-emphasized-handle-border-color-disabled);
+      }
+    }
+  }
+  .spectrum-ToggleSwitch-input {
+    &:checked + .spectrum-ToggleSwitch-switch {
+      &:after {
+        border-color: var(--spectrum-switch-emphasized-handle-border-color-selected);
+      }
+    }
+  }
+  .spectrum-ToggleSwitch:hover,
+  .spectrum-ToggleSwitch:active {
+    .spectrum-ToggleSwitch-input {
+      & + .spectrum-ToggleSwitch-switch {
+        &:after {
+          border-color: var(--spectrum-switch-emphasized-handle-border-color-hover);
+        }
+      } 
+    }
+  } 
+}
