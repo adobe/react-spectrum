@@ -35,7 +35,9 @@ export interface PressProps extends PressEvents {
    * still pressed, onPressStart will be fired again. If set to `true`, the press is canceled
    * when the pointer leaves the target and onPressStart will not be fired if the pointer returns.
    */
-  shouldCancelOnPointerExit?: boolean
+  shouldCancelOnPointerExit?: boolean,
+  /** Whether text selection should be enabled on the pressable element. */
+  allowTextSelectionOnPress?: boolean
 }
 
 export interface PressHookProps extends PressProps {
@@ -99,6 +101,7 @@ export function usePress(props: PressHookProps): PressResult {
     isPressed: isPressedProp,
     preventFocusOnPress,
     shouldCancelOnPointerExit,
+    allowTextSelectionOnPress,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb,
     ...domProps
@@ -217,7 +220,9 @@ export function usePress(props: PressHookProps): PressResult {
         state.activePointerId = null;
         state.pointerType = null;
         removeAllGlobalListeners();
-        restoreTextSelection();
+        if (!allowTextSelectionOnPress) {
+          restoreTextSelection(state.target);
+        }
       }
     };
 
@@ -329,7 +334,10 @@ export function usePress(props: PressHookProps): PressResult {
             focusWithoutScrolling(e.currentTarget);
           }
 
-          disableTextSelection();
+          if (!allowTextSelectionOnPress) {
+            disableTextSelection(state.target);
+          }
+
           triggerPressStart(e, state.pointerType);
 
           addGlobalListener(document, 'pointermove', onPointerMove, false);
@@ -404,7 +412,9 @@ export function usePress(props: PressHookProps): PressResult {
           state.activePointerId = null;
           state.pointerType = null;
           removeAllGlobalListeners();
-          restoreTextSelection();
+          if (!allowTextSelectionOnPress) {
+            restoreTextSelection(state.target);
+          }
         }
       };
 
@@ -535,7 +545,10 @@ export function usePress(props: PressHookProps): PressResult {
           focusWithoutScrolling(e.currentTarget);
         }
 
-        disableTextSelection();
+        if (!allowTextSelectionOnPress) {
+          disableTextSelection(state.target);
+        }
+
         triggerPressStart(e, state.pointerType);
 
         addGlobalListener(window, 'scroll', onScroll, true);
@@ -588,7 +601,9 @@ export function usePress(props: PressHookProps): PressResult {
         state.activePointerId = null;
         state.isOverTarget = false;
         state.ignoreEmulatedMouseEvents = true;
-        restoreTextSelection();
+        if (!allowTextSelectionOnPress) {
+          restoreTextSelection(state.target);
+        }
         removeAllGlobalListeners();
       };
 
@@ -625,13 +640,17 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [addGlobalListener, isDisabled, preventFocusOnPress, removeAllGlobalListeners]);
+  }, [addGlobalListener, isDisabled, preventFocusOnPress, removeAllGlobalListeners, allowTextSelectionOnPress]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
-    return () => restoreTextSelection();
-  }, []);
+    return () => {
+      if (!allowTextSelectionOnPress) {
+        restoreTextSelection(ref.current.target);
+      }
+    };
+  }, [allowTextSelectionOnPress]);
 
   return {
     isPressed: isPressedProp || isPressed,
