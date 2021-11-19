@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent, useRef} from 'react';
+import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent} from 'react';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {GridState} from '@react-stately/grid';
 // @ts-ignore
