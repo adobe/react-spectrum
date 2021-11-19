@@ -150,4 +150,6 @@
   width: 100%;
   min-width: calc(var(--spectrum-calendar-day-width) * 7);
   max-width: calc((var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12));
+  padding: 0 var(--spectrum-calendar-day-padding);
+  box-sizing: border-box;
 }
