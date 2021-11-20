@@ -110,7 +110,8 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
   }, [sortDirection, column, state.collection.columns]);
 
 
-  // do we have something that might be better suited for this?
+  // do we have something that might be better suited for this? issue is that useInteractionModality
+  // doesn't return quite enough information
   let [interactionType, setInteractionType] = useState('');
   useEffect(() => {
     let onPointerDown = (e) => {
@@ -135,11 +136,15 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
     let selectionMode = state.selectionManager.selectionMode;
     let selectionBehavior = state.selectionManager.selectionBehavior;
     // if we're in replace but can select multiple, then when using touch it's long press to enter selection mode
-    let message = undefined;
+    // if we can't tell what mode we're in, then we're probably in voice over, in which case we need the description to be set
+    // before the user interacts so they know they can enter selection mode before they actually have to interact
+    let message = formatMessage('longPressToSelect');
     if (interactionType === 'touch') {
       message = formatMessage('longPressToSelect');
     } else if (interactionType === 'mouse' || interactionType === 'pen') {
       message = formatMessage('cmdPressToSelect');
+    } else if (interactionType === 'keyboard') {
+      message = formatMessage('keyboardSelection');
     }
     return selectionBehavior === 'replace' && selectionMode === 'multiple' ? message : undefined;
   }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, formatMessage, interactionType]);
@@ -149,6 +154,7 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
   // todo: should mergeprops append describedby's?
   let descriptionProps = mergeDescriptions(sortDescriptionProps, longPressDescriptionProps);
 
+  // useEffect(, [state.selectionManager.selectionBehavior])
 
   // Only announce after initial render, tabbing to the table will tell you the initial sort info already
   useUpdateEffect(() => {
