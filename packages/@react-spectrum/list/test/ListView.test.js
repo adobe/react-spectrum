@@ -371,7 +371,7 @@ describe('ListView', function () {
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
       });
 
-      it('should toggle items in selection highlight with ctrl+click on Mac', function () {
+      it('should toggle items in selection highlight with ctrl-click on Mac', function () {
         let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Mac');
         let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
@@ -393,7 +393,7 @@ describe('ListView', function () {
         uaMock.mockRestore();
       });
 
-      it('should allow multiple items to be selected in selection highlight with ctrl+click on Windows', function () {
+      it('should allow multiple items to be selected in selection highlight with ctrl-click on Windows', function () {
         let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
         let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
@@ -411,6 +411,28 @@ describe('ListView', function () {
         act(() => userEvent.click(getCell(tree, 'Baz'), {ctrlKey: true}));
         checkSelection(onSelectionChange, ['foo', 'baz']);
         expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+        uaMock.mockRestore();
+      });
+
+      it('should toggle items in selection highlight with meta-click on Windows', function () {
+        let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
+        let onSelectionChange = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+
+        let rows = tree.getAllByRole('row');
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        act(() => userEvent.click(getCell(tree, 'Bar'), {metaKey: true}));
+
+        checkSelection(onSelectionChange, ['bar']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+        onSelectionChange.mockClear();
+        act(() => userEvent.click(getCell(tree, 'Baz'), {metaKey: true}));
+        checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
 
