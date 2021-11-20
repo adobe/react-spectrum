@@ -13,8 +13,8 @@
 import {focusSafely} from '@react-aria/focus';
 import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {isNonContiguousSelectionModifier, isNotWindowsMetaKeyClick, isWindowsCtrlKeyClick} from './utils';
-import {mergeProps} from '@react-aria/utils';
 import {LongPressEvent, PressEvent} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager, SelectEventType} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 

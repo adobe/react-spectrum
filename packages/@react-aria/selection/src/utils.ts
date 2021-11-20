@@ -25,10 +25,10 @@ export function isNonContiguousSelectionModifier(e: Event) {
   return isAppleDevice() ? e.altKey : e.ctrlKey;
 }
 
-export function isWindowsCtrlKeyClick (e: Event) {
+export function isWindowsCtrlKeyClick(e: Event) {
   return e && e.ctrlKey && isWindows();
 }
 
-export function isNotWindowsMetaKeyClick (e: Event) {
+export function isNotWindowsMetaKeyClick(e: Event) {
   return e && e.metaKey && !isWindows();
 }
