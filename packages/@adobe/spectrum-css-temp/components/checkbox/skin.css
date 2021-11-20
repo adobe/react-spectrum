@@ -89,7 +89,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Checkbox .spectrum-Checkbox-input,
 .spectrum-Checkbox .spectrum-Checkbox-input:checked {
-  &:disabled + .spectrum-Checkbox-box {
+  &:disabled + .spectrum-Checkbox-box,
+  &:disabled:active + .spectrum-Checkbox-box {
     &:before {
       border-color: var(--spectrum-checkbox-emphasized-box-border-color-disabled);
       background-color: var(--spectrum-checkbox-emphasized-box-background-color-disabled);
