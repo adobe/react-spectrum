@@ -15,6 +15,14 @@ governing permissions and limitations under the License.
 :root {
   --spectrum-tabs-item-height: calc(var(--spectrum-tabs-height) - var(--spectrum-tabs-rule-height));
   --spectrum-tabs-compact-item-height: calc(var(--spectrum-tabs-quiet-compact-height) - var(--spectrum-tabs-rule-height));
+  --spectrum-tabs-emphasized-text-color: var(--spectrum-global-color-blue-600);
+  --spectrum-tabs-emphasized-icon-color: var(--spectrum-global-color-blue-600);
+  --spectrum-tabs-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-600);
+  --spectrum-tabs-emphasized-text-color-hover: var(--spectrum-global-color-blue-700);
+  --spectrum-tabs-emphasized-icon-color-hover: var(--spectrum-global-color-blue-700);
+  --spectrum-tabs-emphasized-text-color-key-focus: var(--spectrum-global-color-blue-600);
+  --spectrum-tabs-emphasized-icon-color-key-focus: var(--spectrum-global-color-blue-600);
+  --spectrum-tabs-emphasized-focus-ring-color: var(--spectrum-global-color-blue-600);
 }
 
 .spectrum-TabsPanel {

@@ -61,6 +61,8 @@ export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, 
   disabledKeys?: Iterable<Key>,
   /** Whether the tabs are displayed in a quiet style. */
   isQuiet?: boolean,
+  /** Whether the tabs are displayed in an emphasized style. */
+  isEmphasized?: boolean,
   /** The amount of space between the tabs. */
   density?: 'compact' | 'regular'
 }

@@ -31,6 +31,10 @@ governing permissions and limitations under the License.
 
 .spectrum-Tabs-selectionIndicator {
   background-color: var(--spectrum-tabs-selection-indicator-color);
+
+  &.spectrum-Tabs--emphasized {
+    background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
+  }
 }
 
 .spectrum-Tabs-item {
@@ -54,6 +58,34 @@ governing permissions and limitations under the License.
     .spectrum-Icon {
       fill: var(--spectrum-tabs-icon-color-selected)
     }
+
+    &.spectrum-Tabs--emphasized {
+      color: var(--spectrum-tabs-emphasized-text-color);
+
+      .spectrum-Icon {
+        fill: var(--spectrum-tabs-emphasized-icon-color);
+      }
+
+      &:focus-ring {
+        color: var(--spectrum-tabs-emphasized-text-color-key-focus);
+
+        &::before {
+          border-color: var(--spectrum-tabs-emphasized-focus-ring-color);
+        }
+
+        .spectrum-Icon {
+          fill: var(--spectrum-tabs-emphasized-icon-color-key-focus);
+        }
+      }
+
+      &:hover {
+        color: var(--spectrum-tabs-emphasized-text-color-hover);
+
+        .spectrum-Icon {
+          fill: var(--spectrum-tabs-emphasized-icon-color-hover);
+        }
+      }
+    }
   }
 
   &:focus-ring {
@@ -76,6 +108,28 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+/* picker doesn't support emphasized */
+.spectrum-Tabs--isCollapsed {
+  &.spectrum-Tabs--emphasized {
+    & button {
+      color: var(--spectrum-tabs-emphasized-text-color);
+
+      .spectrum-Icon {
+        fill: var(--spectrum-tabs-emphasized-icon-color);
+      }
+
+      &:hover {
+        color: var(--spectrum-tabs-emphasized-text-color-hover);
+
+        .spectrum-Icon {
+          fill: var(--spectrum-tabs-emphasized-icon-color-hover);
+        }
+      }
+    }
+  }
+}
+/* end emphasized picker */
 
 .spectrum-Tabs--quiet {
   border-block-end-color: var(--spectrum-tabs-quiet-rule-color);

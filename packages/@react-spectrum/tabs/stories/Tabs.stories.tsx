@@ -73,6 +73,18 @@ storiesOf('Tabs', module)
     () => renderWithIcons({orientation: 'vertical', density: 'compact'})
   )
   .add(
+    'isEmphasized: true',
+    () => render({isEmphasized: true})
+  )
+  .add(
+    'isEmphasized: true, icons',
+    () => renderWithIcons({isEmphasized: true})
+  )
+  .add(
+    'isEmphasized: true, orientation: vertical',
+    () => render({isEmphasized: true, orientation: 'vertical'})
+  )
+  .add(
     'disable all tabs',
     () => render({isDisabled: true}))
   .add(
@@ -110,6 +122,10 @@ storiesOf('Tabs', module)
   .add(
     'collapse behavior, density: compact, isQuiet',
     () => <DynamicTabs isQuiet density="compact" />
+  )
+  .add(
+    'collapse behavior, isEmphasized: true',
+    () => <DynamicTabs isEmphasized />
   )
   .add(
     'orientation flip',
