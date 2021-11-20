@@ -16,7 +16,8 @@ import {isWindows} from '@react-aria/utils';
 interface Event {
   altKey: boolean,
   ctrlKey: boolean,
-  metaKey: boolean
+  metaKey: boolean,
+  pointerType: string
 }
 
 export function isNonContiguousSelectionModifier(e: Event) {
@@ -25,10 +26,6 @@ export function isNonContiguousSelectionModifier(e: Event) {
   return isAppleDevice() ? e.altKey : e.ctrlKey;
 }
 
-export function isWindowsCtrlKeyClick(e: Event) {
-  return e && e.ctrlKey && isWindows();
-}
-
-export function isNotWindowsMetaKeyClick(e: Event) {
-  return e && e.metaKey && !isWindows();
+export function isSelectionAddition(e: Event) {
+  return e && (e.ctrlKey && isWindows()) || (e.metaKey && !isWindows() || e.pointerType === 'touch' || e.pointerType === 'virtual');
 }

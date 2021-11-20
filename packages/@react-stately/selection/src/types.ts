@@ -14,8 +14,8 @@ import {FocusStrategy, Selection, SelectionBehavior, SelectionMode} from '@react
 import {Key} from 'react';
 
 export interface SelectEventType {
-  extend?: boolean,
-  toggle?: boolean
+  continuous?: boolean,
+  addition?: boolean
 }
 
 export interface FocusState {

@@ -12,7 +12,7 @@
 
 import {focusSafely} from '@react-aria/focus';
 import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
-import {isNonContiguousSelectionModifier, isNotWindowsMetaKeyClick, isWindowsCtrlKeyClick} from './utils';
+import {isNonContiguousSelectionModifier, isSelectionAddition} from './utils';
 import {LongPressEvent, PressEvent} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager, SelectEventType} from '@react-stately/selection';
@@ -88,9 +88,9 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     } else {
       let eventType: SelectEventType = {};
       if (e && e.shiftKey) {
-        eventType.extend = true;
-      } else if (e && (isNotWindowsMetaKeyClick(e) || isWindowsCtrlKeyClick(e) || e.pointerType === 'touch' || e.pointerType === 'virtual')) {
-        eventType.toggle = true;
+        eventType.continuous = true;
+      } else if (isSelectionAddition(e)) {
+        eventType.addition = true;
       }
       manager.select(key, eventType);
     }

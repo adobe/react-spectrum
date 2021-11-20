@@ -420,9 +420,9 @@ export class SelectionManager implements MultipleSelectionManager {
       } else {
         this.replaceSelection(key);
       }
-    } else if (eventType && eventType.extend) {
+    } else if (eventType && eventType.continuous) {
       this.extendSelection(key);
-    } else if (this.selectionBehavior === 'toggle' || eventType && eventType.toggle) {
+    } else if (this.selectionBehavior === 'toggle' || eventType && eventType.addition) {
       // if touch or virtual (VO) then we just want to toggle, otherwise it's impossible to multi select because they don't have modifier keys
       this.toggleSelection(key);
     } else {
