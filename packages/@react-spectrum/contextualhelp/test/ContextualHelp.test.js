@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@testing-library/react';
 import {ContextualHelp} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {act, render} from '@testing-library/react';
-import {triggerPress} from '@react-spectrum/test-utils';
 import {theme} from '@react-spectrum/theme-default';
+import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('ContextualHelp', function () {
   beforeAll(() => {
