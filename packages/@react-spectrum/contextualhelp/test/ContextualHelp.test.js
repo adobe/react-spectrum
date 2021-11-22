@@ -11,16 +11,62 @@
  */
 
 import {ContextualHelp} from '../';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {act, render} from '@testing-library/react';
+import {triggerPress} from '@react-spectrum/test-utils';
+import {theme} from '@react-spectrum/theme-default';
 
 describe('ContextualHelp', function () {
-  it.each`
-    Name | Component      | props
-    ${'ContextualHelp'} | ${ContextualHelp} | ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
-    let tree = render(<Component {...props} />);
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+  afterAll(() => {
+    jest.clearAllMocks();
+    jest.useRealTimers();
+  });
 
-    expect(tree).toBeTruthy();
+  beforeEach(() => {
+    // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
+  });
+
+  it('renders quiet action button', function () {
+    let {getByRole, queryByRole} = render(
+      <Provider theme={theme}>
+        <ContextualHelp title="Test title" />
+      </Provider>
+    );
+
+    expect(queryByRole('dialog')).toBeNull();
+
+    let button = getByRole('button');
+    expect(button).toBeVisible();
+    expect(button).toHaveClass('spectrum-ActionButton--quiet');
+  });
+
+  it('opens a popover', function () {
+    let {getByRole, queryByRole, getByTestId, getByText} = render(
+      <Provider theme={theme}>
+        <ContextualHelp title="Test title" />
+      </Provider>
+    );
+
+    expect(queryByRole('dialog')).toBeNull();
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+
+    let modal = getByTestId('popover');
+    expect(modal).toBeVisible();
+
+    expect(getByText('Test title')).toBeVisible();
   });
 });
