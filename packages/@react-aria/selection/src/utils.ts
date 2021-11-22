@@ -11,12 +11,12 @@
  */
 
 import {isAppleDevice} from '@react-aria/utils';
-import {isWindows} from '@react-aria/utils';
-import {LongPressEvent, PressEvent} from '@react-types/shared';
+import {isMac, isWindows} from '@react-aria/utils';
 
 interface Event {
   altKey: boolean,
-  ctrlKey: boolean
+  ctrlKey: boolean,
+  metaKey: boolean
 }
 
 export function isNonContiguousSelectionModifier(e: Event) {
@@ -25,6 +25,10 @@ export function isNonContiguousSelectionModifier(e: Event) {
   return isAppleDevice() ? e.altKey : e.ctrlKey;
 }
 
-export function isSelectionAddition(e: LongPressEvent | PressEvent | PointerEvent) {
-  return e && (e.ctrlKey && isWindows()) || (e.metaKey && !isWindows() || e.pointerType === 'touch' || e.pointerType === 'virtual');
+export function isCtrlKeyPressed(e: Event) {
+  return e && (e.ctrlKey && !isMac());
+}
+
+export function isMetaKeyPressed(e: Event) {
+  return e && (e.metaKey && !isWindows());
 }

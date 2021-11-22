@@ -372,7 +372,7 @@ describe('ListView', function () {
       });
 
       it('should toggle items in selection highlight with ctrl-click on Mac', function () {
-        let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Mac');
+        let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
         let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
 
