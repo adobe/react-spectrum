@@ -17,10 +17,15 @@ import {Heading} from '@react-spectrum/text';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
 import helpStyles from './contextualhelp.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React from 'react';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 function ContextualHelp({variant = 'help', title, children, placement = 'bottom end', ...props}: SpectrumContextualHelpProps) {
+  let formatMessage = useMessageFormatter(intlMessages);
+
   let icon = <HelpOutline />;
   if (variant === 'info') {
     icon = <InfoOutline />;
@@ -28,7 +33,12 @@ function ContextualHelp({variant = 'help', title, children, placement = 'bottom 
 
   return (
     <DialogTrigger type="popover" placement={placement} hideArrow {...props}>
-      <ActionButton isQuiet UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-button']}>{icon}</ActionButton>
+      <ActionButton
+        UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-button']}
+        isQuiet
+        aria-label={formatMessage('open')}>
+        {icon}
+      </ActionButton>
       <Dialog UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-dialog']}>
         <Heading>{title}</Heading>
         <Content UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-content']}>
