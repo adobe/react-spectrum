@@ -10,13 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
+import {FocusStrategy, LongPressEvent, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
-
-export interface SelectEventType {
-  continuous?: boolean,
-  addition?: boolean
-}
 
 export interface FocusState {
   /** Whether the collection is currently focused. */
@@ -96,7 +91,7 @@ export interface MultipleSelectionManager extends FocusState {
    * Toggles, replaces, or extends selection to the given key depending
    * on the pointer event and collection's selection mode.
    */
-  select(key: Key, eventType?: SelectEventType): void,
+  select(key: Key, e?: PressEvent | LongPressEvent | PointerEvent): void,
   /** Returns whether the given key can be selected. */
   canSelectItem(key: Key): boolean,
   /** Sets the selection behavior for the collection. */

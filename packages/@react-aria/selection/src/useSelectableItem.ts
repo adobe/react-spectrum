@@ -15,7 +15,7 @@ import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {isNonContiguousSelectionModifier, isSelectionAddition} from './utils';
 import {LongPressEvent, PressEvent} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import {MultipleSelectionManager, SelectEventType} from '@react-stately/selection';
+import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
 interface SelectableItemOptions {
@@ -86,13 +86,24 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {
       manager.toggleSelection(key);
     } else {
-      let eventType: SelectEventType = {};
-      if (e && e.shiftKey) {
-        eventType.continuous = true;
-      } else if (isSelectionAddition(e)) {
-        eventType.addition = true;
+      if (manager.selectionMode === 'none') {
+        return;
       }
-      manager.select(key, eventType);
+
+      if (manager.selectionMode === 'single') {
+        if (manager.isSelected(key) && !manager.disallowEmptySelection) {
+          manager.toggleSelection(key);
+        } else {
+          manager.replaceSelection(key);
+        }
+      } else if (e && e.shiftKey) {
+        manager.extendSelection(key);
+      } else if (manager.selectionBehavior === 'toggle' || isSelectionAddition(e)) {
+        // if touch or virtual (VO) then we just want to toggle, otherwise it's impossible to multi select because they don't have modifier keys
+        manager.toggleSelection(key);
+      } else {
+        manager.replaceSelection(key);
+      }
     }
   };
 

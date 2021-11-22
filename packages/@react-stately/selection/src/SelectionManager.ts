@@ -14,12 +14,14 @@ import {
   Collection,
   FocusStrategy,
   Selection as ISelection,
+  LongPressEvent,
   Node,
+  PressEvent,
   SelectionBehavior,
   SelectionMode
 } from '@react-types/shared';
 import {Key} from 'react';
-import {MultipleSelectionManager, MultipleSelectionState, SelectEventType} from './types';
+import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 
 interface SelectionManagerOptions {
@@ -409,7 +411,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
   }
 
-  select(key: Key, eventType?: SelectEventType) {
+  select(key: Key, e?: PressEvent | LongPressEvent | PointerEvent) {
     if (this.selectionMode === 'none') {
       return;
     }
@@ -420,9 +422,7 @@ export class SelectionManager implements MultipleSelectionManager {
       } else {
         this.replaceSelection(key);
       }
-    } else if (eventType && eventType.continuous) {
-      this.extendSelection(key);
-    } else if (this.selectionBehavior === 'toggle' || eventType && eventType.addition) {
+    } else if (this.selectionBehavior === 'toggle' || (e && (e.pointerType === 'touch' || e.pointerType === 'virtual'))) {
       // if touch or virtual (VO) then we just want to toggle, otherwise it's impossible to multi select because they don't have modifier keys
       this.toggleSelection(key);
     } else {
