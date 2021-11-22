@@ -46,7 +46,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
 
   return (
     <div
-      {...mergeProps(tagProps, hoverProps, focusProps, labelProps, otherProps)}
+      {...mergeProps(tagProps, hoverProps, focusProps, otherProps)}
       role={tagProps.role}
       className={classNames(
         styles,
@@ -55,19 +55,43 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
           'is-disabled': isDisabled,
           'focus-ring': isFocusVisible,
           'is-focused': isFocusVisible,
-          'spectrum-Tags-item--removable': isRemovable,
+          'not-removable': !isRemovable,
           'is-hovered': isHovered
         }
       )}>
       <SlotProvider
         slots={{
-          icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-          text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content')}
+          tagLabel: {UNSAFE_className: classNames(styles, 'spectrum-Tag-label')}
         }}>
-        {typeof props.children === 'string' ? <Text><span role="gridcell">{props.children}</span></Text> : props.children}
+        <TagLabel {...mergeProps(props, labelProps)} isRemovable={isRemovable} />
         {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
       </SlotProvider>
     </div>
+  );
+}
+
+function TagLabel(props) {
+  let {role, children, isRemovable} = props;
+  props = useSlotProps(props, 'tagLabel');
+  let {styleProps} = useStyleProps(props);
+  let labelRef = useRef();
+
+  console.log(isRemovable);
+
+  return (
+    <span
+      {...styleProps}
+      role="rowheader"
+      ref={labelRef}
+      className={classNames(styles, 'spectrum-Tags-labelItem')}>
+      <SlotProvider
+        slots={{
+          icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
+          text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable})}
+        }}>
+        {typeof children === 'string' ? <span role={role}><Text>{children}</Text></span> : children}
+      </SlotProvider>
+    </span>
   );
 }
 

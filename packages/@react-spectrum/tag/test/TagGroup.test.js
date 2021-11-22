@@ -74,19 +74,22 @@ describe('TagGroup', function () {
    Name           | Component         | TagComponent | props
    ${'TagGroup'}  | ${TagGroup}       | ${Item}      |${{}}
   `('$Name has correct accessibility roles', ({Component, TagComponent, props}) => {
-    let {container, getByText} = render(
+    let {container} = render(
       <Component
         {...props}
         aria-label="tag group">
         <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
       </Component>
     );
+
     let tagGroup = container.children[0];
     expect(tagGroup).toHaveAttribute('role', 'grid');
     let tag = tagGroup.children[0];
     expect(tag).toHaveAttribute('role', 'row');
-    let tagContent = getByText('Tag 1');
-    expect(tagContent).toHaveAttribute('role', 'gridcell');
+    let tagContent = tag.children[0];
+    expect(tagContent).toHaveAttribute('role', 'rowheader');
+    let tagLabel = tagContent.children[0];
+    expect(tagLabel).toHaveAttribute('role', 'gridcell');
   });
 
   it.each`

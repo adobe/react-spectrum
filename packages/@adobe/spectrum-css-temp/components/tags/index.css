@@ -22,8 +22,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Tags-item {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas: "icon content action";
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "label action";
   align-items: center;
   box-sizing: border-box;
 
@@ -46,23 +46,25 @@ governing permissions and limitations under the License.
   &.is-disabled {
     pointer-events: none;
   }
+}
 
-  > .spectrum-Tags-itemIcon {
-    margin-inline-end: var(--spectrum-tag-icon-padding-x);
-    margin-inline-start: calc(var(--spectrum-tag-deletable-border-size-key-focus) * -1);
-  }
+.spectrum-Tags-labelItem {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "icon content";
+  align-items: center;
 }
 
 .spectrum-Tag-icon {
   grid-area: icon;
-  padding-inline-end: var(--spectrum-global-dimension-size-100);
+  margin-inline-end: var(--spectrum-global-dimension-size-100);
 }
 
 .spectrum-Tag-content {
   grid-area: content;
   block-size: 100%;
   line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
-  padding-inline-end: var(--spectrum-tag-padding-x);
+  margin-inline-end: var(--spectrum-tag-padding-x);
   flex: 1 1 auto;
   font-size: var(--spectrum-tag-text-size);
   cursor: default;
@@ -72,8 +74,17 @@ governing permissions and limitations under the License.
   outline: none;
 }
 
+.tags-removable {
+  margin-inline-end: 0;
+}
+
+.spectrum-Tag-label {
+  grid-area: label;
+}
+
 .spectrum-Tag-action {
   grid-area: action;
   height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
-  width: var(--spectrum-global-dimension-size-200);
+  width: var(--spectrum-global-dimension-size-300);
 }
+

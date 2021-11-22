@@ -68,8 +68,7 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
       ref: tagRef
     }),
     labelProps: mergeProps(gridCellProps, {
-      id: tagId,
-      ref: labelRef
+      id: tagId
     }),
     clearButtonProps: mergeProps(pressProps, gridCellProps, {
       'aria-label': removeString,
