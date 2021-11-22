@@ -66,6 +66,7 @@
   &::-webkit-scrollbar { /* WebKit */
     width: 0;
     height: 0;
+    display: none;
   }
 }
 
@@ -96,6 +97,12 @@
   box-sizing: content-box;
   white-space: nowrap;
   color: var(--spectrum-textfield-text-color);
+
+  &::selection {
+    /* hide the selection because there is no way to fully prevent it in Firefox */
+    /* https://bugzilla.mozilla.org/show_bug.cgi?id=1742153 */
+    background: transparent;
+  }
 }
 
 .react-spectrum-DatePicker-cell:focus {
@@ -149,4 +156,6 @@
   width: 100%;
   min-width: calc(var(--spectrum-calendar-day-width) * 7);
   max-width: calc((var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12));
+  padding: 0 var(--spectrum-calendar-day-padding);
+  box-sizing: border-box;
 }
