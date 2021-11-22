@@ -11,7 +11,7 @@
  */
 
 import {isAppleDevice} from '@react-aria/utils';
-import {isMac, isWindows} from '@react-aria/utils';
+import {isMac} from '@react-aria/utils';
 
 interface Event {
   altKey: boolean,
@@ -30,5 +30,5 @@ export function isCtrlKeyPressed(e: Event) {
 }
 
 export function isMetaKeyPressed(e: Event) {
-  return e && (e.metaKey && !isWindows());
+  return e && (e.metaKey && isMac());
 }
