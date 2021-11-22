@@ -10,6 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-ContextualHelp-popover {
-  padding: 0;
+:root {
+  --spectrum-contextualhelp-button-size: var(--spectrum-global-dimension-size-250);
+  --spectrum-contextualhelp-icon-size: var(--spectrum-global-dimension-size-175);
+  --spectrum-contexualhelp-dialog-width: 250px;
+  --spectrum-contextualhelp-dialog-padding: var(--spectrum-global-dimension-static-size-300);
+}
+
+.react-spectrum-ContextualHelp-button {
+  --spectrum-button-primary-height: var(--spectrum-contextualhelp-button-size);
+  --spectrum-actionbutton-height: var(--spectrum-contextualhelp-button-size);
+  --spectrum-actionbutton-min-width: var(--spectrum-contextualhelp-button-size);
+  --spectrum-actionbutton-icon-padding-x: var(--spectrum-global-dimension-size-40);
+
+  svg {
+    block-size: var(--spectrum-contextualhelp-icon-size);
+    inline-size: var(--spectrum-contextualhelp-icon-size);
+  }
+
+}
+
+.react-spectrum-ContextualHelp-dialog {
+  width: var(--spectrum-contexualhelp-dialog-width);
+  --spectrum-dialog-padding-x: var(--spectrum-contextualhelp-dialog-padding);
+  --spectrum-dialog-padding-y: var(--spectrum-contextualhelp-dialog-padding);
+
+  .react-spectrum-ContextualHelp-content {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--spectrum-global-dimension-static-size-100);
+  }
 }

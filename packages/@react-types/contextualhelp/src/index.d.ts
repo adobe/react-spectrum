@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps} from '@react-types/shared';
+import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
 import {ReactNode} from 'react';
 
 export interface ContextualHelpProps {
@@ -20,8 +21,8 @@ export interface ContextualHelpProps {
 
 export interface AriaContextualHelpProps extends ContextualHelpProps, DOMProps, AriaLabelingProps {}
 
-export interface SpectrumContextualHelpProps extends AriaContextualHelpProps, StyleProps {
-  /** The contents of the Contextual Help. */
+export interface SpectrumContextualHelpProps extends ContextualHelpProps, OverlayTriggerProps, PositionProps {
+  /** Contents of the Contextual Help popover. */
   children: ReactNode,
   /** Indicates whether contents are informative or provides helpful guidance. */
   variant?: 'help' | 'info'

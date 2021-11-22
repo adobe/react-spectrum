@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextualHelp} from '../src';
+import {action} from '@storybook/addon-actions';
 import {Button, Flex, Link, Text} from '@adobe/react-spectrum';
+import {ContextualHelp} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -21,16 +22,16 @@ storiesOf('ContextualHelp', module)
   () => <ContextualHelp title="Help title">{helpText()}</ContextualHelp>
 )
 .add(
-  'info',
+  'type: info',
   () => <ContextualHelp variant="info" title="Help title">{helpText()}</ContextualHelp>
 )
 .add(
   'with link',
   () => (<ContextualHelp title="Help title">
-    <Flex direction="column">
+    <>
       {helpText()}
       <Link marginTop="size-100">Learn more</Link>
-    </Flex>
+    </>
   </ContextualHelp>)
 )
 .add(
@@ -39,6 +40,18 @@ storiesOf('ContextualHelp', module)
     <Button variant="primary" isDisabled>Create</Button>
     <ContextualHelp title="Help title">{helpText()}</ContextualHelp>
   </Flex>)
+)
+.add(
+  'trigger events',
+  () => (<ContextualHelp title="Help title" onOpenChange={action('open change')}>{helpText()}</ContextualHelp>)
+)
+.add(
+  'placement: bottom',
+  () => (<ContextualHelp title="Help title" placement="bottom" >{helpText()}</ContextualHelp>)
+)
+.add(
+  'placement: bottom start',
+  () => (<ContextualHelp title="Help title" placement="bottom start" >{helpText()}</ContextualHelp>)
 );
 
 const helpText = () => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem.</Text>;

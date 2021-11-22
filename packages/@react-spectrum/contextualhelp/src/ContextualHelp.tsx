@@ -19,20 +19,19 @@ import helpStyles from './contextualhelp.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 import React from 'react';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
-import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 
-function ContextualHelp({variant = 'help', title, children, ...props}: SpectrumContextualHelpProps) {
+function ContextualHelp({variant = 'help', title, children, placement = 'bottom end', ...props}: SpectrumContextualHelpProps) {
   let icon = <HelpOutline />;
   if (variant === 'info') {
     icon = <InfoOutline />;
   }
 
   return (
-    <DialogTrigger type="popover" placement="bottom end" hideArrow>
-      <ActionButton isQuiet UNSAFE_className={styles['spectrum-Icon--sizeS']}>{icon}</ActionButton>
-      <Dialog {...props} UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-popover']}>
+    <DialogTrigger type="popover" placement={placement} hideArrow {...props}>
+      <ActionButton isQuiet UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-button']}>{icon}</ActionButton>
+      <Dialog UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-dialog']}>
         <Heading>{title}</Heading>
-        <Content marginTop="size-100">
+        <Content UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-content']}>
           {children}
         </Content>
       </Dialog>
