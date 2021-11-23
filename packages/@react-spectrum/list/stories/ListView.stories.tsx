@@ -81,35 +81,33 @@ storiesOf('ListView', module)
       </Item>
     </ListView>
   ))
-  .add('dynamic items', () => {
-    return (
-      <ListView items={items} width="300px" height="250px">
-        {(item) => (
-          <Item key={item.key} textValue={item.textValue}>
-            <Content>
-              <Flex alignItems="center" gap="10px">
-                <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
-                <ActionButton><Add /></ActionButton>
-                <MenuTrigger>
-                  <ActionButton><MoreSmall /></ActionButton>
-                  <Menu>
-                    <Item>
-                      <Edit />
-                      <Text>Edit</Text>
-                    </Item>
-                    <Item>
-                      <Delete />
-                      <Text>Delete</Text>
-                    </Item>
-                  </Menu>
-                </MenuTrigger>
-              </Flex>
-            </Content>
-          </Item>
+  .add('dynamic items', () => (
+    <ListView items={items} width="300px" height="250px">
+      {(item) => (
+        <Item key={item.key} textValue={item.textValue}>
+          <Content>
+            <Flex alignItems="center" gap="10px">
+              <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
+              <ActionButton><Add /></ActionButton>
+              <MenuTrigger>
+                <ActionButton><MoreSmall /></ActionButton>
+                <Menu>
+                  <Item>
+                    <Edit />
+                    <Text>Edit</Text>
+                  </Item>
+                  <Item>
+                    <Delete />
+                    <Text>Delete</Text>
+                  </Item>
+                </Menu>
+              </MenuTrigger>
+            </Flex>
+          </Content>
+        </Item>
         )}
-      </ListView>
-    );
-  })
+    </ListView>
+    ))
   .add('empty list', () => (
     <ListView width="300px" height="300px" renderEmptyState={renderEmptyState}>
       {[]}
@@ -360,14 +358,12 @@ function EmptyTest() {
 
 
 function DragExample(props?) {
-  let getItems = (keys) => {
-    return [...keys].map(key => {
-      let item = items.find(item => item.key === key);
-      return {
-        'text/plain': item.textValue
-      };
-    });
-  };
+  let getItems = (keys) => [...keys].map(key => {
+    let item = items.find(item => item.key === key);
+    return {
+      'text/plain': item.textValue
+    };
+  });
 
   // TODO: Figure out multiple selection for drag and drop
   // TODO: Figure out how to better handle click to drag operation clashing with selection.
