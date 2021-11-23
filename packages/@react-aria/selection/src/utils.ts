@@ -26,9 +26,9 @@ export function isNonContiguousSelectionModifier(e: Event) {
 }
 
 export function isCtrlKeyPressed(e: Event) {
-  return e && (e.ctrlKey && !isMac());
-}
+  if (isMac()) {
+    return e.metaKey;
+  }
 
-export function isMetaKeyPressed(e: Event) {
-  return e && (e.metaKey && isMac());
+  return e.ctrlKey;
 }
