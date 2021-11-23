@@ -220,7 +220,7 @@ storiesOf('ListView', module)
   ).add(
     'draggable rows, custom dragIcon',
     () => (
-      <DragExample dragIcon={<SentimentPositive size="S" />} />
+      <DragExample dragIcon={<SentimentPositive size="XS" />} />
     )
   );
 

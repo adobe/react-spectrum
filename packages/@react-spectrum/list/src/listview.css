@@ -91,6 +91,10 @@
     border: 1px solid var(--spectrum-global-color-blue-500);
     border-radius: var(--spectrum-global-dimension-size-50);
   }
+
+  .react-spectrum-ListView--draggable & {
+    padding-inline-start: 0;
+  }
 }
 
 .react-spectrum-ListViewItem-selected {
@@ -114,24 +118,32 @@
 
 .react-spectrum-ListViewItem-grid {
   display: grid;
-  grid-template-columns: auto auto auto 1fr auto auto;
+  grid-template-columns: auto auto auto auto 1fr auto auto;
   grid-template-rows: 1fr auto;
   grid-template-areas:
-    "checkbox icon image content actions actionmenu chevron"
-    "checkbox icon image description actions actionmenu chevron"
+    "draghandle checkbox icon image content actions actionmenu chevron"
+    "draghandle checkbox icon image description actions actionmenu chevron"
   ;
   align-items: center;
 }
 
-.react-spectrum-ListViewItem-draghandle {
-  position: absolute;
-  left: var(--spectrum-global-dimension-size-25);
-  height: 32px;
-  border-radius: var(--spectrum-global-dimension-size-50);
+.react-spectrum-ListViewItem-draghandle-container {
+  grid-area: draghandle;
+  align-items: center;
+  justify-items: center;
+  width: var(--spectrum-global-dimension-size-250);
 
-  &:focus-ring {
-    box-shadow: 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
-    outline: none;
+  .react-spectrum-ListViewItem-draghandle-button {
+    margin: auto var(--spectrum-global-dimension-size-25);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:focus-ring {
+      box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+      outline: none;
+    }
   }
 }
 
@@ -145,6 +157,7 @@
     margin: 0;
   }
 }
+
 
 .react-spectrum-ListViewItem-icon,
 .react-spectrum-ListViewItem-image {

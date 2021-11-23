@@ -161,8 +161,10 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')}
           UNSAFE_style={{width: itemWidth}}>
           <div className={listStyles['react-spectrum-ListViewItem-grid']}>
-            <div className={listStyles['react-spectrum-ListViewItem-draghandle']}>
-              {dragIcon}
+            <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
+              <div className={listStyles['react-spectrum-ListViewItem-draghandle-button']}>
+                {dragIcon}
+              </div>
             </div>
             <div className={listStyles['react-spectrum-ListViewItem-content']}>
               {item.rendered}
@@ -204,7 +206,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             'react-spectrum-ListView',
             `react-spectrum-ListView--${density}`,
             {
-              'react-spectrum-ListView--quiet': isQuiet
+              'react-spectrum-ListView--quiet': isQuiet,
+              'react-spectrum-ListView--draggable': isDraggable
             },
             styleProps.className
           )

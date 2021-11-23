@@ -111,15 +111,19 @@ export function ListViewItem(props) {
         ref={cellRef}
         {...mergedProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
-          {showDragHandle &&
-            <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
-              <div
-                {...buttonProps as React.HTMLAttributes<HTMLElement>}
-                ref={dragButtonRef}
-                className={listStyles['react-spectrum-ListViewItem-draghandle']}>
-                {dragIcon}
-              </div>
-            </FocusRing>
+          {isListDraggable && 
+            <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
+              {showDragHandle &&
+                <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
+                  <div
+                    {...buttonProps as React.HTMLAttributes<HTMLElement>}
+                    className={listStyles['react-spectrum-ListViewItem-draghandle-button']}
+                    ref={dragButtonRef}>
+                    {dragIcon}
+                  </div>
+                </FocusRing>
+              }
+            </div>
           }
           {showCheckbox && 
             <Checkbox
