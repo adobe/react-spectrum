@@ -13,10 +13,7 @@
 import {
   ClipboardEventHandler,
   CompositionEventHandler,
-  DOMFactory,
   FormEventHandler,
-  HTMLAttributes,
-  ReactDOM,
   ReactEventHandler
 } from 'react';
 
