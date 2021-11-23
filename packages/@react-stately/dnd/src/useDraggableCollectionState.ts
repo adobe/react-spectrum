@@ -48,7 +48,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     // item is dragged. This matches native macOS behavior.
     let keys = new Set(
       selectionManager.isSelected(key)
-        ? selectionManager.selectedKeys
+        ? new Set([...selectionManager.selectedKeys].filter(key => collection.getItem(key).props.isDraggable))
         : []
     );
 
