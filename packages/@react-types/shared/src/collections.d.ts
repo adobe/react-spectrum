@@ -24,7 +24,9 @@ export interface ItemProps<T> {
   /** A list of child item objects. Used for dynamic collections. */
   childItems?: Iterable<T>,
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean
+  hasChildItems?: boolean,
+  /** Whether this item in a draggable list is draggable. */
+  isDraggable?: boolean
 }
 
 export type ItemElement<T> = ReactElement<ItemProps<T>>;
