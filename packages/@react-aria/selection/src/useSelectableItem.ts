@@ -215,7 +215,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   });
 
   // Pressing the Enter key with selectionBehavior = 'replace' performs an action (i.e. navigation).
-  let onKeyDown = hasSecondaryAction ? (e: KeyboardEvent) => {
+  let onKeyUp = hasSecondaryAction ? (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       onAction();
     }
@@ -226,7 +226,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       itemProps,
       allowsSelection || hasPrimaryAction ? pressProps : {},
       hasSecondaryAction ? longPressProps : {},
-      {onKeyDown, onDoubleClick}
+      {onKeyUp, onDoubleClick}
     ),
     isPressed
   };

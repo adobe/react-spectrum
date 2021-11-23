@@ -36,3 +36,6 @@ ScrollTesting.args = {};
 
 export const Disabled = Template().bind({});
 Disabled.args = {isDisabled: true};
+
+export const FocusWrapping = Template().bind({});
+FocusWrapping.args = {shouldFocusWrap: true};

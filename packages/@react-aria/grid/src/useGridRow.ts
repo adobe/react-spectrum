@@ -29,7 +29,9 @@ export interface GridRowProps<T> {
 
 export interface GridRowAria {
   /** Props for the grid row element. */
-  rowProps: HTMLAttributes<HTMLElement>
+  rowProps: HTMLAttributes<HTMLElement>,
+  /** Whether the row is currently in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -45,7 +47,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     onAction
   } = props;
 
-  let {itemProps} = useSelectableItem({
+  let {itemProps, isPressed} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
@@ -67,6 +69,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   }
 
   return {
-    rowProps
+    rowProps,
+    isPressed
   };
 }

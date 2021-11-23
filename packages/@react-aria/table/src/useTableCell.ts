@@ -27,7 +27,9 @@ interface TableCellProps {
 
 interface TableCellAria {
   /** Props for the table cell element. */
-  gridCellProps: HTMLAttributes<HTMLElement>
+  gridCellProps: HTMLAttributes<HTMLElement>,
+  /** Whether the cell is currently in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -37,7 +39,7 @@ interface TableCellAria {
  * @param ref - The ref attached to the cell element.
  */
 export function useTableCell<T>(props: TableCellProps, state: TableState<T>, ref: RefObject<HTMLElement>): TableCellAria {
-  let {gridCellProps} = useGridCell(props, state, ref);
+  let {gridCellProps, isPressed} = useGridCell(props, state, ref);
 
   let columnKey = props.node.column.key;
   if (state.collection.rowHeaderColumnKeys.has(columnKey)) {
@@ -46,6 +48,7 @@ export function useTableCell<T>(props: TableCellProps, state: TableState<T>, ref
   }
 
   return {
-    gridCellProps
+    gridCellProps,
+    isPressed
   };
 }
