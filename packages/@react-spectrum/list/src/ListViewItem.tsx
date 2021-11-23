@@ -14,7 +14,6 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import DragHandle from './DragHandle';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import listStyles from './listview.css';
@@ -29,7 +28,8 @@ import {useLocale} from '@react-aria/i18n';
 
 export function ListViewItem(props) {
   let {
-    item
+    item,
+    dragIcon
   } = props;
   let cellNode = [...item.childNodes][0];
   let {state, dragState, onAction, isDraggable: isListDraggable} = useContext(ListViewContext);
@@ -117,7 +117,7 @@ export function ListViewItem(props) {
                 {...buttonProps as React.HTMLAttributes<HTMLElement>}
                 ref={dragButtonRef}
                 className={listStyles['react-spectrum-ListViewItem-draghandle']}>
-                <DragHandle />
+                {dragIcon}
               </div>
             </FocusRing>
           }

@@ -33,7 +33,7 @@ import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
-import React, {Key, ReactElement, useContext, useMemo} from 'react';
+import React, {Key, ReactElement, ReactNode, useContext, useMemo} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useDraggableCollectionState} from '@react-stately/dnd';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -86,7 +86,8 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   // TODO: should this support an extra input arg for collection/state in case the user want do collection.getItem(key) in their getItems function?
   getItems?: (keys: Set<Key>) => DragItem[],
   // TODO: prop to control if the stuff inside the ListView is draggable. Perhaps should be added to DragCollection state? Or perhaps GridState should track drag stuff within it like it does selection?
-  isDraggable?: boolean
+  isDraggable?: boolean,
+  dragIcon?: ReactNode
 }
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -99,7 +100,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     getItems,
     onDragStart,
     onDragEnd,
-    isDraggable = false
+    isDraggable = false,
+    dragIcon = <DragHandle />
   } = props;
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
@@ -160,7 +162,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           UNSAFE_style={{width: itemWidth}}>
           <div className={listStyles['react-spectrum-ListViewItem-grid']}>
             <div className={listStyles['react-spectrum-ListViewItem-draghandle']}>
-              <DragHandle />
+              {dragIcon}
             </div>
             <div className={listStyles['react-spectrum-ListViewItem-content']}>
               {item.rendered}
@@ -214,7 +216,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           if (type === 'item') {
             return (
               // TODO: moved most of the item props to ListViewContext since Virtualizer won't rerender w/ a memoized collection unless
-              <ListViewItem item={item} />
+              <ListViewItem item={item} dragIcon={dragIcon} />
             );
           } else if (type === 'loader') {
             return (

@@ -18,6 +18,7 @@ import {Link} from '@react-spectrum/link';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
+import SentimentPositive from '@spectrum-icons/workflow/SentimentPositive';
 import {storiesOf} from '@storybook/react';
 
 const items = [
@@ -217,6 +218,11 @@ storiesOf('ListView', module)
     'draggable rows',
     () => (
       <DragExample />
+    )
+  ).add(
+    'draggable rows, custom dragIcon',
+    () => (
+      <DragExample dragIcon={<SentimentPositive size="S" />} />
     )
   );
 
