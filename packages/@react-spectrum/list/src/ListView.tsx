@@ -205,6 +205,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             listStyles,
             'react-spectrum-ListView',
             `react-spectrum-ListView--${density}`,
+            'react-spectrum-ListView--emphasized',
             {
               'react-spectrum-ListView--quiet': isQuiet,
               'react-spectrum-ListView--draggable': isDraggable
@@ -219,7 +220,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           if (type === 'item') {
             return (
               // TODO: moved most of the item props to ListViewContext since Virtualizer won't rerender w/ a memoized collection unless
-              <ListViewItem item={item} dragIcon={dragIcon} />
+              <ListViewItem item={item} isEmphasized dragIcon={dragIcon} />
             );
           } else if (type === 'loader') {
             return (

@@ -29,6 +29,7 @@ import {useLocale} from '@react-aria/i18n';
 export function ListViewItem(props) {
   let {
     item,
+    isEmphasized,
     dragIcon
   } = props;
   let cellNode = [...item.childNodes][0];
@@ -104,6 +105,7 @@ export function ListViewItem(props) {
               'focus-ring': isFocusVisible,
               'is-hovered': isHovered,
               'is-selected': isSelected,
+              'is-previous-selected': state.selectionManager.isSelected(item.prevKey),
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey))
             }
           )
@@ -129,7 +131,7 @@ export function ListViewItem(props) {
             <Checkbox
               UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
               {...checkboxProps}
-              isEmphasized />
+              isEmphasized={isEmphasized} />
           }
           <SlotProvider
             slots={{

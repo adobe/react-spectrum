@@ -141,8 +141,14 @@ storiesOf('ListView', module)
   .add('selection: single, checkbox, disabled', () => (
     <Example selectionMode="single" disabledKeys={['row1']} />
   ))
+  .add('selection: single, checkbox, isQuiet', () => (
+    <Example selectionMode="single" isQuiet />
+  ))
   .add('selection: multiple, checkbox', () => (
     <Example selectionMode="multiple" />
+  ))
+  .add('selection: multiple, checkbox, isQuiet', () => (
+    <Example selectionMode="multiple" isQuiet />
   ))
   .add('parent link example', () => (
     <Example2 selectionMode="multiple" />

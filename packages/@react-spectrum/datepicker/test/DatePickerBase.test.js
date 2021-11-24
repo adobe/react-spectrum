@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render as render_} from '@testing-library/react';
 import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DatePicker, DateRangePicker} from '../';
 import {installPointerEvent} from '@react-spectrum/test-utils';
@@ -28,6 +28,17 @@ function pointerEvent(type, opts) {
     button: opts.button || 0
   }, opts);
   return evt;
+}
+
+function render(el) {
+  if (el.type === Provider) {
+    return render_(el);
+  }
+  return render_(
+    <Provider theme={theme}>
+      {el}
+    </Provider>
+  );
 }
 
 describe('DatePickerBase', function () {
@@ -50,10 +61,12 @@ describe('DatePickerBase', function () {
         expect(segment).not.toHaveAttribute('aria-disabled');
         expect(segment).toHaveAttribute('contentEditable', 'true');
         expect(segment).toHaveAttribute('inputMode', 'numeric');
+        expect(segment).not.toHaveAttribute('aria-readonly', 'true');
       }
 
       let button = getAllByRole('button')[0];
       expect(button).toBeVisible();
+      expect(button).toHaveAttribute('tabindex', '-1');
     });
 
     it.each`
@@ -125,6 +138,22 @@ describe('DatePickerBase', function () {
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('aria-invalid', 'true');
+      }
+    });
+
+    it.each`
+      Name                   | Component
+      ${'DatePicker'}        | ${DatePicker}
+      ${'DateRangePicker'}   | ${DateRangePicker}
+    `('$Name should set aria-readonly on non-editable segments', ({Component}) => {
+      let {getAllByTestId} = render(<Component label="Date" placeholderValue={parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')} />);
+
+      let timezones = getAllByTestId('timeZoneName');
+      for (let tz of timezones) {
+        expect(tz).toHaveAttribute('role', 'textbox');
+        expect(tz).toHaveAttribute('aria-readonly', 'true');
+        expect(tz).toHaveTextContent('PDT');
+        expect(tz).not.toHaveAttribute('contenteditable');
       }
     });
   });
@@ -325,17 +354,6 @@ describe('DatePickerBase', function () {
 
       fireEvent(literals[0], pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       expect(segments[1]).toHaveFocus();
-    });
-
-    it.each`
-      Name                   | Component
-      ${'DatePicker'}        | ${DatePicker}
-      ${'DateRangePicker'}   | ${DateRangePicker}
-    `('$Name should focus the next segment on mouse down on a non-editable segment', ({Component}) => {
-      let {getAllByTestId} = render(<Component label="Date" placeholderValue={parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')} />);
-
-      fireEvent(getAllByTestId('timeZoneName').pop(), pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      expect(getAllByTestId('dayPeriod').pop()).toHaveFocus();
     });
 
     it.each`

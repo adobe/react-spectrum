@@ -20,7 +20,7 @@ import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
-import {FocusScope, useFocusRing} from '@react-aria/focus';
+import {Input} from './Input';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
@@ -28,6 +28,8 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
+import {useFocusRing} from '@react-aria/focus';
+import {useFormatHelpText, useVisibleMonths} from './utils';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -41,13 +43,12 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
     isReadOnly,
     isRequired,
     placeholderValue,
-    visibleMonths
-    // showFormatHelpText,
+    maxVisibleMonths = 1
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
   let state = useDatePickerState(props);
-  let {groupProps, labelProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state, targetRef);
+  let {groupProps, labelProps, fieldProps, descriptionProps, errorMessageProps, buttonProps, dialogProps} = useDatePicker(props, state, targetRef);
   let {value, setValue, isOpen, setOpen} = state;
   let {direction} = useLocale();
 
@@ -79,31 +80,42 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
     }
   );
 
-  // TODO: format help text
-  // let formatter = useDateFormatter({dateStyle: 'short'});
-  // let segments = showFormatHelpText ? formatter.formatToParts(new Date()).map(s => {
-  //   if (s.type === 'literal') {
-  //     return s.value;
-  //   }
+  // Note: this description is intentionally not passed to useDatePicker.
+  // The format help text is unnecessary for screen reader users because each segment already has a label.
+  let description = useFormatHelpText(props);
+  if (description && !props.description) {
+    descriptionProps.id = null;
+  }
 
-  //   return s.type;
-  // }).join(' ') : '';
-
-  let v = state.value || props.placeholderValue;
   let placeholder: DateValue = placeholderValue;
   let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : null;
   let timeMinValue = props.minValue && 'hour' in props.minValue ? props.minValue : null;
   let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
-  let timeGranularity = props.granularity === 'hour' || props.granularity === 'minute' || props.granularity === 'second' || props.granularity === 'millisecond' ? props.granularity : null;
-  let showTimeField = (v && 'hour' in v) || !!timeGranularity;
+  let timeGranularity = state.granularity === 'hour' || state.granularity === 'minute' || state.granularity === 'second' || state.granularity === 'millisecond' ? state.granularity : null;
+  let showTimeField = !!timeGranularity;
+
+  let visibleMonths = useVisibleMonths(maxVisibleMonths);
 
   return (
-    <Field {...props} labelProps={labelProps}>
+    <Field
+      {...props}
+      ref={targetRef}
+      description={description}
+      labelProps={labelProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      validationState={state.validationState}
+      UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <div
         {...mergeProps(groupProps, hoverProps, focusProps)}
-        className={className}
-        ref={targetRef}>
-        <FocusScope autoFocus={autoFocus}>
+        className={className}>
+        <Input
+          isDisabled={isDisabled}
+          isQuiet={isQuiet}
+          validationState={state.validationState}
+          autoFocus={autoFocus}
+          className={classNames(styles, 'spectrum-InputGroup-field')}
+          inputClassName={fieldClassName}>
           <DatePickerField
             {...fieldProps}
             data-testid="date-field"
@@ -118,9 +130,8 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
             granularity={props.granularity}
             hourCycle={props.hourCycle}
             inputClassName={fieldClassName}
-            UNSAFE_className={classNames(styles, 'spectrum-InputGroup-field')}
             hideTimeZone={props.hideTimeZone} />
-        </FocusScope>
+        </Input>
         <DialogTrigger
           type="popover"
           mobileType="tray"
@@ -138,12 +149,14 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
-            <Content>
+            <Content UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
               <Calendar
                 autoFocus
                 value={state.dateValue}
                 onChange={state.setDateValue}
-                visibleMonths={visibleMonths} />
+                visibleMonths={visibleMonths}
+                minValue={props.minValue}
+                maxValue={props.maxValue} />
               {showTimeField &&
                 <TimeField
                   label="Time"
@@ -154,7 +167,8 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
                   minValue={timeMinValue}
                   maxValue={timeMaxValue}
                   hourCycle={props.hourCycle}
-                  hideTimeZone={props.hideTimeZone} />
+                  hideTimeZone={props.hideTimeZone}
+                  marginTop="size-100" />
               }
             </Content>
           </Dialog>

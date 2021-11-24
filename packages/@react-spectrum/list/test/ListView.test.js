@@ -11,11 +11,26 @@
  */
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    altKey: false,
+    button: opts.button || 0,
+    width: 1,
+    height: 1
+  }, opts);
+  return evt;
+}
 
 describe('ListView', function () {
   let offsetWidth, offsetHeight;
@@ -232,7 +247,7 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(start);
       });
 
-      it('should mov focus to above row', function () {
+      it('should move focus to above row', function () {
         let tree = renderListWithFocusables();
         let start = getCell(tree, 'Bar');
         let end = getCell(tree, 'Foo');
@@ -276,6 +291,7 @@ describe('ListView', function () {
   });
 
   describe('selection', function () {
+    installPointerEvent();
     let checkSelection = (onSelectionChange, selectedKeys) => {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
@@ -370,6 +386,123 @@ describe('ListView', function () {
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
       });
+
+      it('should support single tap to perform row selection with screen reader if onAction isn\'t provided', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+
+        let rows = tree.getAllByRole('row');
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+
+        act(() => userEvent.click(within(rows[1]).getByText('Bar'), {pointerType: 'touch', width: 0, height: 0}));
+        checkSelection(onSelectionChange, [
+          'bar'
+        ]);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        onSelectionChange.mockReset();
+
+        // Android TalkBack double tap test, pointer event sets pointerType and onClick handles the rest
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        act(() => {
+          let el = within(rows[2]).getByText('Baz');
+          fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+        });
+        checkSelection(onSelectionChange, [
+          'bar', 'baz'
+        ]);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should support single tap to perform onAction with screen reader', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight', onAction});
+
+        let rows = tree.getAllByRole('row');
+        act(() => userEvent.click(within(rows[1]).getByText('Bar'), {pointerType: 'touch', width: 0, height: 0}));
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('bar');
+
+        // Android TalkBack double tap test, pointer event sets pointerType and onClick handles the rest
+        act(() => {
+          let el = within(rows[2]).getByText('Baz');
+          fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+        });
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(2);
+        expect(onAction).toHaveBeenCalledWith('baz');
+      });
+    });
+  });
+
+  describe('scrolling', function () {
+    beforeAll(() => {
+      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+        .mockImplementation(function () {
+          return 40;
+        });
+    });
+
+    let moveFocus = (key, opts = {}) => {
+      fireEvent.keyDown(document.activeElement, {key, ...opts});
+      fireEvent.keyUp(document.activeElement, {key, ...opts});
+    };
+
+    it('should scroll to a cell when it is focused', function () {
+      let onSelectionChange = jest.fn();
+
+      let tree = render(
+        <ListView
+          width="250px"
+          height="60px"
+          aria-label="List"
+          data-testid="test"
+          selectionStyle="highlight"
+          selectionMode="multiple"
+          onSelectionChange={onSelectionChange}
+          items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+          {item => <Item>{item.name}</Item>}
+        </ListView>
+      );
+      let grid = tree.getByRole('grid');
+      Object.defineProperty(grid, 'clientHeight', {
+        get() {
+          return 60;
+        }
+      });
+      // fire resize so the new clientHeight is requested
+      act(() => {
+        fireEvent(window, new Event('resize'));
+      });
+      userEvent.tab();
+      expect(grid.scrollTop).toBe(0);
+
+      let rows = tree.getAllByRole('row');
+      let rowWrappers = rows.map(item => item.parentElement);
+
+      expect(rowWrappers[0].style.top).toBe('0px');
+      expect(rowWrappers[0].style.height).toBe('40px');
+      expect(rowWrappers[1].style.top).toBe('40px');
+      expect(rowWrappers[1].style.height).toBe('40px');
+
+      // scroll us down far enough that item 0 isn't in the view
+      moveFocus('ArrowDown');
+      moveFocus('ArrowDown');
+      moveFocus('ArrowDown');
+      expect(document.activeElement).toBe(getCell(tree, 'Item 3'));
+      expect(grid.scrollTop).toBe(100);
+
+      moveFocus('ArrowUp');
+      moveFocus('ArrowUp');
+      moveFocus('ArrowUp');
+      expect(document.activeElement).toBe(getCell(tree, 'Item 0'));
+      expect(grid.scrollTop).toBe(0);
     });
   });
 });
