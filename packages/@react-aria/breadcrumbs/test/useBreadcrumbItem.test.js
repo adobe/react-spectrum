@@ -30,7 +30,7 @@ describe('useBreadcrumbItem', function () {
 
   it('handles isCurrent', function () {
     let {itemProps} = renderLinkHook({elementType: 'span', isCurrent: true});
-    expect(itemProps.tabIndex).toBeUndefined();
+    expect(itemProps.tabIndex).toBe(-1);
     expect(itemProps.role).toBe('link');
     expect(itemProps['aria-current']).toBe('page');
   });
