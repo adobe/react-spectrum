@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/i18n",
-  "version": "3.3.3",
+  "version": "3.3.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@internationalized/date": "3.0.0-alpha.0",
+    "@internationalized/date": "3.0.0-alpha.1",
     "@internationalized/message": "^3.0.2",
     "@internationalized/number": "^3.0.2",
     "@react-aria/ssr": "^3.0.3",
