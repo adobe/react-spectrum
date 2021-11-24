@@ -42,6 +42,7 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject
 
   if (isCurrent) {
     itemProps['aria-current'] = ariaCurrent || 'page';
+    itemProps.tabIndex = -1;
   }
 
   return {

@@ -12,9 +12,11 @@
 
 import {action} from '@storybook/addon-actions';
 import {Breadcrumbs} from '../';
+import {Button} from '@react-spectrum/button';
+import {DOMRefValue} from '@react-types/shared';
 // import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 let styles = {
@@ -136,6 +138,12 @@ storiesOf('Breadcrumbs', module)
         <Item>Root</Item>
       </Breadcrumbs>
     )
+  )
+  .add(
+    'Dynamic breadcrumbs with focus management',
+    () => (
+      <DynamicBreadcrumbs />
+    )
   );
 
 function render(props = {}) {
@@ -178,4 +186,40 @@ function renderMany(props = {}) {
       <Item key="Folder 7">April 7</Item>
     </Breadcrumbs>
   );
+}
+
+function DynamicBreadcrumbs(props = {}) {
+  const defaultItems = [
+    {key: 'Folder 1', children: 'The quick brown fox jumps over'},
+    {key: 'Folder 2', children: 'My Documents'},
+    {key: 'Folder 3', children: 'Kangaroos jump high'},
+    {key: 'Folder 4', children: 'Koalas are very cute'},
+    {key: 'Folder 5', children: 'Wombat\'s noses'},
+    {key: 'Folder 6', children: 'Wattle trees'},
+    {key: 'Folder 7', children: 'April 7'}
+  ];
+  let [items, setItems] = useState(defaultItems);
+  let domRef = useRef<DOMRefValue<HTMLDivElement>>();
+  return (<>
+    <Breadcrumbs
+      ref={domRef}
+      {...props}
+      onAction={key => {
+        // Update breadcrumbs based on activated item.
+        setItems(items.slice(0, items.findIndex(item => key === item.key) + 1));
+
+        // Wait for breadcrumb items to render, then focus the current item.
+        requestAnimationFrame(() => {
+          if (domRef.current) {
+            let current = domRef.current.UNSAFE_getDOMNode().querySelector('[aria-current][tabindex]') as HTMLElement;
+            current && current.focus();
+          }
+        });
+      }}>
+      {items.map((item) => <Item {...item} />)}
+    </Breadcrumbs>
+    <p>
+      <Button variant="primary" onPress={() => setItems(defaultItems)}>Reset</Button>
+    </p>
+  </>);
 }
