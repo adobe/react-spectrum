@@ -282,9 +282,9 @@ describe('CheckboxGroup', () => {
     expect(necessityIndicator).toHaveAttribute('aria-label', '(required)');
 
     let checkboxes = getAllByRole('checkbox');
-    expect(checkboxes[0]).toHaveAttribute('required');
-    expect(checkboxes[1]).toHaveAttribute('required');
-    expect(checkboxes[2]).toHaveAttribute('required');
+    expect(checkboxes[0]).toHaveAttribute('aria-required');
+    expect(checkboxes[1]).toHaveAttribute('aria-required');
+    expect(checkboxes[2]).toHaveAttribute('aria-required');
   });
 
   it('does not add aria-invalid to every checkbox by default', () => {
