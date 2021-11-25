@@ -54,5 +54,8 @@ governing permissions and limitations under the License.
   .spectrum-Tooltip-tip {
     forced-color-adjust: none;
     --spectrum-tooltip-background-color: CanvasText;
+    --spectrum-tooltip-negative-background-color: Highlight;
+    --spectrum-tooltip-info-background-color: Highlight;
+    --spectrum-tooltip-positive-background-color: Highlight;
   }
 }
