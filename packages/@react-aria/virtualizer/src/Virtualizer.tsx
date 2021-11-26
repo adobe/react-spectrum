@@ -12,7 +12,6 @@
 
 import {Collection} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
-import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
@@ -129,8 +128,8 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     if (virtualizer.visibleRect.height === 0) {
       return;
     }
-    let modality = getInteractionModality();
-    if (focusedKey !== lastFocusedKey.current && modality !== 'pointer') {
+
+    if (focusedKey !== lastFocusedKey.current) {
       if (scrollToItem) {
         scrollToItem(focusedKey);
       } else {

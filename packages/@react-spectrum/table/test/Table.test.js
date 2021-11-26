@@ -2414,6 +2414,7 @@ describe('TableView', function () {
       });
 
       it('will add to the current selection if the command key is pressed', function () {
+        let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
@@ -2439,6 +2440,8 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(6, 10), false);
         checkRowSelection(rows.slice(10, 21), true);
         checkRowSelection(rows.slice(21), false);
+
+        uaMock.mockRestore();
       });
 
       it('should toggle selection with touch', function () {

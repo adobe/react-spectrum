@@ -23,11 +23,12 @@ import {TableState} from '@react-stately/table';
  */
 export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridRowAria {
   let {node} = props;
-  let {rowProps} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+  let {rowProps, isPressed} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
   return {
     rowProps: {
       ...rowProps,
       'aria-labelledby': getRowLabelledBy(state, node.key)
-    }
+    },
+    isPressed
   };
 }
