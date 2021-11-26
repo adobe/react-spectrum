@@ -14,6 +14,7 @@ import {act, render} from '@testing-library/react';
 import {ContextualHelp} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
@@ -68,5 +69,27 @@ describe('ContextualHelp', function () {
     expect(modal).toBeVisible();
 
     expect(getByText('Test title')).toBeVisible();
+  });
+
+  it('renders content', function () {
+    let {getByRole, getByText} = render(
+      <Provider theme={theme}>
+        <ContextualHelp title="Test title"><Text>Help content</Text></ContextualHelp>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+
+    const content = getByText('Help content');
+    expect(content).toBeVisible();
+    expect(content.nodeName).toBe('SPAN');
   });
 });
