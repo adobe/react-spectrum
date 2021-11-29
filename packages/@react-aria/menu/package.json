@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/menu",
-  "version": "3.2.3",
+  "version": "3.3.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,16 +18,16 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/interactions": "^3.5.1",
-    "@react-aria/overlays": "^3.7.2",
-    "@react-aria/selection": "^3.5.1",
-    "@react-aria/utils": "^3.8.2",
+    "@react-aria/interactions": "^3.7.0",
+    "@react-aria/overlays": "^3.7.3",
+    "@react-aria/selection": "^3.7.0",
+    "@react-aria/utils": "^3.10.0",
     "@react-stately/collections": "^3.3.3",
     "@react-stately/menu": "^3.2.3",
     "@react-stately/tree": "^3.2.0",
     "@react-types/button": "^3.4.1",
     "@react-types/menu": "^3.3.0",
-    "@react-types/shared": "^3.8.0"
+    "@react-types/shared": "^3.10.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",

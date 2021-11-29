@@ -828,7 +828,7 @@ user-provided
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
-    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) 1fr var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) var(--spectrum-alias-single-line-height) 1fr;
     grid-template-areas:
       "preview preview preview"
       ".       .       ."
@@ -1241,3 +1241,20 @@ For now working around it with a useLayoutEffect in CardBase.
   }
 }
 /** END Standard Horizontal **/
+
+/* CardView styles */
+.spectrum-CardView {
+  outline: none;
+
+  .spectrum-CardView-centeredWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+  .spectrum-CardView-row {
+    outline: none;
+    height: 100%
+  }
+}

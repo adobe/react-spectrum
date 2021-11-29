@@ -77,7 +77,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let formatMessage = useMessageFormatter(intlMessages);
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      type: 'listbox'
+      type: 'listbox',
+      isDisabled: isDisabled || isReadOnly
     },
     state,
     buttonRef
@@ -302,7 +303,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       ...triggerLabelProps,
       excludeFromTabOrder: true,
       onPress,
-      onPressStart
+      onPressStart,
+      isDisabled: isDisabled || isReadOnly
     },
     inputProps: mergeProps(inputProps, {
       role: 'combobox',

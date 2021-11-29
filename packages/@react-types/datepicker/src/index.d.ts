@@ -14,6 +14,7 @@ import {
   AriaLabelingProps,
   DOMProps,
   FocusableProps,
+  HelpTextProps,
   InputBase,
   LabelableProps,
   RangeValue,
@@ -31,12 +32,13 @@ type MappedDateValue<T> =
   T extends CalendarDate ? CalendarDate :
   never;
 
-interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps {
+export type Granularity = 'day' | 'hour' | 'minute' | 'second' | 'millisecond';
+interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps {
   minValue?: DateValue,
   maxValue?: DateValue,
   placeholderValue?: T,
   hourCycle?: 12 | 24,
-  granularity?: 'day' | 'hour' | 'minute' | 'second' | 'millisecond',
+  granularity?: Granularity,
   hideTimeZone?: boolean
 }
 
@@ -52,7 +54,7 @@ export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDateP
 interface SpectrumDatePickerBase<T extends DateValue> extends AriaDatePickerBaseProps<T>, SpectrumLabelableProps, StyleProps {
   isQuiet?: boolean,
   showFormatHelpText?: boolean,
-  visibleMonths?: number
+  maxVisibleMonths?: number
 }
 
 export interface SpectrumDatePickerProps<T extends DateValue> extends DatePickerProps<T>, SpectrumDatePickerBase<T> {}
