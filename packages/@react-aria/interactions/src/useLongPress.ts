@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {HTMLAttributes, useRef} from 'react';
 import {LongPressEvent} from '@react-types/shared';
 import {mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {usePress} from './usePress';
-import {useRef} from 'react';
 
 interface LongPressProps {
   /** Whether long press events should be disabled. */
@@ -42,9 +42,18 @@ interface LongPressProps {
   accessibilityDescription?: string
 }
 
+interface LongPressResult {
+  /** Props to spread on the target element. */
+  longPressProps: HTMLAttributes<HTMLElement>
+}
+
 const DEFAULT_THRESHOLD = 500;
 
-export function useLongPress(props: LongPressProps) {
+/**
+ * Handles long press interactions across mouse and touch devices. Supports a customizable time threshold,
+ * accessibility description, and normalizes behavior across browsers and devices.
+ */
+export function useLongPress(props: LongPressProps): LongPressResult {
   let {
     isDisabled,
     onLongPressStart,
@@ -102,7 +111,7 @@ export function useLongPress(props: LongPressProps) {
         clearTimeout(timeRef.current);
       }
 
-      if (onLongPressEnd) {
+      if (onLongPressEnd && (e.pointerType === 'mouse' || e.pointerType === 'touch')) {
         onLongPressEnd({
           ...e,
           type: 'longpressend'

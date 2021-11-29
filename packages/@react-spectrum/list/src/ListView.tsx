@@ -159,6 +159,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             listStyles,
             'react-spectrum-ListView',
             `react-spectrum-ListView--${density}`,
+            'react-spectrum-ListView--emphasized',
             {
               'react-spectrum-ListView--quiet': isQuiet
             },
@@ -171,7 +172,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} onAction={onAction} />
+              <ListViewItem item={item} onAction={onAction} isEmphasized />
             );
           } else if (type === 'loader') {
             return (
