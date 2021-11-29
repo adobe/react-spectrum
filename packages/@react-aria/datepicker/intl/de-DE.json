@@ -5,7 +5,7 @@
   "date": "Datum",
   "dateRange": "Datumsbereich",
   "day": "Tag",
-  "dayPeriod": "Zeitraum",
+  "dayPeriod": "Tageshälfte",
   "endDate": "Enddatum",
   "era": "Epoche",
   "hour": "Stunde",
@@ -13,5 +13,7 @@
   "month": "Monat",
   "second": "Sekunde",
   "startDate": "Anfangsdatum",
-  "year": "Jahr"
+  "year": "Jahr",
+  "weekday": "Wochentag",
+  "timeZoneName": "Zeitzone"
 }

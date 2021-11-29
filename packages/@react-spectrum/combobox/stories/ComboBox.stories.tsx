@@ -16,6 +16,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import Alert from '@spectrum-icons/workflow/Alert';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {chain} from '@react-aria/utils';
 import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Draw from '@spectrum-icons/workflow/Draw';
@@ -562,7 +563,7 @@ function AsyncLoadingExample() {
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
       loadingState={list.loadingState}
-      onLoadMore={list.loadMore}
+      onLoadMore={chain(action('onLoadMore'), list.loadMore)}
       onOpenChange={action('onOpenChange')}>
       {item => <Item key={item.name}>{item.name}</Item>}
     </ComboBox>

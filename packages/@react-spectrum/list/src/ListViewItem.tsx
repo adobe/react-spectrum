@@ -21,12 +21,14 @@ import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useFocusRing} from '@react-aria/focus';
 import {useGridCell, useGridRow, useGridSelectionCheckbox} from '@react-aria/grid';
-import {useHover} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
 export function ListViewItem(props) {
   let {
-    item
+    item,
+    onAction,
+    isEmphasized
   } = props;
   let cellNode = [...item.childNodes][0];
   let {state} = useContext(ListViewContext);
@@ -38,11 +40,14 @@ export function ListViewItem(props) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let isDisabled = state.disabledKeys.has(item.key);
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
+  let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let {hoverProps, isHovered} = useHover({isDisabled});
+  let {pressProps, isPressed} = usePress({isDisabled});
   let {rowProps} = useGridRow({
     node: item,
-    isVirtualized: true
+    isVirtualized: true,
+    onAction: onAction ? () => onAction(item.key) : null
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
@@ -71,10 +76,11 @@ export function ListViewItem(props) {
       );
   }
 
-  let showCheckbox = state.selectionManager.selectionMode !== 'none';
+  let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
+  let isSelected = state.selectionManager.isSelected(item.key);
   return (
     <div
-      {...rowProps}
+      {...mergeProps(rowProps, pressProps)}
       ref={rowRef}>
       <div
         className={
@@ -82,9 +88,13 @@ export function ListViewItem(props) {
             listStyles,
             'react-spectrum-ListViewItem',
             {
+              'is-active': isPressed,
               'is-focused': isFocusVisibleWithin,
               'focus-ring': isFocusVisible,
-              'is-hovered': isHovered
+              'is-hovered': isHovered,
+              'is-selected': isSelected,
+              'is-previous-selected': state.selectionManager.isSelected(item.prevKey),
+              'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey))
             }
           )
         }
@@ -95,7 +105,7 @@ export function ListViewItem(props) {
             <Checkbox
               UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
               {...checkboxProps}
-              isEmphasized />
+              isEmphasized={isEmphasized} />
           )}
           <SlotProvider
             slots={{
@@ -110,7 +120,8 @@ export function ListViewItem(props) {
                 UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
                 isQuiet: true,
                 density: 'compact'
-              }
+              },
+              actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
             }}>
             {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
             <ClearSlots>

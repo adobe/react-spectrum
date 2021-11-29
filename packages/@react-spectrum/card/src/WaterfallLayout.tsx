@@ -27,11 +27,6 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
    */
   maxItemSize?: Size,
   /**
-   * The margin around the grid view between the edges and the items.
-   * @default 24
-   */
-  margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
-  /**
    * The minimum space required between items.
    * @default 18 x 18
    */
@@ -52,7 +47,6 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
 export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   protected minItemSize: Size;
   protected maxItemSize: Size;
-  protected margin: number;
   protected minSpace: Size;
   protected maxColumns: number;
   itemPadding: number;
@@ -133,6 +127,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       let rect = new Rect(x, y, itemWidth, height);
       let layoutInfo = new LayoutInfo(node.type, key, rect);
       layoutInfo.estimatedSize = estimatedSize;
+      layoutInfo.allowOverflow = true;
       this.layoutInfos.set(key, layoutInfo);
 
       // TODO: From v2 figure out this bit, when does this get called and what to replace this.collectionView._transaction with?

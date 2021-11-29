@@ -18,9 +18,10 @@ import {DateRangePickerState} from '@react-stately/datepicker';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent} from '@react-types/shared';
 import {mergeProps, useDescription, useId, useLabels} from '@react-aria/utils';
-import {useLabel} from '@react-aria/label';
+import {useDatePickerGroup} from './useDatePickerGroup';
+import {useField} from '@react-aria/label';
+import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 interface DateRangePickerAria<T extends DateValue> {
@@ -28,13 +29,17 @@ interface DateRangePickerAria<T extends DateValue> {
   groupProps: HTMLAttributes<HTMLElement>,
   startFieldProps: AriaDatePickerProps<T>,
   endFieldProps: AriaDatePickerProps<T>,
+  /** Props for the description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>,
   buttonProps: AriaButtonProps,
   dialogProps:  AriaDialogProps
 }
 
 export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<HTMLElement>): DateRangePickerAria<T> {
   let formatMessage = useMessageFormatter(intlMessages);
-  let {labelProps, fieldProps} = useLabel({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
   });
@@ -43,7 +48,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
 
   let {locale} = useLocale();
   let description = state.formatValue(locale, {month: 'long'});
-  let descriptionProps = useDescription(description);
+  let descProps = useDescription(description);
 
   let startFieldProps = useLabels({
     'aria-label': formatMessage('startDate'),
@@ -58,20 +63,20 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   let buttonId = useId();
   let dialogId = useId();
 
-  // Open the popover on alt + arrow down
-  let onKeyDown = (e: KeyboardEvent) => {
-    if (e.altKey && e.key === 'ArrowDown') {
-      e.preventDefault();
-      e.stopPropagation();
-      state.setOpen(true);
+  let groupProps = useDatePickerGroup(state, ref);
+  let {focusWithinProps} = useFocusWithin({
+    onBlurWithin() {
+      state.confirmPlaceholder();
     }
-  };
+  });
+
+  let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
 
   return {
-    groupProps: mergeProps(fieldProps, descriptionProps, {
+    groupProps: mergeProps(groupProps, fieldProps, descProps, focusWithinProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
-      onKeyDown
+      'aria-describedby': ariaDescribedBy
     }),
     labelProps: {
       ...labelProps,
@@ -81,17 +86,27 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       }
     },
     buttonProps: {
-      ...descriptionProps,
+      ...descProps,
       id: buttonId,
+      excludeFromTabOrder: true,
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
-      'aria-labelledby': `${labelledBy} ${buttonId}`
+      'aria-labelledby': `${labelledBy} ${buttonId}`,
+      'aria-describedby': ariaDescribedBy
     },
     dialogProps: {
       id: dialogId,
       'aria-labelledby': `${labelledBy} ${buttonId}`
     },
-    startFieldProps,
-    endFieldProps
+    startFieldProps: {
+      ...startFieldProps,
+      'aria-describedby': fieldProps['aria-describedby']
+    },
+    endFieldProps: {
+      ...endFieldProps,
+      'aria-describedby': fieldProps['aria-describedby']
+    },
+    descriptionProps,
+    errorMessageProps
   };
 }

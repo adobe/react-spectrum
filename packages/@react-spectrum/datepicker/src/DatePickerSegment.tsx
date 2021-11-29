@@ -27,8 +27,7 @@ interface DatePickerSegmentProps extends DatePickerBase<DateValue> {
 }
 
 interface LiteralSegmentProps {
-  segment: DateSegment,
-  isPlaceholder?: boolean
+  segment: DateSegment
 }
 
 export function DatePickerSegment({segment, state, ...otherProps}: DatePickerSegmentProps) {
@@ -37,18 +36,13 @@ export function DatePickerSegment({segment, state, ...otherProps}: DatePickerSeg
     case 'literal':
       return <LiteralSegment segment={segment} />;
 
-    // These segments cannot be directly edited by the user.
-    case 'weekday':
-    case 'timeZoneName':
-      return <LiteralSegment segment={segment} isPlaceholder />;
-
     // Editable segment
     default:
       return <EditableSegment segment={segment} state={state} {...otherProps} />;
   }
 }
 
-function LiteralSegment({segment, isPlaceholder}: LiteralSegmentProps) {
+function LiteralSegment({segment}: LiteralSegmentProps) {
   let focusManager = useFocusManager();
   let {pressProps} = usePress({
     onPressStart: (e) => {
@@ -63,8 +57,8 @@ function LiteralSegment({segment, isPlaceholder}: LiteralSegmentProps) {
 
   return (
     <span
-      role="presentation"
-      className={classNames(styles, 'react-spectrum-Datepicker-literal', {'is-placeholder': isPlaceholder})}
+      aria-hidden="true"
+      className={classNames(styles, 'react-spectrum-Datepicker-literal')}
       {...pressProps}
       data-testid={segment.type === 'literal' ? undefined : segment.type}>
       {segment.text}
@@ -81,13 +75,16 @@ function EditableSegment({segment, state, ...otherProps}: DatePickerSegmentProps
   return (
     <div
       ref={ref}
-      className={classNames(styles, 'react-spectrum-DatePicker-cell', {'is-placeholder': segment.isPlaceholder})}
+      className={classNames(styles, 'react-spectrum-DatePicker-cell', {
+        'is-placeholder': segment.isPlaceholder,
+        'is-read-only': !segment.isEditable
+      })}
       style={{
         minWidth: !isNumeric ? null : String(segment.maxValue).length + 'ch'
       }}
       data-testid={segment.type}
       {...segmentProps}>
-      {segment.text}
+      {segment.isPlaceholder ? '' : segment.text}
     </div>
   );
 }

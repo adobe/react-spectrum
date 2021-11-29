@@ -19,8 +19,10 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
+import {useFormProps} from '@react-spectrum/form';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
+  props = useFormProps(props);
   let {
     label,
     labelPosition = 'top' as LabelPosition,
@@ -76,27 +78,12 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         showErrorIcon={showErrorIcon} />
     );
 
-    let renderChildren = () => {
-      if (hasHelpText) {
-        if (labelPosition === 'side') {
-          return (
-            <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
-              {children}
-              {renderHelpText()}
-            </Flex>
-          );
-        }
-
-        return (
-          <>
-            {children}
-            {renderHelpText()}
-          </>
-        );
-      }
-
-      return children;
-    };
+    let renderChildren = () => (
+      <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
+        {children}
+        {hasHelpText && renderHelpText()}
+      </Flex>
+    );
 
     return (
       <div

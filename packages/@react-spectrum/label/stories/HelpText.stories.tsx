@@ -43,6 +43,22 @@ storiesOf('HelpText', module)
     }
   )
   .add(
+    'error message with no description',
+    () => {
+      let [value, setValue] = useState('');
+
+      return (
+        <TextField
+          label="Empty field"
+          placeholder="Don't type here!"
+          errorMessage="Remove input."
+          value={value}
+          onChange={setValue}
+          validationState={value.length ? 'invalid' : 'valid'} />
+      );
+    }
+  )
+  .add(
     'description, validationState: valid',
     () => render({
       label: 'Nickname',

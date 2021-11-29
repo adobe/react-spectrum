@@ -13,18 +13,11 @@
 import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {focusWithoutScrolling, isMac, mergeProps, useEvent} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useEvent} from '@react-aria/utils';
+import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
-
-function isCtrlKeyPressed(e: KeyboardEvent) {
-  if (isMac()) {
-    return e.metaKey;
-  }
-
-  return e.ctrlKey;
-}
 
 interface SelectableCollectionOptions {
   /**
@@ -105,7 +98,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     shouldFocusWrap = false,
     disallowEmptySelection = false,
     disallowSelectAll = false,
-    selectOnFocus = false,
+    selectOnFocus = manager.selectionBehavior === 'replace',
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
     allowsTabNavigation = false,
@@ -115,16 +108,16 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   } = options;
   let {direction} = useLocale();
 
+
   let onKeyDown = (e: KeyboardEvent) => {
     // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
     if (e.altKey && e.key === 'Tab') {
       e.preventDefault();
     }
 
-    // Let child element (e.g. menu button) handle the event if the Alt key is pressed.
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (e.altKey || !ref.current.contains(e.target as HTMLElement)) {
+    if (!ref.current.contains(e.target as HTMLElement)) {
       return;
     }
 
@@ -134,7 +127,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
         if (e.shiftKey && manager.selectionMode === 'multiple') {
           manager.extendSelection(key);
-        } else if (selectOnFocus) {
+        } else if (selectOnFocus && !isNonContiguousSelectionModifier(e)) {
           manager.replaceSelection(key);
         }
       }
@@ -291,14 +284,22 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     manager.setFocused(true);
 
     if (manager.focusedKey == null) {
+      let navigateToFirstKey = (key: Key | undefined) => {
+        if (key != null) {
+          manager.setFocusedKey(key);
+          if (selectOnFocus) {
+            manager.replaceSelection(key);
+          }
+        }
+      };
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
       // and either focus the first or last item accordingly.
       let relatedTarget = e.relatedTarget as Element;
       if (relatedTarget && (e.currentTarget.compareDocumentPosition(relatedTarget) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-        manager.setFocusedKey(manager.lastSelectedKey ?? delegate.getLastKey());
+        navigateToFirstKey(manager.lastSelectedKey ?? delegate.getLastKey());
       } else {
-        manager.setFocusedKey(manager.firstSelectedKey ?? delegate.getFirstKey());
+        navigateToFirstKey(manager.firstSelectedKey ?? delegate.getFirstKey());
       }
     } else if (!isVirtualized) {
       // Restore the scroll position to what it was before.
