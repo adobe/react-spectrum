@@ -13,7 +13,7 @@
 import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useEvent} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, scrollIntoView, useEvent} from '@react-aria/utils';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -401,58 +401,4 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       tabIndex
     }
   };
-}
-
-/**
- * Scrolls `scrollView` so that `element` is visible.
- * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
- * but doesn't affect parents above `scrollView`.
- */
-function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
-  let offsetX = relativeOffset(scrollView, element, 'left');
-  let offsetY = relativeOffset(scrollView, element, 'top');
-  let width = element.offsetWidth;
-  let height = element.offsetHeight;
-  let x = scrollView.scrollLeft;
-  let y = scrollView.scrollTop;
-  let maxX = x + scrollView.offsetWidth;
-  let maxY = y + scrollView.offsetHeight;
-
-  if (offsetX <= x) {
-    x = offsetX;
-  } else if (offsetX + width > maxX) {
-    x += offsetX + width - maxX;
-  }
-  if (offsetY <= y) {
-    y = offsetY;
-  } else if (offsetY + height > maxY) {
-    y += offsetY + height - maxY;
-  }
-
-  scrollView.scrollLeft = x;
-  scrollView.scrollTop = y;
-}
-
-/**
- * Computes the offset left or top from child to ancestor by accumulating
- * offsetLeft or offsetTop through intervening offsetParents.
- */
-function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
-  const prop = axis === 'left' ? 'offsetLeft' : 'offsetTop';
-  let sum = 0;
-  while (child.offsetParent) {
-    sum += child[prop];
-    if (child.offsetParent === ancestor) {
-      // Stop once we have found the ancestor we are interested in.
-      break;
-    } else if (child.offsetParent.contains(ancestor)) {
-      // If the ancestor is not `position:relative`, then we stop at
-      // _its_ offset parent, and we subtract off _its_ offset, so that
-      // we end up with the proper offset from child to ancestor.
-      sum -= ancestor[prop];
-      break;
-    }
-    child = child.offsetParent as HTMLElement;
-  }
-  return sum;
 }
