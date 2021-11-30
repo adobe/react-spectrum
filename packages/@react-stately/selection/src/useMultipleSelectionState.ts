@@ -56,7 +56,6 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   let [, setFocusedKey] = useState(null);
   let selectedKeysProp = useMemo(() => convertSelection(props.selectedKeys), [props.selectedKeys]);
   let defaultSelectedKeys = useMemo(() => convertSelection(props.defaultSelectedKeys, new Selection()), [props.defaultSelectedKeys]);
-
   let [selectedKeys, setSelectedKeys] = useControlledState(
     selectedKeysProp,
     defaultSelectedKeys,
