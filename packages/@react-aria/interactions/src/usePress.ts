@@ -228,27 +228,48 @@ export function usePress(props: PressHookProps): PressResult {
 
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
-        if (isValidKeyboardEvent(e.nativeEvent) && e.currentTarget.contains(e.target as HTMLElement)) {
-          e.preventDefault();
-          e.stopPropagation();
+        const {currentTarget, target, nativeEvent, repeat} = e;
+        if (currentTarget.contains(target as HTMLElement)) {
+          const isValid = isValidKeyboardEvent(nativeEvent);
+          if (isValid) {
+            e.stopPropagation();
+          }
+          if (isValid ||
+            (
+              currentTarget !== target &&
+              isHTMLAnchorLink(target as HTMLElement) &&
+              isSpaceKey(nativeEvent)
+            )
+          ) {
+            e.preventDefault();
+            // If the event is repeating, it may have started on a different element
+            // after which focus moved to the current element. Ignore these events and
+            // only handle the first key down event.
+            if (!state.isPressed && !repeat) {
+              state.target = currentTarget as HTMLElement;
+              state.isPressed = true;
+              triggerPressStart(e, 'keyboard');
 
-          // If the event is repeating, it may have started on a different element
-          // after which focus moved to the current element. Ignore these events and
-          // only handle the first key down event.
-          if (!state.isPressed && !e.repeat) {
-            state.target = e.currentTarget as HTMLElement;
-            state.isPressed = true;
-            triggerPressStart(e, 'keyboard');
-
-            // Focus may move before the key up event, so register the event on the document
-            // instead of the same element where the key down event occurred.
-            addGlobalListener(document, 'keyup', onKeyUp, false);
+              // Focus may move before the key up event, so register the event on the document
+              // instead of the same element where the key down event occurred.
+              addGlobalListener(document, 'keyup', onKeyUp, false);
+            }
           }
         }
       },
       onKeyUp(e) {
-        if (isValidKeyboardEvent(e.nativeEvent) && !e.repeat && e.currentTarget.contains(e.target as HTMLElement)) {
-          triggerPressUp(createEvent(state.target, e), 'keyboard');
+        const {currentTarget, target, nativeEvent, repeat} = e;
+        if (!repeat && currentTarget.contains(target as HTMLElement)) {
+          if (
+            isValidKeyboardEvent(nativeEvent) ||
+            (
+              currentTarget !== target &&
+              isHTMLAnchorLink(target as HTMLElement) &&
+              isSpaceKey(nativeEvent)
+            )
+          ) {
+            triggerPressUp(createEvent(state.target, e), 'keyboard');
+          }
         }
       },
       onClick(e) {
@@ -282,18 +303,32 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let onKeyUp = (e: KeyboardEvent) => {
-      if (state.isPressed && isValidKeyboardEvent(e)) {
+      const target = e.target as HTMLElement;
+      const isValid = isValidKeyboardEvent(e);
+      if (
+        state.isPressed &&
+        (
+          isValid ||
+          (
+            state.target.contains(target) &&
+            (isHTMLAnchorLink(target) || target.getAttribute('role') === 'link') &&
+            isSpaceKey(e)
+          )
+        )
+      ) {
+        if (isValid) {
+          e.stopPropagation();
+        }
+
         e.preventDefault();
-        e.stopPropagation();
 
         state.isPressed = false;
-        let target = e.target as HTMLElement;
         triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
 
         // If the target is a link, trigger the click method to open the URL,
         // but defer triggering pressEnd until onClick event handler.
-        if (state.target.contains(target) && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link') {
+        if (state.target.contains(target) && (isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link')) {
           state.target.click();
         }
       }
@@ -658,27 +693,40 @@ export function usePress(props: PressHookProps): PressResult {
   };
 }
 
+function isEditableText(event: KeyboardEvent):boolean {
+  const {tagName, isContentEditable} = event.target as HTMLElement;
+  return (tagName === 'INPUT' || tagName === 'TEXTAREA' || isContentEditable === true);
+}
+
+function isEnterKey(event: KeyboardEvent):boolean {
+  return event.key === 'Enter';
+}
+
+function isSpaceKey(event: KeyboardEvent):boolean {
+  const {key, code} = event;
+  return key === ' ' || key === 'Spacebar' || code === 'Space';
+}
+
 function isHTMLAnchorLink(target: HTMLElement): boolean {
   return target.tagName === 'A' && target.hasAttribute('href');
 }
 
 function isValidKeyboardEvent(event: KeyboardEvent): boolean {
-  const {key, code, target} = event;
+  const {target} = event;
   const element = target as HTMLElement;
-  const {tagName, isContentEditable} = element;
   const role = element.getAttribute('role');
+  const isEnter = isEnterKey(event);
+
   // Accessibility for keyboards. Space and Enter only.
   // "Spacebar" is for IE 11
   return (
-    (key === 'Enter' || key === ' ' || key === 'Spacebar' || code === 'Space') &&
-    (tagName !== 'INPUT' &&
-      tagName !== 'TEXTAREA' &&
-      isContentEditable !== true) &&
+    (isEnter || isSpaceKey(event)) &&
+    !isEditableText(event) &&
     // A link with a valid href should be handled natively,
     // unless it also has role='button' and was triggered using Space.
-    (!isHTMLAnchorLink(element) || (role === 'button' && key !== 'Enter')) &&
+    (!isHTMLAnchorLink(element) || (role === 'button' && !isEnter)) &&
     // An element with role='link' should only trigger with Enter key
-    !(role === 'link' && key !== 'Enter')
+    !(role === 'link' && !isEnter)
   );
 }
 
