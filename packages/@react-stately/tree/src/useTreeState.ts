@@ -40,15 +40,13 @@ export interface TreeState<T> {
  * of items from props, item expanded state, and manages multiple selection state.
  */
 export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T> {
-  let {disallowEmptySelection} = props;
   let [expandedKeys, setExpandedKeys] = useControlledState(
     props.expandedKeys ? new Set(props.expandedKeys) : undefined,
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
     props.onExpandedChange
   );
 
-  // If tree disallows empty selection, fire onSelectionChange even if user selects the currently selected option.
-  let selectionState = useMultipleSelectionState({...props, alwaysFireOnSelection: disallowEmptySelection});
+  let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);

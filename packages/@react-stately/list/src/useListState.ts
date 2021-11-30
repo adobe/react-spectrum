@@ -39,11 +39,9 @@ export interface ListState<T> {
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
-  let {filter, alwaysFireOnSelection, disallowEmptySelection} = props;
+  let {filter} = props;
 
-  // If list disallows empty selection, fire onSelectionChange even if user selects the currently selected option. This allows
-  // the user to know if the currently selected option has been clicked in a combobox, picker, or Tab component.
-  let selectionState = useMultipleSelectionState({...props, alwaysFireOnSelection: alwaysFireOnSelection || disallowEmptySelection});
+  let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);

@@ -56,16 +56,11 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   let [, setFocusedKey] = useState(null);
   let selectedKeysProp = useMemo(() => convertSelection(props.selectedKeys), [props.selectedKeys]);
   let defaultSelectedKeys = useMemo(() => convertSelection(props.defaultSelectedKeys, new Selection()), [props.defaultSelectedKeys]);
-  let onSelectionChange = (keys) => {
-    if (props.onSelectionChange && (alwaysFireOnSelection || !equalSets(keys, selectedKeys))) {
-      props.onSelectionChange(keys);
-    }
-  };
 
   let [selectedKeys, setSelectedKeys] = useControlledState(
     selectedKeysProp,
     defaultSelectedKeys,
-    onSelectionChange
+    props.onSelectionChange
   );
   let disabledKeysProp = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
@@ -102,7 +97,11 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
       setFocusedKey(k);
     },
     selectedKeys,
-    setSelectedKeys,
+    setSelectedKeys(keys) {
+      if (alwaysFireOnSelection || !equalSets(keys, selectedKeys)) {
+        setSelectedKeys(keys);
+      }
+    },
     disabledKeys: disabledKeysProp
   };
 }
