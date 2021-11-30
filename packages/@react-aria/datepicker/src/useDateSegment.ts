@@ -13,7 +13,7 @@
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
-import {isIOS, mergeProps, useEvent, useId} from '@react-aria/utils';
+import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId} from '@react-aria/utils';
 import {labelIds} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
@@ -101,6 +101,12 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
   };
 
   let onKeyDown = (e) => {
+    // Firefox does not fire selectstart for Ctrl/Cmd + A
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
+    if (e.key === 'a' && (isMac() ? e.metaKey : e.ctrlKey)) {
+      e.preventDefault();
+    }
+
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
       return;
     }
@@ -237,9 +243,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
 
   let onFocus = () => {
     enteredKeys.current = '';
-    if (ref.current?.scrollIntoView) {
-      ref.current.scrollIntoView();
-    }
+    scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
 
     // Safari requires that a selection is set or it won't fire input events.
     // Since usePress disables text selection, this won't happen by default.

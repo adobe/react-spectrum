@@ -1,5 +1,5 @@
 diff --git a/node_modules/@parcel/transformer-typescript-types/lib/TSModule.js b/node_modules/@parcel/transformer-typescript-types/lib/TSModule.js
-index 981ca7b..6cd9ebb 100644
+index 981ca7b..c02862b 100644
 --- a/node_modules/@parcel/transformer-typescript-types/lib/TSModule.js
 +++ b/node_modules/@parcel/transformer-typescript-types/lib/TSModule.js
 @@ -33,7 +33,7 @@ class TSModule {
@@ -11,8 +11,19 @@ index 981ca7b..6cd9ebb 100644
      }
    }
  
+@@ -52,7 +52,9 @@ class TSModule {
+   }
+ 
+   addLocal(name, node) {
+-    this.bindings.set(name, node);
++    const bindings = this.bindings.get(name) || new Set();
++    this.bindings.set(name, bindings);
++    bindings.add(node);
+ 
+     if (name !== 'default') {
+       this.names.set(name, name);
 diff --git a/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js b/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js
-index f346712..830f180 100644
+index f346712..18a476e 100644
 --- a/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js
 +++ b/node_modules/@parcel/transformer-typescript-types/lib/TSModuleGraph.js
 @@ -48,17 +48,13 @@ class TSModuleGraph {
@@ -37,7 +48,23 @@ index f346712..830f180 100644
      }
  
      if (module.used.has(name)) {
-@@ -130,8 +126,8 @@ class TSModuleGraph {
+@@ -81,10 +77,11 @@ class TSModuleGraph {
+       return ts.visitEachChild(node, visit, context);
+     };
+ 
+-    let node = module.bindings.get(name);
+-
+-    if (node) {
+-      ts.visitEachChild(node, visit, context);
++    let bindings = module.bindings.get(name);
++    if (bindings) {
++      for (let node of bindings) {
++        ts.visitEachChild(node, visit, context);
++      }
+     }
+   }
+ 
+@@ -130,8 +127,8 @@ class TSModuleGraph {
  
      return {
        module: m,
@@ -48,7 +75,7 @@ index f346712..830f180 100644
      };
    }
  
-@@ -223,6 +219,7 @@ class TSModuleGraph {
+@@ -223,6 +220,7 @@ class TSModuleGraph {
        exportedNames.set(e.name, e.module);
      } // Assign unique names across all modules
  
@@ -56,7 +83,7 @@ index f346712..830f180 100644
  
      for (let m of this.modules.values()) {
        for (let [orig, name] of m.names) {
-@@ -230,7 +227,13 @@ class TSModuleGraph {
+@@ -230,7 +228,13 @@ class TSModuleGraph {
            continue;
          }
  
@@ -71,7 +98,7 @@ index f346712..830f180 100644
            continue;
          }
  
-@@ -242,6 +245,37 @@ class TSModuleGraph {
+@@ -242,6 +246,37 @@ class TSModuleGraph {
        }
      }
  
