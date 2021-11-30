@@ -434,6 +434,19 @@ describe('ActionGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
+  it('ActionGroup deselects the selected button', function () {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = renderComponent({selectionMode: 'single', onSelectionChange});
+
+    let [button1] = getAllByRole('radio');
+    triggerPress(button1);
+    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
+    triggerPress(button1);
+    expect(onSelectionChange).toBeCalledTimes(2);
+    expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set([]));
+  });
+
   it('ActionGroup allows aria-label', function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
