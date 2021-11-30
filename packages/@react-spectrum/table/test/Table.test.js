@@ -2469,8 +2469,7 @@ describe('TableView', function () {
         checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
       });
 
-      // found a bug I think, announce and selectionChange should not have been called in the last block
-      it.skip('should support double click to perform onAction with mouse', function () {
+      it('should support double click to perform onAction with mouse', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
@@ -2488,7 +2487,6 @@ describe('TableView', function () {
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledWith('Foo 5');
-        expect(onSelectionChange).toHaveBeenCalledTimes(1);
       });
 
       it('should support single tap to perform onAction with touch', function () {
@@ -2592,8 +2590,7 @@ describe('TableView', function () {
         expect(tree.queryByLabelText('Select All')).toBeNull();
       });
 
-      // found a bug I think, pretty sure announce should have been called for the Space Key and not for the Enter Key
-      it.skip('should support Enter to perform onAction with keyboard', function () {
+      it('should support Enter to perform onAction with keyboard', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
@@ -2601,8 +2598,8 @@ describe('TableView', function () {
         fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
         fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
         checkSelection(onSelectionChange, ['Foo 10']);
-        expect(announce).toHaveBeenCalledWith('Foo 10 selected.');
-        expect(announce).toHaveBeenCalledTimes(1);
+        // screen reader automatically handles this one
+        expect(announce).not.toHaveBeenCalled();
         expect(onAction).not.toHaveBeenCalled();
 
         announce.mockReset();
