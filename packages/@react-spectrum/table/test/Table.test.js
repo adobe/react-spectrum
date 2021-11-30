@@ -2469,6 +2469,7 @@ describe('TableView', function () {
         userEvent.dblClick(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledWith('Foo 5');
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
       });
 
       it('should support single tap to perform onAction with touch', function () {
@@ -2639,6 +2640,27 @@ describe('TableView', function () {
         fireEvent.keyDown(document.activeElement, {key: ' '});
         fireEvent.keyUp(document.activeElement, {key: ' '});
         checkSelection(onSelectionChange, ['Foo 7']);
+      });
+
+      it('should not call onSelectionChange when hitting Space/Enter on the currently selected row', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        checkSelection(onSelectionChange, ['Foo 10']);
+        expect(onAction).not.toHaveBeenCalled();
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'Enter'});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: 'Enter'});
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 10');
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
       });
     });
   });

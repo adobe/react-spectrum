@@ -16,9 +16,25 @@ import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
 
+function equalSets(setA, setB) {
+  if (setA.size !== setB.size) {
+    return false;
+  }
+
+  for (let item of setA) {
+    if (!setB.has(item)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export interface MultipleSelectionStateProps extends MultipleSelection {
   /** How multiple selection should behave in the collection. */
-  selectionBehavior?: SelectionBehavior
+  selectionBehavior?: SelectionBehavior,
+  /** Whether onSelectionChange should always be fired, even if the key is the same. */
+  alwaysFireOnSelection?: boolean
 }
 
 /**
@@ -27,7 +43,8 @@ export interface MultipleSelectionStateProps extends MultipleSelection {
 export function useMultipleSelectionState(props: MultipleSelectionStateProps): MultipleSelectionState {
   let {
     selectionMode = 'none' as SelectionMode,
-    disallowEmptySelection
+    disallowEmptySelection,
+    alwaysFireOnSelection
   } = props;
 
   // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.
@@ -39,10 +56,16 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   let [, setFocusedKey] = useState(null);
   let selectedKeysProp = useMemo(() => convertSelection(props.selectedKeys), [props.selectedKeys]);
   let defaultSelectedKeys = useMemo(() => convertSelection(props.defaultSelectedKeys, new Selection()), [props.defaultSelectedKeys]);
+  let onSelectionChange = (keys) => {
+    if (props.onSelectionChange && (alwaysFireOnSelection || !equalSets(keys, selectedKeys))) {
+      props.onSelectionChange(keys);
+    }
+  };
+
   let [selectedKeys, setSelectedKeys] = useControlledState(
     selectedKeysProp,
     defaultSelectedKeys,
-    props.onSelectionChange
+    onSelectionChange
   );
   let disabledKeysProp = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
