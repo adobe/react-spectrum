@@ -50,7 +50,8 @@ export function ListViewItem(props) {
   let {rowProps} = useGridRow({
     node: item,
     isVirtualized: true,
-    onAction: onAction ? () => onAction(item.key) : null
+    onAction: onAction ? () => onAction(item.key) : null,
+    shouldSelectOnPressUp: isDraggable
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
