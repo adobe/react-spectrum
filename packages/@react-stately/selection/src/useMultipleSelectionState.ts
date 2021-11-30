@@ -33,8 +33,8 @@ function equalSets(setA, setB) {
 export interface MultipleSelectionStateProps extends MultipleSelection {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
-  /** Whether onSelectionChange should always be fired, even if the key is the same. */
-  alwaysFireOnSelection?: boolean
+  /** Whether onSelectionChange should fire even if the new set of keys is the same as the last. */
+  allowDuplicateSelectionEvents?: boolean
 }
 
 /**
@@ -44,7 +44,7 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   let {
     selectionMode = 'none' as SelectionMode,
     disallowEmptySelection,
-    alwaysFireOnSelection
+    allowDuplicateSelectionEvents
   } = props;
 
   // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.
@@ -97,7 +97,7 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
     },
     selectedKeys,
     setSelectedKeys(keys) {
-      if (alwaysFireOnSelection || !equalSets(keys, selectedKeys)) {
+      if (allowDuplicateSelectionEvents || !equalSets(keys, selectedKeys)) {
         setSelectedKeys(keys);
       }
     },

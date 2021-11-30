@@ -45,7 +45,7 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
     ...props,
     selectionMode: 'single',
     disallowEmptySelection: true,
-    alwaysFireOnSelection: true,
+    allowDuplicateSelectionEvents: true,
     selectedKeys,
     onSelectionChange: (keys: Set<Key>) => {
       let key = keys.values().next().value;
