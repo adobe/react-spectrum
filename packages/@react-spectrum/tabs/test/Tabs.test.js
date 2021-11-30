@@ -637,10 +637,22 @@ describe('Tabs', function () {
     tabPanelInput = getByTestId('panel2_input');
     expect(tabPanelInput.value).toBe('');
   });
-  
+
   it('supports custom props', function () {
     let {getByTestId} = renderComponent({'data-testid': 'tabs1'});
     let tabs = getByTestId('tabs1');
     expect(tabs).toBeInTheDocument();
+  });
+
+  it('fires onSelectionChange when clicking on the current tab', function () {
+    let container = renderComponent({defaultSelectedKey: items[0].name, onSelectionChange});
+    let tablist = container.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let firstItem = tabs[0];
+    expect(firstItem).toHaveAttribute('aria-selected', 'true');
+
+    triggerPress(firstItem);
+    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledWith(items[0].name);
   });
 });
