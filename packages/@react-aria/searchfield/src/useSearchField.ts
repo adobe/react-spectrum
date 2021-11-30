@@ -12,6 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSearchFieldProps} from '@react-types/searchfield';
+import {chain} from '@react-aria/utils';
 import {HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -92,7 +93,7 @@ export function useSearchField(
     ...props,
     value: state.value,
     onChange: state.setValue,
-    onKeyDown,
+    onKeyDown: chain(onKeyDown, props.onKeyDown),
     type
   }, inputRef);
 
