@@ -7,8 +7,6 @@
   "selectAll": "تحديد الكل",
   "sortable": "عمود قابل للترتيب",
   "longPressToSelect": "Long press to enter selection mode.",
-  "cmdPressToSelect": "Command press to add to selection.",
-  "keyboardSelection": "Holding Shift key while navigating will extend the current selection. Holding Option key while navigating will prevent selection.",
   "enteredSelectionMode": "Entered selection mode.",
   "leftSelectionMode": "Left selection mode."
 }

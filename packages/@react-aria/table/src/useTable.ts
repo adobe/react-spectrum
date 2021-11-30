@@ -15,10 +15,10 @@ import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {Key, RefObject, useEffect, useMemo, useState} from 'react';
 import {Layout} from '@react-stately/virtualizer';
 import {mergeDescriptions, mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
-import {RefObject, useEffect, useMemo, useState} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
@@ -26,7 +26,9 @@ import {useMessageFormatter} from '@react-aria/i18n';
 
 interface TableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
-  layout?: Layout<Node<T>>
+  layout?: Layout<Node<T>>,
+  /** Handler that is called when a user performs an action on a row. */
+  onAction?: (key: Key) => void
 }
 
 /**
@@ -141,12 +143,8 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
     let message = formatMessage('longPressToSelect');
     if (interactionType === 'touch') {
       message = formatMessage('longPressToSelect');
-    } else if (interactionType === 'mouse' || interactionType === 'pen') {
-      message = formatMessage('cmdPressToSelect');
-    } else if (interactionType === 'keyboard') {
-      message = formatMessage('keyboardSelection');
     }
-    return selectionBehavior === 'replace' && selectionMode === 'multiple' ? message : undefined;
+    return selectionBehavior === 'replace' && selectionMode !== 'none' && props.onAction ? message : undefined;
   }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, formatMessage, interactionType]);
 
   let sortDescriptionProps = useDescription(sortDescription);

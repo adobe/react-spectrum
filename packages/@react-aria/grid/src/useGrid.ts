@@ -44,7 +44,9 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   /**
    * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
    */
-  scrollRef?: RefObject<HTMLElement>
+  scrollRef?: RefObject<HTMLElement>,
+  /** Handler that is called when a user performs an action on an element. */
+  onAction?: (key: Key) => void
 }
 
 export interface GridAria {
@@ -80,8 +82,14 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
       keyboardNavigated.current = true;
     }
   }, [keyboardNavigated]);
+  let onKeyUp = useCallback((e: KeyboardEvent) => {
+    if (/^Arrow(?:Right|Left|Up|Down)$/.test(e.key) || /^(PageUp|PageDown|Home|End)$/.test(e.key)) {
+      keyboardNavigated.current = false;
+    }
+  }, [keyboardNavigated]);
   let keyboardHandlers = {
-    onKeyDown
+    onKeyDown,
+    onKeyUp
   };
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).

@@ -18,7 +18,7 @@ let descriptionId = 0;
 const descriptionNodes = new Map<string, {refCount: number, element: HTMLElement}>();
 
 export function useDescription(description: string): AriaLabelingProps {
-  let [id, setId] = useState(null);
+  let [id, setId] = useState<string>(null);
 
   useLayoutEffect(() => {
     if (!description) {
@@ -56,13 +56,7 @@ export function useDescription(description: string): AriaLabelingProps {
 }
 
 export function mergeDescriptions(...args: AriaLabelingProps[]): AriaLabelingProps {
-  let key = 'aria-describedby';
-  let ids = args.reduce((acc, id) => {
-    if (acc.length === 0) {
-      return id[key] ? `${id[key]}` : acc;
-    }
-    return id[key] ? `${acc} ${id[key]}` : acc;
-  }, '');
+  let ids = args.flatMap(arg => arg['aria-describedby']).join(' ');
   return {
     'aria-describedby': ids ? ids : undefined
   };
