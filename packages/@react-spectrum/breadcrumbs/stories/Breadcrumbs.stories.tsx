@@ -207,14 +207,6 @@ function DynamicBreadcrumbs(props = {}) {
       onAction={key => {
         // Update breadcrumbs based on activated item.
         setItems(items.slice(0, items.findIndex(item => key === item.key) + 1));
-
-        // Wait for breadcrumb items to render, then focus the current item.
-        requestAnimationFrame(() => {
-          if (domRef.current) {
-            let current = domRef.current.UNSAFE_getDOMNode().querySelector('[aria-current][tabindex]') as HTMLElement;
-            current && current.focus();
-          }
-        });
       }}>
       {items.map((item) => <Item {...item} />)}
     </Breadcrumbs>

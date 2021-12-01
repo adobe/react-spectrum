@@ -12,7 +12,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
 import React, {Key, ReactElement, useCallback, useRef} from 'react';
@@ -48,6 +48,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   let domRef = useDOMRef(ref);
   let listRef = useRef<HTMLUListElement>(null);
+  let currentRef = useRef<DOMRefValue<HTMLAnchorElement | HTMLSpanElement>>(null);
+  let isAfterAction = useRef(false);
 
   let [visibleItems, setVisibleItems] = useValueEffect(childArray.length);
 
@@ -124,11 +126,23 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         yield computeVisibleItems(newVisibleItems);
       }
     });
-  }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
+
+    if (isAfterAction.current) {
+      currentRef.current && currentRef.current.UNSAFE_getDOMNode().focus();
+      isAfterAction.current = false;
+    }
+  }, [listRef, setVisibleItems, showRoot, isMultiline, childArray.length]);
 
   useResizeObserver({ref: domRef, onResize: updateOverflow});
 
-  useLayoutEffect(updateOverflow, [children]);
+  useLayoutEffect(updateOverflow, [children, updateOverflow]);
+
+  function triggerOnAction(key: Key) {
+    if (onAction) {
+      onAction(key);
+      isAfterAction.current = true;
+    }
+  }
 
   let contents = childArray;
   if (childArray.length > visibleItems) {
@@ -136,8 +150,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     let selectedKey = selectedItem.key ?? childArray.length - 1;
     let onMenuAction = (key: Key) => {
       // Don't fire onAction when clicking on the last item
-      if (key !== selectedKey && onAction) {
-        onAction(key);
+      if (key !== selectedKey) {
+        triggerOnAction(key);
       }
     };
 
@@ -171,11 +185,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   let breadcrumbItems = contents.map((child, index) => {
     let isCurrent = index === lastIndex;
     let key = child.key ?? index;
-    let onPress = () => {
-      if (onAction) {
-        onAction(key);
-      }
-    };
+    let onPress = () => triggerOnAction(key);
 
     return (
       <li
@@ -187,6 +197,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
           )
         }>
         <BreadcrumbItem
+          ref={isCurrent ? currentRef : undefined}
           isCurrent={isCurrent}
           isDisabled={isDisabled}
           onPress={onPress}>
