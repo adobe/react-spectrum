@@ -22,6 +22,7 @@ import {Node} from '@react-types/shared';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
+import {useInteractionModality} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface TableProps<T> extends GridProps {
@@ -114,45 +115,30 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
 
   // do we have something that might be better suited for this? issue is that useInteractionModality
   // doesn't return quite enough information
-  let [interactionType, setInteractionType] = useState('');
-  useEffect(() => {
-    let onPointerDown = (e) => {
-      setInteractionType(e.pointerType);
-    };
-    let onKeyDown = () => {
-      setInteractionType('keyboard');
-    };
-    let tableRef = ref.current;
-    tableRef.addEventListener('pointerdown', onPointerDown, true);
-    tableRef.addEventListener('pointerup', onPointerDown, true);
-    tableRef.addEventListener('keydown', onKeyDown, true);
-    tableRef.addEventListener('keyup', onKeyDown, true);
-    return () => {
-      tableRef.removeEventListener('pointerdown', onPointerDown, true);
-      tableRef.removeEventListener('pointerup', onPointerDown, true);
-      tableRef.removeEventListener('keydown', onKeyDown, true);
-      tableRef.removeEventListener('keyup', onKeyDown, true);
-    };
-  });
+  // if is on touch start is in the window put the message?
+  // grab from dnd?
+  // navigator touch points?
+  let modality = useInteractionModality();
+  let shouldLongPress = (modality === 'pointer' || modality === 'virtual') && 'ontouchstart' in window;
+  console.log('shouldLongPress', shouldLongPress, modality, 'ontouchstart' in window)
+
   let interactionDescription = useMemo(() => {
     let selectionMode = state.selectionManager.selectionMode;
     let selectionBehavior = state.selectionManager.selectionBehavior;
     // if we're in replace but can select multiple, then when using touch it's long press to enter selection mode
     // if we can't tell what mode we're in, then we're probably in voice over, in which case we need the description to be set
     // before the user interacts so they know they can enter selection mode before they actually have to interact
-    let message = formatMessage('longPressToSelect');
-    if (interactionType === 'touch') {
+    let message = undefined;
+    if (shouldLongPress) {
       message = formatMessage('longPressToSelect');
     }
     return selectionBehavior === 'replace' && selectionMode !== 'none' && props.onAction ? message : undefined;
-  }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, formatMessage, interactionType]);
+  }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, formatMessage, shouldLongPress]);
 
   let sortDescriptionProps = useDescription(sortDescription);
   let longPressDescriptionProps = useDescription(interactionDescription);
   // todo: should mergeprops append describedby's?
   let descriptionProps = mergeDescriptions(sortDescriptionProps, longPressDescriptionProps);
-
-  // useEffect(, [state.selectionManager.selectionBehavior])
 
   // Only announce after initial render, tabbing to the table will tell you the initial sort info already
   useUpdateEffect(() => {

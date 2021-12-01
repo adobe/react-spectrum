@@ -141,7 +141,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     // Do not announce every time the user presses the arrow keys.
     let wasKeyboardNavigated = keyboardNavigated.current;
     keyboardNavigated.current = false;
-    if (!state.selectionManager.isFocused || wasKeyboardNavigated) {
+    if (!state.selectionManager.isFocused || (wasKeyboardNavigated && state.selectionManager.selectedKeys.size === 1 && lastSelection.current.size <= 1)) {
+      lastSelection.current = selection;
       return;
     }
 
@@ -149,8 +150,9 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     let removedKeys = diffSelection(lastSelection.current, selection);
 
     // If adding or removing a single row from the selection, announce the name of that item.
+    // or if we are coming from multiple selected and keyboard navigating to a single item, announce the item we've moved to.
     let messages = [];
-    if (addedKeys.size === 1 && removedKeys.size === 0) {
+    if ((addedKeys.size === 1 && removedKeys.size === 0) || (wasKeyboardNavigated && state.selectionManager.selectedKeys.size === 1)) {
       let addedText = getRowText(addedKeys.keys().next().value);
       if (addedText) {
         messages.push(formatMessage('selectedItem', {item: addedText}));

@@ -2649,8 +2649,32 @@ describe('TableView', function () {
         onSelectionChange.mockReset();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
-        expect(announce).not.toHaveBeenCalled();
+        expect(announce).toHaveBeenCalledWith('Foo 6 selected. 2 items selected.');
         checkSelection(onSelectionChange, ['Foo 5', 'Foo 6']);
+      });
+
+      it('should announce the new row when moving with the keyboard after multi select', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        userEvent.click(getCell(tree, 'Baz 5'));
+        expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+        expect(announce).toHaveBeenCalledWith('Foo 6 selected. 2 items selected.');
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 6']);
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        expect(announce).toHaveBeenCalledWith('Foo 7 selected. 1 item selected.');
+        checkSelection(onSelectionChange, ['Foo 7']);
       });
 
       it('should support non-contiguous selection with the keyboard', function () {
