@@ -29,7 +29,7 @@ import {useTextField} from '@react-aria/textfield';
 
 interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
   popoverRef: RefObject<HTMLDivElement>,
   /** The ref for the list box. */
@@ -69,6 +69,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     listBoxRef,
     keyboardDelegate,
     // completionMode = 'suggest',
+    shouldFocusWrap,
     isReadOnly,
     isDisabled
   } = props;
@@ -76,7 +77,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let formatMessage = useMessageFormatter(intlMessages);
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      type: 'listbox'
+      type: 'listbox',
+      isDisabled: isDisabled || isReadOnly
     },
     state,
     buttonRef
@@ -98,6 +100,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     keyboardDelegate: delegate,
     disallowTypeAhead: true,
     disallowEmptySelection: true,
+    shouldFocusWrap,
     ref: inputRef,
     // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
     isVirtualized: true
@@ -300,7 +303,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       ...triggerLabelProps,
       excludeFromTabOrder: true,
       onPress,
-      onPressStart
+      onPressStart,
+      isDisabled: isDisabled || isReadOnly
     },
     inputProps: mergeProps(inputProps, {
       role: 'combobox',

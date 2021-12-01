@@ -11,7 +11,7 @@
  */
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
-import {classNames, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -19,7 +19,7 @@ import React, {Key, ReactElement, useCallback, useRef} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useResizeObserver} from '@react-aria/utils';
 

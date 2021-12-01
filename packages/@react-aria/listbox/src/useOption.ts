@@ -13,7 +13,7 @@
 import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
 import {HTMLAttributes, Key, RefObject} from 'react';
-import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {isMac, isWebKit, mergeProps, useSlotId} from '@react-aria/utils';
 import {ListState} from '@react-stately/list';
 import {useSelectableItem} from '@react-aria/selection';
@@ -126,16 +126,15 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  let {itemProps} = useSelectableItem({
+  let {itemProps, isPressed} = useSelectableItem({
     selectionManager: state.selectionManager,
     key,
     ref,
     shouldSelectOnPressUp,
     isVirtualized,
-    shouldUseVirtualFocus
+    shouldUseVirtualFocus,
+    isDisabled
   });
-
-  let {pressProps, isPressed} = usePress({...itemProps, isDisabled, preventFocusOnPress: shouldUseVirtualFocus});
 
   let {hoverProps} = useHover({
     isDisabled: isDisabled || !shouldFocusOnHover,
@@ -150,7 +149,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   return {
     optionProps: {
       ...optionProps,
-      ...mergeProps(pressProps, hoverProps),
+      ...mergeProps(itemProps, hoverProps),
       id: getItemId(state, key)
     },
     labelProps: {

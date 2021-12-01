@@ -13,18 +13,24 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+import {ComboBox} from '@react-spectrum/combobox';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {Key, useState} from 'react';
+import React, {Key, useEffect, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '@react-spectrum/searchwithin';
+import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
+import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import {Well} from '@react-spectrum/well';
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -72,6 +78,74 @@ storiesOf('Form', module)
     )
   )
   .add(
+    'fields with autoComplete property',
+    () => {
+      const [checked, setChecked] = useState(true);
+      return (
+        <Form>
+          <Well role="group" aria-labelledby="billing-legend">
+            <h2 id="billing-legend" className={typographyStyles['spectrum-Heading4']}>Billing address</h2>
+            <Flex>
+              <TextField autoComplete="billing given-name" name="firstName" isRequired label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
+              <TextField autoComplete="billing family-name" name="lastName" isRequired label="Last Name" placeholder="Smith" flex={1} />
+            </Flex>
+            <Flex>
+              <TextArea autoComplete="billing street-address" name="streetAddress" isRequired label="Street Address" placeholder="123 Any Street" flex={1} />
+            </Flex>
+            <Flex>
+              <TextField autoComplete="billing address-level2" name="city" isRequired label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
+              <Picker autoComplete="billing address-level1" name="state" isRequired label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+                {item => <Item key={item.abbr}>{item.name}</Item>}
+              </Picker>
+              <TextField autoComplete="billing postal-code" name="zip" isRequired label="Zip code" placeholder="12345" flex={1} />
+            </Flex>
+            <Flex>
+              <Picker autoComplete="billing country" name="country" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100" flex={1}>
+                {item => <Item key={item.code}>{item.name}</Item>}
+              </Picker>
+            </Flex>
+            <Flex>
+              <TextField autoComplete="billing tel" type="tel" name="phone" label="Phone number" placeholder="123-456-7890" marginEnd="size-100" flex={1} />
+              <TextField autoComplete="billing email" type="email" name="email" isRequired label="Email address" placeholder="me@example.org" marginEnd="size-100" flex={1} />
+            </Flex>
+          </Well>
+          <Well role="group" aria-labelledby="shipping-legend">
+            <h2 id="shipping-legend" className={typographyStyles['spectrum-Heading4']}>Shipping address</h2>
+            <Checkbox isSelected={checked} onChange={setChecked} >Same as billing address</Checkbox>
+            {
+              !checked &&
+              <>
+                <Flex>
+                  <TextField autoComplete="shipping given-name" name="shippingFirstName" isRequired label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
+                  <TextField autoComplete="shipping family-name" name="shippingLastName" isRequired label="Last Name" placeholder="Smith" flex={1} />
+                </Flex>
+                <Flex>
+                  <TextArea autoComplete="shipping street-address" name="shippingStreetAddress" isRequired label="Street Address" placeholder="123 Any Street" flex={1} />
+                </Flex>
+                <Flex>
+                  <TextField autoComplete="shipping address-level2" name="shippingCity" isRequired label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
+                  <Picker autoComplete="shipping address-level1" name="shippingState" isRequired label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+                    {item => <Item key={item.abbr}>{item.name}</Item>}
+                  </Picker>
+                  <TextField autoComplete="shipping postal-code" name="shippingZip" isRequired label="Zip code" placeholder="12345" flex={1} />
+                </Flex>
+                <Flex>
+                  <Picker autoComplete="shipping country" name="shippingCountry" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100" flex={1}>
+                    {item => <Item key={item.code}>{item.name}</Item>}
+                  </Picker>
+                </Flex>
+                <Flex>
+                  <TextField autoComplete="shipping tel" type="tel" name="shippingPhone" label="Phone number" placeholder="123-456-7890" marginEnd="size-100" flex={1} />
+                  <TextField autoComplete="shipping email" type="email" name="shippingEmail" isRequired label="Email address" placeholder="me@example.org" marginEnd="size-100" flex={1} />
+                </Flex>
+              </>
+            }
+          </Well>
+        </Form>
+      );
+    }
+  )
+  .add(
     'isRequired: true',
     () => render({isRequired: true})
   )
@@ -112,6 +186,10 @@ storiesOf('Form', module)
     () => <FormWithControls />
   )
   .add(
+    'form with submit',
+    () => <FormWithSubmit />
+  )
+  .add(
     'form with numberfield and locale=ar-AE',
     () => (
       <Flex gap="size-100">
@@ -133,28 +211,24 @@ storiesOf('Form', module)
 function render(props: any = {}) {
   return (
     <Form {...props}>
-      <TextField label="First Name" placeholder="John" />
-      <TextField label="Last Name" placeholder="Smith" />
-      <TextField label="Street Address" placeholder="123 Any Street" description="Please include apartment or suite number." errorMessage="Please enter a valid street address." />
-      <TextField label="City" placeholder="San Francisco" />
-      <NumberField label="Years lived there" />
-      <Picker label="State" placeholder="Select a state" items={states}>
-        {item => <Item key={item.abbr}>{item.name}</Item>}
-      </Picker>
-      <TextField label="Zip code" placeholder="12345" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
-      <Picker label="Country" placeholder="Select a country" items={countries}>
-        {item => <Item key={item.name}>{item.name}</Item>}
-      </Picker>
       <CheckboxGroup defaultValue={['dragons']} label="Pets">
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>
       </CheckboxGroup>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group">
-        <Radio value="dogs">Dogs</Radio>
-        <Radio value="cats">Cats</Radio>
-        <Radio value="dragons">Dragons</Radio>
-      </RadioGroup>
+      <ComboBox label="More Animals">
+        <Item key="red panda">Red Panda</Item>
+        <Item key="aardvark">Aardvark</Item>
+        <Item key="kangaroo">Kangaroo</Item>
+        <Item key="snake">Snake</Item>
+      </ComboBox>
+      <NumberField label="Years lived there" />
+      <Picker label="State" placeholder="Select a state" items={states}>
+        {item => <Item key={item.abbr}>{item.name}</Item>}
+      </Picker>
+      <Picker label="Country" placeholder="Select a country" items={countries}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Picker>
       <Picker label="Favorite color" description="Select any color you like." errorMessage="Please select a nicer color.">
         <Item>Red</Item>
         <Item>Orange</Item>
@@ -163,13 +237,22 @@ function render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
-      <TextArea label="Comments" placeholder="How do you feel?" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
-      <SearchWithin label="Search">
-        <SearchField placeholder="Search" />
+      <RadioGroup label="Favorite pet" name="favorite-pet-group">
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
+      </RadioGroup>
+      <SearchField label="Search" />
+      <SearchWithin label="Search cities">
+        <SearchField placeholder="City" />
         <Picker label="State" placeholder="Select a state" items={states}>
           {item => <Item key={item.abbr}>{item.name}</Item>}
         </Picker>
       </SearchWithin>
+      <Switch>Low power mode</Switch>
+      <TextArea label="Comments" placeholder="How do you feel?" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <TextField label="City" placeholder="San Francisco" />
+      <TextField label="Zip code" placeholder="12345" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
     </Form>
   );
 }
@@ -345,5 +428,152 @@ function FormWithControls(props: any = {}) {
         </Flex>
       </form>
     </Flex>
+  );
+}
+
+function FormWithSubmit() {
+  let [policies, setPolicies] = useState([]);
+  let [policiesDirty, setPoliciesDirty] = useState(false);
+  let [pet, setPet] = useState('');
+  let [petDirty, setPetDirty] = useState(false);
+  let [truth, setTruth] = useState(false);
+  let [truthDirty, setTruthDirty] = useState(false);
+  let [email, setEmail] = useState('');
+  let [emailDirty, setEmailDirty] = useState(false);
+
+  let [formStatus, setFormStatus] = useState<'progress' | 'invalid' | 'valid' | 'fixing'>('progress');
+  let [isSubmitted, setSubmitted] = useState(false); // TODO: really should be isSectionInvalid / 'fixing' for each form field. once form is submitted with mistakes, unchecking an unrelated, previously valid field should not make it look invalid.
+
+  let getValidationState = (isValid: boolean): 'invalid' | null =>
+    ['invalid', 'fixing'].includes(formStatus) && !isValid ? 'invalid' : null;
+
+  useEffect(() => {
+    let validate = (): boolean => policies.length === 3 && pet && truth && email.includes('@');
+    let formDirty = policiesDirty || petDirty || truthDirty || emailDirty;
+
+    if (isSubmitted) {
+      if (formDirty) {
+        setFormStatus('fixing');
+      } else {
+        setFormStatus(validate() ? 'valid' : 'invalid');
+      }
+    } else {
+      setFormStatus('progress');
+    }
+  }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, email, emailDirty, isSubmitted]);
+
+  let Status = ({formStatus}) => {
+    let [variant, setVariant] = useState<'info' | 'negative' | 'positive' | 'notice'>('info');
+
+    useEffect(() => {
+      switch (formStatus) {
+        case 'invalid':
+          return setVariant('negative');
+        case 'valid':
+          return setVariant('positive');
+        case 'fixing':
+          return setVariant('notice');
+        default:
+          return setVariant('info');
+      }
+    }, [formStatus]);
+
+    return (
+      <StatusLight variant={variant}>
+        {formStatus === 'progress' && 'In progress'}
+        {formStatus === 'valid' && 'Submitted successfully'}
+        {formStatus === 'invalid' && 'Error'}
+        {formStatus === 'fixing' && 'Fixing mistakes'}
+      </StatusLight>
+    );
+  };
+
+  let handleSubmit: React.FormEventHandler<Element> = (e) => {
+    e.preventDefault();
+    setPoliciesDirty(false);
+    setTruthDirty(false);
+    setPetDirty(false);
+    setEmailDirty(false);
+    setSubmitted(true);
+    action('onSubmit')(e);
+  };
+
+  let reset = () => {
+    setSubmitted(false);
+    setPolicies([]);
+    setPet('');
+    setTruth(false);
+    setPoliciesDirty(false);
+    setPetDirty(false);
+    setTruthDirty(false);
+    setEmail('');
+    setEmailDirty(false);
+    setFormStatus('progress');
+  };
+
+  return (
+    <Form onSubmit={handleSubmit} isReadOnly={formStatus === 'valid'}>
+      <TextField
+        label="Email address"
+        type="email"
+        value={email}
+        onChange={chain(() => setEmailDirty(true), setEmail)}
+        validationState={getValidationState(email.includes('@'))}
+        errorMessage="Email address must contain @" />
+      <CheckboxGroup
+        label="Agree to the following"
+        isRequired
+        value={policies}
+        onChange={chain(() => setPoliciesDirty(true), setPolicies)}>
+        <Checkbox
+          value="terms"
+          isRequired
+          validationState={getValidationState(policies.includes('terms'))}>
+          Terms and conditions
+        </Checkbox>
+        <Checkbox
+          value="privacy"
+          isRequired
+          validationState={getValidationState(policies.includes('privacy'))}>
+          Privacy policy
+        </Checkbox>
+        <Checkbox
+          value="cookies"
+          isRequired
+          validationState={getValidationState(policies.includes('cookies'))}>
+          Cookie policy
+        </Checkbox>
+      </CheckboxGroup>
+
+      <Checkbox
+        isRequired
+        value="truth"
+        isSelected={truth}
+        onChange={(chain(() => setTruthDirty(true), setTruth))}
+        validationState={getValidationState(truth)}>
+        I am telling the truth
+      </Checkbox>
+
+      <RadioGroup
+        label="Favorite pet"
+        isRequired
+        value={pet}
+        onChange={chain(() => setPetDirty(true), setPet)}
+        validationState={getValidationState(Boolean(pet))}>
+        <Radio value="dogs">
+          Dogs
+        </Radio>
+        <Radio value="cats">
+          Cats
+        </Radio>
+        <Radio value="dragons">
+          Dragons
+        </Radio>
+      </RadioGroup>
+
+      <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
+      <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>
+      <Status formStatus={formStatus} />
+    </Form>
   );
 }

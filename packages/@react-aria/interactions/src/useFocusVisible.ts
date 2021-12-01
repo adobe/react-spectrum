@@ -58,7 +58,7 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
  */
 function isValidKey(e: KeyboardEvent) {
   // Control and Shift keys trigger when navigating back to the tab with keyboard.
-  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey || e.type === 'keyup' && (e.key === 'Control' || e.key === 'Shift'));
+  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey || e.key === 'Control' || e.key === 'Shift' || e.key === 'Meta');
 }
 
 

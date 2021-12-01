@@ -10,19 +10,50 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render as render_, within} from '@testing-library/react';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 function beforeInput(target, key) {
   // JSDOM doesn't support the beforeinput event
   let e = new InputEvent('beforeinput', {cancelable: true, data: key});
   e.inputType = 'insertText';
   fireEvent(target, e);
+}
+
+function getTextValue(el) {
+  let placeholder = el.getAttribute('aria-placeholder');
+  if (placeholder) {
+    return placeholder;
+  }
+
+  return [...el.childNodes].map(el => el.nodeType === 3 ? el.textContent : getTextValue(el)).join('');
+}
+
+function expectPlaceholder(el, placeholder) {
+  expect(getTextValue(el)).toBe(placeholder);
+}
+
+function render(el) {
+  if (el.type === Provider) {
+    return render_(el);
+  }
+  let res = render_(
+    <Provider theme={theme}>
+      {el}
+    </Provider>
+  );
+  return {
+    ...res,
+    rerender(el) {
+      return res.rerender(<Provider theme={theme}>{el}</Provider>);
+    }
+  };
 }
 
 describe('DatePicker', function () {
@@ -47,21 +78,21 @@ describe('DatePicker', function () {
       expect(segments.length).toBe(3);
 
       expect(segments[0].textContent).toBe('2');
-      expect(segments[0].getAttribute('aria-label')).toBe('Month');
+      expect(segments[0].getAttribute('aria-label')).toBe('month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
       expect(segments[0].getAttribute('aria-valuetext')).toBe('2 − February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
       expect(segments[1].textContent).toBe('3');
-      expect(segments[1].getAttribute('aria-label')).toBe('Day');
+      expect(segments[1].getAttribute('aria-label')).toBe('day');
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
 
       expect(segments[2].textContent).toBe('2019');
-      expect(segments[2].getAttribute('aria-label')).toBe('Year');
+      expect(segments[2].getAttribute('aria-label')).toBe('year');
       expect(segments[2].getAttribute('aria-valuenow')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuetext')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuemin')).toBe('1');
@@ -80,49 +111,49 @@ describe('DatePicker', function () {
       expect(segments.length).toBe(7);
 
       expect(segments[0].textContent).toBe('2');
-      expect(segments[0].getAttribute('aria-label')).toBe('Month');
+      expect(segments[0].getAttribute('aria-label')).toBe('month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
       expect(segments[0].getAttribute('aria-valuetext')).toBe('2 − February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
       expect(segments[1].textContent).toBe('3');
-      expect(segments[1].getAttribute('aria-label')).toBe('Day');
+      expect(segments[1].getAttribute('aria-label')).toBe('day');
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
 
       expect(segments[2].textContent).toBe('2019');
-      expect(segments[2].getAttribute('aria-label')).toBe('Year');
+      expect(segments[2].getAttribute('aria-label')).toBe('year');
       expect(segments[2].getAttribute('aria-valuenow')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuetext')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[2].getAttribute('aria-valuemax')).toBe('9999');
 
       expect(segments[3].textContent).toBe('12');
-      expect(segments[3].getAttribute('aria-label')).toBe('Hour');
+      expect(segments[3].getAttribute('aria-label')).toBe('hour');
       expect(segments[3].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[3].getAttribute('aria-valuetext')).toBe('12 AM');
       expect(segments[3].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[3].getAttribute('aria-valuemax')).toBe('11');
 
       expect(segments[4].textContent).toBe('00');
-      expect(segments[4].getAttribute('aria-label')).toBe('Minute');
+      expect(segments[4].getAttribute('aria-label')).toBe('minute');
       expect(segments[4].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[4].getAttribute('aria-valuetext')).toBe('00');
       expect(segments[4].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[4].getAttribute('aria-valuemax')).toBe('59');
 
       expect(segments[5].textContent).toBe('00');
-      expect(segments[5].getAttribute('aria-label')).toBe('Second');
+      expect(segments[5].getAttribute('aria-label')).toBe('second');
       expect(segments[5].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[5].getAttribute('aria-valuetext')).toBe('00');
       expect(segments[5].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[5].getAttribute('aria-valuemax')).toBe('59');
 
       expect(segments[6].textContent).toBe('AM');
-      expect(segments[6].getAttribute('aria-label')).toBe('Day Period');
+      expect(segments[6].getAttribute('aria-label')).toBe('AM/PM');
       expect(segments[6].getAttribute('aria-valuetext')).toBe('12 AM');
     });
   });
@@ -220,7 +251,7 @@ describe('DatePicker', function () {
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 8, 45));
       expect(combobox).toHaveTextContent('2/4/2019, 8:45 AM');
 
-      let hour = within(timeField).getByLabelText('Hour');
+      let hour = within(timeField).getByLabelText('hour');
       expect(hour).toHaveAttribute('role', 'spinbutton');
       expect(hour).toHaveAttribute('aria-valuetext', '8 AM');
 
@@ -246,8 +277,8 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
-      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).set({hour: 12, minute: 0}).toDate(getLocalTimeZone()));
-      expect(combobox).toHaveTextContent(placeholder);
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
+      expectPlaceholder(combobox, placeholder);
 
       let button = getByRole('button');
       triggerPress(button);
@@ -260,7 +291,7 @@ describe('DatePicker', function () {
       expect(selected).toBeUndefined();
 
       let timeField = getAllByLabelText('Time')[0];
-      expect(timeField).toHaveTextContent('12:00 PM');
+      expectPlaceholder(timeField, '12:00 AM');
 
       // selecting a date should not close the popover
       let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
@@ -270,25 +301,25 @@ describe('DatePicker', function () {
 
       expect(dialog).toBeVisible();
       expect(onChange).not.toHaveBeenCalled();
-      expect(combobox).toHaveTextContent(placeholder);
+      expectPlaceholder(combobox, placeholder);
 
-      let hour = within(timeField).getByLabelText('Hour');
+      let hour = within(timeField).getByLabelText('hour');
       expect(hour).toHaveAttribute('role', 'spinbutton');
-      expect(hour).toHaveAttribute('aria-valuetext', '12 PM');
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
 
       act(() => hour.focus());
       fireEvent.keyDown(hour, {key: 'ArrowUp'});
       fireEvent.keyUp(hour, {key: 'ArrowUp'});
 
-      expect(hour).toHaveAttribute('aria-valuetext', '1 PM');
+      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
 
       expect(onChange).not.toHaveBeenCalled();
-      expect(combobox).toHaveTextContent(placeholder);
+      expectPlaceholder(combobox, placeholder);
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
-      expect(document.activeElement).toHaveAttribute('aria-label', 'Minute');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'minute');
       expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
@@ -296,22 +327,99 @@ describe('DatePicker', function () {
       expect(document.activeElement).toHaveAttribute('aria-valuetext', '01');
 
       expect(onChange).not.toHaveBeenCalled();
-      expect(combobox).toHaveTextContent(placeholder);
+      expectPlaceholder(combobox, placeholder);
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
-      expect(document.activeElement).toHaveAttribute('aria-label', 'Day Period');
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 PM');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM');
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 AM');
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
-      let value = toCalendarDateTime(today(getLocalTimeZone())).set({hour: 13, minute: 1});
+      let value = toCalendarDateTime(today(getLocalTimeZone())).set({hour: 1, minute: 1});
       expect(onChange).toHaveBeenCalledWith(value);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+    });
+
+    it('should confirm time placeholder on blur if date is selected', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme}>
+          <DatePicker label="Date" granularity="minute" onChange={onChange} />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
+      expectPlaceholder(combobox, placeholder);
+
+      let button = getByRole('button');
+      triggerPress(button);
+      act(() => jest.runAllTimers());
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let cells = getAllByRole('gridcell');
+      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      triggerPress(todayCell.firstChild);
+      expect(todayCell).toHaveAttribute('aria-selected', 'true');
+      expect(onChange).not.toHaveBeenCalled();
+
+      userEvent.click(document.body);
+      act(() => jest.runAllTimers());
+
+      expect(dialog).not.toBeInTheDocument();
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      let value = toCalendarDateTime(today(getLocalTimeZone()));
+      expect(onChange).toHaveBeenCalledWith(value);
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+    });
+
+    it('should not confirm on blur if date is not selected', function () {
+      let onChange = jest.fn();
+      let {getByRole, getAllByRole, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <DatePicker label="Date" granularity="minute" onChange={onChange} />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
+      expectPlaceholder(combobox, placeholder);
+
+      let button = getByRole('button');
+      triggerPress(button);
+      act(() => jest.runAllTimers());
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let timeField = getAllByLabelText('Time')[0];
+      expectPlaceholder(timeField, '12:00 AM');
+
+      let hour = within(timeField).getByLabelText('hour');
+      expect(hour).toHaveAttribute('role', 'spinbutton');
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
+
+      act(() => hour.focus());
+      fireEvent.keyDown(hour, {key: 'ArrowUp'});
+      fireEvent.keyUp(hour, {key: 'ArrowUp'});
+
+      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
+
+      userEvent.click(document.body);
+      act(() => jest.runAllTimers());
+
+      expect(dialog).not.toBeInTheDocument();
+      expect(onChange).not.toHaveBeenCalled();
     });
   });
 
@@ -386,16 +494,102 @@ describe('DatePicker', function () {
         expect(segment).toHaveAttribute('aria-labelledby', `foo ${segmentId}`);
       }
     });
+
+    it('should support help text description', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" description="Help text" />);
+
+      let [group, field] = getAllByRole('group');
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(field).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+
+      let description = document.getElementById(group.getAttribute('aria-describedby'));
+      expect(description).toHaveTextContent('Help text');
+    });
+
+    it('should support error message', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" errorMessage="Error message" validationState="invalid" />);
+
+      let [group, field] = getAllByRole('group');
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(field).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+
+      let description = document.getElementById(group.getAttribute('aria-describedby'));
+      expect(description).toHaveTextContent('Error message');
+    });
+
+    it('should not display error message if not invalid', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" errorMessage="Error message" />);
+
+      let [group, field] = getAllByRole('group');
+      expect(group).not.toHaveAttribute('aria-describedby');
+      expect(field).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should support help text with a value', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" description="Help text" value={new CalendarDate(2020, 2, 3)} />);
+
+      let [group, field] = getAllByRole('group');
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(field).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+
+      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(description).toBe('February 3, 2020 Help text');
+    });
+
+    it('should support error message with a value', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" errorMessage="Error message" validationState="invalid" value={new CalendarDate(2020, 2, 3)} />);
+
+      let [group, field] = getAllByRole('group');
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(field).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+
+      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(description).toBe('February 3, 2020 Error message');
+    });
+
+    it('should support format help text', function () {
+      let {getAllByRole, getByText} = render(<DatePicker label="Date" showFormatHelpText />);
+
+      // Not needed in aria-described by because each segment has a label already, so this would be duplicative.
+      let [group, field] = getAllByRole('group');
+      expect(group).not.toHaveAttribute('aria-describedby');
+      expect(field).not.toHaveAttribute('aria-describedby');
+
+      expect(getByText('month / day / year')).toBeVisible();
+    });
   });
 
   describe('focus management', function () {
-    it('should focus the last segment on mouse down in the field', function () {
+    it('should focus the first segment on mouse down in the field', function () {
       let {getAllByRole} = render(<DatePicker label="Date" />);
       let field = getAllByRole('group')[1];
       let segments = getAllByRole('spinbutton');
 
       triggerPress(field);
-      expect(segments[segments.length - 1]).toHaveFocus();
+      expect(segments[0]).toHaveFocus();
+    });
+
+    it('should focus the first unfilled segment on mouse down in the field', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" />);
+      let field = getAllByRole('group')[1];
+      let segments = getAllByRole('spinbutton');
+
+      act(() => segments[0].focus());
+      fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      expect(segments[0]).toHaveFocus();
+
+      triggerPress(field);
+      expect(segments[1]).toHaveFocus();
+    });
+
+    it('should focus the last segment on mouse down in the field with a value', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" value={new CalendarDate(2020, 2, 3)} />);
+      let field = getAllByRole('group')[1];
+      let segments = getAllByRole('spinbutton');
+
+      triggerPress(field);
+      expect(segments[2]).toHaveFocus();
     });
   });
 
@@ -474,132 +668,132 @@ describe('DatePicker', function () {
 
       describe('month', function () {
         it('should support using the arrow keys to increment and decrement the month', function () {
-          testArrows('Month', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 3, 3), new CalendarDate(2019, 1, 3));
+          testArrows('month', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 3, 3), new CalendarDate(2019, 1, 3));
         });
 
         it('should wrap around when incrementing and decrementing the month', function () {
-          testArrows('Month', new CalendarDate(2019, 12, 3), new CalendarDate(2019, 1, 3), new CalendarDate(2019, 11, 3));
-          testArrows('Month', new CalendarDate(2019, 1, 3), new CalendarDate(2019, 2, 3), new CalendarDate(2019, 12, 3));
+          testArrows('month', new CalendarDate(2019, 12, 3), new CalendarDate(2019, 1, 3), new CalendarDate(2019, 11, 3));
+          testArrows('month', new CalendarDate(2019, 1, 3), new CalendarDate(2019, 2, 3), new CalendarDate(2019, 12, 3));
         });
 
         it('should support using the page up and down keys to increment and decrement the month by 2', function () {
-          testArrows('Month', new CalendarDate(2019, 1, 3), new CalendarDate(2019, 3, 3), new CalendarDate(2019, 11, 3), {upKey: 'PageUp', downKey: 'PageDown'});
-          testArrows('Month', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 4, 3), new CalendarDate(2019, 12, 3), {upKey: 'PageUp', downKey: 'PageDown'});
+          testArrows('month', new CalendarDate(2019, 1, 3), new CalendarDate(2019, 3, 3), new CalendarDate(2019, 11, 3), {upKey: 'PageUp', downKey: 'PageDown'});
+          testArrows('month', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 4, 3), new CalendarDate(2019, 12, 3), {upKey: 'PageUp', downKey: 'PageDown'});
         });
 
         it('should support using the home and end keys to jump to the min and max month', function () {
-          testArrows('Month', new CalendarDate(2019, 6, 3), new CalendarDate(2019, 12, 3), new CalendarDate(2019, 1, 3), {upKey: 'End', downKey: 'Home'});
+          testArrows('month', new CalendarDate(2019, 6, 3), new CalendarDate(2019, 12, 3), new CalendarDate(2019, 1, 3), {upKey: 'End', downKey: 'Home'});
         });
       });
 
       describe('day', function () {
         it('should support using the arrow keys to increment and decrement the day', function () {
-          testArrows('Day', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 4), new CalendarDate(2019, 2, 2));
+          testArrows('day', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 4), new CalendarDate(2019, 2, 2));
         });
 
         it('should wrap around when incrementing and decrementing the day', function () {
-          testArrows('Day', new CalendarDate(2019, 2, 28), new CalendarDate(2019, 2, 1), new CalendarDate(2019, 2, 27));
-          testArrows('Day', new CalendarDate(2019, 2, 1), new CalendarDate(2019, 2, 2), new CalendarDate(2019, 2, 28));
+          testArrows('day', new CalendarDate(2019, 2, 28), new CalendarDate(2019, 2, 1), new CalendarDate(2019, 2, 27));
+          testArrows('day', new CalendarDate(2019, 2, 1), new CalendarDate(2019, 2, 2), new CalendarDate(2019, 2, 28));
         });
 
         it('should support using the page up and down keys to increment and decrement the day by 7', function () {
-          testArrows('Day', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 10), new CalendarDate(2019, 2, 24), {upKey: 'PageUp', downKey: 'PageDown'});
+          testArrows('day', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 10), new CalendarDate(2019, 2, 24), {upKey: 'PageUp', downKey: 'PageDown'});
         });
 
         it('should support using the home and end keys to jump to the min and max day', function () {
-          testArrows('Day', new CalendarDate(2019, 2, 5), new CalendarDate(2019, 2, 28), new CalendarDate(2019, 2, 1), {upKey: 'End', downKey: 'Home'});
+          testArrows('day', new CalendarDate(2019, 2, 5), new CalendarDate(2019, 2, 28), new CalendarDate(2019, 2, 1), {upKey: 'End', downKey: 'Home'});
         });
       });
 
       describe('year', function () {
         it('should support using the arrow keys to increment and decrement the year', function () {
-          testArrows('Year', new CalendarDate(2019, 2, 3), new CalendarDate(2020, 2, 3), new CalendarDate(2018, 2, 3));
+          testArrows('year', new CalendarDate(2019, 2, 3), new CalendarDate(2020, 2, 3), new CalendarDate(2018, 2, 3));
         });
 
         it('should support using the page up and down keys to increment and decrement the year to the nearest 5', function () {
-          testArrows('Year', new CalendarDate(2019, 2, 3), new CalendarDate(2020, 2, 3), new CalendarDate(2015, 2, 3), {upKey: 'PageUp', downKey: 'PageDown'});
+          testArrows('year', new CalendarDate(2019, 2, 3), new CalendarDate(2020, 2, 3), new CalendarDate(2015, 2, 3), {upKey: 'PageUp', downKey: 'PageDown'});
         });
       });
 
       describe('hour', function () {
         it('should support using the arrow keys to increment and decrement the hour', function () {
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 9), new CalendarDateTime(2019, 2, 3, 7));
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 9), new CalendarDateTime(2019, 2, 3, 7));
         });
 
         it('should wrap around when incrementing and decrementing the hour in 12 hour time', function () {
           // AM
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 10));
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 1), new CalendarDateTime(2019, 2, 3, 11));
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 10));
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 1), new CalendarDateTime(2019, 2, 3, 11));
 
           // PM
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 12), new CalendarDateTime(2019, 2, 3, 22));
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 12), new CalendarDateTime(2019, 2, 3, 13), new CalendarDateTime(2019, 2, 3, 23));
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 12), new CalendarDateTime(2019, 2, 3, 22));
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 12), new CalendarDateTime(2019, 2, 3, 13), new CalendarDateTime(2019, 2, 3, 23));
         });
 
         it('should wrap around when incrementing and decrementing the hour in 24 hour time', function () {
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 22), {props: {hourCycle: 24}});
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 1), new CalendarDateTime(2019, 2, 3, 23), {props: {hourCycle: 24}});
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 22), {props: {hourCycle: 24}});
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 1), new CalendarDateTime(2019, 2, 3, 23), {props: {hourCycle: 24}});
         });
 
         it('should support using the page up and down keys to increment and decrement the hour by 2', function () {
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 10), new CalendarDateTime(2019, 2, 3, 6), {upKey: 'PageUp', downKey: 'PageDown'});
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 10), new CalendarDateTime(2019, 2, 3, 6), {upKey: 'PageUp', downKey: 'PageDown'});
         });
 
         it('should support using the home and end keys to jump to the min and max hour in 12 hour time', function () {
           // AM
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 0), {upKey: 'End', downKey: 'Home'});
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 0), {upKey: 'End', downKey: 'Home'});
 
           // PM
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 16), new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 12), {upKey: 'End', downKey: 'Home'});
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 16), new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 12), {upKey: 'End', downKey: 'Home'});
         });
 
         it('should support using the home and end keys to jump to the min and max hour in 24 hour time', function () {
-          testArrows('Hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 0), {upKey: 'End', downKey: 'Home', props: {hourCycle: 24}});
+          testArrows('hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 0), {upKey: 'End', downKey: 'Home', props: {hourCycle: 24}});
         });
       });
 
       describe('minute', function () {
         it('should support using the arrow keys to increment and decrement the minute', function () {
-          testArrows('Minute', new CalendarDateTime(2019, 2, 3, 8, 5), new CalendarDateTime(2019, 2, 3, 8, 6), new CalendarDateTime(2019, 2, 3, 8, 4));
+          testArrows('minute', new CalendarDateTime(2019, 2, 3, 8, 5), new CalendarDateTime(2019, 2, 3, 8, 6), new CalendarDateTime(2019, 2, 3, 8, 4));
         });
 
         it('should wrap around when incrementing and decrementing the minute', function () {
-          testArrows('Minute', new CalendarDateTime(2019, 2, 3, 8, 59), new CalendarDateTime(2019, 2, 3, 8, 0), new CalendarDateTime(2019, 2, 3, 8, 58));
-          testArrows('Minute', new CalendarDateTime(2019, 2, 3, 8, 0), new CalendarDateTime(2019, 2, 3, 8, 1), new CalendarDateTime(2019, 2, 3, 8, 59));
+          testArrows('minute', new CalendarDateTime(2019, 2, 3, 8, 59), new CalendarDateTime(2019, 2, 3, 8, 0), new CalendarDateTime(2019, 2, 3, 8, 58));
+          testArrows('minute', new CalendarDateTime(2019, 2, 3, 8, 0), new CalendarDateTime(2019, 2, 3, 8, 1), new CalendarDateTime(2019, 2, 3, 8, 59));
         });
 
         it('should support using the page up and down keys to increment and decrement the minute to the nearest 15', function () {
-          testArrows('Minute', new CalendarDateTime(2019, 2, 3, 8, 22), new CalendarDateTime(2019, 2, 3, 8, 30), new CalendarDateTime(2019, 2, 3, 8, 15), {upKey: 'PageUp', downKey: 'PageDown'});
+          testArrows('minute', new CalendarDateTime(2019, 2, 3, 8, 22), new CalendarDateTime(2019, 2, 3, 8, 30), new CalendarDateTime(2019, 2, 3, 8, 15), {upKey: 'PageUp', downKey: 'PageDown'});
         });
 
         it('should support using the home and end keys to jump to the min and max minute', function () {
-          testArrows('Minute', new CalendarDateTime(2019, 2, 3, 8, 22), new CalendarDateTime(2019, 2, 3, 8, 59), new CalendarDateTime(2019, 2, 3, 8, 0), {upKey: 'End', downKey: 'Home', props: {hourCycle: 24}});
+          testArrows('minute', new CalendarDateTime(2019, 2, 3, 8, 22), new CalendarDateTime(2019, 2, 3, 8, 59), new CalendarDateTime(2019, 2, 3, 8, 0), {upKey: 'End', downKey: 'Home', props: {hourCycle: 24}});
         });
       });
 
       describe('second', function () {
         it('should support using the arrow keys to increment and decrement the second', function () {
-          testArrows('Second', new CalendarDateTime(2019, 2, 3, 8, 5, 10), new CalendarDateTime(2019, 2, 3, 8, 5, 11), new CalendarDateTime(2019, 2, 3, 8, 5, 9), {props: {granularity: 'second'}});
+          testArrows('second', new CalendarDateTime(2019, 2, 3, 8, 5, 10), new CalendarDateTime(2019, 2, 3, 8, 5, 11), new CalendarDateTime(2019, 2, 3, 8, 5, 9), {props: {granularity: 'second'}});
         });
 
         it('should wrap around when incrementing and decrementing the second', function () {
-          testArrows('Second', new CalendarDateTime(2019, 2, 3, 8, 5, 59), new CalendarDateTime(2019, 2, 3, 8, 5, 0), new CalendarDateTime(2019, 2, 3, 8, 5, 58), {props: {granularity: 'second'}});
-          testArrows('Second', new CalendarDateTime(2019, 2, 3, 8, 5, 0), new CalendarDateTime(2019, 2, 3, 8, 5, 1), new CalendarDateTime(2019, 2, 3, 8, 5, 59), {props: {granularity: 'second'}});
+          testArrows('second', new CalendarDateTime(2019, 2, 3, 8, 5, 59), new CalendarDateTime(2019, 2, 3, 8, 5, 0), new CalendarDateTime(2019, 2, 3, 8, 5, 58), {props: {granularity: 'second'}});
+          testArrows('second', new CalendarDateTime(2019, 2, 3, 8, 5, 0), new CalendarDateTime(2019, 2, 3, 8, 5, 1), new CalendarDateTime(2019, 2, 3, 8, 5, 59), {props: {granularity: 'second'}});
         });
 
         it('should support using the page up and down keys to increment and decrement the second to the nearest 15', function () {
-          testArrows('Second', new CalendarDateTime(2019, 2, 3, 8, 5, 22), new CalendarDateTime(2019, 2, 3, 8, 5, 30), new CalendarDateTime(2019, 2, 3, 8, 5, 15), {upKey: 'PageUp', downKey: 'PageDown', props: {granularity: 'second'}});
+          testArrows('second', new CalendarDateTime(2019, 2, 3, 8, 5, 22), new CalendarDateTime(2019, 2, 3, 8, 5, 30), new CalendarDateTime(2019, 2, 3, 8, 5, 15), {upKey: 'PageUp', downKey: 'PageDown', props: {granularity: 'second'}});
         });
 
         it('should support using the home and end keys to jump to the min and max second', function () {
-          testArrows('Second', new CalendarDateTime(2019, 2, 3, 8, 5, 22), new CalendarDateTime(2019, 2, 3, 8, 5, 59), new CalendarDateTime(2019, 2, 3, 8, 5, 0), {upKey: 'End', downKey: 'Home', props: {granularity: 'second', hourCycle: 24}});
+          testArrows('second', new CalendarDateTime(2019, 2, 3, 8, 5, 22), new CalendarDateTime(2019, 2, 3, 8, 5, 59), new CalendarDateTime(2019, 2, 3, 8, 5, 0), {upKey: 'End', downKey: 'Home', props: {granularity: 'second', hourCycle: 24}});
         });
       });
 
       describe('day period', function () {
         it('should support using the arrow keys to increment and decrement the day period', function () {
-          testArrows('Day Period', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 20), new CalendarDateTime(2019, 2, 3, 20));
-          testArrows('Day Period', new CalendarDateTime(2019, 2, 3, 20), new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 8));
+          testArrows('AM/PM', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 20), new CalendarDateTime(2019, 2, 3, 20));
+          testArrows('AM/PM', new CalendarDateTime(2019, 2, 3, 20), new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 8));
         });
       });
     });
@@ -613,11 +807,14 @@ describe('DatePicker', function () {
         let textContent = segment.textContent;
         act(() => {segment.focus();});
 
-        let i = 0;
-        for (let key of keys) {
+        let allowsZero = (label === 'hour' && props?.hourCycle === 24) || label === 'minute' || label === 'second';
+        let count = 0;
+        for (let [i, key] of [...keys].entries()) {
           beforeInput(segment, key);
 
-          expect(onChange).toHaveBeenCalledTimes(++i);
+          if (key !== '0' || (moved && i === keys.length - 1) || allowsZero) {
+            expect(onChange).toHaveBeenCalledTimes(++count);
+          }
           expect(segment.textContent).toBe(textContent);
 
           if (i < keys.length - 1) {
@@ -644,12 +841,14 @@ describe('DatePicker', function () {
         textContent = segment.textContent;
         act(() => {segment.focus();});
 
-        i = 0;
-        for (let key of keys) {
+        count = 0;
+        for (let [i, key] of [...keys].entries()) {
           beforeInput(segment, key);
 
-          expect(onChange).toHaveBeenCalledTimes(++i);
-          expect(segment.textContent).not.toBe(textContent);
+          if (key !== '0' || (moved && i === keys.length - 1) || allowsZero) {
+            expect(onChange).toHaveBeenCalledTimes(++count);
+            expect(segment.textContent).not.toBe(textContent);
+          }
 
           if (i < keys.length - 1) {
             expect(segment).toHaveFocus();
@@ -688,66 +887,105 @@ describe('DatePicker', function () {
         unmount();
       }
 
+      function testIgnored(label, value, keys, props) {
+        let onChange = jest.fn();
+        let {getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} {...props} />);
+
+        let segment = getByLabelText(label);
+        let textContent = segment.textContent;
+        act(() => {segment.focus();});
+
+        for (let key of keys) {
+          beforeInput(segment, key);
+        }
+
+        expect(onChange).not.toHaveBeenCalled();
+        expect(segment.textContent).toBe(textContent);
+        expect(segment).toHaveFocus();
+        unmount();
+      }
+
       it('should support typing into the month segment', function () {
-        testInput('Month', new CalendarDate(2019, 2, 3), '1', new CalendarDate(2019, 1, 3), false);
-        testInput('Month', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 12, 3), true);
-        testInput('Month', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 4, 3), true);
+        testInput('month', new CalendarDate(2019, 2, 3), '1', new CalendarDate(2019, 1, 3), false);
+        testInput('month', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 1, 3), true);
+        testInput('month', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 12, 3), true);
+        testInput('month', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 4, 3), true);
+        testIgnored('month', new CalendarDate(2019, 2, 3), '0');
+        testIgnored('month', new CalendarDate(2019, 2, 3), '00');
       });
 
       it('should support typing into the day segment', function () {
-        testInput('Day', new CalendarDate(2019, 2, 3), '1', new CalendarDate(2019, 2, 1), false);
-        testInput('Day', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 2, 12), true);
-        testInput('Day', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 2, 4), true);
+        testInput('day', new CalendarDate(2019, 2, 3), '1', new CalendarDate(2019, 2, 1), false);
+        testInput('day', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 2, 1), true);
+        testInput('day', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 2, 12), true);
+        testInput('day', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 2, 4), true);
+        testIgnored('day', new CalendarDate(2019, 2, 3), '0');
+        testIgnored('day', new CalendarDate(2019, 2, 3), '00');
       });
 
       it('should support typing into the year segment', function () {
-        testInput('Year', new CalendarDate(2019, 2, 3), '1993', new CalendarDate(1993, 2, 3), false);
-        testInput('Year', new CalendarDateTime(2019, 2, 3, 8), '1993', new CalendarDateTime(1993, 2, 3, 8), true);
+        testInput('year', new CalendarDate(2019, 2, 3), '1993', new CalendarDate(1993, 2, 3), false);
+        testInput('year', new CalendarDateTime(2019, 2, 3, 8), '1993', new CalendarDateTime(1993, 2, 3, 8), true);
+        testIgnored('year', new CalendarDate(2019, 2, 3), '0');
       });
 
       it('should support typing into the hour segment in 12 hour time', function () {
         // AM
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 8), '1', new CalendarDateTime(2019, 2, 3, 1), false);
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 8), '11', new CalendarDateTime(2019, 2, 3, 11), true);
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 8), '12', new CalendarDateTime(2019, 2, 3, 0), true);
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 8), '4', new CalendarDateTime(2019, 2, 3, 4), true);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '1', new CalendarDateTime(2019, 2, 3, 1), false);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '01', new CalendarDateTime(2019, 2, 3, 1), true);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '11', new CalendarDateTime(2019, 2, 3, 11), true);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '12', new CalendarDateTime(2019, 2, 3, 0), true);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '4', new CalendarDateTime(2019, 2, 3, 4), true);
+        testIgnored('hour', new CalendarDateTime(2019, 2, 3, 8), '0');
 
         // PM
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 20), '1', new CalendarDateTime(2019, 2, 3, 13), false);
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 20), '11', new CalendarDateTime(2019, 2, 3, 23), true);
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 20), '12', new CalendarDateTime(2019, 2, 3, 12), true);
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 20), '4', new CalendarDateTime(2019, 2, 3, 16), true);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 20), '1', new CalendarDateTime(2019, 2, 3, 13), false);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 20), '01', new CalendarDateTime(2019, 2, 3, 13), true);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 20), '11', new CalendarDateTime(2019, 2, 3, 23), true);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 20), '12', new CalendarDateTime(2019, 2, 3, 12), true);
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 20), '4', new CalendarDateTime(2019, 2, 3, 16), true);
+        testIgnored('hour', new CalendarDateTime(2019, 2, 3, 20), '0');
       });
 
       it('should support typing into the hour segment in 24 hour time', function () {
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 8), '1', new CalendarDateTime(2019, 2, 3, 1), false, {hourCycle: 24});
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 8), '11', new CalendarDateTime(2019, 2, 3, 11), true, {hourCycle: 24});
-        testInput('Hour', new CalendarDateTime(2019, 2, 3, 8), '23', new CalendarDateTime(2019, 2, 3, 23), true, {hourCycle: 24});
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '0', new CalendarDateTime(2019, 2, 3, 0), false, {hourCycle: 24});
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '00', new CalendarDateTime(2019, 2, 3, 0), true, {hourCycle: 24});
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '1', new CalendarDateTime(2019, 2, 3, 1), false, {hourCycle: 24});
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '01', new CalendarDateTime(2019, 2, 3, 1), true, {hourCycle: 24});
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '11', new CalendarDateTime(2019, 2, 3, 11), true, {hourCycle: 24});
+        testInput('hour', new CalendarDateTime(2019, 2, 3, 8), '23', new CalendarDateTime(2019, 2, 3, 23), true, {hourCycle: 24});
       });
 
       it('should support typing into the minute segment', function () {
-        testInput('Minute', new CalendarDateTime(2019, 2, 3, 8, 8), '1', new CalendarDateTime(2019, 2, 3, 8, 1), false);
-        testInput('Minute', new CalendarDateTime(2019, 2, 3, 8, 8), '2', new CalendarDateTime(2019, 2, 3, 8, 2), false);
-        testInput('Minute', new CalendarDateTime(2019, 2, 3, 8, 8), '5', new CalendarDateTime(2019, 2, 3, 8, 5), false);
-        testInput('Minute', new CalendarDateTime(2019, 2, 3, 8, 8), '6', new CalendarDateTime(2019, 2, 3, 8, 6), true);
-        testInput('Minute', new CalendarDateTime(2019, 2, 3, 8, 8), '59', new CalendarDateTime(2019, 2, 3, 8, 59), true);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '0', new CalendarDateTime(2019, 2, 3, 8, 0), false);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '00', new CalendarDateTime(2019, 2, 3, 8, 0), true);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '1', new CalendarDateTime(2019, 2, 3, 8, 1), false);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '01', new CalendarDateTime(2019, 2, 3, 8, 1), true);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '2', new CalendarDateTime(2019, 2, 3, 8, 2), false);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '02', new CalendarDateTime(2019, 2, 3, 8, 2), true);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '5', new CalendarDateTime(2019, 2, 3, 8, 5), false);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '6', new CalendarDateTime(2019, 2, 3, 8, 6), true);
+        testInput('minute', new CalendarDateTime(2019, 2, 3, 8, 8), '59', new CalendarDateTime(2019, 2, 3, 8, 59), true);
       });
 
       it('should support typing into the second segment', function () {
-        testInput('Second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '1', new CalendarDateTime(2019, 2, 3, 8, 5, 1), false, {granularity: 'second'});
-        testInput('Second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '2', new CalendarDateTime(2019, 2, 3, 8, 5, 2), false, {granularity: 'second'});
-        testInput('Second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '5', new CalendarDateTime(2019, 2, 3, 8, 5, 5), false, {granularity: 'second'});
-        testInput('Second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '6', new CalendarDateTime(2019, 2, 3, 8, 5, 6), true, {granularity: 'second'});
-        testInput('Second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '59', new CalendarDateTime(2019, 2, 3, 8, 5, 59), true, {granularity: 'second'});
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '0', new CalendarDateTime(2019, 2, 3, 8, 5, 0), false, {granularity: 'second'});
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '00', new CalendarDateTime(2019, 2, 3, 8, 5, 0), true, {granularity: 'second'});
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '1', new CalendarDateTime(2019, 2, 3, 8, 5, 1), false, {granularity: 'second'});
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '01', new CalendarDateTime(2019, 2, 3, 8, 5, 1), true, {granularity: 'second'});
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '2', new CalendarDateTime(2019, 2, 3, 8, 5, 2), false, {granularity: 'second'});
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '5', new CalendarDateTime(2019, 2, 3, 8, 5, 5), false, {granularity: 'second'});
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '6', new CalendarDateTime(2019, 2, 3, 8, 5, 6), true, {granularity: 'second'});
+        testInput('second', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '59', new CalendarDateTime(2019, 2, 3, 8, 5, 59), true, {granularity: 'second'});
       });
 
       it('should support typing into the day period segment', function () {
-        testInput('Day Period', new CalendarDateTime(2019, 2, 3, 8), 'p', new CalendarDateTime(2019, 2, 3, 20), false);
-        testInput('Day Period', new CalendarDateTime(2019, 2, 3, 20), 'a', new CalendarDateTime(2019, 2, 3, 8), false);
+        testInput('AM/PM', new CalendarDateTime(2019, 2, 3, 8), 'p', new CalendarDateTime(2019, 2, 3, 20), false);
+        testInput('AM/PM', new CalendarDateTime(2019, 2, 3, 20), 'a', new CalendarDateTime(2019, 2, 3, 8), false);
       });
 
       it('should support entering arabic digits', function () {
-        testInput('Year', new CalendarDate(2019, 2, 3), '٢٠٢٤', new CalendarDate(2024, 2, 3), false);
+        testInput('year', new CalendarDate(2019, 2, 3), '٢٠٢٤', new CalendarDate(2024, 2, 3), false);
       });
     });
 
@@ -782,47 +1020,53 @@ describe('DatePicker', function () {
       }
 
       it('should support backspace in the month segment', function () {
-        testBackspace('Month', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 1, 3));
-        testBackspace('Month', new CalendarDate(2019, 6, 3), new CalendarDate(2019, 1, 3));
-        testBackspace('Month', new CalendarDate(2019, 12, 3), new CalendarDate(2019, 1, 3));
+        testBackspace('month', new CalendarDate(2019, 2, 3), null);
+        testBackspace('month', new CalendarDate(2019, 6, 3), null);
+        testBackspace('month', new CalendarDate(2019, 12, 3), new CalendarDate(2019, 1, 3));
       });
 
       it('should support backspace in the day segment', function () {
-        testBackspace('Day', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 1));
-        testBackspace('Day', new CalendarDate(2019, 2, 20), new CalendarDate(2019, 2, 2));
+        testBackspace('day', new CalendarDate(2019, 2, 3), null);
+        testBackspace('day', new CalendarDate(2019, 2, 20), new CalendarDate(2019, 2, 2));
       });
 
       it('should support backspace in the year segment', function () {
-        testBackspace('Year', new CalendarDate(2019, 2, 3), new CalendarDate(201, 2, 3));
+        testBackspace('year', new CalendarDate(2019, 2, 3), new CalendarDate(201, 2, 3));
+        testBackspace('year', new CalendarDate(2, 2, 3), null);
       });
 
       it('should support backspace in the hour segment in 12 hour time', function () {
         // AM
-        testBackspace('Hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 0));
-        testBackspace('Hour', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 1));
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 8), null);
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 1));
 
         // PM
-        testBackspace('Hour', new CalendarDateTime(2019, 2, 3, 16), new CalendarDateTime(2019, 2, 3, 12));
-        testBackspace('Hour', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 13));
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 16), null);
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 13));
       });
 
       it('should support backspace in the hour segment in 24 hour time', function () {
-        testBackspace('Hour', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 0), {hourCycle: 24});
-        testBackspace('Hour', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 1), {hourCycle: 24});
-        testBackspace('Hour', new CalendarDateTime(2019, 2, 3, 16), new CalendarDateTime(2019, 2, 3, 1), {hourCycle: 24});
-        testBackspace('Hour', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 2), {hourCycle: 24});
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 8), null, {hourCycle: 24});
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 1), {hourCycle: 24});
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 16), new CalendarDateTime(2019, 2, 3, 1), {hourCycle: 24});
+        testBackspace('hour', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 2), {hourCycle: 24});
+      });
+
+      it('should support backspace in the am/pm field', function () {
+        testBackspace('AM/PM', new CalendarDateTime(2019, 2, 3, 8), null);
+        testBackspace('AM/PM', new CalendarDateTime(2019, 2, 3, 16), null);
       });
 
       it('should support backspace in the minute segment', function () {
-        testBackspace('Minute', new CalendarDateTime(2019, 2, 3, 5, 8), new CalendarDateTime(2019, 2, 3, 5, 0));
-        testBackspace('Minute', new CalendarDateTime(2019, 2, 3, 5, 25), new CalendarDateTime(2019, 2, 3, 5, 2));
-        testBackspace('Minute', new CalendarDateTime(2019, 2, 3, 5, 59), new CalendarDateTime(2019, 2, 3, 5, 5));
+        testBackspace('minute', new CalendarDateTime(2019, 2, 3, 5, 8), null);
+        testBackspace('minute', new CalendarDateTime(2019, 2, 3, 5, 25), new CalendarDateTime(2019, 2, 3, 5, 2));
+        testBackspace('minute', new CalendarDateTime(2019, 2, 3, 5, 59), new CalendarDateTime(2019, 2, 3, 5, 5));
       });
 
       it('should support second in the minute segment', function () {
-        testBackspace('Second', new CalendarDateTime(2019, 2, 3, 5, 5, 8), new CalendarDateTime(2019, 2, 3, 5, 5, 0), {granularity: 'second'});
-        testBackspace('Second', new CalendarDateTime(2019, 2, 3, 5, 5, 25), new CalendarDateTime(2019, 2, 3, 5, 5, 2), {granularity: 'second'});
-        testBackspace('Second', new CalendarDateTime(2019, 2, 3, 5, 5, 59), new CalendarDateTime(2019, 2, 3, 5, 5, 5), {granularity: 'second'});
+        testBackspace('second', new CalendarDateTime(2019, 2, 3, 5, 5, 8), null, {granularity: 'second'});
+        testBackspace('second', new CalendarDateTime(2019, 2, 3, 5, 5, 25), new CalendarDateTime(2019, 2, 3, 5, 5, 2), {granularity: 'second'});
+        testBackspace('second', new CalendarDateTime(2019, 2, 3, 5, 5, 59), new CalendarDateTime(2019, 2, 3, 5, 5, 5), {granularity: 'second'});
       });
 
       it('should support backspace with arabic digits', function () {
@@ -832,7 +1076,7 @@ describe('DatePicker', function () {
             <DatePicker label="Date" defaultValue={new CalendarDate(2019, 2, 3)} onChange={onChange} />
           </Provider>
         );
-        let segment = getByLabelText('العام');
+        let segment = getByLabelText('السنة');
         expect(segment).toHaveTextContent('٢٠١٩');
         act(() => {segment.focus();});
 
@@ -854,7 +1098,7 @@ describe('DatePicker', function () {
       let {getByTestId, getByLabelText, queryByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate(1985, 1, 1)} minValue={new CalendarDate(1985, 1, 1)} />);
       expect(queryByTestId('invalid-icon')).toBeNull();
 
-      let year = getByLabelText('Year');
+      let year = getByLabelText('year');
       fireEvent.keyDown(year, {key: 'ArrowDown'});
 
       expect(getByTestId('invalid-icon')).toBeVisible();
@@ -872,7 +1116,7 @@ describe('DatePicker', function () {
       let {getByTestId, getByLabelText, queryByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate(1985, 1, 1)} maxValue={new CalendarDate(1985, 1, 1)} />);
       expect(queryByTestId('invalid-icon')).toBeNull();
 
-      let year = getByLabelText('Year');
+      let year = getByLabelText('year');
       fireEvent.keyDown(year, {key: 'ArrowUp'});
 
       expect(getByTestId('invalid-icon')).toBeVisible();
@@ -889,7 +1133,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let today = new Intl.DateTimeFormat('en-US').format(new Date());
-      expect(combobox).toHaveTextContent(today);
+      expectPlaceholder(combobox, today);
     });
 
     it('should display a placeholder date if the value prop is null', function () {
@@ -898,7 +1142,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let today = new Intl.DateTimeFormat('en-US').format(new Date());
-      expect(combobox).toHaveTextContent(today);
+      expectPlaceholder(combobox, today);
     });
 
     it('should use the placeholderValue prop if provided', function () {
@@ -906,7 +1150,7 @@ describe('DatePicker', function () {
       let {getAllByRole} = render(<DatePicker label="Date" onChange={onChange} placeholderValue={new CalendarDate(1980, 1, 1)} />);
 
       let combobox = getAllByRole('group')[0];
-      expect(combobox).toHaveTextContent('1/1/1980');
+      expectPlaceholder(combobox, '1/1/1980');
     });
 
     it('should confirm placeholder value with the enter key', function () {
@@ -915,7 +1159,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let todayStr = new Intl.DateTimeFormat('en-US').format(new Date());
-      expect(combobox).toHaveTextContent(todayStr);
+      expectPlaceholder(combobox, todayStr);
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -932,7 +1176,7 @@ describe('DatePicker', function () {
       expect(segments[2]).toHaveFocus();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(today(getLocalTimeZone()));
-      expect(combobox).toHaveTextContent(todayStr);
+      expectPlaceholder(combobox, todayStr);
     });
 
     it('should use arrow keys to modify placeholder (uncontrolled)', function () {
@@ -941,7 +1185,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expect(combobox).toHaveTextContent(formatter.format(new Date()));
+      expectPlaceholder(combobox, formatter.format(new Date()));
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -951,20 +1195,20 @@ describe('DatePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       let value = today(getLocalTimeZone()).cycle('month', 1);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       value = value.cycle('day', 1);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       expect(onChange).toHaveBeenCalledTimes(1);
       value = value.cycle('year', 1);
       expect(onChange).toHaveBeenCalledWith(value);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
     it('should use arrow keys to modify placeholder (controlled)', function () {
@@ -973,7 +1217,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expect(combobox).toHaveTextContent(formatter.format(new Date()));
+      expectPlaceholder(combobox, formatter.format(new Date()));
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -983,23 +1227,23 @@ describe('DatePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       let value = today(getLocalTimeZone()).cycle('month', 1);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       value = value.cycle('day', 1);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(value.cycle('year', 1));
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone()))); // controlled
+      expectPlaceholder(combobox, formatter.format(new Date())); // controlled
 
       value = value.cycle('year', 1);
       rerender(<DatePicker label="Date" onChange={onChange} value={value} />);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
     it('should enter a date to modify placeholder (uncontrolled)', function () {
@@ -1008,7 +1252,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expect(combobox).toHaveTextContent(formatter.format(new Date()));
+      expectPlaceholder(combobox, formatter.format(new Date()));
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1017,13 +1261,13 @@ describe('DatePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       let value = today(getLocalTimeZone()).set({month: 4});
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       beforeInput(document.activeElement, '5');
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       value = today(getLocalTimeZone()).set({month: 4, day: 5});
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -1036,7 +1280,7 @@ describe('DatePicker', function () {
       expect(onChange).toHaveBeenCalledTimes(4);
       value = new CalendarDate(2020, 4, 5);
       expect(onChange).toHaveBeenCalledWith(value);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
     it('should enter a date to modify placeholder (controlled)', function () {
@@ -1045,7 +1289,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expect(combobox).toHaveTextContent(formatter.format(new Date()));
+      expectPlaceholder(combobox, formatter.format(new Date()));
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1054,27 +1298,47 @@ describe('DatePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       let value = today(getLocalTimeZone()).set({month: 4});
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       beforeInput(document.activeElement, '5');
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       value = today(getLocalTimeZone()).set({month: 4, day: 5});
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(1);
-      beforeInput(document.activeElement, '0');
-      beforeInput(document.activeElement, '2');
-      beforeInput(document.activeElement, '0');
+      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2, 4, 5));
       expect(segments[2]).toHaveFocus();
-      expect(onChange).toHaveBeenCalledTimes(4);
-      expect(onChange).toHaveBeenCalledWith(new CalendarDate(2020, 4, 5));
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone()))); // controlled
+      expectPlaceholder(combobox, formatter.format(new Date())); // controlled
 
       value = new CalendarDate(2020, 4, 5);
       rerender(<DatePicker label="Date" onChange={onChange} value={value} />);
-      expect(combobox).toHaveTextContent(formatter.format(value.toDate(getLocalTimeZone())));
+      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+    });
+
+    it('should confirm the placeholder on blur', function () {
+      let onChange = jest.fn();
+      let {getAllByRole} = render(<DatePicker label="Date" onChange={onChange} />);
+
+      let combobox = getAllByRole('group')[0];
+      let todayStr = new Intl.DateTimeFormat('en-US').format(new Date());
+      expectPlaceholder(combobox, todayStr);
+
+      let segments = getAllByRole('spinbutton');
+      act(() => {segments[0].focus();});
+
+      // Should not emit onChange if no segments are set
+      act(() => {segments[0].blur();});
+      expect(onChange).not.toHaveBeenCalled();
+
+      act(() => {segments[0].focus();});
+      beforeInput(document.activeElement, '4');
+      expect(onChange).not.toHaveBeenCalled();
+
+      expect(segments[1]).toHaveFocus();
+      act(() => {segments[1].blur();});
+      expect(onChange).toHaveBeenCalledWith(today(getLocalTimeZone()).set({month: 4}));
     });
   });
 });

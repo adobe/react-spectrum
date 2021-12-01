@@ -24,13 +24,14 @@ import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from '../stories/HidingColumns';
+import {installPointerEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
+import {TableWithBreadcrumbs} from '../stories/Table.stories';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -83,6 +84,20 @@ function ExampleSortTable() {
       </TableBody>
     </TableView>
   );
+}
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    altKey: false,
+    button: opts.button || 0,
+    width: 1,
+    height: 1
+  }, opts);
+  return evt;
 }
 
 describe('TableView', function () {
@@ -1340,12 +1355,6 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
       });
 
-      it('should marshall focus to the child on press of the cell', function () {
-        let tree = renderFocusable();
-        triggerPress(tree.getAllByRole('rowheader')[0]);
-        expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
-      });
-
       it('should move focus to the first row when tabbing into the table from the start', function () {
         let tree = renderFocusable();
 
@@ -2285,6 +2294,375 @@ describe('TableView', function () {
         expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in descending order', 'assertive', 500);
       });
     });
+
+    it('can announce deselect even when items are swapped out completely', () => {
+      let tree = render(<TableWithBreadcrumbs />);
+
+      let row = tree.getAllByRole('row')[2];
+      triggerPress(row);
+      expect(announce).toHaveBeenLastCalledWith('File B selected.');
+
+      let link = tree.getAllByRole('link')[1];
+      triggerPress(link);
+
+      expect(announce).toHaveBeenLastCalledWith('No items selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+    });
+
+    it('will not announce deselect caused by breadcrumb navigation', () => {
+      let tree = render(<TableWithBreadcrumbs />);
+
+      let link = tree.getAllByRole('link')[1];
+      triggerPress(link);
+
+      act(() => {
+        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+        jest.runAllTimers();
+      });
+      let row = tree.getAllByRole('row')[1];
+      triggerPress(row);
+      expect(announce).toHaveBeenLastCalledWith('File C selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+
+      // breadcrumb root
+      link = tree.getAllByRole('link')[0];
+      triggerPress(link);
+
+      // focus isn't on the table, so we don't announce that it has been deselected
+      expect(announce).toHaveBeenCalledTimes(2);
+    });
+
+    it('updates even if not focused', () => {
+      let tree = render(<TableWithBreadcrumbs />);
+
+      let link = tree.getAllByRole('link')[1];
+      triggerPress(link);
+
+      act(() => {
+        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+        jest.runAllTimers();
+      });
+      let row = tree.getAllByRole('row')[1];
+      triggerPress(row);
+      expect(announce).toHaveBeenLastCalledWith('File C selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+      let button = tree.getAllByRole('button')[0];
+      triggerPress(button);
+      expect(announce).toHaveBeenCalledTimes(2);
+
+      // breadcrumb root
+      link = tree.getAllByRole('menuitemradio')[0];
+      triggerPress(link);
+
+      act(() => {
+        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+        jest.runAllTimers();
+      });
+
+      // focus isn't on the table, so we don't announce that it has been deselected
+      expect(announce).toHaveBeenCalledTimes(2);
+
+      link = tree.getAllByRole('link')[1];
+      triggerPress(link);
+
+      act(() => {
+        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+        jest.runAllTimers();
+      });
+
+      expect(announce).toHaveBeenCalledTimes(3);
+      expect(announce).toHaveBeenLastCalledWith('No items selected.');
+    });
+
+    describe('selectionStyle highlight', function () {
+      installPointerEvent();
+
+      it('will replace the current selection with the new selection', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        userEvent.click(getCell(tree, 'Baz 10'));
+
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Baz 20'), {shiftKey: true});
+
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Foo 5'));
+
+        checkSelection(onSelectionChange, [
+          'Foo 5'
+        ]);
+
+        checkRowSelection(rows.slice(1, 5), false);
+        checkRowSelection(rows.slice(5, 6), true);
+        checkRowSelection(rows.slice(6), false);
+
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Foo 10'), {shiftKey: true});
+
+        checkSelection(onSelectionChange, [
+          'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10'
+        ]);
+
+        checkRowSelection(rows.slice(1, 5), false);
+        checkRowSelection(rows.slice(5, 11), true);
+        checkRowSelection(rows.slice(11), false);
+      });
+
+      it('will add to the current selection if the command key is pressed', function () {
+        let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        userEvent.click(getCell(tree, 'Baz 10'));
+
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Baz 20'), {shiftKey: true});
+
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Foo 5'), {metaKey: true});
+
+        checkSelection(onSelectionChange, [
+          'Foo 5', 'Foo 10', 'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15',
+          'Foo 16', 'Foo 17', 'Foo 18', 'Foo 19', 'Foo 20'
+        ]);
+
+        checkRowSelection(rows.slice(1, 5), false);
+        checkRowSelection(rows.slice(5, 6), true);
+        checkRowSelection(rows.slice(6, 10), false);
+        checkRowSelection(rows.slice(10, 21), true);
+        checkRowSelection(rows.slice(21), false);
+
+        uaMock.mockRestore();
+      });
+
+      it('should toggle selection with touch', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
+      });
+
+      it('should support double click to perform onAction with mouse', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
+        checkSelection(onSelectionChange, ['Foo 5']);
+        expect(onAction).not.toHaveBeenCalled();
+
+        userEvent.dblClick(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 5');
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      });
+
+      it('should support single tap to perform onAction with touch', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 5');
+      });
+
+      it('should support single tap to perform row selection with screen reader if onAction isn\'t provided', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch', width: 0, height: 0});
+        checkSelection(onSelectionChange, [
+          'Foo 5'
+        ]);
+        onSelectionChange.mockReset();
+
+        userEvent.click(getCell(tree, 'Foo 8'), {pointerType: 'touch', width: 0, height: 0});
+        checkSelection(onSelectionChange, [
+          'Foo 5', 'Foo 8'
+        ]);
+        onSelectionChange.mockReset();
+
+        // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
+        let cell = getCell(tree, 'Foo 10');
+        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+        checkSelection(onSelectionChange, [
+          'Foo 5', 'Foo 8', 'Foo 10'
+        ]);
+      });
+
+      it('should support single tap to perform onAction with screen reader', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        fireEvent.click(getCell(tree, 'Baz 5'), {detail: 0});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 5');
+
+        // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
+        let cell = getCell(tree, 'Foo 10');
+        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(2);
+        expect(onAction).toHaveBeenCalledWith('Foo 10');
+      });
+
+      it('should support long press to enter selection mode on touch', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).not.toHaveBeenCalled();
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+
+        act(() => jest.advanceTimersByTime(800));
+
+        checkSelection(onSelectionChange, ['Foo 5']);
+        expect(onAction).not.toHaveBeenCalled();
+        expect(tree.queryByLabelText('Select All')).not.toBeNull();
+
+        fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+
+        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
+
+        // Deselect all to exit selection mode
+        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+
+        act(() => jest.runAllTimers());
+        checkSelection(onSelectionChange, []);
+        expect(onAction).not.toHaveBeenCalled();
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+      });
+
+      it('should support Enter to perform onAction with keyboard', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        checkSelection(onSelectionChange, ['Foo 10']);
+        expect(onAction).not.toHaveBeenCalled();
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(getCell(tree, 'Baz 5'), {key: 'Enter'});
+        fireEvent.keyUp(getCell(tree, 'Baz 5'), {key: 'Enter'});
+        checkSelection(onSelectionChange, ['Foo 5']);
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 5');
+      });
+
+      it('should perform onAction on single click with selectionMode: none', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionMode: 'none', onAction});
+
+        userEvent.click(getCell(tree, 'Baz 10'));
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 10');
+      });
+
+      it('should move selection when using the arrow keys', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        userEvent.click(getCell(tree, 'Baz 5'));
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        checkSelection(onSelectionChange, ['Foo 6']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 6']);
+      });
+
+      it('should support non-contiguous selection with the keyboard', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        userEvent.click(getCell(tree, 'Baz 5'));
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 6').closest('[role="row"]'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 7').closest('[role="row"]'));
+
+        fireEvent.keyDown(document.activeElement, {key: ' ', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: ' ', ctrlKey: true});
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 7']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: ' '});
+        fireEvent.keyUp(document.activeElement, {key: ' '});
+        checkSelection(onSelectionChange, ['Foo 7']);
+      });
+
+      it('should not call onSelectionChange when hitting Space/Enter on the currently selected row', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        checkSelection(onSelectionChange, ['Foo 10']);
+        expect(onAction).not.toHaveBeenCalled();
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'Enter'});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: 'Enter'});
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 10');
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 
   describe('single selection', function () {
@@ -2523,7 +2901,7 @@ describe('TableView', function () {
   });
 
   describe('press/hover interactions and selection mode', function () {
-    let TableExample = (props) => (
+    let TableWithBreadcrumbs = (props) => (
       <TableView aria-label="Table" {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
@@ -2539,7 +2917,7 @@ describe('TableView', function () {
     );
 
     it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', function () {
-      let tree = render(<TableExample selectionMode="multiple" />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let row = tree.getAllByRole('row')[1];
       fireEvent.mouseDown(row, {detail: 1});
@@ -2547,7 +2925,7 @@ describe('TableView', function () {
       fireEvent.mouseEnter(row);
       expect(row.className.includes('is-hovered')).toBeTruthy();
 
-      rerender(tree, <TableExample selectionMode="single" />);
+      rerender(tree, <TableWithBreadcrumbs selectionMode="single" />);
       row = tree.getAllByRole('row')[1];
       fireEvent.mouseDown(row, {detail: 1});
       expect(row.className.includes('is-active')).toBeTruthy();
@@ -2556,7 +2934,7 @@ describe('TableView', function () {
     });
 
     it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none"', function () {
-      let tree = render(<TableExample selectionMode="none" />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="none" />);
 
       let row = tree.getAllByRole('row')[1];
       fireEvent.mouseDown(row, {detail: 1});
@@ -2860,7 +3238,7 @@ describe('TableView', function () {
   });
 
   describe('with dialog trigger', function () {
-    let TableExample = (props) => (
+    let TableWithBreadcrumbs = (props) => (
       <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} {...props}>
         <TableHeader>
           <Column key="foo">Foo</Column>
@@ -2895,7 +3273,7 @@ describe('TableView', function () {
     );
 
     it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
-      let tree = render(<TableExample />);
+      let tree = render(<TableWithBreadcrumbs />);
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(2);

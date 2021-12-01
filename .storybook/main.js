@@ -10,6 +10,7 @@ module.exports = {
     '@storybook/addon-knobs',
     'storybook-dark-mode',
     './custom-addons/provider/register',
+    './custom-addons/descriptions/register',
     './theme.register'
   ],
   typescript: {
