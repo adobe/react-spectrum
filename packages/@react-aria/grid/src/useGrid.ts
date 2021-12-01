@@ -141,7 +141,13 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     // Do not announce every time the user presses the arrow keys.
     let wasKeyboardNavigated = keyboardNavigated.current;
     keyboardNavigated.current = false;
-    if (!state.selectionManager.isFocused || (wasKeyboardNavigated && state.selectionManager.selectedKeys.size === 1 && lastSelection.current.size <= 1)) {
+    if (!state.selectionManager.isFocused
+      || (
+        wasKeyboardNavigated
+        && state.selectionManager.selectedKeys.size === 1
+        && (typeof lastSelection.current !== 'string' && (lastSelection.current as Set<Key>).size <= 1)
+      )
+    ) {
       lastSelection.current = selection;
       return;
     }
@@ -168,7 +174,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
 
     // Announce how many items are selected, except when selecting the first item.
     if (state.selectionManager.selectionMode === 'multiple') {
-      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current.size > 1) {
+      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || (lastSelection.current as Set<Key>).size > 1) {
         messages.push(selection === 'all'
           ? formatMessage('selectedAll')
           : formatMessage('selectedCount', {count: selection.size})

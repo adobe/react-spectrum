@@ -15,7 +15,7 @@ import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Key, RefObject, useEffect, useMemo, useState} from 'react';
+import {Key, RefObject, useMemo} from 'react';
 import {Layout} from '@react-stately/virtualizer';
 import {mergeDescriptions, mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
@@ -120,7 +120,6 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
   // navigator touch points?
   let modality = useInteractionModality();
   let shouldLongPress = (modality === 'pointer' || modality === 'virtual') && 'ontouchstart' in window;
-  console.log('shouldLongPress', shouldLongPress, modality, 'ontouchstart' in window)
 
   let interactionDescription = useMemo(() => {
     let selectionMode = state.selectionManager.selectionMode;
