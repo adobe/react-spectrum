@@ -12,16 +12,17 @@
 
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
-import {classNames, getWrappedElement} from '@react-spectrum/utils';
+import {classNames, getWrappedElement, useDOMRef} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {Fragment, useRef} from 'react';
+import React, {Fragment} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbItem} from '@react-aria/breadcrumbs';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
-export function BreadcrumbItem(props: BreadcrumbItemProps) {
+function BreadcrumbItem(props: BreadcrumbItemProps, ref: DOMRef) {
   let {
     children,
     isCurrent,
@@ -29,18 +30,18 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   } = props;
 
   let {direction} = useLocale();
-  let ref = useRef();
+  let domRef = useDOMRef(ref);
   let {itemProps} = useBreadcrumbItem({
     ...props,
     elementType: typeof children === 'string' ? 'span' : 'a'
-  }, ref);
+  }, domRef);
   let {hoverProps, isHovered} = useHover(props);
 
   let element = React.cloneElement(
     getWrappedElement(children),
     {
       ...mergeProps(itemProps, hoverProps),
-      ref,
+      ref: domRef,
       className:
         classNames(
           styles,
@@ -73,3 +74,6 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
     </Fragment>
   );
 }
+
+let _BreadcrumbItem = React.forwardRef(BreadcrumbItem);
+export {_BreadcrumbItem as BreadcrumbItem};
