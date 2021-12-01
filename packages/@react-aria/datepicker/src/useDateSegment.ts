@@ -44,7 +44,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
 
   if (segment.type === 'month') {
     let monthTextValue = monthDateFormatter.format(state.dateValue);
-    textValue = monthTextValue !== textValue ? `${textValue} - ${monthTextValue}` : monthTextValue;
+    textValue = monthTextValue !== textValue ? `${textValue} – ${monthTextValue}` : monthTextValue;
   } else if (segment.type === 'hour' || segment.type === 'dayPeriod') {
     textValue = hourDateFormatter.format(state.dateValue);
   }
@@ -328,7 +328,14 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     'aria-valuenow': null
   } : {};
 
-  let fieldLabelId = labelIds.get(state);
+  let {ariaLabelledBy, ariaDescribedBy} = labelIds.get(state);
+
+  // Only apply aria-describedby to the first segment, unless the field is invalid. This avoids it being
+  // read every time the user navigates to a new segment.
+  let firstSegment = useMemo(() => state.segments.find(s => s.isEditable), [state.segments]);
+  if (segment !== firstSegment && state.validationState !== 'invalid') {
+    ariaDescribedBy = undefined;
+  }
 
   let id = useId(props.id);
   let isEditable = !props.isDisabled && !props.isReadOnly && segment.isEditable;
@@ -340,7 +347,8 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       // 'aria-haspopup': props['aria-haspopup'], // deprecated in ARIA 1.2
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
       'aria-label': segment.type !== 'literal' ? displayNames.of(segment.type) : undefined,
-      'aria-labelledby': `${fieldLabelId} ${id}`,
+      'aria-labelledby': `${ariaLabelledBy} ${id}`,
+      'aria-describedby': ariaDescribedBy,
       'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
       'aria-readonly': props.isReadOnly || !segment.isEditable ? 'true' : undefined,
       contentEditable: isEditable,
