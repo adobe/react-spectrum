@@ -58,6 +58,6 @@ export function useDescription(description: string): AriaLabelingProps {
 export function mergeDescriptions(...args: AriaLabelingProps[]): AriaLabelingProps {
   let ids = args.flatMap(arg => arg['aria-describedby']).join(' ');
   return {
-    'aria-describedby': ids ? ids : undefined
+    'aria-describedby': ids || undefined
   };
 }

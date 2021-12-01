@@ -17,7 +17,7 @@ import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridKeyboardDelegates} from './utils';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, Key, RefObject, useCallback, useMemo, useRef} from 'react';
+import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
@@ -75,23 +75,6 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
   }
 
-  // track keyboard navigation for blocking announcements in "replace" mode
-  let keyboardNavigated = useRef(false);
-  let onKeyDown = useCallback((e: KeyboardEvent) => {
-    if (/^Arrow(?:Right|Left|Up|Down)$/.test(e.key) || /^(PageUp|PageDown|Home|End)$/.test(e.key)) {
-      keyboardNavigated.current = true;
-    }
-  }, [keyboardNavigated]);
-  let onKeyUp = useCallback((e: KeyboardEvent) => {
-    if (/^Arrow(?:Right|Left|Up|Down)$/.test(e.key) || /^(PageUp|PageDown|Home|End)$/.test(e.key)) {
-      keyboardNavigated.current = false;
-    }
-  }, [keyboardNavigated]);
-  let keyboardHandlers = {
-    onKeyDown,
-    onKeyUp
-  };
-
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -124,8 +107,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    collectionProps,
-    keyboardHandlers
+    collectionProps
   );
 
   if (isVirtualized) {
@@ -138,17 +120,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let selection = state.selectionManager.rawSelection;
   let lastSelection = useRef(selection);
   useUpdateEffect(() => {
-    // Do not announce every time the user presses the arrow keys.
-    let wasKeyboardNavigated = keyboardNavigated.current;
-    keyboardNavigated.current = false;
-    if (!state.selectionManager.isFocused
-      || (
-        wasKeyboardNavigated
-        && state.selectionManager.selectedKeys.size === 1
-        && (typeof lastSelection.current !== 'string' && (lastSelection.current as Set<Key>).size <= 1)
-      )
-    ) {
-      lastSelection.current = selection;
+    if (!state.selectionManager.isFocused) {
       return;
     }
 
@@ -156,14 +128,13 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     let removedKeys = diffSelection(lastSelection.current, selection);
 
     // If adding or removing a single row from the selection, announce the name of that item.
-    // or if we are coming from multiple selected and keyboard navigating to a single item, announce the item we've moved to.
     let messages = [];
-    if ((addedKeys.size === 1 && removedKeys.size === 0) || (wasKeyboardNavigated && state.selectionManager.selectedKeys.size === 1)) {
+    if (addedKeys.size === 1 && (removedKeys.size === 0 || (state.selectionManager.selectedKeys.size === 1 && state.selectionManager.selectionBehavior === 'replace'))) {
       let addedText = getRowText(addedKeys.keys().next().value);
       if (addedText) {
         messages.push(formatMessage('selectedItem', {item: addedText}));
       }
-    } else if (removedKeys.size === 1 && addedKeys.size === 0) {
+    } else if (removedKeys.size === 1 && (addedKeys.size === 0 || (state.selectionManager.selectedKeys.size === 1 && state.selectionManager.selectionBehavior === 'replace'))) {
       if (state.collection.getItem(removedKeys.keys().next().value)) {
         let removedText = getRowText(removedKeys.keys().next().value);
         if (removedText) {

@@ -2396,7 +2396,7 @@ describe('TableView', function () {
 
         onSelectionChange.mockReset();
         userEvent.click(getCell(tree, 'Foo 5'));
-        expect(announce).toHaveBeenLastCalledWith('1 item selected.');
+        expect(announce).toHaveBeenLastCalledWith('Foo 5 selected. 1 item selected.');
         expect(announce).toHaveBeenCalledTimes(3);
 
         checkSelection(onSelectionChange, [
@@ -2637,13 +2637,13 @@ describe('TableView', function () {
         onSelectionChange.mockReset();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-        expect(announce).not.toHaveBeenCalled();
+        expect(announce).toHaveBeenCalledWith('Foo 6 selected.');
         checkSelection(onSelectionChange, ['Foo 6']);
 
         onSelectionChange.mockReset();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
-        expect(announce).not.toHaveBeenCalled();
+        expect(announce).toHaveBeenCalledWith('Foo 5 selected.');
         checkSelection(onSelectionChange, ['Foo 5']);
 
         onSelectionChange.mockReset();
@@ -2713,33 +2713,6 @@ describe('TableView', function () {
         expect(announce).toHaveBeenCalledWith('Foo 5 not selected. 1 item selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 7']);
-      });
-
-      it('should support non-contiguous selection with the keyboard', function () {
-        let onSelectionChange = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'}, items);
-
-        userEvent.click(getCell(tree, 'Baz 1'));
-        expect(announce).toHaveBeenLastCalledWith('Foo 1 selected.');
-        expect(announce).toHaveBeenCalledTimes(1);
-        checkSelection(onSelectionChange, ['Foo 1']);
-
-        announce.mockReset();
-        onSelectionChange.mockReset();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-        expect(announce).not.toHaveBeenCalled();
-        checkSelection(onSelectionChange, ['Foo 2']);
-
-        onSelectionChange.mockReset();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-        expect(announce).not.toHaveBeenCalled();
-        expect(onSelectionChange).not.toHaveBeenCalled();
-
-        userEvent.click(getCell(tree, 'Baz 1'));
-        expect(announce).toHaveBeenCalledTimes(1);
-        checkSelection(onSelectionChange, ['Foo 1']);
       });
 
       it('should not call onSelectionChange when hitting Space/Enter on the currently selected row', function () {
