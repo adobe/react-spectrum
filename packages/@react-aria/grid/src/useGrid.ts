@@ -128,17 +128,25 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     let removedKeys = diffSelection(lastSelection.current, selection);
 
     // If adding or removing a single row from the selection, announce the name of that item.
+    let isReplace = state.selectionManager.selectionBehavior === 'replace';
     let messages = [];
-    if (addedKeys.size === 1 && (removedKeys.size === 0 || (state.selectionManager.selectedKeys.size === 1 && state.selectionManager.selectionBehavior === 'replace'))) {
+    if (addedKeys.size === 1 && (removedKeys.size === 0 || (state.selectionManager.selectedKeys.size === 1 && isReplace))) {
       let addedText = getRowText(addedKeys.keys().next().value);
       if (addedText) {
         messages.push(formatMessage('selectedItem', {item: addedText}));
       }
-    } else if (removedKeys.size === 1 && (addedKeys.size === 0 || (state.selectionManager.selectedKeys.size === 1 && state.selectionManager.selectionBehavior === 'replace'))) {
+    } else if (removedKeys.size === 1 && (addedKeys.size === 0 || (state.selectionManager.selectedKeys.size === 1 && isReplace))) {
       if (state.collection.getItem(removedKeys.keys().next().value)) {
         let removedText = getRowText(removedKeys.keys().next().value);
         if (removedText) {
           messages.push(formatMessage('deselectedItem', {item: removedText}));
+        }
+      }
+    } else if (isReplace && (lastSelection.current === 'all' || removedKeys.size > 0) && state.selectionManager.selectedKeys.size === 1) {
+      if (state.collection.getItem(state.selectionManager.selectedKeys.keys().next().value)) {
+        let currentSelectionText = getRowText(state.selectionManager.selectedKeys.keys().next().value);
+        if (currentSelectionText) {
+          messages.push(formatMessage('selectedItem', {item: currentSelectionText}));
         }
       }
     }

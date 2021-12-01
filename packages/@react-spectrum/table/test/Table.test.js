@@ -2735,6 +2735,30 @@ describe('TableView', function () {
         expect(onAction).toHaveBeenCalledWith('Foo 10');
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
       });
+
+      it('should announce the current selection when moving from all to one item', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+        userEvent.click(getCell(tree, 'Baz 5'));
+        expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'a', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'a', ctrlKey: true});
+        expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
+        expect(announce).toHaveBeenCalledWith('All items selected.');
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        expect(announce).toHaveBeenCalledWith('Foo 6 selected. 1 item selected.');
+        checkSelection(onSelectionChange, ['Foo 6']);
+      });
     });
   });
 
