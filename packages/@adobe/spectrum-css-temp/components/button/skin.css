@@ -1369,7 +1369,6 @@ governing permissions and limitations under the License.
     --spectrum-actionbutton-static-color-selected: HighlightText; /* becomes the background of the parent element due to mix-blend-mode */
     --spectrum-actionbutton-static-color-disabled: GrayText;
   }
-
   .spectrum-ActionButton--emphasized {
     &.spectrum-ActionButton--quiet.is-selected {
       &:disabled,
@@ -1381,25 +1380,20 @@ governing permissions and limitations under the License.
       &:hover {
         background-color: Highlight;
         color: HighlightText;
-    
         .spectrum-Icon {
           fill: HighlightText;
         }
-    
         .spectrum-ActionButton-hold {
           fill: HighlightText;
         }
       }
-    
       &.is-active {
         background-color: Highlight;
         color: HighlightText;
-    
         .spectrum-ActionButton-hold {
           fill: HighlightText;
         }
       }
     }
   }
-
 }
