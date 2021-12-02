@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
-
 jest.mock('@react-aria/live-announcer');
 import {announce as announceMock} from '@react-aria/live-announcer';
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
@@ -43,7 +41,7 @@ let rows = [
   {id: 2, name: 'Squirtle', type: 'Water', level: '12'},
   {id: 3, name: 'Blastoise', type: 'Water', level: '56'},
   {id: 4, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
-  {id: 5, name: 'Pikachu', type: 'Electric', level: '100'},
+  {id: 5, name: 'Pikachu', type: 'Electric', level: '100'}
 ];
 // copied in so as to put onAction into the TableRow
 function Table(props) {
