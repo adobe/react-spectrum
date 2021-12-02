@@ -237,7 +237,7 @@ export function usePress(props: PressHookProps): PressResult {
           if (isValid ||
             (
               currentTarget !== target &&
-              isHTMLAnchorLink(target as HTMLElement) &&
+              (isHTMLAnchorLink(target as HTMLElement) || (target as HTMLElement).getAttribute('role') === 'link') &&
               isSpaceKey(nativeEvent)
             )
           ) {
@@ -264,7 +264,7 @@ export function usePress(props: PressHookProps): PressResult {
             isValidKeyboardEvent(nativeEvent) ||
             (
               currentTarget !== target &&
-              isHTMLAnchorLink(target as HTMLElement) &&
+              (isHTMLAnchorLink(target as HTMLElement) || (target as HTMLElement).getAttribute('role') === 'link') &&
               isSpaceKey(nativeEvent)
             )
           ) {

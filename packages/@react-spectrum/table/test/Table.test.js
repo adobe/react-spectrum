@@ -762,8 +762,8 @@ describe('TableView', function () {
       </Provider>
     );
 
-    let renderMany = () => render(
-      <TableView aria-label="Table">
+    let renderMany = (withLinks = false) => render(
+      <TableView aria-label="Table" selectionMode={withLinks ? 'multiple' : undefined}>
         <TableHeader columns={columns}>
           {column =>
             <Column>{column.name}</Column>
@@ -772,7 +772,7 @@ describe('TableView', function () {
         <TableBody items={manyItems}>
           {item =>
             (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
+              {key => <Cell>{withLinks && key === 'foo' ? <Link><a href={`https://example.com/?id=${item.id}`} target="_blank">{item[key]}</a></Link> : item[key]}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -1538,6 +1538,44 @@ describe('TableView', function () {
         expect(document.activeElement).toHaveAttribute('role', 'columnheader');
         expect(document.activeElement).toHaveTextContent('Bar');
         expect(body.scrollTop).toBe(1000);
+      });
+
+      describe('Space key with focus on a link within a cell', () => {
+        it('should toggle selection and prevent scrolling of the table', () => {
+          let tree = renderMany(true);
+          
+          let row = tree.getAllByRole('row')[1];
+          
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          
+          let link = within(row).getByRole('link');
+          expect(link.textContent).toBe('Foo 1');
+
+          act(() => {
+            link.focus();
+            fireEvent.keyDown(link, {key: ' '});
+            fireEvent.keyUp(link, {key: ' '});
+            jest.runAllTimers();
+          });
+
+          row = tree.getAllByRole('row')[1];
+  
+          expect(row).toHaveAttribute('aria-selected', 'true');
+  
+          act(() => {
+            link.focus();
+            fireEvent.keyDown(link, {key: ' '});
+            fireEvent.keyUp(link, {key: ' '});
+            jest.runAllTimers();
+          });
+
+          row = tree.getAllByRole('row')[1];
+          link = within(row).getByRole('link');
+  
+          expect(row).toHaveAttribute('aria-selected', 'false');
+
+          expect(link.textContent).toBe('Foo 1');
+        });
       });
     });
   });
