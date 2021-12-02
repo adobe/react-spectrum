@@ -18,7 +18,6 @@ import {Link} from '@react-spectrum/link';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
-import SentimentPositive from '@spectrum-icons/workflow/SentimentPositive';
 import {storiesOf} from '@storybook/react';
 
 const items = [
@@ -223,11 +222,6 @@ storiesOf('ListView', module)
     () => (
       <DragExample />
     )
-  ).add(
-    'draggable rows, custom dragIcon',
-    () => (
-      <DragExample dragIcon={<SentimentPositive size="XS" />} />
-    )
   );
 
 function Example(props?) {
@@ -371,22 +365,21 @@ function DragExample(props?) {
     };
   });
 
-  // TODO: Figure out multiple selection for drag and drop
-  // TODO: Figure out how to better handle click to drag operation clashing with selection.
-  // Right now it will toggle selection when you click to start dragging. Maybe selection should only be toggled
-  // on press up?
+  let itemAllowsDragging = (key) => {
+    let item = items.find(item => item.key === key);
+    return item.isDraggable;
+  };
+
   return (
     <>
       <input />
       <Droppable />
-      <ListView width="300px" selectionMode="multiple" items={items} getItems={getItems} isDraggable {...props}>
+      <ListView width="300px" selectionMode="multiple" items={items} getItems={getItems} itemAllowsDragging={itemAllowsDragging} {...props}>
         {(item: any) => (
-          // TODO: Add draggable to Item props? Create a separate Item/DraggableItem that is exported by ListView/TableView?
-          // TODO: is this the right api or do we wanna do something more top level? Should useDraggableCollectionState track was keys are draggable/not draggable
-          <Item key={item.key} textValue={item.textValue} isDraggable={item.isDraggable}>
+          <Item key={item.key} textValue={item.textValue}>
             <Content>
               <Flex alignItems="center" gap="10px">
-                <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
+                <View flexGrow={1}>Item {item.key}</View>
                 <ActionButton><Add /></ActionButton>
                 <MenuTrigger>
                   <ActionButton><MoreSmall /></ActionButton>

@@ -33,11 +33,10 @@ import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
-import React, {Key, ReactElement, ReactNode, useContext, useMemo} from 'react';
+import React, {Key, ReactElement, useContext, useMemo} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useDraggableCollectionState} from '@react-stately/dnd';
 import {Virtualizer} from '@react-aria/virtualizer';
-
 
 export const ListViewContext = React.createContext(null);
 
@@ -83,11 +82,9 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number,
   onAction?: (key: string) => void,
-  // TODO: should this support an extra input arg for collection/state in case the user want do collection.getItem(key) in their getItems function?
-  getItems?: (keys: Set<Key>) => DragItem[],
-  // TODO: prop to control if the stuff inside the ListView is draggable. Perhaps should be added to DragCollection state? Or perhaps GridState should track drag stuff within it like it does selection?
-  isDraggable?: boolean,
-  dragIcon?: ReactNode
+  // TODO: If we go with the plugin structure for adding drag and drop, this name is fine as is. If we don't, we should rename
+  // this to something like getDragItems. To be done in follow up PR
+  getItems?: (keys: Set<Key>) => DragItem[]
 }
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -100,9 +97,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     getItems,
     onDragStart,
     onDragEnd,
-    isDraggable = false,
-    dragIcon = <DragHandle />
+    itemAllowsDragging
   } = props;
+  let isListDraggable = getItems !== null;
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
   let formatMessage = useMessageFormatter(intlMessages);
@@ -151,7 +148,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     collection: state.collection,
     selectionManager: state.selectionManager,
     getItems: getItems,
-    // TODO: support user provided renderPreview
+    // TODO: support user provided renderPreview. Do in followup PR
     renderPreview(selectedKeys, draggedKey) {
       let item = state.collection.getItem(draggedKey);
       let itemWidth = domRef.current.offsetWidth;
@@ -163,7 +160,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           <div className={listStyles['react-spectrum-ListViewItem-grid']}>
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
               <div className={listStyles['react-spectrum-ListViewItem-draghandle-button']}>
-                {dragIcon}
+                <DragHandle />
               </div>
             </div>
             <div className={listStyles['react-spectrum-ListViewItem-content']}>
@@ -174,7 +171,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       );
     },
     onDragStart: onDragStart,
-    onDragEnd: onDragEnd
+    onDragEnd: onDragEnd,
+    itemAllowsDragging: itemAllowsDragging
   });
 
   let {gridProps} = useGrid({
@@ -193,7 +191,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isDraggable}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, itemAllowsDragging, isListDraggable}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -208,7 +206,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             'react-spectrum-ListView--emphasized',
             {
               'react-spectrum-ListView--quiet': isQuiet,
-              'react-spectrum-ListView--draggable': isDraggable
+              'react-spectrum-ListView--draggable': isListDraggable
             },
             styleProps.className
           )
@@ -219,8 +217,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              // TODO: moved most of the item props to ListViewContext since Virtualizer won't rerender w/ a memoized collection unless
-              <ListViewItem item={item} isEmphasized dragIcon={dragIcon} />
+              // Moved most of the item props to ListViewContext since Virtualizer doesn't rerender on selection change since GridCollection is memoized. This meant
+              // the ListViewItem onDrag were referencing a stale SelectionManager and thus broke multi row drag and drop
+              <ListViewItem item={item} isEmphasized />
             );
           } else if (type === 'loader') {
             return (

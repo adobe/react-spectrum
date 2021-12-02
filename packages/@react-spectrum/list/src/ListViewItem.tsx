@@ -14,6 +14,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
+import DragHandle from './DragHandle';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import listStyles from './listview.css';
@@ -29,12 +30,11 @@ import {useLocale} from '@react-aria/i18n';
 export function ListViewItem(props) {
   let {
     item,
-    isEmphasized,
-    dragIcon
+    isEmphasized
   } = props;
   let cellNode = [...item.childNodes][0];
-  let {state, dragState, onAction, isDraggable: isListDraggable} = useContext(ListViewContext);
-  let isDraggable = isListDraggable && item.props?.isDraggable !== false;
+  let {state, dragState, onAction, isListDraggable, itemAllowsDragging} = useContext(ListViewContext);
+  let isDraggable = itemAllowsDragging ? itemAllowsDragging(item.key) : false;
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();
@@ -50,8 +50,12 @@ export function ListViewItem(props) {
   let {rowProps} = useGridRow({
     node: item,
     isVirtualized: true,
-    onAction: onAction ? () => onAction(item.key) : null,
-    shouldSelectOnPressUp: isDraggable
+    onAction: onAction ? () => onAction(item.key) : null
+    // TODO: Need to figure out a way to make drag start and row selection toggling not happen at the same time (currently they both trigger on press start).
+    // shouldSelectOnPressUp here doesn't quite work since clicking on the a button in the row will toggle selection since the row's onPressUp triggers (usePress has a document level onPointerUp listener)
+    // A possible solution maybe to have selection logic be aware of drag and drop like it is in usePress and have selection toggling happen in onPress instead of onPressStart if
+    // the item is draggable
+    // shouldSelectOnPressUp: isDraggable
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
@@ -63,6 +67,8 @@ export function ListViewItem(props) {
     hoverProps,
     focusWithinProps,
     focusProps,
+    // TODO: Perhaps useDraggableItem should support isDisabled so that we don't have to do the && logic below.
+    // Instead dragProps and dragButtonProps would be empty objects or something
     isDraggable && dragProps
   );
   let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
@@ -114,7 +120,7 @@ export function ListViewItem(props) {
         ref={cellRef}
         {...mergedProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
-          {isListDraggable && 
+          {isListDraggable &&
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
               {showDragHandle &&
                 <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
@@ -122,13 +128,13 @@ export function ListViewItem(props) {
                     {...buttonProps as React.HTMLAttributes<HTMLElement>}
                     className={listStyles['react-spectrum-ListViewItem-draghandle-button']}
                     ref={dragButtonRef}>
-                    {dragIcon}
+                    <DragHandle />
                   </div>
                 </FocusRing>
               }
             </div>
           }
-          {showCheckbox && 
+          {showCheckbox &&
             <Checkbox
               UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
               {...checkboxProps}
