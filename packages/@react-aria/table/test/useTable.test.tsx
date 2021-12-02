@@ -11,9 +11,11 @@
  */
 
 
+import {installPointerEvent} from '@react-spectrum/test-utils';
+
 jest.mock('@react-aria/live-announcer');
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
-import {announce} from '@react-aria/live-announcer';
+import {announce as announceMock} from '@react-aria/live-announcer';
 import React, {useRef} from 'react';
 import {render} from '@testing-library/react';
 import {
@@ -28,6 +30,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import {useTable} from '../src';
 
+let announce = announceMock as jest.Mock<announceMock>;
 
 let columns = [
   {name: 'Name', uid: 'name'},
@@ -91,38 +94,42 @@ let getCell = (tree, text) => {
 
 describe('useTable', () => {
   describe('actions on rows', () => {
-    let onAction = jest.fn();
-    let tree = render(
-      <Table onAction={onAction} selectionStyle="highlight" aria-label="Table with selection" selectionMode="multiple">
-        <TableHeader columns={columns}>
-          {column => (
-            <Column key={column.uid}>
-              {column.name}
-            </Column>
-          )}
-        </TableHeader>
-        <TableBody items={rows}>
-          {item => (
-            <Row>
-              {columnKey => <Cell>{item[columnKey]}</Cell>}
-            </Row>
-          )}
-        </TableBody>
-      </Table>
-    );
+    installPointerEvent();
 
-    // @ts-ignore
-    userEvent.click(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
-    expect(announce).toHaveBeenLastCalledWith('Squirtle selected.');
-    expect(announce).toHaveBeenCalledTimes(1);
-    expect(onAction).not.toHaveBeenCalled();
+    it('calls onAction', () => {
+      let onAction = jest.fn();
+      let tree = render(
+        <Table onAction={onAction} selectionBehavior="replace" aria-label="Table with selection"
+               selectionMode="multiple">
+          <TableHeader columns={columns}>
+            {column => (
+              <Column key={column.uid}>
+                {column.name}
+              </Column>
+            )}
+          </TableHeader>
+          <TableBody items={rows}>
+            {item => (
+              <Row>
+                {columnKey => <Cell>{item[columnKey]}</Cell>}
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      );
 
-    // @ts-ignore
-    announce.mockReset();
-    // @ts-ignore
-    userEvent.dblClick(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
-    expect(announce).not.toHaveBeenCalled();
-    expect(onAction).toHaveBeenCalledTimes(1);
-    expect(onAction).toHaveBeenCalledWith('Squirtle');
+      // @ts-ignore
+      userEvent.click(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
+      expect(announce).toHaveBeenLastCalledWith('Squirtle selected.');
+      expect(announce).toHaveBeenCalledTimes(1);
+      expect(onAction).not.toHaveBeenCalled();
+
+      announce.mockReset();
+      // @ts-ignore
+      userEvent.dblClick(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
+      expect(announce).not.toHaveBeenCalled();
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onAction).toHaveBeenCalledWith(2);
+    });
   });
 });

@@ -103,10 +103,10 @@ export function TableColumnHeader({column, state}) {
   );
 }
 
-export function TableRow({item, children, state}) {
+export function TableRow({item, children, state, onAction}) {
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {rowProps} = useTableRow({node: item}, state, ref);
+  let {rowProps} = useTableRow({onAction: () => onAction(item.key), node: item}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
