@@ -158,7 +158,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           {...provider}
           UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')}
           UNSAFE_style={{width: itemWidth}}>
-          <div className={listStyles['react-spectrum-ListViewItem-grid']}>
+          <div className={listStyles['react-spectrum-ListViewItem-grid']} data-testid="dragpreview">
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
               <div className={listStyles['react-spectrum-ListViewItem-draghandle-button']}>
                 <DragHandle />
