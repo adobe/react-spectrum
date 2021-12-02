@@ -380,7 +380,8 @@ export function DragExample(props?) {
       width="300px"
       selectionMode="multiple"
       items={items}
-      getItems={getItems} disabledKeys={['f']}
+      getItems={getItems}
+      disabledKeys={['f']}
       itemAllowsDragging={itemAllowsDragging}
       onDragStart={action('dragStart')}
       onDragEnd={action('dragEnd')}

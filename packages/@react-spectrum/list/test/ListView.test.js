@@ -14,9 +14,9 @@ import {ActionButton} from '@react-spectrum/button';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {DragExample} from '../stories/ListView.stories';
+import {Droppable} from '@react-aria/dnd/test/examples';
 import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Item, ListView} from '../src';
-import {Droppable} from '@react-aria/dnd/test/examples';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -49,10 +49,13 @@ describe('ListView', function () {
     jest.clearAllMocks();
   });
 
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+  });
+
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.useFakeTimers();
   });
 
@@ -997,6 +1000,6 @@ describe('ListView', function () {
       // expect(within(cellC).queryByTestId('draghandle')).toBeTruthy();
       // fireEvent.mouseLeave(cellC);
       // expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
-    })
+    });
   });
 });
