@@ -78,6 +78,10 @@ governing permissions and limitations under the License.
     .spectrum-Field-field--multiline {
       flex: 1 1 auto;
     }
+
+    .spectrum-Field-wrapper {
+      flex: 1 1 auto;
+    }
   }
 
   /* The side label variant of Field is inline, and fills as much space as needed

@@ -110,11 +110,13 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       for (const [key, value] of heightStyles) {
         switch (key as string) {
           case 'height':
+            calculatedFieldHeight = helpTextHeight + inputOffsetHeight + labelHeight;
             if (inputOffsetHeight < inputHeight) {
-              field.style[key] = `${helpTextHeight + inputOffsetHeight + labelHeight}px`;
+              field.style[key] = `${calculatedFieldHeight}px`;
             } else {
               field.style[key] = calculatedFieldHeight <= fieldHeight ? value : `${calculatedFieldHeight}px`;
             }
+            input.style.height = `${inputOffsetHeight}px`;
             break;
           case 'minHeight':
           case 'maxHeight':
