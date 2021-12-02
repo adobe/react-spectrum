@@ -11,7 +11,7 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useState} from 'react';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useFocusRing} from '@react-aria/focus';
 import {useRef} from 'react';
@@ -21,7 +21,19 @@ import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 export function Table(props) {
-  let state = useTableState({...props, showSelectionCheckboxes: props.selectionMode === 'multiple'});
+  let {onAction} = props;
+  let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
+  console.log(showSelectionCheckboxes);
+  let state = useTableState({
+    ...props,
+    showSelectionCheckboxes,
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  });
+  // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
+  let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
+  if (shouldShowCheckboxes !== showSelectionCheckboxes) {
+    setShowSelectionCheckboxes(shouldShowCheckboxes);
+  }
   let ref = useRef();
   let bodyRef = useRef();
   let {collection} = state;
@@ -42,7 +54,7 @@ export function Table(props) {
       </TableRowGroup>
       <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
         {[...collection.body.childNodes].map(row => (
-          <TableRow key={row.key} item={row} state={state}>
+          <TableRow key={row.key} item={row} state={state} onAction={onAction}>
             {[...row.childNodes].map(cell =>
               cell.props.isSelectionCell
                 ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
@@ -106,7 +118,7 @@ export function TableColumnHeader({column, state}) {
 export function TableRow({item, children, state, onAction}: {item: any, children: ReactNode, state: any, onAction?: (key: string) => void}) {
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {rowProps} = useTableRow({onAction: () => onAction(item.key), node: item}, state, ref);
+  let {rowProps} = useTableRow({onAction: onAction && item.key === 2 ? () => onAction(item.key) : undefined, node: item}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (

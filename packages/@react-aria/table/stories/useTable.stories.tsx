@@ -10,11 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
+import {SpectrumTableProps} from '@react-types/table';
 import {Table} from './example';
 
-const meta = {
+const meta: Meta<SpectrumTableProps<any>> = {
   title: 'useTable'
 };
 
@@ -41,10 +44,10 @@ let rows = [
   {id: 12, name: 'Pikachu', type: 'Electric', level: '100'}
 ];
 
-const Template = () => () => (
+const Template: Story<SpectrumTableProps<any>> = (args) => (
   <>
     <input aria-label="Focusable before" placeholder="Focusable before" />
-    <Table aria-label="Table with selection" selectionMode="multiple">
+    <Table aria-label="Table with selection" selectionMode="multiple" {...args}>
       <TableHeader columns={columns}>
         {column => (
           <Column key={column.uid}>
@@ -64,5 +67,8 @@ const Template = () => () => (
   </>
 );
 
-export const ScrollTesting = Template().bind({});
+export const ScrollTesting = Template.bind({});
 ScrollTesting.args = {};
+
+export const ActionTesting = Template.bind({});
+ActionTesting.args = {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')};
