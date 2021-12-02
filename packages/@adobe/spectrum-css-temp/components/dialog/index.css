@@ -301,6 +301,18 @@ governing permissions and limitations under the License.
   }
 }
 
+/* additional a11y support by moveing scrolling from content to dialog */
+@media screen and (max-height: 400px) {
+  .spectrum-Dialog .spectrum-Dialog-grid {
+    overflow-y: auto;
+  }
+
+  .spectrum-Dialog-content {
+    overflow-y: visible;
+    height: min-content;
+  }
+}
+
 @media screen and (max-width: 700px) {
   /* for zoom (a11y) */
   .spectrum-Dialog {
