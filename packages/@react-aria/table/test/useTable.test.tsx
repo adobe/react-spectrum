@@ -45,12 +45,15 @@ let rows = [
 ];
 // copied in so as to put onAction into the TableRow
 function Table(props) {
-  let {onAction, ...otherProps} = props;
-  let state = useTableState({...otherProps, showSelectionCheckboxes: otherProps.selectionMode === 'multiple'});
+  let state = useTableState({
+    ...props,
+    onRowAction: props.onAction,
+    showSelectionCheckboxes: props.selectionMode === 'multiple'
+  });
   let ref = useRef();
   let bodyRef = useRef();
   let {collection} = state;
-  let {gridProps} = useTable({...otherProps, scrollRef: bodyRef}, state, ref);
+  let {gridProps} = useTable({...props, scrollRef: bodyRef}, state, ref);
 
   return (
     <table {...gridProps} ref={ref} style={{borderCollapse: 'collapse'}}>
@@ -67,7 +70,7 @@ function Table(props) {
       </TableRowGroup>
       <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
         {[...collection.body.childNodes].map(row => (
-          <TableRow key={row.key} item={row} state={state} onAction={onAction}>
+          <TableRow key={row.key} item={row} state={state}>
             {[...row.childNodes].map(cell =>
               cell.props.isSelectionCell
                 ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />

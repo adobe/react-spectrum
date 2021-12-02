@@ -49,7 +49,8 @@ export interface MultipleSelectionState extends FocusState {
   /** Sets the selected keys in the collection. */
   setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void,
   /** The currently disabled keys in the collection. */
-  readonly disabledKeys: Set<Key>
+  readonly disabledKeys: Set<Key>,
+  hasItemActions: boolean
 }
 
 export interface MultipleSelectionManager extends FocusState {
@@ -95,5 +96,6 @@ export interface MultipleSelectionManager extends FocusState {
   /** Returns whether the given key can be selected. */
   canSelectItem(key: Key): boolean,
   /** Sets the selection behavior for the collection. */
-  setSelectionBehavior(selectionBehavior: SelectionBehavior): void
+  setSelectionBehavior(selectionBehavior: SelectionBehavior): void,
+  readonly hasItemActions: boolean
 }

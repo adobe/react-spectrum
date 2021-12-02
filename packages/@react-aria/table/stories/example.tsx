@@ -11,7 +11,7 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactNode, useState} from 'react';
+import React, {useState} from 'react';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useFocusRing} from '@react-aria/focus';
 import {useRef} from 'react';
@@ -21,11 +21,10 @@ import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 export function Table(props) {
-  let {onAction} = props;
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
-  console.log(showSelectionCheckboxes);
   let state = useTableState({
     ...props,
+    onRowAction: props.onAction,
     showSelectionCheckboxes,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
@@ -54,7 +53,7 @@ export function Table(props) {
       </TableRowGroup>
       <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
         {[...collection.body.childNodes].map(row => (
-          <TableRow key={row.key} item={row} state={state} onAction={onAction}>
+          <TableRow key={row.key} item={row} state={state}>
             {[...row.childNodes].map(cell =>
               cell.props.isSelectionCell
                 ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
@@ -115,10 +114,10 @@ export function TableColumnHeader({column, state}) {
   );
 }
 
-export function TableRow({item, children, state, onAction}: {item: any, children: ReactNode, state: any, onAction?: (key: string) => void}) {
+export function TableRow({item, children, state}) {
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {rowProps} = useTableRow({onAction: onAction && item.key === 2 ? () => onAction(item.key) : undefined, node: item}, state, ref);
+  let {rowProps} = useTableRow({node: item}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (

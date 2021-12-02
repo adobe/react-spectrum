@@ -44,6 +44,10 @@ export class SelectionManager implements MultipleSelectionManager {
     this._isSelectAll = null;
   }
 
+  get hasItemActions(): boolean {
+    return this.state.hasItemActions;
+  }
+
   /**
    * The type of selection that is allowed in the collection.
    */
@@ -471,4 +475,5 @@ export class SelectionManager implements MultipleSelectionManager {
 
     return true;
   }
+
 }

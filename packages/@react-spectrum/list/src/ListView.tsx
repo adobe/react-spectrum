@@ -118,7 +118,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     ...props,
     collection: gridCollection,
     focusMode: 'cell',
-    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle',
+    onRowAction: onAction
   });
   let layout = useListLayout(state, props.density || 'regular');
   let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({

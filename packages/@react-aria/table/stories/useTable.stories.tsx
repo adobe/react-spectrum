@@ -72,3 +72,37 @@ ScrollTesting.args = {};
 
 export const ActionTesting = Template.bind({});
 ActionTesting.args = {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')};
+
+/**
+ * Pass through onAction in state selectionmanager
+ * usemultipleselectionstate would take it
+ * be careful not to add to all components
+ *
+ * add next to interface selecitonBehavior in useMultipleSelectionState file itself
+ * signature (key: Key) => void
+ * two exposed elemetns
+ * hasActions: !!onAction
+ * triggerAction: (key) => onAction(key)
+ *
+ * selectionManager.ts gets
+ * get hasActions(), this.state.hasActions
+ * triggerAction...
+ *
+ * in useSeelctableItem, lines 139, manager.hasActions
+ */
+
+
+/**
+ * maybe boolean is better?
+ *
+ */
+
+/**
+ * MultipleSelectionState
+ * hasItemActions?: boolean (enableItemActions)
+ *
+ * useSelectableItems now check manager.hasItemActions instead expect for hasPrimaryAction, that stays the same
+ * onAction passed at the collection level
+ * useGridState takes onRowAction/onCellAction
+ * might be able to have inside useGridState spread props and add onAction that conditionally calls row or cell action
+ */

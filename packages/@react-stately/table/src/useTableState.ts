@@ -37,7 +37,8 @@ export interface CollectionBuilderContext<T> {
 
 export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
-  showSelectionCheckboxes?: boolean
+  showSelectionCheckboxes?: boolean,
+  onRowAction?: (key: Key) => void
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -63,7 +64,8 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
-  let {disabledKeys, selectionManager} = useGridState({...props, collection});
+
+  let {disabledKeys, selectionManager, onRowAction, onCellAction} = useGridState({...props, collection});
 
   return {
     collection,
@@ -78,6 +80,8 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
           ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
           : 'ascending'
       });
-    }
+    },
+    onRowAction,
+    onCellAction
   };
 }

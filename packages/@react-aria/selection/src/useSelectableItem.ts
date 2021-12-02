@@ -135,8 +135,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   }
 
   let modality = useRef(null);
-  let hasPrimaryAction = onAction && manager.selectionMode === 'none';
-  let hasSecondaryAction = onAction && manager.selectionMode !== 'none' && manager.selectionBehavior === 'replace';
+  let hasPrimaryAction = manager.hasItemActions && onAction && manager.selectionMode === 'none';
+  let hasSecondaryAction = manager.hasItemActions && onAction && manager.selectionMode !== 'none' && manager.selectionBehavior === 'replace';
   let allowsSelection = !isDisabled && manager.canSelectItem(key);
 
   // By default, selection occurs on pointer down. This can be strange if selecting an
@@ -161,7 +161,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
 
-    itemPressProps.onPress = hasPrimaryAction ? () => onAction() : null;
+    itemPressProps.onPress = hasPrimaryAction ? () => onAction?.() : null;
   } else {
     // On touch, it feels strange to select on touch down, so we special case this.
     itemPressProps.onPressStart = (e) => {
@@ -176,7 +176,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         // Single tap on touch with selectionBehavior = 'replace' performs an action, i.e. navigation.
         // Also perform action on press up when selectionMode = 'none'.
         if (hasPrimaryAction || hasSecondaryAction) {
-          onAction();
+          onAction?.();
         } else {
           onSelect(e);
         }
@@ -196,7 +196,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (modality.current === 'mouse') {
       e.stopPropagation();
       e.preventDefault();
-      onAction();
+      onAction?.();
     }
   } : undefined;
 
@@ -217,7 +217,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Pressing the Enter key with selectionBehavior = 'replace' performs an action (i.e. navigation).
   let onKeyUp = hasSecondaryAction ? (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
-      onAction();
+      onAction?.();
     }
   } : undefined;
 

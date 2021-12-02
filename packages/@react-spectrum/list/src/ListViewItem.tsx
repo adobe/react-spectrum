@@ -46,8 +46,7 @@ export function ListViewItem(props) {
   let {pressProps, isPressed} = usePress({isDisabled});
   let {rowProps} = useGridRow({
     node: item,
-    isVirtualized: true,
-    onAction: onAction ? () => onAction(item.key) : null
+    isVirtualized: true
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,

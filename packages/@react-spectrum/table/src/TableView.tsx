@@ -73,12 +73,13 @@ function useTableContext() {
 
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let {isQuiet, onAction} = props;
+  let {isQuiet} = props;
   let {styleProps} = useStyleProps(props);
 
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
   let state = useTableState({
     ...props,
+    onRowAction: props.onAction,
     showSelectionCheckboxes,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
@@ -159,8 +160,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         <TableRow
           key={reusableView.key}
           item={reusableView.content}
-          style={style}
-          onAction={onAction}>
+          style={style}>
           {renderChildren(children)}
         </TableRow>
       );
@@ -506,16 +506,15 @@ function TableRowGroup({children, ...otherProps}) {
   );
 }
 
-function TableRow({item, children, onAction, ...otherProps}) {
+function TableRow({item, children, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
-  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || state.selectionManager.hasItemActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({
     node: item,
-    isVirtualized: true,
-    onAction: onAction ? () => onAction(item.key) : null
+    isVirtualized: true
   }, state, ref);
 
   let {pressProps, isPressed} = usePress({isDisabled});

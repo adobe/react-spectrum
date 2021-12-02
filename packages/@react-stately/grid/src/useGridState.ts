@@ -7,21 +7,29 @@ export interface GridState<T, C extends GridCollection<T>> {
   /** A set of keys for rows that are disabled. */
   disabledKeys: Set<Key>,
   /** A selection manager to read and update row selection state. */
-  selectionManager: SelectionManager
+  selectionManager: SelectionManager,
+  onRowAction?: (key: Key) => void,
+  onCellAction?: (key: Key) => void
 }
 
 interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps {
   collection: C,
   disabledKeys?: Iterable<Key>,
-  focusMode?: 'row' | 'cell'
+  focusMode?: 'row' | 'cell',
+  onRowAction?: (key: Key) => void,
+  onCellAction?: (key: Key) => void
 }
 
 /**
  * Provides state management for a grid component. Handles row selection and focusing a grid cell's focusable child if applicable.
  */
 export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
-  let {collection, focusMode} = props;
-  let selectionState = useMultipleSelectionState(props);
+  let {collection, focusMode, onRowAction, onCellAction} = props;
+  let selectionState = useMultipleSelectionState({
+    ...props,
+    hasItemActions: !!(onRowAction || onCellAction)
+  });
+
   let disabledKeys = useMemo(() =>
       props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
     , [props.disabledKeys]);
@@ -54,6 +62,8 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState)
+    selectionManager: new SelectionManager(collection, selectionState),
+    onRowAction,
+    onCellAction
   };
 }
