@@ -21,8 +21,11 @@ import {
   SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {Checkbox} from '@react-spectrum/checkbox';
+import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {Content} from '@react-spectrum/view';
 import DragHandle from './DragHandle';
+import {Grid} from '@react-spectrum/layout';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 // @ts-ignore
@@ -153,21 +156,44 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     renderPreview(selectedKeys, draggedKey) {
       let item = state.collection.getItem(draggedKey);
       let itemWidth = domRef.current.offsetWidth;
+      let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
+      let isSelected = state.selectionManager.isSelected(item.key);
       return (
         <Provider
           {...provider}
           UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')}
-          UNSAFE_style={{width: itemWidth}}>
-          <div className={listStyles['react-spectrum-ListViewItem-grid']}>
+          UNSAFE_style={{width: itemWidth, paddingInlineStart: 0}}>
+          <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
               <div className={listStyles['react-spectrum-ListViewItem-draghandle-button']}>
                 <DragHandle />
               </div>
             </div>
-            <div className={listStyles['react-spectrum-ListViewItem-content']}>
-              {item.rendered}
-            </div>
-          </div>
+            {showCheckbox && 
+              <Checkbox
+                isSelected={isSelected}
+                UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
+                isEmphasized />
+            }
+            <SlotProvider
+              slots={{
+                content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+                text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+                description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
+                icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
+                image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
+                link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
+                actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
+                actionGroup: {
+                  UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
+                  isQuiet: true,
+                  density: 'compact'
+                },
+                actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
+              }}>
+              {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
+            </SlotProvider>
+          </Grid>
         </Provider>
       );
     },
