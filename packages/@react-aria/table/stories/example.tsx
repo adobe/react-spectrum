@@ -11,7 +11,7 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useFocusRing} from '@react-aria/focus';
 import {useRef} from 'react';
@@ -103,7 +103,7 @@ export function TableColumnHeader({column, state}) {
   );
 }
 
-export function TableRow({item, children, state, onAction}) {
+export function TableRow({item, children, state, onAction}: {item: any, children: ReactNode, state: any, onAction?: (key: string) => void}) {
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({onAction: () => onAction(item.key), node: item}, state, ref);

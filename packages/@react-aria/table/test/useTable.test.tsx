@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {announce as announceMock} from '@react-aria/live-announcer';
+import {announce} from '@react-aria/live-announcer';
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
 import {installPointerEvent} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
@@ -28,7 +28,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import {useTable} from '../src';
 
-let announce = announceMock as jest.Mock<announceMock>;
+let mockAnnounce = announce as jest.MockedFunction<typeof announce>;
 
 let columns = [
   {name: 'Name', uid: 'name'},
@@ -121,14 +121,14 @@ describe('useTable', () => {
 
       // @ts-ignore
       userEvent.click(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
-      expect(announce).toHaveBeenLastCalledWith('Squirtle selected.');
-      expect(announce).toHaveBeenCalledTimes(1);
+      expect(mockAnnounce).toHaveBeenLastCalledWith('Squirtle selected.');
+      expect(mockAnnounce).toHaveBeenCalledTimes(1);
       expect(onAction).not.toHaveBeenCalled();
 
-      announce.mockReset();
+      mockAnnounce.mockReset();
       // @ts-ignore
       userEvent.dblClick(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
-      expect(announce).not.toHaveBeenCalled();
+      expect(mockAnnounce).not.toHaveBeenCalled();
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onAction).toHaveBeenCalledWith(2);
     });
