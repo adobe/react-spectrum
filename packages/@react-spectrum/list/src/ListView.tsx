@@ -25,7 +25,6 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import DragHandle from './DragHandle';
-import {Grid} from '@react-spectrum/layout';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 // @ts-ignore
@@ -162,8 +161,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         <Provider
           {...provider}
           UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')}
-          UNSAFE_style={{width: itemWidth, paddingInlineStart: 0}}>
-          <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
+          UNSAFE_style={{width: itemWidth}}>
+          <div className={listStyles['react-spectrum-ListViewItem-grid']} data-testid="dragpreview">
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
               <div className={listStyles['react-spectrum-ListViewItem-draghandle-button']}>
                 <DragHandle />
@@ -193,7 +192,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
               }}>
               {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
             </SlotProvider>
-          </Grid>
+          </div>
         </Provider>
       );
     },

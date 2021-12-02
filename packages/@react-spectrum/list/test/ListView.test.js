@@ -617,10 +617,29 @@ describe('ListView', function () {
     });
 
     afterEach(() => {
+      act(() => {jest.runAllTimers();});
       jest.clearAllMocks();
     });
 
     describe('via mouse', function () {
+      it('should show a default drag preview on drag', function () {
+        let {getAllByRole, getByTestId} = render(
+          <DraggableListView />
+        );
+
+        let row = getAllByRole('row')[0];
+        let cell = within(row).getByRole('gridcell');
+
+        // Need raf to be async so the drag preview shows up properly
+        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
+        let dataTransfer = new DataTransfer();
+
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+        expect(dataTransfer._dragImage.x).toBe(5);
+        expect(dataTransfer._dragImage.y).toBe(5);
+        expect(getByTestId('dragpreview')).toBeTruthy();
+      });
+
       it('should allow drag and drop of a single row', async function () {
         let {getAllByRole, getByText} = render(
           <DraggableListView />
