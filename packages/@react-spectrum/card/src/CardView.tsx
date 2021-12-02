@@ -12,16 +12,16 @@
 
 import {CardBase} from './CardBase';
 import {CardViewContext, useCardViewContext} from './CardViewContext';
-import cardViewStyles from './cardview.css';
 import {classNames, useDOMRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, DOMRefValue, Node} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useMemo, useRef} from 'react';
+import React, {ReactElement, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
+import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
@@ -37,20 +37,14 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     renderEmptyState,
     layout,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    cardOrientation = 'vertical'
   } = props;
+
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator}) : layout, [layout, collator]);
+  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout, [layout, collator, cardOrientation, scale]);
   let layoutType = cardViewLayout.layoutType;
-
-  if (typeof layout === 'function') {
-    if (layoutType === 'grid') {
-      cardViewLayout.itemPadding = scale === 'large' ? 116 : 95;
-    } else if (layoutType === 'gallery') {
-      cardViewLayout.itemPadding = scale === 'large' ? 143 : 114;
-    }
-  }
 
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
@@ -77,6 +71,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   let state = useGridState({
     ...props,
+    selectionMode: cardOrientation === 'horizontal' && layoutType === 'grid' ? 'none' : props.selectionMode,
     collection: gridCollection,
     focusMode: 'cell'
   });
@@ -95,7 +90,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   type View = ReusableView<Node<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View) => (
     <VirtualizerItem
-      className={classNames(cardViewStyles, 'react-spectrum-CardView-CardWrapper')}
       key={reusableView.key}
       reusableView={reusableView}
       parent={parent} />
@@ -107,13 +101,22 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     focusedKey = focusedItem.parentKey;
   }
 
+  let margin = cardViewLayout.margin || 0;
+  let virtualizer = cardViewLayout.virtualizer;
+  let scrollToItem = useCallback((key) => {
+    virtualizer && virtualizer.scrollToItem(key, {
+      duration: 0,
+      offsetY: margin
+    });
+  }, [margin, virtualizer]);
+
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
-    <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout}}>
+    <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout, cardOrientation}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
-        className={classNames(cardViewStyles, 'react-spectrum-CardView')}
+        className={classNames(styles, 'spectrum-CardView')}
         ref={domRef}
         focusedKey={focusedKey}
         scrollDirection="vertical"
@@ -121,7 +124,9 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         collection={gridCollection}
         isLoading={isLoading}
         onLoadMore={onLoadMore}
-        renderWrapper={renderWrapper}>
+        renderWrapper={renderWrapper}
+        transitionDuration={isLoading ? 160 : 220}
+        scrollToItem={scrollToItem}>
         {(type, item) => {
           if (type === 'item') {
             return (
@@ -160,7 +165,7 @@ function CenteredWrapper({children}) {
     <div
       role="row"
       aria-rowindex={state.collection.size + 1}
-      className={classNames(cardViewStyles, 'react-spectrum-CardView-centeredWrapper')}>
+      className={classNames(styles, 'spectrum-CardView-centeredWrapper')}>
       <div role="gridcell">
         {children}
       </div>
@@ -195,8 +200,12 @@ function InternalCard(props) {
     isQuiet = true;
   }
 
+  if (layoutType !== 'grid') {
+    cardOrientation = 'vertical';
+  }
+
   return (
-    <div {...rowProps} ref={rowRef} style={{height: '100%'}}>
+    <div {...rowProps} ref={rowRef} className={classNames(styles, 'spectrum-CardView-row')}>
       <CardBase
         ref={cellRef}
         articleProps={gridCellProps}
