@@ -11,11 +11,11 @@
  */
 
 
-import {installPointerEvent} from '@react-spectrum/test-utils';
 
 jest.mock('@react-aria/live-announcer');
-import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
 import {announce as announceMock} from '@react-aria/live-announcer';
+import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {render} from '@testing-library/react';
 import {
@@ -99,8 +99,11 @@ describe('useTable', () => {
     it('calls onAction', () => {
       let onAction = jest.fn();
       let tree = render(
-        <Table onAction={onAction} selectionBehavior="replace" aria-label="Table with selection"
-               selectionMode="multiple">
+        <Table
+          onAction={onAction}
+          selectionBehavior="replace"
+          aria-label="Table with selection"
+          selectionMode="multiple">
           <TableHeader columns={columns}>
             {column => (
               <Column key={column.uid}>
