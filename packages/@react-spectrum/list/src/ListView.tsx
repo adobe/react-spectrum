@@ -96,6 +96,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     onAction,
     getItems,
     onDragStart,
+    onDragMove,
     onDragEnd,
     itemAllowsDragging
   } = props;
@@ -171,6 +172,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       );
     },
     onDragStart: onDragStart,
+    onDragMove: onDragMove,
     onDragEnd: onDragEnd,
     itemAllowsDragging: itemAllowsDragging
   });

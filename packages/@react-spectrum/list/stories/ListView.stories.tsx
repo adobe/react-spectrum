@@ -220,7 +220,11 @@ storiesOf('ListView', module)
   .add(
     'draggable rows',
     () => (
-      <DragExample />
+      <>
+        <input />
+        <Droppable />
+        <DragExample />
+      </>
     )
   );
 
@@ -357,7 +361,7 @@ function EmptyTest() {
 }
 
 
-function DragExample(props?) {
+export function DragExample(props?) {
   let getItems = (keys) => [...keys].map(key => {
     let item = items.find(item => item.key === key);
     return {
@@ -371,34 +375,39 @@ function DragExample(props?) {
   };
 
   return (
-    <>
-      <input />
-      <Droppable />
-      <ListView width="300px" selectionMode="multiple" items={items} getItems={getItems} itemAllowsDragging={itemAllowsDragging} {...props}>
-        {(item: any) => (
-          <Item key={item.key} textValue={item.textValue}>
-            <Content>
-              <Flex alignItems="center" gap="10px">
-                <View flexGrow={1}>Item {item.key}</View>
-                <ActionButton><Add /></ActionButton>
-                <MenuTrigger>
-                  <ActionButton><MoreSmall /></ActionButton>
-                  <Menu>
-                    <Item>
-                      <Edit />
-                      <Text>Edit</Text>
-                    </Item>
-                    <Item>
-                      <Delete />
-                      <Text>Delete</Text>
-                    </Item>
-                  </Menu>
-                </MenuTrigger>
-              </Flex>
-            </Content>
-          </Item>
-        )}
-      </ListView>
-    </>
+    <ListView
+      aria-label="draggable list view"
+      width="300px"
+      selectionMode="multiple"
+      items={items}
+      getItems={getItems} disabledKeys={['f']}
+      itemAllowsDragging={itemAllowsDragging}
+      onDragStart={action('dragStart')}
+      onDragEnd={action('dragEnd')}
+      {...props}>
+      {(item: any) => (
+        <Item key={item.key} textValue={item.textValue}>
+          <Content>
+            <Flex alignItems="center" gap="10px">
+              <View flexGrow={1}>Item {item.key}</View>
+              <ActionButton><Add /></ActionButton>
+              <MenuTrigger>
+                <ActionButton><MoreSmall /></ActionButton>
+                <Menu>
+                  <Item>
+                    <Edit />
+                    <Text>Edit</Text>
+                  </Item>
+                  <Item>
+                    <Delete />
+                    <Text>Delete</Text>
+                  </Item>
+                </Menu>
+              </MenuTrigger>
+            </Flex>
+          </Content>
+        </Item>
+      )}
+    </ListView>
   );
 }

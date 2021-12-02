@@ -34,7 +34,6 @@ export function ListViewItem(props) {
   } = props;
   let cellNode = [...item.childNodes][0];
   let {state, dragState, onAction, isListDraggable, itemAllowsDragging} = useContext(ListViewContext);
-  let isDraggable = itemAllowsDragging ? itemAllowsDragging(item.key) : false;
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();
@@ -45,6 +44,7 @@ export function ListViewItem(props) {
   let {isFocusVisible, focusProps} = useFocusRing();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
+  let isDraggable = itemAllowsDragging ? itemAllowsDragging(item.key) && !isDisabled : false;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {pressProps, isPressed} = usePress({isDisabled});
   let {rowProps} = useGridRow({
@@ -127,7 +127,8 @@ export function ListViewItem(props) {
                   <div
                     {...buttonProps as React.HTMLAttributes<HTMLElement>}
                     className={listStyles['react-spectrum-ListViewItem-draghandle-button']}
-                    ref={dragButtonRef}>
+                    ref={dragButtonRef}
+                    data-testid="draghandle">
                     <DragHandle />
                   </div>
                 </FocusRing>

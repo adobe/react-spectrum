@@ -11,8 +11,12 @@
  */
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
+import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
+import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
+import {DragExample} from '../stories/ListView.stories';
 import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Item, ListView} from '../src';
+import {Droppable} from '@react-aria/dnd/test/examples';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -34,6 +38,16 @@ function pointerEvent(type, opts) {
 
 describe('ListView', function () {
   let offsetWidth, offsetHeight;
+  let onSelectionChange = jest.fn();
+  let onAction = jest.fn();
+  let onDragStart = jest.fn();
+  let onDragMove = jest.fn();
+  let onDragEnd = jest.fn();
+  let onDrop = jest.fn();
+
+  afterEach(function () {
+    jest.clearAllMocks();
+  });
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
@@ -61,6 +75,11 @@ describe('ListView', function () {
     }
 
     return el;
+  };
+
+  let moveFocus = (key, opts = {}) => {
+    fireEvent.keyDown(document.activeElement, {key, ...opts});
+    fireEvent.keyUp(document.activeElement, {key, ...opts});
   };
 
   it('renders a static listview', function () {
@@ -144,8 +163,6 @@ describe('ListView', function () {
       locale,
       scale
     );
-
-    let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
     describe('Type to select', function () {
       it('focuses the correct cell when typing', function () {
@@ -314,7 +331,6 @@ describe('ListView', function () {
 
     describe('selection', function () {
       it('should select an item from checkbox', function () {
-        let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
         let row = tree.getAllByRole('row')[1];
@@ -326,7 +342,6 @@ describe('ListView', function () {
       });
 
       it('should select a row by pressing the Space key on a row', function () {
-        let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
         let row = tree.getAllByRole('row')[1];
@@ -339,7 +354,6 @@ describe('ListView', function () {
       });
 
       it('should select a row by pressing the Enter key on a row', function () {
-        let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
         let row = tree.getAllByRole('row')[1];
@@ -352,7 +366,6 @@ describe('ListView', function () {
       });
 
       it('should only allow one item to be selected in single selection', function () {
-        let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'single'});
 
         let rows = tree.getAllByRole('row');
@@ -370,7 +383,6 @@ describe('ListView', function () {
       });
 
       it('should allow multiple items to be selected in multiple selection', function () {
-        let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
         let rows = tree.getAllByRole('row');
@@ -389,7 +401,6 @@ describe('ListView', function () {
 
       it('should toggle items in selection highlight with ctrl-click on Mac', function () {
         let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
-        let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
 
         let rows = tree.getAllByRole('row');
@@ -411,7 +422,6 @@ describe('ListView', function () {
 
       it('should allow multiple items to be selected in selection highlight with ctrl-click on Windows', function () {
         let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
-        let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
 
         let rows = tree.getAllByRole('row');
@@ -435,7 +445,6 @@ describe('ListView', function () {
 
       it('should toggle items in selection highlight with meta-click on Windows', function () {
         let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
-        let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
 
         let rows = tree.getAllByRole('row');
@@ -456,7 +465,6 @@ describe('ListView', function () {
       });
 
       it('should support single tap to perform row selection with screen reader if onAction isn\'t provided', function () {
-        let onSelectionChange = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
 
         let rows = tree.getAllByRole('row');
@@ -485,8 +493,6 @@ describe('ListView', function () {
       });
 
       it('should support single tap to perform onAction with screen reader', function () {
-        let onSelectionChange = jest.fn();
-        let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight', onAction});
 
         let rows = tree.getAllByRole('row');
@@ -508,8 +514,6 @@ describe('ListView', function () {
       });
 
       it('should not call onSelectionChange when hitting Space/Enter on the currently selected row', function () {
-        let onSelectionChange = jest.fn();
-        let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight', onAction});
 
         let row = tree.getAllByRole('row')[1];
@@ -542,14 +546,7 @@ describe('ListView', function () {
         });
     });
 
-    let moveFocus = (key, opts = {}) => {
-      fireEvent.keyDown(document.activeElement, {key, ...opts});
-      fireEvent.keyUp(document.activeElement, {key, ...opts});
-    };
-
     it('should scroll to a cell when it is focused', function () {
-      let onSelectionChange = jest.fn();
-
       let tree = render(
         <ListView
           width="250px"
@@ -597,5 +594,390 @@ describe('ListView', function () {
       expect(document.activeElement).toBe(getCell(tree, 'Item 0'));
       expect(grid.scrollTop).toBe(0);
     });
+  });
+
+  describe('drag and drop', function () {
+    function DraggableListView(props) {
+      return (
+        <>
+          <Droppable onDrop={onDrop} />
+          <DragExample onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} onSelectionChange={onSelectionChange} {...props} />
+        </>
+      );
+    }
+    beforeEach(() => {
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({
+        left: 0,
+        top: 0,
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 50
+      }));
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    describe('via mouse', function () {
+      it('should allow drag and drop of a single row', async function () {
+        let {getAllByRole, getByText} = render(
+          <DraggableListView />
+        );
+
+        let droppable = getByText('Drop here');
+        let row = getAllByRole('row')[0];
+        let cell = within(row).getByRole('gridcell');
+        expect(cell).toHaveTextContent('Item a');
+        expect(cell).toHaveAttribute('draggable', 'true');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'Item a')]);
+
+        act(() => jest.runAllTimers());
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith({
+          type: 'dragstart',
+          keys: new Set('a'),
+          x: 0,
+          y: 0
+        });
+
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(onDragMove).toHaveBeenCalledTimes(1);
+        expect(onDragMove).toHaveBeenCalledWith({
+          type: 'dragmove',
+          keys: new Set('a'),
+          x: 1,
+          y: 1
+        });
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+        act(() => jest.runAllTimers());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledWith({
+          type: 'drop',
+          x: 1,
+          y: 1,
+          dropOperation: 'move',
+          items: [
+            {
+              kind: 'text',
+              types: new Set(['text/plain']),
+              getText: expect.any(Function)
+            }
+          ]
+        });
+
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
+
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          keys: new Set('a'),
+          x: 1,
+          y: 1,
+          dropOperation: 'move'
+        });
+      });
+
+      it('should allow drag and drop of multiple rows', async function () {
+        let {getAllByRole, getByText} = render(
+          <DraggableListView />
+        );
+
+        let droppable = getByText('Drop here');
+        let rows = getAllByRole('row');
+        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
+        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+        // This row should be non-draggable
+        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+        act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
+
+        expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['a', 'b', 'c', 'd']));
+
+        let cellA = within(rows[0]).getByRole('gridcell');
+        expect(cellA).toHaveTextContent('Item a');
+        expect(cellA).toHaveAttribute('draggable', 'true');
+
+        let cellB = within(rows[1]).getByRole('gridcell');
+        expect(cellB).toHaveTextContent('Item b');
+        expect(cellB).toHaveAttribute('draggable', 'true');
+
+        let cellC = within(rows[2]).getByRole('gridcell');
+        expect(cellC).toHaveTextContent('Item c');
+        expect(cellC).not.toHaveAttribute('draggable', 'true');
+
+        let cellD = within(rows[3]).getByRole('gridcell');
+        expect(cellD).toHaveTextContent('Item d');
+        expect(cellD).toHaveAttribute('draggable', 'true');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect([...dataTransfer.items]).toEqual([
+          new DataTransferItem('text/plain', 'Item a\nItem b\nItem d'),
+          new DataTransferItem(
+            CUSTOM_DRAG_TYPE,
+            JSON.stringify([{'text/plain': 'Item a'}, {'text/plain': 'Item b'}, {'text/plain': 'Item d'}]
+          ))
+        ]);
+
+        act(() => jest.runAllTimers());
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith({
+          type: 'dragstart',
+          keys: new Set(['a', 'b', 'd']),
+          x: 0,
+          y: 0
+        });
+
+        fireEvent(cellA, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(onDragMove).toHaveBeenCalledTimes(1);
+        expect(onDragMove).toHaveBeenCalledWith({
+          type: 'dragmove',
+          keys: new Set(['a', 'b', 'd']),
+          x: 1,
+          y: 1
+        });
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+        act(() => jest.runAllTimers());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        // onDrop should only have 3 items, item c shouldn't be included
+        expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Item b');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Item d');
+
+        fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          keys: new Set(['a', 'b', 'd']),
+          x: 1,
+          y: 1,
+          dropOperation: 'move'
+        });
+      });
+
+      it('should not allow drag operations on a disabled row', function () {
+        let {getAllByRole} = render(
+          <DraggableListView disabledKeys={['a']} />
+        );
+
+        let row = getAllByRole('row')[0];
+        let cell = within(row).getByRole('gridcell');
+        expect(cell).toHaveTextContent('Item a');
+        expect(cell).not.toHaveAttribute('draggable', 'true');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect([...dataTransfer.items]).toEqual([]);
+        expect(onDragStart).toHaveBeenCalledTimes(0);
+      });
+
+      it('should not allow drag operations on a non draggable row', function () {
+        let itemAllowsDragging = (key) => {
+          if (key === 'c') {
+            return false;
+          }
+          return true;
+        };
+
+        let {getAllByRole} = render(
+          <DraggableListView itemAllowsDragging={itemAllowsDragging} />
+        );
+
+        let rows = getAllByRole('row');
+        // This row should be non-draggable
+        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+        act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
+        expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['c', 'd']));
+
+        let cellC = within(rows[2]).getByRole('gridcell');
+        expect(cellC).toHaveTextContent('Item c');
+        expect(cellC).not.toHaveAttribute('draggable', 'true');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(cellC, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect([...dataTransfer.items]).toEqual([]);
+        expect(onDragStart).toHaveBeenCalledTimes(0);
+      });
+    });
+
+    describe('via keyboard', function () {
+      afterEach(() => {
+        fireEvent.keyDown(document.body, {key: 'Escape'});
+        fireEvent.keyUp(document.body, {key: 'Escape'});
+      });
+
+      it('should allow drag and drop of a single row', async function () {
+        let {getAllByRole, getByText} = render(
+          <DraggableListView />
+        );
+
+        let droppable = getByText('Drop here');
+        let row = getAllByRole('row')[0];
+        let cell = within(row).getByRole('gridcell');
+        expect(cell).toHaveTextContent('Item a');
+        expect(cell).toHaveAttribute('draggable', 'true');
+
+        act(() => cell.focus());
+        let draghandle = within(cell).queryByTestId('draghandle');
+        expect(draghandle).toBeTruthy();
+
+        fireEvent.keyDown(draghandle, {key: 'Enter'});
+        fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith({
+          type: 'dragstart',
+          keys: new Set('a'),
+          x: 50,
+          y: 25
+        });
+
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(droppable);
+        fireEvent.keyDown(droppable, {key: 'Enter'});
+        fireEvent.keyUp(droppable, {key: 'Enter'});
+
+        expect(onDrop).toHaveBeenCalledTimes(1);
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
+
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          keys: new Set('a'),
+          x: 50,
+          y: 25,
+          dropOperation: 'move'
+        });
+      });
+
+      it('should allow drag and drop of multiple rows', async function () {
+        let {getAllByRole, getByText} = render(
+          <DraggableListView selectedKeys={['a', 'b', 'c', 'd']} />
+        );
+
+        let droppable = getByText('Drop here');
+        let rows = getAllByRole('row');
+
+        let cellA = within(rows[0]).getByRole('gridcell');
+        expect(cellA).toHaveTextContent('Item a');
+        expect(cellA).toHaveAttribute('draggable', 'true');
+
+        let cellB = within(rows[1]).getByRole('gridcell');
+        expect(cellB).toHaveTextContent('Item b');
+        expect(cellB).toHaveAttribute('draggable', 'true');
+
+        let cellC = within(rows[2]).getByRole('gridcell');
+        expect(cellC).toHaveTextContent('Item c');
+        expect(cellC).not.toHaveAttribute('draggable', 'true');
+
+        let cellD = within(rows[3]).getByRole('gridcell');
+        expect(cellD).toHaveTextContent('Item d');
+        expect(cellD).toHaveAttribute('draggable', 'true');
+
+        act(() => cellA.focus());
+        let draghandle = within(cellA).queryByTestId('draghandle');
+        expect(draghandle).toBeTruthy();
+
+        fireEvent.keyDown(draghandle, {key: 'Enter'});
+        fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith({
+          type: 'dragstart',
+          keys: new Set(['a', 'b', 'd']),
+          x: 50,
+          y: 25
+        });
+
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(droppable);
+        fireEvent.keyDown(droppable, {key: 'Enter'});
+        fireEvent.keyUp(droppable, {key: 'Enter'});
+
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        // onDrop should only have 3 items, item c shouldn't be included
+        expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Item b');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Item d');
+
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          keys: new Set(['a', 'b', 'd']),
+          x: 50,
+          y: 25,
+          dropOperation: 'move'
+        });
+      });
+    });
+
+    it.skip('should toggle selection upon clicking the row checkbox', function () {
+      // TODO: this is currently broken in draggable listviews
+    });
+
+    it.skip('should open a menu upon click', function () {
+      // TODO: this is currently broken in draggable listviews
+    });
+
+    it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
+      let itemAllowsDragging = (key) => {
+        if (key === 'b') {
+          return false;
+        }
+        return true;
+      };
+
+      let {getAllByRole} = render(
+        <DraggableListView itemAllowsDragging={itemAllowsDragging} disabledKeys={['a']} />
+      );
+
+      let rows = getAllByRole('row');
+      let cellA = within(rows[0]).getByRole('gridcell');
+      let cellB = within(rows[1]).getByRole('gridcell');
+      let cellC = within(rows[2]).getByRole('gridcell');
+
+      act(() => cellA.focus());
+      expect(within(cellA).queryByTestId('draghandle')).toBeFalsy();
+      moveFocus('ArrowDown');
+      expect(within(cellB).queryByTestId('draghandle')).toBeFalsy();
+      moveFocus('ArrowDown');
+      expect(within(cellC).queryByTestId('draghandle')).toBeTruthy();
+      moveFocus('ArrowDown');
+      expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
+
+      fireEvent.mouseDown(cellA, {detail: 1});
+      expect(within(cellA).queryByTestId('draghandle')).toBeFalsy();
+      fireEvent.mouseDown(cellB, {detail: 1});
+      expect(within(cellB).queryByTestId('draghandle')).toBeFalsy();
+      fireEvent.mouseDown(cellC, {detail: 1});
+      expect(within(cellC).queryByTestId('draghandle')).toBeTruthy();
+      fireEvent.mouseUp(cellC, {detail: 1});
+      expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
+
+      // TODO: for some reason this doesn't seem to be triggering the hover listeners properly...
+      // fireEvent.mouseEnter(cellA);
+      // expect(within(cellA).queryByTestId('draghandle')).toBeFalsy();
+      // fireEvent.mouseEnter(cellB);
+      // expect(within(cellB).queryByTestId('draghandle')).toBeFalsy();
+      // fireEvent.mouseEnter(cellC);
+      // expect(within(cellC).queryByTestId('draghandle')).toBeTruthy();
+      // fireEvent.mouseLeave(cellC);
+      // expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
+    })
   });
 });
