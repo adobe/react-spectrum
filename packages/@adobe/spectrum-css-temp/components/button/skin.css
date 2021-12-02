@@ -17,7 +17,7 @@ governing permissions and limitations under the License.
 
 .spectrum-LogicButton,
 .spectrum-Button,
-.spectrum-ActionButton {
+.spectrum-ActionButton--emphasized {
   &:focus-ring,
   &.is-focused {
     &:after {
