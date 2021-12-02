@@ -17,7 +17,7 @@ import {gridIds} from './utils';
 import intlMessages from '../intl/*.json';
 import {Key, RefObject, useMemo} from 'react';
 import {Layout} from '@react-stately/virtualizer';
-import {mergeDescriptions, mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
+import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
@@ -134,10 +134,7 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
     return selectionBehavior === 'replace' && selectionMode !== 'none' && props.onAction ? message : undefined;
   }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, formatMessage, shouldLongPress]);
 
-  let sortDescriptionProps = useDescription(sortDescription);
-  let longPressDescriptionProps = useDescription(interactionDescription);
-  // todo: should mergeprops append describedby's?
-  let descriptionProps = mergeDescriptions(sortDescriptionProps, longPressDescriptionProps);
+  let descriptionProps = useDescription([sortDescription, interactionDescription].filter(Boolean).join(' '));
 
   // Only announce after initial render, tabbing to the table will tell you the initial sort info already
   useUpdateEffect(() => {

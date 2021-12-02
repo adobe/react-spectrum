@@ -44,9 +44,7 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   /**
    * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
    */
-  scrollRef?: RefObject<HTMLElement>,
-  /** Handler that is called when a user performs an action on an element. */
-  onAction?: (key: Key) => void
+  scrollRef?: RefObject<HTMLElement>
 }
 
 export interface GridAria {
@@ -153,7 +151,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
 
     // Announce how many items are selected, except when selecting the first item.
     if (state.selectionManager.selectionMode === 'multiple') {
-      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || (lastSelection.current as Set<Key>).size > 1) {
+      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current?.size > 1) {
         messages.push(selection === 'all'
           ? formatMessage('selectedAll')
           : formatMessage('selectedCount', {count: selection.size})

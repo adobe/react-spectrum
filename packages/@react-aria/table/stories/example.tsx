@@ -55,7 +55,7 @@ export function Table(props) {
   );
 }
 
-const TableRowGroup = React.forwardRef((props: any, ref) => {
+export const TableRowGroup = React.forwardRef((props: any, ref) => {
   let {type: Element, style, children} = props;
   let {rowGroupProps} = useTableRowGroup();
   return (
@@ -65,7 +65,7 @@ const TableRowGroup = React.forwardRef((props: any, ref) => {
   );
 });
 
-function TableHeaderRow({item, state, children}) {
+export function TableHeaderRow({item, state, children}) {
   let ref = useRef();
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
 
@@ -76,7 +76,7 @@ function TableHeaderRow({item, state, children}) {
   );
 }
 
-function TableColumnHeader({column, state}) {
+export function TableColumnHeader({column, state}) {
   let ref = useRef();
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -103,7 +103,7 @@ function TableColumnHeader({column, state}) {
   );
 }
 
-function TableRow({item, children, state}) {
+export function TableRow({item, children, state}) {
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({node: item}, state, ref);
@@ -128,7 +128,7 @@ function TableRow({item, children, state}) {
   );
 }
 
-function TableCell({cell, state}) {
+export function TableCell({cell, state}) {
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -147,7 +147,7 @@ function TableCell({cell, state}) {
   );
 }
 
-function TableCheckboxCell({cell, state}) {
+export function TableCheckboxCell({cell, state}) {
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
@@ -164,7 +164,7 @@ function TableCheckboxCell({cell, state}) {
   );
 }
 
-function TableSelectAllCell({column, state}) {
+export function TableSelectAllCell({column, state}) {
   let ref = useRef();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
