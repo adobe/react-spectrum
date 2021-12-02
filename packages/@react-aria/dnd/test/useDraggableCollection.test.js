@@ -126,7 +126,6 @@ describe('useDraggableCollection', () => {
       expect(cells.map(c => c.textContent)).toEqual(['Foo', 'Baz']);
     });
 
-    // TODO: fix
     it('should drag multiple selected items', async () => {
       let onDragStart = jest.fn();
       let onDragEnd = jest.fn();
