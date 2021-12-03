@@ -26,7 +26,7 @@ import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectru
 import {Content} from '@react-spectrum/view';
 import DragHandle from './DragHandle';
 import {GridCollection, useGridState} from '@react-stately/grid';
-import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
+import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from '@react-stately/layout';
@@ -147,6 +147,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }), [state, domRef, direction, collator]);
 
   let provider = useProvider();
+  let {checkboxProps} = useGridSelectionCheckbox({key: null}, state);
   let dragState = useDraggableCollectionState({
     collection: state.collection,
     selectionManager: state.selectionManager,
@@ -168,11 +169,12 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                 <DragHandle />
               </div>
             </div>
-            {showCheckbox && 
+            {showCheckbox &&
               <Checkbox
                 isSelected={isSelected}
                 UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
-                isEmphasized />
+                isEmphasized
+                aria-label={checkboxProps['aria-label']} />
             }
             <SlotProvider
               slots={{
