@@ -762,22 +762,25 @@ describe('TableView', function () {
       </Provider>
     );
 
-    let renderMany = (withLinks = false) => render(
-      <TableView aria-label="Table" selectionMode={withLinks ? 'multiple' : undefined}>
-        <TableHeader columns={columns}>
-          {column =>
-            <Column>{column.name}</Column>
-          }
-        </TableHeader>
-        <TableBody items={manyItems}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{withLinks && key === 'foo' ? <Link><a href={`https://example.com/?id=${item.id}`} target="_blank">{item[key]}</a></Link> : item[key]}</Cell>}
-            </Row>)
-          }
-        </TableBody>
-      </TableView>
-    );
+    let renderMany = (props = {}) => {
+      let {withLinks = false, ...otherProps} = props;
+      return render(
+        <TableView aria-label="Table" {...otherProps}>
+          <TableHeader columns={columns}>
+            {column =>
+              <Column>{column.name}</Column>
+            }
+          </TableHeader>
+          <TableBody items={manyItems}>
+            {item =>
+              (<Row key={item.foo}>
+                {key => <Cell>{withLinks && key === 'foo' ? <Link><a href={`https://example.com/?id=${item.id}`} target="_blank">{item[key]}</a></Link> : item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </TableView>
+      );
+    };
 
     let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
     let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
@@ -1542,34 +1545,44 @@ describe('TableView', function () {
 
       describe('Space key with focus on a link within a cell', () => {
         it('should toggle selection and prevent scrolling of the table', () => {
-          let tree = renderMany(true);
-          
-          let row = tree.getAllByRole('row')[1];
+          let tree = renderMany({withLinks: true, selectionMode: 'multiple'});
+          let body = tree.getByRole('grid').childNodes[1];
+          expect(body.scrollTop).toBe(0);
+
+          let row = within(body).getAllByRole('row')[0];
           
           expect(row).toHaveAttribute('aria-selected', 'false');
           
           let link = within(row).getByRole('link');
           expect(link.textContent).toBe('Foo 1');
 
+          let isNotPrevented = true;
+
           act(() => {
             link.focus();
-            fireEvent.keyDown(link, {key: ' '});
-            fireEvent.keyUp(link, {key: ' '});
+            isNotPrevented = fireEvent.keyDown(link, {key: ' '});
+            isNotPrevented = fireEvent.keyUp(link, {key: ' '});
+            expect(isNotPrevented).toBe(false);
             jest.runAllTimers();
           });
 
-          row = tree.getAllByRole('row')[1];
+          expect(body.scrollTop).toBe(0);
+          row = within(body).getAllByRole('row')[0];
   
           expect(row).toHaveAttribute('aria-selected', 'true');
   
+          isNotPrevented = true;
+
           act(() => {
             link.focus();
-            fireEvent.keyDown(link, {key: ' '});
-            fireEvent.keyUp(link, {key: ' '});
+            isNotPrevented = fireEvent.keyDown(link, {key: ' '});
+            isNotPrevented = fireEvent.keyUp(link, {key: ' '});
+            expect(isNotPrevented).toBe(false);
             jest.runAllTimers();
           });
 
-          row = tree.getAllByRole('row')[1];
+          expect(body.scrollTop).toBe(0);
+          row = within(body).getAllByRole('row')[0];
           link = within(row).getByRole('link');
   
           expect(row).toHaveAttribute('aria-selected', 'false');

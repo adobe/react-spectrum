@@ -237,7 +237,7 @@ export function usePress(props: PressHookProps): PressResult {
           if (isValid ||
             (
               currentTarget !== target &&
-              (isHTMLAnchorLink(target as HTMLElement) || (target as HTMLElement).getAttribute('role') === 'link') &&
+              isLinkRole(target as HTMLElement) &&
               isSpaceKey(nativeEvent)
             )
           ) {
@@ -259,17 +259,18 @@ export function usePress(props: PressHookProps): PressResult {
       },
       onKeyUp(e) {
         const {currentTarget, target, nativeEvent, repeat} = e;
-        if (!repeat && currentTarget.contains(target as HTMLElement)) {
-          if (
+        if (
+          !repeat &&
+          currentTarget.contains(target as HTMLElement) &&
+          (
             isValidKeyboardEvent(nativeEvent) ||
             (
               currentTarget !== target &&
-              (isHTMLAnchorLink(target as HTMLElement) || (target as HTMLElement).getAttribute('role') === 'link') &&
+              isLinkRole(target as HTMLElement) &&
               isSpaceKey(nativeEvent)
             )
-          ) {
-            triggerPressUp(createEvent(state.target, e), 'keyboard');
-          }
+          )) {
+          triggerPressUp(createEvent(state.target, e), 'keyboard');
         }
       },
       onClick(e) {
@@ -311,7 +312,7 @@ export function usePress(props: PressHookProps): PressResult {
           isValid ||
           (
             state.target.contains(target) &&
-            (isHTMLAnchorLink(target) || target.getAttribute('role') === 'link') &&
+            isLinkRole(target as HTMLElement) &&
             isSpaceKey(e)
           )
         )
@@ -328,7 +329,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // If the target is a link, trigger the click method to open the URL,
         // but defer triggering pressEnd until onClick event handler.
-        if (state.target.contains(target) && (isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link')) {
+        if (state.target.contains(target) && isLinkRole(target as HTMLElement)) {
           state.target.click();
         }
       }
@@ -709,6 +710,10 @@ function isSpaceKey(event: KeyboardEvent):boolean {
 
 function isHTMLAnchorLink(target: HTMLElement): boolean {
   return target.tagName === 'A' && target.hasAttribute('href');
+}
+
+function isLinkRole(target: HTMLElement): boolean {
+  return isHTMLAnchorLink(target) || target.getAttribute('role') === 'link';
 }
 
 function isValidKeyboardEvent(event: KeyboardEvent): boolean {
