@@ -15,3 +15,4 @@ export * from './useSelectableItem';
 export * from './useSelectableList';
 export * from './ListKeyboardDelegate';
 export * from './useTypeSelect';
+export * from './useHighlightSelectionDescription';

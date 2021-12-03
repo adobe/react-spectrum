@@ -23,6 +23,7 @@
     "@react-aria/interactions": "^3.7.0",
     "@react-aria/utils": "^3.10.0",
     "@react-stately/collections": "^3.3.3",
+    "@react-stately/grid": "^3.1.0",
     "@react-stately/selection": "^3.8.0",
     "@react-types/shared": "^3.10.0"
   },

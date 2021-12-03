@@ -2721,7 +2721,7 @@ describe('TableView', function () {
         onSelectionChange.mockReset();
         fireEvent.keyDown(document.activeElement, {key: ' '});
         fireEvent.keyUp(document.activeElement, {key: ' '});
-        expect(announce).toHaveBeenCalledWith('Foo 5 not selected. 1 item selected.');
+        expect(announce).toHaveBeenCalledWith('Foo 7 selected. 1 item selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 7']);
       });
