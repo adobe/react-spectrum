@@ -5,8 +5,5 @@
   "descendingSort": "ترتيب حسب العمود {columnName} بترتيب تنازلي",
   "select": "تحديد",
   "selectAll": "تحديد الكل",
-  "sortable": "عمود قابل للترتيب",
-  "longPressToSelect": "Long press to enter selection mode.",
-  "enteredSelectionMode": "Entered selection mode.",
-  "leftSelectionMode": "Left selection mode."
+  "sortable": "عمود قابل للترتيب"
 }

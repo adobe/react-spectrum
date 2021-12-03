@@ -15,21 +15,18 @@ import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Key, RefObject, useMemo} from 'react';
 import {Layout} from '@react-stately/virtualizer';
 import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
+import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
-import {useInteractionModality} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface TableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
-  layout?: Layout<Node<T>>,
-  /** Handler that is called when a user performs an action on a row. */
-  onAction?: (key: Key) => void
+  layout?: Layout<Node<T>>
 }
 
 /**
@@ -112,29 +109,7 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
     return sortDirection && column ? formatMessage(`${sortDirection}Sort`, {columnName}) : undefined;
   }, [sortDirection, column, state.collection.columns]);
 
-
-  // do we have something that might be better suited for this? issue is that useInteractionModality
-  // doesn't return quite enough information
-  // if is on touch start is in the window put the message?
-  // grab from dnd?
-  // navigator touch points?
-  let modality = useInteractionModality();
-  let shouldLongPress = (modality === 'pointer' || modality === 'virtual') && 'ontouchstart' in window;
-
-  let interactionDescription = useMemo(() => {
-    let selectionMode = state.selectionManager.selectionMode;
-    let selectionBehavior = state.selectionManager.selectionBehavior;
-    // if we're in replace but can select multiple, then when using touch it's long press to enter selection mode
-    // if we can't tell what mode we're in, then we're probably in voice over, in which case we need the description to be set
-    // before the user interacts so they know they can enter selection mode before they actually have to interact
-    let message = undefined;
-    if (shouldLongPress) {
-      message = formatMessage('longPressToSelect');
-    }
-    return selectionBehavior === 'replace' && selectionMode !== 'none' && props.onAction ? message : undefined;
-  }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, formatMessage, shouldLongPress]);
-
-  let descriptionProps = useDescription([sortDescription, interactionDescription].filter(Boolean).join(' '));
+  let descriptionProps = useDescription(sortDescription);
 
   // Only announce after initial render, tabbing to the table will tell you the initial sort info already
   useUpdateEffect(() => {
@@ -142,6 +117,12 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
   }, [sortDescription]);
 
   return {
-    gridProps: mergeProps(gridProps, descriptionProps)
+    gridProps: mergeProps(
+      gridProps,
+      descriptionProps,
+      {
+        'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')
+      }
+    )
   };
 }

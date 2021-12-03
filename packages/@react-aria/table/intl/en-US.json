@@ -5,8 +5,5 @@
   "ascending": "ascending",
   "descending": "descending",
   "ascendingSort": "sorted by column {columnName} in ascending order",
-  "descendingSort": "sorted by column {columnName} in descending order",
-  "longPressToSelect": "Long press to enter selection mode.",
-  "enteredSelectionMode": "Entered selection mode.",
-  "leftSelectionMode": "Left selection mode."
+  "descendingSort": "sorted by column {columnName} in descending order"
 }

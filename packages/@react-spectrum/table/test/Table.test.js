@@ -2547,47 +2547,58 @@ describe('TableView', function () {
         expect(onAction).toHaveBeenCalledTimes(2);
         expect(onAction).toHaveBeenCalledWith('Foo 10');
       });
+      describe('with pointer events', () => {
+        beforeEach(() => {
+          window.ontouchstart = jest.fn();
+        });
+        afterEach(() => {
+          delete window.ontouchstart;
+        });
+        it('should support long press to enter selection mode on touch', function () {
+          window.ontouchstart = jest.fn();
+          let onSelectionChange = jest.fn();
+          let onAction = jest.fn();
+          let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+          userEvent.click(document.body);
 
-      it('should support long press to enter selection mode on touch', function () {
-        let onSelectionChange = jest.fn();
-        let onAction = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+          fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+          let description = tree.getByText('Long press to enter selection mode.');
+          expect(tree.getByRole('grid')).toHaveAttribute('aria-describedby', expect.stringContaining(description.id));
+          expect(announce).not.toHaveBeenCalled();
+          expect(onSelectionChange).not.toHaveBeenCalled();
+          expect(onAction).not.toHaveBeenCalled();
+          expect(tree.queryByLabelText('Select All')).toBeNull();
 
-        fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-        expect(announce).not.toHaveBeenCalled();
-        expect(onSelectionChange).not.toHaveBeenCalled();
-        expect(onAction).not.toHaveBeenCalled();
-        expect(tree.queryByLabelText('Select All')).toBeNull();
+          act(() => jest.advanceTimersByTime(800));
 
-        act(() => jest.advanceTimersByTime(800));
+          expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
+          expect(announce).toHaveBeenCalledTimes(1);
+          checkSelection(onSelectionChange, ['Foo 5']);
+          expect(onAction).not.toHaveBeenCalled();
+          expect(tree.queryByLabelText('Select All')).not.toBeNull();
 
-        expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
-        expect(announce).toHaveBeenCalledTimes(1);
-        checkSelection(onSelectionChange, ['Foo 5']);
-        expect(onAction).not.toHaveBeenCalled();
-        expect(tree.queryByLabelText('Select All')).not.toBeNull();
+          fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+          onSelectionChange.mockReset();
 
-        fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-        onSelectionChange.mockReset();
+          userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+          expect(announce).toHaveBeenLastCalledWith('Foo 10 selected. 2 items selected.');
+          expect(announce).toHaveBeenCalledTimes(2);
+          checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
-        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
-        expect(announce).toHaveBeenLastCalledWith('Foo 10 selected. 2 items selected.');
-        expect(announce).toHaveBeenCalledTimes(2);
-        checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
+          // Deselect all to exit selection mode
+          userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+          expect(announce).toHaveBeenLastCalledWith('Foo 10 not selected. 1 item selected.');
+          expect(announce).toHaveBeenCalledTimes(3);
+          onSelectionChange.mockReset();
+          userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+          expect(announce).toHaveBeenLastCalledWith('Foo 5 not selected.');
+          expect(announce).toHaveBeenCalledTimes(4);
 
-        // Deselect all to exit selection mode
-        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
-        expect(announce).toHaveBeenLastCalledWith('Foo 10 not selected. 1 item selected.');
-        expect(announce).toHaveBeenCalledTimes(3);
-        onSelectionChange.mockReset();
-        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-        expect(announce).toHaveBeenLastCalledWith('Foo 5 not selected.');
-        expect(announce).toHaveBeenCalledTimes(4);
-
-        act(() => jest.runAllTimers());
-        checkSelection(onSelectionChange, []);
-        expect(onAction).not.toHaveBeenCalled();
-        expect(tree.queryByLabelText('Select All')).toBeNull();
+          act(() => jest.runAllTimers());
+          checkSelection(onSelectionChange, []);
+          expect(onAction).not.toHaveBeenCalled();
+          expect(tree.queryByLabelText('Select All')).toBeNull();
+        });
       });
 
       it('should support Enter to perform onAction with keyboard', function () {

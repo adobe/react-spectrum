@@ -12,7 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaLabelingProps, DOMProps, KeyboardDelegate, Selection} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId, useUpdateEffect} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridKeyboardDelegates} from './utils';
@@ -21,6 +21,7 @@ import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useInteractionModality} from '@react-aria/interactions';
 import {useSelectableCollection} from '@react-aria/selection';
 
 export interface GridProps extends DOMProps, AriaLabelingProps {
@@ -97,6 +98,29 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let id = useId();
   gridKeyboardDelegates.set(state, delegate);
 
+  // do we have something that might be better suited for this? issue is that useInteractionModality
+  // doesn't return quite enough information
+  // if is on touch start is in the window put the message?
+  // grab from dnd?
+  // navigator touch points?
+  let modality = useInteractionModality();
+  let shouldLongPress = (modality === 'pointer' || modality === 'virtual') && 'ontouchstart' in window;
+
+  let interactionDescription = useMemo(() => {
+    let selectionMode = state.selectionManager.selectionMode;
+    let selectionBehavior = state.selectionManager.selectionBehavior;
+    // if we're in replace but can select multiple, then when using touch it's long press to enter selection mode
+    // if we can't tell what mode we're in, then we're probably in voice over, in which case we need the description to be set
+    // before the user interacts so they know they can enter selection mode before they actually have to interact
+    let message = undefined;
+    if (shouldLongPress) {
+      message = formatMessage('longPressToSelect');
+    }
+    return selectionBehavior === 'replace' && selectionMode !== 'none' && state.selectionManager.hasItemActions ? message : undefined;
+  }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, formatMessage, shouldLongPress]);
+
+  let descriptionProps = useDescription(interactionDescription);
+
   let domProps = filterDOMProps(props, {labelable: true});
   let gridProps: HTMLAttributes<HTMLElement> = mergeProps(
     domProps,
@@ -105,7 +129,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    collectionProps
+    collectionProps,
+    descriptionProps
   );
 
   if (isVirtualized) {
@@ -119,6 +144,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let lastSelection = useRef(selection);
   useUpdateEffect(() => {
     if (!state.selectionManager.isFocused) {
+      // do we still need this? can't recall why i removed it, will need to see why it was added and add a test for whichever way it's supposed to be
+      // lastSelection.current = selection;
       return;
     }
 
