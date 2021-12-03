@@ -30,7 +30,11 @@ interface GridCellProps {
   focusMode?: 'child' | 'cell',
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
-  /** Handler that is called when a user performs an action on the cell. */
+  /**
+   * Handler that is called when a user performs an action on the cell.
+   * Please use onCellAction at the collection level instead.
+   * @deprecated
+   **/
   onAction?: () => void
 }
 
