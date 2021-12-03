@@ -20,7 +20,9 @@ export interface ListProps<T> extends CollectionBase<T>, MultipleSelectionStateP
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
   /** @private */
-  suppressTextValueWarning?: boolean
+  suppressTextValueWarning?: boolean,
+  onRowAction?: (key: Key) => void,
+  onCellAction?: (key: Key) => void
 }
 
 export interface ListState<T> {
@@ -31,7 +33,9 @@ export interface ListState<T> {
   disabledKeys: Set<Key>,
 
   /** A selection manager to read and update multiple selection state. */
-  selectionManager: SelectionManager
+  selectionManager: SelectionManager,
+  onRowAction?: (key: Key) => void,
+  onCellAction?: (key: Key) => void
 }
 
 /**
@@ -39,9 +43,12 @@ export interface ListState<T> {
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
-  let {filter} = props;
+  let {filter, onRowAction, onCellAction} = props;
 
-  let selectionState = useMultipleSelectionState(props);
+  let selectionState = useMultipleSelectionState({
+    ...props,
+    hasItemActions: !!(onRowAction || onCellAction)
+  });
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
@@ -61,6 +68,8 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState)
+    selectionManager: new SelectionManager(collection, selectionState),
+    onRowAction,
+    onCellAction
   };
 }
