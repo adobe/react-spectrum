@@ -23,7 +23,11 @@ export interface GridRowProps<T> {
   isVirtualized?: boolean,
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
-  /** Handler that is called when a user performs an action on the row. */
+  /**
+   * Handler that is called when a user performs an action on the row.
+   * Please use onCellAction at the collection level instead.
+   * @deprecated
+   **/
   onAction?: () => void
 }
 
