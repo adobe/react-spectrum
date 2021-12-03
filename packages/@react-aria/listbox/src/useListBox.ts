@@ -17,9 +17,9 @@ import {KeyboardDelegate} from '@react-types/shared';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
 import {useFocusWithin} from '@react-aria/interactions';
+import {useHighlightSelectionDescription, useSelectableList} from '@react-aria/selection';
 import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
-import {useHighlightSelectionDescription, useSelectableList} from '@react-aria/selection';
 
 interface ListBoxAria {
   /** Props for the listbox element. */
