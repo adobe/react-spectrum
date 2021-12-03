@@ -38,6 +38,7 @@ export interface CollectionBuilderContext<T> {
 export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean,
+  /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void
 }
 

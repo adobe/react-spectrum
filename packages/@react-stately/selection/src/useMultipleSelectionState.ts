@@ -35,6 +35,7 @@ export interface MultipleSelectionStateProps extends MultipleSelection {
   selectionBehavior?: SelectionBehavior,
   /** Whether onSelectionChange should fire even if the new set of keys is the same as the last. */
   allowDuplicateSelectionEvents?: boolean,
+  /** If any item has an action. */
   hasItemActions?: boolean
 }
 

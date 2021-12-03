@@ -44,6 +44,9 @@ export class SelectionManager implements MultipleSelectionManager {
     this._isSelectAll = null;
   }
 
+  /**
+   * If any item has an action.
+   */
   get hasItemActions(): boolean {
     return this.state.hasItemActions;
   }

@@ -19,10 +19,12 @@ import {useCollection} from '@react-stately/collections';
 export interface ListProps<T> extends CollectionBase<T>, MultipleSelectionStateProps {
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
-  /** @private */
-  suppressTextValueWarning?: boolean,
+  /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
-  onCellAction?: (key: Key) => void
+  /** Handler that is called when a user performs an action on the cell. */
+  onCellAction?: (key: Key) => void,
+  /** @private */
+  suppressTextValueWarning?: boolean
 }
 
 export interface ListState<T> {
@@ -34,7 +36,9 @@ export interface ListState<T> {
 
   /** A selection manager to read and update multiple selection state. */
   selectionManager: SelectionManager,
+  /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
+  /** Handler that is called when a user performs an action on the cell. */
   onCellAction?: (key: Key) => void
 }
 

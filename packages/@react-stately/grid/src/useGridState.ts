@@ -8,7 +8,9 @@ export interface GridState<T, C extends GridCollection<T>> {
   disabledKeys: Set<Key>,
   /** A selection manager to read and update row selection state. */
   selectionManager: SelectionManager,
+  /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
+  /** Handler that is called when a user performs an action on the cell. */
   onCellAction?: (key: Key) => void
 }
 
