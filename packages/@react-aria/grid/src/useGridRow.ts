@@ -22,7 +22,9 @@ export interface GridRowProps<T> {
   /** Whether the grid row is contained in a virtual scroller. */
   isVirtualized?: boolean,
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean,
+  /** Handler that is called when a user performs an action on the row. */
+  onAction?: () => void
 }
 
 export interface GridRowAria {
@@ -41,7 +43,8 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   let {
     node,
     isVirtualized,
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    onAction
   } = props;
 
   let {itemProps, isPressed} = useSelectableItem({
@@ -50,7 +53,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     ref,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction: state.onRowAction ? () => state.onRowAction(node.key) : undefined
+    onAction: state.onRowAction ? () => state.onRowAction(node.key) : onAction
   });
 
   let isSelected = state.selectionManager.isSelected(node.key);

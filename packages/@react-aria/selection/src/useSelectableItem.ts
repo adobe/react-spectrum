@@ -135,8 +135,9 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   }
 
   let modality = useRef(null);
-  let hasPrimaryAction = manager.hasItemActions && onAction && manager.selectionMode === 'none';
-  let hasSecondaryAction = manager.hasItemActions && onAction && manager.selectionMode !== 'none' && manager.selectionBehavior === 'replace';
+  // check for undefined in the backwards compatible case
+  let hasPrimaryAction = (manager.hasItemActions || manager.hasItemActions == null) && onAction && manager.selectionMode === 'none';
+  let hasSecondaryAction = (manager.hasItemActions || manager.hasItemActions == null) && onAction && manager.selectionMode !== 'none' && manager.selectionBehavior === 'replace';
   let allowsSelection = !isDisabled && manager.canSelectItem(key);
 
   // By default, selection occurs on pointer down. This can be strange if selecting an

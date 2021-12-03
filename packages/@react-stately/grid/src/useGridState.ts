@@ -27,7 +27,7 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
   let {collection, focusMode, onRowAction, onCellAction} = props;
   let selectionState = useMultipleSelectionState({
     ...props,
-    hasItemActions: !!(onRowAction || onCellAction)
+    hasItemActions: (onRowAction == null && onCellAction == null) ? undefined : !!(onRowAction || onCellAction)
   });
 
   let disabledKeys = useMemo(() =>

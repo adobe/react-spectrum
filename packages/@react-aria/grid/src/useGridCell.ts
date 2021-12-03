@@ -29,7 +29,9 @@ interface GridCellProps {
   /** Whether the cell or its first focusable child element should be focused when the grid cell is focused. */
   focusMode?: 'child' | 'cell',
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean,
+  /** Handler that is called when a user performs an action on the cell. */
+  onAction?: () => void
 }
 
 interface GridCellAria {
@@ -49,7 +51,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     node,
     isVirtualized,
     focusMode = 'child',
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    onAction
   } = props;
 
   let {direction} = useLocale();
@@ -81,7 +84,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     isVirtualized,
     focus,
     shouldSelectOnPressUp,
-    onAction: state.onCellAction ? () => state.onCellAction(node.key) : undefined
+    onAction: state.onCellAction ? () => state.onCellAction(node.key) : onAction
   });
 
   let onKeyDown = (e: ReactKeyboardEvent) => {

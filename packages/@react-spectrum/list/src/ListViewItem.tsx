@@ -40,13 +40,14 @@ export function ListViewItem(props) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || (state.selectionManager.hasItemActions || (state.selectionManager.hasItemActions == null && onAction));
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {pressProps, isPressed} = usePress({isDisabled});
   let {rowProps} = useGridRow({
     node: item,
-    isVirtualized: true
+    isVirtualized: true,
+    onAction: onAction ? () => onAction(item.key) : undefined
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
