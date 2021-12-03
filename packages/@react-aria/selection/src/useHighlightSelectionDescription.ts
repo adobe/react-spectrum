@@ -37,6 +37,7 @@ export function useHighlightSelectionDescription(props, state: GridState<any, an
     if (shouldLongPress) {
       message = formatMessage('longPressToSelect');
     }
+
     return selectionBehavior === 'replace' && selectionMode !== 'none' && state.selectionManager.hasItemActions ? message : undefined;
   }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, state.selectionManager.hasItemActions, formatMessage, shouldLongPress]);
 

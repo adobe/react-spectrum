@@ -121,6 +121,7 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
       gridProps,
       descriptionProps,
       {
+        // merge sort description with long press information
         'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')
       }
     )

@@ -12,7 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaLabelingProps, DOMProps, KeyboardDelegate, Selection} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId, useUpdateEffect} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridKeyboardDelegates} from './utils';
@@ -21,7 +21,6 @@ import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useInteractionModality} from '@react-aria/interactions';
 import {useHighlightSelectionDescription, useSelectableCollection} from '@react-aria/selection';
 
 export interface GridProps extends DOMProps, AriaLabelingProps {
