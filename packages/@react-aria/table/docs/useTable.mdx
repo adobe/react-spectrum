@@ -612,6 +612,8 @@ When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the
 
 In the `"replace"` selection behavior, the `onRowAction` and `onCellAction` prop can be used to enable row and cell actions, which differ depending on the interaction method. When provided to `useTableState`, double clicking with a mouse or pressing the <kbd>Enter</kbd> key triggers the action, while single click and the <kbd>Space</kbd> key are reserved for selection. On touch devices, the action becomes the primary tap interaction, and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode and reverts the selection behavior back to `"replace"`. Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
 
+You'll recall that in the implementation of [Example](#example) above, we passed all props to `useTableState`, so we can just pass `onRowAction` through our `PokemonTable`.
+
 ```tsx example
 <PokemonTable selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
 ```
