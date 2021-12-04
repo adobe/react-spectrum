@@ -63,7 +63,6 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
-
   let {disabledKeys, selectionManager} = useGridState({...props, collection});
 
   return {

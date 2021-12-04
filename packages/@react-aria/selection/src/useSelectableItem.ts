@@ -135,7 +135,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   }
 
   let modality = useRef(null);
-  // check for undefined in the backwards compatible case
   let hasPrimaryAction = onAction && manager.selectionMode === 'none';
   let hasSecondaryAction = onAction && manager.selectionMode !== 'none' && manager.selectionBehavior === 'replace';
   let allowsSelection = !isDisabled && manager.canSelectItem(key);

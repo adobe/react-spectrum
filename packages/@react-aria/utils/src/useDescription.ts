@@ -18,7 +18,7 @@ let descriptionId = 0;
 const descriptionNodes = new Map<string, {refCount: number, element: HTMLElement}>();
 
 export function useDescription(description: string): AriaLabelingProps {
-  let [id, setId] = useState<string>(null);
+  let [id, setId] = useState(null);
 
   useLayoutEffect(() => {
     if (!description) {

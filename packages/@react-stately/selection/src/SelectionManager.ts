@@ -471,5 +471,4 @@ export class SelectionManager implements MultipleSelectionManager {
 
     return true;
   }
-
 }
