@@ -15,6 +15,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
+import {gridMap} from '@react-aria/grid/src/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -79,7 +80,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
   let state = useTableState({
     ...props,
-    onRowAction: onAction,
     showSelectionCheckboxes,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
@@ -124,7 +124,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let {gridProps} = useTable({
     ...props,
     isVirtualized: true,
-    layout
+    layout,
+    onRowAction: onAction
   }, state, domRef);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
@@ -509,7 +510,8 @@ function TableRowGroup({children, ...otherProps}) {
 function TableRow({item, children, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
-  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || state.selectionManager.hasItemActions;
+  let {actions: {onRowAction}} = gridMap.get(state);
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onRowAction;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({

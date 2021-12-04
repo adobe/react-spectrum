@@ -45,13 +45,6 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   /**
-   * If any item has an action.
-   */
-  get hasItemActions(): boolean {
-    return this.state.hasItemActions;
-  }
-
-  /**
    * The type of selection that is allowed in the collection.
    */
   get selectionMode(): SelectionMode {

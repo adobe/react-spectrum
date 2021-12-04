@@ -47,13 +47,20 @@ let rows = [
 function Table(props) {
   let state = useTableState({
     ...props,
-    onRowAction: props.onAction,
     showSelectionCheckboxes: props.selectionMode === 'multiple'
   });
   let ref = useRef();
   let bodyRef = useRef();
   let {collection} = state;
-  let {gridProps} = useTable({...props, scrollRef: bodyRef}, state, ref);
+  let {gridProps} = useTable(
+    {
+      ...props,
+      onRowAction: props.onAction,
+      scrollRef: bodyRef
+    },
+    state,
+    ref
+  );
 
   return (
     <table {...gridProps} ref={ref} style={{borderCollapse: 'collapse'}}>

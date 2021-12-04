@@ -11,35 +11,39 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-import {GridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {MultipleSelectionManager} from '@react-stately/selection';
 import {useDescription} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useMemo} from 'react';
 import {useMessageFormatter} from '@react-aria/i18n';
 
+interface UseHighlightSelectionDescriptionProps {
+  selectionManager: MultipleSelectionManager,
+  hasItemActions?: boolean
+}
+
 /**
  * Computes the description for a grid selectable collection.
  * @param props
- * @param state
  */
-export function useHighlightSelectionDescription(props, state: GridState<any, any>): AriaLabelingProps {
+export function useHighlightSelectionDescription(props: UseHighlightSelectionDescriptionProps): AriaLabelingProps {
   let formatMessage = useMessageFormatter(intlMessages);
   let modality = useInteractionModality();
   let shouldLongPress = (modality === 'pointer' || modality === 'virtual') && 'ontouchstart' in window;
 
   let interactionDescription = useMemo(() => {
-    let selectionMode = state.selectionManager.selectionMode;
-    let selectionBehavior = state.selectionManager.selectionBehavior;
+    let selectionMode = props.selectionManager.selectionMode;
+    let selectionBehavior = props.selectionManager.selectionBehavior;
 
     let message = undefined;
     if (shouldLongPress) {
       message = formatMessage('longPressToSelect');
     }
 
-    return selectionBehavior === 'replace' && selectionMode !== 'none' && state.selectionManager.hasItemActions ? message : undefined;
-  }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, state.selectionManager.hasItemActions, formatMessage, shouldLongPress]);
+    return selectionBehavior === 'replace' && selectionMode !== 'none' && props.hasItemActions ? message : undefined;
+  }, [props.selectionManager.selectionMode, props.selectionManager.selectionBehavior, props.hasItemActions, formatMessage, shouldLongPress]);
 
   let descriptionProps = useDescription(interactionDescription);
   return descriptionProps;

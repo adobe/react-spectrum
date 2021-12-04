@@ -12,7 +12,7 @@
 
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {GridCollection} from '@react-types/grid';
-import {gridKeyboardDelegates} from './utils';
+import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
@@ -60,7 +60,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   } = props;
 
   let {direction} = useLocale();
-  let keyboardDelegate = gridKeyboardDelegates.get(state);
+  let {keyboardDelegate, actions: {onCellAction}} = gridMap.get(state);
 
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
@@ -88,7 +88,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     isVirtualized,
     focus,
     shouldSelectOnPressUp,
-    onAction: state.onCellAction ? () => state.onCellAction(node.key) : onAction
+    onAction: onCellAction ? () => onCellAction(node.key) : onAction
   });
 
   let onKeyDown = (e: ReactKeyboardEvent) => {

@@ -17,9 +17,9 @@ import {KeyboardDelegate} from '@react-types/shared';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
 import {useFocusWithin} from '@react-aria/interactions';
-import {useHighlightSelectionDescription, useSelectableList} from '@react-aria/selection';
 import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
+import {useSelectableList} from '@react-aria/selection';
 
 interface ListBoxAria {
   /** Props for the listbox element. */
@@ -70,7 +70,6 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
     collection: state.collection,
     disabledKeys: state.disabledKeys
   });
-  let descriptionProps = useHighlightSelectionDescription(props, state);
 
   let {focusWithinProps} = useFocusWithin({
     onFocusWithin: props.onFocus,
@@ -98,16 +97,11 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
 
   return {
     labelProps,
-    listBoxProps: mergeProps(
-      domProps,
-      focusWithinProps,
-      state.selectionManager.selectionMode === 'multiple' ? {
-        'aria-multiselectable': 'true'
-      } : {}, {
-        role: 'listbox',
-        ...mergeProps(fieldProps, listProps)
-      },
-      descriptionProps
-    )
+    listBoxProps: mergeProps(domProps, focusWithinProps, state.selectionManager.selectionMode === 'multiple' ? {
+      'aria-multiselectable': 'true'
+    } : {}, {
+      role: 'listbox',
+      ...mergeProps(fieldProps, listProps)
+    })
   };
 }

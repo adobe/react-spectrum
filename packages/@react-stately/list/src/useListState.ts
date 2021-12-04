@@ -19,10 +19,6 @@ import {useCollection} from '@react-stately/collections';
 export interface ListProps<T> extends CollectionBase<T>, MultipleSelectionStateProps {
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
-  /** Handler that is called when a user performs an action on the row. */
-  onRowAction?: (key: Key) => void,
-  /** Handler that is called when a user performs an action on the cell. */
-  onCellAction?: (key: Key) => void,
   /** @private */
   suppressTextValueWarning?: boolean
 }
@@ -35,11 +31,7 @@ export interface ListState<T> {
   disabledKeys: Set<Key>,
 
   /** A selection manager to read and update multiple selection state. */
-  selectionManager: SelectionManager,
-  /** Handler that is called when a user performs an action on the row. */
-  onRowAction?: (key: Key) => void,
-  /** Handler that is called when a user performs an action on the cell. */
-  onCellAction?: (key: Key) => void
+  selectionManager: SelectionManager
 }
 
 /**
@@ -47,12 +39,9 @@ export interface ListState<T> {
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
-  let {filter, onRowAction, onCellAction} = props;
+  let {filter} = props;
 
-  let selectionState = useMultipleSelectionState({
-    ...props,
-    hasItemActions: !!(onRowAction || onCellAction)
-  });
+  let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
@@ -72,8 +61,6 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState),
-    onRowAction,
-    onCellAction
+    selectionManager: new SelectionManager(collection, selectionState)
   };
 }

@@ -24,7 +24,6 @@ export function Table(props) {
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
   let state = useTableState({
     ...props,
-    onRowAction: props.onAction,
     showSelectionCheckboxes,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
@@ -36,7 +35,15 @@ export function Table(props) {
   let ref = useRef();
   let bodyRef = useRef();
   let {collection} = state;
-  let {gridProps} = useTable({...props, scrollRef: bodyRef}, state, ref);
+  let {gridProps} = useTable(
+    {
+      ...props,
+      onRowAction: props.onAction,
+      scrollRef: bodyRef
+    },
+    state,
+    ref
+  );
 
   return (
     <table {...gridProps} ref={ref} style={{borderCollapse: 'collapse'}}>

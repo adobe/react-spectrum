@@ -15,7 +15,7 @@ import {AriaLabelingProps, DOMProps, KeyboardDelegate, Selection} from '@react-t
 import {filterDOMProps, mergeProps, useId, useUpdateEffect} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
-import {gridKeyboardDelegates} from './utils';
+import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
 // @ts-ignore
@@ -44,7 +44,11 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   /**
    * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
    */
-  scrollRef?: RefObject<HTMLElement>
+  scrollRef?: RefObject<HTMLElement>,
+  /** Handler that is called when a user performs an action on the row. */
+  onRowAction?: (key: Key) => void,
+  /** Handler that is called when a user performs an action on the cell. */
+  onCellAction?: (key: Key) => void
 }
 
 export interface GridAria {
@@ -65,7 +69,9 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     keyboardDelegate,
     focusMode,
     getRowText = (key) => state.collection.getItem(key)?.textValue,
-    scrollRef
+    scrollRef,
+    onRowAction,
+    onCellAction
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -95,9 +101,12 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   });
 
   let id = useId();
-  gridKeyboardDelegates.set(state, delegate);
+  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
 
-  let descriptionProps = useHighlightSelectionDescription(props, state);
+  let descriptionProps = useHighlightSelectionDescription({
+    selectionManager: state.selectionManager,
+    hasItemActions: !!(onRowAction || onCellAction)
+  });
 
   let domProps = filterDOMProps(props, {labelable: true});
   let gridProps: HTMLAttributes<HTMLElement> = mergeProps(

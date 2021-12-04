@@ -34,9 +34,7 @@ export interface MultipleSelectionStateProps extends MultipleSelection {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** Whether onSelectionChange should fire even if the new set of keys is the same as the last. */
-  allowDuplicateSelectionEvents?: boolean,
-  /** If any item has an action. */
-  hasItemActions?: boolean
+  allowDuplicateSelectionEvents?: boolean
 }
 
 /**
@@ -46,8 +44,7 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   let {
     selectionMode = 'none' as SelectionMode,
     disallowEmptySelection,
-    allowDuplicateSelectionEvents,
-    hasItemActions
+    allowDuplicateSelectionEvents
   } = props;
 
   // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.
@@ -104,8 +101,7 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
         setSelectedKeys(keys);
       }
     },
-    disabledKeys: disabledKeysProp,
-    hasItemActions: hasItemActions
+    disabledKeys: disabledKeysProp
   };
 }
 
