@@ -45,6 +45,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     isDismissable = contextProps.isDismissable,
     onDismiss = contextProps.onClose,
     size,
+    level = 2,
     ...otherProps
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
@@ -63,7 +64,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let slots = useMemo(() => ({
     hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
     header: {UNSAFE_className: styles['spectrum-Dialog-header']},
-    heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
+    heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), level, ...titleProps},
     typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
     divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
     content: {UNSAFE_className: styles['spectrum-Dialog-content']},
