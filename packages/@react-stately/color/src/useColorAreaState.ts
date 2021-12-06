@@ -237,8 +237,6 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     yValue,
     setYValue,
     setColorFromPoint(x: number, y: number) {
-      let {minValue: minValueX, maxValue: maxValueX} = color.getChannelRange(channels.xChannel);
-      let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(channels.yChannel);
       let newXValue = minValueX + clamp(x, 0, 1) * (maxValueX - minValueX);
       let newYValue = minValueY + (1 - clamp(y, 0, 1)) * (maxValueY - minValueY);
       let newColor:Color;
@@ -262,10 +260,10 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       return {x, y};
     },
     incrementX(stepSize) {
-      setXValue(snapValueToStep(xValue + stepSize, minValueX, maxValueX, stepSize));
+      setXValue(xValue + stepSize > maxValueX ? maxValueX : snapValueToStep(xValue + stepSize, minValueX, maxValueX, stepSize));
     },
     incrementY(stepSize) {
-      setYValue(snapValueToStep(yValue + stepSize, minValueY, maxValueY, stepSize));
+      setYValue(yValue + stepSize > maxValueY ? maxValueY : snapValueToStep(yValue + stepSize, minValueY, maxValueY, stepSize));
     },
     decrementX(stepSize) {
       setXValue(snapValueToStep(xValue - stepSize, minValueX, maxValueX, stepSize));
