@@ -36,7 +36,9 @@ interface GridCellProps {
 
 interface GridCellAria {
   /** Props for the grid cell element. */
-  gridCellProps: HTMLAttributes<HTMLElement>
+  gridCellProps: HTMLAttributes<HTMLElement>,
+  /** Whether the cell is currently in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -75,7 +77,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     }
   };
 
-  let {itemProps} = useSelectableItem({
+  let {itemProps, isPressed} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
@@ -223,7 +225,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   }
 
   return {
-    gridCellProps
+    gridCellProps,
+    isPressed
   };
 }
 
