@@ -55,7 +55,6 @@ function renderComponent(Component, contextProps = {}, props = {}) {
 describe('Menu', function () {
   let offsetWidth, offsetHeight;
   let onSelectionChange = jest.fn();
-  let onSelect = jest.fn();
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);

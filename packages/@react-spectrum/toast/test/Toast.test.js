@@ -79,7 +79,6 @@ describe('Toast', function () {
     triggerPress(button[1]);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onAction).toHaveBeenCalledTimes(1);
-    expect(onRemove).toHaveBeenCalledTimes(0);
   });
 
   it.each`
