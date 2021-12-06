@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+// @ts-check
 const {Transformer} = require('@parcel/plugin');
 const mdx = require('@mdx-js/mdx');
 const flatMap = require('unist-util-flatmap');
@@ -34,10 +35,15 @@ const IMPORT_MAPPINGS = {
 };
 
 module.exports = new Transformer({
-  async transform({asset, options}) {
+  async loadConfig({config}) {
+    let pkg = await config.getPackage();
+    return {
+      version: pkg.version
+    };
+  },
+  async transform({asset, options, config}) {
     let exampleCode = [];
-    let assetPackage = await asset.getPackage();
-    let preReleaseParts = assetPackage.version.match(/(alpha)|(beta)|(rc)/);
+    let preReleaseParts = config.version.match(/(alpha)|(beta)|(rc)/);
     let preRelease = preReleaseParts ? preReleaseParts[0] : '';
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
@@ -192,8 +198,8 @@ module.exports = new Transformer({
           order = yamlData.order;
           if (yamlData.image) {
             image = asset.addDependency({
-              moduleSpecifier: yamlData.image,
-              isURL: true
+              specifier: yamlData.image,
+              specifierType: 'url'
             });
           }
         }
@@ -261,7 +267,7 @@ module.exports = new Transformer({
     asset.meta.order = order;
     asset.meta.isMDX = true;
     asset.meta.preRelease = preRelease;
-    asset.isSplittable = false;
+    asset.isBundleSplittable = false;
 
     // Generate the client bundle. We always need the client script,
     // and the docs script when there's a TOC or an example on the page.
@@ -286,7 +292,7 @@ export default {};
         type: 'jsx',
         content: clientBundle,
         uniqueKey: 'client',
-        isSplittable: true,
+        isBundleSplittable: true,
         sideEffects: true,
         env: {
           // We have to override all of the environment options to ensure this doesn't inherit
@@ -307,9 +313,11 @@ export default {};
     // Add a dependency on the client bundle. It should not inherit its entry status from the page,
     // and should always be placed in a separate bundle.
     asset.addDependency({
-      moduleSpecifier: 'client',
-      isEntry: false,
-      isIsolated: true
+      specifier: 'client',
+      specifierType: 'esm',
+      needsStableName: false,
+      priority: 'parallel',
+      bundleBehavior: 'isolated'
     });
 
     // Override the environment of the page bundle. It will run in node as part of the SSG optimizer.

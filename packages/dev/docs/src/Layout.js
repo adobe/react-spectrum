@@ -30,6 +30,7 @@ import ruleStyles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
+import pageStyles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
 
@@ -116,7 +117,8 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
       dir="ltr"
       prefix="og: http://ogp.me/ns#"
       className={clsx(
-        theme.global.spectrum,
+        pageStyles.spectrum,
+        Object.values(theme.global),
         theme.light['spectrum--light'],
         theme.medium['spectrum--medium'],
         typographyStyles.spectrum,

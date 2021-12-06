@@ -49,7 +49,8 @@ module.exports = new Transformer({
           }
 
           asset.addDependency({
-            moduleSpecifier: path.node.source.value,
+            specifier: path.node.source.value,
+            specifierType: 'esm',
             symbols,
             pipeline: 'docs-json'
           });
@@ -77,7 +78,8 @@ module.exports = new Transformer({
 
       ExportAllDeclaration(path) {
         asset.addDependency({
-          moduleSpecifier: path.node.source.value,
+          specifier: path.node.source.value,
+          specifierType: 'esm',
           symbols: new Map([['*', {local: '*'}]]),
           pipeline: 'docs-json'
         });
@@ -247,7 +249,8 @@ module.exports = new Transformer({
 
       if (path.isImportSpecifier()) {
         asset.addDependency({
-          moduleSpecifier: path.parent.source.value,
+          specifier: path.parent.source.value,
+          specifierType: 'esm',
           symbols: new Map([[path.node.imported.name, {local: path.node.local.name}]]),
           pipeline: 'docs-json'
         });

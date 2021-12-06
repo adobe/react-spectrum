@@ -15,19 +15,21 @@ const NodeResolver = require('@parcel/node-resolver-core').default;
 const path = require('path');
 
 module.exports = new Resolver({
-  async resolve({dependency, options, filePath}) {
-    if (dependency.moduleSpecifier.startsWith('docs:') || dependency.moduleSpecifier.startsWith('apiCheck:') || dependency.pipeline === 'docs' || dependency.pipeline === 'docs-json' || dependency.pipeline === 'apiCheck') {
+  async resolve({dependency, options, specifier}) {
+    if (dependency.specifier.startsWith('docs:') || dependency.specifier.startsWith('apiCheck:') || dependency.pipeline === 'docs' || dependency.pipeline === 'docs-json' || dependency.pipeline === 'apiCheck') {
       const resolver = new NodeResolver({
+        fs: options.inputFS,
+        projectRoot: options.projectRoot,
         extensions: ['ts', 'tsx', 'd.ts', 'js'],
-        mainFields: ['source', 'types', 'main'],
-        options
+        mainFields: ['source', 'types', 'main']
       });
 
       let resolved = await resolver.resolve({
-        filename: filePath,
-        isURL: dependency.isURL,
-        parent: dependency.sourcePath,
-        env: dependency.env
+        filename: specifier,
+        specifierType: dependency.specifierType,
+        parent: dependency.resolveFrom,
+        env: dependency.env,
+        sourcePath: dependency.sourcePath
       });
 
       if (resolved && resolved.filePath) {

@@ -52,7 +52,7 @@ module.exports = new Optimizer({
     let name = rename(bundle);
     let code = ReactDOMServer.renderToStaticMarkup(
       React.createElement(Component, {
-        scripts: bundles.filter(b => b.type === 'js' && !b.isInline).map(b => ({
+        scripts: bundles.filter(b => b.type === 'js').map(b => ({
           type: b.env.outputFormat === 'esmodule' ? 'module' : undefined,
           url: urlJoin(b.target.publicUrl, b.name)
         })),
