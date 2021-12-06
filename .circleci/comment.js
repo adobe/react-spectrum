@@ -11,7 +11,7 @@ async function run() {
   if (true) {
     console.log('blah', process.env.CIRCLE_SHA1)
     await octokit.repos.createCommitComment({
-      owner: 'octocat',
+      owner: 'adobe',
       repo: 'react-spectrum',
       commit_sha: process.env.CIRCLE_SHA1,
       body: `Testing comment
