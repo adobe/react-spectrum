@@ -57,11 +57,6 @@ governing permissions and limitations under the License.
     flex: 1;
     box-sizing: border-box;
     min-inline-size: inherit;
-
-    &:hover,
-    &:focus {
-      position: relative; /* shows right border */
-    }
   }
 }
 
