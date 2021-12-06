@@ -17,14 +17,15 @@ governing permissions and limitations under the License.
   --spectrum-calendar-border-width-reset: 0;
   --spectrum-calendar-margin-y: 24px;
   --spectrum-calendar-margin-x: 32px;
-  --spectrum-calendar-width: calc((var(--spectrum-calendar-day-width) + var(--spectrum-calendar-day-padding) * 2) * 7);
+  --spectrum-calendar-max-width: calc((var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12));
+  --spectrum-calendar-min-width: calc(var(--spectrum-calendar-day-width) * 7);
   --spectrum-calendar-button-gap: var(--spectrum-global-dimension-size-40);
   --spectrum-calendar-title-margin-x: var(--spectrum-global-dimension-size-75);
 }
 
 .spectrum-Calendar {
   display: block;
-  touch-action: none;
+  isolation: isolate;
 }
 
 .spectrum-Calendar--padded {
@@ -44,7 +45,9 @@ governing permissions and limitations under the License.
   grid-template-areas: 'prev title next';
   grid-template-columns: minmax(auto, 1fr) auto minmax(auto, 1fr);
   align-content: start;
-  width: var(--spectrum-calendar-width);
+  width: 100%;
+  min-width: var(--spectrum-calendar-min-width);
+  max-width: var(--spectrum-calendar-max-width);
   padding: 0 var(--spectrum-calendar-button-gap);
   box-sizing: border-box;
 }
@@ -115,7 +118,9 @@ governing permissions and limitations under the License.
 
 .spectrum-Calendar-table {
   table-layout: fixed;
-  width: var(--spectrum-calendar-width);
+  width: 100%;
+  min-width: var(--spectrum-calendar-min-width);
+  max-width: var(--spectrum-calendar-max-width);
 
   border-collapse: collapse;
   border-spacing: 0;
@@ -133,7 +138,7 @@ governing permissions and limitations under the License.
   box-sizing: content-box;
   height: var(--spectrum-calendar-day-height);
   width: var(--spectrum-calendar-day-width);
-  padding: var(--spectrum-calendar-day-padding);
+  padding: var(--spectrum-calendar-day-padding) 0;
 
   &:focus {
     outline: 0;
@@ -150,8 +155,8 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
 
   height: var(--spectrum-calendar-day-height);
-  width: var(--spectrum-calendar-day-width);
-  margin: var(--spectrum-calendar-day-padding);
+  width: 100%;
+  margin: var(--spectrum-calendar-day-padding) 0;
 
   border-radius: var(--spectrum-calendar-day-width);
 
@@ -164,6 +169,17 @@ governing permissions and limitations under the License.
   transition: background var(--spectrum-global-animation-duration-100) ease-in-out,
       color var(--spectrum-global-animation-duration-100) ease-in-out,
       border-color var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  /* compute the "auto" margin to center the date text manually rather than using the keyword to ensure consistent rounding. */
+  --margin: calc((100% - var(--spectrum-calendar-day-width)) / 2);
+
+  .spectrum-Calendar-dateText {
+    display: block;
+    width: var(--spectrum-calendar-day-width);
+    margin: 0 auto;
+    margin-inline-start: auto;
+    margin-inline-end: var(--margin);
+  }
 
   &:focus {
     outline: 0;
@@ -205,6 +221,23 @@ governing permissions and limitations under the License.
     }
   }
 
+  /* hover and selected states */
+  &:after {
+    position: absolute;
+    top: calc(50% - calc(var(--spectrum-calendar-day-width) / 2));
+    left: calc(50% - calc(var(--spectrum-calendar-day-width) / 2));
+
+    display: block;
+
+    height: var(--spectrum-calendar-day-height);
+    width: var(--spectrum-calendar-day-width);
+
+    border-radius: var(--spectrum-calendar-day-width);
+
+    content: '';
+    z-index: -1;
+  }
+
   &.is-range-selection {
     /* overrides to make the cells appear connected */
     margin: var(--spectrum-calendar-day-padding) 0;
@@ -212,57 +245,47 @@ governing permissions and limitations under the License.
     line-height: var(--spectrum-calendar-day-height);
     border-radius: var(--spectrum-calendar-border-radius-reset);
 
-    /* Todo: Calculate this */
-    width: calc(var(--spectrum-calendar-day-width) + calc(var(--spectrum-calendar-day-padding) * 2));
-
-    &.is-range-start,
-    &.is-range-end,
-    &.is-selection-start,
-    &.is-selection-end {
-      width: calc(var(--spectrum-calendar-day-width) + var(--spectrum-calendar-day-padding));
-    }
-
-    /* hover and selected states */
-    &:after {
-      position: absolute;
-      top: calc(50% - calc(var(--spectrum-calendar-day-width) / 2));
-      left: calc(50% - calc(var(--spectrum-calendar-day-width) / 2));
-
-      display: block;
-
-      height: var(--spectrum-calendar-day-height);
-      width: var(--spectrum-calendar-day-width);
-
-      border-radius: var(--spectrum-calendar-day-width);
-
-      content: '';
-      z-index: -1;
-    }
-
     &.is-range-start,
     &.is-selection-start {
-      padding-inline-end: var(--spectrum-calendar-day-padding);
-      margin-inline-start: var(--spectrum-calendar-day-padding);
       border-start-start-radius: var(--spectrum-calendar-day-width);
       border-end-start-radius: var(--spectrum-calendar-day-width);
+      /* reduce the width by the "auto" margin and end align so the background doesn't extend to the left */
+      inset-inline-start: auto;
+      inset-inline-end: 0;
+      width: calc(100% - var(--margin));
 
       &:before,
-      &:after {
+      &:after,
+      .spectrum-Calendar-dateText {
         inset-inline-start: 0;
+      }
+
+      &:after,
+      .spectrum-Calendar-dateText {
+        margin-inline-start: 0;
       }
     }
 
     &.is-range-end,
     &.is-selection-end {
-      padding-inline-start: var(--spectrum-calendar-day-padding);
-      margin-inline-end: var(--spectrum-calendar-day-padding);
       border-start-end-radius: var(--spectrum-calendar-day-width);
       border-end-end-radius: var(--spectrum-calendar-day-width);
+      /* reduce the width by the "auto" margin and start align so the background doesn't extend to the right */
+      /* this must be measured from the right rather than using width to avoid rounding errors in Safari */
+      width: auto;
+      inset-inline-start: 0;
+      inset-inline-end: var(--margin);
 
       &:before,
-      &:after {
+      &:after,
+      .spectrum-Calendar-dateText {
         inset-inline-start: auto;
         inset-inline-end: 0;
+      }
+
+      &:after,
+      .spectrum-Calendar-dateText {
+        margin-inline-end: 0;
       }
     }
 
@@ -271,7 +294,17 @@ governing permissions and limitations under the License.
     &.is-selection-end.is-range-start,
     &.is-range-start.is-range-end {
       width: var(--spectrum-calendar-day-width);
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      margin-inline-start: auto;
+      margin-inline-end: var(--margin);
       border-radius: var(--spectrum-calendar-day-width);
+
+      &:after,
+      .spectrum-Calendar-dateText {
+        margin-inline-start: auto;
+        margin-inline-end: var(--margin);
+      }
     }
   }
 }

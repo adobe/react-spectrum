@@ -96,7 +96,7 @@ function Cell({isToday, isSelected, isFocused, isHovered, isPressed, isDisabled,
         'is-hovered': isHovered,
         'is-pressed': isPressed
       })}>
-      12
+      <span className={classNames(styles, 'spectrum-Calendar-dateText')}>12</span>
     </span>
   );
 }
