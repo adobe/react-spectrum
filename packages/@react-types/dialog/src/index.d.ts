@@ -70,12 +70,7 @@ export interface SpectrumDialogProps extends AriaDialogProps, StyleProps {
   /** Whether the Dialog is dismissable. See the [examples](#examples) for more details. */
   isDismissable?: boolean,
   /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
-  onDismiss?: () => void,
-  /**
-   * Sets heading level for the Heading slot element, h1 through h6.
-   * @default 2
-   */
-   level?: 1 | 2 | 3 | 4 | 5 | 6
+  onDismiss?: () => void
 }
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
@@ -102,11 +97,6 @@ export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   /** Handler that is called when the secondary button is pressed. */
   onSecondaryAction?: () => void,
   /** Button to focus by default when the dialog opens. */
-  autoFocusButton?: 'cancel' | 'primary' | 'secondary',
+  autoFocusButton?: 'cancel' | 'primary' | 'secondary'
   // allowsKeyboardConfirmation?: boolean, // triggers primary action
-  /**
-   * Sets heading level for the Heading slot element, h1 through h6.
-   * @default 2
-   */
-   level?: 1 | 2 | 3 | 4 | 5 | 6
 }

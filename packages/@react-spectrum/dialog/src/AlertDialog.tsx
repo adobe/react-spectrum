@@ -45,7 +45,6 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     cancelLabel,
     autoFocusButton,
     title,
-    level = 2, 
     isPrimaryActionDisabled,
     isSecondaryActionDisabled,
     onCancel = () => {},
@@ -73,7 +72,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
       size="M"
       role="alertdialog"
       ref={ref}>
-      <Heading level={level}>{title}</Heading>
+      <Heading level={2}>{title}</Heading>
       {(variant === 'error' || variant === 'warning') &&
         <AlertMedium
           slot="typeIcon"
