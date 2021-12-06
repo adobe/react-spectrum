@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
+import {classNames, getWrappedElement, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
@@ -26,6 +26,7 @@ import {useProviderProps} from '@react-spectrum/provider';
  */
 export function Link(props: SpectrumLinkProps) {
   props = useProviderProps(props);
+  props = useSlotProps(props, 'link');
   let {
     variant = 'primary',
     isQuiet,

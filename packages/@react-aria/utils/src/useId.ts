@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '@react-aria/ssr';
+import {useValueEffect} from './';
 
 let idsUpdaterMap: Map<string, (v: string) => void> = new Map();
 
@@ -25,6 +26,9 @@ export function useId(defaultId?: string): string {
   isRendering.current = true;
   let [value, setValue] = useState(defaultId);
   let nextId = useRef(null);
+
+  let res = useSSRSafeId(value);
+
   // don't memo this, we want it new each render so that the Effects always run
   let updateValue = (val) => {
     if (!isRendering.current) {
@@ -34,9 +38,18 @@ export function useId(defaultId?: string): string {
     }
   };
 
+  idsUpdaterMap.set(res, updateValue);
+
   useLayoutEffect(() => {
     isRendering.current = false;
   }, [updateValue]);
+
+  useLayoutEffect(() => {
+    let r = res;
+    return () => {
+      idsUpdaterMap.delete(r);
+    };
+  }, [res]);
 
   useEffect(() => {
     let newId = nextId.current;
@@ -45,9 +58,6 @@ export function useId(defaultId?: string): string {
       nextId.current = null;
     }
   }, [setValue, updateValue]);
-
-  let res = useSSRSafeId(value);
-  idsUpdaterMap.set(res, updateValue);
   return res;
 }
 
@@ -78,15 +88,20 @@ export function mergeIds(idA: string, idB: string): string {
 /**
  * Used to generate an id, and after render, check if that id is rendered so we know
  * if we can use it in places such as labelledby.
+ * @param depArray - When to recalculate if the id is in the DOM.
  */
-export function useSlotId(): string {
-  let [id, setId] = useState(useId());
-  useLayoutEffect(() => {
-    let setCurr = idsUpdaterMap.get(id);
-    if (setCurr && !document.getElementById(id)) {
-      setId(null);
-    }
-  }, [id]);
+export function useSlotId(depArray: ReadonlyArray<any> = []): string {
+  let id = useId();
+  let [resolvedId, setResolvedId] = useValueEffect(id);
+  let updateId = useCallback(() => {
+    setResolvedId(function *() {
+      yield id;
 
-  return id;
+      yield document.getElementById(id) ? id : null;
+    });
+  }, [id, setResolvedId]);
+
+  useLayoutEffect(updateId, [id, updateId, ...depArray]);
+
+  return resolvedId;
 }

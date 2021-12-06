@@ -13,6 +13,7 @@
 export {useBreadcrumbItem, useBreadcrumbs} from '@react-aria/breadcrumbs';
 export {useButton, useToggleButton} from '@react-aria/button';
 export {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
+export {useComboBox} from '@react-aria/combobox';
 export {useDialog} from '@react-aria/dialog';
 export {FocusRing, FocusScope, useFocusManager, useFocusRing, useFocusable} from '@react-aria/focus';
 export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
@@ -32,6 +33,7 @@ export {useSeparator} from '@react-aria/separator';
 export {SSRProvider, useIsSSR} from '@react-aria/ssr';
 export {useSlider, useSliderThumb} from '@react-aria/slider';
 export {useSwitch} from '@react-aria/switch';
+export {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 export {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 export {useTextField} from '@react-aria/textfield';
 export {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';

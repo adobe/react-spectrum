@@ -62,7 +62,16 @@ export function useMatchedBreakpoints(breakpoints: Breakpoints): string[] {
     }
 
     let onResize = () => {
-      setBreakpoint(getBreakpointHandler());
+      const breakpointHandler = getBreakpointHandler();
+
+      setBreakpoint(previousBreakpointHandler => {
+        if (previousBreakpointHandler.length !== breakpointHandler.length ||
+          previousBreakpointHandler.some((breakpoint, idx) => breakpoint !== breakpointHandler[idx])) {
+          return [...breakpointHandler]; // Return a new array to force state change
+        }
+
+        return previousBreakpointHandler;
+      });
     };
 
     window.addEventListener('resize', onResize);

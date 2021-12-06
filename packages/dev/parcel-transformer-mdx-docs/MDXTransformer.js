@@ -54,8 +54,10 @@ module.exports = new Transformer({
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
             let code = node.value;
-            code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m) => {
-              exampleCode.push(m);
+            code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m, _, s) => {
+              if (s.slice(1, -1) !== 'your-component-library') {
+                exampleCode.push(m);
+              }
               return '';
             });
 

@@ -1,14 +1,19 @@
 {
   "calendar": "Kalender",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} till {end, date, long}",
   "date": "Datum",
   "dateRange": "Datumintervall",
-  "day": "Dag",
-  "dayPeriod": "Dagsperiod",
+  "day": "dag",
+  "dayPeriod": "fm/em",
   "endDate": "Slutdatum",
-  "hour": "Timme",
-  "minute": "Minut",
-  "month": "Månad",
-  "second": "Sekund",
+  "era": "era",
+  "hour": "timme",
+  "minute": "minut",
+  "month": "månad",
+  "second": "sekund",
   "startDate": "Startdatum",
-  "year": "År"
+  "year": "år",
+  "weekday": "veckodag",
+  "timeZoneName": "tidszon"
 }

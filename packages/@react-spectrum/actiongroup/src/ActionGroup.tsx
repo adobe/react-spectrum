@@ -14,8 +14,15 @@ import {ActionButton} from '@react-spectrum/button';
 import {AriaLabelingProps, DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, SlotProvider, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
-import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {
+  classNames,
+  ClearSlots,
+  SlotProvider,
+  useDOMRef,
+  useSlotProps,
+  useStyleProps
+} from '@react-spectrum/utils';
+import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
@@ -32,6 +39,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  props = useSlotProps(props, 'actionGroup');
 
   let {
     isEmphasized,
@@ -284,40 +292,42 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
     // Use a PressResponder to send DOM props through.
     // ActionButton doesn't allow overriding the role by default.
     <PressResponder {...mergeProps(buttonProps, hoverProps)}>
-      <SlotProvider
-        slots={{
-          text: {
-            id: hideButtonText ? textId : null,
-            isHidden: hideButtonText
-          }
-        }}>
-        <ActionButton
-          ref={ref}
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-ActionGroup-item',
-              {
-                'is-selected': isSelected,
-                'is-hovered': isHovered,
-                'spectrum-ActionGroup-item--iconOnly': hideButtonText
-              },
+      <ClearSlots>
+        <SlotProvider
+          slots={{
+            text: {
+              id: hideButtonText ? textId : null,
+              isHidden: hideButtonText
+            }
+          }}>
+          <ActionButton
+            ref={ref}
+            UNSAFE_className={
               classNames(
-                buttonStyles,
+                styles,
+                'spectrum-ActionGroup-item',
                 {
-                  'spectrum-ActionButton--emphasized': isEmphasized,
-                  'is-selected': isSelected
-                }
+                  'is-selected': isSelected,
+                  'is-hovered': isHovered,
+                  'spectrum-ActionGroup-item--iconOnly': hideButtonText
+                },
+                classNames(
+                  buttonStyles,
+                  {
+                    'spectrum-ActionButton--emphasized': isEmphasized,
+                    'is-selected': isSelected
+                  }
+                )
               )
-            )
-          }
-          isDisabled={isDisabled}
-          staticColor={staticColor}
-          aria-label={item['aria-label']}
-          aria-labelledby={item['aria-label'] == null && hideButtonText ? textId : undefined}>
-          {item.rendered}
-        </ActionButton>
-      </SlotProvider>
+            }
+            isDisabled={isDisabled}
+            staticColor={staticColor}
+            aria-label={item['aria-label']}
+            aria-labelledby={item['aria-label'] == null && hideButtonText ? textId : undefined}>
+            {item.rendered}
+          </ActionButton>
+        </SlotProvider>
+      </ClearSlots>
     </PressResponder>
   );
 
@@ -446,6 +456,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
       </SlotProvider>
       <Menu
         items={items}
+        disabledKeys={state.disabledKeys}
         selectionMode={state.selectionManager.selectionMode}
         selectedKeys={state.selectionManager.selectedKeys}
         disallowEmptySelection={state.selectionManager.disallowEmptySelection}

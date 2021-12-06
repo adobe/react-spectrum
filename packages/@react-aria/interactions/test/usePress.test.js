@@ -21,9 +21,9 @@ import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
 function Example(props) {
-  let {elementType: ElementType = 'div', ...otherProps} = props;
+  let {elementType: ElementType = 'div', style, ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...pressProps} tabIndex="0">test</ElementType>;
+  return <ElementType {...pressProps} style={style} tabIndex="0">test</ElementType>;
 }
 
 function pointerEvent(type, opts) {
@@ -32,6 +32,7 @@ function pointerEvent(type, opts) {
     ctrlKey: false,
     metaKey: false,
     shiftKey: false,
+    altKey: false,
     button: opts.button || 0,
     width: 1,
     height: 1
@@ -84,7 +85,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -96,7 +98,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -104,7 +107,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -116,7 +120,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -146,7 +151,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -158,7 +164,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -179,7 +186,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -191,7 +199,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -203,7 +212,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -215,7 +225,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -223,7 +234,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -235,7 +247,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -263,7 +276,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -275,7 +289,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -307,7 +322,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -319,7 +335,56 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
+
+    it('should cancel press when moving outside and the shouldCancelOnPointerExit option is set', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          shouldCancelOnPointerExit
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -353,7 +418,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: true
+          shiftKey: true,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -365,7 +431,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: true,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -373,7 +440,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: true,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -385,7 +453,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: true,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -458,7 +527,7 @@ describe('usePress', function () {
       expect(allowDefault).toBe(true);
     });
 
-    it('should detect virtual pointer events', function () {
+    it('should ignore virtual pointer events', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
@@ -471,8 +540,11 @@ describe('usePress', function () {
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
 
+      expect(events).toEqual([]);
+
+      fireEvent.click(el);
       expect(events).toEqual([
         {
           type: 'pressstart',
@@ -480,7 +552,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressup',
@@ -488,7 +561,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -496,7 +570,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'press',
@@ -504,7 +579,68 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    it('should detect Android TalkBack double tap', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      // Android TalkBack will occasionally fire a pointer down event with "width: 1, height: 1" instead of "width: 0, height: 0".
+      // Make sure we can still determine that this is a virtual event by checking the pressure, detail, and height/width.
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      expect(events).toEqual([]);
+
+      // Virtual pointer event sets pointerType and onClick handles the rest
+      fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -567,7 +703,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -579,7 +716,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -587,7 +725,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -599,7 +738,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -629,7 +769,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -641,7 +782,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -663,7 +805,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -675,7 +818,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -687,7 +831,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -699,7 +844,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -707,7 +853,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -719,7 +866,56 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    it('should cancel press when moving outside and the shouldCancelOnPointerExit option is set', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          shouldCancelOnPointerExit
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.mouseDown(el, {detail: 1});
+      fireEvent.mouseLeave(el);
+      fireEvent.mouseEnter(el);
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
         }
       ]);
     });
@@ -748,7 +944,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: true,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -760,7 +957,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: true
+          shiftKey: true,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -768,7 +966,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: true
+          shiftKey: true,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -780,7 +979,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: true
+          shiftKey: true,
+          altKey: false
         }
       ]);
     });
@@ -876,7 +1076,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -888,7 +1089,8 @@ describe('usePress', function () {
           pointerType: 'mouse',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -922,7 +1124,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -934,7 +1137,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -942,7 +1146,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -954,7 +1159,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -983,7 +1189,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -995,7 +1202,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1016,7 +1224,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1028,7 +1237,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1040,7 +1250,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1052,7 +1263,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -1060,7 +1272,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1072,7 +1285,56 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    it('should cancel press when moving outside and the shouldCancelOnPointerExit option is set', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          shouldCancelOnPointerExit
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
         }
       ]);
     });
@@ -1107,7 +1369,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1119,7 +1382,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1131,7 +1395,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1143,7 +1408,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -1151,7 +1417,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1163,7 +1430,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -1192,7 +1460,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1204,7 +1473,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1237,7 +1507,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1249,7 +1520,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1288,7 +1560,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1300,7 +1573,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -1308,7 +1582,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1320,7 +1595,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -1348,7 +1624,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1360,7 +1637,8 @@ describe('usePress', function () {
           pointerType: 'touch',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1430,7 +1708,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1442,7 +1721,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -1450,7 +1730,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1462,7 +1743,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -1508,7 +1790,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1520,7 +1803,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -1528,7 +1812,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1540,7 +1825,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -1577,7 +1863,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1589,7 +1876,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -1597,7 +1885,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1609,7 +1898,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'click'
@@ -1652,7 +1942,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1664,7 +1955,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -1672,7 +1964,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1684,7 +1977,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'click'
@@ -1715,7 +2009,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: true
+          shiftKey: true,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1727,7 +2022,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: true,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -1735,7 +2031,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: true,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1747,7 +2044,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: true,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -1779,7 +2077,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1791,7 +2090,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1805,7 +2105,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1817,7 +2118,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -1825,7 +2127,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1837,7 +2140,8 @@ describe('usePress', function () {
           pointerType: 'keyboard',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -1885,7 +2189,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1897,7 +2202,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'pressend',
@@ -1905,7 +2211,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         },
         {
           type: 'presschange',
@@ -1917,7 +2224,8 @@ describe('usePress', function () {
           pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
-          shiftKey: false
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -1949,19 +2257,35 @@ describe('usePress', function () {
     let handler = jest.fn();
     let mockUserSelect = 'contain';
     let oldUserSelect = document.documentElement.style.webkitUserSelect;
+    let platformGetter;
+
+    function TestStyleChange(props) {
+      let {styleToApply, ...otherProps} = props;
+      let [show, setShow] = React.useState(false);
+      let {pressProps} = usePress({...otherProps, onPressStart: () => setTimeout(() => setShow(true), 3000)});
+      return (
+        <div style={show ? styleToApply : {}} {...pressProps}>test</div>
+      );
+    }
+
+    beforeAll(() => {
+      platformGetter = jest.spyOn(window.navigator, 'platform', 'get');
+    });
 
     afterAll(() => {
       handler.mockClear();
+      jest.restoreAllMocks();
     });
 
     beforeEach(() => {
       document.documentElement.style.webkitUserSelect = mockUserSelect;
+      platformGetter.mockReturnValue('iPhone');
     });
     afterEach(() => {
       document.documentElement.style.webkitUserSelect = oldUserSelect;
     });
 
-    it('should add user-select: none to html element when press start', function () {
+    it('should add user-select: none to the page on press start (iOS)', function () {
       let {getByText} = render(
         <Example
           onPressStart={handler}
@@ -1974,9 +2298,28 @@ describe('usePress', function () {
       let el = getByText('test');
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
+      expect(el).not.toHaveStyle('user-select: none');
+      fireEvent.touchEnd(el, {targetTouches: [{identifier: 1}]});
     });
 
-    it('should remove user-select: none to html element when press end', function () {
+    it('should not add user-select: none to the page when press start (non-iOS)', function () {
+      platformGetter.mockReturnValue('Android');
+      let {getByText} = render(
+        <Example
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />
+      );
+
+      let el = getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+      expect(el).toHaveStyle('user-select: none');
+    });
+
+    it('should remove user-select: none from the page when press end (iOS)', function () {
       let {getByText} = render(
         <Example
           onPressStart={handler}
@@ -2007,7 +2350,36 @@ describe('usePress', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
 
-    it('should not remove user-select: none when pressing two different elements quickly', function () {
+    it('should remove user-select: none from the element when press end (non-iOS)', function () {
+      platformGetter.mockReturnValue('Android');
+      let {getByText} = render(
+        <Example
+          style={{userSelect: 'text'}}
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />
+      );
+
+      let el = getByText('test');
+
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle('user-select: none');
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle('user-select: text');
+
+      // Checkbox doesn't remove `user-select: none;` style from HTML Element issue
+      // see https://github.com/adobe/react-spectrum/issues/862
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
+      expect(el).toHaveStyle('user-select: text');
+    });
+
+    it('should not remove user-select: none when pressing two different elements quickly (iOS)', function () {
       let {getAllByText} = render(
         <>
           <Example
@@ -2043,7 +2415,81 @@ describe('usePress', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
 
-    it('should remove user-select: none from html element if pressable component unmounts', function () {
+    it('should not remove user-select: none when pressing two different elements quickly (iOS)', function () {
+      let {getAllByText} = render(
+        <>
+          <Example
+            onPressStart={handler}
+            onPressEnd={handler}
+            onPressChange={handler}
+            onPress={handler}
+            onPressUp={handler} />
+          <Example
+            onPressStart={handler}
+            onPressEnd={handler}
+            onPressChange={handler}
+            onPress={handler}
+            onPressUp={handler} />
+        </>
+      );
+
+      let els = getAllByText('test');
+
+      fireEvent.touchStart(els[0], {targetTouches: [{identifier: 1}]});
+      fireEvent.touchEnd(els[0], {changedTouches: [{identifier: 1}]});
+
+      expect(document.documentElement.style.webkitUserSelect).toBe('none');
+
+      fireEvent.touchStart(els[1], {targetTouches: [{identifier: 1}]});
+
+      act(() => {jest.advanceTimersByTime(300);});
+      expect(document.documentElement.style.webkitUserSelect).toBe('none');
+
+      fireEvent.touchEnd(els[1], {changedTouches: [{identifier: 1}]});
+
+      act(() => {jest.advanceTimersByTime(300);});
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+    });
+
+    it('should clean up user-select: none when pressing and releasing two different elements (non-iOS)', function () {
+      platformGetter.mockReturnValue('Android');
+      let {getAllByText} = render(
+        <>
+          <Example
+            style={{userSelect: 'text'}}
+            onPressStart={handler}
+            onPressEnd={handler}
+            onPressChange={handler}
+            onPress={handler}
+            onPressUp={handler} />
+          <Example
+            style={{userSelect: 'text'}}
+            onPressStart={handler}
+            onPressEnd={handler}
+            onPressChange={handler}
+            onPress={handler}
+            onPressUp={handler} />
+        </>
+      );
+
+      let els = getAllByText('test');
+
+      fireEvent.touchStart(els[0], {targetTouches: [{identifier: 1}]});
+      fireEvent.touchStart(els[1], {targetTouches: [{identifier: 2}]});
+
+      expect(els[0]).toHaveStyle('user-select: none');
+      expect(els[1]).toHaveStyle('user-select: none');
+
+      fireEvent.touchEnd(els[0], {changedTouches: [{identifier: 1}]});
+      expect(els[0]).toHaveStyle('user-select: text');
+      expect(els[1]).toHaveStyle('user-select: none');
+
+      fireEvent.touchEnd(els[1], {changedTouches: [{identifier: 2}]});
+      expect(els[0]).toHaveStyle('user-select: text');
+      expect(els[1]).toHaveStyle('user-select: text');
+    });
+
+    it('should remove user-select: none from the page if pressable component unmounts (iOS)', function () {
       let {getByText, unmount} = render(
         <Example
           onPressStart={handler}
@@ -2060,6 +2506,69 @@ describe('usePress', function () {
       unmount();
       act(() => {jest.advanceTimersByTime(300);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
+    });
+
+    it('non related style changes during press down shouldn\'t overwrite user-select on press end (non-iOS)', function () {
+      platformGetter.mockReturnValue('Android');
+      let {getByText} = render(
+        <TestStyleChange
+          styleToApply={{background: 'red'}}
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />
+      );
+
+      let el = getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle(`
+        user-select: none;
+      `);
+
+      act(() => jest.runAllTimers());
+
+      expect(el).toHaveStyle(`
+        user-select: none;
+        background: red;
+      `);
+
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle(`
+        background: red;
+      `);
+    });
+
+    it('changes to user-select during press down remain on press end (non-iOS)', function () {
+      platformGetter.mockReturnValue('Android');
+      let {getByText} = render(
+        <TestStyleChange
+          styleToApply={{background: 'red', userSelect: 'text'}}
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />
+      );
+
+      let el = getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle(`
+        user-select: none;
+      `);
+
+      act(() => jest.runAllTimers());
+
+      expect(el).toHaveStyle(`
+        user-select: text;
+        background: red;
+      `);
+
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
+      expect(el).toHaveStyle(`
+        user-select: text;
+        background: red;
+      `);
     });
   });
 

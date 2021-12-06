@@ -16,15 +16,14 @@ import {
   useDOMRef,
   useResizeObserver,
   useSlotProps,
-  useStyleProps,
-  useValueEffect
+  useStyleProps
 } from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, useValueEffect} from '@react-aria/utils';
+import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
 import React, {useCallback, useEffect, useRef} from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
-import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   let {scale} = useProvider();
@@ -100,11 +99,12 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
       <SlotProvider
         slots={{
           button: {
-            isDisabled,
             UNSAFE_className: classNames(styles, 'spectrum-ButtonGroup-Button')
           }
         }}>
-        {children}
+        <Provider isDisabled={isDisabled}>
+          {children}
+        </Provider>
       </SlotProvider>
     </div>
   );

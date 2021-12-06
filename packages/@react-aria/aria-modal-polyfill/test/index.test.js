@@ -42,7 +42,7 @@ describe('watchModals', () => {
     window.requestAnimationFrame.mockRestore();
   });
 
-  let verify = async function (modal, getByRole) {
+  let verify = async function (modal, queryByRole) {
     // this function expects some specific things when verifying
     // that there is a single separator in the dom that is hidden when the modal is open
     // but is accessible when the modal is open
@@ -54,7 +54,7 @@ describe('watchModals', () => {
     });
     // we shouldn't be able to find it because the search is done by accessibility and the non-modal
     // part of the tree should be inaccessible while the modal is open
-    expect(() => getByRole('separator')).toThrow();
+    expect(queryByRole('separator')).toBeNull();
 
     expect(document.activeElement).toBe(modal);
 
@@ -69,12 +69,12 @@ describe('watchModals', () => {
     }); // wait for animation
 
     // once the modal is removed, we should be able to access the main part of the document again
-    expect(() => getByRole('separator')).not.toThrow();
+    expect(queryByRole('separator')).toBeVisible();
   };
 
   it('should hide everything except the modal', async () => {
     watchModals();
-    let {getByLabelText, getByRole} = render(
+    let {getByLabelText, getByRole, queryByRole} = render(
       <>
         <Provider theme={theme}>
           <DialogTrigger>
@@ -85,7 +85,7 @@ describe('watchModals', () => {
         <hr />
       </>
     );
-    expect(() => getByRole('separator')).not.toThrow();
+    expect(getByRole('separator')).toBeVisible();
     act(() => {
       triggerPress(getByLabelText('Trigger'));
     });
@@ -93,12 +93,12 @@ describe('watchModals', () => {
       jest.runAllTimers();
     });
     let dialog = getByRole('dialog');
-    await verify(dialog, getByRole);
+    await verify(dialog, queryByRole);
   });
 
   it('should handle nested modals', async () => {
     watchModals();
-    let {getByLabelText, getByRole, getAllByRole, getByText} = render(
+    let {getByLabelText, queryByRole, getByRole, getAllByRole, getByText} = render(
       <>
         <Provider theme={theme}>
           <DialogTrigger>
@@ -118,7 +118,7 @@ describe('watchModals', () => {
       </>
     );
     // expect just the button labeled Trigger, and open the first dialog
-    expect(() => getByRole('separator')).not.toThrow();
+    expect(getByRole('separator')).toBeVisible();
     act(() => {
       triggerPress(getByLabelText('Trigger'));
     });
@@ -130,7 +130,7 @@ describe('watchModals', () => {
       expect(dialog).toBeVisible();
     });
     expect(getByText('Outer')).toBeVisible();
-    expect(() => getByRole('separator')).toThrow();
+    expect(queryByRole('separator')).toBeNull();
 
     // the outer dialog is open now, expect to only have access to the button called Nested Trigger and click that
     let buttons = getAllByRole('button');
@@ -148,8 +148,8 @@ describe('watchModals', () => {
       expect(innerDialog).toBeVisible();
     });
     expect(getByText('Inner')).toBeVisible();
-    expect(() => getByRole('button')).toThrow();
-    expect(() => getByRole('separator')).toThrow();
+    expect(queryByRole('button')).toBeNull();
+    expect(queryByRole('separator')).toBeNull();
 
     // start closing dialogs
     fireEvent.keyDown(innerDialog, {key: 'Escape'});
@@ -165,7 +165,7 @@ describe('watchModals', () => {
     expect(buttons.length).toBe(1);
     expect(buttons[0]).toBe(getByLabelText('Nested Trigger'));
     expect(getByText('Outer')).toBeVisible();
-    expect(() => getByRole('separator')).toThrow();
+    expect(queryByRole('separator')).toBeNull();
 
     // close the outer dialog
     fireEvent.keyDown(dialog, {key: 'Escape'});
@@ -179,7 +179,7 @@ describe('watchModals', () => {
     buttons = getAllByRole('button');
     expect(buttons.length).toBe(1);
     expect(buttons[0]).toBe(getByLabelText('Trigger'));
-    expect(() => getByRole('separator')).not.toThrow();
+    expect(getByRole('separator')).toBeVisible();
   });
 
   it('should hide around Menus', async () => {
@@ -191,7 +191,7 @@ describe('watchModals', () => {
       ]}
     ];
     watchModals();
-    let {getByLabelText, getByRole} = render(
+    let {getByLabelText, getByRole, queryByRole} = render(
       <>
         <Provider theme={theme}>
           <MenuTrigger>
@@ -208,7 +208,7 @@ describe('watchModals', () => {
         <hr />
       </>
     );
-    expect(() => getByRole('separator')).not.toThrow();
+    expect(getByRole('separator')).toBeVisible();
     act(() => {
       triggerPress(getByLabelText('Trigger'));
     });
@@ -216,7 +216,7 @@ describe('watchModals', () => {
       jest.runAllTimers();
     });
     let menu = getByRole('menu');
-    await verify(menu, getByRole);
+    await verify(menu, queryByRole);
   });
 
   it('should hide around Tray', async () => {
@@ -230,7 +230,7 @@ describe('watchModals', () => {
     // menu should be a tray
     matchMedia.useMediaQuery('(max-width: 700px)');
     watchModals();
-    let {getByLabelText, getByRole} = render(
+    let {getByLabelText, getByRole, queryByRole} = render(
       <>
         <Provider theme={theme}>
           <MenuTrigger>
@@ -247,7 +247,7 @@ describe('watchModals', () => {
         <hr />
       </>
     );
-    expect(() => getByRole('separator')).not.toThrow();
+    expect(getByRole('separator')).toBeVisible();
     act(() => {
       triggerPress(getByLabelText('Trigger'));
     });
@@ -255,12 +255,12 @@ describe('watchModals', () => {
       jest.runAllTimers();
     });
     let menu = getByRole('menu');
-    await verify(menu, getByRole);
+    await verify(menu, queryByRole);
   });
 
   it('should hide around Popover', async () => {
     watchModals();
-    let {getByLabelText, getByRole} = render(
+    let {getByLabelText, getByRole, queryByRole} = render(
       <>
         <Provider theme={theme}>
           <DialogTrigger type="popover">
@@ -271,7 +271,7 @@ describe('watchModals', () => {
         <hr />
       </>
     );
-    expect(() => getByRole('separator')).not.toThrow();
+    expect(getByRole('separator')).toBeVisible();
     act(() => {
       triggerPress(getByLabelText('Trigger'));
     });
@@ -279,6 +279,6 @@ describe('watchModals', () => {
       jest.runAllTimers();
     });
     let dialog = getByRole('dialog');
-    await verify(dialog, getByRole);
+    await verify(dialog, queryByRole);
   });
 });

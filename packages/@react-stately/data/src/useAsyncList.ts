@@ -14,7 +14,7 @@ import {createListActions, ListData, ListState} from './useListData';
 import {Key, Reducer, useEffect, useReducer} from 'react';
 import {LoadingState, Selection, SortDescriptor} from '@react-types/shared';
 
-interface AsyncListOptions<T, C> {
+export interface AsyncListOptions<T, C> {
   /** The keys for the initially selected items. */
   initialSelectedKeys?: Iterable<Key>,
   /** The initial sort descriptor. */
@@ -111,6 +111,7 @@ interface AsyncListData<T> extends ListData<T> {
 }
 
 function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncListState<T, C> {
+  let selectedKeys;
   switch (data.state) {
     case 'idle':
     case 'error':
@@ -151,12 +152,13 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             return data;
           }
 
+          selectedKeys = action.selectedKeys ?? data.selectedKeys;
           return {
             ...data,
             filterText: action.filterText ?? data.filterText,
             state: 'idle',
             items: [...action.items],
-            selectedKeys: new Set(action.selectedKeys ?? data.selectedKeys),
+            selectedKeys: selectedKeys === 'all' ? 'all' : new Set(selectedKeys),
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
             abortController: null,
             cursor: action.cursor
@@ -200,12 +202,15 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
     case 'loadingMore':
       switch (action.type) {
         case 'success':
+          selectedKeys = (data.selectedKeys === 'all' || action.selectedKeys === 'all')
+            ? 'all'
+            : new Set([...data.selectedKeys, ...(action.selectedKeys ?? [])]);
           // Append the new items
           return {
             ...data,
             state: 'idle',
             items: [...data.items, ...action.items],
-            selectedKeys: new Set([...data.selectedKeys, ...(action.selectedKeys ?? [])]),
+            selectedKeys,
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
             abortController: null,
             cursor: action.cursor
@@ -274,7 +279,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     state: 'idle',
     error: null,
     items: [],
-    selectedKeys: new Set(initialSelectedKeys),
+    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys),
     sortDescriptor: initialSortDescriptor,
     filterText: initialFilterText
   });
@@ -337,7 +342,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort(sortDescriptor: SortDescriptor) {
       dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
     },
-    ...createListActions({...options, getKey}, fn => {
+    ...createListActions({...options, getKey, cursor: data.cursor}, fn => {
       dispatch({type: 'update', updater: fn});
     }),
     setFilterText(filterText: string) {

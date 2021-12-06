@@ -1,14 +1,19 @@
 {
   "calendar": "Ημερολόγιο",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} ως {end, date, long}",
   "date": "Ημερομηνία",
   "dateRange": "Εύρος ημερομηνιών",
-  "day": "Ημέρα",
-  "dayPeriod": "Περίοδος ημερών",
+  "day": "ημέρα",
+  "dayPeriod": "π.μ./μ.μ.",
   "endDate": "Ημερομηνία λήξης",
-  "hour": "Ώρα",
-  "minute": "Λεπτό",
-  "month": "Μήνας",
-  "second": "Δευτερόλεπτο",
+  "era": "περίοδος",
+  "hour": "ώρα",
+  "minute": "λεπτό",
+  "month": "μήνας",
+  "second": "δευτερόλεπτο",
   "startDate": "Ημερομηνία έναρξης",
-  "year": "Έτος"
+  "year": "έτος",
+  "weekday": "καθημερινή",
+  "timeZoneName": "ζώνη ώρας"
 }

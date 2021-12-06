@@ -1,14 +1,19 @@
 {
   "calendar": "Календар",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} до {end, date, long}",
   "date": "Дата",
   "dateRange": "Времеви интервал",
-  "day": "Ден",
-  "dayPeriod": "Период в дни",
+  "day": "ден",
+  "dayPeriod": "пр.об./сл.об.",
   "endDate": "Крайна дата",
-  "hour": "Час",
-  "minute": "Минута",
-  "month": "Месец",
-  "second": "Секунда",
+  "era": "ера",
+  "hour": "час",
+  "minute": "минута",
+  "month": "месец",
+  "second": "секунда",
   "startDate": "Начална дата",
-  "year": "Година"
+  "year": "година",
+  "weekday": "ден от седмицата",
+  "timeZoneName": "часова зона"
 }

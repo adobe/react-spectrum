@@ -1,14 +1,19 @@
 {
   "calendar": "Kalender",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} til {end, date, long}",
   "date": "Dato",
   "dateRange": "Datoområde",
-  "day": "Dag",
-  "dayPeriod": "Dagsperiode",
+  "day": "dag",
+  "dayPeriod": "a.m./p.m.",
   "endDate": "Sluttdato",
-  "hour": "Time",
-  "minute": "Minutt",
-  "month": "Måned",
-  "second": "Sekund",
+  "era": "tidsalder",
+  "hour": "time",
+  "minute": "minutt",
+  "month": "måned",
+  "second": "sekund",
   "startDate": "Startdato",
-  "year": "År"
+  "year": "år",
+  "weekday": "ukedag",
+  "timeZoneName": "tidssone"
 }

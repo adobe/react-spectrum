@@ -40,7 +40,11 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
    * @default (key) => state.collection.getItem(key)?.textValue
    */
-  getRowText?: (key: Key) => string
+  getRowText?: (key: Key) => string,
+  /**
+   * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
+   */
+  scrollRef?: RefObject<HTMLElement>
 }
 
 export interface GridAria {
@@ -60,7 +64,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     isVirtualized,
     keyboardDelegate,
     focusMode,
-    getRowText = (key) => state.collection.getItem(key)?.textValue
+    getRowText = (key) => state.collection.getItem(key)?.textValue,
+    scrollRef
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -83,7 +88,9 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: state.selectionManager,
-    keyboardDelegate: delegate
+    keyboardDelegate: delegate,
+    isVirtualized,
+    scrollRef
   });
 
   let id = useId();
@@ -107,7 +114,11 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let selection = state.selectionManager.rawSelection;
   let lastSelection = useRef(selection);
   useUpdateEffect(() => {
-    if (!state.selectionManager.isFocused) {
+    // Do not do this when using selectionBehavior = 'replace' to avoid selection announcements
+    // every time the user presses the arrow keys.
+    if (!state.selectionManager.isFocused || state.selectionManager.selectionBehavior === 'replace') {
+      lastSelection.current = selection;
+
       return;
     }
 
@@ -122,9 +133,11 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
         messages.push(formatMessage('selectedItem', {item: addedText}));
       }
     } else if (removedKeys.size === 1 && addedKeys.size === 0) {
-      let removedText = getRowText(removedKeys.keys().next().value);
-      if (removedText) {
-        messages.push(formatMessage('deselectedItem', {item: removedText}));
+      if (state.collection.getItem(removedKeys.keys().next().value)) {
+        let removedText = getRowText(removedKeys.keys().next().value);
+        if (removedText) {
+          messages.push(formatMessage('deselectedItem', {item: removedText}));
+        }
       }
     }
 

@@ -40,7 +40,14 @@ export interface PressEvent {
   /** Whether the ctrl keyboard modifier was held during the press event. */
   ctrlKey: boolean,
   /** Whether the meta keyboard modifier was held during the press event. */
-  metaKey: boolean
+  metaKey: boolean,
+  /** Whether the alt keyboard modifier was held during the press event. */
+  altKey: boolean
+}
+
+export interface LongPressEvent extends Omit<PressEvent, 'type'> {
+  /** The type of long press event being fired. */
+  type: 'longpressstart' | 'longpressend' | 'longpress'
 }
 
 export interface HoverEvent {

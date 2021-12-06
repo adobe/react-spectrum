@@ -23,120 +23,103 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Calendar-date {
-  &:hover {
-    color: var(--spectrum-calendar-day-text-color-hover);
+  --spectrum-calendar-day-background-color-cap-selected: var(--spectrum-global-color-blue-400);
+  --spectrum-calendar-day-background-color-cap-selected-hover: var(--spectrum-global-color-blue-500);
+  --spectrum-calendar-day-background-color-cap-selected-down: var(--spectrum-global-color-blue-600);
+  --spectrum-calendar-day-text-color-cap-selected: white;
+  --spectrum-calendar-day-text-color-cap-selected-hover: white;
+  --spectrum-calendar-day-today-background-color: var(--spectrum-global-color-gray-300);
+  --spectrum-calendar-day-today-background-color-hover: var(--spectrum-global-color-gray-400);
+  --spectrum-calendar-day-today-background-color-down: var(--spectrum-global-color-gray-500);
 
-    &:not(.is-selection-end):not(.is-selection-start) {
-      &:before {
-        background: var(--spectrum-calendar-day-background-color-hover);
-      }
-    }
-
-    &.is-selected {
-      color: var(--spectrum-calendar-day-text-color-selected-hover);
-      &:not(.is-selection-end):not(.is-selection-start) {
-        &:before {
-          background: var(--spectrum-calendar-day-background-color-selected-hover);
-        }
-      }
-    }
-
-    &.is-range-selection {
-      &:before {
-        background: var(--spectrum-calendar-day-background-color-selected-hover);
-      }
-    }
+  --background: transparent;
+  &:after {
+    background: var(--background);
   }
 
-  &:active {
-    background-color: var(--spectrum-calendar-day-background-color-down);
-  }
-
-  &.is-selected {
-    color: var(--spectrum-calendar-day-text-color-selected);
+  &.is-range-selection {
     background: var(--spectrum-calendar-day-background-color-selected);
-  }
-
-  &.is-selected:not(.is-range-selection) {
-    background: var(--spectrum-calendar-day-background-color-cap-selected);
   }
 
   &.is-today {
     color: var(--spectrum-calendar-day-today-text-color);
-    border-color: var(--spectrum-calendar-day-today-border-color);
+    border-color: var(--spectrum-calendar-day-today-background-color);
+    --background: var(--spectrum-calendar-day-today-background-color);
+  }
 
-    &:before {
-      border-color: var(--spectrum-calendar-day-today-border-color);
+  &.is-selected:not(.is-range-selection),
+  &.is-selection-start,
+  &.is-selection-end {
+    color: var(--spectrum-calendar-day-text-color-cap-selected);
+    --background: var(--spectrum-calendar-day-background-color-cap-selected);
+  }
+
+  &:hover {
+    color: var(--spectrum-calendar-day-text-color-hover);
+    --background: var(--spectrum-calendar-day-background-color-hover);
+
+    &.is-range-selection {
+      color: var(--spectrum-calendar-day-text-color-selected-hover);
+      --background: var(--spectrum-alias-highlight-selected);
     }
 
-    &:hover {
-      &.is-selected:not(.is-range-selection) {
-        &:before {
-          background: var(--spectrum-calendar-day-today-background-color-selected-hover);
-        }
-      }
+    &.is-today {
+      --background: var(--spectrum-calendar-day-today-background-color-hover);
     }
 
-    &.is-disabled {
-      color: var(--spectrum-calendar-day-today-text-color-disabled);
-      border-color: var(--spectrum-calendar-day-today-border-color-disabled);
-
-      &:before {
-        border-color: var(--spectrum-calendar-day-today-border-color-disabled);
-      }
+    &.is-selected:not(.is-range-selection),
+    &.is-selection-start,
+    &.is-selection-end {
+      color: var(--spectrum-calendar-day-text-color-cap-selected-hover);
+      --background: var(--spectrum-calendar-day-background-color-cap-selected-hover);
     }
   }
 
-  &.is-focused:not(.is-range-selection) {
-    background: var(--spectrum-calendar-day-background-color-key-focus);
-    border-color: var(--spectrum-calendar-day-border-color-key-focus);
-    color: var(--spectrum-calendar-day-text-color-key-focus);
+  &.is-pressed {
+    color: var(--spectrum-calendar-day-text-color-hover);
+    --background: var(--spectrum-calendar-day-background-color-down);
 
-    &.is-today {
-      border-color: var(--spectrum-calendar-day-border-color-key-focus);
-
-      &:before {
-        border-color: var(--spectrum-calendar-day-border-color-key-focus);
-      }
+    &.is-range-selection {
+      color: var(--spectrum-calendar-day-text-color-selected-hover);
+      --background:  var(--spectrum-alias-highlight-selected-hover);
     }
 
-    &:active,
-    &.is-selected {
-      color: var(--spectrum-calendar-day-text-color-selected);
-      background: var(--spectrum-calendar-day-background-color-cap-selected);
-      border-color: var(--spectrum-calendar-day-border-color-key-focus);
+    &.is-today {
+      --background: var(--spectrum-calendar-day-today-background-color-down);
+    }
+
+    &.is-selected:not(.is-range-selection),
+    &.is-selection-start,
+    &.is-selection-end {
+      color: var(--spectrum-calendar-day-text-color-cap-selected-hover);
+      --background: var(--spectrum-calendar-day-background-color-cap-selected-down);
     }
   }
 
   &.is-focused {
-    &.is-selected {
-      &:before {
-        background: var(--spectrum-calendar-day-background-color-selected-hover);
-      }
-    }
-
-    &.is-range-selection {
-      &:before {
-        border-color: var(--spectrum-calendar-day-border-color-key-focus);
-        background: var(--spectrum-calendar-day-background-color-selected-hover);
-      }
+    &:before {
+      box-shadow: 0 0 0 var(--spectrum-calendar-day-border-size-key-focus) var(--spectrum-calendar-day-border-color-key-focus);
     }
   }
 
   &.is-disabled {
-    color: var(--spectrum-calendar-day-text-color-disabled);
-  }
-
-  &.is-selection-start,
-  &.is-selection-end {
-    color: var(--spectrum-calendar-day-text-color-cap-selected);
-
-    &:after {
-      background-color: var(--spectrum-calendar-day-background-color-selected);
+    &,
+    &.is-today {
+      --background: var(--spectrum-calendar-day-background-color-disabled);
     }
 
-    &.is-disabled {
+    &,
+    &.is-today,
+    &.is-selected {
       color: var(--spectrum-calendar-day-text-color-disabled);
+    }
+
+    &.is-range-selection {
+      background: var(--spectrum-global-color-gray-200);
+    }
+
+    &.is-selected {
+      --background: var(--spectrum-global-color-gray-200);
     }
   }
 }
