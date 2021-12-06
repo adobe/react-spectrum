@@ -7,7 +7,18 @@ const octokit = new Octokit({
 run();
 
 async function run() {
-  if (!process.env.CIRCLE_PULL_REQUEST) {
+  // TODO this if will be !process.env.CIRCLE_PULL_REQUEST
+  if (true) {
+    console.log('blah', process.env.CIRCLE_SHA1)
+    await octokit.rest.repos.createCommitComment({
+      owner: 'octocat',
+      repo: 'react-spectrum',
+      commit_sha: process.env.CIRCLE_SHA1,
+      body: `Testing comment
+      https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/build/index.html
+      https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/docs/index.html
+      `
+    })
     return;
   }
 

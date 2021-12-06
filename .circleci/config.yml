@@ -337,9 +337,9 @@ workflows:
           requires:
             - install
       - docs-verdaccio:
-          filters:
-            branches:
-              only: main
+          # filters:
+          #   branches:
+          #     only: main
           requires:
             - install
       - deploy:
@@ -361,9 +361,15 @@ workflows:
       - deploy-verdaccio:
           requires:
             - docs-verdaccio
+      # removing for now to test verdaccio comment
       - comment:
+          name: comment-pr
           requires:
             - deploy
+      - comment:
+          name: comment-verdaccio
+          requires:
+            - deploy-verdaccio
 
   nightly:
     triggers:
