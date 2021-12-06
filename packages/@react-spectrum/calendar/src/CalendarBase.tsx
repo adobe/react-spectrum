@@ -19,14 +19,14 @@ import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
-import React from 'react';
+import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
   state: T,
-  useCalendar: (props: CalendarPropsBase, state: T) => CalendarAria,
+  useCalendar: (props: CalendarPropsBase, state: T, ref?: RefObject<HTMLElement>) => CalendarAria,
   visibleMonths?: number
 }
 
@@ -45,7 +45,8 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     era: currentMonth.calendar.identifier !== 'gregory' ? 'long' : undefined,
     calendar: currentMonth.calendar.identifier
   });
-  let {calendarProps, prevButtonProps, nextButtonProps} = useCalendar(props, state);
+  let ref = useRef(null);
+  let {calendarProps, prevButtonProps, nextButtonProps} = useCalendar(props, state, ref);
 
   let titles = [];
   let calendars = [];
@@ -88,6 +89,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
   return (
     <div
       {...calendarProps}
+      ref={ref}
       className={
         classNames(styles,
           'spectrum-Calendar'

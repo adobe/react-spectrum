@@ -81,7 +81,7 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
   }
 }
 
-describe('SideNav', function () {
+describe.skip('SideNav', function () {
   let stub1, stub2;
   let scrollHeight;
 

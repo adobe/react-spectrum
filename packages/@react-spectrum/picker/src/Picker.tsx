@@ -48,6 +48,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   props = useProviderProps(props);
   let formatMessage = useMessageFormatter(intlMessages);
   let {
+    autoComplete,
     isDisabled,
     direction = 'bottom',
     align = 'start',
@@ -199,6 +200,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         )
       }>
       <HiddenSelect
+        autoComplete={autoComplete}
         isDisabled={isDisabled}
         state={state}
         triggerRef={unwrappedTriggerRef}

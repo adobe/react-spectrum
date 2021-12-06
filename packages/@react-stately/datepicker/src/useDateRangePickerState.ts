@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {createPlaceholderDate, FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
 import {DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
-import {DateRange, DateRangePickerProps, DateValue, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, isInvalid} from './utils';
+import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 
 type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState {
@@ -23,6 +23,7 @@ export interface DateRangePickerState {
   setValue: (value: DateRange) => void,
   setDate: (part: keyof DateRange, value: DateValue) => void,
   setTime: (part: keyof TimeRange, value: TimeValue) => void,
+  setDateTime: (part: keyof DateRange, value: DateValue) => void,
   dateRange: DateRange,
   setDateRange: (value: DateRange) => void,
   timeRange: TimeRange,
@@ -30,25 +31,38 @@ export interface DateRangePickerState {
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
   validationState: ValidationState,
-  formatValue(locale: string, fieldOptions: FieldOptions): string
+  formatValue(locale: string, fieldOptions: FieldOptions): string,
+  confirmPlaceholder(): void,
+  granularity: Granularity
 }
 
 export function useDateRangePickerState<T extends DateValue>(props: DateRangePickerProps<T>): DateRangePickerState {
   let [isOpen, setOpen] = useState(false);
-  let onChange = value => {
-    if (value.start && value.end && props.onChange) {
-      props.onChange(value);
+  let [controlledValue, setControlledValue] = useControlledState<DateRange>(props.value, props.defaultValue || null, props.onChange);
+  let [placeholderValue, setPlaceholderValue] = useState(() => controlledValue || {start: null, end: null});
+
+  // Reset the placeholder if the value prop is set to null.
+  if (controlledValue == null && placeholderValue.start && placeholderValue.end) {
+    placeholderValue = {start: null, end: null};
+    setPlaceholderValue(placeholderValue);
+  }
+
+  let value = controlledValue || placeholderValue;
+  let valueRef = useRef(value);
+  valueRef.current = value;
+
+  let setValue = (value: DateRange) => {
+    valueRef.current = value;
+    setPlaceholderValue(value);
+    if (value?.start && value.end) {
+      setControlledValue(value);
+    } else {
+      setControlledValue(null);
     }
   };
 
-  let [value, setValue] = useControlledState<DateRange>(
-    props.value === null ? {start: null, end: null} : props.value,
-    props.defaultValue || {start: null, end: null},
-    onChange
-  );
-
   let v = (value?.start || value?.end || props.placeholderValue);
-  let granularity = props.granularity || (v && 'minute' in v ? 'minute' : 'day');
+  let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
 
   let [dateRange, setSelectedDateRange] = useState<DateRange>(null);
@@ -107,16 +121,32 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     setValue,
     dateRange,
     timeRange,
+    granularity,
     setDate(part, date) {
       setDateRange({...dateRange, [part]: date});
     },
     setTime(part, time) {
       setTimeRange({...timeRange, [part]: time});
     },
+    setDateTime(part, dateTime) {
+      setValue({...value, [part]: dateTime});
+    },
     setDateRange,
     setTimeRange,
     isOpen,
-    setOpen,
+    setOpen(isOpen) {
+      // Commit the selected date range when the calendar is closed. Use a placeholder time if one wasn't set.
+      // If only the time range was set and not the date range, don't commit. The state will be preserved until
+      // the user opens the popover again.
+      if (!isOpen && !(value?.start && value?.end) && dateRange?.start && dateRange?.end && hasTime) {
+        commitValue(dateRange, {
+          start: timeRange?.start || getPlaceholderTime(props.placeholderValue),
+          end: timeRange?.end || getPlaceholderTime(props.placeholderValue)
+        });
+      }
+
+      setOpen(isOpen);
+    },
     validationState,
     formatValue(locale, fieldOptions) {
       if (!value || !value.start || !value.end) {
@@ -160,6 +190,19 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
       }
 
       return `${startFormatter.format(value.start.toDate(startTimeZone))} – ${endFormatter.format(value.end.toDate(endTimeZone))}`;
+    },
+    confirmPlaceholder() {
+      // Need to use ref value here because the value can be set in the same tick as
+      // a blur, which means the component won't have re-rendered yet.
+      let value = valueRef.current;
+      if (value && Boolean(value.start) !== Boolean(value.end)) {
+        let calendar = (value.start || value.end).calendar;
+        let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
+        setValue({
+          start: value.start || placeholder,
+          end: value.end || placeholder
+        });
+      }
     }
   };
 }
