@@ -16,7 +16,7 @@ import MatchMediaMock from 'jest-matchmedia-mock';
 import {act, fireEvent, render} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {Provider} from '../';
+import {Provider, useColorScheme, useBreakpoints as useProviderBreakpoints} from '../';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -281,6 +281,49 @@ describe('Provider', () => {
 
       // shouldn't fire again for something in the same range as before
       expect(onRender).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('hooks', () => {
+    const TestComponent = ({testid}) => {
+      const breakpoints = useProviderBreakpoints();
+      const colorScheme = useColorScheme();
+
+      return (<div data-testid={testid} data-color={colorScheme} data-breakpoint={breakpoints['S']} />);
+    };
+
+    test('provide access to color scheme and breakpoints', async () => {
+      const inner = {
+        testId: 'innerTest',
+        colorScheme: 'dark'
+      };
+      const outer = {
+        testId: 'outerTest',
+        colorScheme: 'dark'
+      };
+
+      matchMedia.useMediaQuery(mediaQueryMinSmall);
+      const {getByTestId} = render(<Provider theme={theme} colorScheme={outer.colorScheme}>
+        <TestComponent testid={outer.testId} />
+        <Provider
+          theme={theme}
+          colorScheme={inner.colorScheme}
+          breakpoints={{S: 480, M: 640}}>
+          <TestComponent testid={inner.testId} />
+        </Provider>
+      </Provider>);
+
+      const innerElement = getByTestId(inner.testId);
+      const outerElement = getByTestId(outer.testId);
+
+      const colorFiled = 'data-color';
+      const breakpointFiled = 'data-breakpoint';
+
+      expect(innerElement.getAttribute(colorFiled)).toEqual(inner.colorScheme);
+      expect(outerElement.getAttribute(colorFiled)).toEqual(outer.colorScheme);
+
+      expect(innerElement.getAttribute(breakpointFiled)).toEqual('480');
+      expect(outerElement.getAttribute(breakpointFiled)).toEqual('640');
     });
   });
 });

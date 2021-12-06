@@ -22,11 +22,11 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
-import {ProviderContext, ProviderProps} from '@react-types/provider';
+import {Breakpoints, ColorScheme, ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
-import {useColorScheme, useScale} from './mediaQueries';
+import {useColorScheme as useMediaQueriesColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
 import {version} from '../package.json';
 
@@ -44,7 +44,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     defaultColorScheme
   } = props;
   // Hooks must always be called.
-  let autoColorScheme = useColorScheme(theme, defaultColorScheme);
+  let autoColorScheme = useMediaQueriesColorScheme(theme, defaultColorScheme);
   let autoScale = useScale(theme);
   let {locale: prevLocale} = useLocale();
   // if the new theme doesn't support the prevColorScheme, we must resort to the auto
@@ -187,6 +187,14 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
 
 export function useProvider(): ProviderContext {
   return useContext(Context);
+}
+
+export function useColorScheme(): ColorScheme {
+  return useProvider().colorScheme;
+}
+
+export function useBreakpoints(): Breakpoints {
+  return useProvider().breakpoints;
 }
 
 export function useProviderProps<T>(props: T) : T {
