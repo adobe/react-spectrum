@@ -43,7 +43,7 @@ let monopackages = new Set([
 class VersionManager {
   constructor() {
     // Get dependency tree from yarn workspaces
-    this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+    this.workspacePackages = JSON.parse(JSON.parse(exec('yarn workspaces info --json').toString()).data);
     this.existingPackages = new Set();
     this.changedPackages = new Set();
     this.versionBumps = {};
@@ -295,6 +295,26 @@ class VersionManager {
         this.addReleasedPackage(dep, bump);
       }
     }
+
+    // Bump anything that has this as a dep by a patch, all the way up the tree
+    if (status === 'released') {
+      for (let p in this.workspacePackages) {
+        if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
+          if (this.releasedPackages.has(p)) {
+            continue;
+          }
+          let filePath = this.workspacePackages[p].location + '/package.json';
+          let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+          if (pkg.private) {
+            continue;
+          }
+          let version = semver.parse(pkg.version);
+          let prerelease = version.prerelease;
+          let b = prerelease.length === 0 ? 'patch' : prerelease[0];
+          this.addReleasedPackage(p, b);
+        }
+      }
+    }
   }
 
   getVersions() {
@@ -325,6 +345,8 @@ class VersionManager {
         versions.set(name, [pkg.version, newVersion, pkg.private]);
       }
     }
+
+
 
     return versions;
   }
