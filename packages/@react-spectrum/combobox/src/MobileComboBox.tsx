@@ -447,6 +447,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           isLoading={showLoading && loadingState === 'filtering'}
           loadingIndicator={loadingState != null && loadingCircle}
           validationState={validationState}
+          labelAlign="start"
+          labelPosition="top"
           wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering' || validationState != null) && !props.isReadOnly && clearButton}
           UNSAFE_className={
             classNames(

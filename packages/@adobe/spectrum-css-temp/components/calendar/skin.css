@@ -33,14 +33,12 @@ governing permissions and limitations under the License.
   --spectrum-calendar-day-today-background-color-down: var(--spectrum-global-color-gray-500);
 
   --background: transparent;
-  background: var(--background);
+  &:after {
+    background: var(--background);
+  }
 
   &.is-range-selection {
     background: var(--spectrum-calendar-day-background-color-selected);
-
-    &:after {
-      background: var(--background);
-    }
   }
 
   &.is-today {
