@@ -10,7 +10,7 @@ async function run() {
   // TODO this if will be !process.env.CIRCLE_PULL_REQUEST
   if (true) {
     console.log('blah', process.env.CIRCLE_SHA1)
-    await octokit.rest.repos.createCommitComment({
+    await octokit.repos.createCommitComment({
       owner: 'octocat',
       repo: 'react-spectrum',
       commit_sha: process.env.CIRCLE_SHA1,
