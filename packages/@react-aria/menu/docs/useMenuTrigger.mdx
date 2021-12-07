@@ -120,7 +120,8 @@ function MenuButton(props) {
       {state.isOpen &&
         <MenuPopup
           {...props}
-          {...menuProps}
+          domProps={menuProps}
+          aria-label={props.label}
           autoFocus={state.focusStrategy}
           onClose={() => state.close()} />
       }
