@@ -316,14 +316,14 @@ describe('Provider', () => {
       const innerElement = getByTestId(inner.testId);
       const outerElement = getByTestId(outer.testId);
 
-      const colorFiled = 'data-color';
-      const breakpointFiled = 'data-breakpoint';
+      const colorField = 'data-color';
+      const breakpointField = 'data-breakpoint';
 
-      expect(innerElement.getAttribute(colorFiled)).toEqual(inner.colorScheme);
-      expect(outerElement.getAttribute(colorFiled)).toEqual(outer.colorScheme);
+      expect(innerElement.getAttribute(colorField)).toEqual(inner.colorScheme);
+      expect(outerElement.getAttribute(colorField)).toEqual(outer.colorScheme);
 
-      expect(innerElement.getAttribute(breakpointFiled)).toEqual('480');
-      expect(outerElement.getAttribute(breakpointFiled)).toEqual('640');
+      expect(innerElement.getAttribute(breakpointField)).toEqual('480');
+      expect(outerElement.getAttribute(breakpointField)).toEqual('640');
     });
   });
 });
