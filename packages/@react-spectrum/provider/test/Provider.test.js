@@ -308,7 +308,7 @@ describe('Provider', () => {
         <Provider
           theme={theme}
           colorScheme={inner.colorScheme}
-          breakpoints={{S: 480, M: 640}}>
+          breakpoints={{S: 480, M: 700}}>
           <TestComponent testid={inner.testId} />
         </Provider>
       </Provider>);
