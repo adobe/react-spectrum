@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+// @ts-check
 const {Optimizer} = require('@parcel/plugin');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
@@ -51,7 +52,7 @@ module.exports = new Optimizer({
           preRelease: meta.preRelease
         });
       }
-    });
+    }, null);
 
     let name = rename(bundle);
     let code = ReactDOMServer.renderToStaticMarkup(

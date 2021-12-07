@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+// @ts-check
 const {Transformer} = require('@parcel/plugin');
 const {parse} = require('@babel/parser');
 const traverse = require('@babel/traverse').default;

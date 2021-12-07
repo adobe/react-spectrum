@@ -10,18 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-check
 const {Transformer} = require('@parcel/plugin');
-const mdx = require('@mdx-js/mdx');
 const flatMap = require('unist-util-flatmap');
 const treeSitter = require('remark-tree-sitter');
 const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
-const frontmatter = require('remark-frontmatter');
-const slug = require('remark-slug');
-const util = require('mdast-util-toc');
 const yaml = require('js-yaml');
-// const prettier = require('prettier');
-// const {parse} = require('@babel/parser');
 const dprint = require('dprint-node');
 const t = require('@babel/types');
 
@@ -143,6 +136,7 @@ module.exports = new Transformer({
     let author = '';
     let image = '';
     let order;
+    let util = (await import('mdast-util-toc')).toc;
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -155,6 +149,21 @@ module.exports = new Transformer({
           tight: tight,
           skip: skip
         }).map;
+
+        function findLink(node) {
+          if (node.type === 'link') {
+            return node;
+          }
+
+          if (node.children) {
+            for (let child of node.children) {
+              let link = findLink(child);
+              if (link) {
+                return link;
+              }
+            }
+          }
+        }
 
         /**
          * Go from complex structure that the mdx plugin renders from to a simpler one
@@ -171,8 +180,9 @@ module.exports = new Transformer({
             if (nodes) {
               newTree.children = treeConverter(nodes);
             }
-            newTree.id = name.children[0].url.split('#').pop();
-            newTree.textContent = name.children[0].children[0].value;
+            let link = findLink(name);
+            newTree.id = link.url.split('#').pop();
+            newTree.textContent = link.children[0].value;
           }
           return newTree;
         }
@@ -227,7 +237,11 @@ module.exports = new Transformer({
       );
     }
 
-    const compiled = await mdx(await asset.getCode(), {
+    let {compile} = await import('@mdx-js/mdx');
+    let frontmatter = (await import('remark-frontmatter')).default;
+    let slug = (await import('remark-slug')).default;
+    let compiled = await compile(await asset.getCode(), {
+      providerImportSource: '@mdx-js/react',
       remarkPlugins: [
         slug,
         extractToc,
@@ -251,11 +265,7 @@ module.exports = new Transformer({
     });
 
     asset.type = 'jsx';
-    asset.setCode(`/* @jsx mdx */
-    import React from 'react';
-    import { mdx } from '@mdx-js/react'
-    ${compiled}
-    `);
+    asset.setCode(String(compiled));
     asset.meta.toc = toc;
     asset.meta.title = title;
     asset.meta.category = category;

@@ -1,4 +1,4 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -55,7 +55,7 @@ To handle focus events on only the target element, and not descendants, see [use
 
 `useFocusWithin` supports the following event handlers:
 
-<!-- filter props to only include events... -->
+{/* filter props to only include events... */}
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={Object.fromEntries(Object.entries(docs.links[docs.exports.useFocusWithin.parameters[0].value.id].properties).filter(([, prop]) => prop.value.type === 'function'))} />
 </TypeContext.Provider>
