@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, KeyboardDelegate, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {RefObject} from 'react';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
@@ -28,25 +29,35 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   /** Handler that is called when the ComboBox input value changes. */
   onInputChange?: (value: string) => void,
   /** Whether the ComboBox allows a non-item matching input value to be set. */
-  allowsCustomValue?: boolean
+  allowsCustomValue?: boolean,
   // /**
   //  * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
   //  * @default 'suggest'
   //  */
   // completionMode?: 'suggest' | 'complete',
+ /**
+  * The interaction required to display the ComboBox menu.
+  * @default 'input'
+  */
+  menuTrigger?: MenuTriggerAction
 }
 
 export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps {
- /**
-   * The interaction required to display the ComboBox menu.
-   * @default 'input'
-   */
-  menuTrigger?: MenuTriggerAction,
+  /** The ref for the input element. */
+  inputRef: RefObject<HTMLInputElement>,
+  /** The ref for the list box popover. */
+  popoverRef: RefObject<HTMLDivElement>,
+  /** The ref for the list box. */
+  listBoxRef: RefObject<HTMLElement>,
+  /** The ref for the optional list box popup trigger button.  */
+  buttonRef?: RefObject<HTMLElement>,
+  /** An optional keyboard delegate implementation, to override the default. */
+  keyboardDelegate?: KeyboardDelegate,
   /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean
 }
 
-export interface SpectrumComboBoxProps<T> extends Omit<AriaComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T> extends AriaComboBoxProps<T>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
    * @default 'input'

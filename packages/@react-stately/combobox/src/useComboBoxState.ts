@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
 import {Collection, FocusStrategy, Node} from '@react-types/shared';
+import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
 import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
@@ -34,7 +34,7 @@ export interface ComboBoxState<T> extends SelectState<T> {
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
-interface ComboBoxStateProps<T> extends AriaComboBoxProps<T> {
+interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: FilterFn,
   /** Whether the combo box allows the menu to be open when the collection is empty. */
