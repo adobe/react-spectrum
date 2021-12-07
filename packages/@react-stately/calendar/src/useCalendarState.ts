@@ -144,6 +144,9 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
         focusCell(focusedDate.subtract({weeks: 1}));
       }
     },
+    focusPage(date: CalendarDate) {
+      focusCell(date.set({day: 1}));
+    },
     focusNextPage() {
       let start = startDate.add(visibleDuration);
       setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));

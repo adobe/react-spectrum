@@ -25,6 +25,7 @@ export interface CalendarStateBase {
   focusPreviousDay(): void,
   focusNextRow(): void,
   focusPreviousRow(): void,
+  focusPage(date: CalendarDate): void,
   focusNextPage(): void,
   focusPreviousPage(): void,
   focusPageStart(): void,
