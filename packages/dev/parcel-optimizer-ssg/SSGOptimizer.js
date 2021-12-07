@@ -25,6 +25,10 @@ module.exports = new Optimizer({
     }
 
     let js = await blobToString(contents);
+    let parcelRequireName = Object.keys(global).find(name => name.startsWith('parcelRequire'));
+    if (parcelRequireName) {
+      delete global[parcelRequireName];
+    }
     let Component = requireFromString(js, mainAsset.filePath).default;
     let bundles = bundleGraph.getReferencedBundles(bundle).reverse();
 
