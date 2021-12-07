@@ -28,13 +28,16 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   /** Handler that is called when the ComboBox input value changes. */
   onInputChange?: (value: string) => void,
   /** Whether the ComboBox allows a non-item matching input value to be set. */
-  allowsCustomValue?: boolean,
+  allowsCustomValue?: boolean
   // /**
   //  * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
   //  * @default 'suggest'
   //  */
   // completionMode?: 'suggest' | 'complete',
-  /**
+}
+
+export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps {
+ /**
    * The interaction required to display the ComboBox menu.
    * @default 'input'
    */
@@ -43,7 +46,7 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   shouldFocusWrap?: boolean
 }
 
-export interface SpectrumComboBoxProps<T> extends Omit<ComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T> extends Omit<AriaComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
    * @default 'input'
