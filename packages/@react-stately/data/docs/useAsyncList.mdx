@@ -133,7 +133,7 @@ let list = useAsyncList({
   async load({signal}) {
     // Same load function as before
   },
-  sort({items, sortDescriptor}) {
+  async sort({items, sortDescriptor}) {
     return {
       items: items.sort((a, b) => {
         // Compare the items by the sorted column
