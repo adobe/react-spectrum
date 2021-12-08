@@ -1,5 +1,5 @@
 diff --git a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
-index 9e563e8..50632b3 100644
+index 9e563e8..08a2af7 100644
 --- a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
 +++ b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
 @@ -135,10 +135,10 @@ var _default = new (_plugin().Transformer)({
@@ -35,6 +35,25 @@ index 9e563e8..50632b3 100644
      });
  
      for (let msg of messages) {
+@@ -246,13 +246,13 @@ var _default = new (_plugin().Transformer)({
+         ([className, classNameHashed]) => `module.exports[${JSON.stringify(className)}] = ${JSON.stringify(classNameHashed)};`).join('\n');
+       }
+ 
+-      asset.symbols.ensure();
++      // asset.symbols.ensure();
+ 
+-      for (let [k, v] of cssModulesList) {
+-        asset.symbols.set(k, v);
+-      }
++      // for (let [k, v] of cssModulesList) {
++      //   asset.symbols.set(k, v);
++      // }
+ 
+-      asset.symbols.set('default', 'default');
++      // asset.symbols.set('default', 'default');
+       assets.push({
+         type: 'js',
+         content: code
 @@ -269,7 +269,7 @@ var _default = new (_plugin().Transformer)({
    }) {
      const postcss = await loadPostcss(options, asset.filePath);
