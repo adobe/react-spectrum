@@ -39,6 +39,7 @@ module.exports = new Transformer({
 
     asset.symbols.ensure();
     asset.symbols.set('*', `$${asset.id}$exports`);
+    asset.isBundleSplittable = false;
 
     traverse(ast, {
       ExportNamedDeclaration(path) {
