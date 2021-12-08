@@ -184,9 +184,9 @@ storiesOf('Picker', module)
     'isQuiet',
     () => (
       <Picker isQuiet label="Test" onSelectionChange={action('selectionChange')}>
-        <Item key="One hundred">One hundred</Item>
-        <Item key="Two thousand and twelve">Two thousand and twelve</Item>
-        <Item key="Three">Three</Item>
+        <Item key="100">One hundred</Item>
+        <Item key="2012">Two thousand and twelve</Item>
+        <Item key="3">Three</Item>
       </Picker>
     )
   )
@@ -300,12 +300,12 @@ storiesOf('Picker', module)
     'long item text',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-        <Item key="One">One</Item>
-        <Item key="your text here long long long long">your text here long long long long</Item>
-        <Item key="underyour_text_here_long_long_long_longscores">your_text_here_long_long_long_long</Item>
-        <Item key="your-text-here-long-long-long-long">your-text-here-long-long-long-long</Item>
-        <Item key="supercalifragilisticexpialidocious">supercalifragilisticexpialidocious</Item>
-        <Item key="This item is very long and word wraps poorly">This item is very long and word wraps poorly</Item>
+        <Item key="short">One</Item>
+        <Item key="long">your text here long long long long</Item>
+        <Item key="underscores">your_text_here_long_long_long_long</Item>
+        <Item key="hyphens">your-text-here-long-long-long-long</Item>
+        <Item key="singleWord">supercalifragilisticexpialidocious</Item>
+        <Item key="always">This item is very long and word wraps poorly</Item>
       </Picker>
     )
   )
