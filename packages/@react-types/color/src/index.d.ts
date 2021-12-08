@@ -51,6 +51,8 @@ export interface Color {
   toFormat(format: ColorFormat): Color,
   /** Converts the color to a string in the given format. */
   toString(format: ColorFormat | 'css'): string,
+  /** Returns a duplicate of the color value. */
+  clone(): Color,
   /** Converts the color to hex, and returns an integer representation. */
   toHexInt(): number,
   /**
@@ -75,7 +77,11 @@ export interface Color {
   /**
    * Formats the numeric value for a given channel for display according to the provided locale.
    */
-  formatChannelValue(channel: ColorChannel, locale: string): string
+  formatChannelValue(channel: ColorChannel, locale: string): string,
+  /**
+   * Returns the color space, 'rgb', 'hsb' or 'hsl', for the current color.
+   */
+  getColorSpace(): ColorFormat
 }
 
 export interface ColorFieldProps extends Omit<ValueBase<string | Color>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {

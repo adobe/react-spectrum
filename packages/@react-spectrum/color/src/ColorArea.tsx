@@ -109,6 +109,10 @@ function useGradients({direction, state, zChannel, xChannel, isDisabled}): Gradi
   let dir = false;
   let background = {colorAreaStyles: {}, gradientStyles: {}};
   let zValue = state.value.getChannelValue(zChannel);
+  let {minValue: zMin, maxValue: zMax} = state.value.getChannelRange(zChannel);
+  let alphaValue = (zValue - zMin) / (zMax - zMin);
+  let lValue;
+  let isHSL = state.value.getColorSpace() === 'hsl';
   let maskImage;
   if (!isDisabled) {
     switch (zChannel) {
@@ -163,6 +167,84 @@ function useGradients({direction, state, zChannel, xChannel, isDisabled}): Gradi
           /* the foreground gradient is masked by a perpendicular linear gradient from black to white */
           'WebkitMaskImage': maskImage,
           maskImage
+        };
+        break;
+      }
+      case 'hue': {
+        dir = xChannel !== 'saturation';
+        lValue = isHSL ? 50 : 100;
+        background.gradientStyles = {
+          background: [
+            (isHSL
+              /* For HSL, foreground gradient represents lightness,
+              from black to transparent to white. */
+              ? `linear-gradient(to ${orientation[Number(dir)]}, hsla(0,0%,0%,1) 0%, hsla(0,0%,0%,0) 50%, hsla(0,0%,100%,0) 50%, hsla(0,0%,100%,1) 100%)`
+              /* For HSB, foreground gradient represents brightness,
+              from black to transparent. */
+              : `linear-gradient(to ${orientation[Number(dir)]},hsl(0,0%,0%),hsla(0,0%,0%,0))`),
+            /* background gradient represents saturation,
+            from gray to transparent for HSL,
+            or from white to transparent for HSB. */
+            `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,${lValue}%),hsla(0,0%,${lValue}%,0))`,
+            /* background color is the hue at full saturation and brightness */
+            `hsl(${zValue}, 100%, 50%)`
+          ].join(',')
+        };
+        break;
+      }
+      case 'saturation': {
+        dir = xChannel === 'hue';
+        background.gradientStyles = {
+          background: [
+            (isHSL
+              /* for HSL, foreground gradient represents lightness, 
+              from black to transparent to white, with alpha set to saturation value */
+              ? `linear-gradient(to ${orientation[Number(!dir)]}, hsla(0,0%,0%,${alphaValue}) 0%, hsla(0,0%,0%,0) 50%, hsla(0,0%,100%,0) 50%, hsla(0,0%,100%,${alphaValue}) 100%)`
+              /* for HSB, foreground gradient represents brightness,
+              from black to transparent, with alpha set to saturation value */
+              : `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,0%,${alphaValue}),hsla(0,0%,0%,0))`),
+            /* background gradient represents the hue,
+            from 0 to 360, with alpha set to saturation value */
+            `linear-gradient(to ${orientation[Number(dir)]},hsla(0,100%,50%,${alphaValue}),hsla(60,100%,50%,${alphaValue}),hsla(120,100%,50%,${alphaValue}),hsla(180,100%,50%,${alphaValue}),hsla(240,100%,50%,${alphaValue}),hsla(300,100%,50%,${alphaValue}),hsla(359,100%,50%,${alphaValue}))`,
+            (isHSL
+              /* for HSL, the alpha transparency representing saturation 
+              of the gradients above overlay a solid gray background */
+              ? 'hsl(0, 0%, 50%)'
+              /* for HSB, the alpha transparency representing saturation, 
+              of the gradients above overlay a gradient from black to white */
+              : `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,0%),hsl(0,0%,100%))`)
+          ].join(',')
+        };
+        break;
+      }
+      case 'brightness': {
+        dir = xChannel === 'hue';
+        background.gradientStyles = {
+          background: [
+            /* foreground gradient represents saturation,
+            from white to transparent, with alpha set to brightness value */
+            `linear-gradient(to ${orientation[Number(!dir)]},hsla(0,0%,100%,${alphaValue}),hsla(0,0%,100%,0))`,
+            /* background gradient represents the hue,
+            from 0 to 360, with alpha set to brightness value */
+            `linear-gradient(to ${orientation[Number(dir)]},hsla(0,100%,50%,${alphaValue}),hsla(60,100%,50%,${alphaValue}),hsla(120,100%,50%,${alphaValue}),hsla(180,100%,50%,${alphaValue}),hsla(240,100%,50%,${alphaValue}),hsla(300,100%,50%,${alphaValue}),hsla(359,100%,50%,${alphaValue}))`,
+            /* for HSB, the alpha transparency representing brightness
+            of the gradients above overlay a solid black background */
+            '#000'
+          ].join(',')
+        };
+        break;
+      }
+      case 'lightness': {
+        dir = xChannel === 'hue';
+        background.gradientStyles = {
+          backgroundImage: [
+            /* foreground gradient represents the color saturation from 0 to 100,
+            adjusted by the lightness value */
+            `linear-gradient(to ${orientation[Number(!dir)]},hsl(0,0%,${zValue}%),hsla(0,0%,${zValue}%,0))`,
+            /* background gradient represents the hue, from 0 to 360,
+            adjusted by the lightness value */
+            `linear-gradient(to ${orientation[Number(dir)]},hsl(0,100%,${zValue}%),hsl(60,100%,${zValue}%),hsl(120,100%,${zValue}%),hsl(180,100%,${zValue}%),hsl(240,100%,${zValue}%),hsl(300,100%,${zValue}%),hsl(360,100%,${zValue}%))`
+          ].join(',')
         };
         break;
       }
