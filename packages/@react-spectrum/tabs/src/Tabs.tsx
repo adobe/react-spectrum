@@ -165,11 +165,12 @@ function Tab<T>(props: TabProps<T>) {
     ...props
   });
   let isSelected = state.selectedKey === key;
+  let domProps = filterDOMProps(item.props);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...mergeProps(tabProps, hoverProps)}
+        {...mergeProps(tabProps, hoverProps, domProps)}
         ref={ref}
         className={classNames(
           styles,
