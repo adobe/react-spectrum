@@ -57,9 +57,9 @@ storiesOf('Picker', module)
     'default',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-        <Item key="rarely">Short</Item>
-        <Item key="sometimes">Normal</Item>
-        <Item key="always">This item is very long and word wraps poorly</Item>
+        <Item key="Short">Short</Item>
+        <Item key="Normal">Normal</Item>
+        <Item key="This item is very long and word wraps poorly">This item is very long and word wraps poorly</Item>
       </Picker>
     )
   )
@@ -184,9 +184,9 @@ storiesOf('Picker', module)
     'isQuiet',
     () => (
       <Picker isQuiet label="Test" onSelectionChange={action('selectionChange')}>
-        <Item key="100">One hundred</Item>
-        <Item key="2012">Two thousand and twelve</Item>
-        <Item key="3">Three</Item>
+        <Item key="One hundred">One hundred</Item>
+        <Item key="Two thousand and twelve">Two thousand and twelve</Item>
+        <Item key="Three">Three</Item>
       </Picker>
     )
   )
@@ -205,7 +205,7 @@ storiesOf('Picker', module)
     () => (
       <Picker label="Test" isQuiet labelAlign="end" onSelectionChange={action('selectionChange')}>
         <Item key="One">One</Item>
-        <Item key="two">Two dollary-doos</Item>
+        <Item key="Two dollary-doos">Two dollary-doos</Item>
         <Item key="Three">Three</Item>
       </Picker>
     )
@@ -300,12 +300,12 @@ storiesOf('Picker', module)
     'long item text',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-        <Item key="short">One</Item>
-        <Item key="long">your text here long long long long</Item>
-        <Item key="underscores">your_text_here_long_long_long_long</Item>
-        <Item key="hyphens">your-text-here-long-long-long-long</Item>
-        <Item key="singleWord">supercalifragilisticexpialidocious</Item>
-        <Item key="always">This item is very long and word wraps poorly</Item>
+        <Item key="One">One</Item>
+        <Item key="your text here long long long long">your text here long long long long</Item>
+        <Item key="underyour_text_here_long_long_long_longscores">your_text_here_long_long_long_long</Item>
+        <Item key="your-text-here-long-long-long-long">your-text-here-long-long-long-long</Item>
+        <Item key="supercalifragilisticexpialidocious">supercalifragilisticexpialidocious</Item>
+        <Item key="This item is very long and word wraps poorly">This item is very long and word wraps poorly</Item>
       </Picker>
     )
   )
@@ -598,9 +598,9 @@ function ResizePicker() {
     <Flex direction="column" gap="size-200" alignItems="start">
       <div style={{width: state ? '200px' : '300px'}}>
         <Picker label="Choose A" width="100%">
-          <Item key="rarely">A1</Item>
-          <Item key="sometimes">A2</Item>
-          <Item key="always">A3</Item>
+          <Item key="A1">A1</Item>
+          <Item key="A2">A2</Item>
+          <Item key="A3">A3</Item>
         </Picker>
       </div>
       <ActionButton onPress={() => setState(!state)}>Toggle size</ActionButton>
