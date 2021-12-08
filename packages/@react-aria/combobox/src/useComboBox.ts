@@ -12,22 +12,33 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
-import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
+import {AriaComboBoxProps as ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent,  TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent,  RefObject,  TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {KeyboardDelegate, PressEvent} from '@react-types/shared';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
-import {PressEvent} from '@react-types/shared';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-interface ComboBoxAria<T> {
+interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
+  /** The ref for the input element. */
+  inputRef: RefObject<HTMLInputElement>,
+  /** The ref for the list box popover. */
+  popoverRef: RefObject<HTMLDivElement>,
+  /** The ref for the list box. */
+  listBoxRef: RefObject<HTMLElement>,
+  /** The ref for the optional list box popup trigger button.  */
+  buttonRef?: RefObject<HTMLElement>,
+  /** An optional keyboard delegate implementation, to override the default. */
+  keyboardDelegate?: KeyboardDelegate
+}interface ComboBoxAria<T> {
   /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
   /** Props for the combo box input element. */
