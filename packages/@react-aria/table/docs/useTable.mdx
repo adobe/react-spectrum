@@ -64,6 +64,9 @@ HTML tables are meant for static content, rather than tables with rich interacti
 * Single, multiple, or no row selection via mouse, touch, or keyboard interactions
 * Support for disabled rows, which cannot be selected
 * Optional support for checkboxes in each row for selection, as well as in the header to select all rows
+* Support for both `toggle` and `replace` selection behaviors
+* Support for row actions via double click, <kbd>Enter</kbd> key, or tapping
+* Long press to enter selection mode on touch when there is both selection and row actions
 * Column sorting support
 * Async loading, infinite scrolling, filtering, and sorting support
 * Support for column groups via nested columns
@@ -132,7 +135,12 @@ import {useRef} from 'react';
 import {useFocusRing} from '@react-aria/focus';
 
 function Table(props) {
-  let state = useTableState({...props, showSelectionCheckboxes: props.selectionMode === 'multiple'});
+  let {selectionMode, selectionBehavior, onAction} = props;
+  let state = useTableState({
+    ...props,
+    showSelectionCheckboxes: selectionMode === 'multiple' && selectionBehavior !== 'replace'
+  });
+
   let ref = useRef();
   let {collection} = state;
   let {gridProps} = useTable(props, state, ref);
@@ -152,7 +160,7 @@ function Table(props) {
       </TableRowGroup>
       <TableRowGroup type="tbody">
         {[...collection.body.childNodes].map(row => (
-          <TableRow key={row.key} item={row} state={state}>
+          <TableRow key={row.key} item={row} state={state} onAction={onAction}>
             {[...row.childNodes].map(cell =>
               cell.props.isSelectionCell
                 ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
@@ -251,17 +259,20 @@ Now that we've covered the table header, let's move on to the body. We'll use
 the <TypeLink links={docs.links} type={docs.exports.useTableRow} /> hook to render each row in the table.
 Table rows can be focused and navigated to using the keyboard via the arrow keys. In addition, table rows
 can optionally support selection via mouse, touch, or keyboard. Clicking, tapping, or pressing the <kbd>Space</kbd>
-key anywhere in the row selects it.
+key anywhere in the row selects it. Row actions are also supported via the provided `onAction` prop. See [below](#row-and-cell-actions) for details.
 
 We'll use the <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} /> object exposed
 by the `state` to determine if a row is selected, and render a pink background if so. We'll also use the <TypeLink links={focusDocs.links} type={focusDocs.exports.useFocusRing} />
 hook to render a focus ring when the user navigates to the row with the keyboard.
 
 ```tsx example export=true render=false
-function TableRow({item, children, state}) {
+function TableRow({item, children, state, onAction}) {
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {rowProps} = useTableRow({node: item}, state, ref);
+  let {rowProps, isPressed} = useTableRow({
+    node: item,
+    onAction: onAction && (() => onAction(item.key))
+  }, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
@@ -269,9 +280,11 @@ function TableRow({item, children, state}) {
       style={{
         background: isSelected
           ? 'blueviolet'
-          : item.index % 2
-            ? 'var(--spectrum-alias-highlight-hover)'
-            : 'none',
+          : isPressed
+            ? 'var(--spectrum-global-color-gray-400)'
+            : item.index % 2
+              ? 'var(--spectrum-alias-highlight-hover)'
+              : 'none',
         color: isSelected ? 'white' : null,
         outline: isFocusVisible ? '2px solid orange' : 'none'
       }}
@@ -582,6 +595,26 @@ Note that you are responsible for the styling of disabled rows, however, the sel
 ```tsx example
 // Using the same table as above
 <PokemonTable selectionMode="multiple" disabledKeys={[3]} />
+```
+
+### Selection behavior
+
+By default, `useTable` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <kbd>Space</kbd> or <kbd>Enter</kbd> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with a column of checkboxes in each row as an explicit affordance for selection.
+
+When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <kbd>Ctrl</kbd>, <kbd>Cmd</kbd>, and <kbd>Shift</kbd> can be used. To move focus without moving selection, the <kbd>Ctrl</kbd> key on Windows or the <kbd>Option</kbd> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <kbd>Space</kbd> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows, and is often used when checkboxes in each row are not desired.
+
+```tsx example
+<PokemonTable selectionMode="multiple" selectionBehavior="replace" />
+```
+
+### Row and cell actions
+
+`useTable` may be used in use cases where users can perform actions on rows or cells, such as navigating into items to open them or get more details. In the default `"toggle"` selection behavior, it is recommended to use a link in the first column for navigation.
+
+In the `"replace"` selection behavior, the `onAction` prop can be used to enable row and cell actions, which differ depending on the interaction method. When provided to `useTableRow` or `useTableCell`, double clicking with a mouse or pressing the <kbd>Enter</kbd> key triggers `onAction`, while single click and the <kbd>Space</kbd> key are reserved for selection. On touch devices, `onAction` becomes the primary tap interaction, and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode and reverts the selection behavior back to `"replace"`. Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
+
+```tsx example
+<PokemonTable selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
 ```
 
 ### Sorting
