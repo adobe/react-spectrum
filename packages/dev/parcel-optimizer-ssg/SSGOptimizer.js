@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-check
 const {Optimizer} = require('@parcel/plugin');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');

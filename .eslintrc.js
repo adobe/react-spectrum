@@ -79,7 +79,10 @@ module.exports = {
     'expect': true,
     'JSX': 'readonly',
     'NodeJS': 'readonly',
-    'AsyncIterable': 'readonly'
+    'AsyncIterable': 'readonly',
+    'FileSystemFileEntry': 'readonly',
+    'FileSystemDirectoryEntry': 'readonly',
+    'FileSystemEntry': 'readonly'
   },
   settings: {
     jsdoc: {
