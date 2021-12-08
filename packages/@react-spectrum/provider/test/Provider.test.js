@@ -285,6 +285,15 @@ describe('Provider', () => {
   });
 
   describe('hooks', () => {
+    const child = {
+      testId: 'childTestComponent',
+      colorScheme: 'light'
+    };
+    const parent = {
+      testId: 'parentTestComponent',
+      colorScheme: 'dark'
+    };
+
     const TestComponent = ({testid}) => {
       const breakpoints = useProviderBreakpoints();
       const colorScheme = useColorScheme();
@@ -292,38 +301,40 @@ describe('Provider', () => {
       return (<div data-testid={testid} data-color={colorScheme} data-breakpoint={breakpoints['S']} />);
     };
 
-    test('provide access to color scheme and breakpoints', async () => {
-      const inner = {
-        testId: 'innerTest',
-        colorScheme: 'dark'
-      };
-      const outer = {
-        testId: 'outerTest',
-        colorScheme: 'dark'
-      };
+    const renderHookTestComponent = () => render(<Provider theme={theme} colorScheme={parent.colorScheme}>
+      <TestComponent testid={parent.testId} />
+      <Provider
+        theme={theme}
+        colorScheme={child.colorScheme}
+        breakpoints={{S: 480, M: 700}}>
+        <TestComponent testid={child.testId} />
+      </Provider>
+    </Provider>);
 
-      matchMedia.useMediaQuery(mediaQueryMinSmall);
-      const {getByTestId} = render(<Provider theme={theme} colorScheme={outer.colorScheme}>
-        <TestComponent testid={outer.testId} />
-        <Provider
-          theme={theme}
-          colorScheme={inner.colorScheme}
-          breakpoints={{S: 480, M: 700}}>
-          <TestComponent testid={inner.testId} />
-        </Provider>
-      </Provider>);
+    test('provide access to color scheme', () => {
+      matchMedia.useMediaQuery(mediaQueryLight);
+      const {getByTestId} = renderHookTestComponent();
 
-      const innerElement = getByTestId(inner.testId);
-      const outerElement = getByTestId(outer.testId);
+      const childElement = getByTestId(child.testId);
+      const parentElement = getByTestId(parent.testId);
 
       const colorField = 'data-color';
+
+      expect(childElement.getAttribute(colorField)).toEqual(child.colorScheme);
+      expect(parentElement.getAttribute(colorField)).toEqual(parent.colorScheme);
+    });
+
+    test('provide access to breakpoints', () => {
+      matchMedia.useMediaQuery(mediaQueryMinSmall);
+      const {getByTestId} = renderHookTestComponent();
+
+      const childElement = getByTestId(child.testId);
+      const parentElement = getByTestId(parent.testId);
+
       const breakpointField = 'data-breakpoint';
 
-      expect(innerElement.getAttribute(colorField)).toEqual(inner.colorScheme);
-      expect(outerElement.getAttribute(colorField)).toEqual(outer.colorScheme);
-
-      expect(innerElement.getAttribute(breakpointField)).toEqual('480');
-      expect(outerElement.getAttribute(breakpointField)).toEqual('640');
+      expect(childElement.getAttribute(breakpointField)).toEqual('480');
+      expect(parentElement.getAttribute(breakpointField)).toEqual('640');
     });
   });
 });
