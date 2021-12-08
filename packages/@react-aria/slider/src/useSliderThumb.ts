@@ -78,21 +78,43 @@ export function useSliderThumb(
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
   let {moveProps} = useMove({
-    onMoveStart() {
+    onMoveStart({pointerType}) {
       currentPosition.current = null;
-      state.setThumbDragging(index, true);
+      // Don't start dragging for keyboard events unless the value has changed.
+      if (pointerType !== 'keyboard') {
+        stateRef.current.setThumbDragging(index, true);
+      }
     },
     onMove({deltaX, deltaY, pointerType}) {
+      const {
+        getThumbPercent, 
+        getThumbMaxValue, 
+        getThumbMinValue, 
+        getThumbValue, 
+        setThumbDragging, 
+        setThumbPercent, 
+        setThumbValue, 
+        step
+      } = stateRef.current;
       let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
 
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPercent(index) * size;
+        currentPosition.current = getThumbPercent(index) * size;
       }
       if (pointerType === 'keyboard') {
+        const currentValue = getThumbValue(index);
         // (invert left/right according to language direction) + (according to vertical)
-        let delta = ((reverseX ? -deltaX : deltaX) + (isVertical ? -deltaY : -deltaY)) * stateRef.current.step;
+        const delta = ((reverseX ? -deltaX : deltaX) + (isVertical ? -deltaY : -deltaY)) * step;
+        if (delta > 0 && currentValue === getThumbMaxValue(index)) {
+          return;
+        }
+        if (delta < 0 && currentValue === getThumbMinValue(index)) {
+          return;
+        }
         currentPosition.current += delta * size;
-        stateRef.current.setThumbValue(index, stateRef.current.getThumbValue(index) + delta);
+        setThumbDragging(index, true);
+        setThumbValue(index, currentValue + delta);
+        setThumbDragging(index, false);
       } else {
         let delta = isVertical ? deltaY : deltaX;
         if (isVertical || reverseX) {
@@ -100,11 +122,14 @@ export function useSliderThumb(
         }
 
         currentPosition.current += delta;
-        stateRef.current.setThumbPercent(index, clamp(currentPosition.current / size, 0, 1));
+        setThumbPercent(index, clamp(currentPosition.current / size, 0, 1));
       }
     },
-    onMoveEnd() {
-      state.setThumbDragging(index, false);
+    onMoveEnd({pointerType}) {
+      // Don't end dragging, triggering onChangeEnd, for keyboard events unless the value has changed.
+      if (pointerType !== 'keyboard') {
+        stateRef.current.setThumbDragging(index, false);
+      }
     }
   });
 
@@ -142,6 +167,8 @@ export function useSliderThumb(
     }
   };
 
+  let inputting = false;
+
   // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
   // we focus the range input, and let the browser handle the keyboard
@@ -160,8 +187,19 @@ export function useSliderThumb(
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': opts['aria-errormessage'],
+      onInput: () => {
+        // Flag native keyboard input.
+        inputting = true;
+      },
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        state.setThumbValue(index, parseFloat(e.target.value));
+        if (parseFloat(e.target.value) !== state.getThumbValue(index)) {
+          // On native keyboard input, set thumb dragging so that onChangeEnd will be fired.
+          inputting && state.setThumbDragging(index, true);
+          state.setThumbValue(index, parseFloat(e.target.value));
+          // After native keyboard input, unset thumb dragging so that onChangeEnd will be fired.
+          inputting && state.setThumbDragging(index, false);
+        }
+        inputting = false;
       }
     }),
     thumbProps: !isDisabled ? mergeProps(
