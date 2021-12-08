@@ -17,7 +17,7 @@ import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
 import {AriaComboBoxProps as ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject,  TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
