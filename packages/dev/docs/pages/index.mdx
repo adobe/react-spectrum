@@ -21,6 +21,7 @@ import heroWideWebp from 'url:./assets/ReactSpectrumHome_976x445_1x.webp';
 import heroWide2xWebp from 'url:./assets/ReactSpectrumHome_976x445_2x.webp';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import clsx from 'clsx';
+import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import styles from '@react-spectrum/docs/src/docs.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
@@ -34,7 +35,7 @@ keywords: [react spectrum, react aria, react stately, design system]
 A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.
 
 <p className={clsx(typographyStyles['spectrum-Body2'], styles.homeLinks)}>
-  <a href="https://github.com/adobe/react-spectrum">GitHub</a>
+  <a href="https://github.com/adobe/react-spectrum" className={clsx(linkStyle['spectrum-Link'], styles.link)}>GitHub</a>
 </p>
 
 <Hero
