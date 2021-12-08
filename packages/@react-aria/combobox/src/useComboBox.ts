@@ -38,7 +38,9 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   buttonRef?: RefObject<HTMLElement>,
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate
-}interface ComboBoxAria<T> {
+}
+
+interface ComboBoxAria<T> {
   /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
   /** Props for the combo box input element. */
