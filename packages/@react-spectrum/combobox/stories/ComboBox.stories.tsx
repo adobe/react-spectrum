@@ -252,7 +252,7 @@ storiesOf('ComboBox', module)
   )
   .add(
     'validationState: invalid',
-    () => render({allowsCustomValue: true, validationState: 'invalid', defaultSelectedKey: 'two'})
+    () => render({validationState: 'invalid', defaultSelectedKey: 'two'})
   )
   .add(
     'validationState: valid',
