@@ -166,6 +166,7 @@ function Tab<T>(props: TabProps<T>) {
   });
   let isSelected = state.selectedKey === key;
   let domProps = filterDOMProps(item.props);
+  delete domProps.id;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

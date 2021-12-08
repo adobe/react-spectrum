@@ -645,11 +645,16 @@ describe('Tabs', function () {
   });
 
   it('supports custom props for tab items', function () {
-    let {getAllByTestId} = renderComponent({}, {'data-testid': 'tabItems', 'data-instance-id': 'instance-id'});
+    let {getAllByTestId} = renderComponent({}, {
+      'data-testid': 'tabItems',
+      'data-instance-id': 'instance-id',
+      'id': 'id-1'
+    });
     let tabItems = getAllByTestId('tabItems');
     expect(tabItems).toHaveLength(3);
     for (let tabItem of tabItems) {
       expect(tabItem).toHaveAttribute('data-instance-id', 'instance-id');
+      expect(tabItem).not.toHaveAttribute('id', 'id-1');
       expect(tabItem).toBeInTheDocument();
     }
   });
