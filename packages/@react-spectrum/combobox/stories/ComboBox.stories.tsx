@@ -64,7 +64,8 @@ let actions = {
   onInputChange: action('onInputChange'),
   onSelectionChange: action('onSelectionChange'),
   onBlur: action('onBlur'),
-  onFocus: action('onFocus')
+  onFocus: action('onFocus'),
+  onCustomValueEnterPressed: action('onCustomValueEnterPressed')
 };
 
 storiesOf('ComboBox', module)
@@ -251,7 +252,7 @@ storiesOf('ComboBox', module)
   )
   .add(
     'validationState: invalid',
-    () => render({validationState: 'invalid', defaultSelectedKey: 'two'})
+    () => render({allowsCustomValue: true, validationState: 'invalid', defaultSelectedKey: 'two'})
   )
   .add(
     'validationState: valid',

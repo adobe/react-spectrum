@@ -32,6 +32,7 @@ let theme = {
   medium: scaleMedium
 };
 
+let onCustomValueEnterPressed = jest.fn();
 let onSelectionChange = jest.fn();
 let onOpenChange = jest.fn();
 let onInputChange = jest.fn();
@@ -1535,6 +1536,94 @@ describe('ComboBox', function () {
       expect(onSelectionChange).toHaveBeenCalledWith(null);
 
       expect(queryByRole('listbox')).toBeNull();
+    });
+
+    it('commits custom value and calls onCustomValueEnterPressed on Enter pressed', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test" allowsCustomValue onCustomValueEnterPressed={onCustomValueEnterPressed} onInputChange={onInputChange} >
+            <Item key="1">Bulbasaur</Item>
+            <Item key="2">Squirtle</Item>
+            <Item key="3">Charmander</Item>
+          </ComboBox>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        userEvent.click(combobox);
+        jest.runAllTimers();
+      });
+      act(() => {
+        fireEvent.change(combobox, {target: {value: 'Bulba'}});
+        jest.runAllTimers();
+        combobox.blur();
+        jest.runAllTimers();
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      expect(onInputChange).toHaveBeenCalledWith('Bulba');
+      expect(onCustomValueEnterPressed).toHaveBeenCalledWith('Bulba');
+    });
+
+    it('onCustomValueEnterPressed should not be called upon Enter press if menu is open', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test" allowsCustomValue onCustomValueEnterPressed={onCustomValueEnterPressed} onOpenChange={onOpenChange}>
+            <Item key="1">Bulbasaur</Item>
+            <Item key="2">Squirtle</Item>
+            <Item key="3">Charmander</Item>
+          </ComboBox>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        userEvent.click(combobox);
+        jest.runAllTimers();
+      });
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        jest.runAllTimers();
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      expect(onOpenChange).toHaveBeenCalled();
+      expect(onCustomValueEnterPressed).not.toHaveBeenCalled();
+    });
+
+    it('onCustomValueEnterPressed should not be called upon Enter press if allowsCustomValue is false', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test" onCustomValueEnterPressed={onCustomValueEnterPressed} onInputChange={onInputChange} >
+            <Item key="1">Bulbasaur</Item>
+            <Item key="2">Squirtle</Item>
+            <Item key="3">Charmander</Item>
+          </ComboBox>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        userEvent.click(combobox);
+        jest.runAllTimers();
+      });
+      act(() => {
+        fireEvent.change(combobox, {target: {value: 'Bulba'}});
+        jest.runAllTimers();
+        combobox.blur();
+        jest.runAllTimers();
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      expect(onCustomValueEnterPressed).not.toHaveBeenCalled();
     });
 
     it('retains selected key on blur if input value matches', function () {

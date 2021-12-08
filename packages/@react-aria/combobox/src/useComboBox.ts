@@ -110,12 +110,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'Enter':
-      case 'Tab':
         // Prevent form submission if menu is open since we may be selecting a option
         if (state.isOpen && e.key === 'Enter') {
           e.preventDefault();
         }
-
+        !state.isOpen && props.allowsCustomValue && props.onCustomValueEnterPressed(state.inputValue);
+        state.commit();
+        break;
+      case 'Tab':
         state.commit();
         break;
       case 'Escape':

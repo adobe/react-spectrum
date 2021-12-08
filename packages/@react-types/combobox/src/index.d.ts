@@ -29,6 +29,8 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
   onInputChange?: (value: string) => void,
   /** Whether the ComboBox allows a non-item matching input value to be set. */
   allowsCustomValue?: boolean,
+  /** Handler that is called when allowsCustomValue is true and Enter was pressed. */
+  onCustomValueEnterPressed?: (value: string) => void,
   // /**
   //  * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
   //  * @default 'suggest'
