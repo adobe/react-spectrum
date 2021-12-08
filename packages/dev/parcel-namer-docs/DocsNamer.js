@@ -37,10 +37,10 @@ module.exports = new Namer({
       );
     } else if (!bundle.target || !bundle.target.distEntry) {
       // An asset. Should end up hashed in the root.
-      let bundleGroup = bundleGraph.getBundleGroupsContainingBundle(bundle)[0];
-      let bundleGroupBundles = bundleGraph.getBundlesInBundleGroup(bundleGroup);
-      let mainBundle =  bundleGroupBundles.find(b => b.getEntryAssets().some(a => a.id === bundleGroup.entryAssetId));
-      let entry = mainBundle.getEntryAssets().find(a => a.id === bundleGroup.entryAssetId).filePath;
+      // let bundleGroup = bundleGraph.getBundleGroupsContainingBundle(bundle)[0];
+      // let bundleGroupBundles = bundleGraph.getBundlesInBundleGroup(bundleGroup);
+      // let mainBundle =  bundleGroupBundles.find(b => b.getEntryAssets().some(a => a.id === bundleGroup.entryAssetId));
+      // let entry = mainBundle.getEntryAssets().find(a => a.id === bundleGroup.entryAssetId).filePath;
       // return path.basename(entry, path.extname(entry)) + '.' + bundle.hashReference + '.' + bundle.type;
       return bundle.id + '.' + bundle.type;
     } else {
