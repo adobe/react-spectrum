@@ -90,8 +90,15 @@ module.exports = new Transformer({
               node.meta = null;
               return [
                 {
-                  type: 'jsx',
-                  value: `<div id="${id}" />`
+                  type: 'mdxJsxFlowElement',
+                  name: 'div',
+                  attributes: [
+                    {
+                      type: 'mdxJsxAttribute',
+                      name: 'id',
+                      value: id
+                    }
+                  ]
                 }
               ];
             }
@@ -104,8 +111,15 @@ module.exports = new Transformer({
             return [
               ...transformExample(node, preRelease),
               {
-                type: 'jsx',
-                value: `<div id="${id}" />`
+                type: 'mdxJsxFlowElement',
+                name: 'div',
+                attributes: [
+                  {
+                    type: 'mdxJsxAttribute',
+                    name: 'id',
+                    value: id
+                  }
+                ]
               }
             ];
           }
@@ -114,8 +128,14 @@ module.exports = new Transformer({
             return [
               ...responsiveCode(node),
               {
-                type: 'jsx',
-                value: '<style>{`' + node.value + '`}</style>'
+                type: 'mdxJsxFlowElement',
+                name: 'style',
+                children: [
+                  {
+                    type: 'text',
+                    value: node.value
+                  }
+                ]
               }
             ];
           }
@@ -228,8 +248,8 @@ module.exports = new Transformer({
     function wrapExamples() {
       return (tree) => (
         flatMap(tree, node => {
-          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring) {
-            node.properties.className = node.children[0].properties.metastring.split(' ');
+          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].data?.meta) {
+            node.properties.className = node.children[0].data.meta.split(' ');
           }
 
           return [node];
