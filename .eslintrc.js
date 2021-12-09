@@ -65,6 +65,11 @@ module.exports = {
       'jsdoc/require-jsdoc': OFF,
       'jsdoc/require-description': OFF
     }
+  }, {
+    files: ['packages/!(@react-aria)/**'],
+    rules: {
+      'rulesdir/useLayoutEffectRule': OFF
+    }
   }],
   env: {
     'browser': true,
@@ -166,6 +171,7 @@ module.exports = {
     // custom rules
     'rulesdir/sort-imports': [ERROR],
     'rulesdir/imports': [ERROR],
+    'rulesdir/useLayoutEffectRule': [ERROR],
 
     // jsx-a11y rules
     'jsx-a11y/accessible-emoji': ERROR,
