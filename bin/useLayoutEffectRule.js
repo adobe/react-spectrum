@@ -14,7 +14,7 @@ module.exports = function (context) {
   return {
     ImportDeclaration(node) {
       const source = node.source.value;
-      if (source === '@react-aria/utils' || source === './') {
+      if (source === '@react-aria/utils' || source === './useLayoutEffect' || source === './') {
         return;
       }
       const importSpecifiers = node.specifiers.filter(specifier => specifier.type === 'ImportSpecifier');
