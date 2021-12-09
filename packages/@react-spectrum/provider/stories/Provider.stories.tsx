@@ -13,6 +13,7 @@
 import {Button} from '@react-spectrum/button';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
+import {createPortal} from 'react-dom';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
@@ -29,6 +30,7 @@ import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
+import {View} from '@react-spectrum/view';
 
 const THEME = {
   light: customTheme,
@@ -92,6 +94,60 @@ storiesOf('Provider', module)
     'custom theme',
     () => render({theme: THEME})
   )
+  .add(
+    'isPortal (ReactDOM.createPortal)',
+    () => {
+      // need to create element outside of <div id="root" />
+      // to properly create the portal scenario
+      let portalTargetDiv = document.createElement('div');
+      portalTargetDiv.setAttribute('id', 'portalTarget');
+      const rootDiv = document.getElementById('root');
+      rootDiv.before(portalTargetDiv);
+
+      const viewContainer = {
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'center'
+      };
+
+      return (
+        <>
+          {createPortal(
+            <Provider isPortal>
+              <div style={viewContainer}>
+                <View
+                  borderWidth="thin"
+                  borderColor="dark"
+                  borderRadius="medium"
+                  padding="size-250"
+                  marginTop="30px">
+                  <CheckboxGroup label="Inside a ReactDOM.createPortal">
+                    <Checkbox value="dogs">Dogs</Checkbox>
+                    <Checkbox value="cats">Cats</Checkbox>
+                    <Checkbox value="dragons">Dragons</Checkbox>
+                  </CheckboxGroup>
+                </View>
+              </div>
+            </Provider>,
+            document.getElementById('portalTarget') as HTMLElement
+          )}
+          <Provider>
+            <View
+              borderWidth="thin"
+              borderColor="dark"
+              borderRadius="medium"
+              padding="size-250"
+              marginTop="-300px">
+              <CheckboxGroup label="Outside a ReactDOM.createPortal">
+                <Checkbox value="dogs">Dogs</Checkbox>
+                <Checkbox value="cats">Cats</Checkbox>
+                <Checkbox value="dragons">Dragons</Checkbox>
+              </CheckboxGroup>
+            </View>
+          </Provider>
+        </>
+      );
+    })
   .add(
     'responsive styleProps',
     () => (
