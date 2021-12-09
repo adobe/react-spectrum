@@ -389,7 +389,7 @@ workflows:
             - deploy-verdaccio
       - deploy-docs-diff:
           requires:
-            - docs_diff
+            - docs-diff
       - comment:
           name: comment-pr
           requires:
