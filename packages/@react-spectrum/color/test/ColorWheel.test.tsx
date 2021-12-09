@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '../../../../scripts/customRTL';
 import {ColorWheel} from '../';
 import {ControlledHSL} from '../stories/ColorWheel.stories';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';

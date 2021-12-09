@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '../../../../scripts/customRTL';
 import {StatusLight} from '../';
 import V2StatusLight from '@react/react-spectrum/StatusLight';
 

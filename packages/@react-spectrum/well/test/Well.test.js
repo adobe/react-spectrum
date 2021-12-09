@@ -11,7 +11,7 @@
  */
 
 import React, {useRef} from 'react';
-import {render} from '@testing-library/react';
+import {render} from '../../../../scripts/customRTL';
 import V2Well from '@react/react-spectrum/Well';
 import {Well} from '../';
 

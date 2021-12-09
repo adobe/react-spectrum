@@ -11,7 +11,7 @@
  */
 
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {fireEvent, render, waitFor} from '@testing-library/react';
+import {fireEvent, render, waitFor} from '../../../../scripts/customRTL';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';

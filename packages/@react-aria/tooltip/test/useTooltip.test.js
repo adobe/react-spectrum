@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '../../../../scripts/customRTL';
 import React from 'react';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useTooltip, useTooltipTrigger} from '../';

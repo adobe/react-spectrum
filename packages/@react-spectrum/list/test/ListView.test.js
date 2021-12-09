@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {act, fireEvent, render as renderComponent, within} from '../../../../scripts/customRTL';
 import {ActionButton} from '@react-spectrum/button';
 import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Item, ListView} from '../src';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, waitFor} from '@testing-library/react';
+import {fireEvent, render, waitFor} from '../../../../scripts/customRTL';
 import {Modal} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

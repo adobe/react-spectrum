@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent} from '@testing-library/react';
+import {act, fireEvent} from '../../../../scripts/customRTL';
 
 function pressKeyOnButton(key, button) {
   fireEvent.keyDown(button, {key});

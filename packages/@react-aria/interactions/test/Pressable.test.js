@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '../../../../scripts/customRTL';
 import {Pressable} from '../';
 import React from 'react';
 

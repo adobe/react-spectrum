@@ -12,7 +12,7 @@
 
 import {ProgressBar} from '../';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '../../../../scripts/customRTL';
 import V2ProgressBar from '@react/react-spectrum/Progress';
 
 

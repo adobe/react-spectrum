@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
+import {act, render} from '../../../../scripts/customRTL';
 import React from 'react';
 import {useCheckboxGroupState} from '../';
 

@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '../../../../scripts/customRTL';
 import {announce} from '@react-aria/live-announcer';
 import {CalendarDate} from '@internationalized/date';
 import {RangeCalendar} from '../';
