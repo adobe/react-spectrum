@@ -59,7 +59,7 @@ describe('ListBox', function () {
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {

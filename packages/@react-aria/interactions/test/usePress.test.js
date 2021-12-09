@@ -42,13 +42,12 @@ function pointerEvent(type, opts) {
 
 describe('usePress', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterAll(() => {
     jest.useRealTimers();
-    window.requestAnimationFrame.mockRestore();
   });
 
   afterEach(() => {
@@ -2591,7 +2590,7 @@ describe('usePress', function () {
     }
 
     beforeAll(() => {
-      jest.useFakeTimers();
+      jest.useFakeTimers('legacy');
     });
     afterAll(() => {
       jest.useRealTimers();

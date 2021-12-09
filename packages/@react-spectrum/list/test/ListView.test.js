@@ -39,7 +39,7 @@ describe('ListView', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterAll(function () {

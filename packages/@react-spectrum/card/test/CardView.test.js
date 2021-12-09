@@ -162,7 +162,7 @@ describe('CardView', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => mockWidth);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => mockHeight);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {

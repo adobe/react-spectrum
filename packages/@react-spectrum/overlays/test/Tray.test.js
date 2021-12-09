@@ -18,7 +18,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {Tray} from '../';
 
 describe('Tray', function () {
-  beforeAll(() => jest.useFakeTimers());
+  beforeAll(() => jest.useFakeTimers('legacy'));
   afterAll(() => jest.useRealTimers());
 
   it('should render nothing if isOpen is not set', function () {

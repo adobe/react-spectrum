@@ -25,10 +25,6 @@ describe('Calendar', () => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
-  afterEach(() => {
-    window.requestAnimationFrame.mockRestore();
-  });
-
   describe('basics', () => {
     it.each`
       Name      | Calendar

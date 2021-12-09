@@ -29,16 +29,10 @@ describe('ColorSlider', () => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 100);
     // @ts-ignore
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
   afterAll(() => {
-    // @ts-ignore
-    window.HTMLElement.prototype.offsetWidth.mockReset();
-    // @ts-ignore
-    window.HTMLElement.prototype.offsetHeight.mockReset();
     jest.useRealTimers();
-    // @ts-ignore
-    window.requestAnimationFrame.mockReset();
   });
 
   afterEach(() => {

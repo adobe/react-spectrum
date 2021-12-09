@@ -31,13 +31,12 @@ function ExampleWithPress(props) {
 
 describe('useLongPress', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterAll(() => {
     jest.useRealTimers();
-    window.requestAnimationFrame.mockRestore();
   });
 
   afterEach(() => {

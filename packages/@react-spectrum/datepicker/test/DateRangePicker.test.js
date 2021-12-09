@@ -69,7 +69,7 @@ function render(el) {
 
 describe('DateRangePicker', function () {
   // there are live announcers, we need to be able to get rid of them after each test or get a warning in the console about act()
-  beforeAll(() => jest.useFakeTimers());
+  beforeAll(() => jest.useFakeTimers('legacy'));
   afterAll(() => jest.useRealTimers());
   afterEach(() => {
     act(() => {

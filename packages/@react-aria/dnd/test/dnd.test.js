@@ -31,7 +31,7 @@ describe('useDrag and useDrop', function () {
       height: 50
     }));
 
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {

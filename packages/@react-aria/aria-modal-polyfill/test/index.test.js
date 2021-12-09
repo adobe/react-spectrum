@@ -25,7 +25,7 @@ import {watchModals} from '../';
 describe('watchModals', () => {
   let matchMedia;
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
   afterAll(() => {
     jest.useRealTimers();
@@ -39,7 +39,6 @@ describe('watchModals', () => {
   afterEach(() => {
     jest.runAllTimers();
     matchMedia.clear();
-    window.requestAnimationFrame.mockRestore();
   });
 
   let verify = async function (modal, queryByRole) {

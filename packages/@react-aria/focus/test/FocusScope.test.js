@@ -21,10 +21,6 @@ describe('FocusScope', function () {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
-  afterEach(() => {
-    window.requestAnimationFrame.mockRestore();
-  });
-
   describe('focus containment', function () {
     it('should contain focus within the scope', function () {
       let {getByTestId} = render(

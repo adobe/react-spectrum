@@ -25,11 +25,10 @@ function Example(props) {
 describe('useMove', function () {
   beforeAll(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
   afterAll(() => {
     jest.useRealTimers();
-    window.requestAnimationFrame.mockRestore();
   });
 
   afterEach(() => {

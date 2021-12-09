@@ -29,7 +29,7 @@ function PopoverWithDialog({children}) {
 
 describe('Popover', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
   afterAll(() => {
     jest.useRealTimers();

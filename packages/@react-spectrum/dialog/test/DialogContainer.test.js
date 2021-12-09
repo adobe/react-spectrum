@@ -19,7 +19,7 @@ import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('DialogContainer', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterAll(() => {
@@ -32,7 +32,6 @@ describe('DialogContainer', function () {
 
   afterEach(() => {
     jest.runAllTimers();
-    window.requestAnimationFrame.mockRestore();
   });
 
   it('should open and close a dialog based on controlled state', function () {
