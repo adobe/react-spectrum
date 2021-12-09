@@ -65,11 +65,6 @@ module.exports = {
       'jsdoc/require-jsdoc': OFF,
       'jsdoc/require-description': OFF
     }
-  }, {
-    files: ['packages/!(@react-aria)/**'],
-    rules: {
-      'rulesdir/useLayoutEffectRule': OFF
-    }
   }],
   env: {
     'browser': true,
