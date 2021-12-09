@@ -497,9 +497,12 @@ This example performs client side sorting by passing a `sort` function to the [u
 See the docs for more information on how to perform server side sorting.
 
 ```tsx example
+
+import { useCollator } from '@react-aria/i18n';
+
 function AsyncSortTable() {
 
-  let collator = useCollator();
+  let collator = useCollator({numeric: true});
 
   let list = useAsyncList({
     async load({signal}) {
