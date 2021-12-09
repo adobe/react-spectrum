@@ -305,7 +305,7 @@ jobs:
     steps:
       - run:
           name: generate docs diff
-          command: ./
+          command: ./docsDiffer.sh
       - persist_to_workspace:
           root: docs_diff_dist
           paths:
