@@ -1421,7 +1421,6 @@ describe('useDrag and useDrop', function () {
 
       // todo work with devon, i think it's from DragManaer line 240?
       it.skip('should handle when a drop target is hidden with aria-hidden', async () => {
-        let promise = Promise.resolve();
         let setShowTarget2;
         let Test = () => {
           let [showTarget2, _setShowTarget2] = React.useState(true);
