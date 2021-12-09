@@ -24,7 +24,7 @@ describe('ActionBar', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 500);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {
@@ -33,6 +33,7 @@ describe('ActionBar', () => {
 
   it('should open when there are selected items', () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
+    act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -56,6 +57,7 @@ describe('ActionBar', () => {
 
   it('should update the selected count when selecting more items', () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
+    act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -70,6 +72,7 @@ describe('ActionBar', () => {
 
   it('should work with select all', () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
+    act(() => {jest.runAllTimers();});
 
     let selectAll = tree.getByLabelText('Select All');
     triggerPress(selectAll);
@@ -79,6 +82,7 @@ describe('ActionBar', () => {
 
   it('should close and restore focus when pressing the clear button', () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
+    act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -100,6 +104,7 @@ describe('ActionBar', () => {
 
   it('should close when pressing the escape key', () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
+    act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -123,6 +128,7 @@ describe('ActionBar', () => {
   it('should fire onAction when clicking on an action', () => {
     let onAction = jest.fn();
     let tree = render(<Provider theme={theme}><Example onAction={onAction} /></Provider>);
+    act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');

@@ -34,7 +34,7 @@ describe('NumberField', function () {
   let onKeyUpSpy = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterAll(() => {

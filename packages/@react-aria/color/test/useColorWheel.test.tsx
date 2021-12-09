@@ -52,22 +52,14 @@ function ColorWheel(props: ColorWheelProps) {
 describe('useColorWheel', () => {
   let onChangeSpy = jest.fn();
 
-  afterEach(() => {
-    onChangeSpy.mockClear();
-  });
-
   beforeAll(() => {
     // @ts-ignore
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
-    jest.useFakeTimers();
-  });
-  afterAll(() => {
-    jest.useRealTimers();
-    // @ts-ignore
-    window.requestAnimationFrame.mockRestore();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {
+    onChangeSpy.mockClear();
     // for restoreTextSelection
     jest.runAllTimers();
   });
