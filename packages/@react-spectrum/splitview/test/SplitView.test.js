@@ -484,7 +484,6 @@ describe('SplitView tests', function () {
       expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
     });
 
-    // V2 version doesn't have this capability, firstly limited by onMouseDown `if (this.props.primarySize !== undefined) {`
     it.each`
       Name             | Component      | props
       ${'SplitView'}   | ${SplitView}   | ${{primarySize: 500, UNSAFE_className: 'splitview'}}
@@ -988,7 +987,6 @@ describe('SplitView tests', function () {
       expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
     });
 
-    // V2 version doesn't have this capability, firstly limited by onpointerDown `if (this.props.primarySize !== undefined) {`
     it.each`
       Name             | Component      | props
       ${'SplitView'}   | ${SplitView}   | ${{primarySize: 500, UNSAFE_className: 'splitview'}}

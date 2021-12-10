@@ -17,8 +17,6 @@ import {Radio, RadioGroup} from '../';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
-import V2Radio from '@react/react-spectrum/Radio';
-import V2RadioGroup from '@react/react-spectrum/RadioGroup';
 
 function renderRadioGroup(ComponentGroup, Component, groupProps, radioProps) {
   return render(
@@ -131,7 +129,6 @@ describe('Radios', function () {
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                 | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{onChange: onChangeSpy}} | ${[{}, {}, {}]}
-    ${'V2Radio'} | ${V2RadioGroup} | ${V2Radio} | ${{onChange: onChangeSpy}} | ${[{}, {}, {}]}
   `('$Name handles defaults', function ({Name, ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getAllByRole, getByLabelText} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
 
@@ -140,13 +137,10 @@ describe('Radios', function () {
     expect(radioGroup).toBeTruthy();
     expect(radios.length).toBe(3);
 
-    // V2 doesn't have a default generated name
-    if (Name === 'Radio') {
-      let groupName = radios[0].getAttribute('name');
-      radios.forEach(radio => {
-        expect(radio).toHaveAttribute('name', groupName);
-      });
-    }
+    let groupName = radios[0].getAttribute('name');
+    radios.forEach(radio => {
+      expect(radio).toHaveAttribute('name', groupName);
+    });
 
     expect(radios[0].value).toBe('dogs');
     expect(radios[1].value).toBe('cats');
@@ -169,7 +163,6 @@ describe('Radios', function () {
   it.each`
     Name         | ComponentGroup  | Component  | groupProps | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{}}      | ${[{}, {}, {}]}
-    ${'V2Radio'} | ${V2RadioGroup} | ${V2Radio} | ${{}}      | ${[{}, {}, {}]}
   `('$Name renders without labels', function ({Name, ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getAllByRole} = render(
       <ComponentGroup aria-label="favorite pet" {...groupProps}>
@@ -184,19 +177,15 @@ describe('Radios', function () {
     expect(radioGroup).toBeTruthy();
     expect(radios.length).toBe(3);
 
-    // V2 doesn't have a default generated name
-    if (Name === 'Radio') {
-      let groupName = radios[0].getAttribute('name');
-      radios.forEach(radio => {
-        expect(radio).toHaveAttribute('name', groupName);
-      });
-    }
+    let groupName = radios[0].getAttribute('name');
+    radios.forEach(radio => {
+      expect(radio).toHaveAttribute('name', groupName);
+    });
   });
 
   it.each`
     Name         | ComponentGroup  | Component  | groupProps              | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{name: 'customName'}} | ${[{}, {}, {}]}
-    ${'V2Radio'} | ${V2RadioGroup} | ${V2Radio} | ${{name: 'customName'}} | ${[{}, {}, {}]}
   `('$Name can be given a group name', function ({ComponentGroup, Component, groupProps, radioProps}) {
     let {getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
 
@@ -206,7 +195,6 @@ describe('Radios', function () {
     });
   });
 
-  // V2 provider can't disable a set of inputs
   it.each`
     Name         | ComponentGroup  | Component  | groupProps | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{}}      | ${[{}, {}, {}]}
@@ -233,7 +221,6 @@ describe('Radios', function () {
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                 | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{onChange: onChangeSpy}} | ${[{}, {isDisabled: true}, {}]}
-    ${'V2Radio'} | ${V2RadioGroup} | ${V2Radio} | ${{onChange: onChangeSpy}} | ${[{}, {disabled: true}, {}]}
   `('$Name can have a single disabled radio', function ({ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
 
@@ -261,7 +248,6 @@ describe('Radios', function () {
     expect(radios[2].checked).toBe(false);
   });
 
-  // V2 can't readonly
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                                   | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{isReadOnly: true, onChange: onChangeSpy}} | ${[{}, {}, {}]}
@@ -282,7 +268,6 @@ describe('Radios', function () {
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
-  // V2 can't readonly
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                 | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{onChange: onChangeSpy}} | ${[{isReadOnly: true}, {}, {}]}
@@ -302,8 +287,6 @@ describe('Radios', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
-  // once rsp 2.26 comes out, we can re-enable the v2 test
-  // ${'V2Radio'} | ${V2RadioGroup} | ${V2Radio} | ${{defaultSelectedValue: 'dragons', onChange: onChangeSpy}} | ${[{}, {}, {}]}
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                                                  | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{defaultValue: 'dragons', onChange: onChangeSpy}}         | ${[{}, {}, {}]}
@@ -332,7 +315,6 @@ describe('Radios', function () {
   it.each`
     Name         | ComponentGroup  | Component  | groupProps                                           | radioProps
     ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{value: 'dragons', onChange: onChangeSpy}}         | ${[{}, {}, {}]}
-    ${'V2Radio'} | ${V2RadioGroup} | ${V2Radio} | ${{selectedValue: 'dragons', onChange: onChangeSpy}} | ${[{}, {}, {}]}
   `('$Name can be controlled', function ({ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
 
