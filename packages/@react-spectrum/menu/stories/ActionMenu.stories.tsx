@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionMenu} from '..';
 import {Alignment} from '@react-types/shared';
-import {Checkbox} from '../../checkbox';
+import {Checkbox} from '@react-spectrum/checkbox';
 import {Flex} from '../../layout';
 import {Item} from '../';
 import {Meta, Story} from '@storybook/react';
