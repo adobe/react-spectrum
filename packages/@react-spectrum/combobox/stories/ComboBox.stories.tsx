@@ -64,11 +64,7 @@ let actions = {
   onInputChange: action('onInputChange'),
   onSelectionChange: action('onSelectionChange'),
   onBlur: action('onBlur'),
-  onFocus: action('onFocus'),
-  onFocusChange: action('onFocusChange'),
-  onKeyDown: action('onKeyDown'),
-  onKeyUp: action('onKeyUp'),
-  onLoadMore: action('onLoadMore')
+  onFocus: action('onFocus')
 };
 
 storiesOf('ComboBox', module)
@@ -863,6 +859,8 @@ let CustomValueComboBox = (props) => {
   let onSelectionChange = (key) => {
     setSelectedKey(key);
   };
+
+  actions['onKeyDown'] = action('onKeyDown');
 
   return (
     <div>
