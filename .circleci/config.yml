@@ -260,7 +260,7 @@ jobs:
           name: deploy
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              az storage blob upload-batch -d reactspectrum -s /tmp/verdaccio_dist --account-name reactspectrum
+              az storage blob upload-batch -d reactspectrum -s /tmp/verdaccio_dist/verdaccio --account-name reactspectrum
             fi
 
   deploy-production:
@@ -337,9 +337,9 @@ workflows:
           requires:
             - install
       - docs-verdaccio:
-          filters:
-            branches:
-              only: main
+          # filters:
+          #   branches:
+          #     only: main
           requires:
             - install
       - deploy:
