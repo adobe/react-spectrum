@@ -15,7 +15,6 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
-import {gridMap} from '@react-aria/grid/src/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -34,7 +33,16 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import {
+  useTable,
+  useTableCell,
+  useTableColumnHeader,
+  useTableHeaderRow,
+  useTableRow,
+  useTableRowGroup,
+  useTableSelectAllCheckbox,
+  useTableSelectionCheckbox
+} from '@react-aria/table';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
@@ -161,7 +169,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         <TableRow
           key={reusableView.key}
           item={reusableView.content}
-          style={style}>
+          style={style}
+          hasActions={onAction}>
           {renderChildren(children)}
         </TableRow>
       );
@@ -507,11 +516,10 @@ function TableRowGroup({children, ...otherProps}) {
   );
 }
 
-function TableRow({item, children, ...otherProps}) {
+function TableRow({item, children, hasActions, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
-  let {actions: {onRowAction}} = gridMap.get(state);
-  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onRowAction;
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({

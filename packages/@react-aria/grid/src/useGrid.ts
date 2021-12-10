@@ -21,7 +21,8 @@ import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useHighlightSelectionDescription, useSelectableCollection} from '@react-aria/selection';
+import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
+import {useSelectableCollection} from '@react-aria/selection';
 
 export interface GridProps extends DOMProps, AriaLabelingProps {
   /** Whether the grid uses virtual scrolling. */
