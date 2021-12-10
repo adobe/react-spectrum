@@ -64,7 +64,11 @@ let actions = {
   onInputChange: action('onInputChange'),
   onSelectionChange: action('onSelectionChange'),
   onBlur: action('onBlur'),
-  onFocus: action('onFocus')
+  onFocus: action('onFocus'),
+  onFocusChange: action('onFocusChange'),
+  onKeyDown: action('onKeyDown'),
+  onKeyUp: action('onKeyUp'),
+  onLoadMore: action('onLoadMore')
 };
 
 storiesOf('ComboBox', module)
