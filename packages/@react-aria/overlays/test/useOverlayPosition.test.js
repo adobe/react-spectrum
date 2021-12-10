@@ -129,14 +129,14 @@ describe('useOverlayPosition', function () {
     `);
   });
 
-  it('should limit and update the overlay\'s maximum height by the given maxHeight', function () {
-    let res = render(<Example maxHeight={250} />);
+  it('should update the overlay\'s maxHeight by the given one if it\'s smaller than available viewport height.', function () {
+    let res = render(<Example maxHeight={450} />);
     let overlay = res.getByTestId('overlay');
 
     expect(overlay).toHaveStyle(`
       left: 12px;
       top: 350px;
-      max-height: 250px;
+      max-height: 406px;
     `);
 
     res.rerender(<Example maxHeight={150} />);
