@@ -66,7 +66,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
           arrowProps,
           ...tooltipProps
         }}>
-        <Overlay isOpen={state.isOpen}>
+        <Overlay isOpen={state.isOpen} nodeRef={overlayRef}>
           {tooltip}
         </Overlay>
       </TooltipContext.Provider>
