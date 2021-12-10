@@ -129,6 +129,25 @@ describe('useOverlayPosition', function () {
     `);
   });
 
+  it('should limit and update the overlay\'s maximum height by the given maxHeight', function () {
+    let res = render(<Example maxHeight={250}/>);
+    let overlay = res.getByTestId('overlay');
+
+    expect(overlay).toHaveStyle(`
+      left: 12px;
+      top: 350px;
+      max-height: 250px;
+    `);
+
+    res.rerender(<Example maxHeight={150}/>);
+
+    expect(overlay).toHaveStyle(`
+      left: 12px;
+      top: 350px;
+      max-height: 150px;
+    `);
+  });
+
   it('should close the overlay when the trigger scrolls', function () {
     let onClose = jest.fn();
     let res = render(
