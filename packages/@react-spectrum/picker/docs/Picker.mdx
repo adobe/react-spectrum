@@ -151,6 +151,32 @@ function Example() {
   );
 }
 ```
+### Deselection
+Unsetting a selected option can be done by using `selectedKey` and `onSelectionChange` handler
+
+```tsx example
+function Example() {
+  let options = [
+    {name: 'Koala'},
+    {name: 'Kangaroo'},
+    {name: 'Platypus'},
+    {name: 'Bald Eagle'},
+    {name: 'Bison'},
+    {name: 'Skunk'}
+  ];
+  let [animal, setAnimal] = React.useState();
+
+  return (
+    <Picker
+      label="Pick an animal (deselection allowed)"
+      items={options}
+      selectedKey={animal}
+      onSelectionChange={selected => setAnimal(animal === selected ? null : selected)}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </Picker>
+  );
+}
+```
 ## Sections
 Picker supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
 

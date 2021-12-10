@@ -64,6 +64,19 @@ storiesOf('Picker', module)
     )
   )
   .add(
+    'can be deselected',
+    () => {
+      const [selected, setSelected] = React.useState<React.Key>();
+      return (
+        <Picker label="Test" selectedKey={selected} onSelectionChange={val => setSelected(val === selected ? null : val)}>
+          <Item key="rarely">Short</Item>
+          <Item key="sometimes">Normal</Item>
+          <Item key="always">This item is very long and word wraps poorly</Item>
+        </Picker>
+      );
+    }
+  )
+  .add(
     'sections',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
