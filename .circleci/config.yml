@@ -27,6 +27,14 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
+  rsp-xlarge-browsers:
+    docker:
+      - image: circleci/node:12-browsers
+    resource_class: xlarge
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
 jobs:
   install:
     executor: rsp-large
@@ -301,7 +309,7 @@ jobs:
           command: make publish-nightly
 
   docs-diff:
-    executor: rsp-xlarge
+    executor: rsp-xlarge-browsers
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -322,7 +330,7 @@ jobs:
           name: deploy
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              az storage blob upload-batch -d reactspectrum -s /tmp/docs_diff_dist --account-name reactspectrum
+              az storage blob upload-batch -d reactspectrum -s /tmp/docs_diff_dist/dashboard --account-name reactspectrum
             fi
 
 workflows:
