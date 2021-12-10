@@ -15,7 +15,6 @@ import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../src';
 import {triggerPress} from '@react-spectrum/test-utils';
-import {SideNav as V2SideNav, SideNavItem as V2SideNavItem} from '@react/react-spectrum/SideNav';
 
 let flatItems = [
   {name: 'Foo'},
@@ -43,7 +42,6 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
           {item => <ComponentItem key={item.name}>{item.name}</ComponentItem>}
         </Component>
       );
-    case 'V2SideNav':
     case 'SideNavStatic':
       return render(
         <Component {...props} >
@@ -104,20 +102,16 @@ describe.skip('SideNav', function () {
     ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
-    ${'V2SideNav'}                 | ${V2SideNav} | ${V2SideNavItem} | ${V2SideNavItem}
   `('$Name has default behavior', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let {getByRole, getAllByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem);
 
     let sideNav = getByRole('navigation');
     let sideNavList = getByRole('list');
-    if (Component === SideNav) {
-      // wait for v3 components
-      await waitFor(() => {
-        expect(sideNav).toBeVisible();
-        expect(sideNavList).toBeVisible();
-        expect(getByText('Foo')).toBeVisible();
-      });
-    }
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(sideNavList).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    });
 
     expect(sideNav).toBeTruthy();
     expect(sideNav.getAttribute('id')).toBeDefined();
@@ -142,30 +136,23 @@ describe.skip('SideNav', function () {
 
     let sideNavListItemLinks = getAllByRole('link');
     expect(sideNavListItemLinks.length).toBe(4);
-    if (Name !== 'V2SideNav') {
-      expect(sideNavListItemLinks[0].getAttribute('target')).toBe('_self');
-    }
+    expect(sideNavListItemLinks[0].getAttribute('target')).toBe('_self');
   });
 
   it.each`
     Name           | Component    | ComponentSection       | ComponentItem | props
     ${'SideNav'}   | ${SideNav}   | ${Section}             | ${Item}       | ${{UNSAFE_className: 'test-class'}}
-    ${'V2SideNav'} | ${V2SideNav} | ${V2SideNavItem} | ${V2SideNavItem}}   | ${{className: 'test-class'}}
   `('$Name can pass className', async function ({Name, Component, ComponentSection, ComponentItem, props}) {
     let {getByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem, props);
 
     let sideNav = getByRole('navigation');
-    if (Component === SideNav) {
-      // wait for v3 components
-      await waitFor(() => {
-        expect(sideNav).toBeVisible();
-      }); // wait for animation
-    }
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+    }); // wait for animation
 
     expect(sideNav).toHaveAttribute('class', expect.stringContaining('test-class'));
   });
 
-  // omitting v2 component
   it.each`
     Name                           | Component    | ComponentSection | ComponentItem
     ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
