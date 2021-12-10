@@ -8,6 +8,7 @@ docs_diff_path=docs_diff_dist/`git rev-parse HEAD`/dashboard
 mkdir -p $docs_diff_path
 
 # Clone docs differ repo and run differ
+cd ../
 git clone https://$GITHUB_TOKEN@github.com/ktabors/docs-differ.git
 cd docs-differ
 yarn install
