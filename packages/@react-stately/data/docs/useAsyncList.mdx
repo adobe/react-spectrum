@@ -129,15 +129,17 @@ This example shows how to implement client side sorting by passing a `sort` func
 items array.
 
 ```tsx
+let collator = useCollator();
+
 let list = useAsyncList({
   async load({signal}) {
     // Same load function as before
   },
-  sort({items, sortDescriptor}) {
+  async sort({items, sortDescriptor}) {
     return {
       items: items.sort((a, b) => {
         // Compare the items by the sorted column
-        let cmp = a[sortDescriptor.column] < b[sortDescriptor.column] ? -1 : 1;
+        let cmp = collator.compare(a[sortDescriptor.column], b[sortDescriptor.column]);
 
         // Flip the direction if descending order is specified.
         if (sortDescriptor.direction === 'descending') {
