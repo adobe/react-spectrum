@@ -303,6 +303,8 @@ jobs:
   docs-diff:
     executor: rsp-xlarge
     steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: generate docs diff
           command: ./docsDiffer.sh
