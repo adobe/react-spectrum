@@ -17,12 +17,12 @@ import {
   useMatchedBreakpoints,
   useStyleProps
 } from '@react-spectrum/utils';
+import {Breakpoints, ColorScheme, ProviderContext, ProviderProps} from '@react-types/provider';
 import clsx from 'clsx';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
-import {Breakpoints, ColorScheme, ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
