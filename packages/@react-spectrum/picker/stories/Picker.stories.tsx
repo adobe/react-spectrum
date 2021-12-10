@@ -57,9 +57,9 @@ storiesOf('Picker', module)
     'default',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-        <Item key="rarely">Short</Item>
-        <Item key="sometimes">Normal</Item>
-        <Item key="always">This item is very long and word wraps poorly</Item>
+        <Item key="Short">Short</Item>
+        <Item key="Normal">Normal</Item>
+        <Item key="This item is very long and word wraps poorly">This item is very long and word wraps poorly</Item>
       </Picker>
     )
   )
@@ -205,7 +205,7 @@ storiesOf('Picker', module)
     () => (
       <Picker label="Test" isQuiet labelAlign="end" onSelectionChange={action('selectionChange')}>
         <Item key="One">One</Item>
-        <Item key="two">Two dollary-doos</Item>
+        <Item key="Two dollary-doos">Two dollary-doos</Item>
         <Item key="Three">Three</Item>
       </Picker>
     )
@@ -598,9 +598,9 @@ function ResizePicker() {
     <Flex direction="column" gap="size-200" alignItems="start">
       <div style={{width: state ? '200px' : '300px'}}>
         <Picker label="Choose A" width="100%">
-          <Item key="rarely">A1</Item>
-          <Item key="sometimes">A2</Item>
-          <Item key="always">A3</Item>
+          <Item key="A1">A1</Item>
+          <Item key="A2">A2</Item>
+          <Item key="A3">A3</Item>
         </Picker>
       </div>
       <ActionButton onPress={() => setState(!state)}>Toggle size</ActionButton>

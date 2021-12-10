@@ -14,7 +14,6 @@ import {act, render} from '@testing-library/react';
 import {ClearButton} from '../';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
-import V2Button from '@react/react-spectrum/Button';
 
 // NOTE: ClearButton doesn't use Button.tsx as a base and thus differs from v2 ClearButton in a couple ways
 // Refinement of ClearButton to be done later
@@ -29,7 +28,6 @@ describe('ClearButton', function () {
   it.each`
     Name                | Component      | props
     ${'v3 ClearButton'} | ${ClearButton} | ${{onPress: onPressSpy}}
-    ${'v2 ClearButton'} | ${V2Button}    | ${{variant: 'clear', onClick: onPressSpy}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -41,7 +39,6 @@ describe('ClearButton', function () {
   it.each`
     Name                | Component      | props
     ${'v3 ClearButton'} | ${ClearButton} | ${{}}
-    ${'v2 ClearButton'} | ${V2Button}    | ${{variant: 'clear'}}
   `('$Name allows custom props to be passed through to the button', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} data-foo="bar">Click Me</Component>);
 
@@ -49,7 +46,6 @@ describe('ClearButton', function () {
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
 
-  // Current v3 implementation that diverges from v2
   it.each`
     Name                | Component
     ${'v3 ClearButton'} | ${ClearButton}
@@ -61,7 +57,6 @@ describe('ClearButton', function () {
     expect(icon).toBeNull();
   });
 
-  // Only v3 allows for ref forwarding
   it.each`
     Name                | Component
     ${'v3 ClearButton'} | ${ClearButton}
