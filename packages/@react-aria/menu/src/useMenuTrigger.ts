@@ -13,14 +13,18 @@
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject} from 'react';
 import {MenuTriggerState} from '@react-stately/menu';
-import {useId} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
+import {useLongPress} from '@react-aria/interactions';
+import {MenuTriggerType} from '@react-types/menu';
 
 interface MenuTriggerAriaProps {
   /** The type of menu that the menu trigger opens. */
   type?: 'menu' | 'listbox',
   /** Whether menu trigger is disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /** How menu is triggered. */
+  trigger?: MenuTriggerType,
 }
 
 interface MenuTriggerAria {
@@ -39,7 +43,8 @@ interface MenuTriggerAria {
 export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<HTMLElement>): MenuTriggerAria {
   let {
     type = 'menu' as MenuTriggerAriaProps['type'],
-    isDisabled
+    isDisabled,
+    trigger
   } = props;
 
   let menuTriggerId = useId();
@@ -73,23 +78,35 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     }
   };
 
+  let {longPressProps} = useLongPress({
+    isDisabled: false,
+    onLongPress(e) {
+      state.open('first');
+    }
+  });
+
+  let pressProps =  {
+    onPressStart(e) {
+      // For consistency with native, open the menu on mouse/key down, but touch up.
+      if (e.pointerType !== 'touch' && e.pointerType !== 'keyboard' && !isDisabled) {
+        // If opened with a screen reader, auto focus the first item.
+        // Otherwise, the menu itself will be focused.
+        state.toggle(e.pointerType === 'virtual' ? 'first' : null);
+      }
+    },
+    onPress(e) {
+      if (e.pointerType === 'touch' && !isDisabled) {
+        state.toggle();
+      }
+    }
+  }
+
+  triggerProps = mergeProps(triggerProps, trigger === 'press' ? pressProps : longPressProps);
+
   return {
     menuTriggerProps: {
       ...triggerProps,
       id: menuTriggerId,
-      onPressStart(e) {
-        // For consistency with native, open the menu on mouse/key down, but touch up.
-        if (e.pointerType !== 'touch' && e.pointerType !== 'keyboard' && !isDisabled) {
-          // If opened with a screen reader, auto focus the first item.
-          // Otherwise, the menu itself will be focused.
-          state.toggle(e.pointerType === 'virtual' ? 'first' : null);
-        }
-      },
-      onPress(e) {
-        if (e.pointerType === 'touch' && !isDisabled) {
-          state.toggle();
-        }
-      },
       onKeyDown
     },
     menuProps: {

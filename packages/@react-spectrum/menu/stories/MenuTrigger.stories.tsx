@@ -527,6 +527,10 @@ storiesOf('MenuTrigger', module)
         <Item key="3">Three</Item>
       </Menu>
     )
+  )
+  .add(
+    'MenuTrigger with trigger="longPress"',
+    () => render(defaultMenu, {trigger: 'longPress'})
   );
 
 let customMenuItem = (item) => {

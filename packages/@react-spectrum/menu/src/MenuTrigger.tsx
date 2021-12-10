@@ -35,13 +35,14 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     align = 'start',
     shouldFlip = true,
     direction = 'bottom',
-    closeOnSelect
+    closeOnSelect,
+    trigger = "press",
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
   let state = useMenuTriggerState(props);
 
-  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, menuTriggerRef);
+  let {menuTriggerProps, menuProps} = useMenuTrigger({trigger}, state, menuTriggerRef);
 
   let initialPlacement: Placement;
   switch (direction) {
