@@ -130,7 +130,7 @@ describe('useOverlayPosition', function () {
   });
 
   it('should limit and update the overlay\'s maximum height by the given maxHeight', function () {
-    let res = render(<Example maxHeight={250}/>);
+    let res = render(<Example maxHeight={250} />);
     let overlay = res.getByTestId('overlay');
 
     expect(overlay).toHaveStyle(`
@@ -139,7 +139,7 @@ describe('useOverlayPosition', function () {
       max-height: 250px;
     `);
 
-    res.rerender(<Example maxHeight={150}/>);
+    res.rerender(<Example maxHeight={150} />);
 
     expect(overlay).toHaveStyle(`
       left: 12px;

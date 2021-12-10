@@ -59,8 +59,8 @@ function Trigger(props: {
           listStyleType: 'none'
         }}>
         {maxHeight
-          ? [...Array(20)].map((_,i)=><li>Hello {i}</li>)
-          : [...Array(5)].map((_,i)=><li>Hello {i}</li>)
+          ? [...Array(20)].map((_, i) => <li>Hello {i}</li>)
+          : [...Array(5)].map((_, i) => <li>Hello {i}</li>)
         }
       </ul>
     </div>

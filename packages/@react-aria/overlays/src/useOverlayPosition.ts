@@ -125,7 +125,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         boundaryElement,
         offset,
         crossOffset,
-        maxHeight,
+        maxHeight
       })
     );
   }, deps);

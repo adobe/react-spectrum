@@ -286,7 +286,7 @@ export function calculatePositionInternal(
   offset: number,
   crossOffset: number,
   isContainerPositioned: boolean,
-  userSetMaxHeight?: number,
+  userSetMaxHeight?: number
 ): PositionResult {
   let placementInfo = parsePlacement(placementInput);
   let {size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
@@ -334,8 +334,8 @@ export function calculatePositionInternal(
     padding
   );
 
-  if(userSetMaxHeight && userSetMaxHeight < maxHeight) {
-    maxHeight = userSetMaxHeight
+  if (userSetMaxHeight && userSetMaxHeight < maxHeight) {
+    maxHeight = userSetMaxHeight;
   }
 
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
@@ -370,7 +370,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     boundaryElement,
     offset,
     crossOffset,
-    maxHeight,
+    maxHeight
   } = opts;
 
   let container = overlayNode.offsetParent || document.body;
@@ -406,6 +406,6 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     offset,
     crossOffset,
     isContainerPositioned,
-    maxHeight,
+    maxHeight
   );
 }
