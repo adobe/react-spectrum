@@ -9,7 +9,8 @@ mkdir -p $docs_diff_path
 
 # Clone docs differ repo and run differ
 cd ../
-git clone https://$GITHUB_TOKEN@github.com/ktabors/docs-differ.git
+# git clone https://$GITHUB_TOKEN@github.com/ktabors/docs-differ.git
+git clone --branch why_app_no_build https://$GITHUB_TOKEN@github.com/LFDanLu/docs-differ.git
 cd docs-differ
 yarn add pngquant
 yarn install
