@@ -12,7 +12,7 @@ cd docs-differ
 yarn add pngquant
 yarn install
 # yarn run-differ -f -b https://react-spectrum.adobe.com/ -c https://reactspectrum.blob.core.windows.net/reactspectrum/$commit_hash/verdaccio/docs/index.html
-yarn run-differ -f -b https://react-spectrum.adobe.com/react-stately/useColorFieldState.html -c https://reactspectrum.blob.core.windows.net/reactspectrum/26aec8ae9a2c36f8f91da1d628dd58deee7b180c/verdaccio/docs/react-stately/useColorFieldState.html
+yarn run-differ -t 1000 -h -f -b https://react-spectrum.adobe.com/react-aria/useFocus.html -c https://reactspectrum.blob.core.windows.net/reactspectrum/$commit_hash/verdaccio/docs/react-aria/useFocus.html
 
 # TODO: (install in script for now) compress diff png and remove baseline and current
 ./node_modules/.bin/pngquant src/docs-differ/diff/*.png --skip-if-larger --ext=.png --force
