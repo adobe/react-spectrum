@@ -44,7 +44,7 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
   let {
     type = 'menu' as MenuTriggerAriaProps['type'],
     isDisabled,
-    trigger
+    trigger = 'press'
   } = props;
 
   let menuTriggerId = useId();
@@ -80,6 +80,9 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
 
   let {longPressProps} = useLongPress({
     isDisabled: false,
+    onLongPressStart() {
+      state.close();
+    },
     onLongPress(e) {
       state.open('first');
     }
