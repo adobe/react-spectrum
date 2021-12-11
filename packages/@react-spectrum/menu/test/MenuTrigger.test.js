@@ -12,12 +12,12 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress, triggerTouch, triggerLongPress} from '@react-spectrum/test-utils';
-import {installPointerEvent} from '@react-spectrum/test-utils';
+import {triggerLongPress, triggerPress, triggerTouch} from '@react-spectrum/test-utils';
 
 let triggerText = 'Menu Button';
 
@@ -780,7 +780,7 @@ describe('MenuTrigger', function () {
     expect(menu2Item1).toBeInTheDocument();
   });
 
-  describe('MenuTrigger trigger="longPress" open behavior', function() {
+  describe('MenuTrigger trigger="longPress" open behavior', function () {
     installPointerEvent();
 
     const DEFAULT_THRESHOLD = 500;
@@ -846,7 +846,7 @@ describe('MenuTrigger', function () {
 
   });
 
-  describe('MenuTrigger trigger="longPress" focus behavior', function() {
+  describe('MenuTrigger trigger="longPress" focus behavior', function () {
     installPointerEvent();
 
     function expectMenuItemToBeActive(tree, idx) {

@@ -13,10 +13,10 @@
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject} from 'react';
 import {MenuTriggerState} from '@react-stately/menu';
-import {mergeProps, useId} from '@react-aria/utils';
-import {useOverlayTrigger} from '@react-aria/overlays';
-import {useLongPress} from '@react-aria/interactions';
 import {MenuTriggerType} from '@react-types/menu';
+import {mergeProps, useId} from '@react-aria/utils';
+import {useLongPress} from '@react-aria/interactions';
+import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuTriggerAriaProps {
   /** The type of menu that the menu trigger opens. */
@@ -24,7 +24,7 @@ interface MenuTriggerAriaProps {
   /** Whether menu trigger is disabled. */
   isDisabled?: boolean,
   /** How menu is triggered. */
-  trigger?: MenuTriggerType,
+  trigger?: MenuTriggerType
 }
 
 interface MenuTriggerAria {
@@ -83,7 +83,7 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     onLongPressStart() {
       state.close();
     },
-    onLongPress(e) {
+    onLongPress() {
       state.open('first');
     }
   });
@@ -102,7 +102,7 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
         state.toggle();
       }
     }
-  }
+  };
 
   triggerProps = mergeProps(triggerProps, trigger === 'press' ? pressProps : longPressProps);
 
