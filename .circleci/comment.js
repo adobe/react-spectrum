@@ -7,7 +7,7 @@ const octokit = new Octokit({
 run();
 
 async function run() {
-  if (true) {
+  if (!process.env.CIRCLE_PULL_REQUEST) {
     await octokit.repos.createCommitComment({
       owner: 'adobe',
       repo: 'react-spectrum',

@@ -11,8 +11,7 @@ git clone https://$GITHUB_TOKEN@github.com/ktabors/docs-differ.git
 cd docs-differ
 yarn add pngquant
 yarn install
-# yarn run-differ -f -b https://react-spectrum.adobe.com/ -c https://reactspectrum.blob.core.windows.net/reactspectrum/$commit_hash/verdaccio/docs/index.html
-yarn run-differ -t 1000 -h -f -b https://react-spectrum.adobe.com/react-aria/useFocus.html -c https://reactspectrum.blob.core.windows.net/reactspectrum/$commit_hash/verdaccio/docs/react-aria/useFocus.html
+yarn run-differ -t 1000 -h -f -b https://react-spectrum.adobe.com/ -c https://reactspectrum.blob.core.windows.net/reactspectrum/$commit_hash/verdaccio/docs/index.html
 
 # TODO: (install in script for now) compress diff png and remove baseline and current
 ./node_modules/.bin/pngquant src/docs-differ/diff/*.png --skip-if-larger --ext=.png --force
