@@ -121,7 +121,6 @@ function MenuButton(props) {
         <MenuPopup
           {...props}
           {...menuProps}
-          aria-label={props.label}
           autoFocus={state.focusStrategy}
           onClose={() => state.close()} />
       }
