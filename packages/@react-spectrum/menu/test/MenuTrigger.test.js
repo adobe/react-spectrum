@@ -824,11 +824,39 @@ describe('MenuTrigger', function () {
   describe('MenuTrigger trigger="longPress" open behavior', function() {
     installPointerEvent();
 
+    const DEFAULT_THRESHOLD = 500;
+
     it('should open the menu on longPress', function () {
       const props = {onOpenChange, trigger: 'longPress'};
       verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
         if (!menu) {
           triggerLongPress(button);
+        } else {
+          triggerTouch(button);
+        }
+      });
+    });
+
+    it('should open the menu on Enter', function () {
+      const props = {onOpenChange, trigger: 'longPress'};
+      verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
+        if (!menu) {
+          fireEvent.keyDown(button, {key: 'Enter'});
+          act(() => jest.advanceTimersByTime(DEFAULT_THRESHOLD));
+          fireEvent.keyUp(button, {key: 'Enter'});
+        } else {
+          triggerTouch(button);
+        }
+      });
+    });
+
+    it('should open the menu on Space', function () {
+      const props = {onOpenChange, trigger: 'longPress'};
+      verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
+        if (!menu) {
+          fireEvent.keyDown(button, {key: ' '});
+          act(() => jest.advanceTimersByTime(DEFAULT_THRESHOLD));
+          fireEvent.keyUp(button, {key: ' '});
         } else {
           triggerTouch(button);
         }
