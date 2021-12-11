@@ -17,10 +17,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@re
 import packageData from '@react-aria/searchfield/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useSearchField} from '@react-aria/searchfield';
-```
-
 ---
 category: Forms
 keywords: [searchbox, input, search, aria]
@@ -84,6 +80,7 @@ to identify the element to screen readers.
 **Note**: This example does not show the optional description or error message elements. See [useTextField](useTextField.html) for an example of that.
 
 ```tsx example
+import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
 
 function SearchField(props) {

@@ -43,6 +43,8 @@ For all other props, the last prop object overrides all previous ones.
 ## Example
 
 ```tsx
+import {mergeProps} from '@react-aria/utils';
+
 let a = {
   className: 'foo',
   onKeyDown(e) {
