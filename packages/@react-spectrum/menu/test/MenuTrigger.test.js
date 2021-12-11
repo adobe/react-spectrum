@@ -821,10 +821,10 @@ describe('MenuTrigger', function () {
     expect(menu2Item1).toBeInTheDocument();
   });
 
-  describe('MenuTrigger trigger="longPress" behavior', function() {
+  describe('MenuTrigger trigger="longPress" open behavior', function() {
     installPointerEvent();
 
-    it('MenuTrigger toggles the menu display on mouse down longPress', function () {
+    it('should open the menu on longPress', function () {
       const props = {onOpenChange, trigger: 'longPress'};
       verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
         if (!menu) {
@@ -835,7 +835,7 @@ describe('MenuTrigger', function () {
       });
     });
 
-    it('MenuTrigger toggles the menu display on Alt+ArrowUp', function () {
+    it('should open the menu on Alt+ArrowUp', function () {
       const props = {onOpenChange, trigger: 'longPress'};
       verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
         if (!menu) {
@@ -846,7 +846,7 @@ describe('MenuTrigger', function () {
       });
     });
 
-    it('MenuTrigger toggles the menu display on Alt+ArrowDown', function () {
+    it('should open the menu on Alt+ArrowDown', function () {
       const props = {onOpenChange, trigger: 'longPress'};
       verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
         if (!menu) {
@@ -856,5 +856,69 @@ describe('MenuTrigger', function () {
         }
       });
     });
-  })
+
+  });
+
+  describe('MenuTrigger trigger="longPress" focus behavior', function() {
+    installPointerEvent();
+
+    function expectMenuItemToBeActive(tree, idx) {
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      let menuItems = within(menu).getAllByRole('menuitem');
+      let selectedItem = menuItems[idx < 0 ? menuItems.length + idx : idx];
+      expect(selectedItem).toBe(document.activeElement);
+      return menu;
+    }
+
+    it('should focus the selected item on menu open', function () {
+      let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {selectedKeys: ['Bar']});
+      let button = tree.getByRole('button');
+      act(() => {
+        triggerLongPress(button);
+        jest.runAllTimers();
+      });
+      let menu = expectMenuItemToBeActive(tree, 1);
+      act(() => {
+        triggerTouch(button);
+        jest.runAllTimers();
+      });
+      expect(menu).not.toBeInTheDocument();
+
+      // Opening menu via Alt+ArrowUp still autofocuses the selected item
+      fireEvent.keyDown(button, {key: 'ArrowUp', altKey: true});
+      menu = expectMenuItemToBeActive(tree, 1);
+
+      act(() => {
+        triggerTouch(button);
+        jest.runAllTimers();
+      });
+      expect(menu).not.toBeInTheDocument();
+
+      // Opening menu via Alt+ArrowDown still autofocuses the selected item
+      fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
+      menu = expectMenuItemToBeActive(tree, 1);
+
+      act(() => {
+        triggerTouch(button);
+        jest.runAllTimers();
+      });
+      expect(menu).not.toBeInTheDocument();
+    });
+
+    it('should focus the last item on Alt+ArrowUp if no selectedKeys specified', function () {
+      let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {});
+      let button = tree.getByRole('button');
+      fireEvent.keyDown(button, {key: 'ArrowUp', altKey: true});
+      expectMenuItemToBeActive(tree, -1);
+    });
+
+    it('should focus the last item on Alt+ArrowDown if no selectedKeys specified', function () {
+      let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {});
+      let button = tree.getByRole('button');
+      fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
+      expectMenuItemToBeActive(tree, 0);
+    });
+  });
+
 });
