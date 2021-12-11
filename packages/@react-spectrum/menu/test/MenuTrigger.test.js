@@ -16,10 +16,11 @@ import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
+import {triggerPress, triggerTouch, triggerLongPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 import V2Dropdown from '@react/react-spectrum/Dropdown';
 import {Menu as V2Menu, MenuItem as V2MenuItem} from '@react/react-spectrum/Menu';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 
 let triggerText = 'Menu Button';
 
@@ -819,4 +820,41 @@ describe('MenuTrigger', function () {
     let menu2Item1 = within(menu2).getByText('Whiskey');
     expect(menu2Item1).toBeInTheDocument();
   });
+
+  describe('MenuTrigger trigger="longPress" behavior', function() {
+    installPointerEvent();
+
+    it('MenuTrigger toggles the menu display on mouse down longPress', function () {
+      const props = {onOpenChange, trigger: 'longPress'};
+      verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
+        if (!menu) {
+          triggerLongPress(button);
+        } else {
+          triggerTouch(button);
+        }
+      });
+    });
+
+    it('MenuTrigger toggles the menu display on Alt+ArrowUp', function () {
+      const props = {onOpenChange, trigger: 'longPress'};
+      verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
+        if (!menu) {
+          fireEvent.keyDown(button, {key: 'ArrowUp', altKey: true});
+        } else {
+          triggerTouch(button);
+        }
+      });
+    });
+
+    it('MenuTrigger toggles the menu display on Alt+ArrowDown', function () {
+      const props = {onOpenChange, trigger: 'longPress'};
+      verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
+        if (!menu) {
+          fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
+        } else {
+          triggerTouch(button);
+        }
+      });
+    });
+  })
 });

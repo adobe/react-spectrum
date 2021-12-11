@@ -22,6 +22,21 @@ export function triggerPress(element, opts = {}) {
   fireEvent.click(element, {detail: 1, ...opts});
 }
 
+// Triggers a "touch" event on an element.
+export function triggerTouch(element, opts = {}) {
+  fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
+  fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
+}
+
+// Triggers a "longPress" event on an element.
+const DEFAULT_THRESHOLD = 500;
+
+export function triggerLongPress(element, opts = {}) {
+  fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
+  act(() => jest.advanceTimersByTime(DEFAULT_THRESHOLD));
+  fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
+}
+
 /**
  * Enables reading pageX/pageY from fireEvent.mouse*(..., {pageX: ..., pageY: ...}).
  */
