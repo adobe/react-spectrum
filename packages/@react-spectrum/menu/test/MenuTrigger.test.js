@@ -900,7 +900,7 @@ describe('MenuTrigger', function () {
       expectMenuItemToBeActive(tree, -1);
     });
 
-    it('should focus the last item on Alt+ArrowDown if no selectedKeys specified', function () {
+    it('should focus the first item on Alt+ArrowDown if no selectedKeys specified', function () {
       let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {});
       let button = tree.getByRole('button');
       fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
