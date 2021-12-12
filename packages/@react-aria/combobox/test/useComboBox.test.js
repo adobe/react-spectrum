@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {act, renderHook} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
@@ -85,6 +85,17 @@ describe('useComboBox', function () {
   });
 
   it('should prevent default on Enter if isOpen', function () {
+    let props = {
+      label: 'test label',
+      popoverRef: React.createRef(),
+      buttonRef: React.createRef(),
+      inputRef: {
+        current: document.createElement('input')
+      },
+      listBoxRef: React.createRef(),
+      layout: mockLayout
+    };
+
     let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: {...props, allowsEmptyCollection: true}});
     act(() => {
       // set combobox state to open

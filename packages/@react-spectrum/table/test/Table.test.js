@@ -3305,9 +3305,9 @@ describe('TableView', function () {
 
       expect(document.activeElement).toEqual(input);
 
+      fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+      fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
       act(() => {
-        fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
-        fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
         jest.runAllTimers();
       });
 

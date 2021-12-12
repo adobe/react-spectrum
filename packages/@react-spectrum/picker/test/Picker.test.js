@@ -440,6 +440,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -512,6 +514,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -589,6 +593,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -706,6 +712,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -1003,6 +1011,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
@@ -1038,6 +1048,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Empty');
 
@@ -1053,6 +1065,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Zero');
 
@@ -1068,10 +1082,11 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('False');
     });
-
 
     it('can select items with the Space key', function () {
       let {getByRole} = render(
@@ -1113,6 +1128,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
@@ -1156,6 +1173,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
@@ -1199,6 +1218,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
@@ -1257,6 +1278,8 @@ describe('Picker', function () {
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(4);
       expect(queryByRole('listbox')).toBeNull();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
@@ -1299,6 +1322,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
@@ -1341,6 +1366,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('One');
     });
@@ -1386,6 +1413,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
@@ -1475,6 +1504,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Cut');
       expect(getAllByRole('img', {hidden: true})).toHaveLength(2);
@@ -1506,6 +1537,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Puppy');
       expect(getAllByRole('img', {hidden: true})).toHaveLength(2);
@@ -1554,6 +1587,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
 
@@ -1601,6 +1636,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });

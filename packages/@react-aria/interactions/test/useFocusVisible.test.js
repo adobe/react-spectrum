@@ -11,7 +11,7 @@
  */
 import {act, fireEvent, render, screen} from '@testing-library/react';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@testing-library/react';
 import {useFocusVisible, useFocusVisibleListener} from '../';
 
 function Example(props) {
