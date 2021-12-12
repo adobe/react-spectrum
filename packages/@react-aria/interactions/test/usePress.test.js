@@ -52,7 +52,9 @@ describe('usePress', function () {
   });
 
   afterEach(() => {
-    jest.runAllTimers();
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.

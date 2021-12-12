@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@testing-library/react';
 import {Card} from '../src';
 import {Default, DefaultPreviewAlt, NoDescription} from '../stories/Card.stories';
 import {Quiet} from '../stories/QuietCard.stories';
 import React from 'react';
-import {render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 describe('Card', function () {
@@ -28,21 +28,29 @@ describe('Card', function () {
     expect(card).toHaveAccessibleDescription('Description');
     expect(images[0]).not.toHaveAccessibleName();
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(card).toBe(document.activeElement);
 
     let buttons = getAllByRole('button');
     expect(buttons.length).toBe(2);
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(buttons[0]).toBe(document.activeElement);
     expect(buttons[0]).toHaveAttribute('aria-label', 'More actions');
 
     // this is the footer button
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(buttons[1]).toBe(document.activeElement);
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.body).toBe(document.activeElement);
   });
 
@@ -72,12 +80,16 @@ describe('Card', function () {
     expect(card).toHaveAccessibleDescription('Description');
     expect(images[0]).not.toHaveAccessibleName();
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(card).toBe(document.activeElement);
 
     let button = getByRole('button');
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(button).toBe(document.activeElement);
     expect(button).toHaveAttribute('aria-label', 'More actions');
   });

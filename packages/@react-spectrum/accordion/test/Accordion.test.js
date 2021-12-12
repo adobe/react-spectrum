@@ -63,9 +63,9 @@ describe('Accordion', function () {
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
-    userEvent.click(selectedItem);
+    act(() => userEvent.click(selectedItem));
     expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(selectedItem);
+    act(() => userEvent.click(selectedItem));
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
   });
 
@@ -111,19 +111,31 @@ describe('Accordion', function () {
     let [firstItem, secondItem, thirdItem] = buttons;
     act(() => {firstItem.focus();});
     expect(document.activeElement).toBe(firstItem);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(secondItem);
-    userEvent.tab({shift: true});
+    act(() => {
+      userEvent.tab({shift: true});
+    });
     expect(document.activeElement).toBe(firstItem);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(secondItem);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(thirdItem);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).not.toBe(firstItem);
     expect(document.activeElement).not.toBe(secondItem);
     expect(document.activeElement).not.toBe(thirdItem);
-    userEvent.tab({shift: true});
+    act(() => {
+      userEvent.tab({shift: true});
+    });
     expect(document.activeElement).toBe(thirdItem);
   });
 });

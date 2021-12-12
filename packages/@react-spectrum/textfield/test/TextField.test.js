@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {fireEvent, render, waitFor} from '@testing-library/react';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';
@@ -114,7 +114,9 @@ describe('Shared TextField behavior', () => {
   `('$Name calls onFocus when the the input field is focused', ({Name, Component}) => {
     let tree = renderComponent(Component, {onFocus, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
-    fireEvent.focus(input);
+    act(() => {
+      fireEvent.focus(input);
+    });
     expect(onFocus).toHaveBeenCalledTimes(1);
     userEvent.click(input);
     expect(onFocus).toHaveBeenCalledTimes(2);
@@ -128,7 +130,9 @@ describe('Shared TextField behavior', () => {
   `('$Name calls onBlur when the input field loses focus', ({Name, Component}) => {
     let tree = renderComponent(Component, {onBlur, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
-    fireEvent.blur(input);
+    act(() => {
+      fireEvent.blur(input);
+    });
     expect(onBlur).toHaveBeenCalledTimes(1);
   });
 

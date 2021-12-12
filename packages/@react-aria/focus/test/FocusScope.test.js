@@ -42,22 +42,34 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input1);
     });
 
@@ -81,22 +93,34 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input1);
     });
 
@@ -123,22 +147,34 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input1);
     });
 
@@ -190,22 +226,34 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(input1);
 
       act(() => {input4.focus();});
@@ -232,7 +280,9 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       fireEvent.focusIn(input2);
       expect(document.activeElement).toBe(input2);
 
@@ -261,7 +311,9 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       fireEvent.focusIn(input2);
       expect(document.activeElement).toBe(input2);
 
@@ -362,7 +414,9 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       act(() => {input3.focus();});
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(getByTestId('after'));
     });
 
@@ -394,7 +448,9 @@ describe('FocusScope', function () {
       let input1 = getByTestId('input1');
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(getByTestId('before'));
     });
 
@@ -429,7 +485,9 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       act(() => {input3.focus();});
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(getByTestId('after'));
     });
 
@@ -465,7 +523,9 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       act(() => {input3.focus();});
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(getByTestId('after'));
     });
   });
@@ -870,13 +930,21 @@ describe('FocusScope', function () {
       let child3 = getByTestId('child3');
 
       expect(document.activeElement).toBe(child1);
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child2);
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child3);
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child1);
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(child3);
     });
 
@@ -909,13 +977,21 @@ describe('FocusScope', function () {
       let child3 = getByTestId('child3');
 
       expect(document.activeElement).toBe(child1);
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child2);
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child3);
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child1);
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(child3);
     });
 
@@ -947,15 +1023,25 @@ describe('FocusScope', function () {
       let child3 = getByTestId('child3');
 
       expect(document.activeElement).toBe(parent);
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child1);
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child2);
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child3);
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(parent);
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(child3);
     });
 
@@ -996,7 +1082,9 @@ describe('FocusScope', function () {
 
       // Can move into a child, but not out.
       let child1 = getByTestId('child1');
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child1);
 
       act(() => parent.focus());
@@ -1006,7 +1094,9 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(child1);
 
       let child2 = getByTestId('child2');
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child2);
 
       act(() => child1.focus());
@@ -1018,7 +1108,9 @@ describe('FocusScope', function () {
       rerender(<Test show1 show2 show3 />);
 
       let child3 = getByTestId('child3');
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(child3);
 
       rerender(<Test show1 />);
@@ -1117,10 +1209,14 @@ describe('FocusScope', function () {
       let afterScope = getByTestId('afterScope');
 
       act(() => {inScope.focus();});
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(afterScope);
       act(() => {inScope.focus();});
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(beforeScope);
     });
   });

@@ -49,7 +49,9 @@ function toggleBrowserWindow() {
 
 describe('useFocusVisible', function () {
   beforeEach(() => {
-    fireEvent.focus(document.body);
+    act(() => {
+      fireEvent.focus(document.body);
+    });
   });
 
   it('returns positive isFocusVisible result after toggling browser tabs after keyboard navigation', function () {

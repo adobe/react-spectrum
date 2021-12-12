@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {KeyboardNavigation} from '../stories/useTreeState.stories';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -18,7 +18,9 @@ import userEvent from '@testing-library/user-event';
 describe('useTreeState', () => {
   it('should be keyboard navigable', () => {
     let {getAllByRole} = render(<KeyboardNavigation />);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     let items = getAllByRole('treeitem');
     expect(items.length).toBe(2);
     expect(document.activeElement).toBe(items[0]);

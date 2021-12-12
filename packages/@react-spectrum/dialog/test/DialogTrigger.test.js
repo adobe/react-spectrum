@@ -244,7 +244,7 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     act(() => {button.focus();});
     fireEvent.focusIn(button);
-    userEvent.click(button);
+    act(() => userEvent.click(button));
 
     act(() => {
       jest.runAllTimers();
@@ -983,7 +983,9 @@ describe('DialogTrigger', function () {
     act(() => {
       jest.runAllTimers();
     });
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     act(() => {
       jest.runAllTimers();
     });

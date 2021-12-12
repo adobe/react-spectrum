@@ -41,7 +41,9 @@ describe('useGrid', () => {
   it('gridFocusMode = row, cellFocusMode = cell', () => {
     let tree = renderGrid({gridFocusMode: 'row', cellFocusMode: 'cell'});
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
@@ -74,7 +76,9 @@ describe('useGrid', () => {
   it('gridFocusMode = row, cellFocusMode = child', () => {
     let tree = renderGrid({gridFocusMode: 'row', cellFocusMode: 'child'});
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
@@ -102,7 +106,9 @@ describe('useGrid', () => {
   it('gridFocusMode = cell, cellFocusMode = child', () => {
     let tree = renderGrid({gridFocusMode: 'cell', cellFocusMode: 'child'});
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
@@ -124,7 +130,9 @@ describe('useGrid', () => {
   it('gridFocusMode = cell, cellFocusMode = cell', () => {
     let tree = renderGrid({gridFocusMode: 'cell', cellFocusMode: 'cell'});
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});

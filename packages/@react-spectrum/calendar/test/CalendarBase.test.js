@@ -546,8 +546,12 @@ describe('CalendarBase', () => {
       );
 
       // make sure focused cell gets updated after rerender
-      fireEvent.blur(grid);
-      fireEvent.focus(grid);
+      act(() => {
+        fireEvent.blur(grid);
+      });
+      act(() => {
+        fireEvent.focus(grid);
+      });
 
       selected = getAllByRole('button').find(cell => cell.getAttribute('tabIndex') === '0');
       expect(document.activeElement).toBe(selected);

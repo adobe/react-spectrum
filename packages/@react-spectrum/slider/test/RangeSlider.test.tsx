@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import {RangeSlider} from '../';
@@ -75,9 +75,13 @@ describe('RangeSlider', function () {
     expect(rightSlider).toBeDisabled();
     let [buttonA, buttonB] = getAllByRole('button');
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonB);
   });
 
@@ -91,19 +95,33 @@ describe('RangeSlider', function () {
     let [sliderLeft, sliderRight] = getAllByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(sliderLeft);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(sliderRight);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
+    act(() => {
+      userEvent.tab({shift: true});
+    });
     expect(document.activeElement).toBe(sliderRight);
-    userEvent.tab({shift: true});
+    act(() => {
+      userEvent.tab({shift: true});
+    });
     expect(document.activeElement).toBe(sliderLeft);
-    userEvent.tab({shift: true});
+    act(() => {
+      userEvent.tab({shift: true});
+    });
     expect(document.activeElement).toBe(buttonA);
   });
 

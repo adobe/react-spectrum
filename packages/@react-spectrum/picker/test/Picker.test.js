@@ -2021,12 +2021,18 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(picker);
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(1);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(afterBtn);
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(1);
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
       expect(document.activeElement).toBe(beforeBtn);
     });
@@ -2057,12 +2063,16 @@ describe('Picker', function () {
       let items = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(items[0]);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(afterBtn);
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(1);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
       fireEvent.keyDown(picker, {key: 'ArrowDown'});
       fireEvent.keyUp(picker, {key: 'ArrowDown'});
@@ -2071,7 +2081,9 @@ describe('Picker', function () {
       items = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(items[0]);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       act(() => jest.runAllTimers());
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
       expect(document.activeElement).toBe(beforeBtn);

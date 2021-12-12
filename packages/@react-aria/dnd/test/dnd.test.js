@@ -1149,7 +1149,9 @@ describe('useDrag and useDrop', function () {
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
       expect(droppable2).toHaveAttribute('data-droptarget', 'false');
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
 
       expect(document.activeElement).toBe(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
@@ -1184,7 +1186,9 @@ describe('useDrag and useDrop', function () {
       expect(droppable).toHaveAttribute('data-droptarget', 'true');
       expect(droppable2).toHaveAttribute('data-droptarget', 'false');
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
 
       expect(document.activeElement).toBe(droppable2);
       expect(droppable2).toHaveAttribute('aria-describedby');
@@ -1272,7 +1276,9 @@ describe('useDrag and useDrop', function () {
         let droppable = tree.getByText('Drop here');
         let droppable2 = tree.getByText('Drop here 2');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1280,10 +1286,14 @@ describe('useDrag and useDrop', function () {
         act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(droppable);
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(droppable2);
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
       });
 
@@ -1301,7 +1311,9 @@ describe('useDrag and useDrop', function () {
         let droppable = tree.getByText('Drop here');
         let droppable2 = tree.getByText('Drop here 2');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1309,13 +1321,19 @@ describe('useDrag and useDrop', function () {
         act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(droppable);
 
-        userEvent.tab({shift: true});
+        act(() => {
+          userEvent.tab({shift: true});
+        });
         expect(document.activeElement).toBe(draggable);
 
-        userEvent.tab({shift: true});
+        act(() => {
+          userEvent.tab({shift: true});
+        });
         expect(document.activeElement).toBe(droppable2);
 
-        userEvent.tab({shift: true});
+        act(() => {
+          userEvent.tab({shift: true});
+        });
         expect(document.activeElement).toBe(droppable);
       });
 
@@ -1328,7 +1346,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1353,7 +1373,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1361,7 +1383,9 @@ describe('useDrag and useDrop', function () {
         act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(droppable);
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1381,7 +1405,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1409,7 +1435,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable2 = tree.getByText('Drop here 2');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1438,7 +1466,9 @@ describe('useDrag and useDrop', function () {
         let droppable = tree.getByText('Drop here');
         let droppable2 = tree.getByText('Drop here 2');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1446,14 +1476,18 @@ describe('useDrag and useDrop', function () {
         act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(droppable);
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(droppable2);
 
         act(() => setShowTarget2(false));
         expect(tree.getAllByRole('button')).toHaveLength(2);
         await waitFor(() => expect(document.activeElement).toBe(droppable));
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
       });
 
@@ -1475,7 +1509,9 @@ describe('useDrag and useDrop', function () {
         let droppable = tree.getByText('Drop here');
         let droppable2 = tree.getByText('Drop here 2');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1483,16 +1519,24 @@ describe('useDrag and useDrop', function () {
         act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(droppable);
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(droppable2);
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(droppable);
 
-        userEvent.tab({shift: true});
+        act(() => {
+          userEvent.tab({shift: true});
+        });
         expect(document.activeElement).toBe(droppable2);
 
-        userEvent.tab({shift: true});
+        act(() => {
+          userEvent.tab({shift: true});
+        });
         expect(document.activeElement).toBe(droppable);
       });
 
@@ -1512,7 +1556,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1543,7 +1589,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1587,7 +1635,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1636,7 +1686,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1683,7 +1735,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1733,7 +1787,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1782,7 +1838,9 @@ describe('useDrag and useDrop', function () {
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1833,7 +1891,9 @@ describe('useDrag and useDrop', function () {
         let droppable = tree.getByText('Drop here');
         let droppable2 = tree.getByText('Drop here 2');
 
-        userEvent.tab();
+        act(() => {
+          userEvent.tab();
+        });
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
@@ -1854,7 +1914,9 @@ describe('useDrag and useDrop', function () {
   describe('screen reader', () => {
     beforeEach(() => {
       // reset focus visible state
-      fireEvent.focus(document.body);
+      act(() => {
+        fireEvent.focus(document.body);
+      });
     });
 
     afterEach(() => {
@@ -1884,7 +1946,9 @@ describe('useDrag and useDrop', function () {
       let droppable = tree.getByText('Drop here');
       let droppable2 = tree.getByText('Drop here 2');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
       expect(draggable).toHaveAttribute('data-dragging', 'false');
@@ -2026,7 +2090,9 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
@@ -2059,7 +2125,9 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2090,7 +2158,9 @@ describe('useDrag and useDrop', function () {
 
       expect(tree.getAllByRole('textbox')).toHaveLength(1);
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2122,7 +2192,9 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2150,7 +2222,9 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2171,7 +2245,9 @@ describe('useDrag and useDrop', function () {
       let droppable = tree.getByText('Drop here');
       let input = tree.getByRole('textbox');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2191,7 +2267,9 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let input = tree.getByRole('textbox');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2208,7 +2286,9 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2226,7 +2306,9 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2242,7 +2324,9 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable, {detail: 1});
       act(() => jest.runAllTimers());
 
@@ -2258,12 +2342,16 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 
-      fireEvent.focus(droppable);
+      act(() => {
+        fireEvent.focus(droppable);
+      });
       fireEvent.click(droppable, {detail: 1});
       expect(draggable).toHaveAttribute('data-dragging', 'true');
     });
@@ -2279,7 +2367,9 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Double tap to start dragging');
 

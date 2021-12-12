@@ -440,22 +440,30 @@ describe('Radios', function () {
       // 0. body/nothing is focused
 
       // 1. tab once to focus button before radiogroup
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
       // 2. tab once again to focus radiogroup (= first radiobutton)
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).not.toBe(button);
       expect(document.activeElement).toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
       // 3. tab once again to focus the body, and again to wrap back around to the button
-      userEvent.tab();
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
@@ -489,14 +497,14 @@ describe('Radios', function () {
 
     it.each`
       Name                                                  | props                                           | orders
-      ${'(left/right arrows, ltr + horizontal) RadioGroup'} | ${{locale: 'de-DE', orientation: 'horizontal'}} | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
-      ${'(left/right arrows, rtl + horizontal) RadioGroup'} | ${{locale: 'ar-AE', orientation: 'horizontal'}} | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.forward}]}
-      ${'(up/down arrows, ltr + horizontal) RadioGroup'}    | ${{locale: 'de-DE', orientation: 'horizontal'}} | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
-      ${'(up/down arrows, rtl + horizontal) RadioGroup'}    | ${{locale: 'ar-AE', orientation: 'horizontal'}} | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
-      ${'(left/right arrows, ltr + vertical) RadioGroup'}   | ${{locale: 'de-DE'}}                            | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
-      ${'(left/right arrows, rtl + vertical) RadioGroup'}   | ${{locale: 'ar-AE'}}                            | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
-      ${'(up/down arrows, ltr + vertical) RadioGroup'}      | ${{locale: 'de-DE'}}                            | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
-      ${'(up/down arrows, rtl + vertical) RadioGroup'}      | ${{locale: 'ar-AE'}}                            | ${[{action: () => userEvent.tab(), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
+      ${'(left/right arrows, ltr + horizontal) RadioGroup'} | ${{locale: 'de-DE', orientation: 'horizontal'}} | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
+      ${'(left/right arrows, rtl + horizontal) RadioGroup'} | ${{locale: 'ar-AE', orientation: 'horizontal'}} | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.forward}]}
+      ${'(up/down arrows, ltr + horizontal) RadioGroup'}    | ${{locale: 'de-DE', orientation: 'horizontal'}} | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
+      ${'(up/down arrows, rtl + horizontal) RadioGroup'}    | ${{locale: 'ar-AE', orientation: 'horizontal'}} | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
+      ${'(left/right arrows, ltr + vertical) RadioGroup'}   | ${{locale: 'de-DE'}}                            | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
+      ${'(left/right arrows, rtl + vertical) RadioGroup'}   | ${{locale: 'ar-AE'}}                            | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedFocus.radio1Focused}, {action: pressArrowRight, result: radioBehavior.forward}, {action: pressArrowLeft, result: radioBehavior.backward}, {action: pressArrowLeft, result: radioBehavior.backward}]}
+      ${'(up/down arrows, ltr + vertical) RadioGroup'}      | ${{locale: 'de-DE'}}                            | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
+      ${'(up/down arrows, rtl + vertical) RadioGroup'}      | ${{locale: 'ar-AE'}}                            | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedFocus.radio1Focused}, {action: pressArrowDown, result: radioBehavior.forward}, {action: pressArrowUp, result: radioBehavior.backward}, {action: pressArrowUp, result: radioBehavior.backward}]}
     `('$Name default keyboard navigation with wrapping', async ({props, orders}) => {
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme} locale={props.locale}>
@@ -521,14 +529,14 @@ describe('Radios', function () {
     let und = null;
     it.each`
       Name                     | props                | disabledKeys  | orders
-      ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${[1]}        | ${[{action: () => userEvent.tab(), result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
-      ${'first disabled'}      | ${{locale: 'de-DE'}} | ${[0]}        | ${[{action: () => userEvent.tab(), result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
-      ${'last disabled'}       | ${{locale: 'de-DE'}} | ${[2]}        | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
-      ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${[0, 1]}     | ${[{action: () => userEvent.tab(), result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
-      ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${[1]}        | ${[{action: () => userEvent.tab(), result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
-      ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${[0]}        | ${[{action: () => userEvent.tab(), result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
-      ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${[2]}        | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
-      ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${[0, 1]}     | ${[{action: () => userEvent.tab(), result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
+      ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${[1]}        | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
+      ${'first disabled'}      | ${{locale: 'de-DE'}} | ${[0]}        | ${[{action: () => act(() => {userEvent.tab();}), result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
+      ${'last disabled'}       | ${{locale: 'de-DE'}} | ${[2]}        | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
+      ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${[0, 1]}     | ${[{action: () => act(() => {userEvent.tab();}), result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
+      ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${[1]}        | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
+      ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${[0]}        | ${[{action: () => act(() => {userEvent.tab();}), result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
+      ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${[2]}        | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
+      ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${[0, 1]}     | ${[{action: () => act(() => {userEvent.tab();}), result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
     `('$Name skips disabled radios', function ({Name, props, disabledKeys, orders}) {
       let tree = render(
         <Provider theme={theme} locale={props.locale}>
@@ -552,8 +560,8 @@ describe('Radios', function () {
 
     it.each`
       Name                         | props                | disabledKeys | orders
-      ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${[1, 2]}    | ${[{action: () => userEvent.tab(), result: () => ['0', und, und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, und, '0']}, {action: pressArrowRight, result: () => ['0', und, und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, und, '0']}, {action: pressArrowLeft, result: () => ['0', und, und, '-1']}]}
-      ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${[1, 2]}    | ${[{action: () => userEvent.tab(), result: () => ['0', und, und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, und, '0']}, {action: pressArrowRight, result: () => ['0', und, und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, und, '0']}, {action: pressArrowLeft, result: () => ['0', und, und, '-1']}]}
+      ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${[1, 2]}    | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', und, und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, und, '0']}, {action: pressArrowRight, result: () => ['0', und, und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, und, '0']}, {action: pressArrowLeft, result: () => ['0', und, und, '-1']}]}
+      ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${[1, 2]}    | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', und, und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, und, '0']}, {action: pressArrowRight, result: () => ['0', und, und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, und, '0']}, {action: pressArrowLeft, result: () => ['0', und, und, '-1']}]}
     `('$Name skips multiple disabled radios', function ({Name, props, disabledKeys, orders}) {
       let tree = render(
         <Provider theme={theme} locale={props.locale}>

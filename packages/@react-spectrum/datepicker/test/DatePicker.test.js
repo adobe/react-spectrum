@@ -371,7 +371,7 @@ describe('DatePicker', function () {
       expect(todayCell).toHaveAttribute('aria-selected', 'true');
       expect(onChange).not.toHaveBeenCalled();
 
-      userEvent.click(document.body);
+      act(() => userEvent.click(document.body));
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();
@@ -415,7 +415,7 @@ describe('DatePicker', function () {
 
       expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
 
-      userEvent.click(document.body);
+      act(() => userEvent.click(document.body));
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();

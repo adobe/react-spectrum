@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
@@ -33,7 +33,9 @@ describe('useSelectableCollection', () => {
     );
     let options = getAllByRole('option');
     expect(options[0]).not.toHaveAttribute('aria-selected');
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(options[0]);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
   });
@@ -48,7 +50,9 @@ describe('useSelectableCollection', () => {
     );
     let options = getAllByRole('option');
     expect(options[0]).not.toHaveAttribute('aria-selected');
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(options[0]);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(options[1]).not.toHaveAttribute('aria-selected');

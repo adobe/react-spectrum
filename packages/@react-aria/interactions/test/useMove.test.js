@@ -34,7 +34,9 @@ describe('useMove', function () {
 
   afterEach(() => {
     // for restoreTextSelection
-    jest.runAllTimers();
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   describe('mouse events', function () {

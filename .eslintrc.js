@@ -51,8 +51,16 @@ module.exports = {
       }]
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
+    files: ['**/stories/**', '**/docs/**', '**/chromatic/**'],
     rules: {
+      'rulesdir/imports': OFF,
+      'monorepo/no-internal-import': OFF,
+      'jsdoc/require-jsdoc': OFF
+    }
+  }, {
+    files: ['**/test/**'],
+    rules: {
+      'rsp-rules/act-run-timers': ERROR,
       'rsp-rules/act-events-test': ERROR,
       'rsp-rules/no-getByRole-toThrow': ERROR,
       'rulesdir/imports': OFF,

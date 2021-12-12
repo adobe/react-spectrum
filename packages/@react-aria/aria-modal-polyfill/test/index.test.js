@@ -37,7 +37,9 @@ describe('watchModals', () => {
   });
 
   afterEach(() => {
-    jest.runAllTimers();
+    act(() => {
+      jest.runAllTimers();
+    });
     matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
   });

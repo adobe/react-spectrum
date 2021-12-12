@@ -77,9 +77,13 @@ describe('Slider', function () {
     let [buttonA, buttonB] = getAllByRole('button');
     expect(slider).toBeDisabled();
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonB);
   });
 
@@ -97,10 +101,16 @@ describe('Slider', function () {
     });
 
     expect(document.activeElement).toBe(slider);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
-    userEvent.tab({shift: true});
+    act(() => {
+      userEvent.tab({shift: true});
+    });
+    act(() => {
+      userEvent.tab({shift: true});
+    });
     expect(document.activeElement).toBe(buttonA);
   });
 

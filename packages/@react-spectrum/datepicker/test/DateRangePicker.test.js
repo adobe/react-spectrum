@@ -459,7 +459,7 @@ describe('DateRangePicker', function () {
       triggerPress(enabledCells[1].firstChild);
       expect(onChange).not.toHaveBeenCalled();
 
-      userEvent.click(document.body);
+      act(() => userEvent.click(document.body));
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();
@@ -507,7 +507,7 @@ describe('DateRangePicker', function () {
 
       expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
 
-      userEvent.click(document.body);
+      act(() => userEvent.click(document.body));
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();

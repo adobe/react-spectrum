@@ -358,7 +358,9 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -419,7 +421,9 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -535,7 +539,9 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -605,7 +611,9 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(6);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -689,7 +697,9 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(6);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -772,7 +782,9 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(6);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -848,14 +860,20 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(cells[0]);
 
       pressKey('ArrowDown');
       expect(document.activeElement).toBe(cells[1]);
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -877,8 +895,12 @@ describe('useDroppableCollection', () => {
       let rows = within(grid).getAllByRole('row');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
+      act(() => {
+        userEvent.tab();
+      });
       pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
@@ -894,7 +916,9 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -916,8 +940,12 @@ describe('useDroppableCollection', () => {
       let rows = within(grid).getAllByRole('row');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(cells[0]);
 
       pressKey('ArrowDown');
@@ -932,7 +960,9 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -955,8 +985,12 @@ describe('useDroppableCollection', () => {
       let rows = within(grid).getAllByRole('row');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(cells[0]);
 
       pressKey('ArrowDown');
@@ -971,7 +1005,9 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -994,8 +1030,12 @@ describe('useDroppableCollection', () => {
       let rows = within(grid).getAllByRole('row');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
+      act(() => {
+        userEvent.tab();
+      });
       pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
@@ -1011,7 +1051,9 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -1024,7 +1066,9 @@ describe('useDroppableCollection', () => {
   describe('screen reader', () => {
     beforeEach(() => {
       // reset focus visible state
-      fireEvent.focus(document.body);
+      act(() => {
+        fireEvent.focus(document.body);
+      });
     });
 
     afterEach(() => {
@@ -1044,10 +1088,14 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(draggable);
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -1096,7 +1144,9 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -1124,7 +1174,9 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -1189,7 +1241,9 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      fireEvent.focus(draggable);
+      act(() => {
+        fireEvent.focus(draggable);
+      });
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 

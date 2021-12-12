@@ -44,15 +44,15 @@ let columns = [
 let nestedColumns = [
   {name: 'Test', key: 'test'},
   {name: 'Tiered One Header', key: 'tier1', children: [
-    {name: 'Tier Two Header A', key: 'tier2a', children: [
-      {name: 'Foo', key: 'foo'},
-      {name: 'Bar', key: 'bar'}
-    ]},
-    {name: 'Yay', key: 'yay'},
-    {name: 'Tier Two Header B', key: 'tier2b', children: [
-      {name: 'Baz', key: 'baz'}
+      {name: 'Tier Two Header A', key: 'tier2a', children: [
+          {name: 'Foo', key: 'foo'},
+          {name: 'Bar', key: 'bar'}
+        ]},
+      {name: 'Yay', key: 'yay'},
+      {name: 'Tier Two Header B', key: 'tier2b', children: [
+          {name: 'Baz', key: 'baz'}
+        ]}
     ]}
-  ]}
 ];
 
 let items = [
@@ -2962,15 +2962,21 @@ describe('TableView', function () {
 
       let firstName = tree.getByLabelText('First Name');
       typeText(firstName, 'Devon');
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
 
       let lastName = tree.getByLabelText('Last Name');
       typeText(lastName, 'Govett');
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
 
       let birthday = tree.getByLabelText('Birthday');
       typeText(birthday, 'Feb 3');
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
 
       let createButton = tree.getByText('Create');
       triggerPress(createButton);
@@ -3272,7 +3278,7 @@ describe('TableView', function () {
       </TableView>
     );
 
-    it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
+    it.only('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
       let tree = render(<TableWithBreadcrumbs />);
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
@@ -3815,7 +3821,7 @@ describe('TableView', function () {
             }
           </TableBody>
         </TableView>
-      , scale);
+        , scale);
 
       it('should layout rows with default height', function () {
         let tree = renderTable();

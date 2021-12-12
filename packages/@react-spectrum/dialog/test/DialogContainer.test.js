@@ -31,7 +31,9 @@ describe('DialogContainer', function () {
   });
 
   afterEach(() => {
-    jest.runAllTimers();
+    act(() => {
+      jest.runAllTimers();
+    });
     window.requestAnimationFrame.mockRestore();
   });
 

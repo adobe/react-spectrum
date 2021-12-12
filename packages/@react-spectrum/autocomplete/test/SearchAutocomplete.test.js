@@ -1399,7 +1399,9 @@ describe('SearchAutocomplete', function () {
     });
 
     afterEach(() => {
-      jest.runAllTimers();
+      act(() => {
+        jest.runAllTimers();
+      });
       jest.clearAllMocks();
     });
 

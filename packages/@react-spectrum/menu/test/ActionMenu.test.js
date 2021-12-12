@@ -159,7 +159,9 @@ describe('ActionMenu', function () {
       );
 
       let button = tree.getByRole('button');
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(button).toBe(document.activeElement);
 
       let tooltip = tree.getByRole('tooltip');

@@ -573,7 +573,9 @@ describe('ListView', function () {
       act(() => {
         fireEvent(window, new Event('resize'));
       });
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       expect(grid.scrollTop).toBe(0);
 
       let rows = tree.getAllByRole('row');

@@ -58,7 +58,7 @@ const ExampleComboBox = React.forwardRef((props = {}, ref) => (
       <Item key="3">Three</Item>
     </ComboBox>
   </Provider>
-  ));
+));
 
 function renderComboBox(props = {}) {
   return render(<ExampleComboBox {...props} />);
@@ -1731,7 +1731,9 @@ describe('ComboBox', function () {
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
       expect(items[0]).toHaveTextContent('Bulbasaur');
 
-      userEvent.tab();
+      act(() => {
+        userEvent.tab();
+      });
       act(() => {
         jest.runAllTimers();
       });
@@ -1766,7 +1768,9 @@ describe('ComboBox', function () {
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
       expect(items[0]).toHaveTextContent('Bulbasaur');
 
-      userEvent.tab({shift: true});
+      act(() => {
+        userEvent.tab({shift: true});
+      });
       act(() => {
         jest.runAllTimers();
       });
@@ -1798,7 +1802,7 @@ describe('ComboBox', function () {
       act(() => {
         combobox.focus();
       });
-      userEvent.click(comboboxButton);
+      act(() => userEvent.click(comboboxButton));
       act(() => {
         jest.runAllTimers();
       });
@@ -2221,7 +2225,7 @@ describe('ComboBox', function () {
         expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
 
-        userEvent.click(items[1]);
+        act(() => userEvent.click(items[1]));
         act(() => {
           jest.runAllTimers();
         });
@@ -2594,7 +2598,9 @@ describe('ComboBox', function () {
           listbox = getByRole('listbox');
           expect(listbox).toBeVisible();
 
-          userEvent.tab();
+          act(() => {
+            userEvent.tab();
+          });
           act(() => {
             jest.runAllTimers();
           });
@@ -2640,7 +2646,9 @@ describe('ComboBox', function () {
           expect(queryByRole('listbox')).toBeNull();
           expect(combobox.value).toBe('z');
 
-          userEvent.tab();
+          act(() => {
+            userEvent.tab();
+          });
           act(() => {
             jest.runAllTimers();
           });
@@ -2661,7 +2669,7 @@ describe('ComboBox', function () {
           }
 
           if (!Name.includes('open') && !Name.includes('all')) {
-              // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
+            // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
             expect(onOpenChange).toBeCalledTimes(2);
             expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
           }
@@ -3212,41 +3220,41 @@ describe('ComboBox', function () {
     describe.each`
       Name                                       | Component                               | action
       ${'uncontrolled combobox (Enter)'}         | ${<ControlledValueKeyComboBox />}       | ${
-        (combobox) => {
-          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
-          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
-        }
+      (combobox) => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
       }
+    }
       ${'controlled combobox (Enter)'}           | ${<ExampleComboBox />}                   | ${
-        (combobox) => {
-          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
-          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
-        }
+      (combobox) => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
       }
+    }
       ${'allows custom value combobox (Enter)'}  | ${<ExampleComboBox allowsCustomValue />} | ${
-        (combobox) => {
-          fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
-          fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
-        }
+      (combobox) => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
       }
+    }
       ${'uncontrolled combobox (Escape)'}        | ${<ControlledValueKeyComboBox />}        | ${
-        (combobox) => {
-          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
-          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
-        }
+      (combobox) => {
+        fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
+        fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
       }
+    }
       ${'controlled combobox (Escape)'}          | ${<ExampleComboBox />}                   | ${
-        (combobox) => {
-          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
-          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
-        }
+      (combobox) => {
+        fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
+        fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
       }
+    }
       ${'allows custom value combobox (Escape)'} | ${<ExampleComboBox allowsCustomValue />} | ${
-        (combobox) => {
-          fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
-          fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
-        }
+      (combobox) => {
+        fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
+        fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
       }
+    }
     `('$Name', ({Name, Component, action}) => {
       it('should reset the input value and close the menu when pressing escape', function () {
         let {getByRole, queryByRole} = render(Component);
@@ -3560,7 +3568,9 @@ describe('ComboBox', function () {
     });
 
     afterEach(() => {
-      jest.runAllTimers();
+      act(() => {
+        jest.runAllTimers();
+      });
       jest.clearAllMocks();
     });
 
@@ -4239,7 +4249,7 @@ describe('ComboBox', function () {
       ${'dismiss button'}
       ${'escape key'}
     `('combobox value resets on tray close ($Method)', ({Method}) => {
-       // If there is a selected key and allowCustomValue is false, closing the tray should reset the input value
+      // If there is a selected key and allowCustomValue is false, closing the tray should reset the input value
       let tree = render(<ExampleComboBox defaultSelectedKey="2" />);
       let button = tree.getByRole('button');
       act(() => {

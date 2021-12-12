@@ -69,7 +69,9 @@ describe('useColorWheel', () => {
 
   afterEach(() => {
     // for restoreTextSelection
-    jest.runAllTimers();
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   it('sets input props', () => {
@@ -92,13 +94,21 @@ describe('useColorWheel', () => {
     let slider = getByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(slider);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
+    act(() => {
+      userEvent.tab({shift: true});
+    });
     expect(document.activeElement).toBe(slider);
   });
 
@@ -112,11 +122,17 @@ describe('useColorWheel', () => {
     let [buttonA, buttonB] = getAllByRole('button');
     expect(slider).toHaveAttribute('disabled');
 
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    act(() => {
+      userEvent.tab();
+    });
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
+    act(() => {
+      userEvent.tab({shift: true});
+    });
     expect(document.activeElement).toBe(buttonA);
   });
 
