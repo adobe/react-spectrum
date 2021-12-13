@@ -14,7 +14,6 @@ import React from 'react';
 import {render} from '@testing-library/react';
 import {Switch} from '../';
 import userEvent from '@testing-library/user-event';
-import V2Switch from '@react/react-spectrum/Switch';
 
 describe('Switch', function () {
   let onChangeSpy = jest.fn();
@@ -27,8 +26,6 @@ describe('Switch', function () {
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy}}
     ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, isEmphasized: true}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, quiet: true}}
   `('$Name default unchecked can be checked', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
@@ -53,8 +50,6 @@ describe('Switch', function () {
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true}}
     ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true, isEmphasized: true}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, defaultChecked: true}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, defaultChecked: true, quiet: true}}
   `('$Name can be default checked', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
@@ -70,8 +65,6 @@ describe('Switch', function () {
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, isSelected: true}}
     ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, isSelected: true, isEmphasized: true}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, checked: true}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, checked: true, quiet: true}}
   `('$Name can be controlled checked', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
@@ -87,8 +80,6 @@ describe('Switch', function () {
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, isSelected: false}}
     ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, isSelected: false, isEmphasized: true}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, checked: false}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, checked: false, quiet: true}}
   `('$Name can be controlled unchecked', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
@@ -104,8 +95,6 @@ describe('Switch', function () {
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, isDisabled: true}}
     ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, isDisabled: true, isEmphasized: true}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, disabled: true}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, disabled: true, quiet: true}}
   `('$Name can be disabled', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
@@ -120,7 +109,6 @@ describe('Switch', function () {
   it.each`
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-label': 'not visible'}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, 'aria-label': 'not visible', quiet: true}}
   `('$Name can have a non-visible label', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} />);
 
@@ -131,7 +119,6 @@ describe('Switch', function () {
   it.each`
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-labelledby': 'test'}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, 'aria-labelledby': 'test'}}
   `('$Name supports aria-labelledby', function ({Component, props}) {
     let {getByRole} = render(
       <>
@@ -147,7 +134,6 @@ describe('Switch', function () {
   it.each`
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-describedby': 'test'}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, 'aria-describedby': 'test'}}
   `('$Name supports aria-describedby', function ({Component, props}) {
     let {getByRole} = render(
       <>

@@ -91,7 +91,7 @@ describe('DateRangePicker', function () {
       expect(segments[0].textContent).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
-      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 − February');
+      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 – February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
@@ -112,7 +112,7 @@ describe('DateRangePicker', function () {
       expect(segments[3].textContent).toBe('5');
       expect(segments[3].getAttribute('aria-label')).toBe('month');
       expect(segments[3].getAttribute('aria-valuenow')).toBe('5');
-      expect(segments[3].getAttribute('aria-valuetext')).toBe('5 − May');
+      expect(segments[3].getAttribute('aria-valuetext')).toBe('5 – May');
       expect(segments[3].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[3].getAttribute('aria-valuemax')).toBe('12');
 
@@ -145,7 +145,7 @@ describe('DateRangePicker', function () {
       expect(segments[0].textContent).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
-      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 − February');
+      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 – February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
@@ -191,7 +191,7 @@ describe('DateRangePicker', function () {
       expect(segments[7].textContent).toBe('5');
       expect(segments[7].getAttribute('aria-label')).toBe('month');
       expect(segments[7].getAttribute('aria-valuenow')).toBe('5');
-      expect(segments[7].getAttribute('aria-valuetext')).toBe('5 − May');
+      expect(segments[7].getAttribute('aria-valuetext')).toBe('5 – May');
       expect(segments[7].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[7].getAttribute('aria-valuemax')).toBe('12');
 
@@ -619,6 +619,20 @@ describe('DateRangePicker', function () {
 
       let description = document.getElementById(group.getAttribute('aria-describedby'));
       expect(description).toHaveTextContent('Help text');
+
+      let segments = within(startField).getAllByRole('spinbutton');
+      expect(segments[0]).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+
+      for (let segment of segments.slice(1)) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
+
+      segments = within(endField).getAllByRole('spinbutton');
+      expect(segments[0]).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+
+      for (let segment of segments.slice(1)) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
 
     it('should support error message', function () {
@@ -631,6 +645,11 @@ describe('DateRangePicker', function () {
 
       let description = document.getElementById(group.getAttribute('aria-describedby'));
       expect(description).toHaveTextContent('Error message');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      }
     });
 
     it('should not display error message if not invalid', function () {
@@ -640,6 +659,11 @@ describe('DateRangePicker', function () {
       expect(group).not.toHaveAttribute('aria-describedby');
       expect(startField).not.toHaveAttribute('aria-describedby');
       expect(endField).not.toHaveAttribute('aria-describedby');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
 
     it('should support help text with a value', function () {
@@ -656,8 +680,22 @@ describe('DateRangePicker', function () {
       description = startField.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
       expect(description).toBe('February 3, 2020 Help text');
 
+      let segments = within(startField).getAllByRole('spinbutton');
+      expect(segments[0]).toHaveAttribute('aria-describedby', startField.getAttribute('aria-describedby'));
+
+      for (let segment of segments.slice(1)) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
+
       description = endField.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
       expect(description).toBe('February 10, 2020 Help text');
+
+      segments = within(endField).getAllByRole('spinbutton');
+      expect(segments[0]).toHaveAttribute('aria-describedby', endField.getAttribute('aria-describedby'));
+
+      for (let segment of segments.slice(1)) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
 
     it('should support error message with a value', function () {
@@ -674,8 +712,18 @@ describe('DateRangePicker', function () {
       description = startField.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
       expect(description).toBe('February 3, 2020 Error message');
 
+      let segments = within(startField).getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-describedby', startField.getAttribute('aria-describedby'));
+      }
+
       description = endField.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
       expect(description).toBe('February 10, 2020 Error message');
+
+      segments = within(endField).getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-describedby', endField.getAttribute('aria-describedby'));
+      }
     });
 
     it('should support format help text', function () {
@@ -688,6 +736,11 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       expect(getByText('month / day / year')).toBeVisible();
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
   });
 

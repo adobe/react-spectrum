@@ -160,6 +160,14 @@ storiesOf('Date and Time/DateRangePicker/styling', module)
   .add(
     'errorMessage',
     () => render({errorMessage: 'Dates must be after today', validationState: 'invalid'})
+  )
+  .add(
+    'in scrollable container',
+    () => (
+      <div style={{height: '200vh'}}>
+        {render({granularity: 'second'})}
+      </div>
+    )
   );
 
 function render(props = {}) {
