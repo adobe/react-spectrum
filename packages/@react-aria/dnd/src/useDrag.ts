@@ -53,6 +53,10 @@ const MESSAGES = {
   }
 };
 
+// do we want to support a `legacyRoot` option that allows people to choose what they are using?
+// @ts-ignore
+const isReactConcurrent = !!ReactDOM.createRoot;
+
 export function useDrag(options: DragOptions): DragResult {
   let formatMessage = useMessageFormatter(intlMessages);
   let state = useRef({
@@ -90,8 +94,15 @@ export function useDrag(options: DragOptions): DragResult {
         node.style.left = '-100000px';
         document.body.appendChild(node);
 
-        // Call renderPreview to get a JSX element, and render it into the div with React DOM.
-        ReactDOM.render(preview, node);
+        if (isReactConcurrent) {
+          // @ts-ignore
+          let root = ReactDOM.createRoot(node);
+
+          // Call renderPreview to get a JSX element, and render it into the div with React DOM.
+          root.render(preview);
+        } else {
+          ReactDOM.render(preview, node);
+        }
 
         // Compute the offset that the preview will appear under the mouse.
         // If possible, this is based on the point the user clicked on the target.

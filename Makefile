@@ -66,7 +66,10 @@ storybook:
 	NODE_ENV=production yarn build:storybook
 
 storybook-17:
-	yarn build:storybook-17
+	NODE_ENV=production yarn build:storybook-17
+
+storybook-18:
+	NODE_ENV=production yarn build:storybook-18
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
