@@ -23,7 +23,8 @@ import React from 'react';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-function ContextualHelp({variant = 'help', title, children, placement = 'bottom end', ...props}: SpectrumContextualHelpProps) {
+function ContextualHelp(props: SpectrumContextualHelpProps) {
+  let {variant = 'help', title, children, placement = 'bottom end', ...otherProps} = props;
   let formatMessage = useMessageFormatter(intlMessages);
 
   let icon = <HelpOutline />;
@@ -32,7 +33,7 @@ function ContextualHelp({variant = 'help', title, children, placement = 'bottom 
   }
 
   return (
-    <DialogTrigger type="popover" placement={placement} hideArrow {...props}>
+    <DialogTrigger type="popover" placement={placement} hideArrow {...otherProps}>
       <ActionButton
         UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-button']}
         isQuiet
