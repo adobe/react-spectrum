@@ -118,7 +118,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   isVisible(node: LayoutNode, rect: Rect) {
-    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky;
+    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo?.isSticky;
   }
 
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {

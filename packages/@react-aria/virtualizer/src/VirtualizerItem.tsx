@@ -56,20 +56,20 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
   }
 
   let style: CSSProperties = {
-    position: layoutInfo.isSticky ? 'sticky' : 'absolute',
-    overflow: layoutInfo.allowOverflow ? 'visible' : 'hidden',
-    top: layoutInfo.rect.y - (parent ? parent.rect.y : 0),
-    [xProperty]: layoutInfo.rect.x - (parent ? parent.rect.x : 0),
+    position: layoutInfo?.isSticky ? 'sticky' : 'absolute',
+    overflow: layoutInfo?.allowOverflow ? 'visible' : 'hidden',
+    top: layoutInfo?.rect.y - (parent ? parent.rect.y : 0),
+    [xProperty]: layoutInfo?.rect.x - (parent ? parent.rect.x : 0),
     transition: 'all',
     WebkitTransition: 'all',
     WebkitTransitionDuration: 'inherit',
     transitionDuration: 'inherit',
-    width: layoutInfo.rect.width,
-    height: layoutInfo.rect.height,
-    opacity: layoutInfo.opacity,
-    zIndex: layoutInfo.zIndex,
-    transform: layoutInfo.transform,
-    contain: layoutInfo.allowOverflow ? 'size layout style' : 'size layout style paint'
+    width: layoutInfo?.rect.width,
+    height: layoutInfo?.rect.height,
+    opacity: layoutInfo?.opacity,
+    zIndex: layoutInfo?.zIndex,
+    transform: layoutInfo?.transform,
+    contain: layoutInfo?.allowOverflow ? 'size layout style' : 'size layout style paint'
   };
 
   cache.set(layoutInfo, style);

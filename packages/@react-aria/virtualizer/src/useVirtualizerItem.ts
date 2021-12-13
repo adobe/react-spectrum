@@ -24,8 +24,8 @@ export function useVirtualizerItem<T extends object, V>(options: VirtualizerItem
 
   let updateSize = useCallback(() => {
     let size = getSize(ref.current);
-    virtualizer.updateItemSize(layoutInfo.key, size);
-  }, [virtualizer, layoutInfo.key, ref]);
+    virtualizer.updateItemSize(layoutInfo?.key, size);
+  }, [virtualizer, layoutInfo, ref]);
 
   useLayoutEffect(() => {
     if (layoutInfo.estimatedSize) {
