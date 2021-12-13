@@ -12,7 +12,7 @@
 
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
-import {renderHook} from '@testing-library/react';
+import  {renderHook} from '@testing-library/react-hooks';
 import {useSideNav} from '../';
 
 describe('useSideNav', function () {

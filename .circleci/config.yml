@@ -195,7 +195,7 @@ jobs:
           command: |
             shopt -s globstar
             TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            JEST_JUNIT_OUTPUT_NAME="junit-18.xml" yarn test ${TESTFILES}
+            JEST_JUNIT_OUTPUT_NAME="junit-18.xml" yarn test-18 ${TESTFILES}
       - run:
           command: cp junit-18.xml ~/junit/
           when: always

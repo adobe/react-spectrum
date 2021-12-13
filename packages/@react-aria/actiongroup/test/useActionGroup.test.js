@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {renderHook} from '@testing-library/react';
+import  {renderHook} from '@testing-library/react-hooks';
 import {useActionGroup} from '../';
 import {useListState} from '@react-stately/list';
 

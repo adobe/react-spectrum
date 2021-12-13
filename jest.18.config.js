@@ -13,6 +13,8 @@
 // For a detailed explanation regarding each configuration property, visit:
 // https://jestjs.io/docs/en/configuration.html
 
+// This version will moduleMap the testing-library/react-hooks to test-library/react, a change necessary for 18
+
 module.exports = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
@@ -92,7 +94,8 @@ module.exports = {
   // A map from regular expressions to module names that allow to stub out resources with a single module
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
-    '\\.(css|styl)$': 'identity-obj-proxy'
+    '\\.(css|styl)$': 'identity-obj-proxy',
+    '@testing-library/react-hooks': '@testing-library/react'
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

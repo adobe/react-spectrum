@@ -14,7 +14,7 @@
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
 import React from 'react';
-import {renderHook} from '@testing-library/react';
+import  {renderHook} from '@testing-library/react-hooks';
 import {useColorScheme} from '../src/mediaQueries';
 
 let theme = {

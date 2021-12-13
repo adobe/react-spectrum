@@ -12,7 +12,7 @@
 
 import React from 'react';
 import {render} from '@testing-library/react';
-import {renderHook} from '@testing-library/react';
+import  {renderHook} from '@testing-library/react-hooks';
 import {useField} from '../';
 import {WithError} from '../stories/useField.stories';
 
