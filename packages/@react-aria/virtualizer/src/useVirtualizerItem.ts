@@ -28,7 +28,7 @@ export function useVirtualizerItem<T extends object, V>(options: VirtualizerItem
   }, [virtualizer, layoutInfo, ref]);
 
   useLayoutEffect(() => {
-    if (layoutInfo.estimatedSize) {
+    if (layoutInfo?.estimatedSize) {
       updateSize();
     }
   });
