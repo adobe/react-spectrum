@@ -24,13 +24,13 @@ let items = [
   {name: 'Tab 3', children: 'Tab 3 body'}
 ];
 
-function renderComponent(props) {
+function renderComponent(props, itemProps) {
   return render(
     <Provider theme={theme}>
       <Tabs {...props} items={items}>
         <TabList>
           {item => (
-            <Item key={item.name} title={item.name || item.children} />
+            <Item {...itemProps} key={item.name} title={item.name || item.children} />
           )}
         </TabList>
         <TabPanels>
@@ -638,10 +638,25 @@ describe('Tabs', function () {
     expect(tabPanelInput.value).toBe('');
   });
 
-  it('supports custom props', function () {
+  it('supports custom props for parent tabs element', function () {
     let {getByTestId} = renderComponent({'data-testid': 'tabs1'});
     let tabs = getByTestId('tabs1');
     expect(tabs).toBeInTheDocument();
+  });
+
+  it('supports custom props for tab items', function () {
+    let {getAllByTestId} = renderComponent({}, {
+      'data-testid': 'tabItems',
+      'data-instance-id': 'instance-id',
+      'id': 'id-1'
+    });
+    let tabItems = getAllByTestId('tabItems');
+    expect(tabItems).toHaveLength(3);
+    for (let tabItem of tabItems) {
+      expect(tabItem).toHaveAttribute('data-instance-id', 'instance-id');
+      expect(tabItem).not.toHaveAttribute('id', 'id-1');
+      expect(tabItem).toBeInTheDocument();
+    }
   });
 
   it('fires onSelectionChange when clicking on the current tab', function () {
