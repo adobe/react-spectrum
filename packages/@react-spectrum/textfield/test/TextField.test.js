@@ -17,9 +17,6 @@ import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';
 import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
-import V2SearchField from '@react/react-spectrum/Search';
-import V2TextArea from '@react/react-spectrum/Textarea';
-import V2TextField from '@react/react-spectrum/Textfield';
 
 let testId = 'test-id';
 let inputText = 'blah';
@@ -47,9 +44,6 @@ describe('Shared TextField behavior', () => {
   it.each`
     Name                | Component         | props
     ${'v3 SearchField'} | ${SearchField}    | ${{UNSAFE_className: 'custom-class-name', 'aria-label': 'mandatory label'}}
-    ${'v2 TextField'}   | ${V2TextField}    | ${{className: 'custom-class-name'}}
-    ${'v2 TextArea'}    | ${V2TextArea}     | ${{className: 'custom-class-name'}}
-    ${'v2 SearchField'} | ${V2SearchField}  | ${{className: 'custom-class-name'}}
   `('$Name supports appending custom classnames onto the root element', ({Component, props}) => {
     let tree = renderComponent(Component, props);
     expect(tree.container.querySelector('body>div> .custom-class-name')).toBeTruthy();
@@ -60,17 +54,9 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${'text'}    | ${'INPUT'}
     ${'v3 TextArea'}    | ${TextArea}      | ${'text'}    | ${'TEXTAREA'}
     ${'v3 SearchField'} | ${SearchField}   | ${'search'}  | ${'INPUT'}
-    ${'v2 TextField'}   | ${V2TextField}   | ${'text'}    | ${'INPUT'}
-    ${'v2 TextArea'}    | ${V2TextArea}    | ${'text'}    | ${'TEXTAREA'}
-    ${'v2 SearchField'} | ${V2SearchField} | ${'search'}  | ${'INPUT'}
   `('$Name renders with default textfield behavior', ({Name, Component, expectedType, expectedTagName}) => {
     let tree = renderComponent(Component, {'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input.value).toBe('');
     typeText(input, inputText);
     expect(input.value).toBe(inputText);
@@ -87,18 +73,10 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name allow custom naming', ({Name, Component}) => {
     let name = 'blah';
     let tree = renderComponent(Component, {name, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('name', name);
   });
 
@@ -107,18 +85,10 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name renders with placeholder text', ({Name, Component}) => {
     let tree = renderComponent(Component, {placeholder: inputText, 'aria-label': 'mandatory label'});
     expect(tree.getByPlaceholderText(inputText)).toBeTruthy();
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input.placeholder).toBe(inputText);
   });
 
@@ -127,31 +97,13 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name calls onChange when text changes', ({Name, Component}) => {
     let tree = renderComponent(Component, {onChange, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     fireEvent.change(input, {target: {value: inputText}});
     expect(onChange).toHaveBeenCalledTimes(1);
 
-    if (Component === V2SearchField) {
-      expect(onChange).toHaveBeenLastCalledWith(
-        inputText,
-        expect.anything(),
-        {
-          'from': 'input'
-        }
-      );
-    } else {
-      expect(onChange.mock.calls[0][0]).toBe(inputText);
-    }
+    expect(onChange.mock.calls[0][0]).toBe(inputText);
   });
 
   it.each`
@@ -159,17 +111,9 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name calls onFocus when the the input field is focused', ({Name, Component}) => {
     let tree = renderComponent(Component, {onFocus, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     fireEvent.focus(input);
     expect(onFocus).toHaveBeenCalledTimes(1);
     userEvent.click(input);
@@ -181,17 +125,9 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name calls onBlur when the input field loses focus', ({Name, Component}) => {
     let tree = renderComponent(Component, {onBlur, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     fireEvent.blur(input);
     expect(onBlur).toHaveBeenCalledTimes(1);
   });
@@ -201,18 +137,11 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
   `('$Name is uncontrolled if defaultValue prop is provided', ({Name, Component}) => {
     let defaultValue = 'test';
     let newValue = 'blah';
     let tree = renderComponent(Component, {onChange, defaultValue, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     userEvent.type(input, newValue);
     expect(onChange).toHaveBeenCalledTimes(newValue.length);
   });
@@ -222,19 +151,11 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name is controlled if value prop is provided', ({Name, Component}) => {
     let value = 'test';
     let newValue = 'blah';
     let tree = renderComponent(Component, {onChange, value, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input.value).toBe(value);
     userEvent.type(input, newValue);
     expect(input.value).toBe(value);
@@ -246,21 +167,12 @@ describe('Shared TextField behavior', () => {
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
   `('$Name has the proper aria-invalid value and renders a invalid icon if validationState=invalid', ({Name, Component}) => {
     let tree = renderComponent(Component, {validationState: 'invalid', 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('aria-invalid', 'true');
-    if (Component === TextField || Component === TextArea) {
-      let invalidIcon = tree.getByRole('img', {hidden: true});
-      expect(invalidIcon).toBeTruthy();
-    }
+    let invalidIcon = tree.getByRole('img', {hidden: true});
+    expect(invalidIcon).toBeTruthy();
   });
 
   it.each`
@@ -279,21 +191,12 @@ describe('Shared TextField behavior', () => {
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
   `('$Name has the proper aria-invalid value and renders a valid icon if validationState=valid', ({Name, Component}) => {
     let tree = renderComponent(Component, {validationState: 'valid', 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).not.toHaveAttribute('aria-invalid', 'true');
-    if (Component === TextField || Component === TextArea) {
-      let validIcon = tree.getByRole('img', {hidden: true});
-      expect(validIcon).toBeTruthy();
-    }
+    let validIcon = tree.getByRole('img', {hidden: true});
+    expect(validIcon).toBeTruthy();
   });
 
   it.each`
@@ -301,16 +204,9 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
     ${'v3 TextArea'}    | ${TextArea}      | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
     ${'v3 SearchField'} | ${SearchField}   | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
-    ${'v2 TextField'}   | ${V2TextField}   | ${{required: true}}                                    | ${'required'}
-    ${'v2 TextArea'}    | ${V2TextArea}    | ${{required: true}}                                    | ${'required'}
   `('$Name supports a isRequired prop', ({Name, Component, props, expected}) => {
     let tree = renderComponent(Component, props);
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute(expected);
   });
 
@@ -321,12 +217,7 @@ describe('Shared TextField behavior', () => {
     ${'v3 SearchField'} | ${SearchField}
   `('$Name automatically focuses the input field if autoFocus=true', ({Name, Component}) => {
     let tree = renderComponent(Component, {autoFocus: true, onFocus, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
 
     expect(document.activeElement).toEqual(input);
     expect(onFocus).toHaveBeenCalledTimes(1);
@@ -337,17 +228,9 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${{isReadOnly: true, 'aria-label': 'mandatory label'}}
     ${'v3 TextArea'}    | ${TextArea}      | ${{isReadOnly: true, 'aria-label': 'mandatory label'}}
     ${'v3 SearchField'} | ${SearchField}   | ${{isReadOnly: true, 'aria-label': 'mandatory label'}}
-    ${'v2 TextField'}   | ${V2TextField}   | ${{readOnly: true}}
-    ${'v2 TextArea'}    | ${V2TextArea}    | ${{readOnly: true}}
-    ${'v2 SearchField'} | ${V2SearchField} | ${{readOnly: true}}
   `('$Name should support isReadOnly', ({Name, Component, props}) => {
     let tree = renderComponent(Component, props);
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('readonly');
     userEvent.click(input);
     expect(document.activeElement).toEqual(input);
@@ -361,17 +244,9 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${{isDisabled: true, 'aria-label': 'mandatory label'}}
     ${'v3 TextArea'}    | ${TextArea}      | ${{isDisabled: true, 'aria-label': 'mandatory label'}}
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true, 'aria-label': 'mandatory label'}}
-    ${'v2 TextField'}   | ${V2TextField}   | ${{disabled: true}}
-    ${'v2 TextArea'}    | ${V2TextArea}    | ${{disabled: true}}
-    ${'v2 SearchField'} | ${V2SearchField} | ${{disabled: true}}
   `('$Name should disable the input field if isDisabled=true', ({Name, Component, props}) => {
     let tree = renderComponent(Component, props);
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('disabled');
     userEvent.click(input);
     expect(document.activeElement).not.toEqual(input);
@@ -379,7 +254,6 @@ describe('Shared TextField behavior', () => {
     // Seems like this is a framework issue rather than a bug with TextField so omitting the test case
   });
 
-  // New v3 feature valid for textfield and textarea only
   it.each`
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
@@ -391,7 +265,6 @@ describe('Shared TextField behavior', () => {
     expect(icon).toHaveAttribute('role', 'img');
   });
 
-  // New v3 functionality, omitting v2 components
   it.each`
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
@@ -431,7 +304,7 @@ describe('Shared TextField behavior', () => {
     function Example(props) {
       let [value, setValue] = React.useState('0');
       let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
-    
+
       return (
         <Component
           {...props}
@@ -483,7 +356,7 @@ describe('Shared TextField behavior', () => {
     function Example(props) {
       let [value, setValue] = React.useState('0');
       let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
-    
+
       return (
         <Component
           {...props}
@@ -514,7 +387,7 @@ describe('Shared TextField behavior', () => {
     helpText = tree.getByText('Single digit numbers are 0-9.');
     expect(helpText).toHaveAttribute('id');
     expect(tree.getByTestId(testId)).toHaveAttribute('aria-describedby', `${helpText.id}`);
-    
+
     fireEvent.change(input, {target: {value: ''}});
 
     await waitFor(() => {
