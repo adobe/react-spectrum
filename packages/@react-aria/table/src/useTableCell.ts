@@ -21,7 +21,11 @@ interface TableCellProps {
   node: GridNode<unknown>,
   /** Whether the cell is contained in a virtual scroller. */
   isVirtualized?: boolean,
-  /** Handler that is called when a user performs an action on the cell. */
+  /**
+   * Handler that is called when a user performs an action on the cell.
+   * Please use onCellAction at the collection level instead.
+   * @deprecated
+   **/
   onAction?: () => void
 }
 
