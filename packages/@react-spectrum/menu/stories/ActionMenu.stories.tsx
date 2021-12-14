@@ -140,7 +140,7 @@ DisabledKeys.args = {disabledKeys: ['two']};
 export const AutoFocus = Template().bind({});
 AutoFocus.args = {autoFocus: true};
 
-export const DirectionAlign = () => <DirectionAlignment />;
+export const DirectionAlignFlip = () => <DirectionAlignment />;
 
 export const WithTooltip = () => (
   <TooltipTrigger delay={0}>
