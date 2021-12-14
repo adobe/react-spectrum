@@ -74,6 +74,8 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
     }
   };
 
+  let [isDragging, setDragging] = useState(false);
+
   return {
     ...calendar,
     value,
@@ -92,7 +94,9 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
     },
     isSelected(date) {
       return highlightedRange && date.compare(highlightedRange.start) >= 0 && date.compare(highlightedRange.end) <= 0;
-    }
+    },
+    isDragging,
+    setDragging
   };
 }
 

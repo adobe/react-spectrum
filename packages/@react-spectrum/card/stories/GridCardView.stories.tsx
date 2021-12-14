@@ -17,17 +17,20 @@ import {Card, CardView, GridLayout} from '../';
 import {Content, Footer} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
 import {getImageFullData} from './utils';
+import {GridLayoutOptions} from '../src/GridLayout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import React, {Key, useMemo, useState} from 'react';
 import {Size} from '@react-stately/virtualizer';
+import {SpectrumCardViewProps} from '@react-types/card';
+import {Story} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
 import {useCollator} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 
-export let items = [
+let items = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
   {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1'},
   {width: 182, height: 1009, src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 1'},
@@ -52,7 +55,7 @@ export let items = [
   {width: 1215, height: 121, src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Bob 8'}
 ];
 
-export function renderEmptyState() {
+function renderEmptyState() {
   return (
     <IllustratedMessage>
       <svg width="150" height="103" viewBox="0 0 150 103">
@@ -68,7 +71,7 @@ const StoryFn = ({storyFn}) => storyFn();
 
 export default {
   title: 'CardView/Grid layout',
-  excludeStories: ['items', 'renderEmptyState', 'DynamicCardView', 'NoItemCardView', 'StaticCardView', 'ControlledCardView', 'AsyncLoadingCardView', 'CustomLayout'],
+  excludeStories: ['NoCards', 'CustomLayout'],
   decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 
@@ -78,66 +81,119 @@ let actions = {
 };
 
 // TODO add stories for Layouts with non-default options passed in
+const DynamicTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <DynamicCardView {...args} />;
+export const DynamicCards = DynamicTemplate().bind({});
+DynamicCards.args = {
+  items: items,
+  'aria-label': 'Test CardView',
+  selectionMode: 'multiple'
+};
+DynamicCards.storyName = 'default Grid layout with initialized layout';
 
-export const DefaultGridStatic = () => StaticCardView({items});
-DefaultGridStatic.storyName = 'static card';
+const StaticTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <StaticCardView {...args} />;
+export const StaticCards = StaticTemplate().bind({});
+StaticCards.args = {
+  'aria-label': 'Test CardView',
+  selectionMode: 'multiple'
+};
+StaticCards.storyName = 'static card';
 
-export const DefaultGrid = () => DynamicCardView({items});
-DefaultGrid.storyName = 'default Grid layout with initialized layout';
-
-export const DefaultGridConstructor = () => DynamicCardView({layout: GridLayout, items});
+export const DefaultGridConstructor = DynamicTemplate().bind({});
+DefaultGridConstructor.args = {...DynamicCards.args, layout: GridLayout};
 DefaultGridConstructor.storyName = 'default Grid layout w/ layout constructor';
 
-export const DisabledKeys = () => DynamicCardView({items, disabledKeys: ['Joe 2', 'Bob 4']});
+export const HorizontalGrid = DynamicTemplate().bind({});
+HorizontalGrid.args = {...DynamicCards.args, cardOrientation: 'horizontal'};
+HorizontalGrid.storyName = ' Grid layout with horizontal cards, initialized layout';
+
+export const HorizontalGridConstructor = DynamicTemplate().bind({});
+HorizontalGridConstructor.args = {...DynamicCards.args, cardOrientation: 'horizontal', layout: GridLayout};
+HorizontalGridConstructor.storyName = ' Grid layout with horizontal cards, layout constructor';
+
+export const DisabledKeys = DynamicTemplate().bind({});
+DisabledKeys.args = {...DynamicCards.args, disabledKeys: ['Joe 2', 'Bob 4']};
 DisabledKeys.storyName = 'disabled keys, Joe2, Bob 4';
 
-export const NoSelection = () => DynamicCardView({items, selectionMode: 'none'});
+export const NoSelection = DynamicTemplate().bind({});
+NoSelection.args = {...DynamicCards.args, selectionMode: 'none'};
 NoSelection.storyName = 'no selection allowed';
 
-export const SingleSelection = () => DynamicCardView({items, selectionMode: 'single'});
+export const SingleSelection = DynamicTemplate().bind({});
+SingleSelection.args = {...DynamicCards.args, selectionMode: 'single'};
 SingleSelection.storyName = 'single selection only';
 
-export const SelectedKeys = () => ControlledCardView({items});
-SelectedKeys.storyName = 'selected keys, controlled';
+const ControlledTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <ControlledCardView {...args} />;
+export const ControlledCards = ControlledTemplate().bind({});
+ControlledCards.args = {
+  'aria-label': 'Test CardView',
+  selectionMode: 'multiple',
+  items: items
+};
+ControlledCards.storyName = 'selected keys, controlled';
 
-export const isLoadingNoHeightGrid = () => NoItemCardView({width: '800px', loadingState: 'loading', items});
-isLoadingNoHeightGrid.storyName = 'loadingState = loading, no height';
+const NoCardsTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <NoItemCardView {...args} />;
+export const NoCards = NoCardsTemplate().bind({});
+NoCards.args = {
+  'aria-label': 'Test CardView'
+};
 
-export const isLoadingHeightGrid = () => NoItemCardView({width: '800px', height: '800px', loadingState: 'loading', items});
-isLoadingHeightGrid.storyName = 'loadingState = loading, set height';
+export const IsLoadingNoHeightGrid = NoCardsTemplate().bind({});
+IsLoadingNoHeightGrid.args = {...NoCards.args, width: '800px', loadingState: 'loading'};
+IsLoadingNoHeightGrid.storyName = 'loadingState = loading, no height';
 
-export const loadingMoreGrid = () => DynamicCardView({loadingState: 'loadingMore', items});
-loadingMoreGrid.storyName = 'loadingState = loadingMore';
+export const IsLoadingHeightGrid =  NoCardsTemplate().bind({});
+IsLoadingHeightGrid.args = {...NoCards.args, width: '800px', height: '800px', loadingState: 'loading'};
+IsLoadingHeightGrid.storyName = 'loadingState = loading, set height';
 
-export const filteringGrid = () => DynamicCardView({loadingState: 'filtering', items});
-filteringGrid.storyName = 'loadingState = filtering';
+export const LoadingMoreGrid = DynamicTemplate().bind({});
+LoadingMoreGrid.args = {...DynamicCards.args, loadingState: 'loadingMore'};
+LoadingMoreGrid.storyName = 'loadingState = loadingMore';
 
-export const emptyWithHeightGrid = () => NoItemCardView({width: '800px', height: '800px', renderEmptyState});
-emptyWithHeightGrid.storyName = 'empty, set height';
+export const FilteringGrid = DynamicTemplate().bind({});
+FilteringGrid.args = {...DynamicCards.args, loadingState: 'filtering'};
+FilteringGrid.storyName = 'loadingState = filtering';
 
-export const AsyncLoading = () => AsyncLoadingCardView({});
+export const EmptyWithHeightGrid = NoCardsTemplate().bind({});
+EmptyWithHeightGrid.args = {...NoCards.args, width: '800px', height: '800px', renderEmptyState};
+EmptyWithHeightGrid.storyName = 'empty, set height';
+
+const AsyncCardsTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <AsyncLoadingCardView {...args} />;
+export const AsyncLoading = AsyncCardsTemplate().bind({});
+AsyncLoading.args = {
+  'aria-label': 'Test CardView',
+  selectionMode: 'multiple',
+  items: items
+};
 AsyncLoading.storyName = 'Async loading';
 
-export const CustomLayoutOptions = () => CustomLayout({items}, {maxColumns: 2, margin: 150, minSpace: new Size(10, 10), itemPadding: 400});
+const CustomLayoutTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <CustomLayout {...args} />;
+export const CustomLayoutOptions = CustomLayoutTemplate().bind({});
+CustomLayoutOptions.args = {
+  'aria-label': 'Test CardView',
+  selectionMode: 'multiple',
+  items: items,
+  layoutOptions: {maxColumns: 2, margin: 150, minSpace: new Size(10, 10), itemPadding: 400}
+};
 CustomLayoutOptions.storyName = 'Custom layout options';
 
-export function DynamicCardView(props) {
+function DynamicCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
-      collator
+      scale,
+      collator,
+      cardOrientation
     })
-  , [collator, scale]);
+  , [collator, scale, cardOrientation]);
   let {
     layout = gridLayout,
-    selectionMode = 'multiple',
     ...otherProps
   } = props;
 
   let [value, setValue] = useState('');
-  let [items, setItems] = useState(props.items);
+  let [items, setItems] = useState(props.items as Array<object>);
   let removeItem = () => {
     let val = parseInt(value, 10);
     let newItems = items.slice(0, val).concat(items.slice(val + 1, items.length));
@@ -151,7 +207,7 @@ export function DynamicCardView(props) {
           <TextField value={value} onChange={setValue} label="Nth item to remove" />
           <ActionButton onPress={removeItem}>Remove</ActionButton>
         </Flex>
-        <CardView {...actions} {...otherProps} selectionMode={selectionMode} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'var(--spectrum-global-color-gray-300)'}} aria-label="Test CardView">
+        <CardView {...actions} {...otherProps} items={items} layout={layout} width="100%" height="100%">
           {(item: any) => (
             <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
               <Image src={item.src} />
@@ -173,23 +229,24 @@ export function DynamicCardView(props) {
   );
 }
 
-export function ControlledCardView(props) {
+function ControlledCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
-      collator
+      scale,
+      collator,
+      cardOrientation
     })
-  , [collator, scale]);
+  , [collator, scale, cardOrientation]);
   let {
     layout = gridLayout,
-    selectionMode = 'multiple',
     ...otherProps
   } = props;
 
   let [value, setValue] = useState('');
-  let [items, setItems] = useState(props.items);
+  let [items, setItems] = useState(props.items as Array<object>);
   let [selectedKeys, setSelectedKeys] = useState('all' as 'all' | Iterable<Key>);
 
   let removeItem = () => {
@@ -205,7 +262,7 @@ export function ControlledCardView(props) {
           <TextField value={value} onChange={setValue} label="Nth item to remove" />
           <ActionButton onPress={removeItem}>Remove</ActionButton>
         </Flex>
-        <CardView  {...actions} {...otherProps} selectionMode={selectionMode} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'var(--spectrum-global-color-gray-300)'}} aria-label="Test CardView">
+        <CardView  {...actions} {...otherProps} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} items={items} layout={layout} width="100%" height="100%">
           {(item: any) => (
             <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
               <Image src={item.src} />
@@ -227,15 +284,17 @@ export function ControlledCardView(props) {
   );
 }
 
-export function NoItemCardView(props) {
+function NoItemCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
-      collator
+      scale,
+      collator,
+      cardOrientation
     })
-  , [collator, scale]);
+  , [collator, scale, cardOrientation]);
   let {
     layout = gridLayout
   } = props;
@@ -244,7 +303,7 @@ export function NoItemCardView(props) {
   return (
     <>
       <ActionButton onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
-      <CardView {...props} items={show ? items : []} layout={layout} UNSAFE_style={{background: 'var(--spectrum-global-color-gray-300)'}} aria-label="Test CardView">
+      <CardView {...props} items={show ? items : []} layout={layout} UNSAFE_style={{background: 'var(--spectrum-global-color-gray-300)'}}>
         {(item: any) => (
           <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
             <Image src={item.src} />
@@ -265,22 +324,25 @@ export function NoItemCardView(props) {
   );
 }
 
-export function StaticCardView(props) {
+function StaticCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
-      collator
+      scale,
+      collator,
+      cardOrientation
     })
-  , [collator, scale]);
+  , [collator, scale, cardOrientation]);
   let {
     layout = gridLayout
   } = props;
 
   return (
     <div style={{width: '800px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-      <CardView  {...actions} {...props} height="100%" width="100%" layout={layout} UNSAFE_style={{background: 'var(--spectrum-global-color-gray-300)'}} aria-label="Test CardView" selectionMode="multiple">
+      {/* TODO fix typescript. it breaks if I remove the items here */}
+      <CardView  {...actions} {...props} height="100%" width="100%" items={[{}]} layout={layout}>
         <Card key="Bob 1" width={1001} height={381} textValue="Bob 1">
           <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
           <Heading>Bob 1</Heading>
@@ -340,7 +402,7 @@ export function StaticCardView(props) {
   );
 }
 
-export function AsyncLoadingCardView(props) {
+function AsyncLoadingCardView(props: SpectrumCardViewProps<object>) {
   interface StarWarsChar {
     name: string,
     url: string
@@ -348,12 +410,14 @@ export function AsyncLoadingCardView(props) {
 
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
-      collator
+      scale,
+      collator,
+      cardOrientation
     })
-  , [collator, scale]);
+  , [collator, scale, cardOrientation]);
   let {
     layout = gridLayout
   } = props;
@@ -378,7 +442,7 @@ export function AsyncLoadingCardView(props) {
 
   return (
     <div style={{width: '800px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-      <CardView {...actions} {...props} height="100%" width="100%" items={list.items} onLoadMore={list.loadMore} loadingState={list.loadingState} layout={layout} UNSAFE_style={{background: 'var(--spectrum-global-color-gray-300)'}} aria-label="Test CardView" selectionMode="multiple">
+      <CardView {...actions} {...props} height="100%" width="100%" items={list.items} onLoadMore={list.loadMore} loadingState={list.loadingState} layout={layout}>
         {(item: any) => (
           <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
             <Image src={item.src} />
@@ -399,24 +463,30 @@ export function AsyncLoadingCardView(props) {
   );
 }
 
-export function CustomLayout(props, layoutOptions) {
+interface LayoutOptions {
+  layoutOptions?: GridLayoutOptions
+}
+
+export function CustomLayout(props: SpectrumCardViewProps<object> & LayoutOptions) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let layoutOptions = props.layoutOptions;
+  let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
-      itemPadding: scale === 'large' ? 116 : 95,
+      scale,
       collator,
+      cardOrientation,
       ...layoutOptions
     })
-  , [collator, scale, layoutOptions]);
+  , [collator, scale, layoutOptions, cardOrientation]);
   let {
     layout = gridLayout,
-    selectionMode = 'multiple',
     ...otherProps
   } = props;
 
   let [value, setValue] = useState('');
-  let [items, setItems] = useState(props.items);
+  let [items, setItems] = useState(props.items as Array<object>);
   let removeItem = () => {
     let val = parseInt(value, 10);
     let newItems = items.slice(0, val).concat(items.slice(val + 1, items.length));
@@ -430,7 +500,7 @@ export function CustomLayout(props, layoutOptions) {
           <TextField value={value} onChange={setValue} label="Nth item to remove" />
           <ActionButton onPress={removeItem}>Remove</ActionButton>
         </Flex>
-        <CardView {...actions} {...otherProps} selectionMode={selectionMode} items={items} layout={layout} width="100%" height="100%" UNSAFE_style={{background: 'var(--spectrum-global-color-gray-300)'}} aria-label="Test CardView">
+        <CardView {...actions} {...otherProps} items={items} layout={layout} width="100%" height="100%">
           {(item: any) => (
             <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
               <Image src={item.src} />

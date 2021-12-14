@@ -5,7 +5,7 @@
   "date": "תאריך",
   "dateRange": "טווח תאריכים",
   "day": "יום",
-  "dayPeriod": "תקופה בימים",
+  "dayPeriod": "לפנה״צ/אחה״צ",
   "endDate": "תאריך סיום",
   "era": "תקופה",
   "hour": "שעה",
@@ -13,5 +13,7 @@
   "month": "חודש",
   "second": "שנייה",
   "startDate": "תאריך התחלה",
-  "year": "שנה"
+  "year": "שנה",
+  "weekday": "יום בשבוע",
+  "timeZoneName": "אזור זמן"
 }

@@ -96,10 +96,12 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
   let isAnchorPressed = useRef(false);
   let isRangeBoundaryPressed = useRef(false);
+  let touchDragTimerRef = useRef(null);
   let {pressProps, isPressed} = usePress({
     // When dragging to select a range, we don't want dragging over the original anchor
     // again to trigger onPressStart. Cancel presses immediately when the pointer exits.
     shouldCancelOnPointerExit: 'anchorDate' in state && !!state.anchorDate,
+    preventFocusOnPress: true,
     isDisabled,
     onPressStart(e) {
       if ('highlightedRange' in state && !state.anchorDate && (e.pointerType === 'mouse' || e.pointerType === 'touch')) {
@@ -109,33 +111,58 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           if (isSameDay(date, state.highlightedRange.start)) {
             state.setAnchorDate(state.highlightedRange.end);
             state.setFocusedDate(date);
+            state.setDragging(true);
             isRangeBoundaryPressed.current = true;
             return;
           } else if (isSameDay(date, state.highlightedRange.end)) {
             state.setAnchorDate(state.highlightedRange.start);
             state.setFocusedDate(date);
+            state.setDragging(true);
             isRangeBoundaryPressed.current = true;
             return;
           }
         }
 
+        let startDragging = () => {
+          state.setDragging(true);
+          touchDragTimerRef.current = null;
+
+          state.selectDate(date);
+          state.setFocusedDate(date);
+          isAnchorPressed.current = true;
+        };
+
         // Start selection on mouse/touch down so users can drag to select a range.
-        state.selectDate(date);
-        state.setFocusedDate(date);
-        isAnchorPressed.current = true;
+        // On touch, delay dragging to determine if the user really meant to scroll.
+        if (e.pointerType === 'touch') {
+          touchDragTimerRef.current = setTimeout(startDragging, 200);
+        } else {
+          startDragging();
+        }
       }
     },
     onPressEnd() {
       isRangeBoundaryPressed.current = false;
       isAnchorPressed.current = false;
+      clearTimeout(touchDragTimerRef.current);
+      touchDragTimerRef.current = null;
     },
     onPress() {
       // For non-range selection, always select on press up.
       if (!('anchorDate' in state)) {
         state.selectDate(date);
+        state.setFocusedDate(date);
       }
     },
     onPressUp(e) {
+      // If the user tapped quickly, the date won't be selected yet and the
+      // timer will still be in progress. In this case, select the date on touch up.
+      // Timer is cleared in onPressEnd.
+      if ('anchorDate' in state && touchDragTimerRef.current) {
+        state.selectDate(date);
+        state.setFocusedDate(date);
+      }
+
       if ('anchorDate' in state) {
         if (isRangeBoundaryPressed.current) {
           // When clicking on the start or end date of an already selected range,
@@ -145,6 +172,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
         } else if (state.anchorDate && !isAnchorPressed.current) {
           // When releasing a drag or pressing the end date of a range, select it.
           state.selectDate(date);
+          state.setFocusedDate(date);
         } else if (e.pointerType === 'keyboard' && !state.anchorDate) {
           // For range selection, auto-advance the focused date by one if using keyboard.
           // This gives an indication that you're selecting a range rather than a single date.
@@ -158,6 +186,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
         } else if (e.pointerType === 'virtual') {
           // For screen readers, just select the date on click.
           state.selectDate(date);
+          state.setFocusedDate(date);
         }
       }
     }
@@ -191,9 +220,9 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       role: 'button',
       'aria-disabled': isDisabled || null,
       'aria-label': label,
-      onPointerEnter() {
+      onPointerEnter(e) {
         // Highlight the date on hover or drag over a date when selecting a range.
-        if ('highlightDate' in state) {
+        if ('highlightDate' in state && (e.pointerType !== 'touch' || state.isDragging)) {
           state.highlightDate(date);
         }
       },
@@ -204,6 +233,10 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
         if ('releasePointerCapture' in e.target) {
           e.target.releasePointerCapture(e.pointerId);
         }
+      },
+      onContextMenu(e) {
+        // Prevent context menu on long press.
+        e.preventDefault();
       }
     }),
     isPressed

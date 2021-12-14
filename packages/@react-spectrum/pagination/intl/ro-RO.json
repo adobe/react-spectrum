@@ -1,3 +1,3 @@
 {
-  "page_count": "sau {n, plural, =one{# pagină} other{# pagini}}"
+  "page_count": "sau {n, plural, one{# pagină} other{# pagini}}"
 }
