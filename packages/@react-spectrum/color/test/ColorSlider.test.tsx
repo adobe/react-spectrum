@@ -25,13 +25,14 @@ describe('ColorSlider', () => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 100);
     // @ts-ignore
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
+    // @ts-ignore
     jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {
     onChangeSpy.mockClear();
     // for restoreTextSelection
-    jest.runAllTimers();
+    act(() => {jest.runAllTimers();});
   });
 
   it('sets input props', () => {

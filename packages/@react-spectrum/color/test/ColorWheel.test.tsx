@@ -43,6 +43,7 @@ describe('ColorWheel', () => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
     // @ts-ignore
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
+    // @ts-ignore
     jest.useFakeTimers('legacy');
   });
 
