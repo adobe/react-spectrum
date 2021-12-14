@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {Content} from '@react-spectrum/view';
+import {Content, Footer} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Heading} from '@react-spectrum/text';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
@@ -19,18 +19,25 @@ import helpStyles from './contextualhelp.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {Link} from '@react-spectrum/link';
 import React from 'react';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 function ContextualHelp(props: SpectrumContextualHelpProps) {
-  let {variant = 'help', title, children, placement = 'bottom end', ...otherProps} = props;
+  let {
+    variant = 'help',
+    title,
+    link,
+    placement = 'bottom end',
+    children,
+    ...otherProps} = props;
+
   let formatMessage = useMessageFormatter(intlMessages);
 
-  let icon = <HelpOutline />;
-  if (variant === 'info') {
-    icon = <InfoOutline />;
-  }
+  let icon = variant === 'info' ? <InfoOutline /> : <HelpOutline />;
+
+  let hasLink = React.isValidElement(link) && link.type === Link;
 
   return (
     <DialogTrigger type="popover" placement={placement} hideArrow {...otherProps}>
@@ -45,6 +52,7 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
         <Content UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-content']}>
           {children}
         </Content>
+        {hasLink && <Footer UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-footer']}>{link}</Footer>}
       </Dialog>
     </DialogTrigger>
   );

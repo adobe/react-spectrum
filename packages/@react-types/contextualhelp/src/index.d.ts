@@ -11,11 +11,12 @@
  */
 
 import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
-import {ReactNode} from 'react';
+import {ReactElement, ReactNode} from 'react';
 
 export interface ContextualHelpProps {
   /** The title of the Contextual Help. */
-  title?: ReactNode
+  title?: ReactNode,
+  link?: ReactElement
 }
 
 export interface SpectrumContextualHelpProps extends ContextualHelpProps, OverlayTriggerProps, PositionProps {

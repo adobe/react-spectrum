@@ -40,4 +40,8 @@
     flex-direction: column;
     margin-top: var(--spectrum-global-dimension-static-size-100);
   }
+
+  .react-spectrum-ContextualHelp-footer {
+    padding-top: var(--spectrum-global-dimension-static-size-100);
+  }
 }

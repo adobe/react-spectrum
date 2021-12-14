@@ -27,11 +27,8 @@ storiesOf('ContextualHelp', module)
 )
 .add(
   'with link',
-  () => (<ContextualHelp title="Help title">
-    <>
-      {helpText()}
-      <Link marginTop="size-100">Learn more</Link>
-    </>
+  () => (<ContextualHelp title="Help title" link={<Link>Learn more</Link>}>
+    {helpText()}
   </ContextualHelp>)
 )
 .add(

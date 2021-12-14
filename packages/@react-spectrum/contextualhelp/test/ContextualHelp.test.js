@@ -90,6 +90,5 @@ describe('ContextualHelp', function () {
 
     const content = getByText('Help content');
     expect(content).toBeVisible();
-    expect(content.nodeName).toBe('SPAN');
   });
 });
