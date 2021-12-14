@@ -33,7 +33,16 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import {
+  useTable,
+  useTableCell,
+  useTableColumnHeader,
+  useTableHeaderRow,
+  useTableRow,
+  useTableRowGroup,
+  useTableSelectAllCheckbox,
+  useTableSelectionCheckbox
+} from '@react-aria/table';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
@@ -123,7 +132,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let {gridProps} = useTable({
     ...props,
     isVirtualized: true,
-    layout
+    layout,
+    onRowAction: onAction
   }, state, domRef);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
@@ -160,7 +170,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           key={reusableView.key}
           item={reusableView.content}
           style={style}
-          onAction={onAction}>
+          hasActions={onAction}>
           {renderChildren(children)}
         </TableRow>
       );
@@ -506,16 +516,15 @@ function TableRowGroup({children, ...otherProps}) {
   );
 }
 
-function TableRow({item, children, onAction, ...otherProps}) {
+function TableRow({item, children, hasActions, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
-  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({
     node: item,
-    isVirtualized: true,
-    onAction: onAction ? () => onAction(item.key) : null
+    isVirtualized: true
   }, state, ref);
 
   let {pressProps, isPressed} = usePress({isDisabled});
