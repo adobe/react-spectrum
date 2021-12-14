@@ -11,6 +11,7 @@
  */
 
 import {GridCollection} from '@react-types/grid';
+import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {Node} from '@react-types/shared';
@@ -23,13 +24,19 @@ export interface GridRowProps<T> {
   isVirtualized?: boolean,
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
-  /** Handler that is called when a user performs an action on the row. */
+  /**
+   * Handler that is called when a user performs an action on the row.
+   * Please use onCellAction at the collection level instead.
+   * @deprecated
+   **/
   onAction?: () => void
 }
 
 export interface GridRowAria {
   /** Props for the grid row element. */
-  rowProps: HTMLAttributes<HTMLElement>
+  rowProps: HTMLAttributes<HTMLElement>,
+  /** Whether the row is currently in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -45,13 +52,14 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     onAction
   } = props;
 
-  let {itemProps} = useSelectableItem({
+  let {actions: {onRowAction}} = gridMap.get(state);
+  let {itemProps, isPressed} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction
+    onAction: onRowAction ? () => onRowAction(node.key) : onAction
   });
 
   let isSelected = state.selectionManager.isSelected(node.key);
@@ -67,6 +75,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   }
 
   return {
-    rowProps
+    rowProps,
+    isPressed
   };
 }

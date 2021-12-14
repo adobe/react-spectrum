@@ -10,21 +10,74 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerField} from './DatePickerField';
+import {classNames} from '@react-spectrum/utils';
+import {createCalendar} from '@internationalized/date';
+import {DatePickerSegment} from './DatePickerSegment';
+import datepickerStyles from './index.css';
 import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
-import {FocusScope} from '@react-aria/focus';
-import React from 'react';
+import {Field} from '@react-spectrum/label';
+import {Input} from './Input';
+import React, {useRef} from 'react';
+import {useDateField} from '@react-aria/datepicker';
+import {useDatePickerFieldState} from '@react-stately/datepicker';
+import {useFormatHelpText} from './utils';
+import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export function DateField<T extends DateValue>(props: SpectrumDatePickerProps<T>) {
   props = useProviderProps(props);
   let {
-    autoFocus
+    autoFocus,
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    isQuiet
   } = props;
 
+  let ref = useRef();
+  let {locale} = useLocale();
+  let state = useDatePickerFieldState({
+    ...props,
+    locale,
+    createCalendar
+  });
+
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useDateField(props, state, ref);
+
+  // Note: this description is intentionally not passed to useDatePicker.
+  // The format help text is unnecessary for screen reader users because each segment already has a label.
+  let description = useFormatHelpText(props);
+  if (description && !props.description) {
+    descriptionProps.id = null;
+  }
+
   return (
-    <FocusScope autoFocus={autoFocus}>
-      <DatePickerField {...props} />
-    </FocusScope>
+    <Field
+      {...props}
+      description={description}
+      labelProps={labelProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      validationState={state.validationState}
+      UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
+      <Input
+        fieldProps={fieldProps}
+        isDisabled={isDisabled}
+        isQuiet={isQuiet}
+        autoFocus={autoFocus}
+        validationState={state.validationState}
+        inputRef={ref}
+        className={classNames(datepickerStyles, 'react-spectrum-DateField')}>
+        {state.segments.map((segment, i) =>
+          (<DatePickerSegment
+            key={i}
+            segment={segment}
+            state={state}
+            isDisabled={isDisabled}
+            isReadOnly={isReadOnly}
+            isRequired={isRequired} />)
+        )}
+      </Input>
+    </Field>
   );
 }

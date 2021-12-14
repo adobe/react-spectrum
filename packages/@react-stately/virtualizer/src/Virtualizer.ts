@@ -935,7 +935,8 @@ export class Virtualizer<T extends object, V, W> {
    * @param duration The duration of the scroll animation.
    */
   scrollToItem(key: Key, options?: ScrollToItemOptions) {
-    if (!key) {
+    // key can be 0, so check if null or undefined
+    if (key == null) {
       return;
     }
 
