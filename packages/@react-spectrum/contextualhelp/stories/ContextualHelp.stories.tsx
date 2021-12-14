@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Flex, Link, Text} from '@adobe/react-spectrum';
+import {Button, Content, Flex, Footer, Heading, Link, Text} from '@adobe/react-spectrum';
 import {ContextualHelp} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -19,36 +19,49 @@ import {storiesOf} from '@storybook/react';
 storiesOf('ContextualHelp', module)
 .add(
   'default',
-  () => <ContextualHelp title="Help title">{helpText()}</ContextualHelp>
+  () => render({heading: 'Help title', description: helpText()})
 )
 .add(
   'type: info',
-  () => <ContextualHelp variant="info" title="Help title">{helpText()}</ContextualHelp>
+  () => render({heading: 'Help title', description: helpText(), variant: 'info'})
 )
 .add(
   'with link',
-  () => (<ContextualHelp title="Help title" link={<Link>Learn more</Link>}>
-    {helpText()}
-  </ContextualHelp>)
+  () => render({heading: 'Help title', description: helpText(), link: <Link>Learn more</Link>})
 )
 .add(
   'with button',
   () => (<Flex alignItems="center">
     <Button variant="primary" isDisabled>Create</Button>
-    <ContextualHelp title="Help title">{helpText()}</ContextualHelp>
+    <ContextualHelp>
+      <Heading>Help title</Heading>
+      <Content>{helpText()}</Content>
+    </ContextualHelp>
   </Flex>)
 )
 .add(
   'trigger events',
-  () => (<ContextualHelp title="Help title" onOpenChange={action('open change')}>{helpText()}</ContextualHelp>)
+  () => render({heading: 'Help title', description: helpText(), onOpenChange: action('open change')})
 )
 .add(
   'placement: bottom',
-  () => (<ContextualHelp title="Help title" placement="bottom" >{helpText()}</ContextualHelp>)
+  () => render({heading: 'Help title', description: helpText(), placement: 'bottom'})
 )
 .add(
   'placement: bottom start',
-  () => (<ContextualHelp title="Help title" placement="bottom start" >{helpText()}</ContextualHelp>)
+  () => render({heading: 'Help title', description: helpText(), placement: 'bottom start'})
 );
 
 const helpText = () => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem.</Text>;
+
+function render(props: any = {}) {
+  let {heading, description, link, ...otherProps} = props;
+
+  return (
+    <ContextualHelp {...otherProps}>
+      {heading && <Heading>{heading}</Heading>}
+      {description && <Content>{description}</Content>}
+      {link}
+    </ContextualHelp>
+  );
+}

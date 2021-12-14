@@ -11,15 +11,9 @@
  */
 
 import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
-import {ReactElement, ReactNode} from 'react';
+import {ReactNode} from 'react';
 
-export interface ContextualHelpProps {
-  /** The title of the Contextual Help. */
-  title?: ReactNode,
-  link?: ReactElement
-}
-
-export interface SpectrumContextualHelpProps extends ContextualHelpProps, OverlayTriggerProps, PositionProps {
+export interface SpectrumContextualHelpProps extends OverlayTriggerProps, PositionProps {
   /** Contents of the Contextual Help popover. */
   children: ReactNode,
   /** Indicates whether contents are informative or provides helpful guidance. */

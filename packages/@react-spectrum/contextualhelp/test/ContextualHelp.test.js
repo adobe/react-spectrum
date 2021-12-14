@@ -17,6 +17,8 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import {Content, Header} from '@react-spectrum/view';
+import {Link} from '@react-spectrum/link';
 
 describe('ContextualHelp', function () {
   beforeAll(() => {
@@ -35,7 +37,9 @@ describe('ContextualHelp', function () {
   it('renders quiet action button', function () {
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
-        <ContextualHelp title="Test title" />
+        <ContextualHelp>
+          <Header>Test title</Header>
+        </ContextualHelp>
       </Provider>
     );
 
@@ -49,7 +53,9 @@ describe('ContextualHelp', function () {
   it('opens a popover', function () {
     let {getByRole, queryByRole, getByTestId, getByText} = render(
       <Provider theme={theme}>
-        <ContextualHelp title="Test title" />
+        <ContextualHelp>
+          <Header>Test title</Header>
+        </ContextualHelp>
       </Provider>
     );
 
@@ -74,7 +80,10 @@ describe('ContextualHelp', function () {
   it('renders content', function () {
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
-        <ContextualHelp title="Test title"><Text>Help content</Text></ContextualHelp>
+        <ContextualHelp>
+          <Header>Test title</Header>
+          <Content>Help content</Content>
+        </ContextualHelp>
       </Provider>
     );
 
@@ -90,5 +99,31 @@ describe('ContextualHelp', function () {
 
     const content = getByText('Help content');
     expect(content).toBeVisible();
+  });
+
+  it('renders a link', function () {
+    let {getByRole, getByText} = render(
+      <Provider theme={theme}>
+        <ContextualHelp>
+          <Header>Test title</Header>
+          <Content>Help content</Content>
+          <Link>Test link</Link>
+        </ContextualHelp>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+
+    const content = getByText('Test link');
+    expect(content).toBeVisible();
+    expect(content.parentElement).toHaveClass('react-spectrum-ContextualHelp-footer');
   });
 });

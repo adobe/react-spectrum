@@ -36,8 +36,6 @@
   --spectrum-dialog-padding-y: var(--spectrum-contextualhelp-dialog-padding);
 
   .react-spectrum-ContextualHelp-content {
-    display: flex;
-    flex-direction: column;
     margin-top: var(--spectrum-global-dimension-static-size-100);
   }
 

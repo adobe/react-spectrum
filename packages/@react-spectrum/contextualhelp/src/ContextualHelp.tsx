@@ -20,15 +20,14 @@ import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Link} from '@react-spectrum/link';
-import React from 'react';
+import React, {ReactElement} from 'react';
+import {SlotProvider} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 function ContextualHelp(props: SpectrumContextualHelpProps) {
   let {
     variant = 'help',
-    title,
-    link,
     placement = 'bottom end',
     children,
     ...otherProps} = props;
@@ -36,8 +35,23 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
   let formatMessage = useMessageFormatter(intlMessages);
 
   let icon = variant === 'info' ? <InfoOutline /> : <HelpOutline />;
+  let link: ReactElement | null = null;
 
-  let hasLink = React.isValidElement(link) && link.type === Link;
+  let dialogSlots: ReactElement[] = [];
+  React.Children.forEach(children, child => {
+    if (React.isValidElement(child)) {
+      if (child.type === Link) {
+        link = child;
+      } else {
+        dialogSlots.push(child);
+      }
+    }
+  });
+
+  let slots = {
+    content: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-content']},
+    footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
+  };
 
   return (
     <DialogTrigger type="popover" placement={placement} hideArrow {...otherProps}>
@@ -47,13 +61,13 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
         aria-label={formatMessage('open')}>
         {icon}
       </ActionButton>
-      <Dialog UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-dialog']}>
-        <Heading>{title}</Heading>
-        <Content UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-content']}>
-          {children}
-        </Content>
-        {hasLink && <Footer UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-footer']}>{link}</Footer>}
-      </Dialog>
+      <SlotProvider slots={slots}>
+        <Dialog UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-dialog']}>
+          {dialogSlots}
+          {link && <Footer>{link}</Footer>}
+        </Dialog>
+      </SlotProvider>
+
     </DialogTrigger>
   );
 }
