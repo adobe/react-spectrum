@@ -16,7 +16,7 @@ import {ListState, useListState} from './useListState';
 import {Node} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 
-export interface SingleSelectListProps<T> extends CollectionBase<T>, SingleSelection {
+export interface SingleSelectListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
   /** @private */
