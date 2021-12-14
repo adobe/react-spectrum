@@ -79,7 +79,6 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
   };
 
   let {longPressProps} = useLongPress({
-    isDisabled: false,
     onLongPressStart() {
       state.close();
     },
