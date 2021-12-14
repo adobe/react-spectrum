@@ -860,6 +860,8 @@ let CustomValueComboBox = (props) => {
     setSelectedKey(key);
   };
 
+  actions['onKeyDown'] = action('onKeyDown');
+
   return (
     <div>
       <div>Selected Key: {selectedKey}</div>
