@@ -13,14 +13,31 @@
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {
   ChangeEvent,
+  DOMFactory,
   HTMLAttributes,
   LabelHTMLAttributes,
+  ReactDOM,
   RefObject
 } from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {IntrinsicHTMLAttributes, IntrinsicHTMLElements} from '@react-types/shared';
 import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
+
+/**
+ * A map of HTML element names and their interface types.
+ * For example `'a'` -> `HTMLAnchorElement`.
+ */
+type IntrinsicHTMLElements = {
+  [K in keyof IntrinsicHTMLAttributes]: IntrinsicHTMLAttributes[K] extends HTMLAttributes<infer T> ? T : never
+};
+
+/**
+ * A map of HTML element names and their attribute interface types.
+ * For example `'a'` -> `AnchorHTMLAttributes<HTMLAnchorElement>`.
+ */
+type IntrinsicHTMLAttributes = {
+  [K in keyof ReactDOM]: ReactDOM[K] extends DOMFactory<infer T, any> ? T : never
+};
 
 type DefaultElementType = 'input';
 

@@ -217,7 +217,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
   let {
     isQuiet,
     isDisabled,
-    isReadOnly,
     validationState,
     inputProps,
     inputRef,
@@ -340,7 +339,6 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
                 'spectrum-FieldButton'
               )
             }
-            isDisabled={isDisabled || isReadOnly}
             isQuiet={isQuiet}
             validationState={validationState}>
             <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
