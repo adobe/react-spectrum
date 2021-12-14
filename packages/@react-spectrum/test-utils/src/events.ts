@@ -55,7 +55,7 @@ export function installPointerEvent() {
   beforeAll(() => {
     // @ts-ignore
     global.PointerEvent = class FakePointerEvent extends MouseEvent {
-      _init: {pageX: number, pageY: number, pointerType: string, pointerId: number};
+      _init: {pageX: number, pageY: number, pointerType: string, pointerId: number, width: number, height: number};
       constructor(name, init) {
         super(name, init);
         this._init = init;
@@ -71,6 +71,12 @@ export function installPointerEvent() {
       }
       get pageY() {
         return this._init.pageY;
+      }
+      get width() {
+        return this._init.width;
+      }
+      get height() {
+        return this._init.height;
       }
     };
   });

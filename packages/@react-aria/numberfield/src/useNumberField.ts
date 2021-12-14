@@ -12,6 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
+import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {
   HTMLAttributes,
   InputHTMLAttributes,
@@ -23,7 +24,6 @@ import {
 } from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useFocus, useFocusWithin} from '@react-aria/interactions';
@@ -172,7 +172,10 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     state.setInputValue(value);
   };
 
+  let domProps = filterDOMProps(props);
+
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
+    ...domProps,
     label,
     autoFocus,
     isDisabled,

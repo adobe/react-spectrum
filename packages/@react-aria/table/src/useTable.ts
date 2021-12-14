@@ -64,8 +64,11 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
     ...props,
     id,
     keyboardDelegate: delegate,
-    getRowText(key) {
+    getRowText(key): string {
       let added = state.collection.getItem(key);
+      if (!added) {
+        return '';
+      }
 
       // If the row has a textValue, use that.
       if (added.textValue != null) {
@@ -114,6 +117,13 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
   }, [sortDescription]);
 
   return {
-    gridProps: mergeProps(gridProps, descriptionProps)
+    gridProps: mergeProps(
+      gridProps,
+      descriptionProps,
+      {
+        // merge sort description with long press information
+        'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')
+      }
+    )
   };
 }

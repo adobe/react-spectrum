@@ -10,39 +10,69 @@
  * governing permissions and limitations under the License.
  */
 
+import {Story as _Story, Meta} from '@storybook/react';
 import {Accordion, Item} from '../src';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
+import {SpectrumAccordionProps} from '@react-types/accordion';
 
-storiesOf('Accordion', module)
-  .add(
-    'default',
-    () => render({})
-  )
-  .add(
-    'disabledKeys: files, shared',
-    () => render({disabledKeys: ['files', 'shared']})
-  )
-  .add('defaultExpandedKeys: files', () => render({
-    defaultExpandedKeys: ['files']
-  }))
-  .add('disabledKeys: files, shared, defaultExpandedKeys: files', () => render({
-    defaultExpandedKeys: ['files'],
-    disabledKeys: ['files', 'shared']
-  }));
+type ItemType = {
+  key: React.Key,
+  title: string
+};
 
-function render(props = {}) {
-  return (
-    <Accordion {...props} >
-      <Item key="files" title="Your files">
-        files
-      </Item>
-      <Item key="shared" title="Shared with you">
-        shared
-      </Item>
-      <Item key="last" title="Last item">
-        last
-      </Item>
-    </Accordion>
-  );
+/**
+ * Helper type so `bind` returns the actual Story type.
+ */
+interface Story<T> extends _Story<T> {
+  bind: (this: ThisParameterType<typeof Function.bind>, thisArg: Parameters<typeof Function.bind>[0], ...argArray: Parameters<typeof Function.bind>[1][]) => _Story<T>
 }
+
+export default {
+  title: 'Accordion',
+  component: Accordion
+} as Meta<SpectrumAccordionProps<ItemType>>;
+
+const AccordionRenderPropsTemplate: Story<SpectrumAccordionProps<ItemType>> = (args) => (
+  <Accordion {...args}>
+    {item => <Item key={item.key} title={item.title}>{item.key}</Item>}
+  </Accordion>
+);
+
+export const Default = AccordionRenderPropsTemplate.bind({});
+Default.storyName = 'default';
+Default.args = {
+  items: [
+    {key: 'files', title: 'Your files'},
+    {key: 'shared', title: 'Shared with you'},
+    {key: 'last', title: 'Last item'}
+  ]
+};
+
+const AccordionTemplate: Story<SpectrumAccordionProps<ItemType>> = (args) => (
+  <Accordion {...args} >
+    <Item key="files" title="Your files">
+      files
+    </Item>
+    <Item key="shared" title="Shared with you">
+      shared
+    </Item>
+    <Item key="last" title="Last item">
+      last
+    </Item>
+  </Accordion>
+);
+
+export const DefaultExpandedKeys = AccordionTemplate.bind({});
+DefaultExpandedKeys.storyName = 'defaultExpandedKeys: files';
+DefaultExpandedKeys.args = {defaultExpandedKeys: ['files']};
+
+export const DisabledKeys = AccordionTemplate.bind({});
+DisabledKeys.storyName = 'disabledKeys: files, shared';
+DisabledKeys.args = {disabledKeys: ['files', 'shared']};
+
+export const DisabledDefaultExpandedKeys =  AccordionTemplate.bind({});
+DisabledDefaultExpandedKeys.storyName = 'defaultExpandedKeys: files, disabledKeys: files, shared';
+DisabledDefaultExpandedKeys.args = {
+  defaultExpandedKeys: ['files'],
+  disabledKeys: ['files', 'shared']
+};

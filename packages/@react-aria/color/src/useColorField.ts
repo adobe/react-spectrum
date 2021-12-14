@@ -112,6 +112,7 @@ export function useColorField(
       'aria-valuenow': null,
       'aria-valuetext': null,
       autoCorrect: 'off',
+      spellCheck: 'false',
       onBlur: commit
     })
   };

@@ -163,6 +163,22 @@ describe('useOverlayPosition', function () {
     fireEvent.scroll(document.body);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('should close the overlay when the document scrolls', function () {
+    let onClose = jest.fn();
+    render(<Example isOpen onClose={onClose} />);
+
+    fireEvent.scroll(document);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should close the overlay when target is window in a scroll event', function () {
+    let onClose = jest.fn();
+    render(<Example isOpen onClose={onClose} />);
+
+    fireEvent.scroll(window);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('useOverlayPosition with positioned container', () => {
