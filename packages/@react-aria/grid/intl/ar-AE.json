@@ -3,5 +3,6 @@
   "select": "تحديد",
   "selectedAll": "جميع العناصر المحددة.",
   "selectedCount": "{count, plural, =0 {لم يتم تحديد عناصر} one {# عنصر محدد} other {# عنصر محدد}}.",
-  "selectedItem": "{item} المحدد"
+  "selectedItem": "{item} المحدد",
+  "longPressToSelect": "Long press to enter selection mode."
 }

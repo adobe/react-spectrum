@@ -25,6 +25,7 @@
     "@react-aria/selection": "^3.7.0",
     "@react-aria/utils": "^3.10.0",
     "@react-stately/grid": "^3.1.0",
+    "@react-stately/selection": "^3.8.0",
     "@react-stately/virtualizer": "^3.1.6",
     "@react-types/checkbox": "^3.2.3",
     "@react-types/grid": "^3.0.0",
