@@ -280,7 +280,6 @@ module.exports = {
       {
         ignore: [
           '@adobe/spectrum-css-temp',
-          '@react/react-spectrum',
           '@spectrum-icons/ui',
           '@spectrum-icons/workflow',
           '@spectrum-icons/illustrations'

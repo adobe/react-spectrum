@@ -17,7 +17,6 @@ import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
-import V2Button from '@react/react-spectrum/Button';
 
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
@@ -37,7 +36,6 @@ describe('Button', function () {
     ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy}}
     ${'Button'}       | ${Button}      | ${{onPress: onPressSpy}}
     ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy}}
-    ${'V2Button'}     | ${V2Button}    | ${{onClick: onPressSpy}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByRole, getByText} = render(<Component {...props}>Click Me</Component>);
 
@@ -55,7 +53,6 @@ describe('Button', function () {
     ${'Button'}       | ${Button}
     ${'ClearButton'}  | ${ClearButton}
     ${'LogicButton'}  | ${LogicButton}
-    ${'V2Button'}     | ${V2Button}
   `('$Name allows custom props to be passed through to the button', function ({Component}) {
     let {getByRole} = render(<Component data-foo="bar">Click Me</Component>);
 
@@ -69,7 +66,6 @@ describe('Button', function () {
     ${'Button'}       | ${Button}
     ${'ClearButton'}  | ${ClearButton}
     ${'LogicButton'}  | ${LogicButton}
-    ${'V2Button'}     | ${V2Button}
   `('$Name supports aria-label', function ({Component}) {
     let {getByRole} = render(<Component aria-label="Test" />);
 
@@ -83,7 +79,6 @@ describe('Button', function () {
     ${'Button'}       | ${Button}
     ${'ClearButton'}  | ${ClearButton}
     ${'LogicButton'}  | ${LogicButton}
-    ${'V2Button'}     | ${V2Button}
   `('$Name supports aria-labelledby', function ({Component}) {
     let {getByRole} = render(
       <>
@@ -102,7 +97,6 @@ describe('Button', function () {
     ${'Button'}       | ${Button}
     ${'ClearButton'}  | ${ClearButton}
     ${'LogicButton'}  | ${LogicButton}
-    ${'V2Button'}     | ${V2Button}
   `('$Name supports aria-describedby', function ({Component}) {
     let {getByRole} = render(
       <>
@@ -121,7 +115,6 @@ describe('Button', function () {
     ${'Button'}       | ${Button}         | ${{UNSAFE_className: 'x-men-first-class'}}
     ${'ClearButton'}  | ${ClearButton}    | ${{UNSAFE_className: 'x-men-first-class'}}
     ${'LogicButton'}  | ${LogicButton}    | ${{UNSAFE_className: 'x-men-first-class'}}
-    ${'V2Button'}     | ${V2Button}       | ${{className: 'x-men-first-class'}}
   `('$Name allows a custom classname on the button', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -135,7 +128,6 @@ describe('Button', function () {
     ${'Button'}       | ${Button}
     ${'ClearButton'}  | ${ClearButton}
     ${'LogicButton'}  | ${LogicButton}
-    ${'V2Button'}     | ${V2Button}
   `('$Name handles deprecated onClick', function ({Component}) {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole} = render(<Component onClick={onPressSpy}>Click Me</Component>);
@@ -143,9 +135,7 @@ describe('Button', function () {
     let button = getByRole('button');
     triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
-    if (Component === Button) {
-      expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
-    }
+    expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
   });
 
   it.each`
@@ -153,7 +143,6 @@ describe('Button', function () {
     ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a'}}
     ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a'}}
     ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, elementType: 'a'}}
-    ${'V2Button'}     | ${V2Button}    | ${{onClick: onPressSpy, element: 'a'}}
   `('$Name can have elementType=a', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -177,7 +166,6 @@ describe('Button', function () {
     ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
     ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
     ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
-    ${'V2Button'}     | ${V2Button}    | ${{onClick: onPressSpy, element: 'a', href: '#only-hash-in-jsdom'}}
   `('$Name can have elementType=a with an href', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
@@ -194,7 +182,6 @@ describe('Button', function () {
     ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, isDisabled: true}}
     ${'ClearButton'}  | ${ClearButton} | ${{onPress: onPressSpy, isDisabled: true}}
     ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, isDisabled: true}}
-    ${'V2Button'}     | ${V2Button}    | ${{onClick: onPressSpy, disabled: true}}
   `('$Name does not respond when disabled', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
