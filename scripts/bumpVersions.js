@@ -47,8 +47,13 @@ class VersionManager {
       // yarn 1.21 returns this structure
       this.workspacePackages = JSON.parse(JSON.parse(exec('yarn workspaces info --json').toString()).data);
     } catch (e) {
-      // if that failed to parse, then it's because we have yarn 1.22 and this is how we need to parse it
-      this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+      try {
+        // I don't know what version of yarn this supports, but it's how the line originally was, so keep it in because devon probably uses it.
+        this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+      } catch (e) {
+        // If that failed to parse, then it's because we have yarn 1.22 and this is how we need to parse it.
+        this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString())
+      }
     }
     this.existingPackages = new Set();
     this.changedPackages = new Set();
