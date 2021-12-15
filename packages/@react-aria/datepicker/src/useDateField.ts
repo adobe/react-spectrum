@@ -32,7 +32,7 @@ interface DateFieldAria {
   errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
-export const labelIds = new WeakMap<DatePickerFieldState, string>();
+export const labelIds = new WeakMap<DatePickerFieldState, {ariaLabelledBy: string, ariaDescribedBy: string}>();
 
 export function useDateField<T extends DateValue>(props: DateFieldProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
@@ -51,7 +51,13 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
   let formatter = useDateFormatter(state.getFormatOptions({month: 'long'}));
   let descProps = useDescription(state.value ? formatter.format(state.dateValue) : null);
 
-  labelIds.set(state, fieldProps['aria-labelledby'] || fieldProps.id);
+  let segmentLabelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
+  let describedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
+
+  labelIds.set(state, {
+    ariaLabelledBy: segmentLabelledBy,
+    ariaDescribedBy: describedBy
+  });
 
   return {
     labelProps: {
@@ -64,7 +70,7 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
     fieldProps: mergeProps(fieldProps, descProps, groupProps, focusWithinProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || undefined,
-      'aria-describedby': [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined
+      'aria-describedby': describedBy
     }),
     descriptionProps,
     errorMessageProps
