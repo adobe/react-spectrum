@@ -43,7 +43,13 @@ let monopackages = new Set([
 class VersionManager {
   constructor() {
     // Get dependency tree from yarn workspaces
-    this.workspacePackages = JSON.parse(JSON.parse(exec('yarn workspaces info --json').toString()).data);
+    try {
+      // yarn 1.21 returns this structure
+      this.workspacePackages = JSON.parse(JSON.parse(exec('yarn workspaces info --json').toString()).data);
+    } catch (e) {
+      // if that failed to parse, then it's because we have yarn 1.22 and this is how we need to parse it
+      this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+    }
     this.existingPackages = new Set();
     this.changedPackages = new Set();
     this.versionBumps = {};
