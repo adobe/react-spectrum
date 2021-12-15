@@ -191,10 +191,6 @@ import {Keyboard, Text} from '@react-spectrum/text';
 
 ## Visual options
 
-### Autofocus
-
-Applying `autoFocus` to the ActionMenu sets focus to the ActionMenu trigger.
-
 ### Quiet
 
 [View guidelines](https://spectrum.adobe.com/page/action-button/#Quiet)
@@ -203,8 +199,6 @@ Applying `autoFocus` to the ActionMenu sets focus to the ActionMenu trigger.
 <ActionMenu
   isQuiet
   items={[
-    {name: 'Undo', id: 'a1b2c3'},
-    {name: 'Redo', id: 'g5h1j9'},
     {name: 'Cut', id: 'p8k3i4'},
     {name: 'Copy', id: 'j7i3a0'},
     {name: 'Paste', id: 't4u8v6'}
@@ -212,6 +206,10 @@ Applying `autoFocus` to the ActionMenu sets focus to the ActionMenu trigger.
   {item => <Item>{item.name}</Item>}
 </ActionMenu>
 ```
+
+### Autofocus
+
+Applying `autoFocus` to the ActionMenu sets focus to the ActionMenu trigger.
 
 ### Disabled items
 
