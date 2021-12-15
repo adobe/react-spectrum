@@ -17,7 +17,7 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-import {Content, Header} from '@react-spectrum/view';
+import {Content, Footer, Header} from '@react-spectrum/view';
 import {Link} from '@react-spectrum/link';
 
 describe('ContextualHelp', function () {
@@ -107,7 +107,9 @@ describe('ContextualHelp', function () {
         <ContextualHelp>
           <Header>Test title</Header>
           <Content>Help content</Content>
-          <Link>Test link</Link>
+          <Footer>
+            <Link>Test link</Link>
+          </Footer>
         </ContextualHelp>
       </Provider>
     );

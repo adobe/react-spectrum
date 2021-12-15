@@ -11,16 +11,13 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {Content, Footer} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {Heading} from '@react-spectrum/text';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
 import helpStyles from './contextualhelp.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Link} from '@react-spectrum/link';
-import React, {ReactElement} from 'react';
+import React from 'react';
 import {SlotProvider} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useMessageFormatter} from '@react-aria/i18n';
@@ -35,18 +32,6 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
   let formatMessage = useMessageFormatter(intlMessages);
 
   let icon = variant === 'info' ? <InfoOutline /> : <HelpOutline />;
-  let link: ReactElement | null = null;
-
-  let dialogSlots: ReactElement[] = [];
-  React.Children.forEach(children, child => {
-    if (React.isValidElement(child)) {
-      if (child.type === Link) {
-        link = child;
-      } else {
-        dialogSlots.push(child);
-      }
-    }
-  });
 
   let slots = {
     content: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-content']},
@@ -63,8 +48,7 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
       </ActionButton>
       <SlotProvider slots={slots}>
         <Dialog UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-dialog']}>
-          {dialogSlots}
-          {link && <Footer>{link}</Footer>}
+          {children}
         </Dialog>
       </SlotProvider>
 

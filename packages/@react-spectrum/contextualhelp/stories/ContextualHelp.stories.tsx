@@ -61,7 +61,7 @@ function render(props: any = {}) {
     <ContextualHelp {...otherProps}>
       {heading && <Heading>{heading}</Heading>}
       {description && <Content>{description}</Content>}
-      {link}
+      {link && <Footer>{link}</Footer>}
     </ContextualHelp>
   );
 }
