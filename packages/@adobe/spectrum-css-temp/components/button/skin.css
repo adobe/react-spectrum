@@ -13,6 +13,8 @@ governing permissions and limitations under the License.
 :root {
   /* Overridden because of the way we draw focus rings */
   --spectrum-actionbutton-quiet-border-size-key-focus: 1px;
+  /* Interactions with overbackground button should match background. Not a DNA token, overridden in WHCM. */
+  --spectrum-button-over-background-color: inherit;
 }
 
 .spectrum-LogicButton,
@@ -209,13 +211,13 @@ governing permissions and limitations under the License.
   &:hover {
     background-color: var(--spectrum-button-over-background-background-color-hover);
     border-color: var(--spectrum-button-over-background-border-color-hover);
-    color: inherit;
+    color: var(--spectrum-button-over-background-color);
   }
 
   &:focus-ring {
     background-color: var(--spectrum-button-over-background-background-color-hover);
     border-color: var(--spectrum-button-over-background-border-color-hover);
-    color: inherit;
+    color: var(--spectrum-button-over-background-color);;
 
     &:after {
       box-shadow: 0 0 0 var(--spectrum-alias-focus-ring-size) var(--spectrum-button-over-background-border-color-key-focus);
@@ -225,7 +227,7 @@ governing permissions and limitations under the License.
   &.is-active {
     background-color: var(--spectrum-button-over-background-background-color-down);
     border-color: var(--spectrum-button-over-background-border-color-down);
-    color: inherit;
+    color: var(--spectrum-button-over-background-color);;
   }
 
   &:disabled,
@@ -1336,26 +1338,14 @@ governing permissions and limitations under the License.
   --spectrum-button-primary-focus-ring-color-key-focus: CanvasText;
   --spectrum-button-primary-focus-ring-size-key-focus: 3px;
   }
+
   .spectrum-Button--overBackground {
-    &:hover {
-      color: ButtonText;
-    } 
-    &:focus-ring {
-      color: ButtonText;
-    }
-    &.is-active {
-      color: ButtonText;
-    }
+    --spectrum-button-over-background-color: ButtonText;
   }
-  .spectrum-ActionButton {
-    &:focus-ring,
-    &.is-focused  {
-        outline: CanvasText solid 3px;
-      
-    }
-  }
+
   .spectrum-ActionButton--staticWhite,
   .spectrum-ActionButton--staticBlack {
+    /* For some reason, making this a var doesn't work, the value is inlined in the css */
     mix-blend-mode: normal;
     --spectrum-actionbutton-static-background-color-hover: ButtonFace;
     --spectrum-actionbutton-static-background-color-focus: ButtonFace;
@@ -1369,31 +1359,16 @@ governing permissions and limitations under the License.
     --spectrum-actionbutton-static-color-selected: HighlightText; /* becomes the background of the parent element due to mix-blend-mode */
     --spectrum-actionbutton-static-color-disabled: GrayText;
   }
-  .spectrum-ActionButton--emphasized {
-    &.spectrum-ActionButton--quiet.is-selected {
-      &:disabled,
-      &.is-disabled {
-        border-color: ButtonFace;
-      }
-    }
-    &.spectrum-ActionButton--quiet {
-      &:hover {
-        background-color: Highlight;
-        color: HighlightText;
-        .spectrum-Icon {
-          fill: HighlightText;
-        }
-        .spectrum-ActionButton-hold {
-          fill: HighlightText;
-        }
-      }
-      &.is-active {
-        background-color: Highlight;
-        color: HighlightText;
-        .spectrum-ActionButton-hold {
-          fill: HighlightText;
-        }
-      }
+
+  .spectrum-ActionButton--emphasized.spectrum-ActionButton--quiet {
+    --spectrum-actionbutton-emphasized-border-color-selected-disabled: ButtonFace;
+    --spectrum-actionbutton-quiet-background-color-hover: Highlight;
+    --spectrum-actionbutton-quiet-text-color-hover: HighlightText;
+    --spectrum-actionbutton-quiet-background-color-down: Highlight;
+    --spectrum-actionbutton-quiet-text-color-down: HighlightText;
+
+    &.is-active {
+      --spectrum-actionbutton-emphasized-icon-color-key-focus: HighlightText;
     }
   }
 }
