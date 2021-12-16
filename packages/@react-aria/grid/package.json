@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/grid",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,14 +22,14 @@
     "@react-aria/i18n": "^3.3.3",
     "@react-aria/interactions": "^3.7.0",
     "@react-aria/live-announcer": "^3.0.1",
-    "@react-aria/selection": "^3.7.0",
-    "@react-aria/utils": "^3.10.0",
+    "@react-aria/selection": "^3.7.1",
+    "@react-aria/utils": "^3.11.0",
     "@react-stately/grid": "^3.1.0",
-    "@react-stately/selection": "^3.8.0",
+    "@react-stately/selection": "^3.9.0",
     "@react-stately/virtualizer": "^3.1.6",
     "@react-types/checkbox": "^3.2.3",
     "@react-types/grid": "^3.0.0",
-    "@react-types/shared": "^3.10.0"
+    "@react-types/shared": "^3.10.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
