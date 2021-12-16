@@ -73,7 +73,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let state = useGridState({
     ...props,
     collection: gridCollection,
-    focusMode: 'cell'
+    focusMode: 'row'
   });
 
   let keyboardDelegate = new GridKeyboardDelegate({

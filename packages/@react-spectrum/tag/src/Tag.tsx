@@ -76,8 +76,6 @@ function TagLabel(props) {
   let {styleProps} = useStyleProps(props);
   let labelRef = useRef();
 
-  console.log(isRemovable);
-
   return (
     <span
       {...styleProps}
