@@ -546,7 +546,7 @@ function AsyncLoadingExample() {
 
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
       return {
@@ -585,7 +585,7 @@ function AsyncLoadingExampleControlledKey() {
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
       return {
@@ -642,7 +642,7 @@ function AsyncLoadingExampleControlledKeyWithReset() {
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
       let selectedText;

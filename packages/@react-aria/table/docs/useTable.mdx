@@ -633,7 +633,7 @@ import {useAsyncList} from '@react-stately/data';
 function AsyncSortTable() {
   let list = useAsyncList({
     async load({signal}) {
-      let res = await fetch(`https://swapi.dev/api/people/?search`, {signal});
+      let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {signal});
       let json = await res.json();
       return {
         items: json.results
