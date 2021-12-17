@@ -4,14 +4,14 @@
   "private": true,
   "main": "MDXTransformer.js",
   "engines": {
-    "parcel": "^2.0.0"
+    "parcel": "2.0.0-nightly.949"
   },
   "dependencies": {
     "@atom-languages/language-typescript": "atom/language-typescript#v0.6.2",
     "@atom-languages/language-css": "atom/language-css#v0.44.4",
     "@mdx-js/mdx": "next",
     "@mdx-js/react": "next",
-    "@parcel/plugin": "^2.0.1",
+    "@parcel/plugin": "2.0.0-nightly.951",
     "dprint-node": "^1.0.2",
     "js-yaml": "^3.13.1",
     "mdast-util-toc": "^6.1.0",
