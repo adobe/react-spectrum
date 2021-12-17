@@ -145,8 +145,12 @@ class VersionManager {
       }
 
       let name = parts.join('/');
-      let pkg = JSON.parse(fs.readFileSync(`packages/${name}/package.json`, 'utf8'));
-      this.changedPackages.add(name);
+      try {
+        let pkg = JSON.parse(fs.readFileSync(`packages/${name}/package.json`, 'utf8'));
+        this.changedPackages.add(name);
+      } catch (err) {
+        console.log(err);
+      }
     }
 
     // Always bump monopackages

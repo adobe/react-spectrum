@@ -120,7 +120,7 @@ function MenuButton(props) {
       {state.isOpen &&
         <MenuPopup
           {...props}
-          domProps={menuProps}
+          {...menuProps}
           autoFocus={state.focusStrategy}
           onClose={() => state.close()} />
       }
