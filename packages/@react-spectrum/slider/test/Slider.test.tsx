@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '../../../../scripts/customRTL';
 import {installMouseEvent} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
@@ -120,11 +120,8 @@ describe('Slider', function () {
   });
 
   it('can be controlled', function () {
-    let renders = [];
-
     function Test() {
       let [value, setValue] = useState(50);
-      renders.push(value);
 
       return (<Slider label="The Label" value={value} onChange={setValue} />);
     }
@@ -141,8 +138,6 @@ describe('Slider', function () {
     expect(slider).toHaveProperty('value', '55');
     expect(slider).toHaveAttribute('aria-valuetext', '55');
     expect(output).toHaveTextContent('55');
-
-    expect(renders).toStrictEqual([50, 55]);
   });
 
   it('supports a custom getValueLabel', function () {

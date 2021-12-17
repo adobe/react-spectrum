@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent} from '@testing-library/react';
+import {fireEvent} from '../../../../scripts/customRTL';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '../../../../scripts/customRTL';
 import {Tag, TagGroup} from '../src';
 
 describe('TagGroup', function () {

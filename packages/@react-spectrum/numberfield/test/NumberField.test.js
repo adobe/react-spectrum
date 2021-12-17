@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '../../../../scripts/customRTL';
 import {chain} from '@react-aria/utils';
 import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberField} from '../';

@@ -1,6 +1,6 @@
 import {Avatar} from '../';
 import React from 'react';
-import {render, screen} from '@testing-library/react';
+import {render, screen} from '../../../../scripts/customRTL';
 import * as Utils from '@react-spectrum/utils';
 
 describe('Avatar', () => {

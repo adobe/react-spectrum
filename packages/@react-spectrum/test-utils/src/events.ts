@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent} from '@testing-library/react';
+import {act, fireEvent} from '../../../../scripts/customRTL';
 import type {ITypeOpts} from '@testing-library/user-event';
 import userEvent from '@testing-library/user-event';
 

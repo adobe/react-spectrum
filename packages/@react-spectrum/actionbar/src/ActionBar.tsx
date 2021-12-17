@@ -31,12 +31,14 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isOpen = props.selectedItemCount !== 0;
+  let nodeRef = useRef(null);
 
   return (
     <OpenTransition
       in={isOpen}
       mountOnEnter
-      unmountOnExit>
+      unmountOnExit
+      nodeRef={nodeRef}>
       <ActionBarInner {...props} ref={ref} />
     </OpenTransition>
   );

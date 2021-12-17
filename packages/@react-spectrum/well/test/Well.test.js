@@ -11,7 +11,7 @@
  */
 
 import React, {useRef} from 'react';
-import {render} from '@testing-library/react';
+import {render} from '../../../../scripts/customRTL';
 import {Well} from '../';
 
 let refExists = (ComponentToCheck, children, props) => {

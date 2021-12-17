@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '../../../../scripts/customRTL';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '../../../../scripts/customRTL';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
@@ -789,7 +789,7 @@ describe('Picker', function () {
       );
 
       let label = getAllByText('Test')[0];
-      label.click();
+      act(() => label.click());
 
       let picker = getByRole('button');
       expect(document.activeElement).toBe(picker);

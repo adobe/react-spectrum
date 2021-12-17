@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, fireEvent, render, screen} from '@testing-library/react';
+import {act, fireEvent, render, screen} from '../../../../scripts/customRTL';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useFocusVisible, useFocusVisibleListener} from '../';

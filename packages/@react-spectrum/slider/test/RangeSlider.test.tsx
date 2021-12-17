@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '../../../../scripts/customRTL';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import {RangeSlider} from '../';
@@ -126,11 +126,8 @@ describe('RangeSlider', function () {
   });
 
   it('can be controlled', function () {
-    let renders = [];
-
     function Test() {
       let [value, setValue] = useState({start: 20, end: 40});
-      renders.push(value);
 
       return (<RangeSlider label="The Label" value={value} onChange={setValue} />);
     }
@@ -153,8 +150,6 @@ describe('RangeSlider', function () {
     expect(sliderRight).toHaveProperty('value', '50');
     expect(sliderRight).toHaveAttribute('aria-valuetext', '50');
     expect(output).toHaveTextContent('30 – 50');
-
-    expect(renders).toStrictEqual([{start: 20, end: 40}, {start: 30, end: 40}, {start: 30, end: 50}]);
   });
 
   it('supports a custom valueLabel', function () {

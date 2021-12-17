@@ -12,8 +12,8 @@
 
 import {Overlay} from '../';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
-import {render} from '@testing-library/react';
+import React, {useRef} from 'react';
+import {render} from '../../../../scripts/customRTL';
 import {theme} from '@react-spectrum/theme-default';
 
 function ExampleOverlay() {
@@ -22,31 +22,44 @@ function ExampleOverlay() {
 
 describe('Overlay', function () {
   it('should render nothing if isOpen is not set', function () {
-    let overlayRef = React.createRef();
-    render(
-      <Provider theme={theme}>
-        <Overlay ref={overlayRef}>
-          <ExampleOverlay />
-        </Overlay>
-      </Provider>
-    );
 
-    expect(overlayRef.current).toBe(null);
+    let Component = () => {
+      let overlayRef = useRef();
+      return (
+        <Provider theme={theme}>
+          <Overlay nodeRef={overlayRef}>
+            <ExampleOverlay />
+          </Overlay>
+        </Provider>
+      );
+    };
+    let {queryByTestId} = render(<Component />);
+
+    expect(queryByTestId('contents')).toBe(null);
   });
 
   it('should render into a portal in the body', function () {
-    let providerRef = React.createRef();
-    let overlayRef = React.createRef();
-    render(
-      <Provider theme={theme} ref={providerRef}>
-        <Overlay isOpen ref={overlayRef}>
-          <ExampleOverlay />
-        </Overlay>
-      </Provider>
-    );
 
-    let overlayNode = overlayRef.current.UNSAFE_getDOMNode();
-    expect(overlayNode).not.toBe(providerRef.current);
+    let Component = () => {
+      let providerRef = useRef();
+      let overlayRef = useRef();
+      return (
+        <Provider data-testid="provider" theme={theme} ref={providerRef}>
+          <Overlay isOpen nodeRef={overlayRef}>
+            <ExampleOverlay />
+          </Overlay>
+        </Provider>
+      );
+    };
+    let {getByTestId} = render(<Component />);
+
+    let contents = getByTestId('contents');
+    expect(contents).toBeInTheDocument();
+
+    let overlayNode = contents.parentNode;
+    let provider = getByTestId('provider');
+
+    expect(overlayNode).not.toBe(provider);
     expect(overlayNode.parentNode).toBe(document.body);
   });
 });

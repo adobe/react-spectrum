@@ -12,7 +12,7 @@
 
 import {Meter} from '../';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '../../../../scripts/customRTL';
 
 describe('Meter', function () {
   it('handles defaults', function () {

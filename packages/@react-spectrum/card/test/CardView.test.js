@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '../../../../scripts/customRTL';
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Button} from '@react-spectrum/button';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';

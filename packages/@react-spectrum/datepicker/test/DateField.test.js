@@ -14,7 +14,7 @@ import {CalendarDate} from '@internationalized/date';
 import {DateField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render as render_} from '@testing-library/react';
+import {render as render_} from '../../../../scripts/customRTL';
 import {theme} from '@react-spectrum/theme-default';
 
 function render(el) {
