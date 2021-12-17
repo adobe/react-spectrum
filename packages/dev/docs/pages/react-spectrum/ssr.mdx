@@ -58,52 +58,17 @@ First, you’ll need to install an additional Next.js plugin:
 yarn add next-transpile-modules
 ```
 
-With this installed, add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js. Note that packages may need to be removed or added to the config below if using an older or newer version of React Spectrum.
+With this installed, add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js.
 
 ```tsx
-const withTM = require("next-transpile-modules")([
-  "@adobe/react-spectrum",
-  "@react-spectrum/actiongroup",
-  "@react-spectrum/breadcrumbs",
-  "@react-spectrum/button",
-  "@react-spectrum/buttongroup",
-  "@react-spectrum/checkbox",
-  "@react-spectrum/combobox",
-  "@react-spectrum/dialog",
-  "@react-spectrum/divider",
-  "@react-spectrum/form",
-  "@react-spectrum/icon",
-  "@react-spectrum/illustratedmessage",
-  "@react-spectrum/image",
-  "@react-spectrum/label",
-  "@react-spectrum/layout",
-  "@react-spectrum/link",
-  "@react-spectrum/listbox",
-  "@react-spectrum/menu",
-  "@react-spectrum/meter",
-  "@react-spectrum/numberfield",
-  "@react-spectrum/overlays",
-  "@react-spectrum/picker",
-  "@react-spectrum/progress",
-  "@react-spectrum/provider",
-  "@react-spectrum/radio",
-  "@react-spectrum/slider",
-  "@react-spectrum/searchfield",
-  "@react-spectrum/statuslight",
-  "@react-spectrum/switch",
-  "@react-spectrum/table",
-  "@react-spectrum/tabs",
-  "@react-spectrum/text",
-  "@react-spectrum/textfield",
-  "@react-spectrum/theme-dark",
-  "@react-spectrum/theme-default",
-  "@react-spectrum/theme-light",
-  "@react-spectrum/tooltip",
-  "@react-spectrum/view",
-  "@react-spectrum/well",
-  "@spectrum-icons/ui",
-  "@spectrum-icons/workflow"
-]);
+const nextTranspileModules = require("next-transpile-modules");
+const getReactSpectrumModules = require("react-spectrum-monorepo/lib/getModules");
+
+// This wraps the Next.js configuration to do some transpilations so that React
+// Spectrum works in Next.js without any errors.
+//
+// Inspired by https://react-spectrum.adobe.com/react-spectrum/ssr.html#nextjs
+const withTM = nextTranspileModules(getReactSpectrumModules());
 
 module.exports = withTM({
   // Your Next.js configuration
