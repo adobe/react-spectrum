@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/datepicker",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,19 +18,19 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@internationalized/message": "^3.0.2",
+    "@internationalized/message": "^3.0.3",
     "@internationalized/number": "^3.0.1",
     "@react-aria/focus": "^3.1.0",
     "@react-aria/i18n": "^3.3.4",
     "@react-aria/interactions": "^3.7.0",
     "@react-aria/label": "^3.2.1",
     "@react-aria/spinbutton": "^3.0.0",
-    "@react-aria/utils": "^3.10.0",
+    "@react-aria/utils": "^3.11.0",
     "@react-stately/datepicker": "3.0.0-alpha.1",
     "@react-types/button": "^3.1.0",
     "@react-types/datepicker": "3.0.0-alpha.1",
     "@react-types/dialog": "^3.1.0",
-    "@react-types/shared": "^3.10.0"
+    "@react-types/shared": "^3.10.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
