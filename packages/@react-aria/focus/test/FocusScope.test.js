@@ -362,10 +362,11 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(outside);
     });
 
-    it('should restore focus to the previously focused node when tabbing away from a child with autoFocus', function () {
+    it('should move focus after the previously focused node when tabbing away from a scope with autoFocus', function () {
       function Test({show}) {
         return (
           <div>
+            <input data-testid="before" />
             <input data-testid="outside" />
             <input data-testid="after" />
             {show &&
@@ -391,6 +392,38 @@ describe('FocusScope', function () {
 
       userEvent.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
+    });
+
+    it('should move focus before the previously focused node when tabbing away from a scope with Shift+Tab', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="before" />
+            <input data-testid="outside" />
+            <input data-testid="after" />
+            {show &&
+              <FocusScope restoreFocus>
+                <input data-testid="input1" autoFocus />
+                <input data-testid="input2" />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let outside = getByTestId('outside');
+      act(() => {outside.focus();});
+
+      rerender(<Test show />);
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(getByTestId('before'));
     });
 
     it('should restore focus to the previously focused node after children change', function () {
@@ -425,7 +458,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(outside);
     });
 
-    it('should move focus to the next element after the previously focused node on Tab', function () {
+    it('should move focus to the element after the previously focused node on Tab', function () {
       function Test({show}) {
         return (
           <div>
@@ -460,7 +493,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(getByTestId('after'));
     });
 
-    it('should move focus to the previous element after the previously focused node on Shift+Tab', function () {
+    it('should move focus to the element before the previously focused node on Shift+Tab', function () {
       function Test({show}) {
         return (
           <div>
