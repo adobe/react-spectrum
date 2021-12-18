@@ -304,6 +304,8 @@ governing permissions and limitations under the License.
 /* additional a11y support by moveing scrolling from content to dialog */
 @media screen and (max-height: 400px) {
   .spectrum-Dialog .spectrum-Dialog-grid {
+    border-top-left-radius: var(--spectrum-dialog-border-radius);
+    border-top-right-radius: var(--spectrum-dialog-border-radius);
     overflow-y: auto;
   }
 
