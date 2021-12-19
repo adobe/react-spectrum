@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "Đã bỏ chọn {item}.",
+  "select": "Chọn",
+  "selectedCount": "{count, plural, =0 {Không chọn} one {Đã chọn #} other {Đã chọn #}}.",
+  "selectedAll": "Đã chọn tất cả.",
+  "selectedItem": "Đã chọn {item}.",
+  "longPressToSelect": "Giữ phím để vào chế độ chọn."
+}
