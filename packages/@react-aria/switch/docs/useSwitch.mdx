@@ -18,10 +18,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@re
 import packageData from '@react-aria/switch/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useSwitch} from '@react-aria/switch';
-```
-
 ---
 category: Forms
 keywords: [switch, input, checkbox, aria]
@@ -91,6 +87,7 @@ indicate focus. The focus ring is only visible when the user is interacting with
 not with a mouse or touch.
 
 ```tsx example
+import {useSwitch} from '@react-aria/switch';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useToggleState} from '@react-stately/toggle';
 import {useFocusRing} from '@react-aria/focus';
