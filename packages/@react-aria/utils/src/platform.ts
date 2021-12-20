@@ -15,8 +15,7 @@ function testUserAgent(re: RegExp) {
     return false;
   }
   return (
-    window.navigator['userAgentData'] &&
-    window.navigator['userAgentData'].brands.some((brand: {brand: string, version: string}) => re.test(brand.brand))
+    window.navigator['userAgentData']?.brands.some((brand: {brand: string, version: string}) => re.test(brand.brand))
   ) ||
   re.test(window.navigator.userAgent);
 }
