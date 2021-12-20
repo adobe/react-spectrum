@@ -320,7 +320,7 @@ function AsyncTable() {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=`, {signal});
       let json = await res.json();
 
       return {
@@ -497,10 +497,14 @@ This example performs client side sorting by passing a `sort` function to the [u
 See the docs for more information on how to perform server side sorting.
 
 ```tsx example
+import { useCollator } from '@react-aria/i18n';
+
 function AsyncSortTable() {
+  let collator = useCollator({numeric: true});
+
   let list = useAsyncList({
     async load({signal}) {
-      let res = await fetch(`https://swapi.dev/api/people/?search`, {signal});
+      let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {signal});
       let json = await res.json();
       return {
         items: json.results
@@ -511,7 +515,7 @@ function AsyncSortTable() {
         items: items.sort((a, b) => {
           let first = a[sortDescriptor.column];
           let second = b[sortDescriptor.column];
-          let cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+          let cmp = collator.compare(first, second);
           if (sortDescriptor.direction === 'descending') {
             cmp *= -1;
           }

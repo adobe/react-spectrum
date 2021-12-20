@@ -15,7 +15,6 @@ import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
 import React from 'react';
 import {render} from '@testing-library/react';
-import V2IllustratedMessage from '@react/react-spectrum/IllustratedMessage';
 
 let dataTestId = 'IMsvg1';
 
@@ -47,7 +46,6 @@ describe('IllustratedMessage', function () {
   it.each`
     Name                       | Component               | props
     ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image />}}
-    ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{heading: 'foo', description: 'bar', illustration: <Image />}}
   `('$Name should render all parts of an IllustratedMessage', function ({Component, props}) {
     let {getByTestId, getByText} = renderIllustratedMessage(Component, props);
 
@@ -59,7 +57,6 @@ describe('IllustratedMessage', function () {
   it.each`
     Name                       | Component               | props
     ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{illustration: <Image />}}
-    ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{illustration: <Image />}}
   `('$Name should render only an svg', function ({Component, props}) {
     let {queryAllByText, getByTestId} = renderIllustratedMessage(Component, props);
 
@@ -71,7 +68,6 @@ describe('IllustratedMessage', function () {
   it.each`
     Name                       | Component               | props
     ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar'}}
-    ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{heading: 'foo', description: 'bar'}}
   `('$Name should render heading and description without an svg', function ({Component, props}) {
     let {queryAllByTestId, getByText} = renderIllustratedMessage(Component, props);
 
