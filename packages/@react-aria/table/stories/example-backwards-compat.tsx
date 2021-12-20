@@ -11,16 +11,24 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import React, {useState} from 'react';
+import React, {ReactNode, useRef, useState} from 'react';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useFocusRing} from '@react-aria/focus';
-import {useRef} from 'react';
-import {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
+import {
+  useTable,
+  useTableCell,
+  useTableColumnHeader,
+  useTableHeaderRow,
+  useTableRow,
+  useTableRowGroup, useTableSelectAllCheckbox,
+  useTableSelectionCheckbox
+} from '../src';
 import {useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 export function Table(props) {
+  let {onAction} = props;
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
   let state = useTableState({
     ...props,
@@ -35,15 +43,7 @@ export function Table(props) {
   let ref = useRef();
   let bodyRef = useRef();
   let {collection} = state;
-  let {gridProps} = useTable(
-    {
-      ...props,
-      onRowAction: props.onAction,
-      scrollRef: bodyRef
-    },
-    state,
-    ref
-  );
+  let {gridProps} = useTable({...props, scrollRef: bodyRef}, state, ref);
 
   return (
     <table {...gridProps} ref={ref} style={{borderCollapse: 'collapse'}}>
@@ -60,7 +60,7 @@ export function Table(props) {
       </TableRowGroup>
       <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
         {[...collection.body.childNodes].map(row => (
-          <TableRow key={row.key} item={row} state={state}>
+          <TableRow key={row.key} item={row} state={state} onAction={onAction}>
             {[...row.childNodes].map(cell =>
               cell.props.isSelectionCell
                 ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
@@ -113,7 +113,7 @@ export function TableColumnHeader({column, state}) {
       ref={ref}>
       {column.rendered}
       {column.props.allowsSorting &&
-        <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
+      <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
           {arrowIcon}
         </span>
       }
@@ -121,10 +121,10 @@ export function TableColumnHeader({column, state}) {
   );
 }
 
-export function TableRow({item, children, state}) {
+export function TableRow({item, children, state, onAction}: {item: any, children: ReactNode, state: any, onAction?: (key: string) => void}) {
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {rowProps} = useTableRow({node: item}, state, ref);
+  let {rowProps} = useTableRow({node: item, onAction: onAction ? () => onAction(item.key) : undefined}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
