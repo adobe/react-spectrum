@@ -126,16 +126,38 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         yield computeVisibleItems(newVisibleItems);
       }
     });
-
-    if (isAfterAction.current) {
-      currentRef.current && currentRef.current.UNSAFE_getDOMNode().focus();
-      isAfterAction.current = false;
-    }
   }, [listRef, setVisibleItems, showRoot, isMultiline, childArray.length]);
 
   useResizeObserver({ref: domRef, onResize: updateOverflow});
 
   useLayoutEffect(updateOverflow, [children, updateOverflow]);
+
+  useLayoutEffect(() => {
+    // Only try to restore focus after an action.
+    if (!isAfterAction.current) {
+      return;
+    }
+    isAfterAction.current = false;
+
+    // Wait a frame for updateOverflow.
+    requestAnimationFrame(() => {
+      if (
+        // Where breadcrumbs exist, 
+        domRef.current &&
+        // the current breadcrumb is defined,
+        currentRef.current &&
+        // and the current focus has either been removed from the DOM,
+        // or is within the breadcrumbs,
+        (
+          document.activeElement === document.body ||
+          domRef.current.contains(document.activeElement)
+        )
+      ) {
+        // focus the current breadcrumb.
+        currentRef.current.UNSAFE_getDOMNode().focus();
+      }
+    });
+  }, [domRef, currentRef, isAfterAction, children]);
 
   function triggerOnAction(key: Key) {
     if (onAction) {
