@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/radio",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -33,14 +33,14 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.4.1",
-    "@react-aria/interactions": "^3.5.1",
-    "@react-aria/radio": "^3.1.5",
-    "@react-spectrum/form": "^3.2.3",
-    "@react-spectrum/label": "^3.3.4",
-    "@react-spectrum/utils": "^3.6.2",
+    "@react-aria/interactions": "^3.7.0",
+    "@react-aria/radio": "^3.1.6",
+    "@react-spectrum/form": "^3.2.4",
+    "@react-spectrum/label": "^3.4.1",
+    "@react-spectrum/utils": "^3.6.3",
     "@react-stately/radio": "^3.3.2",
     "@react-types/radio": "^3.1.2",
-    "@react-types/shared": "^3.8.0"
+    "@react-types/shared": "^3.10.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"

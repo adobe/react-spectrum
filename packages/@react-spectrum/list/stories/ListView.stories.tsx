@@ -204,17 +204,17 @@ storiesOf('ListView', module)
     )))
   .add('dynamic items + renderEmptyState', () => (<EmptyTest />))
   .add('selectionStyle: highlight', () => (
-    <ListView width="250px" height={400} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))
   .add('selectionStyle: highlight, onAction', () => (
-    <ListView width="250px" height={400} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))
   .add('selectionMode: none, onAction', () => (
-    <ListView width="250px" height={400} selectionMode="none" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionMode="none" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
       {item => <Item>{item.name}</Item>}
     </ListView>
   ));
