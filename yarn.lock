@@ -8917,10 +8917,10 @@ downshift@^6.0.6:
     prop-types "^15.7.2"
     react-is "^17.0.1"
 
-dprint-node@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/dprint-node/-/dprint-node-1.0.2.tgz#798042034bc78ade4d95be96dcf0f77e5c57e947"
-  integrity sha512-bShvKgR8fWlkl5hUiobssKklMrksOL50Q4JZzuXG2O915qKfJvI8Fz54seqHp4Q0BPm0wa8H5BQ1m1qsKHPmTQ==
+dprint-node@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/dprint-node/-/dprint-node-1.0.3.tgz#ba3f094a238bbd239f9cd4a3d176e64847f20ee6"
+  integrity sha512-AXGjYJAwOuBaZ0TsZ/YFclTAAOIgLVlVLxpN7C7KWwClZlUdbP1s7IYjLRUn0XZAVSbTkW0gSF+cE4PTNejD3Q==
   dependencies:
     detect-libc "^1.0.3"
 
