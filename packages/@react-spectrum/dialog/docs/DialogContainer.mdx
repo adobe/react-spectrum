@@ -12,6 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/dialog';
 import {HeaderInfo, PropTable, FunctionAPI} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/dialog/package.json';
 
 ```jsx import
@@ -84,7 +85,7 @@ dialog to be rendered within the DialogContainer.
 
 This example also demonstrates the use of the `useDialogContainer` hook, which allows the dialog to dismiss itself when a user
 presses one of the buttons inside it. This triggers the DialogContainer's `onDismiss` event, which resets the state storing the
-open dialog back to `null`. In addition, the user can close the dialog using the <kbd>Escape</kbd> key (unless the
+open dialog back to `null`. In addition, the user can close the dialog using the <Keyboard>Escape</Keyboard> key (unless the
 `isKeyboardDismissDisabled` prop is set), or by clicking outside (if the `isDismissable` prop is set).
 
 ```tsx example

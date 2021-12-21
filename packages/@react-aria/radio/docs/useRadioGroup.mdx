@@ -15,6 +15,7 @@ import hiddenDocs from 'docs:@react-aria/visually-hidden';
 import focusDocs from 'docs:@react-aria/focus';
 import statelyDocs from 'docs:@react-stately/radio';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/radio/package.json';
 import Anatomy from './anatomy.svg';
 
@@ -65,8 +66,8 @@ radio groups that can be styled as needed.
 A radio group consists of a set of radio buttons, and a label. Each radio
 includes a label and a visual selection indicator. A single radio button
 within the group can be selected at a time. Users may click or touch a radio
-button to select it, or use the <kbd>Tab</kbd> key to navigate to the group, the arrow keys
-to navigate within the group, and the <kbd>Space</kbd> key to select an option.
+button to select it, or use the <Keyboard>Tab</Keyboard> key to navigate to the group, the arrow keys
+to navigate within the group, and the <Keyboard>Space</Keyboard> key to select an option.
 
 `useRadioGroup` returns props for the group and its label, which you should spread
 onto the appropriate element:

@@ -12,6 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-aria/overlays';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/overlays/package.json';
 
 ---
@@ -31,7 +32,7 @@ keywords: [dialog, modal, tray, popover, aria]
 
 `DismissButton` is a visually hidden button that can be used by screen reader users to close an overlay
 in the absence of a visual dismiss button. This may typically be used with a menu or a popover since they often
-forgo a visual dismiss button, instead allowing users to use the <kbd>Escape</kbd> key to dismiss the menu or popover.
+forgo a visual dismiss button, instead allowing users to use the <Keyboard>Escape</Keyboard> key to dismiss the menu or popover.
 
 ## Props
 

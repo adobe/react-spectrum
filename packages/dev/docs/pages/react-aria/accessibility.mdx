@@ -10,6 +10,8 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
+import {Keyboard} from '@react-spectrum/text';
+
 ---
 category: Concepts
 ---
@@ -88,7 +90,7 @@ take over the entire screen, we cannot rely on touch interactions. This means th
 to a screen reader, including things that would typically be handled by keyboard interactions.
 
 For example, to close a dialog or popover, mouse and touchscreen users typically click or tap outside. Keyboard users
-can press the <kbd>Escape</kbd> key. On desktop, this may be enough for screen reader users, but on mobile there is no
+can press the <Keyboard>Escape</Keyboard> key. On desktop, this may be enough for screen reader users, but on mobile there is no
 keyboard available. So, we must ensure there is a way for screen reader users to access this functionality without a keyboard.
 React Aria allows you to handle this by placing a hidden button inside the dialog or popover that screen reader users can
 navigate to in order to close it.

@@ -14,6 +14,7 @@ import docs from 'docs:@react-aria/searchfield';
 import statelyDocs from 'docs:@react-stately/searchfield';
 import buttonDocs from 'docs:@react-aria/button';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/searchfield/package.json';
 import Anatomy from './anatomy.svg';
 
@@ -49,8 +50,8 @@ search fields that can be styled as needed.
 
 * Built with a native `<input type="search">` element
 * Visual and ARIA labeling support
-* Keyboard submit handling via the <kbd>Enter</kbd> key
-* Keyboard support for clearing the search field with the <kbd>Escape</kbd> key
+* Keyboard submit handling via the <Keyboard>Enter</Keyboard> key
+* Keyboard support for clearing the search field with the <Keyboard>Escape</Keyboard> key
 * Custom clear button support with internationalized label for accessibility
 * Support for description and error message help text linked to the input via ARIA
 
@@ -60,8 +61,8 @@ search fields that can be styled as needed.
 
 Search fields consist of an input element, a label, and an optional clear button.
 `useSearchField` automatically manages the labeling and relationships between the elements,
-and handles keyboard events. Users can press the <kbd>Escape</kbd> key to clear the search field, or
-the <kbd>Enter</kbd> key to trigger the `onSubmit` event.
+and handles keyboard events. Users can press the <Keyboard>Escape</Keyboard> key to clear the search field, or
+the <Keyboard>Enter</Keyboard> key to trigger the `onSubmit` event.
 
 `useSearchField` also supports optional description and error message elements, which can be used
 to provide more context about the field, and any validation messages. These are linked with the

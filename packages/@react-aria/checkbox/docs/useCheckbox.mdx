@@ -15,6 +15,7 @@ import hiddenDocs from 'docs:@react-aria/visually-hidden';
 import focusDocs from 'docs:@react-aria/focus';
 import statelyDocs from 'docs:@react-stately/toggle';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/checkbox/package.json';
 import Anatomy from './checkbox-anatomy.svg';
 
@@ -61,7 +62,7 @@ that can be styled as needed.
 
 A checkbox consists of a visual selection indicator and a label. Checkboxes support three
 selection states: checked, unchecked, and indeterminate. Users may click or touch a checkbox
-to toggle the selection state, or use the <kbd>Tab</kbd> key to navigate to it and the <kbd>Space</kbd> key to toggle it.
+to toggle the selection state, or use the <Keyboard>Tab</Keyboard> key to navigate to it and the <Keyboard>Space</Keyboard> key to toggle it.
 
 `useCheckbox` returns props to be spread onto its input element:
 

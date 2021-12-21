@@ -13,6 +13,7 @@ export default Layout;
 import docs from 'docs:@react-aria/tabs';
 import statelyDocs from 'docs:@react-stately/tabs';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/tabs/package.json';
 import Anatomy from './anatomy.svg';
 
@@ -61,7 +62,7 @@ Tabs provide a list of tabs that a user can select from to switch between multip
 <Anatomy />
 
 Tabs consist of a tab list with one or more visually separated tabs. Each tab has associated content, and only the selected tab's content is shown.
-Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on the `keyboardActivation` prop, the tab can be selected by receiving keyboard focus, or it can be selected with the <kbd>Enter</kbd> key.
+Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on the `keyboardActivation` prop, the tab can be selected by receiving keyboard focus, or it can be selected with the <Keyboard>Enter</Keyboard> key.
 
 `useTabList` returns props to spread onto the tab list container:
 
