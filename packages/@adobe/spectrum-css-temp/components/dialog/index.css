@@ -313,6 +313,14 @@ governing permissions and limitations under the License.
     overflow-y: visible;
     height: min-content;
   }
+
+  .spectrum-Dialog-footer {
+    min-width: fit-content;
+  }
+
+  .spectrum-Dialog-buttonGroup {
+    min-width: 0;
+  }
 }
 
 @media screen and (max-width: 700px) {
