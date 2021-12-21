@@ -84,7 +84,7 @@ storiesOf('Dialog', module)
   )
   .add(
     'three buttons, footer',
-    () => renderWithThreeButtonsAndFooter({})
+    () => <RenderWithThreeButtonsAndFooter />
   )
   .add(
     'cleared content',
@@ -484,7 +484,7 @@ function renderWithThreeButtonsVertical({width = 'auto', ...props}) {
   );
 }
 
-function renderWithThreeButtonsAndFooter({width = 'auto', ...props}) {
+function RenderWithThreeButtonsAndFooter({width = 'auto', ...props}) {
   let labels = [
     {
       checkboxLabel: 'I have read and accept',
@@ -495,7 +495,7 @@ function renderWithThreeButtonsAndFooter({width = 'auto', ...props}) {
       secondaryButtonLabel: 'Secondary and best button',
       primaryButtonLabel: 'Primary and worst'
     }
-  ]
+  ];
   let [whichLabels, setWhichLabels] = useState(0);
   console.log('whichLabels', whichLabels);
   console.log('labels[whichLabels]', labels[whichLabels]);
