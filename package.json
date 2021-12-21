@@ -47,7 +47,7 @@
     "copy-build-to-dist": "node scripts/copyBuildToDist.js",
     "clean-for-code-diff": "node scripts/cleanForCodeDiff.js",
     "compare-code": "diff -rq dist/published-packages dist/build-packages",
-    "check:built": "node scripts/getPublishedCode.js && yarn build && yarn copy-build-to-dist && yarn clean-for-code-diff && compare-code"
+    "check:built": "yarn get-published-code && yarn build && yarn copy-build-to-dist && yarn clean-for-code-diff && yarn compare-code"
   },
   "workspaces": [
     "packages/react-stately",
