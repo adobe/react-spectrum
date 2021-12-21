@@ -192,7 +192,7 @@ The `loadingState` prop is also used to show the appropriate loading indicator d
 ```tsx
 let list = useAsyncList({
   async load({signal, filterText}) {
-    let res = await fetch(`https://swapi.dev/api/people/?search=${filterText}`, {signal});
+    let res = await fetch(`https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
     let json = await res.json();
 
     return {
