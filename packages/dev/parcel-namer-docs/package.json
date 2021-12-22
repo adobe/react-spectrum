@@ -4,9 +4,9 @@
   "private": true,
   "main": "DocsNamer.js",
   "engines": {
-    "parcel": ">= 2.0.0-alpha.3.2"
+    "parcel": "2.0.0-nightly.949"
   },
   "dependencies": {
-    "@parcel/plugin": "nightly"
+    "@parcel/plugin": "2.0.0-nightly.951"
   }
 }
