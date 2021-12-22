@@ -369,6 +369,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   // The menu button shouldn't act like an actual action group item.
   delete buttonProps.onPress;
   delete buttonProps.role;
+  delete buttonProps['aria-checked'];
 
   let {hoverProps, isHovered} = useHover({isDisabled});
 
