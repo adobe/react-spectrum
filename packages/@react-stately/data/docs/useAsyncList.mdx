@@ -135,7 +135,7 @@ let list = useAsyncList({
   async load({signal}) {
     // Same load function as before
   },
-  async sort({items, sortDescriptor}) {
+  sort({items, sortDescriptor}) {
     return {
       items: items.sort((a, b) => {
         // Compare the items by the sorted column
@@ -192,7 +192,7 @@ The `loadingState` prop is also used to show the appropriate loading indicator d
 ```tsx
 let list = useAsyncList({
   async load({signal, filterText}) {
-    let res = await fetch(`https://swapi.dev/api/people/?search=${filterText}`, {signal});
+    let res = await fetch(`https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
     let json = await res.json();
 
     return {
