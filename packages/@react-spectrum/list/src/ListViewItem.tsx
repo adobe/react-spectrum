@@ -50,7 +50,7 @@ export function ListViewItem(props) {
   let {rowProps} = useGridRow({
     node: item,
     isVirtualized: true,
-    onAction: onAction ? () => onAction(item.key) : null
+    onAction: onAction ? () => onAction(item.key) : undefined
     // TODO: Need to figure out a way to make drag start and row selection toggling not happen at the same time (currently they both trigger on press start).
     // shouldSelectOnPressUp here doesn't quite work since clicking on the a button in the row will toggle selection since the row's onPressUp triggers (usePress has a document level onPointerUp listener)
     // A possible solution maybe to have selection logic be aware of drag and drop like it is in usePress and have selection toggling happen in onPress instead of onPressStart if
