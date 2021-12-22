@@ -44,6 +44,7 @@ describe('ColorField', function () {
     expect(colorField).toHaveAttribute('type', 'text');
     expect(colorField).toHaveAttribute('autocomplete', 'off');
     expect(colorField).toHaveAttribute('autocorrect', 'off');
+    expect(colorField).toHaveAttribute('spellcheck', 'false');
     expect(colorField).not.toHaveAttribute('readonly');
     expect(colorField).not.toBeInvalid();
     expect(colorField).not.toBeDisabled();
