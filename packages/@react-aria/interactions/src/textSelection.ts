@@ -21,52 +21,75 @@ import {isIOS, runAfterTransition} from '@react-aria/utils';
 // There are three possible states due to the delay before removing user-select: none after
 // pointer up. The 'default' state always transitions to the 'disabled' state, which transitions
 // to 'restoring'. The 'restoring' state can either transition back to 'disabled' or 'default'.
+
+// For non-iOS devices, we apply user-select: none to the pressed element instead to avoid possible
+// performance issues that arise from applying and removing user-select: none to the entire page
+// (see https://github.com/adobe/react-spectrum/issues/1609).
 type State = 'default' | 'disabled' | 'restoring';
 
+// Note that state only matters here for iOS. Non-iOS gets user-select: none applied to the target element
+// rather than at the document level so we just need to apply/remove user-select: none for each pressed element individually
 let state: State = 'default';
 let savedUserSelect = '';
+let modifiedElementMap = new WeakMap<HTMLElement, string>();
 
-export function disableTextSelection() {
-  // Limit this behavior to iOS only. Android devices don't text select nearby element
-  // when long pressing on a different element.
-  if (!isIOS()) {
-    return;
+export function disableTextSelection(target?: HTMLElement) {
+  if (isIOS()) {
+    if (state === 'default') {
+      savedUserSelect = document.documentElement.style.webkitUserSelect;
+      document.documentElement.style.webkitUserSelect = 'none';
+    }
+
+    state = 'disabled';
+  } else if (target) {
+    // If not iOS, store the target's original user-select and change to user-select: none
+    // Ignore state since it doesn't apply for non iOS
+    modifiedElementMap.set(target, target.style.userSelect);
+    target.style.userSelect = 'none';
   }
-
-  if (state === 'default') {
-    savedUserSelect = document.documentElement.style.webkitUserSelect;
-    document.documentElement.style.webkitUserSelect = 'none';
-  }
-
-  state = 'disabled';
 }
 
-export function restoreTextSelection() {
-  // If the state is already default, there's nothing to do.
-  // If it is restoring, then there's no need to queue a second restore.
-  // Limit this behavior to iOS only. Android devices don't text select nearby element
-  // when long pressing on a different element.
-  if (state !== 'disabled' || !isIOS()) {
-    return;
-  }
+export function restoreTextSelection(target?: HTMLElement) {
+  if (isIOS()) {
+    // If the state is already default, there's nothing to do.
+    // If it is restoring, then there's no need to queue a second restore.
+    if (state !== 'disabled') {
+      return;
+    }
 
-  state = 'restoring';
+    state = 'restoring';
 
-  // There appears to be a delay on iOS where selection still might occur
-  // after pointer up, so wait a bit before removing user-select.
-  setTimeout(() => {
-    // Wait for any CSS transitions to complete so we don't recompute style
-    // for the whole page in the middle of the animation and cause jank.
-    runAfterTransition(() => {
-      // Avoid race conditions
-      if (state === 'restoring') {
-        if (document.documentElement.style.webkitUserSelect === 'none') {
-          document.documentElement.style.webkitUserSelect = savedUserSelect || '';
+    // There appears to be a delay on iOS where selection still might occur
+    // after pointer up, so wait a bit before removing user-select.
+    setTimeout(() => {
+      // Wait for any CSS transitions to complete so we don't recompute style
+      // for the whole page in the middle of the animation and cause jank.
+      runAfterTransition(() => {
+        // Avoid race conditions
+        if (state === 'restoring') {
+          if (document.documentElement.style.webkitUserSelect === 'none') {
+            document.documentElement.style.webkitUserSelect = savedUserSelect || '';
+          }
+
+          savedUserSelect = '';
+          state = 'default';
         }
+      });
+    }, 300);
+  } else {
+    // If not iOS, restore the target's original user-select if any
+    // Ignore state since it doesn't apply for non iOS
+    if (target && modifiedElementMap.has(target)) {
+      let targetOldUserSelect = modifiedElementMap.get(target);
 
-        savedUserSelect = '';
-        state = 'default';
+      if (target.style.userSelect === 'none') {
+        target.style.userSelect = targetOldUserSelect;
       }
-    });
-  }, 300);
+
+      if (target.getAttribute('style') === '') {
+        target.removeAttribute('style');
+      }
+      modifiedElementMap.delete(target);
+    }
+  }
 }

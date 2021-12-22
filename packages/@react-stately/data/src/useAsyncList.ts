@@ -32,7 +32,8 @@ export interface AsyncListOptions<T, C> {
   sort?: AsyncListLoadFunction<T, C>
 }
 
-type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => Promise<AsyncListStateUpdate<T, C>>;
+type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
+
 interface AsyncListLoadOptions<T, C> {
   /** The items currently in the list. */
   items: T[],

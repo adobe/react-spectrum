@@ -13,15 +13,18 @@
 import {Dispatch, useCallback, useRef, useState} from 'react';
 import {useLayoutEffect} from './';
 
-type SetValueAction = () => Generator<any, void, unknown>;
+type SetValueAction<S> = (prev: S) => Generator<any, void, unknown>;
 
 // This hook works like `useState`, but when setting the value, you pass a generator function
 // that can yield multiple values. Each yielded value updates the state and waits for the next
 // layout effect, then continues the generator. This allows sequential updates to state to be
 // written linearly.
-export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<SetValueAction>] {
+export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<SetValueAction<S>>] {
   let [value, setValue] = useState(defaultValue);
+  let valueRef = useRef(value);
   let effect = useRef(null);
+
+  valueRef.current = value;
 
   // Store the function in a ref so we can always access the current version
   // which has the proper `value` in scope.
@@ -54,7 +57,7 @@ export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<Set
   });
 
   let queue = useCallback(fn => {
-    effect.current = fn();
+    effect.current = fn(valueRef.current);
     nextRef.current();
   }, [effect, nextRef]);
 

@@ -56,5 +56,7 @@ export interface RangeCalendarState extends CalendarStateBase {
   highlightDate(date: CalendarDate): void,
   anchorDate: CalendarDate | null,
   setAnchorDate(date: CalendarDate | null): void,
-  highlightedRange: RangeValue<CalendarDate>
+  highlightedRange: RangeValue<CalendarDate>,
+  isDragging: boolean,
+  setDragging(isDragging: boolean): void
 }
