@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/view';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/view/package.json';
 
 ```jsx import
@@ -24,7 +24,7 @@ category: Content
 
 # Content
 
-<p>{docs.exports.Content.description}</p>
+<PageDescription>{docs.exports.Content.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}

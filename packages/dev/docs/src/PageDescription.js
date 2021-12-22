@@ -10,16 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Image';
-export * from './Highlights';
-export * from './Layout';
-export * from './PropTable';
-export * from './VersionBadge';
-export * from './HeaderInfo';
-export * from './ResourceCard';
-export * from './types';
-export * from './FunctionAPI';
-export * from './TypeLink';
-export * from './ClassAPI';
-export * from './PostListing';
-export * from './PageDescription';
+import React from 'react';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+
+export function PageDescription({children}) {
+  return <p className={typographyStyles['spectrum-Body3']}>{children}</p>;
+}

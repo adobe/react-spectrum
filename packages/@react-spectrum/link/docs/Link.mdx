@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/link';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/link/package.json';
 
 ```jsx import
@@ -25,7 +25,7 @@ category: Navigation
 
 # Link
 
-<p>{docs.exports.Link.description}</p>
+<PageDescription>{docs.exports.Link.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}

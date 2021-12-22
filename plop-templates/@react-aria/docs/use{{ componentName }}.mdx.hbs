@@ -12,7 +12,7 @@ export default Layout;
 
 *Additional types can be imported via a direct path to the *.d.ts file if need be. See the useComboBox.mdx for an example.*
 import docs from 'docs:@react-aria/{{packageName}}';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/{{packageName}}/package.json';
 import Anatomy from './{{packageName}}Anatomy.svg'
 
@@ -29,7 +29,7 @@ after_version: 3.0.0-alpha.0
 
 # use{{componentName}}
 
-<p>{docs.exports.use{{componentName}}.description}</p>
+<PageDescription>{docs.exports.use{{componentName}}.description}</PageDescription>
 
 *Be sure to update the W3C url below if applicable to your hook, otherwise omit the sourceData prop.*
 <HeaderInfo
