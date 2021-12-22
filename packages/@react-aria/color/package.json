@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/color",
-  "version": "3.0.0-beta.5",
+  "version": "3.0.0-beta.6",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,10 +23,10 @@
     "@react-aria/i18n": "^3.3.3",
     "@react-aria/interactions": "^3.7.0",
     "@react-aria/slider": "^3.0.3",
-    "@react-aria/utils": "^3.10.0",
+    "@react-aria/utils": "^3.11.0",
     "@react-stately/color": "3.0.0-beta.5",
     "@react-types/color": "3.0.0-beta.3",
-    "@react-types/shared": "^3.10.0",
+    "@react-types/shared": "^3.10.1",
     "@react-types/slider": "^3.0.2"
   },
   "peerDependencies": {
