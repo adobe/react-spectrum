@@ -483,7 +483,7 @@ function responsiveCode(node, force) {
 
 function formatCode(node, code, printWidth = 80, force = false) {
   if (!force && code.split('\n').every(line => line.length <= printWidth)) {
-    return code.replace(/^\(<WRAPPER>((?:.|\n)*)<\/WRAPPER>\);?\s*$/m, '$1');
+    return code.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, '$1');
   }
 
   if (node.lang === 'css') {
@@ -498,7 +498,7 @@ function formatCode(node, code, printWidth = 80, force = false) {
     'importDeclaration.spaceSurroundingNamedImports': false
   });
 
-  return res.replace(/^\(<WRAPPER>((?:.|\n)*)<\/WRAPPER>\);?\s*$/m, (str, contents) =>
+  return res.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, (str, contents) =>
     contents.replace(/^\s{2}/gm, '').trim()
   );
 }
