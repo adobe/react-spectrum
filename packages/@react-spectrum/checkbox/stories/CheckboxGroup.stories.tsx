@@ -59,6 +59,14 @@ storiesOf('CheckboxGroup', module)
     () => render({}, [{}, {isDisabled: true}, {}])
   )
   .add(
+    'isDisabled two checkboxes and one checked',
+    () => render({defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}])
+  )
+  .add(
+    'isEmphasized, isDisabled two checkboxes and one checked',
+    () => render({isEmphasized: true, defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}])
+  )
+  .add(
     'isDisabled on one checkbox horizontal',
     () => render({orientation: 'horizontal'}, [{}, {isDisabled: true}, {}])
   )
