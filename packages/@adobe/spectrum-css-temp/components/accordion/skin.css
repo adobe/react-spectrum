@@ -62,3 +62,10 @@ governing permissions and limitations under the License.
     }
   }
 }
+@media (forced-colors: active) {
+  .spectrum-Accordion-itemHeader {
+    &:focus-ring {
+      outline: 3px solid CanvasText;
+    }
+  }
+}
