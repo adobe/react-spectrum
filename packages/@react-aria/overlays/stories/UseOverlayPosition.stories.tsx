@@ -20,9 +20,10 @@ import {useOverlayTriggerState} from '@react-stately/overlays';
 
 function Trigger(props: {
   withPortal: boolean,
-  placement: Placement
+  placement: Placement,
+  maxHeight?: number
 }) {
-  const {withPortal, placement} = props;
+  const {withPortal, placement, maxHeight} = props;
   const targetRef = React.useRef<HTMLButtonElement>(null);
   const overlayRef = React.useRef<HTMLDivElement>(null);
   const state = useOverlayTriggerState({
@@ -37,7 +38,8 @@ function Trigger(props: {
     shouldFlip: false,
     isOpen: state.isOpen,
     offset: 10,
-    placement
+    placement,
+    maxHeight
   });
 
   let overlay = (
@@ -56,11 +58,10 @@ function Trigger(props: {
           margin: 0,
           listStyleType: 'none'
         }}>
-        <li>Hello</li>
-        <li>Hello</li>
-        <li>Hello</li>
-        <li>Hello</li>
-        <li>Hello</li>
+        {maxHeight
+          ? [...Array(20)].map((_, i) => <li>Hello {i}</li>)
+          : [...Array(5)].map((_, i) => <li>Hello {i}</li>)
+        }
       </ul>
     </div>
   );
@@ -80,4 +81,6 @@ storiesOf('UseOverlayPosition', module)
   .add('document.body container bottom', () => <Trigger withPortal placement="bottom" />)
   .add('document.body container top', () => <Trigger withPortal placement="top" />)
   .add('positioned container bottom', () => <Trigger withPortal={false} placement="bottom" />)
-  .add('positioned container top', () => <Trigger withPortal={false} placement="top" />);
+  .add('positioned container top', () => <Trigger withPortal={false} placement="top" />)
+  .add('maxHeight=200 container bottom', () => <Trigger withPortal maxHeight={200} placement="bottom" />)
+  .add('maxHeight=200 container top', () => <Trigger withPortal maxHeight={200} placement="top" />);

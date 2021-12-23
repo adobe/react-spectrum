@@ -79,7 +79,10 @@ module.exports = {
     'expect': true,
     'JSX': 'readonly',
     'NodeJS': 'readonly',
-    'AsyncIterable': 'readonly'
+    'AsyncIterable': 'readonly',
+    'FileSystemFileEntry': 'readonly',
+    'FileSystemDirectoryEntry': 'readonly',
+    'FileSystemEntry': 'readonly'
   },
   settings: {
     jsdoc: {
@@ -280,7 +283,6 @@ module.exports = {
       {
         ignore: [
           '@adobe/spectrum-css-temp',
-          '@react/react-spectrum',
           '@spectrum-icons/ui',
           '@spectrum-icons/workflow',
           '@spectrum-icons/illustrations'

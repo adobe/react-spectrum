@@ -24,10 +24,12 @@ import {ImageContext} from './Image';
 import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
+import pageStyles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import path from 'path';
 import React from 'react';
 import ruleStyles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import {SlotProvider} from '@react-spectrum/utils';
 import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
@@ -70,8 +72,7 @@ const mdxComponents = {
   ol: ({children, ...props}) => <ol {...props} className={typographyStyles['spectrum-Body3']}>{children}</ol>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  a: ({children, ...props}) => <a {...props} className={clsx(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(props.href)}>{children}</a>,
-  kbd: ({children, ...props}) => <kbd {...props} className={docStyles['keyboard']}>{children}</kbd>
+  a: ({children, ...props}) => <a {...props} className={clsx(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(props.href)}>{children}</a>
 };
 
 const sectionTitles = {
@@ -116,7 +117,8 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
       dir="ltr"
       prefix="og: http://ogp.me/ns#"
       className={clsx(
-        theme.global.spectrum,
+        pageStyles.spectrum,
+        Object.values(theme.global),
         theme.light['spectrum--light'],
         theme.medium['spectrum--medium'],
         typographyStyles.spectrum,
@@ -396,7 +398,9 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
             <ImageContext.Provider value={publicUrl}>
               <LinkProvider>
                 <PageContext.Provider value={{pages, currentPage}}>
-                  {children}
+                  <SlotProvider slots={{keyboard: {UNSAFE_className: docStyles['keyboard']}}}>
+                    {children}
+                  </SlotProvider>
                 </PageContext.Provider>
               </LinkProvider>
             </ImageContext.Provider>
