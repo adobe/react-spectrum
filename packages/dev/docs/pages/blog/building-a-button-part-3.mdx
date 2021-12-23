@@ -1,16 +1,17 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import focusRingVideoUrl from 'url:../assets/focus-ring.mp4';
 import keyboardSettingsImageUrl from 'url:../assets/keyboard-settings.png';
 
 import {BlogPostLayout, Video, Image} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 export default BlogPostLayout;
 
 ---
@@ -29,9 +30,9 @@ This is the last post in our three part series on building a button component. I
 
 Keyboard navigation allows users who cannot physically use a mouse or touch screen, for example due to a motor disability, to navigate an application. As an additional benefit, it can also allow power users to navigate your application more quickly, without lifting their hands from the keyboard.
 
-At a high level, keyboard navigation is broken into **tab stops**, which may be navigated by pressing the <kbd>Tab</kbd> key to move to the next tab stop, and <kbd>Shift</kbd> + <kbd>Tab</kbd> to move to the previous tab stop. A tab stop may be an atomic component like a text field or button, or a composite component like a listbox, radio group, grid, or toolbar. Composite components behave as a single tab stop. Elements within a composite component are typically navigated with the arrow keys, while the <kbd>Tab</kbd> key continues to navigate to the next/previous tab stop.
+At a high level, keyboard navigation is broken into **tab stops**, which may be navigated by pressing the <Keyboard>Tab</Keyboard> key to move to the next tab stop, and <Keyboard>Shift</Keyboard> + <Keyboard>Tab</Keyboard> to move to the previous tab stop. A tab stop may be an atomic component like a text field or button, or a composite component like a listbox, radio group, grid, or toolbar. Composite components behave as a single tab stop. Elements within a composite component are typically navigated with the arrow keys, while the <Keyboard>Tab</Keyboard> key continues to navigate to the next/previous tab stop.
 
-Keyboard navigation relies on the concept of **focus**. At any given time, a single element on screen is considered the **active element**, which is the element that will receive keyboard events. As the user navigates around, either with the keyboard or via a pointer or assistive technology, the active element updates and the `focus` and `blur` events are fired. The browser only handles the <kbd>Tab</kbd> key by default, so any time we need more advanced keyboard behavior, we need to implement it in JavaScript. This is commonly referred to as **focus management**.
+Keyboard navigation relies on the concept of **focus**. At any given time, a single element on screen is considered the **active element**, which is the element that will receive keyboard events. As the user navigates around, either with the keyboard or via a pointer or assistive technology, the active element updates and the `focus` and `blur` events are fired. The browser only handles the <Keyboard>Tab</Keyboard> key by default, so any time we need more advanced keyboard behavior, we need to implement it in JavaScript. This is commonly referred to as **focus management**.
 
 There are many aspects of focus management, and perhaps we will cover more in future posts, but today we’ll discuss focus rings, and normalizing browser differences in focus behavior.
 
@@ -44,7 +45,7 @@ An important feature for keyboard users is a **focus ring**. This is a visual af
 
 As you can see in the above video, the focus ring appears around each button when it receives keyboard focus, but when the user interacts with a mouse it does not appear. To implement this, we attach global event listeners for pointer, keyboard, and focus events at the document level and keep track of the most recent input modality that the user was interacting with. If the user most recently interacted with a keyboard or assistive technology, we show the focus ring, otherwise we do not show it.
 
-There are many nuances to this, however. For example, when clicking a text input to focus it with the mouse, and then typing into it, we want to keep the mouse focus style and not switch to keyboard focus. In this case, we only show the keyboard focus ring if the user presses a navigation key such as <kbd>Tab</kbd>.  Another case where a keyboard event occurs but we do not show the keyboard focus ring is for keyboard shortcuts with modifiers such as <kbd>Ctrl</kbd>, <kbd>Cmd</kbd>, or <kbd>Alt</kbd>. These keys are likely performing a command rather than navigating, so it makes sense to keep the current input modality the same.
+There are many nuances to this, however. For example, when clicking a text input to focus it with the mouse, and then typing into it, we want to keep the mouse focus style and not switch to keyboard focus. In this case, we only show the keyboard focus ring if the user presses a navigation key such as <Keyboard>Tab</Keyboard>.  Another case where a keyboard event occurs but we do not show the keyboard focus ring is for keyboard shortcuts with modifiers such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, or <Keyboard>Alt</Keyboard>. These keys are likely performing a command rather than navigating, so it makes sense to keep the current input modality the same.
 
 Another challenge is that focus events may occur without any preceding user event. For example, when navigating through a form with the next and previous buttons on the software keyboard in iOS, only a focus event is fired, with no keyboard or pointer events before it. This can also occur when navigating with an assistive technology like a screen reader. In these cases, we don’t know how the navigation occurred, so we default to showing the focus ring to ensure the user knows where focus went.
 
