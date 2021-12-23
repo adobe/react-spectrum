@@ -39,6 +39,7 @@ let outerBlur = jest.fn();
 let onFocus = jest.fn();
 let onBlur = jest.fn();
 let onLoadMore = jest.fn();
+let onKeyDown = jest.fn();
 
 let defaultProps = {
   label: 'Test',
@@ -937,7 +938,7 @@ describe('ComboBox', function () {
     });
 
     it('closes menu and resets selected key if allowsCustomValue=true and no item is focused', function () {
-      let {getByRole, queryByRole} = render(<ExampleComboBox allowsCustomValue selectedKey="2" />);
+      let {getByRole, queryByRole} = render(<ExampleComboBox allowsCustomValue selectedKey="2" onKeyDown={onKeyDown} />);
 
       let combobox = getByRole('combobox');
       act(() => combobox.focus());
@@ -959,6 +960,7 @@ describe('ComboBox', function () {
       });
 
       expect(queryByRole('listbox')).toBeNull();
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith(null);
       expect(onOpenChange).toHaveBeenCalledTimes(2);

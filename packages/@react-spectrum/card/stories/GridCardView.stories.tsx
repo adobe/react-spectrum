@@ -429,7 +429,7 @@ function AsyncLoadingCardView(props: SpectrumCardViewProps<object>) {
       }
       let items = [];
       await new Promise(resolve => setTimeout(resolve, 1500));
-      let res = await fetch(cursor || 'https://swapi.dev/api/people/?search', {signal});
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search', {signal});
       let json = await res.json();
       items = json.results.map((element, index) => ({...getImageFullData(index), title: element.name}));
 

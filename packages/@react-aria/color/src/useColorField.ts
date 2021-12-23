@@ -98,6 +98,7 @@ export function useColorField(
     mergeProps(props, {
       id: inputId,
       value: inputValue,
+      defaultValue: undefined,
       type: 'text',
       autoComplete: 'off',
       onChange
