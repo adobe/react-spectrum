@@ -396,7 +396,7 @@ governing permissions and limitations under the License.
   &:disabled,
   &.is-disabled {
     background-color: var(--spectrum-actionbutton-background-color-disabled);
-    border-color: var(--spectrum-actionbutton-border-color);
+    border-color: var(--spectrum-actionbutton-border-color-disabled);
     color: var(--spectrum-actionbutton-text-color-disabled);
 
     .spectrum-Icon {
