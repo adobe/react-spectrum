@@ -235,6 +235,8 @@ export function usePress(props: PressHookProps): PressResult {
             e.stopPropagation();
           }
           if (isValid ||
+            // If the target is a link, but the currentTarget containing it is something else, 
+            // like a table row, treat the space key as a valid keyboard event as well.
             (
               currentTarget !== target &&
               isLinkRole(target as HTMLElement) &&
@@ -258,18 +260,12 @@ export function usePress(props: PressHookProps): PressResult {
         }
       },
       onKeyUp(e) {
-        const {currentTarget, target, nativeEvent, repeat} = e;
+        const {currentTarget = state.target, target, nativeEvent, repeat} = e;
         if (
           !repeat &&
           currentTarget.contains(target as HTMLElement) &&
-          (
-            isValidKeyboardEvent(nativeEvent) ||
-            (
-              currentTarget !== target &&
-              isLinkRole(target as HTMLElement) &&
-              isSpaceKey(nativeEvent)
-            )
-          )) {
+          isValidKeyboardEvent(nativeEvent, currentTarget)
+        ) {
           triggerPressUp(createEvent(state.target, e), 'keyboard');
         }
       },
@@ -716,9 +712,9 @@ function isLinkRole(target: HTMLElement): boolean {
   return isHTMLAnchorLink(target) || target.getAttribute('role') === 'link';
 }
 
-function isValidKeyboardEvent(event: KeyboardEvent): boolean {
+function isValidKeyboardEvent(event: KeyboardEvent, currentTarget?: HTMLElement): boolean {
   const {target} = event;
-  const element = target as HTMLElement;
+  const element = (currentTarget || target) as HTMLElement;
   const role = element.getAttribute('role');
   const isEnter = isEnterKey(event);
 
@@ -727,10 +723,13 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
   return (
     (isEnter || isSpaceKey(event)) &&
     !isEditableText(event) &&
-    // A link with a valid href should be handled natively,
-    // unless it also has role='button' and was triggered using Space.
-    (!isHTMLAnchorLink(element) || (role === 'button' && !isEnter)) &&
-    // An element with role='link' should only trigger with Enter key
+    (
+      // A link with a valid href should be handled natively,
+      !isHTMLAnchorLink(element) || 
+      // unless it also has role='button' and was triggered using Space.
+      (role === 'button' && !isEnter)
+    ) &&
+    // An element with role='link' should only trigger with Enter key.
     !(role === 'link' && !isEnter)
   );
 }
