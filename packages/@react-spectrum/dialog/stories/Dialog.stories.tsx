@@ -497,8 +497,6 @@ function RenderWithThreeButtonsAndFooter({width = 'auto', ...props}) {
     }
   ];
   let [whichLabels, setWhichLabels] = useState(0);
-  console.log('whichLabels', whichLabels);
-  console.log('labels[whichLabels]', labels[whichLabels]);
 
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
