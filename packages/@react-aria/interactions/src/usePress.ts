@@ -329,7 +329,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // If the target is a link, trigger the click method to open the URL,
         // but defer triggering pressEnd until onClick event handler.
-        if (state.target.contains(target) && isLinkRole(target as HTMLElement)) {
+        if (state.target.contains(target) && isLinkRole(state.target as HTMLElement)) {
           state.target.click();
         }
       }
