@@ -24,7 +24,8 @@ import {SpectrumFormProps} from '@react-types/form';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
 const meta: Meta<SpectrumFormProps> = {
-  title: 'Form'
+  title: 'Form',
+  component: Form
 };
 
 export default meta;

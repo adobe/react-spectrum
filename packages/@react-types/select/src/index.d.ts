@@ -29,7 +29,7 @@ import {
   Validation
 } from '@react-types/shared';
 
-export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, Omit<InputBase, 'isReadOnly'>, Validation, HelpTextProps, LabelableProps, TextInputBase, SingleSelection, FocusableProps {
+export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, Omit<InputBase, 'isReadOnly'>, Validation, HelpTextProps, LabelableProps, TextInputBase, Omit<SingleSelection, 'disallowEmptySelection'>, FocusableProps {
   /** Sets the open state of the menu. */
   isOpen?: boolean,
   /** Sets the default open state of the menu. */
@@ -44,6 +44,10 @@ export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, Omit<I
 }
 
 export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps, FocusableDOMProps {
+  /**
+   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   */
+  autoComplete?: string,
   /**
    * The name of the input, used when submitting an HTML form.
    */

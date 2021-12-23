@@ -35,7 +35,9 @@ export interface PressProps extends PressEvents {
    * still pressed, onPressStart will be fired again. If set to `true`, the press is canceled
    * when the pointer leaves the target and onPressStart will not be fired if the pointer returns.
    */
-  shouldCancelOnPointerExit?: boolean
+  shouldCancelOnPointerExit?: boolean,
+  /** Whether text selection should be enabled on the pressable element. */
+  allowTextSelectionOnPress?: boolean
 }
 
 export interface PressHookProps extends PressProps {
@@ -99,6 +101,7 @@ export function usePress(props: PressHookProps): PressResult {
     isPressed: isPressedProp,
     preventFocusOnPress,
     shouldCancelOnPointerExit,
+    allowTextSelectionOnPress,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb,
     ...domProps
@@ -217,7 +220,9 @@ export function usePress(props: PressHookProps): PressResult {
         state.activePointerId = null;
         state.pointerType = null;
         removeAllGlobalListeners();
-        restoreTextSelection();
+        if (!allowTextSelectionOnPress) {
+          restoreTextSelection(state.target);
+        }
       }
     };
 
@@ -259,7 +264,7 @@ export function usePress(props: PressHookProps): PressResult {
 
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
-          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && isVirtualClick(e.nativeEvent)) {
+          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))) {
             // Ensure the element receives focus (VoiceOver on iOS does not do this)
             if (!isDisabled && !preventFocusOnPress) {
               focusWithoutScrolling(e.currentTarget);
@@ -282,12 +287,13 @@ export function usePress(props: PressHookProps): PressResult {
         e.stopPropagation();
 
         state.isPressed = false;
-        triggerPressEnd(createEvent(state.target, e), 'keyboard', e.target === state.target);
+        let target = e.target as HTMLElement;
+        triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
 
         // If the target is a link, trigger the click method to open the URL,
         // but defer triggering pressEnd until onClick event handler.
-        if (e.target === state.target && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link') {
+        if (state.target.contains(target) && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link') {
           state.target.click();
         }
       }
@@ -300,15 +306,22 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
+        // iOS safari fires pointer events from VoiceOver with incorrect coordinates/target.
+        // Ignore and let the onClick handler take care of it instead.
+        // https://bugs.webkit.org/show_bug.cgi?id=222627
+        // https://bugs.webkit.org/show_bug.cgi?id=223202
+        if (isVirtualPointerEvent(e.nativeEvent)) {
+          state.pointerType = 'virtual';
+          return;
+        }
+
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on pointer down and handle focusing the pressable element ourselves.
         if (shouldPreventDefault(e.target as Element)) {
           e.preventDefault();
         }
 
-        // iOS safari fires pointer events from VoiceOver (but only when outside an iframe...)
-        // https://bugs.webkit.org/show_bug.cgi?id=222627
-        state.pointerType = isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType;
+        state.pointerType = e.pointerType;
 
         e.stopPropagation();
         if (!state.isPressed) {
@@ -321,7 +334,10 @@ export function usePress(props: PressHookProps): PressResult {
             focusWithoutScrolling(e.currentTarget);
           }
 
-          disableTextSelection();
+          if (!allowTextSelectionOnPress) {
+            disableTextSelection(state.target);
+          }
+
           triggerPressStart(e, state.pointerType);
 
           addGlobalListener(document, 'pointermove', onPointerMove, false);
@@ -348,7 +364,8 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onPointerUp = (e) => {
-        if (!e.currentTarget.contains(e.target as HTMLElement)) {
+        // iOS fires pointerup with zero width and height, so check the pointerType recorded during pointerdown.
+        if (!e.currentTarget.contains(e.target as HTMLElement) || state.pointerType === 'virtual') {
           return;
         }
 
@@ -356,7 +373,7 @@ export function usePress(props: PressHookProps): PressResult {
         // Safari on iOS sometimes fires pointerup events, even
         // when the touch isn't over the target, so double check.
         if (e.button === 0 && isOverTarget(e, e.currentTarget)) {
-          triggerPressUp(e, state.pointerType || (isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType));
+          triggerPressUp(e, state.pointerType || e.pointerType);
         }
       };
 
@@ -395,7 +412,9 @@ export function usePress(props: PressHookProps): PressResult {
           state.activePointerId = null;
           state.pointerType = null;
           removeAllGlobalListeners();
-          restoreTextSelection();
+          if (!allowTextSelectionOnPress) {
+            restoreTextSelection(state.target);
+          }
         }
       };
 
@@ -526,7 +545,10 @@ export function usePress(props: PressHookProps): PressResult {
           focusWithoutScrolling(e.currentTarget);
         }
 
-        disableTextSelection();
+        if (!allowTextSelectionOnPress) {
+          disableTextSelection(state.target);
+        }
+
         triggerPressStart(e, state.pointerType);
 
         addGlobalListener(window, 'scroll', onScroll, true);
@@ -579,7 +601,9 @@ export function usePress(props: PressHookProps): PressResult {
         state.activePointerId = null;
         state.isOverTarget = false;
         state.ignoreEmulatedMouseEvents = true;
-        restoreTextSelection();
+        if (!allowTextSelectionOnPress) {
+          restoreTextSelection(state.target);
+        }
         removeAllGlobalListeners();
       };
 
@@ -616,13 +640,17 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [addGlobalListener, isDisabled, preventFocusOnPress, removeAllGlobalListeners]);
+  }, [addGlobalListener, isDisabled, preventFocusOnPress, removeAllGlobalListeners, allowTextSelectionOnPress]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
-    return () => restoreTextSelection();
-  }, []);
+    return () => {
+      if (!allowTextSelectionOnPress) {
+        restoreTextSelection(ref.current.target);
+      }
+    };
+  }, [allowTextSelectionOnPress]);
 
   return {
     isPressed: isPressedProp || isPressed,
@@ -635,14 +663,14 @@ function isHTMLAnchorLink(target: HTMLElement): boolean {
 }
 
 function isValidKeyboardEvent(event: KeyboardEvent): boolean {
-  const {key, target} = event;
+  const {key, code, target} = event;
   const element = target as HTMLElement;
   const {tagName, isContentEditable} = element;
   const role = element.getAttribute('role');
   // Accessibility for keyboards. Space and Enter only.
   // "Spacebar" is for IE 11
   return (
-    (key === 'Enter' || key === ' ' || key === 'Spacebar') &&
+    (key === 'Enter' || key === ' ' || key === 'Spacebar' || code === 'Space') &&
     (tagName !== 'INPUT' &&
       tagName !== 'TEXTAREA' &&
       isContentEditable !== true) &&
@@ -739,5 +767,16 @@ function shouldPreventDefault(target: Element) {
 
 function isVirtualPointerEvent(event: PointerEvent) {
   // If the pointer size is zero, then we assume it's from a screen reader.
-  return event.width === 0 && event.height === 0;
+  // Android TalkBack double tap will sometimes return a event with width and height of 1
+  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
+  // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
+  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
+  return (
+    (event.width === 0 && event.height === 0) ||
+    (event.width === 1 &&
+      event.height === 1 &&
+      event.pressure === 0 &&
+      event.detail === 0
+    )
+  );
 }

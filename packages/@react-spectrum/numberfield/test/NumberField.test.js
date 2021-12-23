@@ -58,11 +58,10 @@ describe('NumberField', function () {
 
     let root = props.label ? container.firstChild.firstChild : undefined;
     container = within(container).queryByRole('group');
-    let textField = container.firstChild;
+    let textField = within(container).queryByRole('textbox');
     let buttons = within(container).queryAllByRole('button');
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
-    textField = textField.firstChild;
     return {
       root,
       container,
@@ -2132,6 +2131,12 @@ describe('NumberField', function () {
     expect(textField.value).toBe('123');
     expect(textField.selectionStart).toBe(1);
     expect(textField.selectionEnd).toBe(1);
+  });
+
+  it('adds data attributes to textField', () => {
+    let {textField} = renderNumberField({'data-testid': '123'});
+
+    expect(textField).toHaveAttribute('data-testid', '123');
   });
 
   describe('locale specific', () => {
