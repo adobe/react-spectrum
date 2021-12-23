@@ -15,10 +15,6 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/interactions/package.json';
 
-```jsx import
-import {useHover} from '@react-aria/interactions';
-```
-
 ---
 category: Interactions
 keywords: [pointer hover, point events, hover events, aria]
@@ -89,6 +85,8 @@ list below. It also uses the `isHovered` state to adjust the background
 color when the target is hovered.
 
 ```tsx example
+import {useHover} from '@react-aria/interactions';
+
 function Example() {
   let [events, setEvents] = React.useState([]);
   let {hoverProps, isHovered} = useHover({

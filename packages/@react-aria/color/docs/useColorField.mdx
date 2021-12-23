@@ -16,10 +16,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import packageData from '@react-aria/color/package.json';
 import Anatomy from './ColorFieldAnatomy.svg';
 
-```jsx import
-import {useColorField} from '@react-aria/color';
-```
-
 ---
 category: Color
 keywords: [color, input, color picker, aria]
@@ -80,6 +76,7 @@ to identify the element to screen readers.
 ## Example
 
 ```tsx example export=true
+import {useColorField} from '@react-aria/color';
 import {useColorFieldState} from '@react-stately/color';
 
 function ColorField(props) {

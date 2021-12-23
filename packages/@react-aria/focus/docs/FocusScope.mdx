@@ -15,10 +15,6 @@ import {HeaderInfo, PropTable, FunctionAPI, TypeLink, ClassAPI, PageDescription}
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/focus/package.json';
 
-```tsx import
-import {FocusScope, useFocusManager} from '@react-aria/focus';
-```
-
 ---
 category: Focus
 keywords: [focus scope, keyboard focus, focus management, aria]
@@ -68,6 +64,8 @@ button unmounts the focus scope, which restores focus back to the button.
 For a full example of building a modal dialog, see [useDialog](useDialog.html).
 
 ```tsx example
+import {FocusScope} from '@react-aria/focus';
+
 function Example() {
   let [isOpen, setOpen] = React.useState(false);
   return (
@@ -93,6 +91,8 @@ right arrow keys to move focus to the previous and next buttons. The `wrap` opti
 used to make focus wrap around when it reaches the first or last button.
 
 ```tsx example
+import {useFocusManager} from '@react-aria/focus';
+
 function Toolbar(props) {
   return (
     <div role="toolbar">

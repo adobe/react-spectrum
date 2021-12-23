@@ -17,10 +17,6 @@ import statelyDocs from 'docs:@react-stately/slider';
 import i18nDocs from 'docs:@react-aria/i18n';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useSlider, useSliderThumb} from '@react-aria/slider';
-```
-
 ---
 category: Sliders
 keywords: [slider, range, aria]
@@ -113,6 +109,7 @@ using the [VisuallyHidden](VisuallyHidden.html) component. The thumb also uses t
 display using a different color when it is keyboard focused (try tabbing to it).
 
 ```tsx example
+import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {useSliderState} from '@react-stately/slider';
 import {useFocusRing} from '@react-aria/focus';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
