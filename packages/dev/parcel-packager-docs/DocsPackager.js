@@ -44,7 +44,7 @@ module.exports = new Packager({
     function _processAsset(asset, res) {
       let obj = processCode(asset, code.get(asset.id));
       for (let [exported] of asset.symbols) {
-        let {asset: resolvedAsset, exportSymbol} = bundleGraph.resolveSymbol(asset, exported);
+        let {asset: resolvedAsset, exportSymbol} = bundleGraph.getSymbolResolution(asset, exported);
         let processed = resolvedAsset.id === asset.id ? obj : processAsset(resolvedAsset);
 
         if (exportSymbol === '*') {
@@ -65,7 +65,7 @@ module.exports = new Packager({
       for (let dep of deps) {
         let wildcard = dep.symbols.get('*');
         if (wildcard && wildcard.local === '*') {
-          let resolved = bundleGraph.getDependencyResolution(dep, bundle);
+          let resolved = bundleGraph.getResolvedAsset(dep, bundle);
           Object.assign(res, processAsset(resolved));
         }
       }
@@ -77,8 +77,8 @@ module.exports = new Packager({
       let keyStack = [];
       return walk(obj, (t, k, recurse) => {
         if (t && t.type === 'reference') {
-          let dep = bundleGraph.getDependencies(asset).find(d => d.moduleSpecifier === t.specifier);
-          let res = bundleGraph.getDependencyResolution(dep, bundle);
+          let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier);
+          let res = bundleGraph.getResolvedAsset(dep, bundle);
           let result = res ? processAsset(res)[t.imported] : null;
           if (result) {
             t = result;
