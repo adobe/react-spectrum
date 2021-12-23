@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -13,7 +13,8 @@ export default Layout;
 import docs from 'docs:@react-aria/searchfield';
 import statelyDocs from 'docs:@react-stately/searchfield';
 import buttonDocs from 'docs:@react-aria/button';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/searchfield/package.json';
 import Anatomy from './anatomy.svg';
 
@@ -28,7 +29,7 @@ keywords: [searchbox, input, search, aria]
 
 # useSearchField
 
-<p>{docs.exports.useSearchField.description}</p>
+<PageDescription>{docs.exports.useSearchField.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -49,8 +50,8 @@ search fields that can be styled as needed.
 
 * Built with a native `<input type="search">` element
 * Visual and ARIA labeling support
-* Keyboard submit handling via the <kbd>Enter</kbd> key
-* Keyboard support for clearing the search field with the <kbd>Escape</kbd> key
+* Keyboard submit handling via the <Keyboard>Enter</Keyboard> key
+* Keyboard support for clearing the search field with the <Keyboard>Escape</Keyboard> key
 * Custom clear button support with internationalized label for accessibility
 * Support for description and error message help text linked to the input via ARIA
 
@@ -60,8 +61,8 @@ search fields that can be styled as needed.
 
 Search fields consist of an input element, a label, and an optional clear button.
 `useSearchField` automatically manages the labeling and relationships between the elements,
-and handles keyboard events. Users can press the <kbd>Escape</kbd> key to clear the search field, or
-the <kbd>Enter</kbd> key to trigger the `onSubmit` event.
+and handles keyboard events. Users can press the <Keyboard>Escape</Keyboard> key to clear the search field, or
+the <Keyboard>Enter</Keyboard> key to trigger the `onSubmit` event.
 
 `useSearchField` also supports optional description and error message elements, which can be used
 to provide more context about the field, and any validation messages. These are linked with the

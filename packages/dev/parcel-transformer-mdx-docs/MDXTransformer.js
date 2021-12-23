@@ -11,17 +11,11 @@
  */
 
 const {Transformer} = require('@parcel/plugin');
-const mdx = require('@mdx-js/mdx');
 const flatMap = require('unist-util-flatmap');
 const treeSitter = require('remark-tree-sitter');
 const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
-const frontmatter = require('remark-frontmatter');
-const slug = require('remark-slug');
-const util = require('mdast-util-toc');
 const yaml = require('js-yaml');
-const prettier = require('prettier');
-const {parse} = require('@babel/parser');
-const traverse = require('@babel/traverse').default;
+const dprint = require('dprint-node');
 const t = require('@babel/types');
 
 const IMPORT_MAPPINGS = {
@@ -34,10 +28,15 @@ const IMPORT_MAPPINGS = {
 };
 
 module.exports = new Transformer({
-  async transform({asset, options}) {
+  async loadConfig({config}) {
+    let pkg = await config.getPackage();
+    return {
+      version: pkg.version
+    };
+  },
+  async transform({asset, options, config}) {
     let exampleCode = [];
-    let assetPackage = await asset.getPackage();
-    let preReleaseParts = assetPackage.version.match(/(alpha)|(beta)|(rc)/);
+    let preReleaseParts = config.version.match(/(alpha)|(beta)|(rc)/);
     let preRelease = preReleaseParts ? preReleaseParts[0] : '';
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
@@ -91,8 +90,15 @@ module.exports = new Transformer({
               node.meta = null;
               return [
                 {
-                  type: 'jsx',
-                  value: `<div id="${id}" />`
+                  type: 'mdxJsxFlowElement',
+                  name: 'div',
+                  attributes: [
+                    {
+                      type: 'mdxJsxAttribute',
+                      name: 'id',
+                      value: id
+                    }
+                  ]
                 }
               ];
             }
@@ -105,8 +111,15 @@ module.exports = new Transformer({
             return [
               ...transformExample(node, preRelease),
               {
-                type: 'jsx',
-                value: `<div id="${id}" />`
+                type: 'mdxJsxFlowElement',
+                name: 'div',
+                attributes: [
+                  {
+                    type: 'mdxJsxAttribute',
+                    name: 'id',
+                    value: id
+                  }
+                ]
               }
             ];
           }
@@ -115,8 +128,14 @@ module.exports = new Transformer({
             return [
               ...responsiveCode(node),
               {
-                type: 'jsx',
-                value: '<style>{`' + node.value + '`}</style>'
+                type: 'mdxJsxFlowElement',
+                name: 'style',
+                children: [
+                  {
+                    type: 'text',
+                    value: node.value
+                  }
+                ]
               }
             ];
           }
@@ -137,6 +156,7 @@ module.exports = new Transformer({
     let author = '';
     let image = '';
     let order;
+    let util = (await import('mdast-util-toc')).toc;
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -149,6 +169,21 @@ module.exports = new Transformer({
           tight: tight,
           skip: skip
         }).map;
+
+        function findLink(node) {
+          if (node.type === 'link') {
+            return node;
+          }
+
+          if (node.children) {
+            for (let child of node.children) {
+              let link = findLink(child);
+              if (link) {
+                return link;
+              }
+            }
+          }
+        }
 
         /**
          * Go from complex structure that the mdx plugin renders from to a simpler one
@@ -165,8 +200,9 @@ module.exports = new Transformer({
             if (nodes) {
               newTree.children = treeConverter(nodes);
             }
-            newTree.id = name.children[0].url.split('#').pop();
-            newTree.textContent = name.children[0].children[0].value;
+            let link = findLink(name);
+            newTree.id = link.url.split('#').pop();
+            newTree.textContent = link.children[0].value;
           }
           return newTree;
         }
@@ -192,8 +228,8 @@ module.exports = new Transformer({
           order = yamlData.order;
           if (yamlData.image) {
             image = asset.addDependency({
-              moduleSpecifier: yamlData.image,
-              isURL: true
+              specifier: yamlData.image,
+              specifierType: 'url'
             });
           }
         }
@@ -212,8 +248,8 @@ module.exports = new Transformer({
     function wrapExamples() {
       return (tree) => (
         flatMap(tree, node => {
-          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring) {
-            node.properties.className = node.children[0].properties.metastring.split(' ');
+          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].data?.meta) {
+            node.properties.className = node.children[0].data.meta.split(' ');
           }
 
           return [node];
@@ -221,7 +257,11 @@ module.exports = new Transformer({
       );
     }
 
-    const compiled = await mdx(await asset.getCode(), {
+    let {compile} = await import('@mdx-js/mdx');
+    let frontmatter = (await import('remark-frontmatter')).default;
+    let slug = (await import('remark-slug')).default;
+    let compiled = await compile(await asset.getCode(), {
+      providerImportSource: '@mdx-js/react',
       remarkPlugins: [
         slug,
         extractToc,
@@ -245,11 +285,7 @@ module.exports = new Transformer({
     });
 
     asset.type = 'jsx';
-    asset.setCode(`/* @jsx mdx */
-    import React from 'react';
-    import { mdx } from '@mdx-js/react'
-    ${compiled}
-    `);
+    asset.setCode(String(compiled));
     asset.meta.toc = toc;
     asset.meta.title = title;
     asset.meta.category = category;
@@ -261,7 +297,7 @@ module.exports = new Transformer({
     asset.meta.order = order;
     asset.meta.isMDX = true;
     asset.meta.preRelease = preRelease;
-    asset.isSplittable = false;
+    asset.isBundleSplittable = false;
 
     // Generate the client bundle. We always need the client script,
     // and the docs script when there's a TOC or an example on the page.
@@ -286,16 +322,17 @@ export default {};
         type: 'jsx',
         content: clientBundle,
         uniqueKey: 'client',
-        isSplittable: true,
+        isBundleSplittable: true,
+        sideEffects: true,
         env: {
           // We have to override all of the environment options to ensure this doesn't inherit
           // anything from the parent asset, whose environment is set below.
           context: 'browser',
           engines: asset.env.engines,
-          outputFormat: asset.env.scopeHoist ? 'esmodule' : 'global',
+          outputFormat: asset.env.shouldScopeHoist ? 'esmodule' : 'global',
           includeNodeModules: asset.env.includeNodeModules,
-          scopeHoist: asset.env.scopeHoist,
-          minify: asset.env.minify
+          shouldScopeHoist: asset.env.shouldScopeHoist,
+          shouldOptimize: asset.env.shouldOptimize
         },
         meta: {
           isMDX: false
@@ -306,9 +343,11 @@ export default {};
     // Add a dependency on the client bundle. It should not inherit its entry status from the page,
     // and should always be placed in a separate bundle.
     asset.addDependency({
-      moduleSpecifier: 'client',
-      isEntry: false,
-      isIsolated: true
+      specifier: 'client',
+      specifierType: 'esm',
+      needsStableName: false,
+      priority: 'parallel',
+      bundleBehavior: 'isolated'
     });
 
     // Override the environment of the page bundle. It will run in node as part of the SSG optimizer.
@@ -330,8 +369,8 @@ export default {};
         'markdown-to-jsx': false,
         'prop-types': false
       },
-      scopeHoist: false,
-      minify: false
+      shouldScopeHoist: false,
+      shouldOptimize: false
     });
 
     return assets;
@@ -344,20 +383,24 @@ function transformExample(node, preRelease) {
   }
 
   if (/^<(.|\n)*>$/m.test(node.value)) {
-    node.value = node.value.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>$1</WRAPPER>');
+    node.value = node.value.replace(/^(<(.|\n)*>)$/m, '(<WRAPPER>$1</WRAPPER>)');
   }
 
-  let ast = parse(node.value, {
-    sourceType: 'module',
-    plugins: ['jsx', 'typescript']
-  });
+  let force = false;
 
   /* Replace individual package imports in the code
    * with monorepo imports if building for production and not a pre-release
    */
-  if (process.env.DOCS_ENV === 'production' && !preRelease) {
+  if (process.env.DOCS_ENV === 'production' && !preRelease && node.value.includes('@react-spectrum')) {
     let specifiers = [];
     let last;
+    const traverse = require('@babel/traverse').default;
+    const {parse} = require('@babel/parser');
+    const generate = require('@babel/generator').default;
+    let ast = parse(node.value, {
+      sourceType: 'module',
+      plugins: ['jsx', 'typescript']
+    });
 
     traverse(ast, {
       ImportDeclaration(path) {
@@ -400,12 +443,15 @@ function transformExample(node, preRelease) {
         }
       }
     });
+
+    node.value = generate(ast).code.replace(/(<WRAPPER>(?:.|\n)*<\/WRAPPER>)/g, '\n($1)');
+    force = true;
   }
 
-  return responsiveCode(node, ast);
+  return responsiveCode(node, force);
 }
 
-function responsiveCode(node, ast) {
+function responsiveCode(node, force) {
   if (!node.lang) {
     return [node];
   }
@@ -413,19 +459,19 @@ function responsiveCode(node, ast) {
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',
-    value: formatCode(node, node.value, ast, 80)
+    value: formatCode(node, node.value, 80, force)
   };
 
   let medium = {
     ...node,
     meta: node.meta ? `${node.meta} medium` : 'medium',
-    value: formatCode(node, large.value, ast, 60)
+    value: formatCode(node, large.value, 60, force)
   };
 
   let small = {
     ...node,
     meta: node.meta ? `${node.meta} small` : 'small',
-    value: formatCode(node, medium.value, ast, 25)
+    value: formatCode(node, medium.value, 25, force)
   };
 
   return [
@@ -435,26 +481,24 @@ function responsiveCode(node, ast) {
   ];
 }
 
-function formatCode(node, code, ast, printWidth = 80) {
-  if (!ast && code.split('\n').every(line => line.length <= printWidth)) {
-    return code;
+function formatCode(node, code, printWidth = 80, force = false) {
+  if (!force && code.split('\n').every(line => line.length <= printWidth)) {
+    return code.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, '$1');
   }
 
-  let parser = node.lang === 'css' ? 'css' : 'babel-ts';
-  if (ast) {
-    parser = () => ast;
+  if (node.lang === 'css') {
+    return node.value;
   }
 
-  let res = prettier.format(node.value, {
-    parser,
-    singleQuote: true,
-    jsxBracketSameLine: true,
-    bracketSpacing: false,
-    trailingComma: 'none',
-    printWidth
+  let res = dprint.format('example.jsx', node.value, {
+    quoteStyle: 'preferSingle',
+    'jsx.quoteStyle': 'preferDouble',
+    trailingCommas: 'never',
+    lineWidth: printWidth,
+    'importDeclaration.spaceSurroundingNamedImports': false
   });
 
-  return res.replace(/^<WRAPPER>((?:.|\n)*)<\/WRAPPER>;?\s*$/m, (str, contents) =>
+  return res.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, (str, contents) =>
     contents.replace(/^\s{2}/gm, '').trim()
   );
 }

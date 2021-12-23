@@ -51,7 +51,7 @@ async function build() {
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
-      build: "DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' --no-scope-hoist",
+      build: "DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
       postinstall: 'patch-package'
     }
   };
