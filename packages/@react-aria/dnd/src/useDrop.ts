@@ -44,7 +44,7 @@ export function useDrop(options: DropOptions): DropResult {
     x: 0,
     y: 0,
     dragEnterCount: 0,
-    dropEffect: 'none',
+    dropEffect: 'none' as DataTransfer['dropEffect'],
     dropActivateTimer: null
   }).current;
 

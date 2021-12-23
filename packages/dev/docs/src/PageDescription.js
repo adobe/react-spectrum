@@ -10,22 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-const {Transformer} = require('@parcel/plugin');
+import React from 'react';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
-module.exports = new Transformer({
-  async transform({asset, options}) {
-    // Normalize CSS so it always has the same environment and isn't duplicated.
-    // This is necessary because the server bundle has a "node" environment, whereas
-    // the client bundle has a "browser" environment. We want them to end up resolving
-    // to the same asset.
-    asset.setEnvironment({
-      context: 'browser',
-      engines: {
-        browsers: asset.env.engines.browsers
-      },
-      shouldOptimize: options.mode === 'production'
-    });
-
-    return [asset];
-  }
-});
+export function PageDescription({children}) {
+  return <p className={typographyStyles['spectrum-Body3']}>{children}</p>;
+}
