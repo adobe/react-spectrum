@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -14,7 +14,8 @@ import docs from 'docs:@react-aria/overlays';
 import focusDocs from 'docs:@react-aria/focus';
 import dialogDocs from 'docs:@react-aria/dialog';
 import statelyDocs from 'docs:@react-stately/overlays';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/overlays/package.json';
 
 ---
@@ -24,7 +25,7 @@ keywords: [overlays, dialog, modal, aria]
 
 # useOverlayTrigger
 
-<p>{docs.exports.useOverlayTrigger.description}</p>
+<PageDescription>{docs.exports.useOverlayTrigger.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -52,7 +53,7 @@ additional functionality specific to menus.**
 * Exposes overlay trigger and connects trigger to overlay with ARIA
 * Positions the overlay relative to the trigger when combined with <TypeLink links={docs.links} type={docs.exports.useOverlayPosition} />
 * Hides content behind the overlay from screen readers when combined with <TypeLink links={docs.links} type={docs.exports.useModal} />
-* Handles closing the overlay when interacting outside and pressing the <kbd>Escape</kbd> key, when combined with <TypeLink links={docs.links} type={docs.exports.useOverlay} />
+* Handles closing the overlay when interacting outside and pressing the <Keyboard>Escape</Keyboard> key, when combined with <TypeLink links={docs.links} type={docs.exports.useOverlay} />
 
 ## Anatomy
 
@@ -81,7 +82,7 @@ This example shows how to build a typical popover overlay that is positioned rel
 a trigger button. The content of the popover is a dialog, built
 with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />.
 
-The popover can be closed by clicking or interacting outside the popover, or by pressing the <kbd>Escape</kbd> key.
+The popover can be closed by clicking or interacting outside the popover, or by pressing the <Keyboard>Escape</Keyboard> key.
 This is handled by <TypeLink links={docs.links} type={docs.exports.useOverlay} />.
 When the popover is closed, focus is restored back to its trigger button by a
 &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;.
