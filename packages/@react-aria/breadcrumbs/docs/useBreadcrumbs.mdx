@@ -16,10 +16,6 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/breadcrumbs/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useBreadcrumbs, useBreadcrumbItem} from '@react-aria/breadcrumbs';
-```
-
 ---
 category: Navigation
 keywords: [breadcrumbs, aria]
@@ -92,6 +88,8 @@ passed to the last breadcrumb item by cloning the element and adding the `isCurr
 prop.
 
 ```tsx example
+import {useBreadcrumbs, useBreadcrumbItem} from '@react-aria/breadcrumbs';
+
 function Breadcrumbs(props) {
   let {navProps} = useBreadcrumbs(props);
   let children = React.Children.toArray(props.children);

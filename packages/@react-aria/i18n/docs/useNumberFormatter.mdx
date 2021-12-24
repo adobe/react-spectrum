@@ -14,10 +14,6 @@ import docs from 'docs:@react-aria/i18n';
 import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/i18n/package.json';
 
-```tsx import
-import {useNumberFormatter} from '@react-aria/i18n';
-```
-
 ---
 category: Internationalization
 keywords: [number, i18n, aria, localization]
@@ -49,7 +45,7 @@ This example displays a currency value for two locales: USA, and Germany. Two in
 using the [I18nProvider](I18nProvider.html) to specify the locale to display.
 
 ```tsx example
-import {I18nProvider} from '@react-aria/i18n';
+import {I18nProvider, useNumberFormatter} from '@react-aria/i18n';
 
 function Currency({value, currency}) {
   let formatter = useNumberFormatter({

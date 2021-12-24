@@ -19,10 +19,6 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/menu/package.json';
 import Anatomy from './menu-anatomy.svg';
 
-```jsx import
-import {useMenu, useMenuSection, useMenuItem} from '@react-aria/menu';
-```
-
 ---
 category: Collections
 keywords: [menu, mutli-select menu, aria]
@@ -122,6 +118,7 @@ props from <TypeLink links={docs.links} type={docs.exports.useMenu}/>
 and <TypeLink links={docs.links} type={docs.exports.useMenuItem} />.
 
 ```tsx example
+import {useMenu, useMenuItem} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 import {Item} from '@react-stately/collections';
 import {useFocus} from '@react-aria/interactions';
@@ -202,6 +199,7 @@ semantics are correct.
 
 ```tsx example
 import {Section} from '@react-stately/collections';
+import {useMenuSection} from '@react-aria/menu';
 import {useSeparator} from '@react-aria/separator';
 
 function Menu(props) {

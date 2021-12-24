@@ -21,11 +21,6 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/table/package.json';
 import Anatomy from './TableAnatomy.svg';
 
-```jsx import
-import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableHeaderRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
-```
-
 ---
 category: Collections
 keywords: [table, aria, grid]
@@ -134,6 +129,7 @@ import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-s
 import {mergeProps} from '@react-aria/utils';
 import {useRef} from 'react';
 import {useFocusRing} from '@react-aria/focus';
+import {useTable} from '@react-aria/table';
 
 function Table(props) {
   let {selectionMode, selectionBehavior} = props;
@@ -182,6 +178,8 @@ we're using HTML table elements, so this will be either a `<thead>` or `<tbody>`
 above `Table` component via the `type` prop.
 
 ```tsx example export=true render=false
+import {useTableRowGroup} from '@react-aria/table';
+
 function TableRowGroup({type: Element, style, children}) {
   let {rowGroupProps} = useTableRowGroup();
   return (
@@ -197,6 +195,8 @@ but they don't support user interaction like selection. In this example, there's
 row, but there could be multiple in the case of nested columns. See the [example below](#nested-columns) for details.
 
 ```tsx example export=true render=false
+import {useTableHeaderRow} from '@react-aria/table';
+
 function TableHeaderRow({item, state, children}) {
   let ref = useRef();
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
@@ -226,6 +226,8 @@ Finally, we use the <TypeLink links={focusDocs.links} type={focusDocs.exports.us
 the cell is navigated to with the keyboard.
 
 ```tsx example export=true render=false
+import {useTableColumnHeader} from '@react-aria/table';
+
 function TableColumnHeader({column, state}) {
   let ref = useRef();
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
@@ -267,6 +269,8 @@ by the `state` to determine if a row is selected, and render a pink background i
 hook to render a focus ring when the user navigates to the row with the keyboard.
 
 ```tsx example export=true render=false
+import {useTableRow} from '@react-aria/table';
+
 function TableRow({item, children, state}) {
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
@@ -303,6 +307,8 @@ hook. The cell's contents are available in the `rendered` property of the cell <
 object.
 
 ```tsx example export=true render=false
+import {useTableCell} from '@react-aria/table';
+
 function TableCell({cell, state}) {
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
@@ -373,6 +379,7 @@ hook and render an `<input>` element directly, but it's likely you'll have a `Ch
 See the [useCheckbox docs](useCheckbox.html) for more information.
 
 ```tsx example export=true render=false
+import {useTableSelectionCheckbox} from '@react-aria/table';
 import {useToggleState} from '@react-stately/toggle';
 import {useCheckbox} from '@react-aria/checkbox';
 
@@ -404,6 +411,9 @@ The user can check or uncheck the checkbox to select all or clear the selection,
 [VisuallyHidden](VisuallyHidden.html) component can be used to do this.
 
 ```tsx example export=true render=false
+import {useTableSelectAllCheckbox} from '@react-aria/table';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
+
 function TableSelectAllCell({column, state}) {
   let ref = useRef();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
