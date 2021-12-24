@@ -42,6 +42,7 @@ governing permissions and limitations under the License.
 
 
 .spectrum-ActionGroup {
+  isolation: isolate;
   display: flex;
   flex-wrap: wrap;
   --column-gap: var(--spectrum-actionbuttongroup-text-button-gap-x);
@@ -109,6 +110,10 @@ governing permissions and limitations under the License.
       &:last-child {
         border-start-end-radius: var(--spectrum-actionbutton-border-radius);
         border-end-end-radius: var(--spectrum-actionbutton-border-radius);
+      }
+
+      &.spectrum-ActionGroup-item--isDisabled {
+        z-index: -1;
       }
 
       &.is-selected {
