@@ -152,6 +152,9 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     let collection = this.collection;
     let key = fromKey ?? this.getFirstKey();
+    if (!key) {
+      return null
+    }
 
     // If the starting key is a cell, search from its parent row.
     let startItem = collection.getItem(key);
