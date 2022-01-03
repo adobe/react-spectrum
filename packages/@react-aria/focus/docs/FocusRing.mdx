@@ -14,10 +14,6 @@ import docs from 'docs:@react-aria/focus';
 import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/focus/package.json';
 
-```tsx import
-import {FocusRing} from '@react-aria/focus';
-```
-
 ---
 category: Focus
 keywords: [focus, keyboard focus, focus management, aria]
@@ -67,6 +63,8 @@ This example shows how to use `<FocusRing>` to apply a CSS class when keyboard f
 ```
 
 ```tsx example
+import {FocusRing} from '@react-aria/focus';
+
 <FocusRing focusRingClass="focus-ring">
   <button className="button">Test</button>
 </FocusRing>

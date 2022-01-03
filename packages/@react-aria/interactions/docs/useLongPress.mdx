@@ -15,10 +15,6 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/interactions/package.json';
 
-```jsx import
-import {useLongPress, usePress} from '@react-aria/interactions';
-```
-
 ---
 category: Interactions
 keywords: [long press interactions, long press events, long press gesture, aria]
@@ -85,6 +81,7 @@ friendly alternative to all long press interactions if you are using this hook d
 
 ```tsx example
 import {mergeProps} from '@react-aria/utils';
+import {useLongPress, usePress} from '@react-aria/interactions';
 
 function Example() {
   let [events, setEvents] = React.useState([]);

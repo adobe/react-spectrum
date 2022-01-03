@@ -7,17 +7,16 @@
     "parcel": "2.0.0-nightly.949"
   },
   "dependencies": {
-    "@atom-languages/language-typescript": "atom/language-typescript#v0.6.2",
-    "@atom-languages/language-css": "atom/language-css#v0.44.4",
     "@mdx-js/mdx": "next",
     "@mdx-js/react": "next",
     "@parcel/plugin": "2.0.0-nightly.951",
-    "dprint-node": "^1.0.3",
+    "dprint-node": "^1.0.5",
     "js-yaml": "^3.13.1",
     "mdast-util-toc": "^6.1.0",
     "remark-frontmatter": "^4.0.1",
     "remark-slug": "^7.0.1",
-    "remark-tree-sitter": "^1.0.3",
-    "unist-util-flatmap": "^1.0.0"
+    "tree-sitter-highlight": "^1.0.1",
+    "unist-util-flatmap": "^1.0.0",
+    "unist-util-visit": "^4.0.0"
   }
 }

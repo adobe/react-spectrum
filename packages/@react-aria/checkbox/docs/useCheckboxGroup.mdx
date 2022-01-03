@@ -19,10 +19,6 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/checkbox/package.json';
 import Anatomy from './checkboxgroup-anatomy.svg';
 
-```jsx import
-import {useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
-```
-
 ---
 category: Forms
 keywords: [checkbox, input, aria]
@@ -101,6 +97,7 @@ to each checkbox. An HTML `<label>` element wraps the native input and the text 
 for the radio.
 
 ```tsx example
+import {useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
 import {useCheckboxGroupState} from '@react-stately/checkbox';
 
 let CheckboxGroupContext = React.createContext(null);

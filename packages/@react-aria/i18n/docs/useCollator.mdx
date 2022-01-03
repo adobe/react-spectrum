@@ -14,10 +14,6 @@ import docs from 'docs:@react-aria/i18n';
 import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/i18n/package.json';
 
-```tsx import
-import {useCollator} from '@react-aria/i18n';
-```
-
 ---
 category: Internationalization
 keywords: [collator, i18n, aria, localization]
@@ -48,6 +44,8 @@ information.
 This example includes two textfields and compares the values of the two fields using a collator according to the current locale.
 
 ```tsx example
+import {useCollator} from '@react-aria/i18n';
+
 function Example() {
   let [first, setFirst] = React.useState('');
   let [second, setSecond] = React.useState('');

@@ -15,11 +15,6 @@ import {HeaderInfo, FunctionAPI, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/button/package.json';
 
-```jsx import
-import {useButton} from '@react-aria/button';
-import {useRef} from 'react';
-```
-
 ---
 category: Buttons
 keywords: [button, aria, form]
@@ -66,6 +61,9 @@ If a visual label is not provided (e.g. an icon only button), then an `aria-labe
 By default, `useButton` assumes that you are using it with a native `<button>` element.
 
 ```tsx example
+import {useButton} from '@react-aria/button';
+import {useRef} from 'react';
+
 function Button(props) {
   let ref = useRef();
   let {buttonProps} = useButton(props, ref);
