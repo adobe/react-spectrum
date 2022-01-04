@@ -24,9 +24,11 @@ function cleanup {
     git fetch
     git reset --hard $commit_to_revert
     npm set registry $original_registry
+    return
   else
     # lsof doesn't work in circleci
     netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill
+    return
   fi
 }
 
