@@ -75,6 +75,7 @@ interface ModalProviderAria {
  */
 export function useModalProvider(): ModalProviderAria {
   let context = useContext(Context);
+  console.log('adding hidden', context && context.modalCount > 0 ? true : null)
   return {
     modalProviderProps: {
       'aria-hidden': context && context.modalCount > 0 ? true : null
