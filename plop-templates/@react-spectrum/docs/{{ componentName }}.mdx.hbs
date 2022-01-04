@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/{{packageName}}';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/{{packageName}}/package.json';
 
 ```jsx import
@@ -27,7 +27,7 @@ after_version: 3.0.0-alpha.0
 
 # {{componentName}}
 
-<p>{docs.exports.{{componentName}}.description}</p>
+<PageDescription>{docs.exports.{{componentName}}.description}</PageDescription>
 
 *Be sure to update the Spectrum url below to match the current component.*
 <HeaderInfo
