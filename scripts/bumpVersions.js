@@ -52,7 +52,7 @@ class VersionManager {
         this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
       } catch (e) {
         // If that failed to parse, then it's because we have yarn 1.22 and this is how we need to parse it.
-        this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString())
+        this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString());
       }
     }
     this.existingPackages = new Set();
