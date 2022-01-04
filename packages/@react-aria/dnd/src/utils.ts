@@ -277,25 +277,6 @@ function createDirectoryItem(entry: any): DirectoryItem {
   };
 }
 
-interface FileSystemFileEntry {
-  isFile: true,
-  isDirectory: false,
-  name: string,
-  file(successCallback: (file: File) => void, errorCallback?: (error: Error) => void): void
-}
-
-interface FileSystemDirectoryEntry {
-  isDirectory: true,
-  isFile: false,
-  name: string,
-  createReader(): FileSystemDirectoryReader
-}
-
-type FileSystemEntry = FileSystemFileEntry | FileSystemDirectoryEntry;
-interface FileSystemDirectoryReader {
-  readEntries(successCallback: (entries: FileSystemEntry[]) => void, errorCallback?: (error: Error) => void): void
-}
-
 async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileItem | DirectoryItem> {
   let reader = item.createReader();
 
@@ -309,7 +290,7 @@ async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileIt
 
     for (let entry of entries) {
       if (entry.isFile) {
-        let file = await getEntryFile(entry);
+        let file = await getEntryFile(entry as FileSystemFileEntry);
         yield createFileItem(file);
       } else if (entry.isDirectory) {
         yield createDirectoryItem(entry);
