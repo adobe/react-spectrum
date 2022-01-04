@@ -15,10 +15,6 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/interactions/package.json';
 
-```jsx import
-import {useFocusVisible} from '@react-aria/interactions';
-```
-
 ---
 category: Interactions
 keywords: [keyboard focus, focus management, focus ring, focus visibility, aria]
@@ -60,6 +56,8 @@ cause focus visible state to appear. This prevents focus visible state from appe
 typing text in a text field.
 
 ```tsx example
+import {useFocusVisible} from '@react-aria/interactions';
+
 function Example() {
   let {isFocusVisible} = useFocusVisible({isTextInput: true});
 

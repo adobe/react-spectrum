@@ -16,11 +16,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import packageData from '@react-aria/tooltip/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useTooltipTrigger} from '@react-aria/tooltip';
-import {useTooltip} from '@react-aria/tooltip';
-```
-
 ---
 category: Overlays
 keywords: [tooltip, aria]
@@ -83,6 +78,7 @@ This example implements a Tooltip that renders in an absolute position next to i
 Two instances of the example are rendered to demonstrate the behavior of the delay on hover. If you hover over the first button, the tooltip will be shown after a delay. Hovering over the second button shows the tooltip immediately. If you wait for a delay before hovering another element, the delay restarts.
 
 ```tsx example
+import {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 import {mergeProps} from '@react-aria/utils';
 

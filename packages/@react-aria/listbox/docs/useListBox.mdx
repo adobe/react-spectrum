@@ -18,10 +18,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import packageData from '@react-aria/listbox/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
-```
-
 ---
 category: Collections
 keywords: [listbox, aria]
@@ -125,6 +121,7 @@ props from <TypeLink links={docs.links} type={docs.exports.useListBox} />
 and <TypeLink links={docs.links} type={docs.exports.useOption} />.
 
 ```tsx example
+import {useListBox, useOption} from '@react-aria/listbox';
 import {useListState} from '@react-stately/list';
 import {Item} from '@react-stately/collections';
 import {useFocusRing} from '@react-aria/focus';
@@ -206,6 +203,7 @@ are correct.
 
 ```tsx example
 import {Section} from '@react-stately/collections';
+import {useListBoxSection} from '@react-aria/listbox';
 import {useSeparator} from '@react-aria/separator';
 
 function ListBox(props) {

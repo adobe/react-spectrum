@@ -12,7 +12,7 @@
 
 const {Transformer} = require('@parcel/plugin');
 const flatMap = require('unist-util-flatmap');
-const treeSitter = require('remark-tree-sitter');
+const treeSitter = require('tree-sitter-highlight');
 const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const yaml = require('js-yaml');
 const dprint = require('dprint-node');
@@ -257,6 +257,27 @@ module.exports = new Transformer({
       );
     }
 
+    let visit = (await import('unist-util-visit')).visit;
+    function highlight(options) {
+      return (tree) => {
+        visit(tree, 'code', node => {
+          if (!node.lang) {
+            return;
+          }
+          let language = treeSitter.Language[node.lang.toUpperCase()];
+          if (!language) {
+            return;
+          }
+          if (!node.data) {
+            node.data = {};
+          }
+          let highlighted = treeSitter.highlightHast(node.value, language);
+          node.data.hChildren = [highlighted];
+        });
+        return tree;
+      };
+    }
+
     let {compile} = await import('@mdx-js/mdx');
     let frontmatter = (await import('remark-frontmatter')).default;
     let slug = (await import('remark-slug')).default;
@@ -268,15 +289,7 @@ module.exports = new Transformer({
         extractExamples,
         fragmentWrap,
         [frontmatter, {type: 'yaml', anywhere: true, marker: '-'}],
-        [
-          treeSitter,
-          {
-            grammarPackages: [
-              '@atom-languages/language-typescript',
-              '@atom-languages/language-css'
-            ]
-          }
-        ],
+        highlight,
         fragmentUnWrap
       ],
       rehypePlugins: [

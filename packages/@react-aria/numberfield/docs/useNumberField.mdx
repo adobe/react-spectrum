@@ -16,10 +16,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import packageData from '@react-aria/numberfield/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useNumberField} from '@react-aria/numberfield';
-```
-
 ---
 category: Forms
 keywords: [number field, input, form, aria]
@@ -105,6 +101,7 @@ for an example of a button with a custom element type.
 In addition, see [useTextField](useTextField.html) for an example of the description and error message elements.
 
 ```tsx example export=true
+import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useLocale} from '@react-aria/i18n';
 import {useButton} from '@react-aria/button';
