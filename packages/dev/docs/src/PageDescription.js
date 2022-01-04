@@ -10,4 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './src';
+import React from 'react';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+
+export function PageDescription({children}) {
+  return <p className={typographyStyles['spectrum-Body3']}>{children}</p>;
+}
