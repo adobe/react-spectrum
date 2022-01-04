@@ -3641,6 +3641,42 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
       expect(heading).not.toBeInTheDocument();
     });
+
+    it('empty table select all should do nothing', function () {
+      let onSelectionChange = jest.fn();
+      let tree = render(
+        <div>
+          <TableView aria-label="Table" selectionMode="multiple" onSelectionChange={onSelectionChange} renderEmptyState={() => <h3>No results</h3>}>
+            <TableHeader>
+              <Column key="foo">Foo</Column>
+              <Column key="bar">Bar</Column>
+            </TableHeader>
+            <TableBody>
+              {[]}
+            </TableBody>
+          </TableView>
+          <input />
+        </div>
+      );
+
+      let table = tree.getByRole('grid');
+      let selectAll = tree.getByRole('checkbox');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(table);
+      userEvent.tab();
+      // shift tab with userEvent doesn't bring you to the right place
+      fireEvent.keyDown(document.activeElement, {key: 'Tab', shift: true});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab', shift: true});
+      expect(document.activeElement).toBe(selectAll);
+
+      userEvent.type(document.activeElement, '{space}');
+      expect(onSelectionChange).toHaveBeenCalledWith('all');
+      expect(selectAll).toHaveAttribute('aria-checked', 'true');
+    });
   });
 
   describe('sorting', function () {
