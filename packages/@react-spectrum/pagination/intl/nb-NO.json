@@ -1,3 +1,3 @@
 {
-  "page_count": "av {n, plural, =one{# side} other{# sider}}"
+  "page_count": "av {n, plural, one{# side} other{# sider}}"
 }

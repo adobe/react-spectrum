@@ -12,10 +12,10 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
+import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
-import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getItemCount} from '@react-stately/collections';
@@ -27,9 +27,9 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
+interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
   popoverRef: RefObject<HTMLDivElement>,
   /** The ref for the list box. */
@@ -61,7 +61,7 @@ interface ComboBoxAria<T> {
  * @param props - Props for the combo box.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */
-export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria<T> {
+export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxState<T>): ComboBoxAria<T> {
   let {
     buttonRef,
     popoverRef,
@@ -69,6 +69,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     listBoxRef,
     keyboardDelegate,
     // completionMode = 'suggest',
+    shouldFocusWrap,
     isReadOnly,
     isDisabled
   } = props;
@@ -76,7 +77,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let formatMessage = useMessageFormatter(intlMessages);
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      type: 'listbox'
+      type: 'listbox',
+      isDisabled: isDisabled || isReadOnly
     },
     state,
     buttonRef
@@ -98,6 +100,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     keyboardDelegate: delegate,
     disallowTypeAhead: true,
     disallowEmptySelection: true,
+    shouldFocusWrap,
     ref: inputRef,
     // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
     isVirtualized: true
@@ -159,7 +162,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
-    onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDown, onKeyDown),
+    onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown),
     onBlur,
     value: state.inputValue,
     onFocus,
@@ -300,7 +303,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       ...triggerLabelProps,
       excludeFromTabOrder: true,
       onPress,
-      onPressStart
+      onPressStart,
+      isDisabled: isDisabled || isReadOnly
     },
     inputProps: mergeProps(inputProps, {
       role: 'combobox',

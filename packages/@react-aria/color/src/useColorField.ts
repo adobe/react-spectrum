@@ -98,6 +98,7 @@ export function useColorField(
     mergeProps(props, {
       id: inputId,
       value: inputValue,
+      defaultValue: undefined,
       type: 'text',
       autoComplete: 'off',
       onChange
@@ -112,6 +113,7 @@ export function useColorField(
       'aria-valuenow': null,
       'aria-valuetext': null,
       autoCorrect: 'off',
+      spellCheck: 'false',
       onBlur: commit
     })
   };

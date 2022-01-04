@@ -42,7 +42,12 @@ interface AriaPositionProps extends PositionProps {
    */
   shouldUpdatePosition?: boolean,
   /** Handler that is called when the overlay should close. */
-  onClose?: () => void
+  onClose?: () => void,
+  /**
+   * The maxHeight specified for the overlay element.
+   * By default, it will take all space up to the current viewport height.
+   */
+  maxHeight?: number
 }
 
 interface PositionAria {
@@ -77,7 +82,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     crossOffset = 0,
     shouldUpdatePosition = true,
     isOpen = true,
-    onClose
+    onClose,
+    maxHeight
   } = props;
   let [position, setPosition] = useState<PositionResult>({
     position: {},
@@ -102,10 +108,25 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         shouldFlip,
         boundaryElement,
         offset,
-        crossOffset
+        crossOffset,
+        maxHeight
       })
     );
-  }, [shouldUpdatePosition, placement, overlayRef, targetRef, scrollRef, containerPadding, shouldFlip, boundaryElement, offset, crossOffset, isOpen, direction]);
+  }, [
+    shouldUpdatePosition,
+    placement,
+    overlayRef,
+    targetRef,
+    scrollRef,
+    containerPadding,
+    shouldFlip,
+    boundaryElement,
+    offset,
+    crossOffset,
+    isOpen,
+    direction,
+    maxHeight
+  ]);
 
   // Update position when anything changes
   useLayoutEffect(updatePosition, [updatePosition]);

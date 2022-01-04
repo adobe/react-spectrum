@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase, MultipleSelection, Node} from '@react-types/shared';
+import {Collection, CollectionBase, Node} from '@react-types/shared';
 import {Key, useEffect, useMemo} from 'react';
 import {ListCollection} from './ListCollection';
-import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useCollection} from '@react-stately/collections';
 
-export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {
+export interface ListProps<T> extends CollectionBase<T>, MultipleSelectionStateProps {
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
   /** @private */
@@ -39,9 +39,7 @@ export interface ListState<T> {
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
-  let {
-    filter
-  } = props;
+  let {filter} = props;
 
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>

@@ -108,6 +108,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   valueRef.current = value;
 
   let [isDragging, setDragging] = useState(false);
+  let isDraggingRef = useRef(false).current;
 
   let hue = value.getChannelValue('hue');
   function setHue(v: number) {
@@ -117,7 +118,9 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     }
     v = roundToStep(mod(v, 360), step);
     if (hue !== v) {
-      setValue(value.withChannelValue('hue', v));
+      let color = value.withChannelValue('hue', v);
+      valueRef.current = color;
+      setValue(color);
     }
   }
 
@@ -155,13 +158,14 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
       }
     },
     setDragging(isDragging) {
-      setDragging(wasDragging => {
-        if (onChangeEnd && !isDragging && wasDragging) {
-          onChangeEnd(valueRef.current);
-        }
+      let wasDragging = isDraggingRef;
+      isDraggingRef = isDragging;
 
-        return isDragging;
-      });
+      if (onChangeEnd && !isDragging && wasDragging) {
+        onChangeEnd(valueRef.current);
+      }
+
+      setDragging(isDragging);
     },
     isDragging,
     getDisplayColor() {

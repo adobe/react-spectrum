@@ -24,7 +24,7 @@ import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -33,6 +33,7 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useMessageFormatter} from '@react-aria/i18n';
 import {useHover} from '@react-aria/interactions';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
@@ -66,7 +67,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let listBoxRef = useRef();
-  let inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLInputElement>();
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});

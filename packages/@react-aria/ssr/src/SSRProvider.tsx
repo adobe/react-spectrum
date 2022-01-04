@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {ReactNode, useContext, useLayoutEffect, useMemo, useState} from 'react';
+import React, {ReactNode, useContext, useMemo, useState} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 // To support SSR, the auto incrementing id counter is stored in a context. This allows
 // it to be reset on every request to ensure the client and server are consistent.

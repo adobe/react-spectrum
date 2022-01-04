@@ -129,6 +129,25 @@ describe('useOverlayPosition', function () {
     `);
   });
 
+  it('should update the overlay\'s maxHeight by the given one if it\'s smaller than available viewport height.', function () {
+    let res = render(<Example maxHeight={450} />);
+    let overlay = res.getByTestId('overlay');
+
+    expect(overlay).toHaveStyle(`
+      left: 12px;
+      top: 350px;
+      max-height: 406px;
+    `);
+
+    res.rerender(<Example maxHeight={150} />);
+
+    expect(overlay).toHaveStyle(`
+      left: 12px;
+      top: 350px;
+      max-height: 150px;
+    `);
+  });
+
   it('should close the overlay when the trigger scrolls', function () {
     let onClose = jest.fn();
     let res = render(
@@ -161,6 +180,22 @@ describe('useOverlayPosition', function () {
     render(<Example isOpen onClose={onClose} />);
 
     fireEvent.scroll(document.body);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should close the overlay when the document scrolls', function () {
+    let onClose = jest.fn();
+    render(<Example isOpen onClose={onClose} />);
+
+    fireEvent.scroll(document);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should close the overlay when target is window in a scroll event', function () {
+    let onClose = jest.fn();
+    render(<Example isOpen onClose={onClose} />);
+
+    fireEvent.scroll(window);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

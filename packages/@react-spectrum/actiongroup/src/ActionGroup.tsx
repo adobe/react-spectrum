@@ -20,10 +20,9 @@ import {
   SlotProvider,
   useDOMRef,
   useSlotProps,
-  useStyleProps,
-  useValueEffect
+  useStyleProps
 } from '@react-spectrum/utils';
-import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
@@ -310,7 +309,8 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
                 {
                   'is-selected': isSelected,
                   'is-hovered': isHovered,
-                  'spectrum-ActionGroup-item--iconOnly': hideButtonText
+                  'spectrum-ActionGroup-item--iconOnly': hideButtonText,
+                  'spectrum-ActionGroup-item--isDisabled': isDisabled
                 },
                 classNames(
                   buttonStyles,
@@ -370,6 +370,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   // The menu button shouldn't act like an actual action group item.
   delete buttonProps.onPress;
   delete buttonProps.role;
+  delete buttonProps['aria-checked'];
 
   let {hoverProps, isHovered} = useHover({isDisabled});
 
@@ -457,6 +458,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
       </SlotProvider>
       <Menu
         items={items}
+        disabledKeys={state.disabledKeys}
         selectionMode={state.selectionManager.selectionMode}
         selectedKeys={state.selectionManager.selectedKeys}
         disallowEmptySelection={state.selectionManager.disallowEmptySelection}

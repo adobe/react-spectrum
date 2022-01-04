@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {DropOperation} from '@react-types/shared';
+
 export enum DROP_OPERATION {
   none = 0,
   cancel = 0,
@@ -31,7 +33,7 @@ export const DROP_OPERATION_ALLOWED = {
 
 export const EFFECT_ALLOWED = invert(DROP_OPERATION_ALLOWED);
 export const DROP_EFFECT = invert(DROP_OPERATION);
-export const DROP_EFFECT_TO_DROP_OPERATION = {
+export const DROP_EFFECT_TO_DROP_OPERATION: {[name: string]: DropOperation} = {
   none: 'cancel',
   link: 'link',
   copy: 'copy',

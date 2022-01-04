@@ -19,6 +19,7 @@ import {Meta, Story} from '@storybook/react';
 import {Picker} from '../../picker';
 import React, {useState} from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
+import {Tooltip, TooltipTrigger} from '../../tooltip';
 
 const meta: Meta<SpectrumActionMenuProps<object>> = {
   title: 'ActionMenu',
@@ -103,9 +104,9 @@ function DirectionAlignment() {
     <Picker label="Direction" items={directionItems} selectedKey={direction} onSelectionChange={handleDirectionChange}>
       {(item) => <Item key={item.key}>{item.label}</Item>}
     </Picker>
-    <ActionMenu 
-      onAction={action('action')} 
-      align={align} 
+    <ActionMenu
+      onAction={action('action')}
+      align={align}
       direction={direction}>
       <Item key="one">One</Item>
       <Item key="two">Two</Item>
@@ -133,3 +134,14 @@ export const AutoFocus = Template().bind({});
 AutoFocus.args = {autoFocus: true};
 
 export const DirectionAlign = () => <DirectionAlignment />;
+
+export const WithTooltip = () => (
+  <TooltipTrigger delay={0}>
+    <ActionMenu>
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </ActionMenu>
+    <Tooltip>Actions</Tooltip>
+  </TooltipTrigger>
+);
