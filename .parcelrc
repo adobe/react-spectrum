@@ -1,19 +1,25 @@
 {
   "extends": "@parcel/config-default",
-  "resolvers": ["parcel-resolver-docs", "..."],
+  "resolvers": ["@parcel/resolver-glob", "parcel-resolver-docs", "..."],
+  "bundler": "@parcel/bundler-experimental",
   "transformers": {
     "apiCheck:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
     "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
     "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
     "*.{md,mdx}": ["parcel-transformer-mdx-docs"],
     "*.svg": ["@parcel/transformer-svg-react"],
-    "*.css": ["...", "parcel-transformer-css-env"]
+    "*.css": ["...", "parcel-transformer-css-env"],
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ]
   },
   "namers": ["parcel-namer-docs", "..."],
   "packagers": {
     "*.json": "parcel-packager-docs",
+    "*.html": "@parcel/packager-js"
   },
   "optimizers": {
-    "*.js": ["parcel-optimizer-ssg", "..."]
+    "*.html": ["parcel-optimizer-ssg", "..."]
   }
 }

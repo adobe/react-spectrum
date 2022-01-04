@@ -15,12 +15,13 @@ import {AriaLabelingProps, DOMProps, KeyboardDelegate, Selection} from '@react-t
 import {filterDOMProps, mergeProps, useId, useUpdateEffect} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
-import {gridKeyboardDelegates} from './utils';
+import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
 import {useSelectableCollection} from '@react-aria/selection';
 
 export interface GridProps extends DOMProps, AriaLabelingProps {
@@ -44,7 +45,11 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   /**
    * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
    */
-  scrollRef?: RefObject<HTMLElement>
+  scrollRef?: RefObject<HTMLElement>,
+  /** Handler that is called when a user performs an action on the row. */
+  onRowAction?: (key: Key) => void,
+  /** Handler that is called when a user performs an action on the cell. */
+  onCellAction?: (key: Key) => void
 }
 
 export interface GridAria {
@@ -65,7 +70,9 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     keyboardDelegate,
     focusMode,
     getRowText = (key) => state.collection.getItem(key)?.textValue,
-    scrollRef
+    scrollRef,
+    onRowAction,
+    onCellAction
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -85,6 +92,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     collator,
     focusMode
   }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, focusMode]);
+
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: state.selectionManager,
@@ -94,15 +102,24 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   });
 
   let id = useId();
-  gridKeyboardDelegates.set(state, delegate);
+  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
+
+  let descriptionProps = useHighlightSelectionDescription({
+    selectionManager: state.selectionManager,
+    hasItemActions: !!(onRowAction || onCellAction)
+  });
 
   let domProps = filterDOMProps(props, {labelable: true});
-  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(domProps, {
-    role: 'grid',
-    id,
-    'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
-    ...collectionProps
-  });
+  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(
+    domProps,
+    {
+      role: 'grid',
+      id,
+      'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
+    },
+    collectionProps,
+    descriptionProps
+  );
 
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size;
@@ -114,9 +131,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let selection = state.selectionManager.rawSelection;
   let lastSelection = useRef(selection);
   useUpdateEffect(() => {
-    // Do not do this when using selectionBehavior = 'replace' to avoid selection announcements
-    // every time the user presses the arrow keys.
-    if (!state.selectionManager.isFocused || state.selectionManager.selectionBehavior === 'replace') {
+    if (!state.selectionManager.isFocused) {
       lastSelection.current = selection;
 
       return;
@@ -126,8 +141,17 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     let removedKeys = diffSelection(lastSelection.current, selection);
 
     // If adding or removing a single row from the selection, announce the name of that item.
+    let isReplace = state.selectionManager.selectionBehavior === 'replace';
     let messages = [];
-    if (addedKeys.size === 1 && removedKeys.size === 0) {
+
+    if ((state.selectionManager.selectedKeys.size === 1 && isReplace)) {
+      if (state.collection.getItem(state.selectionManager.selectedKeys.keys().next().value)) {
+        let currentSelectionText = getRowText(state.selectionManager.selectedKeys.keys().next().value);
+        if (currentSelectionText) {
+          messages.push(formatMessage('selectedItem', {item: currentSelectionText}));
+        }
+      }
+    } else if (addedKeys.size === 1 && removedKeys.size === 0) {
       let addedText = getRowText(addedKeys.keys().next().value);
       if (addedText) {
         messages.push(formatMessage('selectedItem', {item: addedText}));
@@ -143,7 +167,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
 
     // Announce how many items are selected, except when selecting the first item.
     if (state.selectionManager.selectionMode === 'multiple') {
-      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current.size > 1) {
+      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current?.size > 1) {
         messages.push(selection === 'all'
           ? formatMessage('selectedAll')
           : formatMessage('selectedCount', {count: selection.size})
