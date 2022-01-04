@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DragEvent, HTMLAttributes, RefObject, useLayoutEffect, useRef, useState} from 'react';
+import {DragEvent, HTMLAttributes, RefObject,  useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, readFromDataTransfer} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 interface DropOptions {
@@ -43,7 +44,7 @@ export function useDrop(options: DropOptions): DropResult {
     x: 0,
     y: 0,
     dragEnterCount: 0,
-    dropEffect: 'none',
+    dropEffect: 'none' as DataTransfer['dropEffect'],
     dropActivateTimer: null
   }).current;
 

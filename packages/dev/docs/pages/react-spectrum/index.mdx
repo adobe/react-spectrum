@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -20,6 +20,7 @@ import heroWide2x from 'url:../assets/ReactSpectrum_976x445_2x.png';
 import heroWideWebp from 'url:../assets/ReactSpectrum_976x445_1x.webp';
 import heroWide2xWebp from 'url:../assets/ReactSpectrum_976x445_2x.webp';
 import clsx from 'clsx';
+import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import styles from '@react-spectrum/docs/src/docs.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
@@ -33,9 +34,9 @@ description: A React implementation of Spectrum, Adobe’s design system. Spectr
 A React implementation of Spectrum, Adobe’s design system.
 
 <p className={clsx(typographyStyles['spectrum-Body2'], styles.homeLinks)}>
-  <a href="getting-started.html">Get started</a>
+  <a href="getting-started.html" className={clsx(linkStyle['spectrum-Link'], styles.link)}>Get started</a>
   <span aria-hidden="true">•</span>
-  <a href="https://github.com/adobe/react-spectrum">GitHub</a>
+  <a href="https://github.com/adobe/react-spectrum" className={clsx(linkStyle['spectrum-Link'], styles.link)}>GitHub</a>
 </p>
 
 <Hero

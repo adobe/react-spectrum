@@ -35,3 +35,9 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-loader-circle-medium-over-background-track-fill-color);
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-CircleLoader-fill {
+    --spectrum-loader-circle-medium-track-fill-color: Highlight;
+  }
+}

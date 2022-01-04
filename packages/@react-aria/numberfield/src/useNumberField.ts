@@ -260,6 +260,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     preventFocusOnPress: true,
+    allowFocusWhenDisabled: true,
     isDisabled: !state.canIncrement,
     onPressStart: onButtonPressStart
   });
@@ -271,6 +272,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     preventFocusOnPress: true,
+    allowFocusWhenDisabled: true,
     isDisabled: !state.canDecrement,
     onPressStart: onButtonPressStart
   });
