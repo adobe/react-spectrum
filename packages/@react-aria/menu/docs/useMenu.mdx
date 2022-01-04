@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -14,13 +14,10 @@ import docs from 'docs:@react-aria/menu';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import selectionDocs from 'docs:@react-stately/selection';
 import treeDocs from 'docs:@react-stately/tree';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/menu/package.json';
 import Anatomy from './menu-anatomy.svg';
-
-```jsx import
-import {useMenu, useMenuSection, useMenuItem} from '@react-aria/menu';
-```
 
 ---
 category: Collections
@@ -29,7 +26,7 @@ keywords: [menu, mutli-select menu, aria]
 
 # useMenu
 
-<p>{docs.exports.useMenu.description}</p>
+<PageDescription>{docs.exports.useMenu.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -121,6 +118,7 @@ props from <TypeLink links={docs.links} type={docs.exports.useMenu}/>
 and <TypeLink links={docs.links} type={docs.exports.useMenuItem} />.
 
 ```tsx example
+import {useMenu, useMenuItem} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 import {Item} from '@react-stately/collections';
 import {useFocus} from '@react-aria/interactions';
@@ -201,6 +199,7 @@ semantics are correct.
 
 ```tsx example
 import {Section} from '@react-stately/collections';
+import {useMenuSection} from '@react-aria/menu';
 import {useSeparator} from '@react-aria/separator';
 
 function Menu(props) {

@@ -5,7 +5,7 @@
   "date": "日期",
   "dateRange": "日期范围",
   "day": "日",
-  "dayPeriod": "时段",
+  "dayPeriod": "上午/下午",
   "endDate": "结束日期",
   "era": "纪元",
   "hour": "小时",
@@ -13,5 +13,7 @@
   "month": "月",
   "second": "秒",
   "startDate": "开始日期",
-  "year": "年"
+  "year": "年",
+  "weekday": "工作日",
+  "timeZoneName": "时区"
 }

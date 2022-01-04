@@ -82,7 +82,7 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
           'is-hovered': isHovered,
           'is-pressed': isPressed
         })}>
-        {formatted}
+        <span className={classNames(styles, 'spectrum-Calendar-dateText')}>{formatted}</span>
       </span>
     </td>
   );
