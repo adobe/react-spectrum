@@ -86,6 +86,32 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
+.spectrum-Table-columnResizer {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  right: 0px;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  user-select: none;
+  z-index: 3;
+
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    display: block;
+    box-sizing: border-box;
+    width: 1px;
+    height: 100%;
+    background-color: red;
+  }
+}
+
 .spectrum-Table-cell--alignCenter {
   text-align: center;
 }
@@ -234,6 +260,14 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-cell--divider {
   border-inline-end-width: var(--spectrum-table-divider-border-size);
+}
+
+.spectrum-Table-cell--divider {
+  &.is-resizable {
+    &:hover {
+      border-inline-end-width: 3px;
+    }
+  }
 }
 
 .spectrum-Table-row {

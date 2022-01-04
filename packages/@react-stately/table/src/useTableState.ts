@@ -13,7 +13,7 @@
 import {CollectionBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
-import {Key, useMemo} from 'react';
+import {Key, useMemo, useRef, useState} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
@@ -26,7 +26,12 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** The current sorted column and direction. */
   sortDescriptor: SortDescriptor,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
-  sort(columnKey: Key): void
+  sort(columnKey: Key): void,
+
+  /** Test that something was resized. */
+  isResizingColumn(): boolean,
+  /** Set the value of isResizing. */
+  setResizingColumn(resizing: boolean): void
 }
 
 export interface CollectionBuilderContext<T> {
@@ -51,6 +56,16 @@ const OPPOSITE_SORT_DIRECTION = {
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T>  {
   let {selectionMode = 'none'} = props;
+
+  const [isResizing, setResizing] = useState<boolean>(false);
+
+  const isResizingRef = useRef<boolean>(null);
+  isResizingRef.current = isResizing;
+
+  function updateResizing(resizing: boolean) {
+    isResizingRef.current = resizing;
+    setResizing(isResizingRef.current);
+  }
 
   let context = useMemo(() => ({
     showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
@@ -78,6 +93,8 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
           ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
           : 'ascending'
       });
-    }
+    },
+    isResizingColumn: () => isResizing,
+    setResizingColumn: updateResizing
   };
 }

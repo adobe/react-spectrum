@@ -23,6 +23,7 @@ import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
+import Resizer from './Resizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
@@ -82,6 +83,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     showSelectionCheckboxes,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
+
+  console.log('from TableView:', state.isResizingColumn());
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -197,7 +200,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     );
   };
 
-  let renderView = (type: string, item: GridNode<T>) => {
+  let renderView = (tableState?: any) => (type: string, item: GridNode<T>) => {
     switch (type) {
       case 'header':
       case 'rowgroup':
@@ -234,13 +237,18 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           );
         }
 
-        return <TableColumnHeader column={item} />;
+        return (
+          <>
+            <TableColumnHeader column={item} />
+            <Resizer state={tableState} />
+          </>
+        );
       case 'loader':
         return (
           <CenteredWrapper>
             <ProgressCircle
               isIndeterminate
-              aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+              aria-label={tableState.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
           </CenteredWrapper>
         );
       case 'empty': {
@@ -281,7 +289,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         layout={layout}
         collection={state.collection}
         focusedKey={state.selectionManager.focusedKey}
-        renderView={renderView}
+        renderView={() => renderView(state)}
         renderWrapper={renderWrapper}
         domRef={domRef} />
     </TableContext.Provider>

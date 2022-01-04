@@ -62,7 +62,12 @@ export interface ColumnProps<T> {
   minWidth?: number | string,
   /** The maximum width of the column. */
   maxWidth?: number | string,
-  // defaultWidth?: number | string
+  /** The default width of the column. */
+  defaultWidth?: number | string,
+  /** Whether the column allows resizing. */
+  allowsResizing?: boolean,
+  /** Whether the column allows resizing. */
+  onResize?: (width: number) => void,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
   /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */

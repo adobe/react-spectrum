@@ -225,7 +225,7 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     getThumbValue: (index: number) => values[index],
     setThumbValue: updateValue,
     setThumbPercent,
-    isThumbDragging: (index: number) => isDraggings[index],
+    isThumbDragging: (index: number) => isDraggingsRef.current[index],
     setThumbDragging: updateDragging,
     focusedThumb: focusedIndex,
     setFocusedThumb: setFocusedIndex,

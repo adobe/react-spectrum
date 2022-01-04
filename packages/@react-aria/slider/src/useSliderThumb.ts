@@ -80,11 +80,12 @@ export function useSliderThumb(
   let {moveProps} = useMove({
     onMoveStart() {
       currentPosition.current = null;
+      console.log('start', stateRef.current.isThumbDragging(index));
       state.setThumbDragging(index, true);
     },
     onMove({deltaX, deltaY, pointerType}) {
       let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
-
+      
       if (currentPosition.current == null) {
         currentPosition.current = stateRef.current.getThumbPercent(index) * size;
       }
@@ -98,12 +99,13 @@ export function useSliderThumb(
         if (isVertical || reverseX) {
           delta = -delta;
         }
-
+        
         currentPosition.current += delta;
         stateRef.current.setThumbPercent(index, clamp(currentPosition.current / size, 0, 1));
       }
     },
     onMoveEnd() {
+      console.log('end', stateRef.current.isThumbDragging(index));
       state.setThumbDragging(index, false);
     }
   });
