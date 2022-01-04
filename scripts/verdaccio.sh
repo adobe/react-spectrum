@@ -13,6 +13,7 @@ then
 fi
 
 function cleanup {
+  echo "Cleaning up"
   if [ "$ci" = false ];
   then
     lsof -ti tcp:4000 | xargs kill
@@ -23,16 +24,18 @@ function cleanup {
     git fetch
     git reset --hard $commit_to_revert
     npm set registry $original_registry
+    return
   else
     # lsof doesn't work in circleci
     netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill
+    return
   fi
 }
 
 trap cleanup ERR EXIT
 
 # Generate dists for the packages
-PARCEL_WORKERS=2 yarn parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-minify --log-level error
+yarn parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-optimize --log-level error
 
 # Start verdaccio and send it to the background
 yarn verdaccio --listen $port &>${output}&
@@ -69,7 +72,6 @@ then
   # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   node scripts/buildWebsite.js /reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs
   cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
-  node scripts/brotli.js
 
   # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
