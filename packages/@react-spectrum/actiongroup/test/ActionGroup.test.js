@@ -717,6 +717,7 @@ describe('ActionGroup', function () {
       expect(buttons[0]).toHaveTextContent('One');
       expect(buttons[1]).toHaveAttribute('aria-label', '…');
       expect(buttons[1]).toHaveAttribute('aria-haspopup', 'true');
+      expect(buttons[1]).not.toHaveAttribute('aria-checked');
 
       triggerPress(buttons[1]);
 
@@ -784,6 +785,7 @@ describe('ActionGroup', function () {
       let button = tree.getByRole('button');
       expect(button).toHaveAttribute('aria-label', 'Test');
       expect(button).toHaveAttribute('aria-haspopup', 'true');
+      expect(button).not.toHaveAttribute('aria-checked');
 
       triggerPress(button);
 
@@ -817,6 +819,7 @@ describe('ActionGroup', function () {
       let button = tree.getByRole('button');
       expect(button).toHaveAttribute('aria-label', '…');
       expect(button).toHaveAttribute('aria-haspopup', 'true');
+      expect(button).not.toHaveAttribute('aria-checked');
 
       triggerPress(button);
 
@@ -859,6 +862,7 @@ describe('ActionGroup', function () {
       let button = tree.getByRole('button');
       expect(button).toHaveAttribute('aria-label', '…');
       expect(button).toHaveAttribute('aria-haspopup', 'true');
+      expect(button).not.toHaveAttribute('aria-checked');
 
       triggerPress(button);
 
@@ -903,6 +907,7 @@ describe('ActionGroup', function () {
       expect(buttons[0]).toBeDisabled();
       expect(buttons[1]).toHaveAttribute('aria-label', '…');
       expect(buttons[1]).toHaveAttribute('aria-haspopup', 'true');
+      expect(buttons[1]).not.toHaveAttribute('aria-checked');
       expect(buttons[1]).toBeDisabled();
     });
 
@@ -925,6 +930,7 @@ describe('ActionGroup', function () {
       expect(within(actionGroup).getByRole('button', {name: 'One'})).toBeVisible();
 
       const moreButton = within(actionGroup).getByRole('button', {name: '…'});
+      expect(moreButton).not.toHaveAttribute('aria-checked');
       expect(moreButton).toBeVisible();
 
       triggerPress(moreButton);
