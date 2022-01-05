@@ -12,7 +12,7 @@
 
 import {Dialog} from '../';
 import {DialogContext} from '../src/context';
-import {fireEvent, render} from '../../../../scripts/customRTL';
+import {fireEvent, render} from '../../../../lib/customRTL';
 import {Header} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
 import {ModalProvider} from '@react-aria/overlays';

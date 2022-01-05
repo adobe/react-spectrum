@@ -14,7 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
 import {Calendar} from '../';
 import {CalendarDate} from '@internationalized/date';
-import {fireEvent, render} from '../../../../scripts/customRTL';
+import {fireEvent, render} from '../../../../lib/customRTL';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
 

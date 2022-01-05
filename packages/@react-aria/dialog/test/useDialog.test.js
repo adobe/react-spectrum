@@ -11,7 +11,7 @@
  */
 
 import React, {useRef} from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 import {useDialog} from '../';
 
 function Example(props) {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '../../../../scripts/customRTL';
+import {act, fireEvent, render, waitFor} from '../../../../lib/customRTL';
 import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../src';

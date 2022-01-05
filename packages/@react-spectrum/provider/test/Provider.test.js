@@ -13,7 +13,7 @@
 // needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
-import {act, fireEvent, render} from '../../../../scripts/customRTL';
+import {act, fireEvent, render} from '../../../../lib/customRTL';
 import {Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '../';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_} from '../../../../scripts/customRTL';
+import {act, fireEvent, render as render_} from '../../../../lib/customRTL';
 import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DatePicker, DateRangePicker} from '../';
 import {installPointerEvent} from '@react-spectrum/test-utils';

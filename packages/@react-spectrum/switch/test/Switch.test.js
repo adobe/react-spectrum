@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 import {Switch} from '../';
 import userEvent from '@testing-library/user-event';
 

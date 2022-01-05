@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '../../../../scripts/customRTL';
+import {act, fireEvent, render, within} from '../../../../lib/customRTL';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, Section} from '../';

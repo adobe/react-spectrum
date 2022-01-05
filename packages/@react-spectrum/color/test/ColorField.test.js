@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '../../../../scripts/customRTL';
+import {act, fireEvent, render} from '../../../../lib/customRTL';
 import {chain} from '@react-aria/utils';
 import {ColorField} from '../';
 import {parseColor} from '@react-stately/color';

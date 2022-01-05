@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '../../../../scripts/customRTL';
+import {fireEvent, render} from '../../../../lib/customRTL';
 import {installPointerEvent} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {useInteractOutside} from '../';

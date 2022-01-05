@@ -11,7 +11,7 @@
  */
 
 import {ClipboardEvent, DataTransfer, DataTransferItem} from './mocks';
-import {fireEvent, render} from '../../../../scripts/customRTL';
+import {fireEvent, render} from '../../../../lib/customRTL';
 import React from 'react';
 import {useClipboard} from '../';
 import userEvent from '@testing-library/user-event';

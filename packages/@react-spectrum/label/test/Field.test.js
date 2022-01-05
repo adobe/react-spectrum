@@ -12,7 +12,7 @@
 
 import {Field} from '../';
 import React from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 import {useField} from '@react-aria/label';
 
 let defaultProps = {

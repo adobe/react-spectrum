@@ -11,7 +11,7 @@
  */
 
 import {Accordion, Item} from '../src';
-import {act, fireEvent, render, within} from '../../../../scripts/customRTL';
+import {act, fireEvent, render, within} from '../../../../lib/customRTL';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';

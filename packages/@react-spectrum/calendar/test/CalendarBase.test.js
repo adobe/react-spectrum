@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '../../../../scripts/customRTL';
+import {act, fireEvent, render} from '../../../../lib/customRTL';
 import {Calendar, RangeCalendar} from '../';
 import {CalendarDate} from '@internationalized/date';
 import {getDaysInMonth} from 'date-fns';

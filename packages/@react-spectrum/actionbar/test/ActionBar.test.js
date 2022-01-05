@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render, within} from '../../../../scripts/customRTL';
+import {act, fireEvent, render, within} from '../../../../lib/customRTL';
 import {announce} from '@react-aria/live-announcer';
 import {Example} from '../stories/Example';
 import {Provider} from '@react-spectrum/provider';

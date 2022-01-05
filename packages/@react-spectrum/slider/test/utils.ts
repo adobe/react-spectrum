@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent} from '../../../../scripts/customRTL';
+import {act, fireEvent} from '../../../../lib/customRTL';
 
 function pressKeyOnButton(key, button) {
   fireEvent.keyDown(button, {key});

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor, within} from '../../../../scripts/customRTL';
+import {act, fireEvent, render, waitFor, within} from '../../../../lib/customRTL';
 import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

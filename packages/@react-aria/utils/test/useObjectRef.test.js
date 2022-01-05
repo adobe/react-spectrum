@@ -11,7 +11,7 @@
  */
 
 import React, {useEffect} from 'react';
-import {render, screen} from '../../../../scripts/customRTL';
+import {render, screen} from '../../../../lib/customRTL';
 import {renderHook} from '@testing-library/react-hooks';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useObjectRef} from '../';

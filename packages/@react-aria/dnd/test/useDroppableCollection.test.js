@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor, within} from '../../../../scripts/customRTL';
+import {act, fireEvent, render, waitFor, within} from '../../../../lib/customRTL';
 import {DataTransfer, DragEvent} from './mocks';
 import {Draggable} from './examples';
 import {DroppableGridExample} from '../stories/DroppableGrid';

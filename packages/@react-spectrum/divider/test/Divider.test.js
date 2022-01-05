@@ -12,7 +12,7 @@
 
 import {Divider} from '../';
 import React from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 
 describe('Divider', function () {
   it.each`

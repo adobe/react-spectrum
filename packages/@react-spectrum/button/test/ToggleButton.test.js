@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 import {ToggleButton} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
 

@@ -12,7 +12,7 @@
 
 import {OverlayContainer, OverlayProvider, useModal} from '..';
 import React from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 
 function ModalDOM(props) {
   let {modalProps} = useModal();

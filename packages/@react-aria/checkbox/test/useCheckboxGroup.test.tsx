@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '../../../../scripts/customRTL';
+import {act, render} from '../../../../lib/customRTL';
 import {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps} from '@react-types/checkbox';
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
 import React, {useRef} from 'react';

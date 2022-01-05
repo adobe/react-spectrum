@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '../../../../scripts/customRTL';
+import {act, render} from '../../../../lib/customRTL';
 import React from 'react';
 import {useFocusWithin} from '../';
 

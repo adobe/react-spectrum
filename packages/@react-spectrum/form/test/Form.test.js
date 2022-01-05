@@ -15,7 +15,7 @@ import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';

@@ -14,7 +14,7 @@ import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
 import React from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 
 let dataTestId = 'IMsvg1';
 

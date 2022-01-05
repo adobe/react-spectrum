@@ -12,7 +12,7 @@
 
 import {ariaHideOutside} from '../src';
 import React from 'react';
-import {render, waitFor} from '../../../../scripts/customRTL';
+import {render, waitFor} from '../../../../lib/customRTL';
 
 describe('ariaHideOutside', function () {
   it('should hide everything except the provided element [button]', function () {

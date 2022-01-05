@@ -13,7 +13,7 @@
 import {Checkbox, CheckboxGroup} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render, within} from '../../../../scripts/customRTL';
+import {render, within} from '../../../../lib/customRTL';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '../../../../scripts/customRTL';
+import {fireEvent, render} from '../../../../lib/customRTL';
 import React, {useRef} from 'react';
 import {useOverlayPosition, useOverlayTrigger} from '../';
 import {useOverlayTriggerState} from '@react-stately/overlays';

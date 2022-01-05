@@ -1,4 +1,4 @@
-import {fireEvent, render, screen} from '../../../../scripts/customRTL';
+import {fireEvent, render, screen} from '../../../../lib/customRTL';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import * as React from 'react';
 import {renderHook} from '@testing-library/react-hooks';

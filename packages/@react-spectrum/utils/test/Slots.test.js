@@ -11,7 +11,7 @@
  */
 
 import React, {useRef} from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 import {SlotProvider, useSlotProps} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {useId, useSlotId} from '@react-aria/utils';

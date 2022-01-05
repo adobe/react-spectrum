@@ -13,7 +13,7 @@
 import {Overlay} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 import {theme} from '@react-spectrum/theme-default';
 
 function ExampleOverlay() {

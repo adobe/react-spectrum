@@ -12,7 +12,7 @@
 
 import {ActionButton} from '../';
 import React from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('ActionButton', function () {

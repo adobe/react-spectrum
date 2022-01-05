@@ -11,7 +11,7 @@
  */
 
 import {act, renderHook} from '@testing-library/react-hooks';
-import {act as actDOM, render} from '../../../../scripts/customRTL';
+import {act as actDOM, render} from '../../../../lib/customRTL';
 import React, {useEffect, useState} from 'react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';

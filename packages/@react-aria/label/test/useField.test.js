@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {render} from '../../../../scripts/customRTL';
+import {render} from '../../../../lib/customRTL';
 import {renderHook} from '@testing-library/react-hooks';
 import {useField} from '../';
 import {WithError} from '../stories/useField.stories';

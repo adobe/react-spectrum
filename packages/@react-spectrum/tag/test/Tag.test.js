@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent} from '../../../../scripts/customRTL';
+import {fireEvent, render} from '../../../../lib/customRTL';
 import React from 'react';
-import {render} from '../../../../scripts/customRTL';
 import {Tag} from '../';
 
 
