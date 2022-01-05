@@ -15,10 +15,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} fr
 import packageData from '@react-aria/meter/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useMeter} from '@react-aria/meter';
-```
-
 ---
 category: Status
 keywords: [meter, progressbar, aria]
@@ -75,6 +71,8 @@ to identify the element to screen readers.
 ## Example
 
 ```tsx example
+import {useMeter} from '@react-aria/meter';
+
 function Meter(props) {
   let {
     label,

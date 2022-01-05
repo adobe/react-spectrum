@@ -14,10 +14,6 @@ import docs from 'docs:@react-aria/focus';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/focus/package.json';
 
-```tsx import
-import {useFocusRing} from '@react-aria/focus';
-```
-
 ---
 category: Focus
 keywords: [focus ring, keyboard focus, focus management, aria]
@@ -66,6 +62,8 @@ See [useCheckbox](useCheckbox.html#styling), [useRadioGroup](useRadioGroup.html#
 techniques.
 
 ```tsx example
+import {useFocusRing} from '@react-aria/focus';
+
 function Example() {
   let {isFocusVisible, focusProps} = useFocusRing();
 
