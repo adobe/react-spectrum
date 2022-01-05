@@ -21,8 +21,7 @@ import userEvent from '@testing-library/user-event';
 
 function beforeInput(target, key) {
   // JSDOM doesn't support the beforeinput event
-  let e = new InputEvent('beforeinput', {cancelable: true, data: key});
-  e.inputType = 'insertText';
+  let e = new InputEvent('beforeinput', {cancelable: true, data: key, inputType: 'insertText'});
   fireEvent(target, e);
 }
 
