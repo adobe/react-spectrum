@@ -105,13 +105,13 @@ ActionMenu supports sections in order to group options. Sections can be used by 
 ```tsx example
 <ActionMenu>
   <Section title="File">
-    <Item key="bold">New</Item>
-    <Item key="underline">Open...</Item>
+    <Item key="new">New</Item>
+    <Item key="open">Open...</Item>
   </Section>
   <Section title="Save">
-    <Item key="left">Save</Item>
-    <Item key="middle">Save As...</Item>
-    <Item key="right">Save All</Item>
+    <Item key="save">Save</Item>
+    <Item key="saveAs">Save As...</Item>
+    <Item key="saveAll">Save All</Item>
   </Section>
 </ActionMenu>
 ```
@@ -127,17 +127,17 @@ function Example() {
       name: 'Reversion',
       id: 'revert',
       children: [
-        {id: 11, name: 'Undo'},
-        {id: 12, name: 'Redo'}
+        {id: 'undo', name: 'Undo'},
+        {id: 'redo', name: 'Redo'}
       ]
     },
     {
       name: 'Clipboard',
       id: 'buffer',
       children: [
-        {id: 21, name: 'Cut'},
-        {id: 22, name: 'Copy'},
-        {id: 23, name: 'Paste'}
+        {id: 'cut', name: 'Cut'},
+        {id: 'copy', name: 'Copy'},
+        {id: 'paste', name: 'Paste'}
       ]
     }
   ];
@@ -198,9 +198,9 @@ import {Keyboard, Text} from '@react-spectrum/text';
 <ActionMenu
   isQuiet
   items={[
-    {name: 'Cut', id: 'p8k3i4'},
-    {name: 'Copy', id: 'j7i3a0'},
-    {name: 'Paste', id: 't4u8v6'}
+    {name: 'Cut', id: 'cut'},
+    {name: 'Copy', id: 'copy'},
+    {name: 'Paste', id: 'paste'}
   ]}>
   {item => <Item>{item.name}</Item>}
 </ActionMenu>
@@ -215,13 +215,13 @@ Applying `autoFocus` to the ActionMenu sets focus to the ActionMenu trigger.
 ```tsx example
 <ActionMenu
   items={[
-    {name: 'Undo', id: 'a1b2c3'},
-    {name: 'Redo', id: 'g5h1j9'},
-    {name: 'Cut', id: 'p8k3i4'},
-    {name: 'Copy', id: 'j7i3a0'},
-    {name: 'Paste', id: 't4u8v6'}
+    {name: 'Undo', id: 'undo'},
+    {name: 'Redo', id: 'redo'},
+    {name: 'Cut', id: 'cut'},
+    {name: 'Copy', id: 'copy'},
+    {name: 'Paste', id: 'paste'}
   ]}
-  disabledKeys={['g5h1j9', 't4u8v6']}>
+  disabledKeys={['redo', 'paste']}>
   {item => <Item>{item.name}</Item>}
 </ActionMenu>
 ```
