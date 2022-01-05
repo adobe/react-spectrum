@@ -2096,7 +2096,7 @@ describe('useDrag and useDrop', function () {
       await act(async () => {
         await tree.rerender(<Test showInput2 />);
       });
-      expect(() => tree.getAllByRole('textbox')).toThrow()
+      expect(() => tree.getAllByRole('textbox')).toThrow();
 
       fireEvent.click(draggable);
       expect(tree.getAllByRole('textbox')).toHaveLength(2);
