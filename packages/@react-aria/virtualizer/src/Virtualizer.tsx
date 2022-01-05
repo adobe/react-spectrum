@@ -11,8 +11,8 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {getInteractionModality} from '@react-aria/interactions';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
