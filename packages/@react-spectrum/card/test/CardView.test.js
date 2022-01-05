@@ -1164,4 +1164,33 @@ describe('CardView', function () {
       expect(row.parentNode.style.height).toBe(`${mockHeight}px`);
     });
   });
+
+  // TODO: not testing waterfall layout because of aforementioned issue with the heights for each card being set to 0 for that layout
+  it.each`
+    Name                  | layout
+    ${'Grid layout'}      | ${GridLayout}
+    ${'Gallery layout'}   | ${GalleryLayout}
+  `('$Name CardView should only scroll an item into view when in keyboard modality', function ({layout}) {
+    let tree = render(<DynamicCardView layout={layout} />);
+    act(() => {
+      jest.runAllTimers();
+    });
+    let cards = tree.getAllByRole('gridcell');
+    expect(cards).toBeTruthy();
+    let grid = tree.getByRole('grid');
+    let initialScrollTop = grid.scrollTop;
+    triggerPress(cards[cards.length - 1]);
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(grid.scrollTop).toBe(initialScrollTop);
+
+    act(() => {
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+      jest.runAllTimers();
+    });
+
+    expect(grid.scrollTop).toBeGreaterThan(initialScrollTop);
+  });
 });

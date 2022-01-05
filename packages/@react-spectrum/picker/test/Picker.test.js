@@ -403,6 +403,33 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(listbox);
     });
+
+    it.skip('scrolls the selected item into view on menu open', function () {
+      // Mock scroll height so that the picker heights actually have a value
+      let scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 500);
+      let {getByRole, queryByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" selectedKey="four">
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(queryByRole('listbox')).toBeNull();
+      let picker = getByRole('button');
+      triggerPress(picker);
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      act(() => jest.runAllTimers());
+      expect(within(listbox).queryByText('Four')).toBeTruthy();
+
+      scrollHeightSpy.mockReset();
+    });
   });
 
   describe('closing', function () {
