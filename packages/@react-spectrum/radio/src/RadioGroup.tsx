@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, LabelPosition} from '@react-types/shared';
-import {Label} from '@react-spectrum/label';
+import {Field, Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {RadioContext} from './context';
 import React from 'react';
@@ -28,63 +28,24 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
   props = useFormProps(props);
   let {
     isEmphasized,
-    isRequired,
-    necessityIndicator,
-    label,
-    labelPosition = 'top' as LabelPosition,
-    labelAlign,
     validationState,
-    children,
-    orientation = 'vertical',
-    ...otherProps
+    children
   } = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
 
   let state = useRadioGroupState(props);
   let {radioGroupProps, labelProps} = useRadioGroup(props, state);
 
   return (
-    <div
-      {...styleProps}
-      {...radioGroupProps}
-      className={
-        classNames(
-          styles,
-          'spectrum-FieldGroup',
-          {
-            'spectrum-FieldGroup--positionSide': labelPosition === 'side'
-          },
-          // This is so radio works inside a <Form>
-          classNames(
-            labelStyles,
-            'spectrum-Field'
-          ),
-          styleProps.className
-        )
-      }
+    <Field
+      {...props as Omit<SpectrumRadioGroupProps, 'onChange'>}
+      labelProps={labelProps}
+      descriptionProps={{}}
+      errorMessageProps={{}}
+      includeNecessityIndicatorInAccessibilityName
+      elementType="span"
       ref={domRef}>
-      {label &&
-        <Label
-          {...labelProps}
-          elementType="span"
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}>
-          {label}
-        </Label>
-      }
-      <div
-        className={
-          classNames(
-            styles,
-            'spectrum-FieldGroup-group',
-            {
-              'spectrum-FieldGroup-group--horizontal': orientation === 'horizontal'
-            }
-          )
-        }>
+      <div {...radioGroupProps}>
         <RadioContext.Provider
           value={{
             isEmphasized,
@@ -94,7 +55,7 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
           {children}
         </RadioContext.Provider>
       </div>
-    </div>
+    </Field>
   );
 }
 

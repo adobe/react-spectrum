@@ -24,6 +24,15 @@ export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
   return {...ctx, ...props};
 }
 
+export function FieldGroup(props) {
+  let contextProps = useFormProps({});
+  return (
+    <FormContext.Provider value={{...contextProps, newFormLayout: false}}>
+      {props.children}
+    </FormContext.Provider>
+  );
+}
+
 const formPropNames = new Set([
   'action',
   'autoComplete',
@@ -46,6 +55,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
     isDisabled,
     isReadOnly,
     validationState,
+    newFormLayout,
     ...otherProps
   } = props;
 
@@ -55,7 +65,8 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
   let ctx = {
     labelPosition,
     labelAlign,
-    necessityIndicator
+    necessityIndicator,
+    newFormLayout
   };
 
   return (
@@ -67,8 +78,9 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
       className={
         classNames(
           styles,
-          'spectrum-Form',
           {
+            'spectrum-Form': !newFormLayout,
+            'spectrum-Form-newLayout': newFormLayout,
             'spectrum-Form--positionSide': labelPosition === 'side',
             'spectrum-Form--positionTop': labelPosition === 'top'
           },

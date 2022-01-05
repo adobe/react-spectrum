@@ -164,3 +164,34 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+.spectrum-Form-newLayout {
+  display: grid;
+
+  > .spectrum-Field-field {
+    width: 100%;
+  }
+
+  &.spectrum-Form--positionSide {
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: start;
+
+    > .spectrum-Field-field {
+      grid-column-start: 2;
+    }
+
+    > .spectrum-Field-helpText {
+      grid-column-start: 2;
+    }
+
+    > :not(.spectrum-FieldLabel) {
+      grid-column-start: 2;
+    }
+  }
+
+  /* With labelPosition=top, we use a normal flex stack */
+  &.spectrum-Form--positionTop {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

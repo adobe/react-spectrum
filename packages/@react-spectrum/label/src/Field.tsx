@@ -48,6 +48,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
 
+  let {newFormLayout} = useFormProps({} as any);
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(
       labelStyles,
@@ -67,30 +68,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       )
     }));
 
-    let renderHelpText = () => (
-      <HelpText
-        descriptionProps={descriptionProps}
-        errorMessageProps={errorMessageProps}
-        description={description}
-        errorMessage={errorMessage}
-        validationState={validationState}
-        isDisabled={isDisabled}
-        showErrorIcon={showErrorIcon} />
-    );
-
-    let renderChildren = () => (
-      <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
-        {children}
-        {hasHelpText && renderHelpText()}
-      </Flex>
-    );
-
-    return (
-      <div
-        {...styleProps}
-        ref={ref as RefObject<HTMLDivElement>}
-        className={labelWrapperClass}>
-        {label && (
+    if (newFormLayout) {
+      return (
+        <>
           <Label
             {...labelProps}
             labelPosition={labelPosition}
@@ -101,10 +81,59 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
             elementType={elementType}>
             {label}
           </Label>
-        )}
-        {renderChildren()}
-      </div>
-    );
+          {children}
+          {hasHelpText && (
+            <HelpText
+              descriptionProps={descriptionProps}
+              errorMessageProps={errorMessageProps}
+              description={description}
+              errorMessage={errorMessage}
+              validationState={validationState}
+              isDisabled={isDisabled}
+              showErrorIcon={showErrorIcon} />
+          )}
+        </>
+      );
+    } else {
+      let renderHelpText = () => (
+        <HelpText
+          descriptionProps={descriptionProps}
+          errorMessageProps={errorMessageProps}
+          description={description}
+          errorMessage={errorMessage}
+          validationState={validationState}
+          isDisabled={isDisabled}
+          showErrorIcon={showErrorIcon} />
+      );
+
+      let renderChildren = () => (
+        <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
+          {children}
+          {hasHelpText && renderHelpText()}
+        </Flex>
+      );
+
+      return (
+        <div
+          {...styleProps}
+          ref={ref as RefObject<HTMLDivElement>}
+          className={labelWrapperClass}>
+          {label && (
+            <Label
+              {...labelProps}
+              labelPosition={labelPosition}
+              labelAlign={labelAlign}
+              isRequired={isRequired}
+              necessityIndicator={necessityIndicator}
+              includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
+              elementType={elementType}>
+              {label}
+            </Label>
+          )}
+          {renderChildren()}
+        </div>
+      );
+    }
   }
 
   return React.cloneElement(children, mergeProps(children.props, {

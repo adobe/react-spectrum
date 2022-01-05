@@ -18,8 +18,8 @@ import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ColorWheel} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {countries, states} from './data';
+import {FieldGroup, Form} from '../';
 import {Flex} from '@react-spectrum/layout';
-import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -34,7 +34,7 @@ import {TextArea, TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
 
-storiesOf('Form/default', module)
+storiesOf('Form/newLayout', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'Default',
@@ -63,18 +63,22 @@ storiesOf('Form/default', module)
   .add(
     'fields next to each other',
     () => (
-      <Form>
-        <Flex>
-          <TextField label="First Name" placeholder="John" marginEnd="size-100" flex={1} description="Please enter your first name." />
-          <TextField label="Last Name" placeholder="Smith" flex={1} description="Please enter your last name." />
+      <Form newFormLayout>
+        <Flex gap="size-100">
+          <FieldGroup>
+            <TextField flex="1" label="First Name" placeholder="John" />
+            <TextField flex="1" label="Last Name" placeholder="Smith" />
+          </FieldGroup>
         </Flex>
-        <TextField label="Street Address" placeholder="123 Any Street" description="Please include apartment or suite number." />
-        <Flex>
-          <TextField label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} description="Please enter the city you live in." />
-          <Picker label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
-            {item => <Item key={item.abbr}>{item.name}</Item>}
-          </Picker>
-          <TextField label="Zip code" placeholder="12345" flex={1} description="Please enter a five-digit zip code." />
+        <TextField label="Street Address" placeholder="123 Any Street" />
+        <Flex gap="size-100">
+          <FieldGroup>
+            <TextField flex="1" label="City" placeholder="San Francisco" />
+            <Picker flex="1" label="State" placeholder="Select a state" items={states}>
+              {item => <Item key={item.abbr}>{item.name}</Item>}
+            </Picker>
+            <TextField flex="1" label="Zip code" placeholder="12345" />
+          </FieldGroup>
         </Flex>
       </Form>
     )
@@ -84,7 +88,7 @@ storiesOf('Form/default', module)
     () => {
       const [checked, setChecked] = useState(true);
       return (
-        <Form>
+        <Form newFormLayout>
           <Well role="group" aria-labelledby="billing-legend">
             <h2 id="billing-legend" className={typographyStyles['spectrum-Heading4']}>Billing address</h2>
             <Flex>
@@ -196,13 +200,13 @@ storiesOf('Form/default', module)
     () => (
       <Flex gap="size-100">
         <NumberField label="Outside form" />
-        <Form>
+        <Form newFormLayout>
           <NumberField label="Inside form" />
         </Form>
-        <Form>
+        <Form newFormLayout>
           <TextField label="First Name" placeholder="John" />
         </Form>
-        <Form>
+        <Form newFormLayout>
           <TextField label="First Name" placeholder="John" />
           <NumberField label="Inside form" />
         </Form>
@@ -212,7 +216,7 @@ storiesOf('Form/default', module)
 
 function render(props: any = {}) {
   return (
-    <Form {...props}>
+    <Form {...props} newFormLayout>
       <CheckboxGroup defaultValue={['dragons']} label="Pets">
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
@@ -285,6 +289,7 @@ function FormWithControls(props: any = {}) {
             e.preventDefault();
           }
         }}
+        newFormLayout
         {...props}>
         <TextField name="first-name" label="First Name controlled" placeholder="John" value={firstName} onChange={setFirstName} />
         <TextField name="last-name" label="Last Name default" placeholder="Smith" defaultValue="world" />
@@ -516,7 +521,7 @@ function FormWithSubmit() {
   };
 
   return (
-    <Form onSubmit={handleSubmit} isReadOnly={formStatus === 'valid'}>
+    <Form newFormLayout onSubmit={handleSubmit} isReadOnly={formStatus === 'valid'}>
       <TextField
         label="Email address"
         type="email"
