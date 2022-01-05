@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, LabelPosition} from '@react-types/shared';
-import {Field, Label} from '@react-spectrum/label';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {DOMRef} from '@react-types/shared';
+import {Field} from '@react-spectrum/label';
 import {RadioContext} from './context';
 import React from 'react';
 import {SpectrumRadioGroupProps} from '@react-types/radio';
-import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
+import {useDOMRef} from '@react-spectrum/utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
