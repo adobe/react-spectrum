@@ -312,6 +312,7 @@ governing permissions and limitations under the License.
   .spectrum-Dialog-content {
     overflow-y: visible;
     height: min-content;
+    display: inline-table;
   }
 
   .spectrum-Dialog-footer {
