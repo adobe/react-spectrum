@@ -53,6 +53,19 @@ storiesOf('Button/ToggleButton', module)
         </Flex>
       </View>
     )
+  )
+  .add(
+    'styles to check WHCM support',
+    () => (
+      <View backgroundColor="static-yellow-400" padding="size-1000">
+        <Flex direction="column" rowGap="size-150">
+          {render()}
+          {render({isEmphasized: true})}
+          {render({isQuiet: true})}
+          {render({isQuiet: true, isEmphasized: true})}
+        </Flex>
+      </View>
+    )
   );
 
 function render(props = {}) {

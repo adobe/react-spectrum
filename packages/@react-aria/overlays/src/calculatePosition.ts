@@ -58,7 +58,8 @@ interface PositionOpts {
   shouldFlip: boolean,
   boundaryElement: HTMLElement,
   offset: number,
-  crossOffset: number
+  crossOffset: number,
+  maxHeight?: number
 }
 
 export interface PositionResult {
@@ -284,7 +285,8 @@ export function calculatePositionInternal(
   containerOffsetWithBoundary: Offset,
   offset: number,
   crossOffset: number,
-  isContainerPositioned: boolean
+  isContainerPositioned: boolean,
+  userSetMaxHeight?: number
 ): PositionResult {
   let placementInfo = parsePlacement(placementInput);
   let {size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
@@ -332,6 +334,10 @@ export function calculatePositionInternal(
     padding
   );
 
+  if (userSetMaxHeight && userSetMaxHeight < maxHeight) {
+    maxHeight = userSetMaxHeight;
+  }
+
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
   position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
@@ -363,7 +369,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     shouldFlip,
     boundaryElement,
     offset,
-    crossOffset
+    crossOffset,
+    maxHeight
   } = opts;
 
   let container = overlayNode.offsetParent || document.body;
@@ -398,6 +405,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     containerOffsetWithBoundary,
     offset,
     crossOffset,
-    isContainerPositioned
+    isContainerPositioned,
+    maxHeight
   );
 }
