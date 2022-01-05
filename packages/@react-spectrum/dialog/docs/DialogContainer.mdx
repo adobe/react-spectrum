@@ -1,17 +1,18 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/dialog';
-import {ExampleImage, HeaderInfo, PropTable, FunctionAPI} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, FunctionAPI, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/dialog/package.json';
 
 ```jsx import
@@ -36,7 +37,7 @@ keywords: [dialog container, dialog, modal]
 
 # DialogContainer
 
-<p>{docs.exports.DialogContainer.description}</p>
+<PageDescription>{docs.exports.DialogContainer.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -84,7 +85,7 @@ dialog to be rendered within the DialogContainer.
 
 This example also demonstrates the use of the `useDialogContainer` hook, which allows the dialog to dismiss itself when a user
 presses one of the buttons inside it. This triggers the DialogContainer's `onDismiss` event, which resets the state storing the
-open dialog back to `null`. In addition, the user can close the dialog using the <kbd>Escape</kbd> key (unless the
+open dialog back to `null`. In addition, the user can close the dialog using the <Keyboard>Escape</Keyboard> key (unless the
 `isKeyboardDismissDisabled` prop is set), or by clicking outside (if the `isDismissable` prop is set).
 
 ```tsx example
