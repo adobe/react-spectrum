@@ -49,7 +49,6 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   let domRef = useDOMRef(ref);
   let listRef = useRef<HTMLUListElement>(null);
   let currentRef = useRef<DOMRefValue<HTMLAnchorElement | HTMLSpanElement>>(null);
-  let isAfterAction = useRef(false);
 
   let [visibleItems, setVisibleItems] = useValueEffect(childArray.length);
 
@@ -132,38 +131,11 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   useLayoutEffect(updateOverflow, [children, updateOverflow]);
 
-  useLayoutEffect(() => {
-    // Only try to restore focus after an action.
-    if (!isAfterAction.current) {
-      return;
-    }
-    isAfterAction.current = false;
-
-    // Wait a frame for updateOverflow.
-    requestAnimationFrame(() => {
-      if (
-        // Where breadcrumbs exist, 
-        domRef.current &&
-        // the current breadcrumb is defined,
-        currentRef.current &&
-        // and the current focus has either been removed from the DOM,
-        // or is within the breadcrumbs,
-        (
-          document.activeElement === document.body ||
-          domRef.current.contains(document.activeElement)
-        )
-      ) {
-        // focus the current breadcrumb.
-        currentRef.current.UNSAFE_getDOMNode().focus();
-      }
-    });
-  }, [domRef, currentRef, isAfterAction, children]);
-
   function triggerOnAction(key: Key) {
     if (onAction) {
       onAction(key);
-      isAfterAction.current = true;
     }
+    currentRef.current.UNSAFE_getDOMNode().focus();
   }
 
   let contents = childArray;
@@ -211,7 +183,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
     return (
       <li
-        key={key}
+        key={isCurrent ? 'current' : key}
         className={
           classNames(
             styles,
