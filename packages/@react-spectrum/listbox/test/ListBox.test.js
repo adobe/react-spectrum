@@ -812,7 +812,6 @@ describe('ListBox', function () {
       expect(options.length).toBe(5);
       // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
       // onLoadMore called twice from useLayoutEffect
-      // todo: talk to daniel about this one
       expect(onLoadMore).toHaveBeenCalledTimes(4);
     });
   });
