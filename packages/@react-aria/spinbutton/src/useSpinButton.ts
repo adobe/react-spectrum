@@ -167,6 +167,10 @@ export function useSpinButton(
     [onDecrement, minValue, value]
   );
 
+  let cancelContextMenu = (e) => {
+    e.preventDefault();
+  };
+
   return {
     spinButtonProps: {
       role: 'spinbutton',
@@ -182,14 +186,26 @@ export function useSpinButton(
       onBlur
     },
     incrementButtonProps: {
-      onPressStart: () => onIncrementPressStart(400),
-      onPressEnd: clearAsync,
+      onPressStart: () => {
+        onIncrementPressStart(400);
+        window.addEventListener('contextmenu', cancelContextMenu);
+      },
+      onPressEnd: () => {
+        clearAsync();
+        window.removeEventListener('contextmenu', cancelContextMenu);
+      },
       onFocus,
       onBlur
     },
     decrementButtonProps: {
-      onPressStart: () => onDecrementPressStart(400),
-      onPressEnd: clearAsync,
+      onPressStart: () => {
+        onDecrementPressStart(400);
+        window.addEventListener('contextmenu', cancelContextMenu);
+      },
+      onPressEnd: () => {
+        clearAsync();
+        window.removeEventListener('contextmenu', cancelContextMenu);
+      },
       onFocus,
       onBlur
     }

@@ -103,7 +103,7 @@ export function usePress(props: PressHookProps): PressResult {
     shouldCancelOnPointerExit,
     allowTextSelectionOnPress,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb,
+    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
     ...domProps
   } = usePressResponderContext(props);
   let propsRef = useRef<PressHookProps>(null);
@@ -243,7 +243,9 @@ export function usePress(props: PressHookProps): PressResult {
               isSpaceKey(nativeEvent)
             )
           ) {
-            e.preventDefault();
+            if (shouldPreventDefaultKeyboard(target as Element)) {
+              e.preventDefault();
+            }
             // If the event is repeating, it may have started on a different element
             // after which focus moved to the current element. Ignore these events and
             // only handle the first key down event.
@@ -317,7 +319,9 @@ export function usePress(props: PressHookProps): PressResult {
           e.stopPropagation();
         }
 
-        e.preventDefault();
+        if (shouldPreventDefaultKeyboard(target as Element)) {
+          e.preventDefault();
+        }
 
         state.isPressed = false;
         triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
@@ -815,6 +819,10 @@ function isOverTarget(point: EventPoint, target: HTMLElement) {
 function shouldPreventDefault(target: Element) {
   // We cannot prevent default if the target is inside a draggable element.
   return !target.closest('[draggable="true"]');
+}
+
+function shouldPreventDefaultKeyboard(target: Element) {
+  return !((target.tagName === 'INPUT' || target.tagName === 'BUTTON') && (target as HTMLButtonElement | HTMLInputElement).type === 'submit');
 }
 
 function isVirtualPointerEvent(event: PointerEvent) {
