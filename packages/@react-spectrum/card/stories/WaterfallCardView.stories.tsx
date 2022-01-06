@@ -36,7 +36,7 @@ import {WaterfallLayoutOptions} from '../src/WaterfallLayout';
 
 let itemsNoSize = [
   {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
-  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1'},
+  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1 really really really really really really really really really really really really long'},
   {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 1'},
   {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 2'},
   {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 2'},
