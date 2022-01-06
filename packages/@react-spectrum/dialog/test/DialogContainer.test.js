@@ -19,7 +19,7 @@ import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('DialogContainer', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterAll(() => {

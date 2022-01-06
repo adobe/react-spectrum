@@ -34,13 +34,13 @@ function renderSearchWithin(props = {}, searchFieldProps = {}, pickerProps = {})
           <Item key="tags">Tags</Item>
         </Picker>
       </SearchWithin>
-    </Provider>  
+    </Provider>
   );
 }
 
 describe('SearchWithin', function () {
   beforeAll(function () {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {

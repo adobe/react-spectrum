@@ -25,7 +25,7 @@ describe('ActionMenu', function () {
   let onActionSpy = jest.fn();
 
   beforeAll(function () {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {

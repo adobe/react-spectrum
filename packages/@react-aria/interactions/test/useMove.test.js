@@ -25,11 +25,7 @@ function Example(props) {
 describe('useMove', function () {
   beforeAll(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers();
-  });
-  afterAll(() => {
-    jest.useRealTimers();
-    window.requestAnimationFrame.mockRestore();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {
@@ -218,7 +214,8 @@ describe('useMove', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
-      act(() => {jest.advanceTimersByTime(300);});
+      // advance by the setTimeout in textSelection, then an additional 16ms for the requestAnimationFrame in runAfterTransition
+      act(() => {jest.advanceTimersByTime(316);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
 

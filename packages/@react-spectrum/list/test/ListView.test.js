@@ -39,7 +39,7 @@ describe('ListView', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterAll(function () {
@@ -47,11 +47,16 @@ describe('ListView', function () {
     offsetHeight.mockReset();
   });
 
-  let render = (children, locale = 'en-US', scale = 'medium') => renderComponent(
-    <Provider theme={theme} scale={scale} locale={locale}>
-      {children}
-    </Provider>
-  );
+  let render = (children, locale = 'en-US', scale = 'medium') => {
+    let tree = renderComponent(
+      <Provider theme={theme} scale={scale} locale={locale}>
+        {children}
+      </Provider>
+    );
+    // Allow for Virtualizer layout to update
+    act(() => {jest.runAllTimers();});
+    return tree;
+  };
 
   let getCell = (tree, text) => {
     // Find by text, then go up to the element with the cell role.

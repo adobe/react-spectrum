@@ -144,7 +144,7 @@ describe('SearchAutocomplete', function () {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {
@@ -1272,7 +1272,7 @@ describe('SearchAutocomplete', function () {
     it('searchAutocomplete should hide the loading circle when if the menu closes', function () {
       let {getByRole, queryByRole} = render(<ExampleSearchAutocomplete loadingState="filtering" />);
       let searchAutocomplete = getByRole('combobox');
-      
+
       expect(queryByRole('progressbar')).toBeNull();
 
       act(() => {

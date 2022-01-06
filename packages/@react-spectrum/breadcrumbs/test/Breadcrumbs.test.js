@@ -20,7 +20,7 @@ import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('Breadcrumbs', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
