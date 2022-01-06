@@ -14,38 +14,26 @@
 import {useMove} from '@react-aria/interactions';
 import {useRef} from 'react';
 
-
 export function useTableColumnResize(state): any {
   const stateRef = useRef(null);
   stateRef.current = state;
-  let currentPosition = useRef<number>(null);
+  let currentPosition = useRef<number>(0);
   const {moveProps} = useMove({
     onMoveStart() {
-      currentPosition.current = null;
-      console.log('start resizing - isResizingColumn:', stateRef.current.isResizingColumn());
-      stateRef.current.setResizingColumn(true);
+      currentPosition.current = 0;
+      stateRef.current.setColumnResizeWidth(0);
     },
     onMove({deltaX}) {
-
-      if (currentPosition.current == null) {
-        // currentPosition.current = state;
-        currentPosition.current = 100;
-      }
-      
+      console.log('current resize width: ', currentPosition.current, ' moved from that position: ', deltaX);
       currentPosition.current += deltaX;
-      // console.log(currentPosition.current, state);
-      // setState(currentPosition.current);
-      // setState(snapValueToStep(currentPosition.current, 75, 500, 1));
+      stateRef.current.setColumnResizeWidth(currentPosition.current);
     },
     onMoveEnd() {
-      console.log('end resizing - isResizingColumn:', stateRef.current.isResizingColumn());
-      stateRef.current.setResizingColumn(false);
+      currentPosition.current = 0;
     }
   });
-
 
   return {
     resizerProps: moveProps
   };
-
 }

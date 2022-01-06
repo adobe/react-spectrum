@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {
+  CollectionBase,
+  Node,
+  SelectionMode,
+  Sortable,
+  SortDescriptor,
+  SortDirection
+} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key, useMemo, useRef, useState} from 'react';
@@ -29,9 +36,9 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   sort(columnKey: Key): void,
 
   /** Test that something was resized. */
-  isResizingColumn(): boolean,
+  columnResizeWidth(): number,
   /** Set the value of isResizing. */
-  setResizingColumn(resizing: boolean): void
+  setColumnResizeWidth(size: number): void
 }
 
 export interface CollectionBuilderContext<T> {
@@ -40,7 +47,10 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
+export interface TableStateProps<T>
+  extends CollectionBase<T>,
+    MultipleSelectionStateProps,
+    Sortable {
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean
 }
@@ -54,31 +64,40 @@ const OPPOSITE_SORT_DIRECTION = {
  * Provides state management for a table component. Handles building a collection
  * of columns and rows from props. In addition, it tracks row selection and manages sort order changes.
  */
-export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T>  {
+export function useTableState<T extends object>(
+  props: TableStateProps<T>
+): TableState<T> {
   let {selectionMode = 'none'} = props;
 
-  const [isResizing, setResizing] = useState<boolean>(false);
+  const [columnWidth, setColumnWidth] = useState<number>(0);
 
-  const isResizingRef = useRef<boolean>(null);
-  isResizingRef.current = isResizing;
+  const columnWidthRef = useRef<number>(null);
+  columnWidthRef.current = columnWidth;
 
-  function updateResizing(resizing: boolean) {
-    isResizingRef.current = resizing;
-    setResizing(isResizingRef.current);
+  function updateColumnWidth(newWidth: number) {
+    columnWidthRef.current = newWidth;
+    setColumnWidth(columnWidthRef.current);
   }
 
-  let context = useMemo(() => ({
-    showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
-    selectionMode,
-    columns: []
-  }), [props.children, props.showSelectionCheckboxes, selectionMode]);
+  let context = useMemo(
+    () => ({
+      showSelectionCheckboxes:
+        props.showSelectionCheckboxes && selectionMode !== 'none',
+      selectionMode,
+      columns: []
+    }),
+    [props.children, props.showSelectionCheckboxes, selectionMode]
+  );
 
   let collection = useCollection<T, TableCollection<T>>(
     props,
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
-  let {disabledKeys, selectionManager} = useGridState({...props, collection});
+  let {disabledKeys, selectionManager} = useGridState({
+    ...props,
+    collection
+  });
 
   return {
     collection,
@@ -89,12 +108,13 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     sort(columnKey: Key) {
       props.onSortChange({
         column: columnKey,
-        direction: props.sortDescriptor?.column === columnKey
-          ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
-          : 'ascending'
+        direction:
+          props.sortDescriptor?.column === columnKey
+            ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
+            : 'ascending'
       });
     },
-    isResizingColumn: () => isResizing,
-    setResizingColumn: updateResizing
+    columnResizeWidth: () => columnWidth,
+    setColumnResizeWidth: updateColumnWidth
   };
 }

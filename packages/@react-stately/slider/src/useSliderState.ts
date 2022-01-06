@@ -140,16 +140,26 @@ interface SliderStateOptions extends SliderProps {
  * @param props
  */
 export function useSliderState(props: SliderStateOptions): SliderState {
-  const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, numberFormatter: formatter, step = DEFAULT_STEP_VALUE} = props;
+  const {
+    isDisabled,
+    minValue = DEFAULT_MIN_VALUE,
+    maxValue = DEFAULT_MAX_VALUE,
+    numberFormatter: formatter,
+    step = DEFAULT_STEP_VALUE
+  } = props;
 
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
-    props.defaultValue ?? [minValue] as any,
+    props.defaultValue ?? ([minValue] as any),
     props.onChange as any
   );
-  const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
+  const [isDraggings, setDraggings] = useState<boolean[]>(
+    new Array(values.length).fill(false)
+  );
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
-  const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
+  const [focusedIndex, setFocusedIndex] = useState<number | undefined>(
+    undefined
+  );
 
   const valuesRef = useRef<number[]>(null);
   valuesRef.current = values;
@@ -194,11 +204,19 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     }
 
     const wasDragging = isDraggingsRef.current[index];
-    isDraggingsRef.current = replaceIndex(isDraggingsRef.current, index, dragging);
+    isDraggingsRef.current = replaceIndex(
+      isDraggingsRef.current,
+      index,
+      dragging
+    );
     setDraggings(isDraggingsRef.current);
 
     // Call onChangeEnd if no handles are dragging.
-    if (props.onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
+    if (
+      props.onChangeEnd &&
+      wasDragging &&
+      !isDraggingsRef.current.some(Boolean)
+    ) {
       props.onChangeEnd(valuesRef.current);
     }
   }

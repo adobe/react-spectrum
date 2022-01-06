@@ -18,7 +18,8 @@ import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
-  getDefaultWidth: (props) => string | number
+  getDefaultWidth: (props) => string | number,
+  columnResizeWidth: number
 }
 
 export class TableLayout<T> extends ListLayout<T> {
@@ -26,6 +27,7 @@ export class TableLayout<T> extends ListLayout<T> {
   lastCollection: TableCollection<T>;
   columnWidths: Map<Key, number>;
   stickyColumnIndices: number[];
+  columnResizeWidth: number;
   getDefaultWidth: (props) => string | number;
   wasLoading = false;
   isLoading = false;
@@ -33,6 +35,7 @@ export class TableLayout<T> extends ListLayout<T> {
   constructor(options: TableLayoutOptions<T>) {
     super(options);
     this.getDefaultWidth = options.getDefaultWidth;
+    this.columnResizeWidth = options.columnResizeWidth;
   }
 
 
@@ -73,6 +76,10 @@ export class TableLayout<T> extends ListLayout<T> {
     for (let column of this.collection.columns) {
       let props = column.props as ColumnProps<T>;
       let width = props.width ?? this.getDefaultWidth(props);
+      if (width && this.collection.columns[0] === column) {
+        // @ts-ignore
+        width = width + this.columnResizeWidth;
+      }
       if (width != null) {
         let w = this.parseWidth(width);
         this.columnWidths.set(column.key, w);
@@ -90,9 +97,13 @@ export class TableLayout<T> extends ListLayout<T> {
 
     // Pass 2: if there are remaining columns, then distribute the remaining space evenly.
     if (remainingColumns.size > 0) {
-      let columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
-
+      let fakeWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
+      let columnWidth = fakeWidth;
       for (let column of remainingColumns) {
+        if (this.collection.columns[0] === column) {
+          // @ts-ignore
+          columnWidth = columnWidth + this.columnResizeWidth;
+        }
         let props = column.props as ColumnProps<T>;
         let minWidth = props.minWidth != null ? this.parseWidth(props.minWidth) : 75;
         let maxWidth = props.maxWidth != null ? this.parseWidth(props.maxWidth) : Infinity;

@@ -1,7 +1,21 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {
+  clamp,
+  focusWithoutScrolling,
+  mergeProps,
+  useGlobalListeners
+} from '@react-aria/utils';
 import {getSliderThumbId, sliderIds} from './utils';
-import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {
+  ChangeEvent,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  RefObject,
+  useCallback,
+  useEffect,
+  useRef
+} from 'react';
 import {SliderState} from '@react-stately/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
@@ -80,32 +94,41 @@ export function useSliderThumb(
   let {moveProps} = useMove({
     onMoveStart() {
       currentPosition.current = null;
-      console.log('start', stateRef.current.isThumbDragging(index));
       state.setThumbDragging(index, true);
     },
     onMove({deltaX, deltaY, pointerType}) {
-      let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
-      
+      let size = isVertical
+        ? trackRef.current.offsetHeight
+        : trackRef.current.offsetWidth;
+
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPercent(index) * size;
+        currentPosition.current =
+          stateRef.current.getThumbPercent(index) * size;
       }
       if (pointerType === 'keyboard') {
         // (invert left/right according to language direction) + (according to vertical)
-        let delta = ((reverseX ? -deltaX : deltaX) + (isVertical ? -deltaY : -deltaY)) * stateRef.current.step;
+        let delta =
+          ((reverseX ? -deltaX : deltaX) + (isVertical ? -deltaY : -deltaY)) *
+          stateRef.current.step;
         currentPosition.current += delta * size;
-        stateRef.current.setThumbValue(index, stateRef.current.getThumbValue(index) + delta);
+        stateRef.current.setThumbValue(
+          index,
+          stateRef.current.getThumbValue(index) + delta
+        );
       } else {
         let delta = isVertical ? deltaY : deltaX;
         if (isVertical || reverseX) {
           delta = -delta;
         }
-        
+
         currentPosition.current += delta;
-        stateRef.current.setThumbPercent(index, clamp(currentPosition.current / size, 0, 1));
+        stateRef.current.setThumbPercent(
+          index,
+          clamp(currentPosition.current / size, 0, 1)
+        );
       }
     },
     onMoveEnd() {
-      console.log('end', stateRef.current.isThumbDragging(index));
       state.setThumbDragging(index, false);
     }
   });
@@ -130,7 +153,6 @@ export function useSliderThumb(
     addGlobalListener(window, 'mouseup', onUp, false);
     addGlobalListener(window, 'touchend', onUp, false);
     addGlobalListener(window, 'pointerup', onUp, false);
-
   };
 
   let onUp = (e) => {
@@ -166,9 +188,8 @@ export function useSliderThumb(
         state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
-    thumbProps: !isDisabled ? mergeProps(
-      moveProps,
-      {
+    thumbProps: !isDisabled
+      ? mergeProps(moveProps, {
         onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
           if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
             return;
@@ -181,9 +202,11 @@ export function useSliderThumb(
           }
           onDown(e.pointerId);
         },
-        onTouchStart: (e: React.TouchEvent<HTMLElement>) => {onDown(e.changedTouches[0].identifier);}
-      }
-    ) : {},
+        onTouchStart: (e: React.TouchEvent<HTMLElement>) => {
+          onDown(e.changedTouches[0].identifier);
+        }
+      })
+      : {},
     labelProps
   };
 }
