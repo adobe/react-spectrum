@@ -173,7 +173,7 @@ governing permissions and limitations under the License.
   }
 
   &.spectrum-Form--positionSide {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr;
     align-items: start;
 
     > .spectrum-FieldLabel {
@@ -194,7 +194,7 @@ governing permissions and limitations under the License.
       padding-bottom: 10px;
     }
 
-    > :not(.spectrum-FieldLabel):not(.spectrum-Field-helpText):not(.spectrum-Field-field) {
+    > :not(.spectrum-FieldLabel):not(.spectrum-Field-helpText):not(.spectrum-Field-field):not(.spectrum-Form-group) {
       grid-column-start: 2;
       margin-bottom: 10px;
     }
@@ -203,7 +203,8 @@ governing permissions and limitations under the License.
     .spectrum-Form-group {
       grid-column-start: span 2;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(0, auto) minmax(0, auto));
+      column-gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(0, auto) minmax(0, 1fr));
       grid-template-rows: auto auto;
       grid-auto-flow: column;
 

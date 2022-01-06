@@ -96,7 +96,7 @@ storiesOf('Form/newLayout', module)
           <TextField label="Last Name" placeholder="Smith" />
         </FieldGroup>
         <TextField label="Street Address" placeholder="123 Any Street" />
-        <FieldGroup columns={repeat('auto-fit', [minmax(0, 'auto'), minmax(0, '1fr')])}>
+        <FieldGroup>
           <TextField label="City" placeholder="San Francisco" />
           <Picker label="State" placeholder="Select a state" items={states}>
             {item => <Item key={item.abbr}>{item.name}</Item>}
