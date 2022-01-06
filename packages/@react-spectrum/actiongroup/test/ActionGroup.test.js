@@ -131,7 +131,7 @@ function renderComponentWithExtraInputs(props) {
 
 describe('ActionGroup', function () {
   beforeAll(function () {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
 
     jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
       if (this instanceof HTMLButtonElement) {
