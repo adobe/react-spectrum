@@ -125,7 +125,7 @@ function Example() {
   let openWindows = [
     {
       name: 'Reversion',
-      id: 'revert',
+      id: 'reversion',
       children: [
         {id: 'undo', name: 'Undo'},
         {id: 'redo', name: 'Redo'}
@@ -133,7 +133,7 @@ function Example() {
     },
     {
       name: 'Clipboard',
-      id: 'buffer',
+      id: 'clipboard',
       children: [
         {id: 'cut', name: 'Cut'},
         {id: 'copy', name: 'Copy'},
@@ -210,6 +210,22 @@ import {Keyboard, Text} from '@react-spectrum/text';
 
 Applying `autoFocus` to the ActionMenu sets focus to the ActionMenu trigger.
 
+### Disabled
+
+```tsx example
+<ActionMenu
+  items={[
+    {name: 'Undo', id: 'undo'},
+    {name: 'Redo', id: 'redo'},
+    {name: 'Cut', id: 'cut'},
+    {name: 'Copy', id: 'copy'},
+    {name: 'Paste', id: 'paste'}
+  ]}
+  isDisabled>
+  {item => <Item>{item.name}</Item>}
+</ActionMenu>
+```
+
 ### Disabled items
 
 ```tsx example
@@ -273,4 +289,25 @@ By default, the ActionMenu menu flips direction automatically upon opening when 
     <Item key="paste">Paste</Item>
   </ActionMenu>
 </Flex>
+```
+
+### Open
+
+The `isOpen` and `defaultOpen` props on the ActionMenu control whether the menu is open by default.
+They apply controlled and uncontrolled behavior on the Menu respectively.
+
+```tsx example
+function Example() {
+  let [open, setOpen] = React.useState(false);
+
+  return (
+    <ActionMenu
+      isOpen={open}
+      onOpenChange={setOpen}>
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </ActionMenu>
+  );
+}
 ```
