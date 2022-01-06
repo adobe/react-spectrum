@@ -11,10 +11,8 @@
  */
 
 import {act, fireEvent, render, within} from '@testing-library/react';
-import {ActionMenu, Item} from '@react-spectrum/menu';
-import {Button} from '@react-spectrum/button';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
-import {Content, Footer} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Provider} from '@react-spectrum/provider';
@@ -83,39 +81,18 @@ function StaticCardView(props) {
           <Heading>Title  1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
         </Card>
         <Card width={640} height={640} textValue="Title  1">
           <Image src="https://i.imgur.com/DhygPot.jpg" />
           <Heading>Title  1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
         </Card>
         <Card width={182} height={1009} textValue="Title  1">
           <Image src="https://i.imgur.com/L7RTlvI.png" />
           <Heading>Title  1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
         </Card>
       </CardView>
     </Provider>
@@ -143,13 +120,6 @@ function DynamicCardView(props) {
             <Heading>{item.title}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
-            <Footer>
-              <Button variant="primary">Something</Button>
-            </Footer>
           </Card>
         )}
       </CardView>
@@ -205,18 +175,6 @@ describe('CardView', function () {
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
       expect(within(cell).getByText('Title', {exact: false})).toBeTruthy();
-
-      if (Name === 'Waterfall layout') {
-        let buttons = within(cell).getAllByRole('button');
-        expect(buttons.length).toEqual(2);
-        expect(buttons[0]).toHaveAttribute('aria-label', 'More actions');
-        expect(buttons[1]).toHaveTextContent('Something');
-      } else {
-        // Grid and Gallery only support quiet cards for now.
-        let actionMenuButton = within(cell).getByRole('button');
-        expect(actionMenuButton).toBeTruthy();
-        expect(actionMenuButton).toHaveAttribute('aria-label', 'More actions');
-      }
     }
   });
 
@@ -248,18 +206,6 @@ describe('CardView', function () {
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
       expect(within(cell).getByText('Title', {exact: false})).toBeTruthy();
-
-      if (Name === 'Waterfall layout') {
-        let buttons = within(cell).getAllByRole('button');
-        expect(buttons.length).toEqual(2);
-        expect(buttons[0]).toHaveAttribute('aria-label', 'More actions');
-        expect(buttons[1]).toHaveTextContent('Something');
-      } else {
-        // Grid and Gallery only support quiet cards for now.
-        let actionMenuButton = within(cell).getByRole('button');
-        expect(actionMenuButton).toBeTruthy();
-        expect(actionMenuButton).toHaveAttribute('aria-label', 'More actions');
-      }
     }
   });
 
