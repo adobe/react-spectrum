@@ -34,11 +34,17 @@ type MappedDateValue<T> =
 
 export type Granularity = 'day' | 'hour' | 'minute' | 'second' | 'millisecond';
 interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps {
+  /** The minimum allowed date that a user may select. */
   minValue?: DateValue,
+  /** The maximum allowed date that a user may select. */
   maxValue?: DateValue,
+  /** A placeholder date to display when no value is selected. */
   placeholderValue?: T,
+  /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
   hourCycle?: 12 | 24,
+  /** Determines the smallest unit that is displayed in the date picker. */
   granularity?: Granularity,
+  /** Whether to hide the time zone abbreviation. */
   hideTimeZone?: boolean
 }
 
@@ -52,8 +58,11 @@ export interface DateRangePickerProps<T extends DateValue> extends DatePickerBas
 export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DateRangePickerProps<T> {}
 
 interface SpectrumDatePickerBase<T extends DateValue> extends AriaDatePickerBaseProps<T>, SpectrumLabelableProps, StyleProps {
+  /** Whether the date picker should be displayed with a quiet style. */
   isQuiet?: boolean,
+  /** Whether to show the localized date format as help text below the field. */
   showFormatHelpText?: boolean,
+  /** The maximum number of months to display at once in the calendar popover, if screen space permits. */
   maxVisibleMonths?: number
 }
 
@@ -68,11 +77,17 @@ type MappedTimeValue<T> =
   never;
 
 export interface TimePickerProps<T extends TimeValue> extends InputBase, Validation, FocusableProps, LabelableProps, ValueBase<T, MappedTimeValue<T>> {
+  /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
   hourCycle?: 12 | 24,
+  /** Determines the smallest unit that is displayed in the time picker. */
   granularity?: 'hour' | 'minute' | 'second' | 'millisecond',
+  /** Whether to hide the time zone abbreviation. */
   hideTimeZone?: boolean,
+  /** A placeholder time to display when no value is selected. */
   placeholderValue?: T,
+  /** The minimum allowed time that a user may select. */
   minValue?: TimeValue,
+  /** The maximum allowed time that a user may select. */
   maxValue?: TimeValue
 }
 
