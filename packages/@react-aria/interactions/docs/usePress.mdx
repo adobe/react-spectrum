@@ -16,10 +16,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/interactions/package.json';
 
-```jsx import
-import {usePress} from '@react-aria/interactions';
-```
-
 ---
 category: Interactions
 keywords: [press interactions, press events, aria]
@@ -86,6 +82,8 @@ the target with a keyboard and pressing the <Keyboard>Enter</Keyboard> or <Keybo
 **NOTE: for more advanced button functionality, see [useButton](useButton.html).**
 
 ```tsx example
+import {usePress} from '@react-aria/interactions';
+
 function Example() {
   let [events, setEvents] = React.useState([]);
   let {pressProps, isPressed} = usePress({

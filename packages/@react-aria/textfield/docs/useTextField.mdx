@@ -15,9 +15,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} fr
 import packageData from '@react-aria/textfield/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useTextField} from '@react-aria/textfield';
-```
 
 ---
 category: Forms
@@ -78,6 +75,8 @@ to identify the element to screen readers.
 ## Example
 
 ```tsx example export=true
+import {useTextField} from '@react-aria/textfield';
+
 function TextField(props) {
   let {label} = props;
   let ref = React.useRef();
