@@ -348,3 +348,56 @@ governing permissions and limitations under the License.
   .spectrum-Card-footer {
   }
 }
+
+ /* Card "row" div is focused instead of the grid cell when in a CardView so handle focus ring cases here */
+.spectrum-CardView {
+  .spectrum-CardView-row:focus-ring {
+    .spectrum-Card--default {
+      border-color: var(--spectrum-card-border-color-key-focus);
+      &:before {
+        box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+      }
+
+      &:hover.is-selected {
+        border-color: var(--spectrum-card-border-color-key-focus);
+        &:before {
+          box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+        }
+      }
+    }
+
+    .spectrum-Card--isQuiet {
+      .spectrum-Card-grid {
+        &:after {
+          box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+        }
+      }
+
+      &:hover.is-selected {
+        .spectrum-Card-grid {
+          &:after {
+            box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+          }
+        }
+      }
+    }
+
+    .spectrum-Card--horizontal {
+      border-color: var(--spectrum-card-border-color-key-focus);
+      .spectrum-Card-grid {
+        &:before {
+          box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+        }
+      }
+
+      &:hover.is-selected {
+        border-color: var(--spectrum-card-border-color-key-focus);
+        .spectrum-Card-grid {
+          &:before {
+            box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+          }
+        }
+      }
+    }
+  }
+}

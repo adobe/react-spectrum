@@ -216,7 +216,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
 
-    return this.collection.getItem(key)?.childNodes[0]?.key;
+    return key;
   }
 
   getClosestLeft(key: Key) {
@@ -230,18 +230,14 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
 
-    return this.collection.getItem(key)?.childNodes[0]?.key;
+    return key;
   }
 
   getKeyRightOf(key: Key) {
-    // Expected key is the currently focused cell so we need the parent row key
-    let parentRowKey = this.collection.getItem(key).parentKey;
-    return this.direction === 'rtl' ?  this.getClosestLeft(parentRowKey) : this.getClosestRight(parentRowKey);
+    return this.direction === 'rtl' ?  this.getClosestLeft(key) : this.getClosestRight(key);
   }
 
   getKeyLeftOf(key: Key) {
-    // Expected key is the currently focused cell so we need the parent row key
-    let parentRowKey = this.collection.getItem(key).parentKey;
-    return this.direction === 'rtl' ?  this.getClosestRight(parentRowKey) : this.getClosestLeft(parentRowKey);
+    return this.direction === 'rtl' ?  this.getClosestRight(key) : this.getClosestLeft(key);
   }
 }

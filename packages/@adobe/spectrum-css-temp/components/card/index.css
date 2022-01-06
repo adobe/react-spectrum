@@ -1149,6 +1149,15 @@ For now working around it with a useLayoutEffect in CardBase.
   }
   .spectrum-CardView-row {
     outline: none;
-    height: 100%
+    height: 100%;
+
+    /* Card "row" div is focused instead of the grid cell when in a CardView so handling that case here */
+    &.focus-ring {
+      .spectrum-Card-checkboxWrapper {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
   }
 }

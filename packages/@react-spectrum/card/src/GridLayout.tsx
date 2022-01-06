@@ -245,30 +245,26 @@ export class GridLayout<T> extends BaseLayout<T> {
   // then return the key that occupies the row + column below. This can be done by figuring out how many cards exist per column then dividing the
   // collection contents by that number (which will give us the row distribution)
   getKeyBelow(key: Key) {
-    // Expected key is the currently focused cell so we need the parent row key
-    let parentRowKey = this.collection.getItem(key).parentKey;
     let indexRowBelow;
-    let index = this.collection.rows.findIndex(card => card.key === parentRowKey);
+    let index = this.collection.rows.findIndex(card => card.key === key);
     if (index !== -1) {
       indexRowBelow = index + this.numColumns;
     } else {
       return null;
     }
 
-    return this.collection.rows[indexRowBelow]?.childNodes[0].key || null;
+    return this.collection.rows[indexRowBelow]?.key || null;
   }
 
   getKeyAbove(key: Key) {
-    // Expected key is the currently focused cell so we need the parent row key
-    let parentRowKey = this.collection.getItem(key).parentKey;
     let indexRowAbove;
-    let index = this.collection.rows.findIndex(card => card.key === parentRowKey);
+    let index = this.collection.rows.findIndex(card => card.key === key);
     if (index !== -1) {
       indexRowAbove = index - this.numColumns;
     } else {
       return null;
     }
 
-    return this.collection.rows[indexRowAbove]?.childNodes[0].key || null;
+    return this.collection.rows[indexRowAbove]?.key || null;
   }
 }

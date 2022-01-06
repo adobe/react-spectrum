@@ -14,6 +14,7 @@ import {CardBase} from './CardBase';
 import {CardViewContext, useCardViewContext} from './CardViewContext';
 import {classNames, useDOMRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, DOMRefValue, Node} from '@react-types/shared';
+import {FocusRing} from '@react-aria/focus';
 import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -73,7 +74,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     ...props,
     selectionMode: cardOrientation === 'horizontal' && layoutType === 'grid' ? 'none' : props.selectionMode,
     collection: gridCollection,
-    focusMode: 'cell'
+    focusMode: 'row'
   });
 
   cardViewLayout.collection = gridCollection;
@@ -84,7 +85,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
-    keyboardDelegate: cardViewLayout
+    keyboardDelegate: cardViewLayout,
+    focusMode: 'row'
   }, state, domRef);
 
   type View = ReusableView<Node<T>, unknown>;
@@ -96,10 +98,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   );
 
   let focusedKey = state.selectionManager.focusedKey;
-  let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
-  if (focusedItem?.parentKey != null) {
-    focusedKey = focusedItem.parentKey;
-  }
 
   let margin = cardViewLayout.margin || 0;
   let virtualizer = cardViewLayout.virtualizer;
@@ -205,17 +203,19 @@ function InternalCard(props) {
   }
 
   return (
-    <div {...rowProps} ref={rowRef} className={classNames(styles, 'spectrum-CardView-row')}>
-      <CardBase
-        ref={cellRef}
-        articleProps={gridCellProps}
-        isQuiet={isQuiet}
-        orientation={cardOrientation}
-        item={item}
-        layout={layoutType}>
-        {item.rendered}
-      </CardBase>
-    </div>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div {...rowProps} ref={rowRef} className={classNames(styles, 'spectrum-CardView-row')}>
+        <CardBase
+          ref={cellRef}
+          articleProps={gridCellProps}
+          isQuiet={isQuiet}
+          orientation={cardOrientation}
+          item={item}
+          layout={layoutType}>
+          {item.rendered}
+        </CardBase>
+      </div>
+    </FocusRing>
   );
 }
 

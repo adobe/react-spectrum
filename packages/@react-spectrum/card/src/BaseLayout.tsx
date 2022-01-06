@@ -141,117 +141,72 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getKeyBelow(key: Key) {
-    // Expected key is the currently focused cell so we need the parent row key
-    let parentRowKey = this.collection.getItem(key).parentKey;
-    let layoutInfo = this.getLayoutInfo(parentRowKey);
+    let layoutInfo = this.getLayoutInfo(key);
     let rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY + 1, layoutInfo.rect.width, this.virtualizer.visibleRect.height);
-    let closestRow = this.collection.getItem(this._findClosest(layoutInfo.rect, rect)?.key);
-    return closestRow?.childNodes[0]?.key;
+    return this._findClosest(layoutInfo.rect, rect)?.key;
   }
 
   getKeyAbove(key: Key) {
-    // Expected key is the currently focused cell so we need the parent row key
-    let parentRowKey = this.collection.getItem(key).parentKey;
-    let layoutInfo = this.getLayoutInfo(parentRowKey);
+    let layoutInfo = this.getLayoutInfo(key);
     let rect = new Rect(layoutInfo.rect.x, 0, layoutInfo.rect.width, layoutInfo.rect.y - 1);
-    let closestRow = this.collection.getItem(this._findClosest(layoutInfo.rect, rect)?.key);
-    return closestRow?.childNodes[0]?.key;
+    return this._findClosest(layoutInfo.rect, rect)?.key;
   }
 
   getKeyRightOf(key: Key) {
-    // Expected key is the currently focused cell so we need the parent row key
-    let parentRowKey = this.collection.getItem(key).parentKey;
-    key = this.direction === 'rtl' ?  this.collection.getKeyBefore(parentRowKey) : this.collection.getKeyAfter(parentRowKey);
-
-    while (key != null) {
-      let item = this.collection.getItem(key);
-      // Don't check if item is disabled because we want to be able to focus disabled items in a grid (double check this)
-      if (item.type === 'item') {
-        return item.childNodes[0].key;
-      }
-      key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
-    }
+    return this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
   }
 
   getKeyLeftOf(key: Key) {
-    // Expected key is the currently focused cell so we need the parent row key
-    let parentRowKey = this.collection.getItem(key).parentKey;
-    key = this.direction === 'rtl' ?  this.collection.getKeyAfter(parentRowKey) : this.collection.getKeyBefore(parentRowKey);
-    while (key != null) {
-      let item = this.collection.getItem(key);
-      // Don't check if item is disabled because we want to be able to focus disabled items in a grid (double check this)
-      if (item.type === 'item') {
-        return item.childNodes[0].key;
-      }
-
-      key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
-    }
+    return  key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
   }
 
   getFirstKey() {
-    let firstRow = this.collection.getItem(this.collection.getFirstKey());
-    return firstRow.childNodes[0].key;
+    return this.collection.getFirstKey();
   }
 
   getLastKey() {
-    let lastRow = this.collection.getItem(this.collection.getLastKey());
-    return lastRow.childNodes[0].key;
+    return this.collection.getLastKey();
   }
 
-  // TODO: pretty unwieldy because it needs to bounce back and forth between the parent key and the child key
-  // Perhaps have layoutInfo store childKey as well so we don't need to do this? Or maybe make the layoutInfos be the cells instead of the rows?
   getKeyPageAbove(key: Key) {
-    // Expected key is the currently focused cell so we need the parent row key
-    let parentRowKey = this.collection.getItem(key).parentKey;
-    let layoutInfo = this.getLayoutInfo(parentRowKey);
+    let layoutInfo = this.getLayoutInfo(key);
 
     if (layoutInfo) {
       let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
       // If the node is so large that it spans multiple page heights, return the key of the item immediately above
       // Otherwise keep going up until we exceed a single page height worth of nodes
-      let keyAbove = this.collection.getItem(this.getKeyAbove(key))?.parentKey;
+      let keyAbove = this.getKeyAbove(key);
       layoutInfo = this.getLayoutInfo(keyAbove);
-
       if (layoutInfo && layoutInfo.rect.y > pageY) {
         while (layoutInfo && layoutInfo.rect.y > pageY) {
-          let childKey = this.collection.getItem(layoutInfo.key).childNodes[0].key;
-          let keyAbove = this.collection.getItem(this.getKeyAbove(childKey))?.parentKey;
-          layoutInfo = this.getLayoutInfo(keyAbove);
+          layoutInfo = this.getLayoutInfo(this.getKeyAbove(layoutInfo.key));
         }
       }
 
       if (layoutInfo) {
-        let childKey = this.collection.getItem(layoutInfo.key).childNodes[0].key;
-        return childKey;
+        return layoutInfo.key;
       }
     }
 
     return this.getFirstKey();
   }
 
-  // TODO: pretty unwieldy because it needs to bounce back and forth between the parent key and the child key
-  // Perhaps have layoutInfo store childKey as well so we don't need to do this?
   getKeyPageBelow(key: Key) {
-    // Expected key is the currently focused cell so we need the parent row key
-    let parentRowKey = this.collection.getItem(key).parentKey;
-    let layoutInfo = this.getLayoutInfo(parentRowKey);
+    let layoutInfo = this.getLayoutInfo(key);
     if (layoutInfo) {
       let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
       // If the node is so large that it spans multiple page heights, return the key of the item immediately below
       // Otherwise keep going up until we exceed a single page height worth of nodes
-      let keyBelow =  this.collection.getItem(this.getKeyBelow(key))?.parentKey;
+      let keyBelow =  this.getKeyBelow(key);
       layoutInfo = this.getLayoutInfo(keyBelow);
       if (layoutInfo && layoutInfo.rect.y < pageY) {
         while (layoutInfo && layoutInfo.rect.y < pageY) {
-          let childKey = this.collection.getItem(layoutInfo.key).childNodes[0].key;
-          let keyBelow = this.collection.getItem(this.getKeyBelow(childKey))?.parentKey;
-          layoutInfo = this.getLayoutInfo(keyBelow);
+          layoutInfo = this.getLayoutInfo(this.getKeyBelow(layoutInfo.key));
         }
       }
 
       if (layoutInfo) {
-        let childKey = this.collection.getItem(layoutInfo.key).childNodes[0].key;
-        return childKey;
+        return layoutInfo.key;
       }
     }
 
@@ -266,15 +221,12 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let collection = this.collection;
     let key = fromKey ?? this.getFirstKey();
 
-    let startItem = collection.getItem(key);
-    key = startItem.parentKey;
-
     while (key != null) {
       let item = collection.getItem(key);
       if (item.textValue) {
         let substring = item.textValue.slice(0, search.length);
         if (this.collator.compare(substring, search) === 0) {
-          return [...item.childNodes][0].key;
+          return item.key;
         }
       }
 
