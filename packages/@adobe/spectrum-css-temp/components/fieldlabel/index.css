@@ -174,24 +174,113 @@ governing permissions and limitations under the License.
 
   &.spectrum-Form--positionSide {
     grid-template-columns: 1fr auto;
-    gap: 10px;
     align-items: start;
+
+    > .spectrum-FieldLabel {
+      padding-inline-end: 10px;
+    }
 
     > .spectrum-Field-field {
       grid-column-start: 2;
+      padding-bottom: 5px;
+    }
+
+    > .spectrum-Field--noHelpText.spectrum-Field-field {
+      padding-bottom: 10px;
     }
 
     > .spectrum-Field-helpText {
       grid-column-start: 2;
+      padding-bottom: 10px;
     }
 
-    > :not(.spectrum-FieldLabel) {
+    > :not(.spectrum-FieldLabel):not(.spectrum-Field-helpText):not(.spectrum-Field-field) {
       grid-column-start: 2;
+      margin-bottom: 10px;
+    }
+
+    /* not sure groups in side label make sense */
+    .spectrum-Form-group {
+      grid-column-start: span 2;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(0, auto) minmax(0, auto));
+      grid-template-rows: auto auto;
+      grid-auto-flow: column;
+
+      > .spectrum-FieldLabel {
+        grid-column-start: unset;
+        grid-row-start: 1;
+      }
+
+      > .spectrum-Field-field {
+        grid-column-start: unset;
+        grid-row-start: 1;
+        width: auto;
+      }
+
+      > .spectrum-Field-helpText {
+        grid-column-start: unset;
+        grid-row-start: 2;
+      }
+
+      > :not(.spectrum-FieldLabel):not(.spectrum-Field-helpText):not(.spectrum-Field-field) {
+        grid-column-start: unset;
+        grid-row-start: 1;
+      }
     }
   }
 
   /* With labelPosition=top, we use a normal flex stack */
   &.spectrum-Form--positionTop {
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: 1fr;
+
+    > .spectrum-FieldLabel {
+      padding-bottom: 5px;
+    }
+
+    > .spectrum-Field-field {
+      padding-bottom: 5px;
+    }
+
+    > .spectrum-Field--noHelpText.spectrum-Field-field {
+      padding-bottom: 10px;
+    }
+
+    > .spectrum-Field-helpText {
+      padding-bottom: 10px;
+    }
+
+    > :not(.spectrum-FieldLabel):not(.spectrum-Field-helpText):not(.spectrum-Field-field) {
+      padding-bottom: 10px;
+    }
+
+    .spectrum-Form-group {
+      display: grid;
+      column-gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      grid-template-rows: auto auto auto;
+      grid-auto-flow: column;
+
+      > .spectrum-FieldLabel {
+        grid-column-start: unset;
+        grid-row-start: 1;
+      }
+
+      > .spectrum-Field-field {
+        grid-column-start: unset;
+        grid-row-start: 2;
+        width: auto;
+      }
+
+      > .spectrum-Field-helpText {
+        grid-column-start: unset;
+        grid-row-start: 3;
+      }
+
+      > :not(.spectrum-FieldLabel):not(.spectrum-Field-helpText):not(.spectrum-Field-field) {
+        grid-column-start: unset;
+        grid-row-start: 2;
+      }
+    }
   }
 }

@@ -13,6 +13,7 @@
 import {Alignment, DOMRef, LabelPosition, SpectrumLabelableProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {Grid} from '@react-spectrum/layout';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {useContext} from 'react';
 import {SpectrumFormProps} from '@react-types/form';
@@ -25,11 +26,21 @@ export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
 }
 
 export function FieldGroup(props) {
-  let contextProps = useFormProps({});
+  let contextProps = useFormProps({} as any);
+  if (!contextProps.newFormLayout) {
+    console.warn('this can only be used with the new form layout');
+  }
   return (
-    <FormContext.Provider value={{...contextProps, newFormLayout: false}}>
+    <Grid
+      {...props}
+      UNSAFE_className={
+        classNames(
+          styles,
+          'spectrum-Form-group'
+        )
+      }>
       {props.children}
-    </FormContext.Provider>
+    </Grid>
   );
 }
 

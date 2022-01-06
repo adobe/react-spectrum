@@ -33,6 +33,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/utils": "^3.10.0",
+    "@react-spectrum/layout": "^3.2.1",
     "@react-spectrum/utils": "^3.6.3",
     "@react-types/form": "^3.2.2",
     "@react-types/shared": "^3.10.0"
