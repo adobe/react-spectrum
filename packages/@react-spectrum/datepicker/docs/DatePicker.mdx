@@ -21,7 +21,7 @@ import {Flex} from '@react-spectrum/layout';
 ```
 
 ---
-category: Pickers
+category: Date and Time
 keywords: []
 after_version: 3.0.0
 ---
@@ -48,7 +48,7 @@ A `DatePicker` displays a placeholder date by default. An initial, uncontrolled 
 Date values are provided using objects in the `@internationalized/date` package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns. `DatePicker` supports values of the following types:
 
 * <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> – a date without any time components. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDate} /> function. Use this type to represent dates where the time is not important, such as a birthday or an all day calendar event.
-* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> – a date with a time, but not in any specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDateTime} /> function. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks. Most times are better stored as a `ZonedDateTime`.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> – a date with a time, but not in any specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDateTime} /> function. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a `ZonedDateTime`.
 * <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> – a date with a time in a specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} />, <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} />, or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> functions. Use this type to represent an exact moment in time at a particular location on Earth.
 
 ```tsx example
@@ -73,13 +73,13 @@ function Example() {
 
 ### Time zones
 
-`DatePicker` is time zone aware when a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is provided as the value. The time zone abbreviation will be displayed, and manipulating the date and time takes time zone concerns such as daylight saving time into account.
+`DatePicker` is time zone aware when a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account when the value is manipulated.
 
 Most likely, your data will come from and be sent to a server as an ISO 8601 formatted string. `@internationalized/date` includes functions for parsing strings in multiple formats into <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> objects. Which format you use will depend on what information you need to store.
 
-* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} /> – This function parses a date with an explicit time zone and optional UTC offset attached, e.g. `"2021-11-07T00:45[America/Los_Angeles]"` or `"2021-11-07T00:45-07:00[America/Los_Angeles]"`. This format preserves the maximum amount of information. If the exact wall clock time and time zone that a user selected is important, use this format. Storing the time zone and offset that was selected rather than converting to UTC ensures that the wall time is correct regardless daylight saving rule changes (e.g. if a locale abolishes DST). Examples where this applies include calendar events, reminders, and other times that occur in a particular location.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} /> – This function parses a date with an explicit time zone and optional UTC offset attached, e.g. `"2021-11-07T00:45[America/Los_Angeles]"` or `"2021-11-07T00:45-07:00[America/Los_Angeles]"`. This format preserves the maximum amount of information. If the exact local time and time zone that a user selected is important, use this format. Storing the time zone and offset that was selected rather than converting to UTC ensures that the local time is correct regardless daylight saving rule changes (e.g. if a locale abolishes DST). Examples where this applies include calendar events, reminders, and other times that occur in a particular location.
 * <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} /> – This function parses an absolute date and time that occurs at the same instant at all locations on Earth. It can be represented in UTC, e.g. `"2021-11-07T07:45:00Z"`, or stored with a particular offset, e.g. `"2021-11-07T07:45:00-07:00"`. A time zone identifier, e.g. `America/Los_Angeles`, must be passed, and the result will be converted into that time zone. Absolute times are the best way to represent events that occurred in the past, or future events where an exact time regardless of time zone is needed.
-* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> – This function parses an absolute date and time into the current user's local time zone. It is a shortcut for and accepts the same formats as `parseAbsolute`.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> – This function parses an absolute date and time into the current user's local time zone. It is a shortcut for `parseAbsolute`, and accepts the same formats.
 
 ```tsx example
 import {parseZonedDateTime} from '@internationalized/date';
@@ -89,7 +89,7 @@ import {parseZonedDateTime} from '@internationalized/date';
   defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
 ```
 
-`DatePicker` displays times in the time zone included in the `ZoneDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. However, `@internationalized/date` includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone.
+`DatePicker` displays times in the time zone included in the `ZoneDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. `@internationalized/date` includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone.
 
 ```tsx example
 import {parseAbsoluteToLocal} from '@internationalized/date';
@@ -113,12 +113,12 @@ function Example() {
   return (
     <Flex gap="size-150" wrap>
       <DatePicker
-        label="Event date"
+        label="Date and time"
         granularity="second"
         value={date}
         onChange={setDate} />
       <DatePicker
-        label="Event date"
+        label="Date"
         granularity="day"
         value={date}
         onChange={setDate} />
