@@ -339,6 +339,14 @@ governing permissions and limitations under the License.
     justify-content: flex-start;
   }
 
+  .spectrum-Dialog-footer {
+    min-width: fit-content;
+  }
+
+  .spectrum-Dialog-buttonGroup {
+    min-width: 0;
+  }
+
   .spectrum-Dialog--fullscreen,
   .spectrum-Dialog--fullscreenTakeover {
 
@@ -393,15 +401,7 @@ governing permissions and limitations under the License.
     display: inline-table;
   }
 
-  .spectrum-Dialog-footer {
-    min-width: fit-content;
-
-    + .spectrum-Dialog-buttonGroup {
-      padding-block-start: calc(var(--spectrum-global-dimension-size-25) * 2);
-    }
-  }
-
-  .spectrum-Dialog-buttonGroup {
-    min-width: 0;
+  .spectrum-Dialog-footer + .spectrum-Dialog-buttonGroup {
+    padding-block-start: calc(var(--spectrum-global-dimension-size-25) * 2);
   }
 }
