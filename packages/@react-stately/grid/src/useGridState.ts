@@ -13,14 +13,15 @@ export interface GridState<T, C extends GridCollection<T>> {
 interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps {
   collection: C,
   disabledKeys?: Iterable<Key>,
-  focusMode?: 'row' | 'cell'
+  focusMode?: 'row' | 'cell',
+  preventCellFocus?: boolean
 }
 
 /**
  * Provides state management for a grid component. Handles row selection and focusing a grid cell's focusable child if applicable.
  */
 export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
-  let {collection, focusMode} = props;
+  let {collection, focusMode, preventCellFocus} = props;
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
       props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
@@ -38,6 +39,15 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         } else {
           key = children[0]?.key;
         }
+      }
+    } else if (preventCellFocus && key != null) {
+      // If preventCellFocus is true, set focus to the row containing the cell
+      let item = collection.getItem(key);
+      if (item?.type === 'cell') {
+        while (item && item?.type === 'cell') {
+          item = collection.getItem(item.parentKey);
+        }
+        key = item.key;
       }
     }
 

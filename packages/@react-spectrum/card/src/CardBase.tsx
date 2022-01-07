@@ -174,7 +174,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           {manager && manager.selectionMode !== 'none' && (
             <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
               <Checkbox
-                preventFocus
                 isDisabled={isDisabled}
                 excludeFromTabOrder
                 isSelected={isSelected}

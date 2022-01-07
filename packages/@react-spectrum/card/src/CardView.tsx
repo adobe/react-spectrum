@@ -74,7 +74,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     ...props,
     selectionMode: cardOrientation === 'horizontal' && layoutType === 'grid' ? 'none' : props.selectionMode,
     collection: gridCollection,
-    focusMode: 'row'
+    focusMode: 'row',
+    preventCellFocus: true
   });
 
   cardViewLayout.collection = gridCollection;
