@@ -133,6 +133,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             onChange={start => state.setDateTime('start', start)}
             granularity={props.granularity}
             hourCycle={props.hourCycle}
+            hideTimeZone={props.hideTimeZone}
             inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
           <DateRangeDash />
           <DatePickerField
@@ -148,6 +149,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             onChange={end => state.setDateTime('end', end)}
             granularity={props.granularity}
             hourCycle={props.hourCycle}
+            hideTimeZone={props.hideTimeZone}
             inputClassName={classNames(
               styles,
               'spectrum-Datepicker-endField',

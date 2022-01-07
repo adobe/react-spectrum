@@ -38,13 +38,16 @@ interface DatePickerBase<T extends DateValue> extends InputBase, Validation, Foc
   minValue?: DateValue,
   /** The maximum allowed date that a user may select. */
   maxValue?: DateValue,
-  /** A placeholder date to display when no value is selected. */
+  /** A placeholder date to display when no value is selected. Defaults to today's date at midnight. */
   placeholderValue?: T,
   /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
   hourCycle?: 12 | 24,
-  /** Determines the smallest unit that is displayed in the date picker. */
+  /** Determines the smallest unit that is displayed in the date picker. By default, this is `"day"` for dates, and `"minute"` for times. */
   granularity?: Granularity,
-  /** Whether to hide the time zone abbreviation. */
+  /**
+   * Whether to hide the time zone abbreviation.
+   * @default false
+   */
   hideTimeZone?: boolean
 }
 
@@ -58,11 +61,20 @@ export interface DateRangePickerProps<T extends DateValue> extends DatePickerBas
 export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DateRangePickerProps<T> {}
 
 interface SpectrumDatePickerBase<T extends DateValue> extends AriaDatePickerBaseProps<T>, SpectrumLabelableProps, StyleProps {
-  /** Whether the date picker should be displayed with a quiet style. */
+  /**
+   * Whether the date picker should be displayed with a quiet style.
+   * @default false
+   */
   isQuiet?: boolean,
-  /** Whether to show the localized date format as help text below the field. */
+  /**
+   * Whether to show the localized date format as help text below the field.
+   * @default false
+   */
   showFormatHelpText?: boolean,
-  /** The maximum number of months to display at once in the calendar popover, if screen space permits. */
+  /**
+   * The maximum number of months to display at once in the calendar popover, if screen space permits.
+   * @default 1
+   */
   maxVisibleMonths?: number
 }
 

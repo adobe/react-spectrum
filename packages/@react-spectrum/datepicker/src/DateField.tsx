@@ -24,6 +24,10 @@ import {useFormatHelpText} from './utils';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
+/**
+ * DateFields allow users to enter and edit date and time values using a keyboard.
+ * Each part of a date value is displayed in an individually editable segment.
+ */
 export function DateField<T extends DateValue>(props: SpectrumDatePickerProps<T>) {
   props = useProviderProps(props);
   let {
