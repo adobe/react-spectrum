@@ -16,9 +16,16 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/list/package.json';
 
 ```jsx import
+import {ActionGroup} from '@react-spectrum/actiongroup';
+import {ActionMenu} from '@react-spectrum/menu';
+import Add from '@spectrum-icons/workflow/Add';
+import Delete from '@spectrum-icons/workflow/Delete';
 import {Flex} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/text';
+import Folder from '@spectrum-icons/workflow/Folder';
+import {Heading, Text} from '@react-spectrum/text';
+import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '@react-spectrum/list';
+import {Link} from '@react-spectrum/link';
 ```
 
 ---
@@ -178,6 +185,50 @@ function PokemonList(props) {
     </ListView>
   );
 }
+```
+
+### Complex items
+
+```tsx example
+function renderActions() {
+  return (
+    <>
+      <ActionGroup buttonLabelBehavior="hide" slot="actionGroup">
+        <Item key="info">
+          <Info />
+          <Text>Info</Text>
+        </Item>
+      </ActionGroup>
+      <ActionMenu slot="actionMenu">
+        <Item key="add">
+          <Add />
+          <Text>Add</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionMenu>
+    </>
+  );
+}
+
+<ListView aria-label="List example with complex items">
+  <Item key="a" textValue="folder 1" hasChildItems>
+    <Folder />
+    <Link>folder 1</Link>
+    <Text slot="description">description for folder 1</Text>
+    {renderActions()}
+  </Item>
+  <Item textValue="row 2">
+    row 2
+    {renderActions()}
+  </Item>
+  <Item textValue="row 3">
+    row 3
+    {renderActions()}
+  </Item>
+</ListView>
 ```
 
 ### Single selection
