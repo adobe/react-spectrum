@@ -51,8 +51,7 @@ export function ListViewItem(props) {
     node: item,
     isVirtualized: true,
     onAction: onAction ? () => onAction(item.key) : undefined,
-    shouldSelectOnPressUp: isDraggable,
-    isDraggable
+    shouldSelectOnPressUp: isDraggable
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
