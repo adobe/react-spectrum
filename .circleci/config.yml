@@ -6,14 +6,14 @@ orbs:
 executors:
   rsp:
     docker:
-      - image: cimg/node:12.22
+      - image: cimg/node:14.16.0
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
-      - image: cimg/node:12.22
+      - image: cimg/node:14.16.0
     resource_class: large
     environment:
       CACHE_VERSION: v1
@@ -21,7 +21,7 @@ executors:
 
   rsp-xlarge:
     docker:
-      - image: cimg/node:12.22
+      - image: cimg/node:14.16.0
     resource_class: xlarge
     environment:
       CACHE_VERSION: v1
@@ -60,7 +60,7 @@ jobs:
             - ~/react-spectrum
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
-  install-17:
+  install-16:
     executor: rsp-large
     steps:
       - checkout
@@ -73,12 +73,12 @@ jobs:
       - run:
           name: build
           command: |
-            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-17 --cache-folder ~/.cache/yarn
+            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-16 --cache-folder ~/.cache/yarn
 
       - save_cache:
           paths:
             - ~/react-spectrum
-          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
   test-ssr:
     executor: rsp-xlarge
@@ -116,23 +116,23 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  test-ssr-17:
+  test-ssr-16:
     executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test ssr
           command: |
             yarn test:ssr
 
-  test-17:
+  test-16:
     parallelism: 3
     executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run: mkdir ~/junit
 
@@ -141,10 +141,10 @@ jobs:
           command: |
             shopt -s globstar
             TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test ${TESTFILES}
+            JEST_JUNIT_OUTPUT_NAME="junit-16.xml" yarn test ${TESTFILES}
 
       - run:
-          command: cp junit-17.xml ~/junit/
+          command: cp junit-16.xml ~/junit/
           when: always
       - store_test_results:
           path: ~/junit
@@ -176,20 +176,20 @@ jobs:
           paths:
             - '*/storybook/'
 
-  storybook-17:
+  storybook-16:
     executor: rsp-large
     steps:
       - restore_cache:
-          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: build storybook-17
-          command: make storybook-17
+          name: build storybook-16
+          command: make storybook-16
 
       - persist_to_workspace:
           root: dist
           paths:
-            - '*/storybook-17/'
+            - '*/storybook-16/'
 
   docs:
     executor: rsp-xlarge
@@ -275,28 +275,28 @@ workflows:
   commit:
     jobs:
       - install
-      - install-17
+      - install-16
       - test-ssr:
           requires:
             - install
       - test:
           requires:
             - install
-      - test-ssr-17:
+      - test-ssr-16:
           requires:
-            - install-17
-      - test-17:
+            - install-16
+      - test-16:
           requires:
-            - install-17
+            - install-16
       - lint:
           requires:
             - install
       - storybook:
           requires:
             - install
-      - storybook-17:
+      - storybook-16:
           requires:
-            - install-17
+            - install-16
       - docs:
           requires:
             - install
@@ -311,10 +311,10 @@ workflows:
             - lint
             - test-ssr
             - test
-            - test-ssr-17
-            - test-17
+            - test-ssr-16
+            - test-16
             - storybook
-            - storybook-17
+            - storybook-16
             - docs
       - deploy-production:
           filters:

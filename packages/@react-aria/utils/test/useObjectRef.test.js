@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {useEffect, useLayoutEffect} from 'react';
+import React, {useEffect} from 'react';
 import {render, screen} from '@testing-library/react';
 import {renderHook} from '@testing-library/react-hooks';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useObjectRef} from '../';
 
 describe('useObjectRef', () => {

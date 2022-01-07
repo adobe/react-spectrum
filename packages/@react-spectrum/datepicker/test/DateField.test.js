@@ -84,60 +84,94 @@ describe('DateField', function () {
     });
 
     it('should support help text description', function () {
-      let {getByRole} = render(<DateField label="Date" description="Help text" />);
+      let {getByRole, getAllByRole} = render(<DateField label="Date" description="Help text" />);
 
       let group = getByRole('group');
       expect(group).toHaveAttribute('aria-describedby');
 
       let description = document.getElementById(group.getAttribute('aria-describedby'));
       expect(description).toHaveTextContent('Help text');
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments[0]).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+
+      for (let segment of segments.slice(1)) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
 
     it('should support error message', function () {
-      let {getByRole} = render(<DateField label="Date" errorMessage="Error message" validationState="invalid" />);
+      let {getByRole, getAllByRole} = render(<DateField label="Date" errorMessage="Error message" validationState="invalid" />);
 
       let group = getByRole('group');
       expect(group).toHaveAttribute('aria-describedby');
 
       let description = document.getElementById(group.getAttribute('aria-describedby'));
       expect(description).toHaveTextContent('Error message');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      }
     });
 
     it('should not display error message if not invalid', function () {
-      let {getByRole} = render(<DateField label="Date" errorMessage="Error message" />);
+      let {getByRole, getAllByRole} = render(<DateField label="Date" errorMessage="Error message" />);
 
       let group = getByRole('group');
       expect(group).not.toHaveAttribute('aria-describedby');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
 
     it('should support help text with a value', function () {
-      let {getByRole} = render(<DateField label="Date" description="Help text" value={new CalendarDate(2020, 2, 3)} />);
+      let {getByRole, getAllByRole} = render(<DateField label="Date" description="Help text" value={new CalendarDate(2020, 2, 3)} />);
 
       let group = getByRole('group');
       expect(group).toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
       expect(description).toBe('February 3, 2020 Help text');
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments[0]).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+
+      for (let segment of segments.slice(1)) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
 
     it('should support error message with a value', function () {
-      let {getByRole} = render(<DateField label="Date" errorMessage="Error message" validationState="invalid" value={new CalendarDate(2020, 2, 3)} />);
+      let {getByRole, getAllByRole} = render(<DateField label="Date" errorMessage="Error message" validationState="invalid" value={new CalendarDate(2020, 2, 3)} />);
 
       let group = getByRole('group');
       expect(group).toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
       expect(description).toBe('February 3, 2020 Error message');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      }
     });
 
     it('should support format help text', function () {
-      let {getByRole, getByText} = render(<DateField label="Date" showFormatHelpText />);
+      let {getByRole, getByText, getAllByRole} = render(<DateField label="Date" showFormatHelpText />);
 
       // Not needed in aria-described by because each segment has a label already, so this would be duplicative.
       let group = getByRole('group');
       expect(group).not.toHaveAttribute('aria-describedby');
 
       expect(getByText('month / day / year')).toBeVisible();
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
   });
 });
