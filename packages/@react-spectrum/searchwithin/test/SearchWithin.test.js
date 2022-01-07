@@ -161,7 +161,7 @@ describe('SearchWithin', function () {
 });
 
 describe('SearchWithin labeling', function () {
-  it('Searchwithin (no label); SearchField no aria-label; Picker no aria-label', function () {
+  it('no label - default', function () {
     let {getByRole} = renderSearchWithin({label: undefined});
 
     let group = getByRole('group');
@@ -175,7 +175,7 @@ describe('SearchWithin labeling', function () {
     expect(picker).toHaveAttribute('aria-labelledby', `${picker.id} ${picker.childNodes[0].id}`);
   });
 
-  it('SearchWithin label = foo; SearchField no aria-label, no placeholder; Picker no aria-label', function () {
+  it('label = foo', function () {
     let {getByRole, getByText} = renderSearchWithin({label: 'foo'});
 
     let group = getByRole('group');
@@ -192,7 +192,7 @@ describe('SearchWithin labeling', function () {
     expect(label).toHaveAttribute('for', searchfield.id);
   });
 
-  it('SearchWithin aria-label = bar; SearchField no aria-label, no placeholder; Picker no aria-label', function () {
+  it('aria-label = bar', function () {
     let {getByRole} = renderSearchWithin({'aria-label': 'bar', label: undefined});
 
     let group = getByRole('group');
@@ -206,7 +206,7 @@ describe('SearchWithin labeling', function () {
     expect(picker).toHaveAttribute('aria-labelledby', `${group.id} ${picker.id} ${picker.childNodes[0].id}`);
   });
 
-  it('SearchWithin aria-labelledby = {id}; SearchField no aria-label, no placeholder; Picker no aria-label', function () {
+  it('aria-labelledby = {id}', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
         <label id="id-foo-label" htmlFor="id-searchfield">
