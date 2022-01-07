@@ -144,6 +144,28 @@ import {now} from '@internationalized/date';
 </Flex>
 ```
 
+### International calendars
+
+`DateField` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the Unicode calendar locale extension, passed to the `Provider` component.
+
+By default, all selected dates are converted to the Gregorian calendar, even if they are displayed to the user in a different calendar system. Since applications usually store dates in the Gregorian calendar system, this means you don't usually need to worry about dealing with other calendar systems in application code. However, if you do provide a `value` or `defaultValue` in a non-Gregorian calendar, the selected dates passed to `onChange` will also be in the same calendar system.
+
+The below example displays a `DateField` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
+
+```tsx example
+import {Provider} from '@adobe/react-spectrum';
+
+function Example() {
+  let [date, setDate] = React.useState(null);
+  return (
+    <Provider locale="hi-IN-u-ca-indian">
+      <DateField label="Date" value={date} onChange={setDate} />
+      <p>Selected date: {date?.toString()}</p>
+    </Provider>
+  );
+}
+```
+
 ## Labeling
 
 A visual label should be provided for the `DateField` using the `label` prop. If the `DateField` is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
