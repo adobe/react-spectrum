@@ -1,0 +1,303 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/list';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-spectrum/list/package.json';
+
+```jsx import
+import {ActionGroup} from '@react-spectrum/actiongroup';
+import Bookmark from '@spectrum-icons/workflow/Bookmark';
+import {Button} from '@react-spectrum/button';
+import Calendar from '@spectrum-icons/workflow/Calendar';
+import Dashboard from '@spectrum-icons/workflow/Dashboard';
+import {Flex} from '@react-spectrum/layout';
+import {Heading, Text} from '@react-spectrum/text';
+import {Item, ListView} from '@react-spectrum/list';
+```
+
+---
+category: Collections
+keywords: [listview, collections]
+---
+
+# ListView
+
+<PageDescription>{docs.exports.ListView.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Item', 'ListView']}
+  />
+
+## Example
+```tsx example
+<ListView width="500px" aria-label="List example">
+  <Item textValue="row 1">row 1</Item>
+  <Item textValue="row 2">row 2</Item>
+  <Item textValue="row 3">row 3</Item>
+</ListView>
+```
+
+## Content
+ListView is a [collection component](../react-stately/collections.html) that provides users with a way to sort and organize lists.
+
+Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView is hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data in this way allows ListView to automatically cache the rendering of each item, which dramatically improves performance.
+
+Each has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
+
+
+```tsx example
+const rows = [
+    {key: 'a'},
+    {key: 'b'},
+    {key: 'c'},
+    {key: 'd'},
+    {key: 'e'},
+    {key: 'f'},
+    {key: 'g'},
+    {key: 'h'},
+    {key: 'i'},
+    {key: 'j'},
+    {key: 'k'},
+    {key: 'l'},
+    {key: 'm'},
+    {key: 'n'}
+];
+
+<ListView items={rows} width="300px" height="250px" aria-label="List example">
+  {(item) => (
+    <Item key={item.key} textValue={`Item ${item.key}`}>
+      {`Item ${item.key}`}
+    </Item>
+  )}
+</ListView>
+```
+
+### Internationalization
+To internationalize a ListView, all text content within the ListView should be localized. This includes the `aria-label` provided to the ListView if any.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of ListView is automatically flipped.
+
+## Labeling
+### Accessibility
+An `aria-label` must be provided to the ListView for accessibility. If the ListView is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+
+## Asynchronous loading
+ListView supports loading data asynchronously, and will display a progress circle reflecting the current load state,
+set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+See the docs for more information.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncList() {
+
+  let list = useAsyncList({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ListView
+        aria-label="example async loading list"
+        height="size-3000"
+        items={list.items}
+        loadingState={list.loadingState}
+        onLoadMore={list.loadMore}>
+        {(item) => (
+          <Item key={item.name} textValue={item.name}>{item.name}</Item>
+        )}
+    </ListView>
+  );
+}
+```
+
+
+## Selection
+
+By default, ListView doesn't allow row selection but this can be enabled using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the value of the selected keys must match the `key` prop of the Item.
+
+The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "row1" and "row3".
+
+```tsx example
+<ListView width="250px" selectionMode="multiple" defaultSelectedKeys={["row1", "row3"]} aria-label="List seletion example">
+  <Item key="folder1" textValue="folder 1" hasChildItems>
+    <Content>folder 1</Content>
+  </Item>
+  <Item key="row1" textValue="row 1">
+    <Content>row 1</Content>
+  </Item>
+  <Item key="row2" textValue="row 2">
+    <Content>row 2</Content>
+  </Item>
+  <Item key="row3" textValue="row 3">
+    <Content>row 3</Content>
+  </Item>
+</ListView>
+```
+
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly.
+
+Here is how you would control selection for the above example.
+
+```tsx example export=true
+function PokemonList(props) {
+  let rows = [
+    {id: 1, name: 'Charizard'},
+    {id: 2, name: 'Blastoise'},
+    {id: 3, name: 'Venusaur'},
+    {id: 4, name: 'Pikachu'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+
+  return (
+    <ListView items={rows} aria-label="List with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+      {(item) => (
+        <Item key={item.id} textValue={item.name}>
+          {item.name}
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+
+### Single selection
+
+To limit users to selecting only a single item at a time, `selectionMode` can be set to `single`.
+
+```tsx example
+// Using the same list as above
+<PokemonList selectionMode="single" />
+```
+
+### Disallow empty selection
+
+ListView also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the ListView selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+// Using the same list as above
+<PokemonList disallowEmptySelection />
+```
+
+### Disabled rows
+
+You can disable specific rows by providing an array of keys to ListView via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+
+```tsx example
+// Using the same list as above
+<PokemonList selectionMode="multiple" disabledKeys={[3]} />
+```
+
+### Highlight selection
+
+By default, ListView uses the checkbox selection style, which includes a column of checkboxes in each row for selection. When the `selectionStyle` prop is set to `"highlight"`, the checkboxes are hidden, and the selected rows are displayed with a highlighted background instead.
+
+In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
+
+In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used.  To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows.
+
+```tsx example
+<PokemonList selectionMode="multiple" selectionStyle="highlight" />
+```
+
+### Row actions
+
+ListView may be used in use cases where users can perform actions on rows, such as navigating into items to open them or get more details. In the default checkbox selection style, it is recommended to use a [Link](Link.html) component in the first column for navigation.
+
+In the highlight selection style, the `onAction` prop can be used to enable row actions, which differ depending on the interaction method. When provided, double clicking with a mouse or pressing the <Keyboard>Enter</Keyboard> key triggers `onAction`, while single click and the <Keyboard>Space</Keyboard> key are reserved for selection. On touch devices, `onAction` becomes the primary tap interaction, and a long press enters into selection mode, which displays checkboxes to perform selection. Deselecting all items exits selection mode and hides the checkboxes. Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
+
+```tsx example
+<PokemonList selectionMode="multiple" selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} />
+```
+
+## Props
+
+<PropTable component={docs.exports.ListView} links={docs.links} />
+
+
+## Visual options
+### Quiet
+
+```tsx example
+<ListView isQuiet width="500px" aria-label="Quiet list example">
+  <Item textValue="row 1">row 1</Item>
+  <Item textValue="row 2">row 2</Item>
+  <Item textValue="row 3">row 3</Item>
+</ListView>
+```
+
+### Density
+The amount of vertical padding that each row contains can be modified by providing the `density` prop.
+
+```tsx example
+<Flex direction="column" gap="size-300">
+  <ListView density="compact" width="500px" aria-label="Compact list example">
+    <Item textValue="row 1">row 1</Item>
+    <Item textValue="row 2">row 2</Item>
+    <Item textValue="row 3">row 3</Item>
+  </ListView>
+  <ListView density="spacious" width="500px" aria-label="Spacious list example">
+    <Item textValue="row 1">row 1</Item>
+    <Item textValue="row 2">row 2</Item>
+    <Item textValue="row 3">row 3</Item>
+  </ListView>
+</Flex>
+```
+
+### Empty state
+Use the `renderEmptyState` prop to customize what the ListView will display if there are no rows provided.
+
+```tsx example
+import {Content} from '@react-spectrum/view';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
+import {Heading} from '@react-spectrum/text';
+
+function renderEmptyState() {
+  return (
+    <IllustratedMessage>
+      <NotFound />
+      <Heading>No results</Heading>
+      <Content>No results found</Content>
+    </IllustratedMessage>
+  );
+}
+
+<ListView
+  aria-label="Example list for empty state"
+  height="size-3000" 
+  renderEmptyState={renderEmptyState}>
+  {[]}
+</ListView>
+```
