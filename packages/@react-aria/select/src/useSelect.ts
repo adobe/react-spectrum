@@ -121,6 +121,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let domProps = filterDOMProps(props, {labelable: true});
   let triggerProps = mergeProps(typeSelectProps, menuTriggerProps, fieldProps);
 
+  // used to make predictable id's based on the trigger which is already generated, this aids us in testing
   let valueId = `${triggerProps.id}-value`;
 
   return {
