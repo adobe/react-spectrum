@@ -765,7 +765,7 @@ function isOverTarget(point: EventPoint, target: HTMLElement) {
 }
 
 function shouldPreventDefault(target: HTMLElement) {
-  // We cannot prevent default if the target is inside a draggable element.
+  // We cannot prevent default if the target is a draggable element.
   return !target.draggable;
 }
 

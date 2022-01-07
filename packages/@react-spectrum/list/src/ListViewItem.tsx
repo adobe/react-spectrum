@@ -122,7 +122,8 @@ export function ListViewItem(props) {
                     {...buttonProps as React.HTMLAttributes<HTMLElement>}
                     className={listStyles['react-spectrum-ListViewItem-draghandle-button']}
                     ref={dragButtonRef}
-                    data-testid="draghandle">
+                    data-testid="draghandle"
+                    draggable="true">
                     <DragHandle />
                   </div>
                 </FocusRing>
