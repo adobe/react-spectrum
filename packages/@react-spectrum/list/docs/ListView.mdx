@@ -36,7 +36,7 @@ keywords: [listview, collections]
 
 ## Example
 ```tsx example
-<ListView width="500px" aria-label="List example">
+<ListView aria-label="List example">
   <Item textValue="row 1">row 1</Item>
   <Item textValue="row 2">row 2</Item>
   <Item textValue="row 3">row 3</Item>
@@ -69,7 +69,7 @@ const rows = [
     {key: 'n'}
 ];
 
-<ListView items={rows} width="300px" height="250px" aria-label="List example">
+<ListView items={rows} height="250px" aria-label="List example">
   {(item) => (
     <Item key={item.key} textValue={`Item ${item.key}`}>
       {`Item ${item.key}`}
@@ -137,10 +137,7 @@ Use `defaultSelectedKeys` to provide a default set of selected rows. Note that t
 The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "row1" and "row3".
 
 ```tsx example
-<ListView width="250px" selectionMode="multiple" defaultSelectedKeys={["row1", "row3"]} aria-label="List seletion example">
-  <Item key="folder1" textValue="folder 1" hasChildItems>
-    <Content>folder 1</Content>
-  </Item>
+<ListView selectionMode="multiple" defaultSelectedKeys={["row1", "row3"]} aria-label="List seletion example">
   <Item key="row1" textValue="row 1">
     <Content>row 1</Content>
   </Item>
@@ -241,7 +238,7 @@ In the highlight selection style, the `onAction` prop can be used to enable row 
 ### Quiet
 
 ```tsx example
-<ListView isQuiet width="500px" aria-label="Quiet list example">
+<ListView isQuiet aria-label="Quiet list example">
   <Item textValue="row 1">row 1</Item>
   <Item textValue="row 2">row 2</Item>
   <Item textValue="row 3">row 3</Item>
@@ -253,12 +250,12 @@ The amount of vertical padding that each row contains can be modified by providi
 
 ```tsx example
 <Flex direction="column" gap="size-300">
-  <ListView density="compact" width="500px" aria-label="Compact list example">
+  <ListView density="compact" aria-label="Compact list example">
     <Item textValue="row 1">row 1</Item>
     <Item textValue="row 2">row 2</Item>
     <Item textValue="row 3">row 3</Item>
   </ListView>
-  <ListView density="spacious" width="500px" aria-label="Spacious list example">
+  <ListView density="spacious" aria-label="Spacious list example">
     <Item textValue="row 1">row 1</Item>
     <Item textValue="row 2">row 2</Item>
     <Item textValue="row 3">row 3</Item>
