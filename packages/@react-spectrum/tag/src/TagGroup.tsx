@@ -13,16 +13,16 @@
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
-import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useMemo} from 'react';
 import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
+import {TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
+import {useGrid} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTagGroup} from '@react-aria/tag';
 
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -76,13 +76,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     focusMode: 'row'
   });
 
-  let keyboardDelegate = new GridKeyboardDelegate({
+  let keyboardDelegate = new TagKeyboardDelegate({
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     ref: domRef,
     direction,
-    focusMode: 'row',
-    cycleMode: 'between'
+    focusMode: 'row'
   });
   let {gridProps} = useGrid({
     ...props,
