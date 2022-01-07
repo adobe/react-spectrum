@@ -133,11 +133,8 @@ Disabled.args = {isDisabled: true};
 export const AutoFocus = Template().bind({});
 AutoFocus.args = {autoFocus: true};
 
-export const OpenChange = Template().bind({});
-OpenChange.args = {onOpenChange: action('openChange')};
-
 export const DefaultOpen = Template().bind({});
-DefaultOpen.args = {defaultOpen: true};
+DefaultOpen.args = {onOpenChange: action('openChange'), defaultOpen: true};
 
 export const ControlledOpen = () => {
   let [open, setOpen] = React.useState(false);
