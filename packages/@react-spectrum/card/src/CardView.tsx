@@ -192,7 +192,8 @@ function InternalCard(props) {
 
   let {gridCellProps} = useGridCell({
     node: cellNode,
-    focusMode: 'cell'
+    focusMode: 'cell',
+    preventChildrenFocus: true
   }, state, unwrappedRef);
 
 
