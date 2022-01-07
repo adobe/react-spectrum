@@ -38,15 +38,15 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   } = props;
 
   let defaultAriaLabel = formatMessage('search');
-  if (!props['aria-label'] && !props['aria-labelledby']) {
+  if (!label && !props['aria-label'] && !props['aria-labelledby']) {
     props['aria-label'] = defaultAriaLabel;
   }
   // Get label and group props (aka fieldProps)
   let {labelProps, fieldProps} = useLabel(props);
 
-  // Grab aria-labelledby for the search input. Will need the entire concatted aria-labelledby if it exists since pointing at the group id doesn't
+  // Grab aria-labelledby for the search input. Will need the entire concatenated aria-labelledby if it exists since pointing at the group id doesn’t
   // suffice if there is a external label
-  let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
+  let labelledBy = fieldProps['aria-labelledby'] || (fieldProps['aria-label'] !== defaultAriaLabel ? fieldProps.id : '');
   let pickerId = useId();
 
   let domRef = useFocusableRef(ref);
@@ -92,7 +92,9 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
       ...defaultSlotValues,
       UNSAFE_className: searchFieldClassName,
       // Apply aria-labelledby of group or the group id to searchfield. No need to pass the group id (we want a new one) and aria-label (aria-labelledby will suffice)
-      'aria-labelledby': labelledBy
+      'aria-labelledby': `${labelledBy} ${pickerId} ${pickerId}-value`,
+      // When label is provided, input should have id referenced by htmlFor of label, instead of group
+      id: label && fieldProps.id
     },
     picker: {
       ...defaultSlotValues,
@@ -104,6 +106,11 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
       'aria-labelledby': `${labelledBy} ${pickerId}`
     }
   };
+
+  if (label) {
+    // When label is provided, input should have id referenced by htmlFor of label, instead of group
+    delete fieldProps.id;
+  }
 
   return (
     <Field
