@@ -100,8 +100,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       return;
     }
 
-    // TODO: Can't do {tabbable: true} because that would stop focus from reaching the roving tabindex -1 buttons in a action group
-    // within a grid cell
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
 
