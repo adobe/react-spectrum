@@ -23,6 +23,7 @@ import {useTag} from '@react-aria/tag';
 
 export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
+    children,
     isDisabled,
     isRemovable,
     item,
@@ -44,57 +45,39 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
     labelRef
   }, state);
 
+
   return (
     <div
-      {...mergeProps(tagProps, hoverProps, focusProps, otherProps)}
-      role={tagProps.role}
-      className={classNames(
-        styles,
-        'spectrum-Tags-item',
-        {
-          'is-disabled': isDisabled,
-          'focus-ring': isFocusVisible,
-          'is-focused': isFocusVisible,
-          'not-removable': !isRemovable,
-          'is-hovered': isHovered
-        }
+      role={tagProps.role}>
+      <div
+        {...mergeProps(tagProps, hoverProps, focusProps, labelProps, otherProps)}
+        role="gridcell"
+        className={classNames(
+          styles,
+          'spectrum-Tags-item',
+          {
+            'is-disabled': isDisabled,
+            'focus-ring': isFocusVisible,
+            'is-focused': isFocusVisible,
+            'not-removable': !isRemovable,
+            'is-hovered': isHovered
+          }
       )}>
-      <SlotProvider
-        slots={{
-          tagLabel: {UNSAFE_className: classNames(styles, 'spectrum-Tag-label')}
-        }}>
-        <TagLabel {...mergeProps(props, labelProps)} isRemovable={isRemovable} />
-        {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
-      </SlotProvider>
+        <SlotProvider
+          slots={{
+            tagLabel: {UNSAFE_className: classNames(styles, 'spectrum-Tag-label')},
+            icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable})}
+          }}>
+          {typeof children === 'string' ? <span ref={labelRef}><Text>{children}</Text></span> : children}
+          {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
+        </SlotProvider>
+      </div>
     </div>
   );
 }
 
-function TagLabel(props) {
-  let {role, children, isRemovable} = props;
-  props = useSlotProps(props, 'tagLabel');
-  let {styleProps} = useStyleProps(props);
-  let labelRef = useRef();
-
-  return (
-    <span
-      {...styleProps}
-      role="rowheader"
-      ref={labelRef}
-      className={classNames(styles, 'spectrum-Tags-labelItem')}>
-      <SlotProvider
-        slots={{
-          icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-          text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable})}
-        }}>
-        {typeof children === 'string' ? <span role={role}><Text>{children}</Text></span> : children}
-      </SlotProvider>
-    </span>
-  );
-}
-
 function TagRemoveButton(props) {
-  let {role} = props;
   props = useSlotProps(props, 'tagRemoveButton');
   let {styleProps} = useStyleProps(props);
   let clearBtnRef = useRef();
@@ -102,7 +85,6 @@ function TagRemoveButton(props) {
   return (
     <span
       {...styleProps}
-      role={role}
       ref={clearBtnRef}>
       <ClearButton
         preventFocus

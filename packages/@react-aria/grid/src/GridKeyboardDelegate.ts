@@ -22,7 +22,7 @@ export interface GridKeyboardDelegateOptions<T, C> {
   direction: Direction,
   collator?: Intl.Collator,
   layout?: Layout<Node<T>>,
-  focusMode?: 'row' | 'cell',
+  focusMode?: 'row' | 'cell'
 }
 
 export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements KeyboardDelegate {

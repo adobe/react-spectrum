@@ -23,7 +23,7 @@ governing permissions and limitations under the License.
 .spectrum-Tags-item {
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-areas: "label action";
+  grid-template-areas: "icon content action";
   align-items: center;
   box-sizing: border-box;
 
@@ -46,13 +46,6 @@ governing permissions and limitations under the License.
   &.is-disabled {
     pointer-events: none;
   }
-}
-
-.spectrum-Tags-labelItem {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-areas: "icon content";
-  align-items: center;
 }
 
 .spectrum-Tag-icon {
