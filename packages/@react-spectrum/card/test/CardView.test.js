@@ -833,7 +833,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('row');
+        let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[0]);
         act(() => {
           jest.runAllTimers();
@@ -862,7 +862,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('row');
+        let cards = tree.getAllByRole('gridcell');
 
         triggerPress(cards[0]);
         act(() => {
@@ -892,7 +892,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('row');
+        let cards = tree.getAllByRole('gridcell');
 
         triggerPress(cards[1]);
         act(() => {
