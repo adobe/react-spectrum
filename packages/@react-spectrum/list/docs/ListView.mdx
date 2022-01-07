@@ -32,8 +32,7 @@ keywords: [listview, collections]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Item', 'ListView']}
-  />
+  componentNames={['Item', 'ListView']} />
 
 ## Example
 ```tsx example
@@ -87,7 +86,6 @@ For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout o
 ### Accessibility
 An `aria-label` must be provided to the ListView for accessibility. If the ListView is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
 
-
 ## Asynchronous loading
 ListView supports loading data asynchronously, and will display a progress circle reflecting the current load state,
 set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
@@ -130,7 +128,6 @@ function AsyncList() {
   );
 }
 ```
-
 
 ## Selection
 
@@ -239,7 +236,6 @@ In the highlight selection style, the `onAction` prop can be used to enable row 
 ## Props
 
 <PropTable component={docs.exports.ListView} links={docs.links} />
-
 
 ## Visual options
 ### Quiet
