@@ -14,10 +14,6 @@ import docs from 'docs:@react-aria/i18n';
 import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/i18n/package.json';
 
-```tsx import
-import {useMessageFormatter} from '@react-aria/i18n';
-```
-
 ---
 category: Internationalization
 keywords: [message, i18n, aria, localization]
@@ -50,7 +46,7 @@ used to format the greeting. Two instances of the greeting component are rendere
 to specify the language to display.
 
 ```tsx example
-import {I18nProvider} from '@react-aria/i18n';
+import {I18nProvider, useMessageFormatter} from '@react-aria/i18n';
 
 let messages = {
   'en-US': {

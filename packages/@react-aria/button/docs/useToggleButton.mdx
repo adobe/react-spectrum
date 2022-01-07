@@ -16,11 +16,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/button/package.json';
 
-```jsx import
-import {useToggleButton} from '@react-aria/button';
-import {useRef} from 'react';
-```
-
 ---
 category: Buttons
 keywords: [button, toggle button, aria, form]
@@ -83,6 +78,8 @@ The toggle state is used to switch between a green and blue background when unse
 In addition, the `isPressed` state is used to adjust the background to be darker when the user presses down on the button.
 
 ```tsx example
+import {useRef} from 'react';
+import {useToggleButton} from '@react-aria/button';
 import {useToggleState} from '@react-stately/toggle';
 
 function ToggleButton(props) {

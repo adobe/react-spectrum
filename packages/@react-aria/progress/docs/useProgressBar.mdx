@@ -15,10 +15,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} fr
 import packageData from '@react-aria/progress/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useProgressBar} from '@react-aria/progress';
-```
-
 ---
 category: Status
 keywords: [progressbar, aria]
@@ -73,6 +69,8 @@ to identify the element to screen readers.
 ## Example
 
 ```tsx example
+import {useProgressBar} from '@react-aria/progress';
+
 function ProgressBar(props) {
   let {
     label,

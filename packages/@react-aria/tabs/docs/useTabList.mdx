@@ -17,11 +17,6 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/tabs/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
-import {useTabListState} from '@react-stately/tabs';
-```
-
 ---
 category: Navigation
 keywords: [tabs, aria]
@@ -92,6 +87,8 @@ This example displays a basic list of tabs. The currently selected tab receives 
 
 ```tsx example export=true
 import {Item} from '@react-stately/collections';
+import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
+import {useTabListState} from '@react-stately/tabs';
 
 function Tabs(props) {
   let state = useTabListState(props);

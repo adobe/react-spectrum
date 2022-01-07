@@ -35,7 +35,12 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
         return child.key;
       }
 
-      let firstItem = this.collection.getItem(this.getFirstKey());
+      let firstKey = this.getFirstKey();
+      if (!firstKey) {
+        return;
+      }
+
+      let firstItem = this.collection.getItem(firstKey);
       return [...firstItem.childNodes][startItem.index].key;
     }
 
@@ -147,6 +152,9 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     let collection = this.collection;
     let key = fromKey ?? this.getFirstKey();
+    if (!key) {
+      return null;
+    }
 
     // If the starting key is a cell, search from its parent row.
     let startItem = collection.getItem(key);

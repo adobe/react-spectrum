@@ -15,10 +15,6 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/interactions/package.json';
 
-```jsx import
-import {useFocusWithin} from '@react-aria/interactions';
-```
-
 ---
 category: Interactions
 keywords: [keyboard focus, focus management, focus ring, focus descendant, aria]
@@ -72,6 +68,8 @@ fired when the wrapper gains and loses focus, not when focus moves within the gr
 **NOTE: for more advanced text field functionality, see [useTextField](useTextField.html).**
 
 ```tsx example
+import {useFocusWithin} from '@react-aria/interactions';
+
 function Example() {
   let [events, setEvents] = React.useState([]);
   let [isFocusWithin, setFocusWithin] = React.useState(false);

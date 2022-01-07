@@ -15,10 +15,6 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/interactions/package.json';
 
-```jsx import
-import {useMove} from '@react-aria/interactions';
-```
-
 ---
 category: Interactions
 keywords: [move interactions, move events, drag, touch, mouse, keyboard, aria]
@@ -78,6 +74,8 @@ the arrow keys on your keyboard. The movement is clamped so that the ball cannot
 In addition, all of the move events are logged below so that you can inspect what is going on.
 
 ```tsx example
+import {useMove} from '@react-aria/interactions';
+
 function Example() {
   const CONTAINER_SIZE = 200;
   const BALL_SIZE = 30;

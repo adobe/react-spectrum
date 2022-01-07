@@ -15,10 +15,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} fr
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/link/package.json';
 
-```jsx import
-import {useLink} from '@react-aria/link';
-```
-
 ---
 category: Navigation
 keywords: [link, anchor, aria]
@@ -70,6 +66,8 @@ If a visual label is not provided (e.g. an icon or image only link), then an `ar
 This example shows a basic link using a native `<a>` element.
 
 ```tsx example
+import {useLink} from '@react-aria/link';
+
 function Link(props) {
   let ref = React.useRef();
   let {linkProps} = useLink(props, ref);

@@ -17,10 +17,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import packageData from '@react-aria/color/package.json';
 import Anatomy from './ColorSliderAnatomy.svg';
 
-```jsx import
-import {useColorSlider} from '@react-aria/color';
-```
-
 ---
 category: Color
 keywords: [color slider, color picker, aria]
@@ -100,6 +96,7 @@ using the [VisuallyHidden](VisuallyHidden.html) component. The thumb also uses t
 grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
+import {useColorSlider} from '@react-aria/color';
 import {useColorSliderState} from '@react-stately/color';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useLocale} from '@react-aria/i18n';
