@@ -15,7 +15,7 @@ import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {DragExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
-import {installPointerEvent} from '@react-spectrum/test-utils';
+import {installPointerEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -44,6 +44,11 @@ describe('ListView', function () {
   let onDragMove = jest.fn();
   let onDragEnd = jest.fn();
   let onDrop = jest.fn();
+  let checkSelection = (onSelectionChange, selectedKeys) => {
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
+  };
+
 
   afterEach(function () {
     jest.clearAllMocks();
@@ -318,11 +323,6 @@ describe('ListView', function () {
 
   describe('selection', function () {
     installPointerEvent();
-    let checkSelection = (onSelectionChange, selectedKeys) => {
-      expect(onSelectionChange).toHaveBeenCalledTimes(1);
-      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
-    };
-
     let items = [
       {key: 'foo', label: 'Foo'},
       {key: 'bar', label: 'Bar'},
@@ -656,9 +656,9 @@ describe('ListView', function () {
 
         let droppable = getByText('Drop here');
         let row = getAllByRole('row')[0];
+        expect(row).toHaveAttribute('draggable', 'true');
         let cell = within(row).getByRole('gridcell');
         expect(cell).toHaveTextContent('Item a');
-        expect(cell).toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
@@ -731,19 +731,19 @@ describe('ListView', function () {
 
         let cellA = within(rows[0]).getByRole('gridcell');
         expect(cellA).toHaveTextContent('Item a');
-        expect(cellA).toHaveAttribute('draggable', 'true');
+        expect(rows[0]).toHaveAttribute('draggable', 'true');
 
         let cellB = within(rows[1]).getByRole('gridcell');
         expect(cellB).toHaveTextContent('Item b');
-        expect(cellB).toHaveAttribute('draggable', 'true');
+        expect(rows[1]).toHaveAttribute('draggable', 'true');
 
         let cellC = within(rows[2]).getByRole('gridcell');
         expect(cellC).toHaveTextContent('Item c');
-        expect(cellC).not.toHaveAttribute('draggable', 'true');
+        expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let cellD = within(rows[3]).getByRole('gridcell');
         expect(cellD).toHaveTextContent('Item d');
-        expect(cellD).toHaveAttribute('draggable', 'true');
+        expect(rows[3]).toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
         fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
@@ -804,7 +804,7 @@ describe('ListView', function () {
         let row = getAllByRole('row')[0];
         let cell = within(row).getByRole('gridcell');
         expect(cell).toHaveTextContent('Item a');
-        expect(cell).not.toHaveAttribute('draggable', 'true');
+        expect(row).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
@@ -832,7 +832,7 @@ describe('ListView', function () {
 
         let cellC = within(rows[2]).getByRole('gridcell');
         expect(cellC).toHaveTextContent('Item c');
-        expect(cellC).not.toHaveAttribute('draggable', 'true');
+        expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
         fireEvent(cellC, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
@@ -856,7 +856,7 @@ describe('ListView', function () {
         let row = getAllByRole('row')[0];
         let cell = within(row).getByRole('gridcell');
         expect(cell).toHaveTextContent('Item a');
-        expect(cell).toHaveAttribute('draggable', 'true');
+        expect(row).toHaveAttribute('draggable', 'true');
 
         act(() => cell.focus());
         let draghandle = within(cell).queryByTestId('draghandle');
@@ -901,19 +901,19 @@ describe('ListView', function () {
 
         let cellA = within(rows[0]).getByRole('gridcell');
         expect(cellA).toHaveTextContent('Item a');
-        expect(cellA).toHaveAttribute('draggable', 'true');
+        expect(rows[0]).toHaveAttribute('draggable', 'true');
 
         let cellB = within(rows[1]).getByRole('gridcell');
         expect(cellB).toHaveTextContent('Item b');
-        expect(cellB).toHaveAttribute('draggable', 'true');
+        expect(rows[1]).toHaveAttribute('draggable', 'true');
 
         let cellC = within(rows[2]).getByRole('gridcell');
         expect(cellC).toHaveTextContent('Item c');
-        expect(cellC).not.toHaveAttribute('draggable', 'true');
+        expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let cellD = within(rows[3]).getByRole('gridcell');
         expect(cellD).toHaveTextContent('Item d');
-        expect(cellD).toHaveAttribute('draggable', 'true');
+        expect(rows[3]).toHaveAttribute('draggable', 'true');
 
         act(() => cellA.focus());
         let draghandle = within(cellA).queryByTestId('draghandle');
@@ -954,12 +954,41 @@ describe('ListView', function () {
       });
     });
 
-    it.skip('should toggle selection upon clicking the row checkbox', function () {
-      // TODO: this is currently broken in draggable listviews
+    it('should toggle selection upon clicking the row checkbox', function () {
+      let {getAllByRole} = render(
+        <DraggableListView />
+      );
+
+      let row = getAllByRole('row')[0];
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      expect(row).toHaveAttribute('draggable', 'true');
+      act(() => userEvent.click(within(row).getByRole('checkbox')));
+      expect(row).toHaveAttribute('aria-selected', 'true');
+      expect(onDragStart).toHaveBeenCalledTimes(0);
+      checkSelection(onSelectionChange, ['a']);
     });
 
-    it.skip('should open a menu upon click', function () {
-      // TODO: this is currently broken in draggable listviews
+    it('should open a menu upon click', function () {
+      let {getAllByRole, getByRole} = render(
+        <DraggableListView />
+      );
+
+      let row = getAllByRole('row')[0];
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      expect(row).toHaveAttribute('draggable', 'true');
+
+      let menuButton = within(row).getAllByRole('button')[1];
+      expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+
+      triggerPress(menuButton);
+      act(() => {jest.runAllTimers();});
+
+      let menu = getByRole('menu');
+      expect(menu).toBeTruthy();
+      expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      expect(onDragStart).toHaveBeenCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
     it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {

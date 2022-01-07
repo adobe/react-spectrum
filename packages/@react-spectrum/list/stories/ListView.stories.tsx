@@ -395,11 +395,11 @@ export function DragExample(props?) {
               <MenuTrigger>
                 <ActionButton><MoreSmall /></ActionButton>
                 <Menu>
-                  <Item>
+                  <Item textValue="Edit">
                     <Edit />
                     <Text>Edit</Text>
                   </Item>
-                  <Item>
+                  <Item textValue="Delete">
                     <Delete />
                     <Text>Delete</Text>
                   </Item>

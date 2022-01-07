@@ -171,7 +171,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         if (hasPrimaryAction) {
           onAction();
         }
-      }
+      };
     } else {
       itemPressProps.onPressUp = (e) => {
         if (e.pointerType !== 'keyboard') {
