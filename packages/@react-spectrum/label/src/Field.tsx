@@ -61,15 +61,21 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       wrapperClassName
     );
 
-    children = React.cloneElement(children, mergeProps(children.props, {
-      className: classNames(
-        labelStyles,
-        'spectrum-Field-field',
-        {'spectrum-Field--noHelpText': !hasHelpText}
-      )
-    }));
-
     if (newFormLayout) {
+      // since there is no wrapper and all three are siblings, attach refs and sizes directly
+      // to the field element itself
+      // for instance, setting height 200px on a textarea would result in the input being 200px
+      // tall, not the combination of the three, label + input + helptext
+      children = React.cloneElement(children, mergeProps(children.props, {
+        ...styleProps,
+        className: classNames(
+          labelStyles,
+          'spectrum-Field-field',
+          {'spectrum-Field--noHelpText': !hasHelpText}
+        ),
+        ref
+      }));
+
       return (
         <>
           <Label
@@ -97,6 +103,14 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         </>
       );
     } else {
+      children = React.cloneElement(children, mergeProps(children.props, {
+        className: classNames(
+          labelStyles,
+          'spectrum-Field-field',
+          {'spectrum-Field--noHelpText': !hasHelpText}
+        )
+      }));
+
       let renderHelpText = () => (
         <HelpText
           descriptionProps={descriptionProps}

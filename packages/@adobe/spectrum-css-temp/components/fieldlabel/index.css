@@ -168,7 +168,8 @@ governing permissions and limitations under the License.
 .spectrum-Form-newLayout {
   display: grid;
 
-  > .spectrum-Field-field {
+  /* beat some specificity (such as mobile numberfield) */
+  > .spectrum-Field-field.spectrum-Field-field {
     width: 100%;
   }
 
