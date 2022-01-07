@@ -37,6 +37,10 @@ interface SelectableItemOptions {
    */
   shouldSelectOnPressUp?: boolean,
   /**
+   * Whether the item is draggable.
+   */
+  isDraggable?: boolean,
+  /**
    * Whether the option is contained in a virtual scroller.
    */
   isVirtualized?: boolean,
@@ -79,7 +83,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     shouldUseVirtualFocus,
     focus,
     isDisabled,
-    onAction
+    onAction,
+    isDraggable
   } = options;
 
   let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
@@ -155,13 +160,27 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
 
-    itemPressProps.onPressUp = (e) => {
-      if (e.pointerType !== 'keyboard') {
-        onSelect(e);
-      }
-    };
+    // TODO: Make a decision about this api. Without this change clicking on interactable elements in a draggable row
+    // causes the row to toggle selection.
+    if (isDraggable) {
+      itemPressProps.onPress = (e) => {
+        if (e.pointerType !== 'keyboard') {
+          onSelect(e);
+        }
 
-    itemPressProps.onPress = hasPrimaryAction ? () => onAction() : null;
+        if (hasPrimaryAction) {
+          onAction();
+        }
+      }
+    } else {
+      itemPressProps.onPressUp = (e) => {
+        if (e.pointerType !== 'keyboard') {
+          onSelect(e);
+        }
+      };
+
+      itemPressProps.onPress = hasPrimaryAction ? () => onAction() : null;
+    }
   } else {
     // On touch, it feels strange to select on touch down, so we special case this.
     itemPressProps.onPressStart = (e) => {

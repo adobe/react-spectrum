@@ -50,12 +50,9 @@ export function ListViewItem(props) {
   let {rowProps} = useGridRow({
     node: item,
     isVirtualized: true,
-    onAction: onAction ? () => onAction(item.key) : undefined
-    // TODO: Need to figure out a way to make drag start and row selection toggling not happen at the same time (currently they both trigger on press start).
-    // shouldSelectOnPressUp here doesn't quite work since clicking on the a button in the row will toggle selection since the row's onPressUp triggers (usePress has a document level onPointerUp listener)
-    // A possible solution maybe to have selection logic be aware of drag and drop like it is in usePress and have selection toggling happen in onPress instead of onPressStart if
-    // the item is draggable
-    // shouldSelectOnPressUp: isDraggable
+    onAction: onAction ? () => onAction(item.key) : undefined,
+    shouldSelectOnPressUp: isDraggable,
+    isDraggable
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
@@ -66,10 +63,7 @@ export function ListViewItem(props) {
     gridCellProps,
     hoverProps,
     focusWithinProps,
-    focusProps,
-    // TODO: Perhaps useDraggableItem should support isDisabled so that we don't have to do the && logic below.
-    // Instead dragProps and dragButtonProps would be empty objects or something
-    isDraggable && dragProps
+    focusProps
   );
   let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
 
@@ -99,7 +93,7 @@ export function ListViewItem(props) {
   let showDragHandle = isDraggable && (isFocusVisibleWithin || isHovered || isPressed);
   return (
     <div
-      {...mergeProps(rowProps, pressProps)}
+      {...mergeProps(rowProps, pressProps, isDraggable && dragProps)}
       ref={rowRef}>
       <div
         className={
