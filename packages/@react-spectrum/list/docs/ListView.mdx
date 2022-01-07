@@ -210,7 +210,7 @@ You can disable specific rows by providing an array of keys to ListView via the 
 
 ### Highlight selection
 
-By default, ListView uses the checkbox selection style, which includes a column of checkboxes in each row for selection. When the `selectionStyle` prop is set to `"highlight"`, the checkboxes are hidden, and the selected rows are displayed with a highlighted background instead.
+By default, ListView uses the checkbox selection style, which includes a checkbox in each row for selection. When the `selectionStyle` prop is set to `"highlight"`, the checkboxes are hidden, and the selected rows are displayed with a highlighted background instead.
 
 In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
 
@@ -222,7 +222,7 @@ In the highlight selection style, however, clicking a row with the mouse _replac
 
 ### Row actions
 
-ListView may be used in use cases where users can perform actions on rows, such as navigating into items to open them or get more details. In the default checkbox selection style, it is recommended to use a [Link](Link.html) component in the first column for navigation.
+ListView may be used in use cases where users can perform actions on rows, such as navigating into items to open them or get more details. In the default checkbox selection style, it is recommended to use a [Link](Link.html) component for navigation.
 
 In the highlight selection style, the `onAction` prop can be used to enable row actions, which differ depending on the interaction method. When provided, double clicking with a mouse or pressing the <Keyboard>Enter</Keyboard> key triggers `onAction`, while single click and the <Keyboard>Space</Keyboard> key are reserved for selection. On touch devices, `onAction` becomes the primary tap interaction, and a long press enters into selection mode, which displays checkboxes to perform selection. Deselecting all items exits selection mode and hides the checkboxes. Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
 
