@@ -37,9 +37,10 @@ interface SelectableItemOptions {
    */
   shouldSelectOnPressUp?: boolean,
   /**
-   * Whether the item is draggable.
+   * Whether selection requires the pointer/mouse down and up events to occur on the same target or triggers selection on
+   * the target of the pointer/mouse up event.
    */
-  isDraggable?: boolean,
+  allowsDifferentPressOrigin?: boolean,
   /**
    * Whether the option is contained in a virtual scroller.
    */
@@ -84,7 +85,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     focus,
     isDisabled,
     onAction,
-    isDraggable
+    allowsDifferentPressOrigin
   } = options;
 
   let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
@@ -160,9 +161,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
 
-    // TODO: Make a decision about this api. Without this change clicking on interactable elements in a draggable row
-    // causes the row to toggle selection.
-    if (isDraggable) {
+    if (!allowsDifferentPressOrigin) {
       itemPressProps.onPress = (e) => {
         if (e.pointerType !== 'keyboard') {
           onSelect(e);

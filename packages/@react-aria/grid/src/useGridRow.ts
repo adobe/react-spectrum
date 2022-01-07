@@ -29,9 +29,7 @@ export interface GridRowProps<T> {
    * Please use onCellAction at the collection level instead.
    * @deprecated
    **/
-  onAction?: () => void,
-  /** Whether the grid row is draggable. */
-  isDraggable?: boolean
+  onAction?: () => void
 }
 
 export interface GridRowAria {
@@ -51,8 +49,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     node,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction,
-    isDraggable
+    onAction
   } = props;
 
   let {actions: {onRowAction}} = gridMap.get(state);
@@ -62,8 +59,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     ref,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction: onRowAction ? () => onRowAction(node.key) : onAction,
-    isDraggable
+    onAction: onRowAction ? () => onRowAction(node.key) : onAction
   });
 
   let isSelected = state.selectionManager.isSelected(node.key);
