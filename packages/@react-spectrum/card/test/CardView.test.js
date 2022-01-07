@@ -61,7 +61,7 @@ let itemsNoSize = [
 let mockHeight = 800;
 let mockWidth = 800;
 let onSelectionChange = jest.fn();
-let getCardStyles = (card) => card.parentNode.parentNode.style;
+let getCardStyles = (card) => card.parentNode.style;
 
 function StaticCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -280,7 +280,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('gridcell');
+        let cards = tree.getAllByRole('row');
         triggerPress(cards[1]);
         expect(document.activeElement).toBe(cards[1]);
         let cardStyles = getCardStyles(cards[1]);
@@ -304,7 +304,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('gridcell');
+        let cards = tree.getAllByRole('row');
         triggerPress(cards[5]);
         expect(document.activeElement).toBe(cards[5]);
         let cardStyles = getCardStyles(cards[5]);
@@ -332,7 +332,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('gridcell');
+        let cards = tree.getAllByRole('row');
 
         triggerPress(cards[1]);
         expect(document.activeElement).toBe(cards[1]);
@@ -376,7 +376,7 @@ describe('CardView', function () {
 
         let expectedRight;
         let expectedTop;
-        let cards = tree.getAllByRole('gridcell');
+        let cards = tree.getAllByRole('row');
 
         triggerPress(cards[1]);
         expect(document.activeElement).toBe(cards[1]);
@@ -405,7 +405,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('gridcell');
+        let cards = tree.getAllByRole('row');
         triggerPress(cards[5]);
 
         act(() => {
@@ -414,7 +414,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        cards = tree.getAllByRole('gridcell');
+        cards = tree.getAllByRole('row');
         expect(document.activeElement).toBe(cards[cards.length - 1]);
         let cardStyles = getCardStyles(document.activeElement);
         let expectedLeft = cardStyles.left;
@@ -439,7 +439,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('gridcell');
+        let cards = tree.getAllByRole('row');
         triggerPress(cards[1]);
 
         expect(document.activeElement).toBe(cards[1]);
@@ -508,7 +508,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('gridcell');
+        let cards = tree.getAllByRole('row');
         triggerPress(cards[0]);
         expect(document.activeElement).toBe(cards[0]);
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
@@ -533,7 +533,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('gridcell');
+        let cards = tree.getAllByRole('row');
         triggerPress(cards[3]);
         expect(document.activeElement).toBe(cards[3]);
         expect(within(document.activeElement).getByText('Title 4')).toBeTruthy();
@@ -689,7 +689,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('gridcell');
+        let cards = tree.getAllByRole('row');
         triggerPress(cards[0]);
         expect(document.activeElement).toBe(cards[0]);
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
@@ -716,7 +716,7 @@ describe('CardView', function () {
           jest.runAllTimers();
         });
 
-        let cards = tree.getAllByRole('gridcell');
+        let cards = tree.getAllByRole('row');
         triggerPress(cards[2]);
         expect(document.activeElement).toBe(cards[2]);
         expect(within(document.activeElement).getByText('Title 3')).toBeTruthy();
@@ -738,7 +738,6 @@ describe('CardView', function () {
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
       });
 
-      // TODO: figure out why the spacing is only 16px between each item
       it.skip('should move focus via Arrow Left', function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
         act(() => {
@@ -769,19 +768,6 @@ describe('CardView', function () {
         expect(cardStyles.left).toEqual(expectedLeft);
       });
 
-      // TODO: update the below two tests when we decide on exact keyboard behavior for entering the card
-      // it('should move focus via Arrow Left (RTL)', function () {
-
-      // });
-
-      // it('should move focus via Arrow Right', function () {
-
-      // });
-
-      // it('should move focus via Arrow Right (RTL)', function () {
-
-      // });
-
       // TODO: Can't test PageUp/Down of WaterfallLayout because it is setting the heights of the items to 0. Figure out why
       // seems to be the updateItemSize
     });
@@ -799,7 +785,7 @@ describe('CardView', function () {
         jest.runAllTimers();
       });
 
-      let cards = tree.getAllByRole('gridcell');
+      let cards = tree.getAllByRole('row');
       triggerPress(cards[2]);
       expect(document.activeElement).toBe(cards[2]);
 
@@ -823,7 +809,7 @@ describe('CardView', function () {
         jest.runAllTimers();
       });
 
-      let cards = tree.getAllByRole('gridcell');
+      let cards = tree.getAllByRole('row');
       triggerPress(cards[2]);
       expect(document.activeElement).toBe(cards[2]);
 
@@ -833,7 +819,7 @@ describe('CardView', function () {
         jest.runAllTimers();
       });
 
-      cards = tree.getAllByRole('gridcell');
+      cards = tree.getAllByRole('row');
       expect(document.activeElement).toBe(cards[cards.length - 1]);
     });
 
@@ -848,7 +834,7 @@ describe('CardView', function () {
         jest.runAllTimers();
       });
 
-      let cards = tree.getAllByRole('gridcell');
+      let cards = tree.getAllByRole('row');
       triggerPress(cards[1]);
       expect(document.activeElement).toBe(cards[1]);
 
@@ -1030,7 +1016,7 @@ describe('CardView', function () {
 
       let spinner = within(grid).getByRole('progressbar');
       expect(spinner).toHaveAttribute('aria-label', 'Loading more…');
-      expect(getCardStyles(spinner.parentNode).height).toBe('60px');
+      expect(getCardStyles(spinner.parentNode.parentNode).height).toBe('60px');
     });
 
     it.each`
