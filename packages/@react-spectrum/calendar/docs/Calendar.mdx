@@ -80,9 +80,15 @@ The below example displays a `Calendar` in the Hindi language, using the Indian 
 ```tsx example
 import {Provider} from '@adobe/react-spectrum';
 
-<Provider locale="hi-IN-u-ca-indian">
-  <Calendar aria-label="Date" onChange={date => alert(`Selected date: ${date.toString()}`)} />
-</Provider>
+function Example() {
+  let [date, setDate] = React.useState(null);
+  return (
+    <Provider locale="hi-IN-u-ca-indian">
+      <Calendar aria-label="Date" value={date} onChange={setDate} />
+      <p>Selected date: {date?.toString()}</p>
+    </Provider>
+  );
+}
 ```
 
 ## Labeling

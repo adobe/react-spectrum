@@ -175,7 +175,8 @@ function Example() {
   return (
     <Provider locale="hi-IN-u-ca-indian">
       <DateRangePicker label="Date range" value={range} onChange={setRange} />
-      <p>{`Selected date range: ${range ? range.start.toString() + ' - ' + range.end.toString() : ''}`}</p>
+      <p>Start date: {range?.start.toString()}</p>
+      <p>End date: {range?.end.toString()}</p>
     </Provider>
   );
 }
