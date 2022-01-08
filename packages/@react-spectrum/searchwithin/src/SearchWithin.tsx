@@ -81,7 +81,8 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     description: null,
     errorMessage: null,
     descriptionProps: null,
-    errorMessageProps: null
+    errorMessageProps: null,
+    'aria-label': null
   };
 
   let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
