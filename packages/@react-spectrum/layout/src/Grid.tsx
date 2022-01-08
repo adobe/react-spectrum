@@ -90,7 +90,7 @@ function gridTemplateAreasValue(value) {
 }
 
 function gridDimensionValue(value) {
-  if (/^max-content|min-content|minmax|auto|fit-content|repeat|subgrid/.test(value)) {
+  if (/^max-content|min-content|minmax|auto|none|unset|fit-content|repeat|subgrid/.test(value)) {
     return value;
   }
 

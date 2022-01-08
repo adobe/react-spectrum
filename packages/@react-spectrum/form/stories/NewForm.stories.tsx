@@ -35,6 +35,10 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/var
 import {Well} from '@react-spectrum/well';
 import {FocusableRef} from '@react-types/shared';
 import {TextFieldRef} from '@react-types/textfield';
+import {DatePickerField} from '@react-spectrum/datepicker/src/DatePickerField';
+import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
+import {parseDate} from '@internationalized/date';
+import {RangeCalendar} from '@react-spectrum/calendar';
 
 storiesOf('Form/newLayout', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -180,6 +184,7 @@ storiesOf('Form/newLayout', module)
       );
     }
   )
+  // todo haven't figured this one out yet, might be best not to use FieldGroup?
   .add(
     'fields with different FieldGroup configuration',
     () => {
@@ -187,28 +192,28 @@ storiesOf('Form/newLayout', module)
       return (
         <Form newFormLayout>
           <Well role="group" aria-labelledby="billing-legend">
-            <FieldGroup rowGap={10} columns="1fr" rows="auto" gridAutoFlow="row">
-              <h2 id="billing-legend" className={typographyStyles['spectrum-Heading4']}>Billing address</h2>
-              <FieldGroup>
-                <TextField autoComplete="billing given-name" name="firstName" isRequired label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
-                <TextField autoComplete="billing family-name" name="lastName" isRequired label="Last Name" placeholder="Smith" flex={1} />
+            <FieldGroup rowGap={10} columns="1fr" rows={repeat('auto-fit', 'minmax(0, auto) minmax(0, auto) minmax(0, auto)')} autoFlow="row">
+              <h2 id="billing-legend" className={typographyStyles['spectrum-Heading4']} style={{gridRowStart: '1'}}>Billing address</h2>
+              <FieldGroup gridColumnStart="1">
+                <TextField autoComplete="billing given-name" name="firstName" isRequired label="First Name" placeholder="John" marginEnd="size-100" />
+                <TextField autoComplete="billing family-name" name="lastName" isRequired label="Last Name" placeholder="Smith" />
               </FieldGroup>
-              <TextArea autoComplete="billing street-address" name="streetAddress" isRequired label="Street Address" placeholder="123 Any Street" flex={1} />
-              <FieldGroup>
-                <TextField autoComplete="billing address-level2" name="city" isRequired label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
-                <Picker autoComplete="billing address-level1" name="state" isRequired label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+              <TextArea autoComplete="billing street-address" name="streetAddress" isRequired label="Street Address" placeholder="123 Any Street" />
+              <FieldGroup gridColumnStart="1">
+                <TextField autoComplete="billing address-level2" name="city" isRequired label="City" placeholder="San Francisco" marginEnd="size-100" />
+                <Picker autoComplete="billing address-level1" name="state" isRequired label="State" placeholder="Select a state" items={states} marginEnd="size-100">
                   {item => <Item key={item.abbr}>{item.name}</Item>}
                 </Picker>
-                <TextField autoComplete="billing postal-code" name="zip" isRequired label="Zip code" placeholder="12345" flex={1} />
+                <TextField autoComplete="billing postal-code" name="zip" isRequired label="Zip code" placeholder="12345" />
               </FieldGroup>
-              <FieldGroup>
-                <Picker autoComplete="billing country" name="country" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100" flex={1}>
+              <FieldGroup gridColumnStart="1">
+                <Picker autoComplete="billing country" name="country" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100">
                   {item => <Item key={item.code}>{item.name}</Item>}
                 </Picker>
               </FieldGroup>
-              <FieldGroup>
-                <TextField autoComplete="billing tel" type="tel" name="phone" label="Phone number" placeholder="123-456-7890" marginEnd="size-100" flex={1} />
-                <TextField autoComplete="billing email" type="email" name="email" isRequired label="Email address" placeholder="me@example.org" marginEnd="size-100" flex={1} />
+              <FieldGroup gridColumnStart="1">
+                <TextField autoComplete="billing tel" type="tel" name="phone" label="Phone number" placeholder="123-456-7890" marginEnd="size-100" />
+                <TextField autoComplete="billing email" type="email" name="email" isRequired label="Email address" placeholder="me@example.org" marginEnd="size-100" />
               </FieldGroup>
             </FieldGroup>
           </Well>
@@ -353,6 +358,9 @@ function render(props: any = {}) {
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </ComboBox>
+      <DateField label="Birthday" />
+      <DatePicker label="What date is it?" value={parseDate('2004-10-03')} />
+      <DateRangePicker label="Flight dates" />
       <NumberField label="Years lived there" />
       <Picker label="State" placeholder="Select a state" items={states}>
         {item => <Item key={item.abbr}>{item.name}</Item>}
@@ -386,6 +394,8 @@ function render(props: any = {}) {
       <TextField label="Zip code" placeholder="12345" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
       <ColorWheel />
       <Slider label="the slider" />
+      <RangeCalendar />
+      <TimeField label="Count down" />
     </Form>
   );
 }
@@ -705,8 +715,8 @@ function FormWithSubmit() {
         </Radio>
       </RadioGroup>
 
-      <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
-      <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>
+      <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'} justifySelf="start">Submit</Button>
+      <Button variant="secondary" type="reset" onPress={reset} justifySelf="start">Reset</Button>
       <Status formStatus={formStatus} />
     </Form>
   );

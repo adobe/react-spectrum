@@ -178,21 +178,21 @@ governing permissions and limitations under the License.
     align-items: start;
 
     > .spectrum-FieldLabel {
-      padding-inline-end: 10px;
+      margin-inline-end: 10px;
     }
 
     > .spectrum-Field-field {
       grid-column-start: 2;
-      padding-bottom: 5px;
+      margin-bottom: 5px;
     }
 
     > .spectrum-Field--noHelpText.spectrum-Field-field {
-      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
 
     > .spectrum-Field-helpText {
       grid-column-start: 2;
-      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
 
     > :not(.spectrum-FieldLabel):not(.spectrum-Field-helpText):not(.spectrum-Field-field):not(.spectrum-Form-group) {
@@ -237,23 +237,23 @@ governing permissions and limitations under the License.
     grid-template-columns: 1fr;
 
     > .spectrum-FieldLabel {
-      padding-bottom: 5px;
+      margin-bottom: 5px;
     }
 
     > .spectrum-Field-field {
-      padding-bottom: 5px;
+      margin-bottom: 5px;
     }
 
     > .spectrum-Field--noHelpText.spectrum-Field-field {
-      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
 
     > .spectrum-Field-helpText {
-      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
 
     > :not(.spectrum-FieldLabel):not(.spectrum-Field-helpText):not(.spectrum-Field-field) {
-      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
 
     .spectrum-Form-group {
@@ -271,7 +271,7 @@ governing permissions and limitations under the License.
       > .spectrum-Field-field {
         grid-column-start: unset;
         grid-row-start: 2;
-        width: auto;
+        width: unset;
       }
 
       > .spectrum-Field-helpText {
