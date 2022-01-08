@@ -283,10 +283,6 @@ describe('RangeSlider', function () {
     beforeAll(() => {
       jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
     });
-    afterAll(() => {
-      // @ts-ignore
-      window.HTMLElement.prototype.offsetWidth.mockReset();
-    });
 
     beforeAll(() => {
       let oldMouseEvent = MouseEvent;

@@ -15,10 +15,6 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/interactions/package.json';
 
-```jsx import
-import {useKeyboard} from '@react-aria/interactions';
-```
-
 ---
 category: Interactions
 keywords: [keyboard interactions, keyboard events, aria]
@@ -65,6 +61,8 @@ This example shows a simple input element that handles keyboard events with `use
 **NOTE: for more advanced text field functionality, see [useTextField](useTextField.html).**
 
 ```tsx example
+import {useKeyboard} from '@react-aria/interactions';
+
 function Example() {
   let [events, setEvents] = React.useState([]);
   let {keyboardProps} = useKeyboard({

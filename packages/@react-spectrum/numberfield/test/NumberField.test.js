@@ -34,7 +34,7 @@ describe('NumberField', function () {
   let onKeyUpSpy = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterAll(() => {
@@ -1954,9 +1954,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(0, 3);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -1974,9 +1972,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(1, 3);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(false);
@@ -1994,9 +1990,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(1, 1);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(false);
@@ -2014,9 +2008,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(5, 5);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2', inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2034,9 +2026,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(4, 10);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2', inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2054,9 +2044,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(1, 1);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2', inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(false);
@@ -2074,9 +2062,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(2, 2);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2094,9 +2080,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(0, 0);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2112,8 +2096,7 @@ describe('NumberField', function () {
 
     // fire compositionstart and beforeinput
     fireEvent.compositionStart(textField);
-    let e = new InputEvent('beforeinput', {cancelable: false, data: 'ü'});
-    e.inputType = 'insertCompositionText';
+    let e = new InputEvent('beforeinput', {cancelable: false, data: 'ü', inputType: 'insertCompositionText'});
     let proceed = fireEvent(textField, e);
     expect(proceed).toBe(true);
 

@@ -14,10 +14,6 @@ import docs from 'docs:@react-aria/label';
 import {FunctionAPI, HeaderInfo, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/label/package.json';
 
-```tsx import
-import {useField} from '@react-aria/label';
-```
-
 ---
 category: Utilities
 keywords: [label, form, description, error, field, aria]
@@ -45,6 +41,8 @@ By default, `useField` assumes that the label is a native HTML `<label>` element
 **Note**: Many other React Aria hooks such as [useTextField](useTextField.html), [useSelect](useSelect.html), and [useComboBox](useComboBox.html) already include support for description and error message elements. If you're using one of those hooks, there's no need to use `useField`.
 
 ```tsx example
+import {useField} from '@react-aria/label';
+
 function ContactPicker(props) {
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
 

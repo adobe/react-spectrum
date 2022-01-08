@@ -16,10 +16,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import packageData from '@react-aria/color/package.json';
 import Anatomy from './ColorWheelAnatomy.svg';
 
-```jsx import
-import {useColorWheel} from '@react-aria/color';
-```
-
 ---
 category: Color
 keywords: [color wheel, color picker, aria]
@@ -88,6 +84,7 @@ using the [VisuallyHidden](VisuallyHidden.html) component. The thumb also uses t
 grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
+import {useColorWheel} from '@react-aria/color';
 import {useColorWheelState} from '@react-stately/color';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useFocusRing} from '@react-aria/focus';

@@ -14,10 +14,6 @@ import docs from 'docs:@react-aria/separator';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/separator/package.json';
 
-```jsx import
-import {useSeparator} from '@react-aria/separator';
-```
-
 ---
 category: Content
 keywords: [vertical separator, horizontal separator, separator, hr, aria]
@@ -62,6 +58,8 @@ A separator consists of a single element that represents the divider.
 This example shows how create both a horizontal and a vertical oriented separator.
 
 ```tsx example
+import {useSeparator} from '@react-aria/separator';
+
 function Separator(props) {
   let {separatorProps} = useSeparator(props);
 

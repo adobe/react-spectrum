@@ -16,10 +16,6 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import packageData from '@react-aria/{{packageName}}/package.json';
 import Anatomy from './{{packageName}}Anatomy.svg'
 
-```jsx import
-import {use{{componentName~}}} from '@react-aria/{{packageName}}';
-```
-
 *Include after_version if the docs shouldn't be published to the website until reaching a specific package version.*
 ---
 category: Category Name
@@ -75,6 +71,8 @@ after_version: 3.0.0-alpha.0
 *If you create an example component that will be reused else where in this doc, include export=true so that you can directly reuse the component and avoid copy pasting the same code.*
 *See useComboBox.mdx for an example.*
 ```tsx example export=true
+import {use{{componentName~}}} from '@react-aria/{{packageName}}';
+
 function Example(props) {
   return (
     <div>test</div>
