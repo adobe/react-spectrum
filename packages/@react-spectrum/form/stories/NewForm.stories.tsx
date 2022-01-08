@@ -18,12 +18,15 @@ import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ColorWheel} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {countries, states} from './data';
+import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {FieldGroup, Form} from '../';
-import {Flex, minmax, repeat} from '@react-spectrum/layout';
+import {Flex, repeat} from '@react-spectrum/layout';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
+import {parseDate} from '@internationalized/date';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {Key, RefObject, useEffect, useRef, useState} from 'react';
+import {RangeCalendar} from '@react-spectrum/calendar';
+import React, {Key, useEffect, useRef, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '@react-spectrum/searchwithin';
 import {Slider} from '@react-spectrum/slider';
@@ -33,12 +36,6 @@ import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
-import {FocusableRef} from '@react-types/shared';
-import {TextFieldRef} from '@react-types/textfield';
-import {DatePickerField} from '@react-spectrum/datepicker/src/DatePickerField';
-import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
-import {parseDate} from '@internationalized/date';
-import {RangeCalendar} from '@react-spectrum/calendar';
 
 storiesOf('Form/newLayout', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
