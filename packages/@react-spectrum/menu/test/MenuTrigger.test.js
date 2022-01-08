@@ -17,7 +17,7 @@ import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerLongPress, triggerPress, triggerTouch} from '@react-spectrum/test-utils';
+import {triggerLongPress, triggerPress, triggerTouch, DEFAULT_LONG_PRESS_TIME} from '@react-spectrum/test-utils';
 
 let triggerText = 'Menu Button';
 
@@ -783,7 +783,17 @@ describe('MenuTrigger', function () {
   describe('MenuTrigger trigger="longPress" open behavior', function () {
     installPointerEvent();
 
-    const DEFAULT_THRESHOLD = 500;
+    const ERROR_MENU_NOT_FOUND = new Error('Menu not found');
+
+    const getMenuCallback = () => {
+      try {
+        let menu = tree.getByRole('menu');
+        expect(menu).toBeTruthy();
+        expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
+      } catch (e) {
+        throw ERROR_MENU_NOT_FOUND;
+      }
+    };
 
     it('should open the menu on longPress', function () {
       const props = {onOpenChange, trigger: 'longPress'};
@@ -796,13 +806,39 @@ describe('MenuTrigger', function () {
       });
     });
 
+    it('should not open menu on click', function () {
+      const props = {onOpenChange, trigger: 'longPress'};
+      let tree = renderComponent(MenuTrigger, props, {});
+      let button = tree.getByRole('button');
+
+      act(() => {
+        triggerTouch(button);
+        setTimeout(() => {
+          expect(getMenuCallback).toThrowError(ERROR_MENU_NOT_FOUND);
+        }, 0);
+        jest.runAllTimers();
+      });
+    });
+
+    it(`should not open menu on short press (default threshold set to ${DEFAULT_LONG_PRESS_TIME}ms)`, function () {
+      const props = {onOpenChange, trigger: 'longPress'};
+      let tree = renderComponent(MenuTrigger, props, {});
+      let button = tree.getByRole('button');
+
+      act(() => {
+        triggerTouch(button);
+        setTimeout(() => {
+          expect(getMenuCallback).toThrowError(ERROR_MENU_NOT_FOUND);
+        }, );
+        jest.runAllTimers(DEFAULT_LONG_PRESS_TIME / 2);
+      });
+    });
+
     it('should open the menu on Enter', function () {
       const props = {onOpenChange, trigger: 'longPress'};
       verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
         if (!menu) {
           fireEvent.keyDown(button, {key: 'Enter'});
-          act(() => jest.advanceTimersByTime(DEFAULT_THRESHOLD));
-          fireEvent.keyUp(button, {key: 'Enter'});
         } else {
           triggerTouch(button);
         }
@@ -814,8 +850,6 @@ describe('MenuTrigger', function () {
       verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
         if (!menu) {
           fireEvent.keyDown(button, {key: ' '});
-          act(() => jest.advanceTimersByTime(DEFAULT_THRESHOLD));
-          fireEvent.keyUp(button, {key: ' '});
         } else {
           triggerTouch(button);
         }

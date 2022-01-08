@@ -29,11 +29,11 @@ export function triggerTouch(element, opts = {}) {
 }
 
 // Triggers a "longPress" event on an element.
-const DEFAULT_THRESHOLD = 500;
+export const DEFAULT_LONG_PRESS_TIME = 500;
 
 export function triggerLongPress(element, opts = {}) {
   fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
-  act(() => jest.advanceTimersByTime(DEFAULT_THRESHOLD));
+  act(() => jest.advanceTimersByTime(DEFAULT_LONG_PRESS_TIME));
   fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
 }
 
