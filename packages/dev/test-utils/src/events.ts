@@ -33,6 +33,7 @@ export const DEFAULT_LONG_PRESS_TIME = 500;
 
 export function triggerLongPress(element, opts = {}) {
   fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
+  // @ts-ignore
   act(() => jest.advanceTimersByTime(DEFAULT_LONG_PRESS_TIME));
   fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
 }
