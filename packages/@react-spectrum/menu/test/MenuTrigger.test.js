@@ -12,12 +12,12 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
+import {DEFAULT_LONG_PRESS_TIME, triggerLongPress, triggerPress, triggerTouch} from '@react-spectrum/test-utils';
 import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerLongPress, triggerPress, triggerTouch, DEFAULT_LONG_PRESS_TIME} from '@react-spectrum/test-utils';
 
 let triggerText = 'Menu Button';
 
