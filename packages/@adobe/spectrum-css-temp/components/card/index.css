@@ -225,7 +225,7 @@ user-provided
 
   .spectrum-Card-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(40px, 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
     grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-actionbutton-height), auto) 1fr var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
@@ -342,7 +342,7 @@ user-provided
   &:not(.spectrum-Card--noPreview) .spectrum-Card-grid {
     display: grid;
     block-size: 100%;
-    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(40px, 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
     grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), 1fr) var(--spectrum-global-dimension-size-200) minmax(var(--spectrum-actionbutton-height), auto) auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
@@ -365,7 +365,7 @@ user-provided
   &.spectrum-Card--noPreview .spectrum-Card-grid {
     display: grid;
     block-size: 100%;
-    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(40px, 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
     grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
@@ -461,7 +461,7 @@ user-provided
 
   &:not(.spectrum-Card--noPreview) .spectrum-Card-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(40px, 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
     grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-actionbutton-height), auto) 1fr var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
@@ -483,7 +483,7 @@ user-provided
 
   &.spectrum-Card--noPreview .spectrum-Card-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(40px, 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
     grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
@@ -565,7 +565,7 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) minmax(40px, 1fr) minmax(0, auto);
+    grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
     grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) 1fr var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
@@ -656,7 +656,7 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) minmax(40px, 1fr) minmax(0, auto);
+    grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
     grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) minmax(auto, var(--spectrum-global-dimension-size-600)) var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
@@ -753,7 +753,7 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) minmax(40px, 1fr) minmax(0, auto);
+    grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) var(--spectrum-alias-single-line-height) 1fr;
     grid-template-areas:
       "preview preview preview"
@@ -868,7 +868,7 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) minmax(40px, 1fr) minmax(0, auto);
+    grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) auto var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
