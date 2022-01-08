@@ -17,7 +17,7 @@ import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerLongPress, triggerPress, triggerTouch, DEFAULT_LONG_PRESS_TIME} from '@react-spectrum/test-utils';
+import {DEFAULT_LONG_PRESS_TIME, triggerLongPress, triggerPress, triggerTouch} from '@react-spectrum/test-utils';
 
 let triggerText = 'Menu Button';
 
@@ -785,11 +785,11 @@ describe('MenuTrigger', function () {
 
     const ERROR_MENU_NOT_FOUND = new Error('Menu not found');
 
-    const getMenuCallback = () => {
+    const getMenuCallback = (tree, button) => {
       try {
         let menu = tree.getByRole('menu');
         expect(menu).toBeTruthy();
-        expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
+        expect(menu).toHaveAttribute('aria-labelledby', button.id);
       } catch (e) {
         throw ERROR_MENU_NOT_FOUND;
       }
@@ -814,7 +814,7 @@ describe('MenuTrigger', function () {
       act(() => {
         triggerTouch(button);
         setTimeout(() => {
-          expect(getMenuCallback).toThrowError(ERROR_MENU_NOT_FOUND);
+          expect(getMenuCallback(tree, button)).toThrowError(ERROR_MENU_NOT_FOUND);
         }, 0);
         jest.runAllTimers();
       });
@@ -828,9 +828,9 @@ describe('MenuTrigger', function () {
       act(() => {
         triggerTouch(button);
         setTimeout(() => {
-          expect(getMenuCallback).toThrowError(ERROR_MENU_NOT_FOUND);
-        }, );
-        jest.runAllTimers(DEFAULT_LONG_PRESS_TIME / 2);
+          expect(getMenuCallback(tree, button)).toThrowError(ERROR_MENU_NOT_FOUND);
+        }, DEFAULT_LONG_PRESS_TIME / 2);
+        jest.runAllTimers();
       });
     });
 
