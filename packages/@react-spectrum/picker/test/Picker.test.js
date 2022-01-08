@@ -25,6 +25,7 @@ import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../../../@react-stately/virtualizer/src/Virtualizer';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -404,7 +405,9 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(listbox);
     });
 
-    it.skip('scrolls the selected item into view on menu open', function () {
+    it('scrolls the selected item into view on menu open', function () {
+      let scrollToSpy = jest.fn();
+      let virtualizerMock = jest.spyOn(Virtualizer.prototype, 'scrollToItem').mockImplementationOnce(scrollToSpy);
       // Mock scroll height so that the picker heights actually have a value
       let scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 500);
       let {getByRole, queryByRole} = render(
@@ -426,8 +429,9 @@ describe('Picker', function () {
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
       act(() => jest.runAllTimers());
-      expect(within(listbox).queryByText('Four')).toBeTruthy();
+      expect(scrollToSpy.mock.calls[0][0]).toBe('four');
 
+      virtualizerMock.mockReset();
       scrollHeightSpy.mockReset();
     });
   });
