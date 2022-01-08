@@ -2,7 +2,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/provider';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/provider/package.json';
 
 ```jsx import
@@ -23,7 +23,7 @@ keywords: [theme, locale, application, colorstop]
 
 # Provider
 
-<p>{docs.exports.Provider.description}</p>
+<PageDescription>{docs.exports.Provider.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
