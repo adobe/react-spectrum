@@ -136,6 +136,50 @@ function AsyncList() {
 }
 ```
 
+## Complex items
+
+```tsx example
+function renderActions() {
+  return (
+    <>
+      <ActionGroup buttonLabelBehavior="hide" slot="actionGroup">
+        <Item key="info">
+          <Info />
+          <Text>Info</Text>
+        </Item>
+      </ActionGroup>
+      <ActionMenu slot="actionMenu">
+        <Item key="add">
+          <Add />
+          <Text>Add</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionMenu>
+    </>
+  );
+}
+
+<ListView aria-label="List example with complex items">
+  <Item key="a" textValue="folder 1" hasChildItems>
+    <Folder />
+    <Link>folder 1</Link>
+    <Text slot="description">description for folder 1</Text>
+    {renderActions()}
+  </Item>
+  <Item textValue="row 2">
+    row 2
+    {renderActions()}
+  </Item>
+  <Item textValue="row 3">
+    row 3
+    {renderActions()}
+  </Item>
+</ListView>
+```
+
 ## Selection
 
 By default, ListView doesn't allow row selection but this can be enabled using the `selectionMode` prop.
@@ -185,50 +229,6 @@ function PokemonList(props) {
     </ListView>
   );
 }
-```
-
-### Complex items
-
-```tsx example
-function renderActions() {
-  return (
-    <>
-      <ActionGroup buttonLabelBehavior="hide" slot="actionGroup">
-        <Item key="info">
-          <Info />
-          <Text>Info</Text>
-        </Item>
-      </ActionGroup>
-      <ActionMenu slot="actionMenu">
-        <Item key="add">
-          <Add />
-          <Text>Add</Text>
-        </Item>
-        <Item key="delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionMenu>
-    </>
-  );
-}
-
-<ListView aria-label="List example with complex items">
-  <Item key="a" textValue="folder 1" hasChildItems>
-    <Folder />
-    <Link>folder 1</Link>
-    <Text slot="description">description for folder 1</Text>
-    {renderActions()}
-  </Item>
-  <Item textValue="row 2">
-    row 2
-    {renderActions()}
-  </Item>
-  <Item textValue="row 3">
-    row 3
-    {renderActions()}
-  </Item>
-</ListView>
 ```
 
 ### Single selection
