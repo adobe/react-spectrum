@@ -87,7 +87,7 @@ describe('useToastState', () => {
   });
 
   it('should call onRemove via onAdd', async () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
     let timeoutToast = {
       content: 'Timeout Toast',
       props: {variant: 'info', timeout: 1}
@@ -105,7 +105,7 @@ describe('useToastState', () => {
 
   describe('timers', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      jest.useFakeTimers('legacy');
     });
     afterEach(() => {
       jest.useRealTimers();

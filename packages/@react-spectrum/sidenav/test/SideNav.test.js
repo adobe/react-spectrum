@@ -84,7 +84,7 @@ describe.skip('SideNav', function () {
   let scrollHeight;
 
   beforeAll(function () {
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
     stub1 = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 200);
     stub2 = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 400);
