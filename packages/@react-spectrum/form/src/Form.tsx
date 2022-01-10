@@ -80,6 +80,38 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
     newFormLayout
   };
 
+  if (props.newFormLayout) {
+    return (
+      <div
+        {...filterDOMProps(otherProps, {labelable: true, propNames: formPropNames})}
+        {...styleProps}
+        className={
+          classNames(
+            styles,
+            {
+              'spectrum-Form': !newFormLayout,
+              'spectrum-Form-newLayout': newFormLayout,
+              'spectrum-Form--positionSide': labelPosition === 'side',
+              'spectrum-Form--positionTop': labelPosition === 'top'
+            },
+            styleProps.className
+          )
+        }>
+        <FormContext.Provider value={ctx}>
+          <Provider
+            isQuiet={isQuiet}
+            isEmphasized={isEmphasized}
+            isDisabled={isDisabled}
+            isReadOnly={isReadOnly}
+            isRequired={isRequired}
+            validationState={validationState}>
+            {children}
+          </Provider>
+        </FormContext.Provider>
+      </div>
+    );
+  }
+
   return (
     <form
       {...filterDOMProps(otherProps, {labelable: true, propNames: formPropNames})}
