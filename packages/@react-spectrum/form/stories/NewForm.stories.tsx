@@ -19,8 +19,10 @@ import {ColorWheel} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {countries, states} from './data';
 import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
+import {Divider} from '@react-spectrum/divider';
 import {FieldGroup, Form} from '../';
 import {Flex, repeat} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {parseDate} from '@internationalized/date';
@@ -36,8 +38,6 @@ import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
-import {Divider} from '@react-spectrum/divider';
-import {Heading} from '@react-spectrum/text';
 
 storiesOf('Form/newLayout', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
