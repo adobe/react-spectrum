@@ -12,7 +12,6 @@
 
 import {CheckboxGroupProps} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
-import {useRef} from 'react';
 
 export interface CheckboxGroupState {
   /** Current selected values. */
