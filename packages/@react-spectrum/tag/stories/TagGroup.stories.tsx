@@ -73,7 +73,7 @@ storiesOf('TagGroup', module)
 function render(props: any = {}) {
   return (
     <TagGroup {...props} aria-label="tag group">
-      <Item key="1" >Cool Tag 1</Item>
+      <Item key="1">Cool Tag 1</Item>
       <Item key="2">Cool Tag 2</Item>
       <Item key="3">Cool Tag 3</Item>
     </TagGroup>

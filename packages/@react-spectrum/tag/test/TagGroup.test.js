@@ -32,7 +32,7 @@ describe('TagGroup', function () {
       </TagGroup>
     );
 
-    let tags = container.querySelectorAll('[role="row"]');
+    let tags = container.querySelectorAll('[role="gridcell"]');
     expect(tags.length).toBe(3);
 
     fireEvent.keyDown(tags[1], {key: 'Delete'});
@@ -66,7 +66,7 @@ describe('TagGroup', function () {
         </TagComponent>
       </Component>);
 
-    let tag = getByRole('row');
+    let tag = getByRole('gridcell');
     expect(tag).toHaveAttribute('data-foo', 'bar');
   });
 
@@ -87,9 +87,7 @@ describe('TagGroup', function () {
     let tag = tagGroup.children[0];
     expect(tag).toHaveAttribute('role', 'row');
     let tagContent = tag.children[0];
-    expect(tagContent).toHaveAttribute('role', 'rowheader');
-    let tagLabel = tagContent.children[0];
-    expect(tagLabel).toHaveAttribute('role', 'gridcell');
+    expect(tagContent).toHaveAttribute('role', 'gridcell');
   });
 
   it.each`

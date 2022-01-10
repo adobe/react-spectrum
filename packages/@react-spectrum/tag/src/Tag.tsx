@@ -31,8 +31,9 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
     onRemove,
     ...otherProps
   } = props;
+
   let {hoverProps, isHovered} = useHover({isDisabled});
-  let {isFocusVisible, focusProps} = useFocusRing({within: true});
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let tagRef = useRef();
   let labelRef = useRef();
   let {clearButtonProps, labelProps, tagProps} = useTag({
@@ -44,7 +45,6 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
     tagRef,
     labelRef
   }, state);
-
 
   return (
     <div
@@ -58,7 +58,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
           {
             'is-disabled': isDisabled,
             'focus-ring': isFocusVisible,
-            'is-focused': isFocusVisible,
+            'is-focused': isFocused,
             'not-removable': !isRemovable,
             'is-hovered': isHovered
           }
@@ -69,7 +69,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
             text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable})}
           }}>
-          {typeof children === 'string' ? <span ref={labelRef}><Text>{children}</Text></span> : children}
+          {typeof children === 'string' ? <div ref={labelRef}><Text>{children}</Text></div> : children}
           {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
         </SlotProvider>
       </div>
