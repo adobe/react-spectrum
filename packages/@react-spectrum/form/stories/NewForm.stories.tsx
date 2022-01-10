@@ -36,6 +36,8 @@ import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
+import {Divider} from '@react-spectrum/divider';
+import {Heading} from '@react-spectrum/text';
 
 storiesOf('Form/newLayout', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -89,7 +91,6 @@ storiesOf('Form/newLayout', module)
       </Form>
     )
   )
-  // I don't think side label with groups makes much sense?
   .add(
     'fields next to each other side label',
     () => (
@@ -248,6 +249,71 @@ storiesOf('Form/newLayout', module)
               }
             </Flex>
           </Well>
+        </Form>
+      );
+    }
+  )
+  // todo haven't figured this one out yet, might be best not to use FieldGroup?
+  .add(
+    'fields following guidelines',
+    () => {
+      const [checked, setChecked] = useState(true);
+      return (
+        <Form newFormLayout>
+          <Heading level={2} id="billing-legend">Billing address</Heading>
+          <Divider />
+          <FieldGroup gridColumnStart="1">
+            <TextField autoComplete="billing given-name" name="firstName" isRequired label="First Name" placeholder="John" marginEnd="size-100" />
+            <TextField autoComplete="billing family-name" name="lastName" isRequired label="Last Name" placeholder="Smith" />
+          </FieldGroup>
+          <TextArea autoComplete="billing street-address" name="streetAddress" isRequired label="Street Address" placeholder="123 Any Street" />
+          <FieldGroup gridColumnStart="1">
+            <TextField autoComplete="billing address-level2" name="city" isRequired label="City" placeholder="San Francisco" marginEnd="size-100" />
+            <Picker autoComplete="billing address-level1" name="state" isRequired label="State" placeholder="Select a state" items={states} marginEnd="size-100">
+              {item => <Item key={item.abbr}>{item.name}</Item>}
+            </Picker>
+            <TextField autoComplete="billing postal-code" name="zip" isRequired label="Zip code" placeholder="12345" />
+          </FieldGroup>
+          <FieldGroup gridColumnStart="1">
+            <Picker autoComplete="billing country" name="country" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100">
+              {item => <Item key={item.code}>{item.name}</Item>}
+            </Picker>
+          </FieldGroup>
+          <FieldGroup gridColumnStart="1">
+            <TextField autoComplete="billing tel" type="tel" name="phone" label="Phone number" placeholder="123-456-7890" marginEnd="size-100" />
+            <TextField autoComplete="billing email" type="email" name="email" isRequired label="Email address" placeholder="me@example.org" marginEnd="size-100" />
+          </FieldGroup>
+          <Heading level={2} id="shipping-legend">Shipping address</Heading>
+          <Divider />
+          <Checkbox isSelected={checked} onChange={setChecked} >Same as billing address</Checkbox>
+          {
+            !checked &&
+            <>
+              <FieldGroup>
+                <TextField autoComplete="shipping given-name" name="shippingFirstName" isRequired label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
+                <TextField autoComplete="shipping family-name" name="shippingLastName" isRequired label="Last Name" placeholder="Smith" flex={1} />
+              </FieldGroup>
+              <FieldGroup>
+                <TextArea autoComplete="shipping street-address" name="shippingStreetAddress" isRequired label="Street Address" placeholder="123 Any Street" flex={1} />
+              </FieldGroup>
+              <FieldGroup>
+                <TextField autoComplete="shipping address-level2" name="shippingCity" isRequired label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
+                <Picker autoComplete="shipping address-level1" name="shippingState" isRequired label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+                  {item => <Item key={item.abbr}>{item.name}</Item>}
+                </Picker>
+                <TextField autoComplete="shipping postal-code" name="shippingZip" isRequired label="Zip code" placeholder="12345" flex={1} />
+              </FieldGroup>
+              <FieldGroup>
+                <Picker autoComplete="shipping country" name="shippingCountry" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100" flex={1}>
+                  {item => <Item key={item.code}>{item.name}</Item>}
+                </Picker>
+              </FieldGroup>
+              <FieldGroup>
+                <TextField autoComplete="shipping tel" type="tel" name="shippingPhone" label="Phone number" placeholder="123-456-7890" marginEnd="size-100" flex={1} />
+                <TextField autoComplete="shipping email" type="email" name="shippingEmail" isRequired label="Email address" placeholder="me@example.org" marginEnd="size-100" flex={1} />
+              </FieldGroup>
+            </>
+          }
         </Form>
       );
     }
