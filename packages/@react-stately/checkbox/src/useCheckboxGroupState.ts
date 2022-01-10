@@ -46,7 +46,6 @@ export interface CheckboxGroupState {
  */
 export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxGroupState {
   let [selectedValues, setValue] = useControlledState(props.value, props.defaultValue || [], props.onChange);
-  let currValue = useRef(props.value || props.defaultValue || []);
 
   const state: CheckboxGroupState = {
     value: selectedValues,
@@ -55,30 +54,27 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         return;
       }
 
-      currValue.current = value;
       setValue(value);
     },
     isDisabled: props.isDisabled || false,
     isReadOnly: props.isReadOnly || false,
     isSelected(value) {
-      return currValue.current.includes(value);
+      return selectedValues.includes(value);
     },
     addValue(value) {
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      if (!currValue.current.includes(value)) {
-        currValue.current = currValue.current.concat(value);
-        setValue(currValue.current);
+      if (!selectedValues.includes(value)) {
+        setValue(selectedValues.concat(value));
       }
     },
     removeValue(value) {
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      if (currValue.current.includes(value)) {
-        currValue.current = currValue.current.filter(existingValue => existingValue !== value);
-        setValue(currValue.current);
+      if (selectedValues.includes(value)) {
+        setValue(selectedValues.filter(existingValue => existingValue !== value));
       }
     },
     toggleValue(value) {
@@ -86,11 +82,9 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         return;
       }
       if (selectedValues.includes(value)) {
-        currValue.current = currValue.current.filter(existingValue => existingValue !== value);
-        setValue(currValue.current);
+        setValue(selectedValues.filter(existingValue => existingValue !== value));
       } else {
-        currValue.current = currValue.current.concat(value);
-        setValue(currValue.current);
+        setValue(selectedValues.concat(value));
       }
     }
   };
