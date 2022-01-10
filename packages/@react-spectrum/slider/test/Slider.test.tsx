@@ -257,10 +257,6 @@ describe('Slider', function () {
     beforeAll(() => {
       jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
     });
-    afterAll(() => {
-      // @ts-ignore
-      window.HTMLElement.prototype.offsetWidth.mockReset();
-    });
 
     installMouseEvent();
 
@@ -392,10 +388,6 @@ describe('Slider', function () {
   describe('touch interactions', () => {
     beforeAll(() => {
       jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
-    });
-    afterAll(() => {
-      // @ts-ignore
-      window.HTMLElement.prototype.offsetWidth.mockReset();
     });
 
     it('doesn\'t jump to second touch on track while already dragging', () => {

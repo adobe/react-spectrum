@@ -15,6 +15,7 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const requireFromString = require('require-from-string');
 const {blobToString, urlJoin} = require('@parcel/utils');
+const path = require('path');
 
 module.exports = new Optimizer({
   async optimize({bundle, bundleGraph, contents, map}) {
@@ -24,8 +25,12 @@ module.exports = new Optimizer({
     }
 
     let js = await blobToString(contents);
+    let parcelRequireName = Object.keys(global).find(name => name.startsWith('parcelRequire'));
+    if (parcelRequireName) {
+      delete global[parcelRequireName];
+    }
     let Component = requireFromString(js, mainAsset.filePath).default;
-    let bundles = bundleGraph.getSiblingBundles(bundle).filter(b => !b.isInline).reverse();
+    let bundles = bundleGraph.getReferencedBundles(bundle).reverse();
 
     let pages = [];
     bundleGraph.traverseBundles(b => {
@@ -46,12 +51,12 @@ module.exports = new Optimizer({
           preRelease: meta.preRelease
         });
       }
-    });
+    }, null);
 
     let name = rename(bundle);
     let code = ReactDOMServer.renderToStaticMarkup(
       React.createElement(Component, {
-        scripts: bundles.filter(b => b.type === 'js' && !b.isInline).map(b => ({
+        scripts: bundles.filter(b => b.type === 'js').map(b => ({
           type: b.env.outputFormat === 'esmodule' ? 'module' : undefined,
           url: urlJoin(b.target.publicUrl, b.name)
         })),
@@ -85,7 +90,7 @@ module.exports = new Optimizer({
 });
 
 function rename(bundle) {
-  return bundle.name.slice(0, -bundle.type.length) + 'html';
+  return bundle.name.slice(0, -path.extname(bundle.name).length) + '.html';
 }
 
 function getImageURL(image, bundleGraph, bundle) {

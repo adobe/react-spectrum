@@ -309,7 +309,8 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
                 {
                   'is-selected': isSelected,
                   'is-hovered': isHovered,
-                  'spectrum-ActionGroup-item--iconOnly': hideButtonText
+                  'spectrum-ActionGroup-item--iconOnly': hideButtonText,
+                  'spectrum-ActionGroup-item--isDisabled': isDisabled
                 },
                 classNames(
                   buttonStyles,
@@ -369,6 +370,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   // The menu button shouldn't act like an actual action group item.
   delete buttonProps.onPress;
   delete buttonProps.role;
+  delete buttonProps['aria-checked'];
 
   let {hoverProps, isHovered} = useHover({isDisabled});
 
