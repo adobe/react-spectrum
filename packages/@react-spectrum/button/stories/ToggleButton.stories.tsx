@@ -92,7 +92,7 @@ function ControlledToggleButton() {
   let [selected, setSelected] = useState(false);
   return (
     <div>
-      <ToggleButton onChange={setSelected}>Press Me</ToggleButton>
+      <ToggleButton isSelected={selected} onChange={setSelected}>Press Me</ToggleButton>
       <br />
       {selected ? 'true' : 'false'}
     </div>
