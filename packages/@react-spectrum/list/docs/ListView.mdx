@@ -16,13 +16,15 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/list/package.json';
 
 ```jsx import
+import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu} from '@react-spectrum/menu';
-import Add from '@spectrum-icons/workflow/Add';
 import Delete from '@spectrum-icons/workflow/Delete';
+import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
+import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '@react-spectrum/list';
 import {Link} from '@react-spectrum/link';
@@ -138,44 +140,49 @@ function AsyncList() {
 
 ## Complex items
 
-```tsx example
-function renderActions() {
-  return (
-    <>
-      <ActionGroup buttonLabelBehavior="hide" slot="actionGroup">
-        <Item key="info">
-          <Info />
-          <Text>Info</Text>
-        </Item>
-      </ActionGroup>
-      <ActionMenu slot="actionMenu">
-        <Item key="add">
-          <Add />
-          <Text>Add</Text>
-        </Item>
-        <Item key="delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionMenu>
-    </>
-  );
-}
+Items within a ListView also allow for additional content used to add context or provide additional actions to Items. Icons, links, and descriptions can be added to the children of Item as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements. Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<ActionMenu>` will be styled appropriately if included within an item.
 
+```tsx example
 <ListView aria-label="List example with complex items">
-  <Item key="a" textValue="folder 1" hasChildItems>
+  <Item textValue="Row with link" hasChildItems>
+    <Link>Row with link</Link>
+  </Item>
+  <Item textValue="Row with link, icon, and description" hasChildItems>
     <Folder />
-    <Link>folder 1</Link>
-    <Text slot="description">description for folder 1</Text>
-    {renderActions()}
+    <Link>Row with link, icon, and description</Link>
+    <Text slot="description">Description of row</Text>
   </Item>
-  <Item textValue="row 2">
-    row 2
-    {renderActions()}
+  <Item textValue="Row with action button">
+    Row with action button
+    <ActionButton aria-label="Info">
+      <Info />
+    </ActionButton>
   </Item>
-  <Item textValue="row 3">
-    row 3
-    {renderActions()}
+  <Item textValue="Row with action group">
+    Row with action group
+    <ActionGroup buttonLabelBehavior="hide">
+      <Item key="edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionGroup>
+  </Item>
+  <Item textValue="Row with action menu">
+    Row with action menu
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
   </Item>
 </ListView>
 ```
