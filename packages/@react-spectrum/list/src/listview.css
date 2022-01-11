@@ -68,18 +68,6 @@
     }
   }
 
-  .react-spectrum-ListView--compact & {
-    padding-top: var(--spectrum-listview-item-compact-padding-y);
-    padding-bottom: var(--spectrum-listview-item-compact-padding-y);
-    min-height: var(--spectrum-global-dimension-size-400);
-  }
-  
-  .react-spectrum-ListView--spacious & {
-    padding-top: var(--spectrum-listview-item-spacious-padding-y);
-    padding-bottom: var(--spectrum-listview-item-spacious-padding-y);
-    min-height: var(--spectrum-global-dimension-size-600);
-  }
-
   &.is-hovered,
   &.is-focused {
     background-color: var(--spectrum-table-row-background-color-hover);
@@ -195,6 +183,18 @@
     border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
+}
+
+.react-spectrum-ListView--compact .react-spectrum-ListViewItem {
+  padding-top: var(--spectrum-listview-item-compact-padding-y);
+  padding-bottom: var(--spectrum-listview-item-compact-padding-y);
+  min-height: var(--spectrum-global-dimension-size-400);
+}
+
+.react-spectrum-ListView--spacious .react-spectrum-ListViewItem {
+  padding-top: var(--spectrum-listview-item-spacious-padding-y);
+  padding-bottom: var(--spectrum-listview-item-spacious-padding-y);
+  min-height: var(--spectrum-global-dimension-size-600);
 }
 
 .react-spectrum-ListView-centeredWrapper {
