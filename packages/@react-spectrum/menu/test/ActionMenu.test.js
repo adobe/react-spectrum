@@ -23,6 +23,7 @@ let CLOSE_TIME = 350;
 
 describe('ActionMenu', function () {
   let onActionSpy = jest.fn();
+  let onOpenChange = jest.fn();
 
   beforeAll(function () {
     jest.useFakeTimers('legacy');
@@ -30,6 +31,7 @@ describe('ActionMenu', function () {
 
   afterEach(() => {
     onActionSpy.mockClear();
+    onOpenChange.mockClear();
     act(() => {
       jest.runAllTimers();
     });
@@ -105,6 +107,59 @@ describe('ActionMenu', function () {
 
     let button = tree.getByRole('button');
     expect(document.activeElement).toBe(button);
+  });
+
+  it('supports a controlled open state ', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionMenu onOpenChange={onOpenChange} isOpen>
+          <Item>Foo</Item>
+          <Item>Bar</Item>
+          <Item>Baz</Item>
+        </ActionMenu>
+      </Provider>
+    );
+
+    act(() => {jest.runAllTimers();});
+    expect(onOpenChange).toBeCalledTimes(0);
+
+    let menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+
+    let triggerButton = tree.getByLabelText('More actions');
+    triggerPress(triggerButton);
+    act(() => {jest.runAllTimers();});
+
+    menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+    expect(onOpenChange).toBeCalledTimes(1);
+    expect(triggerButton).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('supports an uncontrolled default open state ', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionMenu onOpenChange={onOpenChange} defaultOpen>
+          <Item>Foo</Item>
+          <Item>Bar</Item>
+          <Item>Baz</Item>
+        </ActionMenu>
+      </Provider>
+    );
+
+    act(() => {jest.runAllTimers();});
+    expect(onOpenChange).toBeCalledTimes(0);
+
+    let menu = tree.getByRole('menu');
+    expect(menu).toBeTruthy();
+
+    let triggerButton = tree.getByLabelText('More actions');
+    triggerPress(triggerButton);
+    act(() => {jest.runAllTimers();});
+
+    expect(menu).not.toBeInTheDocument();
+    expect(onOpenChange).toBeCalledTimes(1);
+    expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
   });
 
   describe('with tooltips', function () {
