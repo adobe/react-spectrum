@@ -14,17 +14,18 @@
 import {useMove} from '@react-aria/interactions';
 import {useRef} from 'react';
 
-export function useTableColumnResize(state): any {
+export function useTableColumnResize(state, layout, item): any {
   const stateRef = useRef(null);
   stateRef.current = state;
   let currentPosition = useRef<number>(0);
   const {moveProps} = useMove({
     onMoveStart() {
-      currentPosition.current = 0;
-      stateRef.current.setColumnResizeWidth(0);
+      const width = layout.columnWidths.get(item.key);
+      currentPosition.current = width;
+      stateRef.current.setColumnResizeWidth(width);
     },
     onMove({deltaX}) {
-      console.log('current resize width: ', currentPosition.current, ' moved from that position: ', deltaX);
+      // console.log('current resize width: ', currentPosition.current, ' moved from that position: ', deltaX);
       currentPosition.current += deltaX;
       stateRef.current.setColumnResizeWidth(currentPosition.current);
     },

@@ -70,17 +70,19 @@ export class TableLayout<T> extends ListLayout<T> {
     this.columnWidths = new Map();
     this.stickyColumnIndices = [];
 
+    // if there was a column resized, set it's width and mark it as static somehow.
+
     // Pass 1: set widths for all explicitly defined columns.
     let remainingColumns = new Set<GridNode<T>>();
     let remainingSpace = this.virtualizer.visibleRect.width;
     for (let column of this.collection.columns) {
       let props = column.props as ColumnProps<T>;
       let width = props.width ?? this.getDefaultWidth(props);
-      if (width && this.collection.columns[0] === column) {
+      if (this.collection.columns[0] === column && this.columnResizeWidth > 0) {
         // @ts-ignore
-        width = width + this.columnResizeWidth;
+        width = this.columnResizeWidth;
       }
-      if (width != null) {
+      if (this.getIsStatic(width)) {
         let w = this.parseWidth(width);
         this.columnWidths.set(column.key, w);
         remainingSpace -= w;
@@ -97,25 +99,120 @@ export class TableLayout<T> extends ListLayout<T> {
 
     // Pass 2: if there are remaining columns, then distribute the remaining space evenly.
     if (remainingColumns.size > 0) {
-      let fakeWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
-      let columnWidth = fakeWidth;
+      const remCols = this.getDynamicColumnWidths(
+        Array.from(remainingColumns),
+        remainingSpace
+      );
+      let i = 0;
       for (let column of remainingColumns) {
-        if (this.collection.columns[0] === column) {
-          // @ts-ignore
-          columnWidth = columnWidth + this.columnResizeWidth;
-        }
-        let props = column.props as ColumnProps<T>;
-        let minWidth = props.minWidth != null ? this.parseWidth(props.minWidth) : 75;
-        let maxWidth = props.maxWidth != null ? this.parseWidth(props.maxWidth) : Infinity;
-        let width = Math.max(minWidth, Math.min(maxWidth, columnWidth));
-
-        this.columnWidths.set(column.key, width);
-        remainingSpace -= width;
-        if (width !== columnWidth) {
-          columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
-        }
+        this.columnWidths.set(column.key, remCols[i].columnWidth);
+        i++;
       }
+
+
+      // let fakeWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
+      // let columnWidth = fakeWidth;
+      // for (let column of remainingColumns) {
+      //   if (this.collection.columns[0] === column) {
+      //     // @ts-ignore
+      //     columnWidth = columnWidth + this.columnResizeWidth;
+      //   }
+      //   let props = column.props as ColumnProps<T>;
+      //   let minWidth = props.minWidth != null ? this.parseWidth(props.minWidth) : 75;
+      //   let maxWidth = props.maxWidth != null ? this.parseWidth(props.maxWidth) : Infinity;
+      //   let width = Math.max(minWidth, Math.min(maxWidth, columnWidth));
+
+      //   this.columnWidths.set(column.key, width);
+      //   remainingSpace -= width;
+      //   if (width !== columnWidth) {
+      //     columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
+      //   }
+      // }
     }
+
+  }
+
+  getIsStatic(width: number | string): boolean {
+    return (
+      width != null && (typeof width === 'number' || width.match(/^(\d+)%$/) !== null)
+    );
+  }
+
+  getDynamicColumnWidths(remainingColumns, remainingSpace) {
+    let columns = this.mapColumns(remainingColumns, remainingSpace);
+  
+    columns.sort((a, b) => b.delta - a.delta);
+    columns = this.solveWidths(columns, remainingSpace);
+    columns.sort((a, b) => a.index - b.index);
+  
+    return columns;
+  }
+
+  mapColumns(remainingColumns, remainingSpace) {
+    let remainingFractions = remainingColumns.reduce(
+      (sum, column) => sum + this.parseFractionalUnit(column.props.width),
+      0
+    );
+  
+    let columns = [...remainingColumns].map((column, index) => {
+      const targetWidth =
+        (this.parseFractionalUnit(column.props.width) * remainingSpace) / remainingFractions;
+  
+      return {
+        ...column,
+        index,
+        delta: Math.max(
+          0,
+          this.getMinWidth(column.minWidth) - targetWidth,
+          targetWidth - this.getMaxWidth(column.maxWidth)
+        )
+      };
+    });
+  
+    return columns;
+  }
+
+  solveWidths(remainingColumns, remainingSpace) {
+    let remainingFractions = remainingColumns.reduce(
+      (sum, col) => sum + this.parseFractionalUnit(col.props.width),
+      0
+    );
+  
+    for (let i = 0; i < remainingColumns.length; i++) {
+      const column = remainingColumns[i];
+  
+      const targetWidth =
+        (this.parseFractionalUnit(column.props.width) * remainingSpace) / remainingFractions;
+  
+      let width = Math.max(
+        this.getMinWidth(column.minWidth),
+        Math.min(targetWidth, this.getMaxWidth(column.maxWidth))
+      );
+      column.columnWidth = width;
+      remainingSpace -= width;
+      remainingFractions -= this.parseFractionalUnit(column.props.width);
+    }
+  
+    return remainingColumns;
+  }
+
+  parseFractionalUnit(width: string): number {
+    if (!width) {
+      return 1;
+    } 
+    return parseInt(width.match(/(?<=^flex-)(\d+)/g)[0], 10);
+  }
+
+  getMinWidth(minWidth: number | string): number {
+    return minWidth !== undefined && minWidth !== null
+      ? this.parseWidth(minWidth)
+      : 75;
+  }
+  
+  getMaxWidth(maxWidth: number | string): number {
+    return maxWidth !== undefined && maxWidth !== null
+      ? this.parseWidth(maxWidth)
+      : Infinity;
   }
 
   parseWidth(width: number | string): number {
@@ -194,6 +291,7 @@ export class TableLayout<T> extends ListLayout<T> {
     }
   }
 
+  // used to get the column widths when rendering to the DOM
   getColumnWidth(node: GridNode<T>) {
     let colspan = node.colspan ?? 1;
     let width = 0;

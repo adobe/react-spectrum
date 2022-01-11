@@ -117,7 +117,7 @@ function TableView<T extends object>(
   });
 
   let columnResizeWidth = state.columnResizeWidth();
-  console.log('from TableView:', state.columnResizeWidth());
+  // console.log('from TableView:', state.columnResizeWidth());
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes =
@@ -132,29 +132,26 @@ function TableView<T extends object>(
   let {scale} = useProvider();
   let density = props.density || 'regular';
   let layout = useMemo(
-    () => {
-      console.log('re-rendering layout');
-      return new TableLayout({
+    () => new TableLayout({
         // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
-        rowHeight:
+      rowHeight:
           props.overflowMode === 'wrap' ? null : ROW_HEIGHTS[density][scale],
-        estimatedRowHeight:
+      estimatedRowHeight:
           props.overflowMode === 'wrap' ? ROW_HEIGHTS[density][scale] : null,
-        headingHeight:
+      headingHeight:
           props.overflowMode === 'wrap' ? null : DEFAULT_HEADER_HEIGHT[scale],
-        estimatedHeadingHeight:
+      estimatedHeadingHeight:
           props.overflowMode === 'wrap' ? DEFAULT_HEADER_HEIGHT[scale] : null,
-        getDefaultWidth: ({hideHeader, isSelectionCell, showDivider}) => {
-          if (hideHeader) {
-            let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
-            return showDivider ? width + 1 : width;
-          } else if (isSelectionCell) {
-            return SELECTION_CELL_DEFAULT_WIDTH[scale];
-          }
-        },
-        columnResizeWidth
-      });
-    },
+      getDefaultWidth: ({hideHeader, isSelectionCell, showDivider}) => {
+        if (hideHeader) {
+          let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
+          return showDivider ? width + 1 : width;
+        } else if (isSelectionCell) {
+          return SELECTION_CELL_DEFAULT_WIDTH[scale];
+        }
+      },
+      columnResizeWidth
+    }),
     [props.overflowMode, scale, density, columnResizeWidth]
   );
   let {direction} = useLocale();
@@ -282,7 +279,7 @@ function TableView<T extends object>(
         return (
           <>
             <TableColumnHeader column={item} />
-            <Resizer state={state} />
+            <Resizer state={state} layout={layout} item={item} />
           </>
         );
       case 'loader':

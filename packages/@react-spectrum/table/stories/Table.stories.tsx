@@ -1022,7 +1022,55 @@ storiesOf('TableView', module)
       </TableView>
     )
   )
-  .add('table with breadcrumb navigation', () => <TableWithBreadcrumbs />);
+  .add('table with breadcrumb navigation', () => <TableWithBreadcrumbs />)
+  .add(
+    'resizable columns',
+    () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column>File Name</Column>
+          <Column>Type</Column>
+          <Column>Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'resizable columns, flex',
+    () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column>File Name</Column>
+          <Column>Type</Column>
+          <Column width={'flex-2'}>Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  );
 
 function AsyncLoadingExample() {
   interface Item {
