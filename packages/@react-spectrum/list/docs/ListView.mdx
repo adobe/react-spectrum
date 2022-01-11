@@ -308,16 +308,18 @@ The amount of vertical padding that each row contains can be modified by providi
 
 ```tsx example
 <Flex direction="column" gap="size-300">
-  <ListView density="compact" aria-label="Compact list example">
-    <Item textValue="row 1">row 1</Item>
-    <Item textValue="row 2">row 2</Item>
-    <Item textValue="row 3">row 3</Item>
-  </ListView>
-  <ListView density="spacious" aria-label="Spacious list example">
-    <Item textValue="row 1">row 1</Item>
-    <Item textValue="row 2">row 2</Item>
-    <Item textValue="row 3">row 3</Item>
-  </ListView>
+    <Text>Compact:</Text>
+    <ListView density="compact" aria-label="Compact list example">
+      <Item textValue="row 1">row 1</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
+    </ListView>
+    <Text>Spacious:</Text>
+    <ListView density="spacious" aria-label="Spacious list example">
+      <Item textValue="row 1">row 1</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
+    </ListView>
 </Flex>
 ```
 
