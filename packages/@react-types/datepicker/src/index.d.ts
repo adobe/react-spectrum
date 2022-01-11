@@ -104,5 +104,9 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
 }
 
 export interface SpectrumTimePickerProps<T extends TimeValue> extends TimePickerProps<T>, SpectrumLabelableProps, DOMProps, StyleProps {
+  /**
+   * Whether the time field should be displayed with a quiet style.
+   * @default false
+   */
   isQuiet?: boolean
 }
