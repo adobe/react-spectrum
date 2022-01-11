@@ -79,7 +79,10 @@ module.exports = {
     'expect': true,
     'JSX': 'readonly',
     'NodeJS': 'readonly',
-    'AsyncIterable': 'readonly'
+    'AsyncIterable': 'readonly',
+    'FileSystemFileEntry': 'readonly',
+    'FileSystemDirectoryEntry': 'readonly',
+    'FileSystemEntry': 'readonly'
   },
   settings: {
     jsdoc: {
@@ -166,6 +169,7 @@ module.exports = {
     // custom rules
     'rulesdir/sort-imports': [ERROR],
     'rulesdir/imports': [ERROR],
+    'rulesdir/useLayoutEffectRule': [ERROR],
 
     // jsx-a11y rules
     'jsx-a11y/accessible-emoji': ERROR,
