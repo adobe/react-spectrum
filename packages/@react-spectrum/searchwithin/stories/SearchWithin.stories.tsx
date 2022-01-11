@@ -123,6 +123,13 @@ export const NoVisibleLabel = () => render({label: undefined, 'aria-label': 'Tes
 
 export const NoLabels = () => render({label: undefined});
 
+export const ExternalLabel = () => (
+  <div style={{display: 'flex', flexDirection: 'column'}}>
+    <span id="foo">External label</span>
+    {render({label: undefined, 'aria-labelledby': 'foo'})}
+  </div>
+);
+
 export const AutoFocusSearchField = () => render({}, {autoFocus: true});
 AutoFocusSearchField.storyName = 'autoFocus: true on SearchField';
 
