@@ -125,13 +125,7 @@
     grid-area: image;
     align-items: center;
     justify-items: center;
-
-    [dir="ltr"] & {
-      padding-right: var(--spectrum-global-dimension-size-100);
-    }
-    [dir="rtl"] & {
-      padding-left: var(--spectrum-global-dimension-size-100);
-    }
+    padding-inline-end: var(--spectrum-global-dimension-size-100);
   }
 
   .react-spectrum-ListViewItem-image {
@@ -165,13 +159,7 @@
 
   .react-spectrum-ListViewItem-parentIndicator {
     grid-area: chevron;
-  
-    [dir="ltr"] & {
-      padding-left: var(--spectrum-global-dimension-size-75);
-    }
-    [dir="rtl"] & {
-      padding-right: var(--spectrum-global-dimension-size-75);
-    }
+    padding-inline-start: var(--spectrum-global-dimension-size-75);
   }
   
   /* give first and last items border-radius to match listview container */
