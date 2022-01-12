@@ -63,7 +63,7 @@ Each has a unique key defined by the data. In the example below, the `key` of ea
 
 
 ```tsx example
-const list = [
+const items = [
   {id: 1, name: 'Adobe Photoshop'},
   {id: 2, name: 'Adobe XD'},
   {id: 3, name: 'Adobe InDesign'},
@@ -75,7 +75,7 @@ const list = [
   {id: 9, name: 'Adobe Dreamweaver'}
 ];
 
-<ListView items={list} height="250px" aria-label="List example">
+<ListView items={items} height="250px" aria-label="List example">
   {(item) => (
     <Item key={item.key} textValue={item.name}>
       {item.name}
@@ -189,15 +189,18 @@ Use `defaultSelectedKeys` to provide a default set of selected rows. Note that t
 The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "row1" and "row3".
 
 ```tsx example
-<ListView selectionMode="multiple" defaultSelectedKeys={["row1", "row3"]} aria-label="List seletion example">
-  <Item key="row1" textValue="row 1">
-    <Content>row 1</Content>
+<ListView selectionMode="multiple" defaultSelectedKeys={["Charizard", "Venusaur"]} aria-label="List selection example">
+  <Item key="Charizard" textValue="Charizard">
+    <Content>Charizard</Content>
   </Item>
-  <Item key="row2" textValue="row 2">
-    <Content>row 2</Content>
+  <Item key="Blastoise" textValue="Blastoise">
+    <Content>Blastoise</Content>
   </Item>
-  <Item key="row3" textValue="row 3">
-    <Content>row 3</Content>
+  <Item key="Venusaur" textValue="Venusaur">
+    <Content>Venusaur</Content>
+  </Item>
+  <Item key="Pikachu" textValue="Pikachu">
+    <Content>Pikachu</Content>
   </Item>
 </ListView>
 ```
@@ -223,7 +226,7 @@ function PokemonList(props) {
   return (
     <ListView items={rows} aria-label="List with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
       {(item) => (
-        <Item key={item.id} textValue={item.name}>
+        <Item textValue={item.name}>
           {item.name}
         </Item>
       )}
