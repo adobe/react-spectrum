@@ -223,7 +223,7 @@ function PokemonList(props) {
   return (
     <ListView items={rows} aria-label="List with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
       {(item) => (
-        <Item key={item.id} textValue={item.name}>
+        <Item textValue={item.name}>
           {item.name}
         </Item>
       )}
