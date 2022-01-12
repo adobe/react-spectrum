@@ -106,7 +106,7 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: Ref
   let formatMessage = useMessageFormatter(intlMessages);
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
-    return sortDirection && column ? formatMessage(`${sortDirection}Sort`, {columnName}) : undefined;
+    return sortDirection && column && columnName ? formatMessage(`${sortDirection}Sort`, {columnName}) : undefined;
   }, [sortDirection, column, state.collection.columns]);
 
   let descriptionProps = useDescription(sortDescription);
