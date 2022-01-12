@@ -189,15 +189,18 @@ Use `defaultSelectedKeys` to provide a default set of selected rows. Note that t
 The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "row1" and "row3".
 
 ```tsx example
-<ListView selectionMode="multiple" defaultSelectedKeys={["row1", "row3"]} aria-label="List seletion example">
-  <Item key="row1" textValue="row 1">
-    <Content>row 1</Content>
+<ListView selectionMode="multiple" defaultSelectedKeys={["Charizard", "Venusaur"]} aria-label="List selection example">
+  <Item key="Charizard" textValue="Charizard">
+    <Content>Charizard</Content>
   </Item>
-  <Item key="row2" textValue="row 2">
-    <Content>row 2</Content>
+  <Item key="Blastoise" textValue="Blastoise">
+    <Content>Blastoise</Content>
   </Item>
-  <Item key="row3" textValue="row 3">
-    <Content>row 3</Content>
+  <Item key="Venusaur" textValue="Venusaur">
+    <Content>Venusaur</Content>
+  </Item>
+  <Item key="Pikachu" textValue="Pikachu">
+    <Content>Pikachu</Content>
   </Item>
 </ListView>
 ```
