@@ -26,9 +26,9 @@ export interface TagProps<T> extends ItemProps<any> {
   isDisabled?: boolean,
   isRemovable?: boolean,
   item: Node<T>,
-  labelRef: RefObject<HTMLElement>,
   onRemove?: (item, e) => void,
-  tagRef: RefObject<HTMLElement>
+  tagRef: RefObject<HTMLElement>,
+  tagRowRef: RefObject<HTMLElement>
 }
 
 export interface SpectrumTagProps<T> extends TagProps<T> {

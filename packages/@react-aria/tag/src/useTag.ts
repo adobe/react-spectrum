@@ -22,6 +22,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 
 export interface TagAria {
   tagProps: HTMLAttributes<HTMLElement>,
+  tagRowProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>,
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
 }
@@ -34,20 +35,21 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
     children,
     item,
     tagRef,
-    labelRef
+    tagRowRef
   } = props;
   const formatMessage = useMessageFormatter(intlMessages);
   const removeString = formatMessage('remove');
-  const tagId = useId();
+  const labelId = useId();
   const buttonId = useId();
 
   let {rowProps} = useGridRow({
     node: item
-  }, state, tagRef);
+  }, state, tagRowRef);
+
   let {gridCellProps} = useGridCell({
     node: [...item.childNodes][0],
     focusMode: 'cell'
-  }, state, labelRef);
+  }, state, tagRef);
 
   function onKeyDown(e: KeyboardEvent<HTMLElement>) {
     if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -61,18 +63,19 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
 
   let domProps = filterDOMProps(props);
   return {
-    tagProps: mergeProps(domProps, rowProps, {
+    tagRowProps: rowProps,
+    tagProps: mergeProps(domProps, gridCellProps, {
       'aria-errormessage': props['aria-errormessage'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
       tabIndex: isDisabled ? -1 : 0,
       ref: tagRef
     }),
-    labelProps: mergeProps(gridCellProps, {
-      id: tagId
-    }),
-    clearButtonProps: mergeProps(pressProps, gridCellProps, {
+    labelProps: {
+      id: labelId
+    },
+    clearButtonProps: mergeProps(pressProps, {
       'aria-label': removeString,
-      'aria-labelledby': `${buttonId} ${tagId}`,
+      'aria-labelledby': `${buttonId} ${labelId}`,
       id: buttonId,
       title: removeString,
       isDisabled

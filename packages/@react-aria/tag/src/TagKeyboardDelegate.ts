@@ -13,16 +13,13 @@
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from '@react-aria/grid';
 import {Key} from 'react';
-// import {Node} from '@react-types/shared';
 
 export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollection<T>> {
   getKeyRightOf(key: Key) {
-    console.log('custom key right');
     return super.getKeyBelow(key);
   }
 
   getKeyLeftOf(key: Key) {
-    console.log('custom key left');
     return super.getKeyAbove(key);
   }
 }
