@@ -216,5 +216,8 @@ function CenteredWrapper({children}) {
   );
 }
 
+/**
+ * Lists display a linear collection of data. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
 const _ListView = React.forwardRef(ListView) as <T>(props: ListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};
