@@ -46,9 +46,11 @@ keywords: [listview, collections]
 ## Example
 ```tsx example
 <ListView aria-label="List example">
-  <Item textValue="row 1">row 1</Item>
-  <Item textValue="row 2">row 2</Item>
-  <Item textValue="row 3">row 3</Item>
+  <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+  <Item textValue="Adobe InDesign">Adobe InDesign</Item>
+  <Item textValue="Adobe AfterEffects">Adobe AfterEffects</Item>
+  <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+  <Item textValue="Adobe Lightroom">Adobe Lightroom</Item>
 </ListView>
 ```
 
@@ -61,27 +63,22 @@ Each has a unique key defined by the data. In the example below, the `key` of ea
 
 
 ```tsx example
-const rows = [
-    {key: 'a'},
-    {key: 'b'},
-    {key: 'c'},
-    {key: 'd'},
-    {key: 'e'},
-    {key: 'f'},
-    {key: 'g'},
-    {key: 'h'},
-    {key: 'i'},
-    {key: 'j'},
-    {key: 'k'},
-    {key: 'l'},
-    {key: 'm'},
-    {key: 'n'}
+const list = [
+  {id: 1, name: 'Adobe Photoshop'},
+  {id: 2, name: 'Adobe XD'},
+  {id: 3, name: 'Adobe InDesign'},
+  {id: 4, name: 'Adobe AfterEffects'},
+  {id: 5, name: 'Adobe Illustrator'},
+  {id: 6, name: 'Adobe Lightroom'},
+  {id: 7, name: 'Adobe Premiere Pro'},
+  {id: 8, name: 'Adobe Fresco'},
+  {id: 9, name: 'Adobe Dreamweaver'}
 ];
 
-<ListView items={rows} height="250px" aria-label="List example">
+<ListView items={list} height="250px" aria-label="List example">
   {(item) => (
-    <Item key={item.key} textValue={`Item ${item.key}`}>
-      {`Item ${item.key}`}
+    <Item key={item.key} textValue={item.name}>
+      {item.name}
     </Item>
   )}
 </ListView>
