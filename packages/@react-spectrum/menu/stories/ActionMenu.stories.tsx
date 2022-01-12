@@ -140,6 +140,24 @@ DisabledKeys.args = {disabledKeys: ['two']};
 export const AutoFocus = Template().bind({});
 AutoFocus.args = {autoFocus: true};
 
+export const DefaultOpen = Template().bind({});
+DefaultOpen.args = {onOpenChange: action('openChange'), defaultOpen: true};
+
+export const ControlledOpen = () => {
+  let [open, setOpen] = React.useState(false);
+
+  return (
+    <ActionMenu
+      isOpen={open}
+      onOpenChange={setOpen}
+      onAction={action('action')}>
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </ActionMenu>
+  );
+};
+
 export const DirectionAlignFlip = () => <DirectionAlignment />;
 
 export const WithTooltip = () => (
