@@ -141,10 +141,10 @@ Items within a ListView also allow for additional content used to add context or
 
 ```tsx example
 <ListView aria-label="List example with complex items">
-  <Item textValue="Row with link" hasChildItems>
+  <Item textValue="Row with link">
     <Link>Row with link</Link>
   </Item>
-  <Item textValue="Row with link, icon, and description" hasChildItems>
+  <Item textValue="Row with link, icon, and description">
     <Folder />
     <Link>Row with link, icon, and description</Link>
     <Text slot="description">Description of row</Text>
