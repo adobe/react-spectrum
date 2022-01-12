@@ -11,6 +11,7 @@
  */
 import {
   AriaLabelingProps,
+  AsyncLoadable,
   CollectionBase,
   DOMProps,
   DOMRef,
@@ -60,6 +61,8 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
         estimatedRowHeight: ROW_HEIGHTS[density][scale],
         padding: 0,
         collator
+        // TODO: fix loader height, may need to adjust the list layout
+        // loader calc to properly position the loader
       })
     , [collator, scale, density]);
 
@@ -68,7 +71,7 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps {
+interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -85,6 +88,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let {
     density = 'regular',
     loadingState,
+    onLoadMore,
     isQuiet,
     transitionDuration = 0,
     onAction
@@ -92,6 +96,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
   let formatMessage = useMessageFormatter(intlMessages);
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
   let {direction} = useLocale();
@@ -138,7 +143,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }, state, domRef);
 
   // Sync loading state into the layout.
-  layout.isLoading = loadingState === 'loading';
+  layout.isLoading = isLoading;
 
   let focusedKey = state.selectionManager.focusedKey;
   let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
@@ -151,6 +156,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       <Virtualizer
         {...gridProps}
         {...styleProps}
+        isLoading={isLoading}
+        onLoadMore={onLoadMore}
         ref={domRef}
         focusedKey={focusedKey}
         scrollDirection="vertical"

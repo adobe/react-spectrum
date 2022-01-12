@@ -19,7 +19,6 @@ import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
-
 function renderEmptyState() {
   return (
     <IllustratedMessage>
@@ -116,6 +115,13 @@ storiesOf('ListView', module)
   .add('loading', () => (
     <ListView width="300px" height="300px" loadingState="loading">
       {[]}
+    </ListView>
+  ))
+  .add('loadingMore', () => (
+    <ListView width="300px" height="300px" loadingState="loadingMore">
+      <Item textValue="row 1">row 1</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
     </ListView>
   ))
   .add('density: compact', () => (
