@@ -63,7 +63,7 @@ Each has a unique key defined by the data. In the example below, the `key` of ea
 
 
 ```tsx example
-const list = [
+const items = [
   {id: 1, name: 'Adobe Photoshop'},
   {id: 2, name: 'Adobe XD'},
   {id: 3, name: 'Adobe InDesign'},
@@ -75,7 +75,7 @@ const list = [
   {id: 9, name: 'Adobe Dreamweaver'}
 ];
 
-<ListView items={list} height="250px" aria-label="List example">
+<ListView items={items} height="250px" aria-label="List example">
   {(item) => (
     <Item key={item.key} textValue={item.name}>
       {item.name}
