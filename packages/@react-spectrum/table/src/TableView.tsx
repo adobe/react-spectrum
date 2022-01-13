@@ -159,15 +159,12 @@ function TableView<T extends object>(
   let {direction} = useLocale();
   layout.collection = state.collection;
 
-  let {gridProps} = useTable(
-    {
-      ...props,
-      isVirtualized: true,
-      layout
-    },
-    state,
-    domRef
-  );
+  let {gridProps} = useTable({
+    ...props,
+    isVirtualized: true,
+    layout,
+    onRowAction: onAction
+  }, state, domRef);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
   type View = ReusableView<GridNode<T>, unknown>;
@@ -208,7 +205,7 @@ function TableView<T extends object>(
           key={reusableView.key}
           item={reusableView.content}
           style={style}
-          onAction={onAction}>
+          hasActions={onAction}>
           {renderChildren(children)}
         </TableRow>
       );
@@ -594,22 +591,16 @@ function TableRowGroup({children, ...otherProps}) {
   );
 }
 
-function TableRow({item, children, onAction, ...otherProps}) {
+function TableRow({item, children, hasActions, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
-  let allowsInteraction =
-    state.selectionManager.selectionMode !== 'none' || onAction;
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {rowProps} = useTableRow(
-    {
-      node: item,
-      isVirtualized: true,
-      onAction: onAction ? () => onAction(item.key) : null
-    },
-    state,
-    ref
-  );
+  let {rowProps} = useTableRow({
+    node: item,
+    isVirtualized: true
+  }, state, ref);
 
   let {pressProps, isPressed} = usePress({isDisabled});
 

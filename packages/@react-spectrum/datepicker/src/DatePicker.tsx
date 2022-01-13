@@ -158,17 +158,19 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
                 minValue={props.minValue}
                 maxValue={props.maxValue} />
               {showTimeField &&
-                <TimeField
-                  label="Time"
-                  value={state.timeValue}
-                  onChange={state.setTimeValue}
-                  placeholderValue={timePlaceholder}
-                  granularity={timeGranularity}
-                  minValue={timeMinValue}
-                  maxValue={timeMaxValue}
-                  hourCycle={props.hourCycle}
-                  hideTimeZone={props.hideTimeZone}
-                  marginTop="size-100" />
+                <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
+                  <TimeField
+                    label="Time"
+                    value={state.timeValue}
+                    onChange={state.setTimeValue}
+                    placeholderValue={timePlaceholder}
+                    granularity={timeGranularity}
+                    minValue={timeMinValue}
+                    maxValue={timeMaxValue}
+                    hourCycle={props.hourCycle}
+                    hideTimeZone={props.hideTimeZone}
+                    marginTop="size-100" />
+                </div>
               }
             </Content>
           </Dialog>

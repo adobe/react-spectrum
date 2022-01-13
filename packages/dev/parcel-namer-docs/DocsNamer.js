@@ -22,7 +22,7 @@ module.exports = new Namer({
       let entryFilePath = path.relative(options.projectRoot, main.filePath);
       let parts = entryFilePath.split(path.sep);
 
-      let basename = path.basename(entryFilePath, path.extname(entryFilePath)) + '.' + bundle.type;
+      let basename = path.basename(entryFilePath, path.extname(entryFilePath)) + '.html';
 
       // For dev files, simply /PageName.html or /dir/PageName.html
       if (parts[1] === 'dev') {

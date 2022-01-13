@@ -1093,7 +1093,7 @@ function AsyncLoadingExample() {
       let json = await res.json();
       return {items: json.data.children, cursor: json.data.after};
     },
-    async sort({items, sortDescriptor}) {
+    sort({items, sortDescriptor}) {
       return {
         items: items.slice().sort((a, b) => {
           let cmp = a.data[sortDescriptor.column] < b.data[sortDescriptor.column] ? -1 : 1;
@@ -1271,7 +1271,7 @@ function AsyncServerFilterTable(props) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
       return {

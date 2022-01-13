@@ -13,7 +13,7 @@
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerProps, DateValue} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
-import {isIOS, mergeProps, useEvent, useId} from '@react-aria/utils';
+import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId} from '@react-aria/utils';
 import {labelIds} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
@@ -44,7 +44,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
 
   if (segment.type === 'month') {
     let monthTextValue = monthDateFormatter.format(state.dateValue);
-    textValue = monthTextValue !== textValue ? `${textValue} - ${monthTextValue}` : monthTextValue;
+    textValue = monthTextValue !== textValue ? `${textValue} – ${monthTextValue}` : monthTextValue;
   } else if (segment.type === 'hour' || segment.type === 'dayPeriod') {
     textValue = hourDateFormatter.format(state.dateValue);
   }
@@ -101,6 +101,12 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
   };
 
   let onKeyDown = (e) => {
+    // Firefox does not fire selectstart for Ctrl/Cmd + A
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
+    if (e.key === 'a' && (isMac() ? e.metaKey : e.ctrlKey)) {
+      e.preventDefault();
+    }
+
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
       return;
     }
@@ -237,9 +243,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
 
   let onFocus = () => {
     enteredKeys.current = '';
-    if (ref.current?.scrollIntoView) {
-      ref.current.scrollIntoView();
-    }
+    scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
 
     // Safari requires that a selection is set or it won't fire input events.
     // Since usePress disables text selection, this won't happen by default.
@@ -324,7 +328,14 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     'aria-valuenow': null
   } : {};
 
-  let fieldLabelId = labelIds.get(state);
+  let {ariaLabelledBy, ariaDescribedBy} = labelIds.get(state);
+
+  // Only apply aria-describedby to the first segment, unless the field is invalid. This avoids it being
+  // read every time the user navigates to a new segment.
+  let firstSegment = useMemo(() => state.segments.find(s => s.isEditable), [state.segments]);
+  if (segment !== firstSegment && state.validationState !== 'invalid') {
+    ariaDescribedBy = undefined;
+  }
 
   let id = useId(props.id);
   let isEditable = !props.isDisabled && !props.isReadOnly && segment.isEditable;
@@ -336,7 +347,8 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       // 'aria-haspopup': props['aria-haspopup'], // deprecated in ARIA 1.2
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
       'aria-label': segment.type !== 'literal' ? displayNames.of(segment.type) : undefined,
-      'aria-labelledby': `${fieldLabelId} ${id}`,
+      'aria-labelledby': `${ariaLabelledBy} ${id}`,
+      'aria-describedby': ariaDescribedBy,
       'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
       'aria-readonly': props.isReadOnly || !segment.isEditable ? 'true' : undefined,
       contentEditable: isEditable,

@@ -1,6 +1,6 @@
 {
   "name": "@internationalized/message",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Internationalized message formatting and locale negotiation",
   "license": "Apache-2.0",
   "main": "dist/main.js",
