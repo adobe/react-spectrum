@@ -38,7 +38,12 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** Test that something was resized. */
   columnResizeWidth(): number,
   /** Set the value of isResizing. */
-  setColumnResizeWidth(size: number): void
+  setColumnResizeWidth(size: number): void,
+
+  /** Colums that are set by the resize. */
+  resizeColumns(): {key: string, width: number}[],
+  /** Set the columns that are fixed by the resize. */
+  setResizeColumns(columns: {key: string, width: number}[]): void
 }
 
 export interface CollectionBuilderContext<T> {
@@ -70,13 +75,22 @@ export function useTableState<T extends object>(
   let {selectionMode = 'none'} = props;
 
   const [columnWidth, setColumnWidth] = useState<number>(0);
+  const [resizedColumns, setResizedColumns] = useState<{key: string, width: number}[]>([]);
 
   const columnWidthRef = useRef<number>(null);
   columnWidthRef.current = columnWidth;
 
+  const resizedColumnsRef = useRef<{key: string, width: number}[]>(null);
+  resizedColumnsRef.current = resizedColumns;
+
   function updateColumnWidth(newWidth: number) {
     columnWidthRef.current = newWidth;
     setColumnWidth(columnWidthRef.current);
+  }
+
+  function updateResizedColumns(columns: {key: string, width: number}[]) {
+    resizedColumnsRef.current = columns;
+    setResizedColumns(resizedColumnsRef.current);
   }
 
   let context = useMemo(
@@ -115,6 +129,8 @@ export function useTableState<T extends object>(
       });
     },
     columnResizeWidth: () => columnWidth,
-    setColumnResizeWidth: updateColumnWidth
+    setColumnResizeWidth: updateColumnWidth,
+    resizeColumns: () => resizedColumns,
+    setResizeColumns: updateResizedColumns
   };
 }

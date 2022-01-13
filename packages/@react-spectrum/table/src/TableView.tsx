@@ -117,7 +117,8 @@ function TableView<T extends object>(
   });
 
   let columnResizeWidth = state.columnResizeWidth();
-  // console.log('from TableView:', state.columnResizeWidth());
+  let resizeColumns = state.resizeColumns();
+  
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes =
@@ -150,9 +151,10 @@ function TableView<T extends object>(
           return SELECTION_CELL_DEFAULT_WIDTH[scale];
         }
       },
-      columnResizeWidth
+      columnResizeWidth,
+      resizeColumns
     }),
-    [props.overflowMode, scale, density, columnResizeWidth]
+    [props.overflowMode, scale, density, columnResizeWidth, resizeColumns]
   );
   let {direction} = useLocale();
   layout.collection = state.collection;

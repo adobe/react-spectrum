@@ -19,7 +19,8 @@ import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
   getDefaultWidth: (props) => string | number,
-  columnResizeWidth: number
+  columnResizeWidth: number,
+  resizeColumns: {key: string, width: number}[]
 }
 
 export class TableLayout<T> extends ListLayout<T> {
@@ -28,6 +29,7 @@ export class TableLayout<T> extends ListLayout<T> {
   columnWidths: Map<Key, number>;
   stickyColumnIndices: number[];
   columnResizeWidth: number;
+  resizeColumns: {key: string, width: number}[];
   getDefaultWidth: (props) => string | number;
   wasLoading = false;
   isLoading = false;
@@ -36,6 +38,7 @@ export class TableLayout<T> extends ListLayout<T> {
     super(options);
     this.getDefaultWidth = options.getDefaultWidth;
     this.columnResizeWidth = options.columnResizeWidth;
+    this.resizeColumns = options.resizeColumns;
   }
 
 
@@ -78,9 +81,9 @@ export class TableLayout<T> extends ListLayout<T> {
     for (let column of this.collection.columns) {
       let props = column.props as ColumnProps<T>;
       let width = props.width ?? this.getDefaultWidth(props);
-      if (this.collection.columns[0] === column && this.columnResizeWidth > 0) {
-        // @ts-ignore
-        width = this.columnResizeWidth;
+
+      if (this.resizeColumns.findIndex(col => col.key === column.key) !== -1) {
+        width = this.resizeColumns.find(col => col.key === column.key).width;
       }
       if (this.getIsStatic(width)) {
         let w = this.parseWidth(width);
@@ -108,26 +111,6 @@ export class TableLayout<T> extends ListLayout<T> {
         this.columnWidths.set(column.key, remCols[i].columnWidth);
         i++;
       }
-
-
-      // let fakeWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
-      // let columnWidth = fakeWidth;
-      // for (let column of remainingColumns) {
-      //   if (this.collection.columns[0] === column) {
-      //     // @ts-ignore
-      //     columnWidth = columnWidth + this.columnResizeWidth;
-      //   }
-      //   let props = column.props as ColumnProps<T>;
-      //   let minWidth = props.minWidth != null ? this.parseWidth(props.minWidth) : 75;
-      //   let maxWidth = props.maxWidth != null ? this.parseWidth(props.maxWidth) : Infinity;
-      //   let width = Math.max(minWidth, Math.min(maxWidth, columnWidth));
-
-      //   this.columnWidths.set(column.key, width);
-      //   remainingSpace -= width;
-      //   if (width !== columnWidth) {
-      //     columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
-      //   }
-      // }
     }
 
   }
