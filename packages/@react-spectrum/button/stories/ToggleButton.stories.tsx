@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import Add from '@spectrum-icons/workflow/Add';
 import {Flex, Text, View} from '@adobe/react-spectrum';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {ToggleButton} from '../';
 
@@ -66,7 +66,10 @@ storiesOf('Button/ToggleButton', module)
         </Flex>
       </View>
     )
-  );
+  )
+  .add('controlled state', () => (
+    <ControlledToggleButton />
+  ));
 
 function render(props = {}) {
   return (<Flex gap="size-100">
@@ -83,4 +86,15 @@ function render(props = {}) {
       <Text>Disabled + selected</Text>
     </ToggleButton>
   </Flex>);
+}
+
+function ControlledToggleButton() {
+  let [selected, setSelected] = useState(false);
+  return (
+    <div>
+      <ToggleButton isSelected={selected} onChange={setSelected}>Press Me</ToggleButton>
+      <br />
+      {selected ? 'true' : 'false'}
+    </div>
+  );
 }
