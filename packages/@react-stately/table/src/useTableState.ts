@@ -35,15 +35,18 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
   sort(columnKey: Key): void,
 
-  /** Test that something was resized. */
-  columnResizeWidth(): number,
-  /** Set the value of isResizing. */
-  setColumnResizeWidth(size: number): void,
+  columnWidths(): Map<Key, number>,
+  getColumnWidth(key: Key): number,
+  setColumnWidth(key: Key, width: number),
 
-  /** Colums that are set by the resize. */
-  resizeColumns(): {key: string, width: number}[],
-  /** Set the columns that are fixed by the resize. */
-  setResizeColumns(columns: {key: string, width: number}[]): void
+  hasResizedColumn(key: Key): boolean,
+  addResizedColumn(key: Key),
+
+  currentResizeColumn(): Key,
+  setCurrentResizeColumn(key: Key),
+
+  resizeDelta(): number,
+  setResizeDelta(deltaX: number)
 }
 
 export interface CollectionBuilderContext<T> {
@@ -74,23 +77,57 @@ export function useTableState<T extends object>(
 ): TableState<T> {
   let {selectionMode = 'none'} = props;
 
-  const [columnWidth, setColumnWidth] = useState<number>(0);
-  const [resizedColumns, setResizedColumns] = useState<{key: string, width: number}[]>([]);
+  // map of the columns and their width, key is the column key, value is the width
+  // TODO: switch to useControlledState
+  const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(new Map<Key, number>());
+  // set of all the column keys that have been resized
+  const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set<Key>());
+  // current column key that is being resized
+  const [currentResizeColumn, setCurrentResizeColumn] = useState<Key>(null);
+  // resize delta
+  const [resizeDelta, setResizeDelta] = useState<number>(0);
 
-  const columnWidthRef = useRef<number>(null);
-  columnWidthRef.current = columnWidth;
 
-  const resizedColumnsRef = useRef<{key: string, width: number}[]>(null);
+  // map of the columns and their width, key is the column key, value is the width
+  const columnWidthsRef = useRef<Map<Key, number>>(null);
+  columnWidthsRef.current = columnWidths;
+  const resizedColumnsRef = useRef<Set<Key>>(null);
   resizedColumnsRef.current = resizedColumns;
+  const currentResizeColumnRef = useRef<Key>(null);
+  currentResizeColumnRef.current = currentResizeColumn;
+  const resizeDeltaRef = useRef<number>(null);
+  resizeDeltaRef.current = resizeDelta;
 
-  function updateColumnWidth(newWidth: number) {
-    columnWidthRef.current = newWidth;
-    setColumnWidth(columnWidthRef.current);
+  function getColumnWidth(key: Key): number {
+    return columnWidths.get(key);
   }
 
-  function updateResizedColumns(columns: {key: string, width: number}[]) {
-    resizedColumnsRef.current = columns;
-    setResizedColumns(resizedColumnsRef.current);
+  function setColumnWidthNew(key: Key, width: number) {
+    columnWidthsRef.current.set(key, width);
+    // new map so that change detection is triggered
+    setColumnWidths(new Map(columnWidthsRef.current));
+  }
+
+  function hasResizedColumn(key: Key): boolean {
+    return resizedColumns.has(key);
+  }
+
+  function addResizedColumn(key: Key) {
+    if (resizedColumnsRef.current.has(key)) {
+      return;
+    }
+    resizedColumnsRef.current.add(key);
+    setResizedColumns(new Set(resizedColumnsRef.current));
+  }
+
+  function updatedCurrentResizeColumn(key: Key) {
+    currentResizeColumnRef.current = key;
+    setCurrentResizeColumn(currentResizeColumnRef.current);
+  }
+
+  function updateResizeDelta(deltaX: number) {
+    resizeDeltaRef.current = deltaX;
+    setResizeDelta(resizeDeltaRef.current);
   }
 
   let context = useMemo(
@@ -128,9 +165,14 @@ export function useTableState<T extends object>(
             : 'ascending'
       });
     },
-    columnResizeWidth: () => columnWidth,
-    setColumnResizeWidth: updateColumnWidth,
-    resizeColumns: () => resizedColumns,
-    setResizeColumns: updateResizedColumns
+    columnWidths: () => columnWidths,
+    getColumnWidth,
+    setColumnWidth: setColumnWidthNew,
+    hasResizedColumn,
+    addResizedColumn,
+    currentResizeColumn: () => currentResizeColumn,
+    setCurrentResizeColumn: updatedCurrentResizeColumn,
+    resizeDelta: () => resizeDelta,
+    setResizeDelta: updateResizeDelta
   };
 }

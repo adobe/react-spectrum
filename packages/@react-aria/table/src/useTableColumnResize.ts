@@ -17,27 +17,17 @@ import {useRef} from 'react';
 export function useTableColumnResize(state, layout, item): any {
   const stateRef = useRef(null);
   stateRef.current = state;
-  let currentPosition = useRef<number>(0);
-  let prevColumns = useRef<{key: string, width: number}[]>([]);
   const {moveProps} = useMove({
     onMoveStart() {
-      const width = layout.columnWidths.get(item.key);
-      currentPosition.current = width;
-      const columns = layout.collection.columns;
-      prevColumns.current = columns.slice(0, columns.findIndex(column => column === item) + 1).map(column => ({key: column.key, width: layout.columnWidths.get(column.key)}));
-      
-      // let prevColumns = layout.collection.columns.slice(0, );
-      // stateRef.current.setColumnResizeWidth(width);
+      stateRef.current.setCurrentResizeColumn(item.key);
+      stateRef.current.addResizedColumn(item.key);
     },
     onMove({deltaX}) {
-      // console.log('current resize width: ', currentPosition.current, ' moved from that position: ', deltaX);
-      currentPosition.current += deltaX;
-      prevColumns.current[prevColumns.current.length - 1].width = currentPosition.current;
-      stateRef.current.setColumnResizeWidth(currentPosition.current);
-      stateRef.current.setResizeColumns(prevColumns.current);
+      stateRef.current.setResizeDelta(deltaX);
     },
     onMoveEnd() {
-      currentPosition.current = 0;
+      stateRef.current.setCurrentResizeColumn();      
+      stateRef.current.setResizeDelta(0);
     }
   });
 
