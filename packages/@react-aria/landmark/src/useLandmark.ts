@@ -10,18 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableRef} from '@react-types/shared';
-import {HTMLAttributes, useCallback} from 'react';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
-import {isElementVisible} from '@react-aria/focus/src/isElementVisible';
+import {AriaLabelingProps} from '@react-types/shared';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {useFocusWithin} from '@react-aria/interactions';
+import {HTMLAttributes, MutableRefObject} from 'react';
+import {isElementVisible} from '@react-aria/focus/src/isElementVisible';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export interface AriaLandmarkProps  extends AriaLabelingProps {
   role: 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary'
-}
-
-interface AriaLandmarkOptions extends AriaLandmarkProps {
 }
 
 interface LandmarkAria {
@@ -73,7 +69,7 @@ function treeDistance(child: HTMLElement, target: HTMLElement): number {
 }
 
 class LandmarkManager {
-  private landmarks = new Map<FocusableRef, HTMLElement>();
+  private landmarks = new Map<MutableRefObject<HTMLElement>, HTMLElement>();
   private static instance: LandmarkManager;
 
   private constructor() {}
@@ -86,14 +82,14 @@ class LandmarkManager {
     return LandmarkManager.instance;
   }
 
-  public addLandmark(ref: FocusableRef) {
+  public addLandmark(ref: MutableRefObject<HTMLElement>) {
     // could change to a map to track roles, then we could warn if someone provides two of the same role but no labels for them
     if (!this.landmarks.has(ref)) {
       this.landmarks.set(ref, null);
     }
   }
 
-  public removeLandmark(ref: FocusableRef) {
+  public removeLandmark(ref: MutableRefObject<HTMLElement>) {
     if (this.landmarks.has(ref)) {
       this.landmarks.delete(ref);
     }
@@ -109,7 +105,7 @@ class LandmarkManager {
       )[0];
   }
 
-  public getNextLandmark(walker, backward) {
+  public getNextLandmark(walker, {backward}) {
     let nextLandmark;
     if (backward) {
       nextLandmark = walker.previousNode();
@@ -153,13 +149,12 @@ class LandmarkManager {
           registeredLandmarks: Array.from(this.landmarks.keys()).map(ref => ref.current)
         }
       );
-      let nextLandmark = this.getNextLandmark(walker, e.shiftKey);
+      let nextLandmark = this.getNextLandmark(walker, {backward: e.shiftKey});
 
-      console.log('the next landmark is', nextLandmark?.getAttribute('role'));
       if (nextLandmark) {
         // if something was previously focused in this landmark, then return focus to it
         let key = Array.from(this.landmarks.keys()).find(ref => ref.current === nextLandmark);
-        if (key && this.landmarks.get(key)) {
+        if (key && this.landmarks.has(key)) {
           let lastFocused = this.landmarks.get(key);
           if (document.body.contains(lastFocused)) {
             lastFocused.focus();
@@ -168,26 +163,13 @@ class LandmarkManager {
         }
         // otherwise find an element to focus
         let focusableWalker = getFocusableTreeWalker(nextLandmark);
-        let nextElement;
-        if (e.shiftKey) {
-          nextElement = focusableWalker.previousNode();
-          if (!nextElement) {
-            walker.currentNode = nextLandmark;
-            nextElement = focusableWalker.lastChild();
-            while (this.closestLandmark(nextElement)?.current !== nextLandmark) {
-              nextElement = focusableWalker.previousNode();
-            }
-          }
-        } else {
-          nextElement = focusableWalker.nextNode();
-          // remove this or to get back to a mostly working state
-          if (!nextElement || (currentLandmark && !currentLandmark.contains(nextElement))) {
-            walker.currentNode = nextLandmark;
-            nextElement = focusableWalker.firstChild();
-            while (this.closestLandmark(nextElement)?.current !== nextLandmark) {
-              nextElement = focusableWalker.nextNode();
-            }
-          }
+        let nextElement = focusableWalker.nextNode() as HTMLElement;
+        if (!nextElement) {
+          walker.currentNode = nextLandmark;
+          nextElement = focusableWalker.firstChild() as HTMLElement;
+        }
+        while (this.closestLandmark(nextElement)?.current !== nextLandmark) {
+          nextElement = focusableWalker.nextNode() as HTMLElement;
         }
         if (nextElement) {
           nextElement.focus();
@@ -198,22 +180,22 @@ class LandmarkManager {
 
   // Only the closest landmark cares about focus inside of it
   public focusinHandler(e: FocusEvent) {
-    let currentLandmark = this.closestLandmark(e.target);
-    this.landmarks.set(currentLandmark, e.target);
+    let currentLandmark = this.closestLandmark(e.target as HTMLElement);
+    this.landmarks.set(currentLandmark, e.target as HTMLElement);
   }
 }
 
 document.addEventListener('keydown', LandmarkManager.getInstance().f6Handler.bind(LandmarkManager.getInstance()), {capture: true});
 document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandler.bind(LandmarkManager.getInstance()), {capture: true});
 
-
 /**
- * TODO: Add description of aria hook here.
+ * Provides landmark navigation in an application. Call this with a role and label to register a landmark navigable with F6.
  * @param props - Props for the LandmarkManager.
  * @param state - State for the LandmarkManager.
  */
-export function useLandmark(props: AriaLandmarkOptions, ref: FocusableRef): LandmarkAria {
+export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTMLElement>): LandmarkAria {
   let manager = LandmarkManager.getInstance();
+
   useLayoutEffect(() => {
     manager.addLandmark(ref);
     return () => {
@@ -221,5 +203,6 @@ export function useLandmark(props: AriaLandmarkOptions, ref: FocusableRef): Land
     };
   }, []);
 
+  // let everything through? or only return role + labelling?
   return {landmarkProps: props};
 }

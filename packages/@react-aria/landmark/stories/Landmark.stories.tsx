@@ -10,47 +10,62 @@
  * governing permissions and limitations under the License.
  */
 
-import {Landmark, useLandmark} from '../';
+import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
+import {Checkbox} from '@react-spectrum/checkbox';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {Flex} from '@react-spectrum/layout';
+import {Link} from '@react-spectrum/link';
 import {Meta, Story} from '@storybook/react';
 import React, {useRef} from 'react';
+import styles from './index.css';
 import {TextField} from '@react-spectrum/textfield';
-import {Checkbox} from '@react-spectrum/checkbox';
+import {useLandmark} from '../';
 
 
-interface StoryProps {
-  usePortal: boolean
-}
+interface StoryProps {}
 
 const meta: Meta<StoryProps> = {
-  title: 'Landmark',
-  component: Landmark
+  title: 'Landmark'
 };
 
 export default meta;
 
 const Template = (): Story<StoryProps> => (props) => <Example {...props} />;
 const NestedTemplate = (): Story<StoryProps> => (props) => <NestedExample {...props} />;
+const TableTemplate = (): Story<StoryProps> => (props) => <TableExample {...props} />;
+const ApplicationTemplate = (): Story<StoryProps> => (props) => <ApplicationExample {...props} />;
 
 
 function Main(props) {
   let ref = useRef();
+  let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
-  return <main ref={ref} {...landmarkProps}>{props.children}</main>;
+  return <main ref={ref} {...landmarkProps} {...styleProps}>{props.children}</main>;
 }
 
 function Navigation(props) {
   let ref = useRef();
+  let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
-  return <nav ref={ref} {...landmarkProps}>{props.children}</nav>;
+  return <nav ref={ref} {...landmarkProps} {...styleProps}>{props.children}</nav>;
 }
 
 function Region(props) {
   let ref = useRef();
+  let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'region'}, ref);
-  return <article ref={ref} {...landmarkProps}>{props.children}</article>;
+  return <article ref={ref} {...landmarkProps} {...styleProps}>{props.children}</article>;
 }
 
-function Example(props: StoryProps) {
+function Search(props) {
+  let ref = useRef();
+  let {styleProps} = useStyleProps(props);
+  let {landmarkProps} = useLandmark({...props, role: 'search'}, ref);
+  return <input type="search" ref={ref} {...landmarkProps} {...styleProps}>{props.children}</input>;
+}
+
+function Example() {
   return (
     <div>
       <Navigation>
@@ -67,7 +82,7 @@ function Example(props: StoryProps) {
   );
 }
 
-function NestedExample(props: StoryProps) {
+function NestedExample() {
   return (
     <div>
       <Main>
@@ -81,8 +96,107 @@ function NestedExample(props: StoryProps) {
   );
 }
 
-export const FlatLandmarks = Template().bind({});
-FlatLandmarks.args = {usePortal: false};
+function TableExample() {
+  return (
+    <div>
+      <Navigation>
+        <ActionGroup>
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </ActionGroup>
+      </Navigation>
+      <Main>
+        <TableView aria-label="Table">
+          <TableHeader>
+            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="baz">Baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+              <Cell>Baz 1</Cell>
+            </Row>
+            <Row>
+              <Cell>Foo 2</Cell>
+              <Cell>Bar 2</Cell>
+              <Cell>Baz 2</Cell>
+            </Row>
+            <Row>
+              <Cell>Foo 3</Cell>
+              <Cell>Bar 3</Cell>
+              <Cell>Baz 3</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+      </Main>
+    </div>
+  );
+}
+// ['main', 'region', 'search', 'navigation', 'form', 'banner', 'contentinfo', 'complementary']
+function ApplicationExample() {
+  return (
+    <div className={classNames(styles, 'application')}>
+      <Region UNSAFE_className={classNames(styles, 'globalnav')}>
+        <Flex justifyContent="space-between">
+          <Link><a href="//react-spectrum.com">React Spectrum</a></Link>
+          <Search />
+        </Flex>
+      </Region>
+      <Navigation UNSAFE_className={classNames(styles, 'navigation')} aria-label="Site Nav">
+        <ActionGroup orientation="vertical">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </ActionGroup>
+      </Navigation>
+      <Main UNSAFE_className={classNames(styles, 'main')}>
+        <TableView aria-label="Table" justifySelf="stretch">
+          <TableHeader>
+            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="baz">Baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+              <Cell>Baz 1</Cell>
+            </Row>
+            <Row>
+              <Cell>Foo 2</Cell>
+              <Cell>Bar 2</Cell>
+              <Cell>Baz 2</Cell>
+            </Row>
+            <Row>
+              <Cell>Foo 3</Cell>
+              <Cell>Bar 3</Cell>
+              <Cell>Baz 3</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+      </Main>
+      <Navigation UNSAFE_className={classNames(styles, 'navigation-content')} aria-label="Content Nav">
+        <ActionGroup orientation="vertical">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </ActionGroup>
+      </Navigation>
+    </div>
+  );
+}
 
-export const NestedLandmarks = Template().bind({});
-NestedLandmarks.args = {usePortal: false};
+export const FlatLandmarks = Template().bind({});
+FlatLandmarks.args = {};
+
+export const NestedLandmarks = NestedTemplate().bind({});
+NestedLandmarks.args = {};
+
+export const TableLandmark = TableTemplate().bind({});
+TableLandmark.args = {};
+
+export const ApplicationWithLandmarks = ApplicationTemplate().bind({});
+ApplicationWithLandmarks.args = {};
