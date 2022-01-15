@@ -188,7 +188,7 @@ function renderMany(props = {}) {
   );
 }
 
-function DynamicBreadcrumbs(props = {}) {
+export function DynamicBreadcrumbs(props = {}) {
   const defaultItems = [
     {key: 'Folder 1', children: 'The quick brown fox jumps over'},
     {key: 'Folder 2', children: 'My Documents'},

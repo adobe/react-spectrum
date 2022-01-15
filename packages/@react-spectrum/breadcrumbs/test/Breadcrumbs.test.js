@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, within} from '@testing-library/react';
+import {act, render, waitFor, within} from '@testing-library/react';
 import {Breadcrumbs} from '../';
+import {DynamicBreadcrumbs} from '../stories/Breadcrumbs.stories';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
@@ -32,7 +33,7 @@ describe('Breadcrumbs', function () {
     });
 
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
   });
 
   afterEach(() => {
@@ -400,5 +401,51 @@ describe('Breadcrumbs', function () {
     );
     let breadcrumbs = getByRole('navigation');
     expect(breadcrumbs).toHaveAttribute('data-testid', 'test');
+  });
+
+  it('restores focus to the current breadcrumb item onAction', async function () {
+    let {getAllByRole, getByRole} = render(
+      <Provider theme={theme}>
+        <DynamicBreadcrumbs />
+      </Provider>
+    );
+    let breadcrumbItems = getAllByRole('link');
+    let newCurrentItem = breadcrumbItems[breadcrumbItems.length - 2];
+    let currentItem = breadcrumbItems[breadcrumbItems.length - 1];
+    triggerPress(newCurrentItem);
+
+    breadcrumbItems = getAllByRole('link');
+    currentItem = breadcrumbItems[breadcrumbItems.length - 1];
+    expect(currentItem.textContent).toEqual(newCurrentItem.textContent);
+    expect(currentItem.hasAttribute('aria-current')).toBeTruthy();
+    await waitFor(() => expect(currentItem).toHaveFocus());
+
+    let menuButton = getAllByRole('button')[0];
+    triggerPress(menuButton);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeTruthy();
+
+    let menuItems = getAllByRole('menuitemradio');
+    newCurrentItem = menuItems[menuItems.length - 2];
+    triggerPress(newCurrentItem);
+
+    await waitFor(() => expect(menu).not.toBeInTheDocument());
+
+    breadcrumbItems = getAllByRole('link');
+    currentItem = breadcrumbItems[breadcrumbItems.length - 1];
+    expect(currentItem.textContent).toEqual(newCurrentItem.textContent);
+    expect(currentItem.hasAttribute('aria-current')).toBeTruthy();
+    await waitFor(() => expect(currentItem).toHaveFocus());
+
+    newCurrentItem = breadcrumbItems[0];
+    act(() => newCurrentItem.focus());
+    triggerPress(newCurrentItem);
+
+    breadcrumbItems = getAllByRole('link');
+    currentItem = breadcrumbItems[breadcrumbItems.length - 1];
+    expect(currentItem.textContent).toEqual(newCurrentItem.textContent);
+    expect(currentItem.hasAttribute('aria-current')).toBeTruthy();
+    await waitFor(() => expect(currentItem).toHaveFocus());
   });
 });

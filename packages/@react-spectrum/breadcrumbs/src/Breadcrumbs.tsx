@@ -135,7 +135,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     if (onAction) {
       onAction(key);
     }
-    currentRef.current.UNSAFE_getDOMNode().focus();
+    requestAnimationFrame(() => currentRef.current && currentRef.current.UNSAFE_getDOMNode().focus());
   }
 
   let contents = childArray;
