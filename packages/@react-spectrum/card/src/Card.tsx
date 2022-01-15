@@ -11,10 +11,10 @@
  */
 
 import {CardBase} from './CardBase';
+import {CardViewCardProps, SpectrumCardProps} from '@react-types/card';
 import {DOMRef, DOMRefValue, ItemProps} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
 import React, {forwardRef, ForwardRefExoticComponent, PropsWithoutRef, RefAttributes} from 'react';
-import {SpectrumCardProps} from '@react-types/card';
 import {useCardViewContext} from './CardViewContext';
 
 
@@ -30,7 +30,7 @@ let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) =>
 });
 
 // @ts-ignore
-Card.getCollectionNode = function* getCollectionNode<T>(props: any): Generator<PartialNode<T>> {
+Card.getCollectionNode = function* getCollectionNode<T>(props: CardViewCardProps): Generator<PartialNode<T>> {
   let {children, textValue} = props;
 
   yield {
@@ -43,5 +43,7 @@ Card.getCollectionNode = function* getCollectionNode<T>(props: any): Generator<P
   };
 };
 
+// TODO: replace the below with CardViewCardProps? Don't really want to expose all of the standalone card props for CardView cards since most won't actually do anything.
+// Problem is that this breaks the standalone card props... Perhaps we should have a standalone card component to make this less complicated...
 let _Card = Card as ForwardRefExoticComponent<ItemProps<SpectrumCardProps> & PropsWithoutRef<SpectrumCardProps> & RefAttributes<DOMRefValue<HTMLDivElement>>>;
 export {_Card as Card};

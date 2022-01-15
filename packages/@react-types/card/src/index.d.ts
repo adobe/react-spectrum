@@ -11,8 +11,8 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, Collection, CollectionBase, Direction, DOMProps, KeyboardDelegate, LoadingState, MultipleSelection, Node, Orientation, StyleProps} from '@react-types/shared';
+import {Key, ReactNode} from 'react';
 import {Layout} from '@react-stately/virtualizer';
-import {ReactNode} from 'react';
 import {Scale} from '@react-types/provider';
 
 interface AriaCardProps extends AriaLabelingProps {}
@@ -26,6 +26,21 @@ interface SpectrumCardProps extends AriaCardProps, StyleProps, DOMProps {
   orientation?: Orientation
 }
 
+export interface CardViewCardProps {
+  /** Rendered contents of the card. Note that focusable elements are not allowed within the card in a CardView. */
+  children: ReactNode,
+  /** A string representation of the cards's contents, used for features like typeahead. */
+  textValue?: string,
+  /** An accessibility label for this card. */
+  'aria-label'?: string,
+  /** The raw height of the card's image. */
+  height: number,
+  /** The raw width of the card's image. */
+  width: number,
+  /** A unique key for the card. */
+  key?: Key
+}
+
 interface LayoutOptions {
   // cardSize?: 'S' | 'M' | 'L',
   cardOrientation?: Orientation,
@@ -37,6 +52,8 @@ interface LayoutOptions {
 }
 
 // TODO: double check if this is the best way to type the layout provided to the CardView
+// Perhaps just have layout be typed as GridLayout || GalleryLayout || WaterfallLayout? Might make it easier
+// especially since they each have different properties/options
 interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate {
   collection: Collection<Node<T>>,
   disabledKeys: any,
@@ -53,12 +70,24 @@ export interface CardViewLayoutConstructor<T> {
 interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, Omit<AsyncLoadable, 'isLoading'> {
   // TODO: Does LayoutContructor and Layout give enough info for a user to know what to put in their own custom layout?
   // Replaced with CardViewLayout so that they know they need to have keyboardDelegate stuff as well as collection, disabledKeys, etc
+  /**
+   * The layout that the CardView should use. Determines the visual layout of the cards and contains information such as the collecion of items,
+   * loading state, keyboard delegate, etc. The available layouts include GridLayout, GalleryLayout, and WaterfallLayout. See the [Layout](#layout)
+   * section for more information.
+   */
   layout: CardViewLayoutConstructor<T> | CardViewLayout<T>,
   // TODO: readd size when we get updated designs from spectrum
   // cardSize?: 'S' | 'M' | 'L',
+  /** The orientation of the cards within the CardView. */
   cardOrientation?: Orientation,
+  /**
+   * Whether the cards in the CardView should be displayed with a quiet style.
+   * Note this option is only valid for the waterfall layout and doesn't affect the cards for the other layouts.
+   */
   isQuiet?: boolean,
-  renderEmptyState?: () => ReactNode,
+  /** Sets what the CardView should render when there is no content to display. */
+  renderEmptyState?: () => JSX.Element,
+  /** The current loading state of the CardView. */
   loadingState?: LoadingState
 }
 

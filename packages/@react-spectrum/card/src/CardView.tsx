@@ -220,7 +220,7 @@ function InternalCard(props) {
 }
 
 /**
- * TODO: Add description of component here.
+ * CardViews display a collection of items in a variety of layouts, providing users with a visual representation of the collection's contents.
  */
 const _CardView = React.forwardRef(CardView) as <T>(props: SpectrumCardViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_CardView as CardView};

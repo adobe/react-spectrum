@@ -11,17 +11,24 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Card, CardView, GridLayout} from '../';
 import {Content, Footer} from '@react-spectrum/view';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Duplicate from '@spectrum-icons/workflow/Duplicate';
+import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import {getImageFullData} from './utils';
 import {GridLayoutOptions} from '../src/GridLayout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
-import React, {Key, useMemo, useState} from 'react';
+import Move from '@spectrum-icons/workflow/Move';
+import React, {useMemo, useState} from 'react';
+import {Selection} from '@react-types/shared';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {Story} from '@storybook/react';
@@ -247,7 +254,7 @@ function ControlledCardView(props: SpectrumCardViewProps<object>) {
 
   let [value, setValue] = useState('');
   let [items, setItems] = useState(props.items as Array<object>);
-  let [selectedKeys, setSelectedKeys] = useState('all' as 'all' | Iterable<Key>);
+  let [selectedKeys, setSelectedKeys] = useState<Selection>('all' as 'all');
 
   let removeItem = () => {
     let val = parseInt(value, 10);
@@ -257,29 +264,58 @@ function ControlledCardView(props: SpectrumCardViewProps<object>) {
 
   return (
     <div style={{width: '800px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-      <Flex direction="column" width="100%" height="100%">
-        <Flex direction="row" maxWidth="500px" alignItems="end">
-          <TextField value={value} onChange={setValue} label="Nth item to remove" />
-          <ActionButton onPress={removeItem}>Remove</ActionButton>
+      <ActionBarContainer height="100%">
+        <Flex direction="column" width="100%" height="100%">
+          <Flex direction="row" maxWidth="500px" alignItems="end">
+            <TextField value={value} onChange={setValue} label="Nth item to remove" />
+            <ActionButton onPress={removeItem}>Remove</ActionButton>
+          </Flex>
+          <CardView  {...actions} {...otherProps} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} items={items} layout={layout} width="100%" height="100%">
+            {(item: any) => (
+              <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
+                <Image src={item.src} />
+                <Heading>{item.title}</Heading>
+                <Text slot="detail">PNG</Text>
+                <Content>Very very very very very very very very very very very very very long description</Content>
+                <ActionMenu>
+                  <Item>Action 1</Item>
+                  <Item>Action 2</Item>
+                </ActionMenu>
+                <Footer>
+                  <Button variant="primary">Something</Button>
+                </Footer>
+              </Card>
+            )}
+          </CardView>
+          <ActionBar
+            selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
+            onClearSelection={() => {
+              setSelectedKeys(new Set());
+            }}
+            onAction={action('onAction')}>
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="copy">
+              <Copy />
+              <Text>Copy</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+            <Item key="move">
+              <Move />
+              <Text>Move</Text>
+            </Item>
+            <Item key="duplicate">
+              <Duplicate />
+              <Text>Duplicate</Text>
+            </Item>
+          </ActionBar>
         </Flex>
-        <CardView  {...actions} {...otherProps} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} items={items} layout={layout} width="100%" height="100%">
-          {(item: any) => (
-            <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
-              <Image src={item.src} />
-              <Heading>{item.title}</Heading>
-              <Text slot="detail">PNG</Text>
-              <Content>Very very very very very very very very very very very very very long description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="primary">Something</Button>
-              </Footer>
-            </Card>
-          )}
-        </CardView>
-      </Flex>
+      </ActionBarContainer>
     </div>
   );
 }
@@ -329,7 +365,7 @@ function StaticCardView(props: SpectrumCardViewProps<object>) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
-    new GridLayout({
+    new GridLayout<object>({
       scale,
       collator,
       cardOrientation
@@ -341,8 +377,7 @@ function StaticCardView(props: SpectrumCardViewProps<object>) {
 
   return (
     <div style={{width: '800px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-      {/* TODO fix typescript. it breaks if I remove the items here */}
-      <CardView  {...actions} {...props} height="100%" width="100%" items={[{}]} layout={layout}>
+      <CardView  {...actions} {...props} height="100%" width="100%" layout={layout}>
         <Card key="Bob 1" width={1001} height={381} textValue="Bob 1">
           <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
           <Heading>Bob 1</Heading>

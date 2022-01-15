@@ -1,0 +1,439 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/card';
+import cardViewTypes from 'docs:@react-types/card/src/index.d.ts';
+import {HeaderInfo, PropTable, PageDescription, TypeLink, ClassAPI, FunctionAPI, InterfaceType, TypeContext} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/card/package.json';
+
+```jsx import
+import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '@react-spectrum/card';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Collections
+keywords: [cardview, gallery, grid, waterfall, tile]
+---
+
+# CardView
+
+<PageDescription>{docs.exports.CardView.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Card', 'CardView', 'GalleryLayout', 'GridLayout', 'WaterfallLayout']} />
+
+## Example
+```tsx example
+import {Content} from '@react-spectrum/view';
+import {Heading, Text} from '@react-spectrum/text';
+import {Image} from '@react-spectrum/image';
+
+<CardView height="500px" maxWidth="800px" layout={GridLayout} aria-label="Static CardView Pokemon example">
+  <Card key="1" width={475} height={475} textValue="Bulbasaur">
+    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png" />
+    <Heading>Bulbasaur</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Grass, Poison</Content>
+  </Card>
+  <Card key="2" width={475} height={475} textValue="Ivysaur">
+    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png" />
+    <Heading>Ivysaur</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Grass, Poison</Content>
+  </Card>
+  <Card key="3" width={475} height={475} textValue="Venusaur">
+    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png" />
+    <Heading>Venusaur</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Grass, Poison</Content>
+  </Card>
+  <Card key="4" width={475} height={475} textValue="Charmander">
+    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png" />
+    <Heading>Charmander</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Fire</Content>
+  </Card>
+  <Card key="5" width={475} height={475} textValue="Charmeleon">
+    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png" />
+    <Heading>Charmeleon</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Fire</Content>
+  </Card>
+  <Card key="6" width={475} height={475} textValue="Charizard">
+    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" />
+    <Heading>Charizard</Heading>
+    <Text slot="detail">PNG</Text>
+    <Content>Fire, Flying</Content>
+  </Card>
+</CardView>
+```
+
+## Content
+CardView is a collection component that displays a collection of cards in a variety of layouts. It follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections.
+It expects `<Card>` elements as children, which in turn accept a variety of other content elements as described [here](#cards). Static collections, as in the previous example, can be used when the full list of cards is known ahead of time.
+
+Dynamic collections, as shown below, can be used when the card data come from an external data source such as an API call, or update over time. As seen below, an iterable list of items is passed to the CardView using the `items` prop.
+Each card accepts a key prop, which is passed to the `onSelectionChange` handler to identify the selected card. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a `key` prop is not required.
+See the [Selection](#selection) section for more detail on selection.
+
+```tsx example
+let items = [
+  {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png'},
+  {id: 2, name: 'Ivysaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png'},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png'},
+  {id: 4, name: 'Charmander', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'},
+  {id: 5, name: 'Charmeleon', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'},
+  {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'},
+];
+
+<CardView items={items} height="500px" maxWidth="800px" layout={GridLayout} aria-label="Dynamic CardView Pokemon example">
+  {item => (
+    <Card textValue={item.name} width={item.width} height={item.height}>
+      <Image src={item.src} />
+      <Heading>{item.name}</Heading>
+      <Text slot="detail">PNG</Text>
+      <Content>{item.type}</Content>
+    </Card>
+  )}
+</CardView>
+```
+
+### Cards
+A standard Card consists of a preview image and a title, and allows for a optional detail area next to the title and an optional content area immediately below the
+title. The image, title, and content area can be populated by providing a [Image](Image.html), [Heading](Heading.html), and [Content](Content.html) respectively as children to
+the Card. The detail area can be populated through a [Text](Text.html) element with an accompanying `slot="detail"` prop. Please note that a Spectrum compliant Card should not contain
+focusable or interactive content within the content area and that the content itself should only display the most essential pieces of information. If you need to perform actions
+on a selected card(s), please use the ActionBar component in lieu of adding an action menu to the Card itself. See the [Card Actions](#card-actions) section for an example.
+
+The properties that the Card supports can be found in the [Props](#props) table below. Note that the `height` and `width` props refer to the image's height and width, not the Card's height and
+width. These values are used to calculate the proper positioning and size of each card within the CardView's container.
+
+### Internationalization
+To internationalize a CardView, all text content within the Cards should be localized. The `aria-label` provided to the CardView should also be localized any.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of CardView is automatically flipped.
+
+## Layout
+CardView supports three different visual layouts: <TypeLink links={docs.links} type={docs.exports.GridLayout} />, <TypeLink links={docs.links} type={docs.exports.GalleryLayout} />
+and <TypeLink links={docs.links} type={docs.exports.WaterfallLayout} />. You can set the CardView's layout by passing the imported class directly to the `layout` prop as shown in the previous examples.
+This will handle instantiating said layout with its default options. Alternatively, you can modify the layout's various options (e.g. `margin`, `collator`, etc) by constructing your own instance of the
+class and providing that to the CardView instead. See the sections below for examples of this.
+
+### GridLayout
+The GridLayout renders each card with a uniform height and width regardless of the image size. The customizable options available to the GridLayout are as follows:
+
+// TODO figure out how to show a table for the GridLayoutOptions
+
+The example below shows a CardView with a modified GridLayout that decreases the minimum required space between the cards and sets the maximum number of columns to 2.
+
+```tsx example export=true
+import {Size} from '@react-stately/virtualizer';
+import {useCollator} from '@react-aria/i18n';
+import {useProvider} from '@react-spectrum/provider';
+
+function CustomLayout(props) {
+  let items = [
+    {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Temple Roof', ext: 'JPG'},
+    {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Starry Sky', ext: 'JPG'},
+    {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Molten glass', ext: 'JPG'},
+    {width: 1215, height: 121, src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Mountain Range', ext: 'JPG'}
+  ];
+
+  let {scale} = useProvider();
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let gridLayout = React.useMemo(() =>
+    new GridLayout({
+      scale,
+      collator,
+      minSpace: new Size(5, 5),
+      maxColumns: 2
+    })
+  , [collator, scale]);
+
+  let {
+    layout = gridLayout,
+    ...otherProps
+  } = props;
+
+  return (
+    <CardView items={items} layout={layout} width="800px" height="500px" aria-label="CardView with modified GridLayout" {...otherProps}>
+      {item => (
+        <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
+          <Image src={item.src} />
+          <Heading>{item.title}</Heading>
+          <Text slot="detail">{item.ext}</Text>
+          <Content>Image dimensions: {item.width}x{item.height}</Content>
+        </Card>
+      )}
+    </CardView>
+  );
+}
+
+<CustomLayout />
+```
+
+### GalleryLayout
+The GalleryLayout arranges each card in such a way that each card in a row shares the same height but has a width that accommodates the image's
+aspect ratio. The layout will attempt to take up all available space in the CardView and thus will distribute the cards in each row accordingly.
+The customizable options available to the GalleryLayout are as follows:
+
+// TODO figure out how to show a table for the GalleryLayoutOptions
+
+The example below shows a CardView with a modified GalleryLayout that adjusts the space between the cards and increases the ideal row height used
+in the layout calculations.
+
+```tsx example
+// Using the same CardView as above the GridLayout example, but applying a modified GalleryLayout instead
+function CustomGalleryLayout() {
+  let {scale} = useProvider();
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let galleryLayout = React.useMemo(() =>
+    new GalleryLayout({
+      collator,
+      scale,
+      itemSpacing: new Size(50, 18)
+    })
+  , [collator, scale]);
+
+  return (
+    <CustomLayout layout={galleryLayout} aria-label="CardView with modified GalleryLayout" />
+  );
+}
+
+<CustomGalleryLayout />
+```
+
+
+### WaterfallLayout
+The WaterfallLayout organizes the cards into equal width columns but allows each card to have a variable height. Similarly to GalleryLayout, it attempts to accommodate
+the aspect ratio of each card's image. The customizable options available to the GalleryLayout are as follows:
+
+// TODO figure out how to show a table for the WaterfallLayoutOptions
+
+The example below shows a CardView with a modified WaterfallLayout adjusts the minimum required space between the cards and sets the maximum number of columns to 2.
+
+```tsx example
+// Using the same CardView as above the GridLayout example, but applying a modified WaterfallLayout instead
+function CustomWaterfallLayout() {
+  let {scale} = useProvider();
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let waterfallLayout = React.useMemo(() =>
+    new WaterfallLayout({
+      collator,
+      scale,
+      maxColumns: 2,
+      minSpace: new Size(50, 50)
+    })
+  , [collator, scale]);
+
+  return (
+    <CustomLayout layout={waterfallLayout} aria-label="CardView with modified WaterfallLayout" />
+  );
+}
+
+<CustomWaterfallLayout />
+```
+
+## Labeling
+### Accessibility
+An `aria-label` must be provided to the CardView for accessibility. If the CardView is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+## Asynchronous loading
+CardView supports loading data asynchronously, and will display a progress circle reflecting the current load state,
+set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+See the docs for more information.
+
+```tsx example
+function AsyncLoadingCardView() {
+  let imageLinks = React.useRef(null);
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      if (imageLinks.current == null) {
+        let fullRes = await fetch('https://rawcdn.githack.com/akabab/starwars-api/0.2.1/api/all.json');
+        imageLinks.current = await fullRes.json();
+      }
+
+      let items = [];
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search', {signal});
+      let json = await res.json();
+      items = json.results.map((element, index) => ({...getImageFullData(index), title: element.name}));
+
+      return {
+        items: items,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+
+  );
+}
+```
+
+## Selection
+
+By default, CardView doesn't allow card selection but this can be enabled using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected Cards. Note that the value of the selected keys must match the `key` prop of the card.
+
+The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the Cards with keys "2" and "4".
+
+// TODO add example for multiple selection mode
+
+### Controlled selection
+
+To programmatically control card selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected card will
+be passed into the callback when the card is pressed, allowing you to update state accordingly.
+
+Here is how you would control selection for the above example.
+
+// TODO add example for controlled selection mode
+
+### Single selection
+
+To limit users to selecting only a single card at a time, `selectionMode` can be set to `single`.
+
+// TODO add example for single selection mode
+
+### Disallow empty selection
+
+CardView also supports a `disallowEmptySelection` prop which forces the user to have at least one Card in the CardView selected at all times.
+In this mode, if a single card is selected and the user presses it, it will not be deselected.
+
+// TODO add example for disallowEmptySelection selection mode
+
+### Disabled cards
+
+You can disable specific card by providing an array of keys to CardView via the `disabledKeys` prop. This will prevent cards from being selectable as shown in the example below.
+
+// TODO add example for disabled cards
+
+### Card actions
+A common use case is to allow a user to perform actions on one or more cards. The example below illustrates how one could use ActionBar to trigger an action on the
+currently selected card.
+
+```tsx example
+import {ActionBar, ActionBarContainer, Item} from '@react-spectrum/actionbar';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Edit from '@spectrum-icons/workflow/Edit';
+
+  // Same items as in the pokemon examples...
+///- begin collapse -///
+let items = [
+  {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png'},
+  {id: 2, name: 'Ivysaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png'},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png'},
+  {id: 4, name: 'Charmander', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'},
+  {id: 5, name: 'Charmeleon', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'},
+  {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'},
+];
+///- end collapse -///
+function CardViewActions() {
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+
+  return (
+    <ActionBarContainer height="500px">
+      <CardView items={items} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="500px" maxWidth="800px" layout={GridLayout} aria-label="CardView Pokemon with ActionBar example" selectionMode="single">
+        {item => (
+          <Card textValue={item.name} width={item.width} height={item.height}>
+            <Image src={item.src} />
+            <Heading>{item.name}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>{item.type}</Content>
+          </Card>
+        )}
+      </CardView>
+      <ActionBar
+        selectedItemCount={selectedKeys.size}
+        onClearSelection={() => {
+          setSelectedKeys(new Set());
+        }}
+        onAction={key => alert(`Performing ${key} action on ${selectedKeys.keys().next().value}`)}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+
+<CardViewActions />
+```
+
+## Props
+
+### CardView props
+
+<PropTable component={docs.exports.CardView} links={docs.links} style={{marginBottom: '40px'}} />
+
+### Card props
+
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(cardViewTypes.exports.CardViewCardProps.properties))
+  }
+}} links={cardViewTypes.links} />
+
+## Visual options
+
+### Horizontal Cards
+GridLayout is the only layout that currently supports horizontal cards. To enable horizontal cards, provide `cardOrientation="horizontal"`
+to the CardView and to your GridLayout instance if you are instantiating one.
+
+```tsx example
+
+```
+
+### Quiet
+Talk about which Card layouts allow quiet
+
+
+### Empty state
+Use the `renderEmptyState` prop to customize what the CardView will display if there are no cards provided.
+
+```tsx example
+import {Content} from '@react-spectrum/view';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
+import {Heading} from '@react-spectrum/text';
+
+function renderEmptyState() {
+  return (
+    <IllustratedMessage>
+      <NotFound />
+      <Heading>No results</Heading>
+      <Content>No results found</Content>
+    </IllustratedMessage>
+  );
+}
+
+<CardView aria-label="Example CardView for empty state" height="size-3000" layout={GridLayout} renderEmptyState={renderEmptyState}>
+  {[]}
+</CardView>
+```
