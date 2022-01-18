@@ -94,7 +94,7 @@ let items = [
   {id: 3, name: 'Venusaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png'},
   {id: 4, name: 'Charmander', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'},
   {id: 5, name: 'Charmeleon', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'},
-  {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'},
+  {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'}
 ];
 
 <CardView items={items} height="500px" maxWidth="800px" layout={GridLayout} aria-label="Dynamic CardView Pokemon example">
@@ -166,7 +166,7 @@ function CustomLayout(props) {
   } = props;
 
   return (
-    <CardView items={items} layout={layout} width="800px" height="500px" aria-label="CardView with modified GridLayout" {...otherProps}>
+    <CardView items={items} layout={layout} maxWidth="800px" height="500px" aria-label="CardView with modified GridLayout" {...otherProps}>
       {item => (
         <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
           <Image src={item.src} />
@@ -256,9 +256,11 @@ This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to
 See the docs for more information.
 
 ```tsx example
+import {useAsyncList} from '@react-stately/data';
+
 function AsyncLoadingCardView() {
   let imageLinks = React.useRef(null);
-  let list = useAsyncList<StarWarsChar>({
+  let list = useAsyncList({
     async load({signal, cursor}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
@@ -272,7 +274,7 @@ function AsyncLoadingCardView() {
       let items = [];
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search', {signal});
       let json = await res.json();
-      items = json.results.map((element, index) => ({...getImageFullData(index), title: element.name}));
+      items = json.results.map((element) => ({src: imageLinks.current.find(char => char.name === element.name)?.image, title: element.name, mass: element.mass}));
 
       return {
         items: items,
@@ -282,47 +284,108 @@ function AsyncLoadingCardView() {
   });
 
   return (
-
+    <CardView items={list.items} onLoadMore={list.loadMore} loadingState={list.loadingState} layout={GridLayout} maxWidth="800px" height="500px" aria-label="Async Star Wars CardView">
+      {item => (
+        <Card key={item.title} textValue={item.title}>
+          <Image src={item.src} />
+          <Heading>{item.title}</Heading>
+          <Content>Mass: {item.mass}</Content>
+        </Card>
+      )}
+    </CardView>
   );
 }
 ```
 
 ## Selection
-
 By default, CardView doesn't allow card selection but this can be enabled using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected Cards. Note that the value of the selected keys must match the `key` prop of the card.
 
-The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the Cards with keys "2" and "4".
+The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the Cards with keys 2 and 4.
 
-// TODO add example for multiple selection mode
+```tsx example
+let items = [
+  {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png'},
+  {id: 2, name: 'Ivysaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png'},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png'},
+  {id: 4, name: 'Charmander', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'},
+  {id: 5, name: 'Charmeleon', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'},
+  {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'}
+];
+
+<CardView items={items} height="500px" maxWidth="800px" layout={GridLayout} aria-label="Default selection CardView Pokemon example" selectionMode="multiple" defaultSelectedKeys={[2, 4]}>
+  {item => (
+    <Card textValue={item.name} width={item.width} height={item.height}>
+      <Image src={item.src} />
+      <Heading>{item.name}</Heading>
+      <Text slot="detail">PNG</Text>
+      <Content>{item.type}</Content>
+    </Card>
+  )}
+</CardView>
+```
 
 ### Controlled selection
-
 To programmatically control card selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected card will
 be passed into the callback when the card is pressed, allowing you to update state accordingly.
 
 Here is how you would control selection for the above example.
 
-// TODO add example for controlled selection mode
+```tsx example export=true
+function PokemonCardView(props) {
+
+  let items = [
+    // Same items as in the pokemon examples...
+    ///- begin collapse -///
+    {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png'},
+    {id: 2, name: 'Ivysaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png'},
+    {id: 4, name: 'Charmander', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'},
+    {id: 5, name: 'Charmeleon', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'},
+    {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'}
+    ///- end collapse -///
+  ];
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+
+  return (
+    <CardView items={items} height="500px" maxWidth="800px" layout={GridLayout} aria-label="Controlled selection CardView Pokemon example" selectionMode="multiple"selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+      {item => (
+        <Card textValue={item.name} width={item.width} height={item.height}>
+          <Image src={item.src} />
+          <Heading>{item.name}</Heading>
+          <Text slot="detail">PNG</Text>
+          <Content>{item.type}</Content>
+        </Card>
+      )}
+    </CardView>
+  );
+}
+```
 
 ### Single selection
-
 To limit users to selecting only a single card at a time, `selectionMode` can be set to `single`.
 
-// TODO add example for single selection mode
+```tsx example
+// Using the same CardView as above
+<PokemonCardView selectionMode="single" />
+```
 
 ### Disallow empty selection
-
 CardView also supports a `disallowEmptySelection` prop which forces the user to have at least one Card in the CardView selected at all times.
 In this mode, if a single card is selected and the user presses it, it will not be deselected.
 
-// TODO add example for disallowEmptySelection selection mode
+```tsx example
+// Using the same CardView as above
+<PokemonCardView disallowEmptySelection />
+```
 
 ### Disabled cards
-
 You can disable specific card by providing an array of keys to CardView via the `disabledKeys` prop. This will prevent cards from being selectable as shown in the example below.
 
-// TODO add example for disabled cards
+```tsx example
+// Using the same CardView as above
+<PokemonCardView selectionMode="multiple" disabledKeys={[3]} />
+```
 
 ### Card actions
 A common use case is to allow a user to perform actions on one or more cards. The example below illustrates how one could use ActionBar to trigger an action on the
@@ -334,17 +397,18 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 
-  // Same items as in the pokemon examples...
-///- begin collapse -///
 let items = [
+  // Same items as in the pokemon examples...
+  ///- begin collapse -///
   {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png'},
   {id: 2, name: 'Ivysaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png'},
   {id: 3, name: 'Venusaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png'},
   {id: 4, name: 'Charmander', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'},
   {id: 5, name: 'Charmeleon', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'},
-  {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'},
+  {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'}
+  ///- end collapse -///
 ];
-///- end collapse -///
+
 function CardViewActions() {
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
 
@@ -407,12 +471,16 @@ GridLayout is the only layout that currently supports horizontal cards. To enabl
 to the CardView and to your GridLayout instance if you are instantiating one.
 
 ```tsx example
-
+<CustomLayout layout={GridLayout} aria-label="CardView with horizontal cards" height="400px" cardOrientation="horizontal" />
 ```
 
 ### Quiet
-Talk about which Card layouts allow quiet
+WaterfallLayout is the only layout that currently supports quiet cards. To enable quiet cards, provide `isQuiet`
+to the CardView.
 
+```tsx example
+<CustomLayout layout={WaterfallLayout} aria-label="CardView with quiet cards" isQuiet />
+```
 
 ### Empty state
 Use the `renderEmptyState` prop to customize what the CardView will display if there are no cards provided.

@@ -34,9 +34,9 @@ export interface CardViewCardProps {
   /** An accessibility label for this card. */
   'aria-label'?: string,
   /** The raw height of the card's image. */
-  height: number,
+  height?: number,
   /** The raw width of the card's image. */
-  width: number,
+  width?: number,
   /** A unique key for the card. */
   key?: Key
 }
