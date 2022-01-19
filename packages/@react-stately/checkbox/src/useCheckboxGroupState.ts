@@ -64,34 +64,27 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      setValue(values => {
-        if (!values.includes(value)) {
-          return values.concat(value);
-        }
-        return values;
-      });
+      if (!selectedValues.includes(value)) {
+        setValue(selectedValues.concat(value));
+      }
     },
     removeValue(value) {
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      setValue(values => {
-        if (values.includes(value)) {
-          return values.filter(existingValue => existingValue !== value);
-        }
-        return values;
-      });
+      if (selectedValues.includes(value)) {
+        setValue(selectedValues.filter(existingValue => existingValue !== value));
+      }
     },
     toggleValue(value) {
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      setValue(values => {
-        if (values.includes(value)) {
-          return values.filter(existingValue => existingValue !== value);
-        }
-        return values.concat(value);
-      });
+      if (selectedValues.includes(value)) {
+        setValue(selectedValues.filter(existingValue => existingValue !== value));
+      } else {
+        setValue(selectedValues.concat(value));
+      }
     }
   };
 
