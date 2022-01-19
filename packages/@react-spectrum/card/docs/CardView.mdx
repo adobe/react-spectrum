@@ -132,7 +132,11 @@ class and providing that to the CardView instead. See the sections below for exa
 ### GridLayout
 The GridLayout renders each card with a uniform height and width regardless of the image size. The customizable options available to the GridLayout are as follows:
 
-// TODO figure out how to show a table for the GridLayoutOptions
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(docs.exports.GridLayoutOptions.properties))
+  }
+}} links={docs.links} style={{marginBottom: '40px'}} />
 
 The example below shows a CardView with a modified GridLayout that decreases the minimum required space between the cards and sets the maximum number of columns to 2.
 
@@ -187,7 +191,11 @@ The GalleryLayout arranges each card in such a way that each card in a row share
 aspect ratio. The layout will attempt to take up all available space in the CardView and thus will distribute the cards in each row accordingly.
 The customizable options available to the GalleryLayout are as follows:
 
-// TODO figure out how to show a table for the GalleryLayoutOptions
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(docs.exports.GalleryLayoutOptions.properties))
+  }
+}} links={docs.links} style={{marginBottom: '40px'}} />
 
 The example below shows a CardView with a modified GalleryLayout that adjusts the space between the cards and increases the ideal row height used
 in the layout calculations.
@@ -218,7 +226,11 @@ function CustomGalleryLayout() {
 The WaterfallLayout organizes the cards into equal width columns but allows each card to have a variable height. Similarly to GalleryLayout, it attempts to accommodate
 the aspect ratio of each card's image. The customizable options available to the GalleryLayout are as follows:
 
-// TODO figure out how to show a table for the WaterfallLayoutOptions
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(docs.exports.WaterfallLayoutOptions.properties))
+  }
+}} links={docs.links} style={{marginBottom: '40px'}} />
 
 The example below shows a CardView with a modified WaterfallLayout adjusts the minimum required space between the cards and sets the maximum number of columns to 2.
 

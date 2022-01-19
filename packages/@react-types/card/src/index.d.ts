@@ -55,11 +55,17 @@ interface LayoutOptions {
 // Perhaps just have layout be typed as GridLayout || GalleryLayout || WaterfallLayout? Might make it easier
 // especially since they each have different properties/options
 interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate {
+  /** A collection of items in the CardView. */
   collection: Collection<Node<T>>,
-  disabledKeys: any,
+  /** The currently disabled keys in the collection. */
+  disabledKeys: Set<Key>,
+  /** Whether data is currently being loaded. */
   isLoading: boolean,
+  /** The writing direction for the current application locale. */
   direction: Direction,
+  /** The name of the layout. */
   layoutType: string,
+  /** The margin around the CardView between the edges and the items. */
   margin?: number
 }
 
