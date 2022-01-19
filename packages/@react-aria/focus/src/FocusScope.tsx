@@ -315,7 +315,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
       scope.forEach(element => element.removeEventListener('focusout', onBlur, false));
     };
-  }, [scopeRef, contain]);
+  }, [scopeRef, contain, allowFocusableFirstInScope]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
@@ -394,7 +394,7 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
       }
     }
     autoFocusRef.current = false;
-  }, []);
+  }, [scopeRef]);
 }
 
 function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
