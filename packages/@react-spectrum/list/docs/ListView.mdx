@@ -45,7 +45,7 @@ keywords: [listview, collections]
 
 ## Example
 ```tsx example
-<ListView aria-label="List example">
+<ListView aria-label="List example" maxWidth="size-6000">
   <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
   <Item textValue="Adobe InDesign">Adobe InDesign</Item>
   <Item textValue="Adobe AfterEffects">Adobe AfterEffects</Item>
@@ -75,7 +75,7 @@ const items = [
   {id: 9, name: 'Adobe Dreamweaver'}
 ];
 
-<ListView items={items} height="250px" aria-label="List example">
+<ListView items={items} maxWidth="size-6000" height="250px" aria-label="List example">
   {(item) => (
     <Item key={item.key} textValue={item.name}>
       {item.name}
@@ -123,6 +123,7 @@ function AsyncList() {
   return (
     <ListView
         aria-label="example async loading list"
+        maxWidth="size-6000"
         height="size-3000"
         items={list.items}
         loadingState={list.loadingState}
@@ -140,7 +141,7 @@ function AsyncList() {
 Items within a ListView also allow for additional content used to add context or provide additional actions to Items. Icons, links, and descriptions can be added to the children of Item as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements. Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<ActionMenu>` will be styled appropriately if included within an item.
 
 ```tsx example
-<ListView aria-label="List example with complex items">
+<ListView maxWidth="size-6000" aria-label="List example with complex items">
   <Item textValue="Row with link, icon, and description">
     <Folder />
     <Link>Row with link, icon, and description</Link>
@@ -189,7 +190,7 @@ Use `defaultSelectedKeys` to provide a default set of selected rows. Note that t
 The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "row1" and "row3".
 
 ```tsx example
-<ListView selectionMode="multiple" defaultSelectedKeys={["Charizard", "Venusaur"]} aria-label="List selection example">
+<ListView maxWidth="size-6000" selectionMode="multiple" defaultSelectedKeys={["Charizard", "Venusaur"]} aria-label="List selection example">
   <Item key="Charizard" textValue="Charizard">
     <Content>Charizard</Content>
   </Item>
@@ -224,7 +225,7 @@ function PokemonList(props) {
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
 
   return (
-    <ListView items={rows} aria-label="List with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+    <ListView items={rows} maxWidth="size-6000" aria-label="List with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
       {(item) => (
         <Item textValue={item.name}>
           {item.name}
@@ -293,7 +294,7 @@ In the highlight selection style, the `onAction` prop can be used to enable row 
 ### Quiet
 
 ```tsx example
-<ListView isQuiet aria-label="Quiet list example">
+<ListView isQuiet aria-label="Quiet list example" maxWidth="size-6000">
   <Item textValue="row 1">row 1</Item>
   <Item textValue="row 2">row 2</Item>
   <Item textValue="row 3">row 3</Item>
@@ -306,13 +307,13 @@ The amount of vertical padding that each row contains can be modified by providi
 ```tsx example
 <Flex direction="column" gap="size-300">
     <Text>Compact:</Text>
-    <ListView density="compact" aria-label="Compact list example">
+    <ListView density="compact" aria-label="Compact list example" maxWidth="size-6000">
       <Item textValue="row 1">row 1</Item>
       <Item textValue="row 2">row 2</Item>
       <Item textValue="row 3">row 3</Item>
     </ListView>
     <Text>Spacious:</Text>
-    <ListView density="spacious" aria-label="Spacious list example">
+    <ListView density="spacious" aria-label="Spacious list example" maxWidth="size-6000">
       <Item textValue="row 1">row 1</Item>
       <Item textValue="row 2">row 2</Item>
       <Item textValue="row 3">row 3</Item>
@@ -341,6 +342,7 @@ function renderEmptyState() {
 
 <ListView
   aria-label="Example list for empty state"
+  maxWidth="size-6000"
   height="size-3000" 
   renderEmptyState={renderEmptyState}>
   {[]}
