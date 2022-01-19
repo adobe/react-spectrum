@@ -35,7 +35,14 @@ interface FocusScopeProps {
   restoreFocus?: boolean,
 
   /** Whether to auto focus the first focusable element in the focus scope on mount. */
-  autoFocus?: boolean
+  autoFocus?: boolean,
+
+  /** 
+   * Whether to include focusable but not tabbable elements when identifying the first focusable element in scope.
+   * This is relevant for components like a Dialog, where when the contents of the FocusScope changes,
+   * and focus gets lost, we want to restore focus to the Dialog itself, which is focusable but not tabbable.
+   */
+  allowFocusableFirstInScope?: boolean
 }
 
 interface FocusManagerOptions {
@@ -82,7 +89,7 @@ let scopes: Map<ScopeRef, ScopeRef | null> = new Map();
  * to user events.
  */
 export function FocusScope(props: FocusScopeProps) {
-  let {children, contain, restoreFocus, autoFocus} = props;
+  let {children, contain, restoreFocus, autoFocus, allowFocusableFirstInScope} = props;
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);
@@ -117,7 +124,7 @@ export function FocusScope(props: FocusScopeProps) {
     };
   }, [scopeRef, parentScope]);
 
-  useFocusContainment(scopeRef, contain);
+  useFocusContainment(scopeRef, contain, allowFocusableFirstInScope);
   useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
 
@@ -227,7 +234,7 @@ function getScopeRoot(scope: HTMLElement[]) {
   return scope[0].parentElement;
 }
 
-function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
+function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean, allowFocusableFirstInScope: boolean) {
   let focusedNode = useRef<HTMLElement>();
 
   let raf = useRef(null);
@@ -288,8 +295,12 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
         if (scopeRef === activeScope && !isElementInChildScope(document.activeElement, scopeRef)) {
           activeScope = scopeRef;
-          focusedNode.current = e.target;
-          focusedNode.current.focus();
+          if (document.body.contains(e.target)) {
+            focusedNode.current = e.target;
+            focusedNode.current.focus();
+          } else if (activeScope) {
+            focusFirstInScope(activeScope.current, !allowFocusableFirstInScope);
+          }
         }
       });
     };
@@ -366,9 +377,9 @@ function focusElement(element: HTMLElement | null, scroll = false) {
   }
 }
 
-function focusFirstInScope(scope: HTMLElement[]) {
+function focusFirstInScope(scope: HTMLElement[], tabbable:boolean = true) {
   let sentinel = scope[0].previousElementSibling;
-  let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, scope);
+  let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
   walker.currentNode = sentinel;
   focusElement(walker.nextNode() as HTMLElement);
 }
