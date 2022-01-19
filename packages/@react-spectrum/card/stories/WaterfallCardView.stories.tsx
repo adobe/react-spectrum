@@ -117,7 +117,7 @@ CustomLayoutOptions.args = {
   'aria-label': 'Test CardView',
   selectionMode: 'multiple',
   items: itemsNoSize,
-  layoutOptions: {minSpace: new Size(50, 50), maxColumns: 2, itemPadding: 400, margin: 10}
+  layoutOptions: {minSpace: new Size(50, 50), maxColumns: 2, margin: 10}
 };
 CustomLayoutOptions.storyName = 'Custom layout options';
 
