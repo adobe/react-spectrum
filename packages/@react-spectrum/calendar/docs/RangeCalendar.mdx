@@ -22,7 +22,7 @@ import {Flex} from '@react-spectrum/layout';
 
 ---
 category: Date and Time
-keywords: []
+keywords: [date]
 after_version: 3.0.0
 ---
 
@@ -77,9 +77,9 @@ function Example() {
 
 ### International calendars
 
-`RangeCalendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the Unicode calendar locale extension, passed to the `Provider` component.
+`RangeCalendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the `Provider` component.
 
-By default, all selected dates are converted to the Gregorian calendar, even if they are displayed to the user in a different calendar system. Since applications usually store dates in the Gregorian calendar system, this means you don't usually need to worry about dealing with other calendar systems in application code. However, if you do provide a `value` or `defaultValue` in a non-Gregorian calendar, the selected dates passed to `onChange` will also be in the same calendar system.
+Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
 
 The below example displays a `RangeCalendar` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
 
@@ -162,7 +162,7 @@ import {today} from '@internationalized/date';
 
 ### Read only
 
-The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDisabled` the RangeCalendar remains focusable.
+The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDisabled`, the RangeCalendar remains focusable.
 
 ```tsx example
 <RangeCalendar aria-label="Trip dates" value={{start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ weeks: 1 })}} isReadOnly />

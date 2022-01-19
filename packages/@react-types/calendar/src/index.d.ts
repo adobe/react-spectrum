@@ -48,7 +48,7 @@ export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBa
 
 export interface SpectrumCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, StyleProps {
   /**
-   * The number of months to display at once.
+   * The number of months to display at once. Up to 3 months are supported.
    * @default 1
    */
   visibleMonths?: number
@@ -56,7 +56,7 @@ export interface SpectrumCalendarProps<T extends DateValue> extends CalendarProp
 
 export interface SpectrumRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, StyleProps {
   /**
-   * The number of months to display at once.
+   * The number of months to display at once. Up to 3 months are supported.
    * @default 1
    */
   visibleMonths?: number
