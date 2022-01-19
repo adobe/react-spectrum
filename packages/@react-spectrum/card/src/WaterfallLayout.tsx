@@ -105,7 +105,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       } else if (node.props.width && node.props.height) {
         let nodeWidth = node.props.width;
         let nodeHeight = node.props.height;
-        let scaledHeight = Math.round(nodeWidth * ((itemWidth) / nodeHeight));
+        let scaledHeight = Math.round(nodeHeight * ((itemWidth) / nodeWidth));
         height = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, scaledHeight));
       } else {
         height = itemWidth;
