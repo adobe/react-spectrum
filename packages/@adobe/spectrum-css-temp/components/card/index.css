@@ -566,13 +566,12 @@ user-provided
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
-    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) 1fr var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) 1fr;
     grid-template-areas:
       "preview preview preview"
       ".       .       .      "
       "title   detail  .      "
-      "content content content"
-      ".       .       .      ";
+      "content content content";
 
     &:before {
       content: ' ';
@@ -657,13 +656,12 @@ user-provided
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
-    grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) minmax(auto, var(--spectrum-global-dimension-size-600)) var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) var(--spectrum-actionbutton-height) var(--spectrum-alias-single-line-height);
     grid-template-areas:
       "preview preview preview"
       ".       .       .      "
       "title   detail  .      "
-      "content content content"
-      ".       .       .      ";
+      "content content content";
 
     &:before {
       content: ' ';
