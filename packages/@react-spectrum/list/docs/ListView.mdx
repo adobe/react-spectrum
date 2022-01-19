@@ -59,7 +59,7 @@ ListView is a [collection component](../react-stately/collections.html) that pro
 
 Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView is hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data in this way allows ListView to automatically cache the rendering of each item, which dramatically improves performance.
 
-Each has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
+Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
 
 
 ```tsx example
@@ -139,7 +139,7 @@ function AsyncList() {
 
 ## Complex items
 
-Items within a ListView also allow for additional content used to add context or provide additional actions to Items. Icons, links, and descriptions can be added to the children of Item as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements. Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<ActionMenu>` will be styled appropriately if included within an item.
+Items within a ListView also allow for additional content used to add context or provide additional actions to items. Icons, links, and descriptions can be added to the children of `<Item>` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements. Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<ActionMenu>` will be styled appropriately if included within an item.
 
 ```tsx example
 <ListView selectionMode="multiple" maxWidth="size-6000" aria-label="List example with complex items">
