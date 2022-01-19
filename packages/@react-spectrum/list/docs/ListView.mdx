@@ -45,7 +45,7 @@ keywords: [listview, collections]
 
 ## Example
 ```tsx example
-<ListView aria-label="List example" maxWidth="size-6000">
+<ListView selectionMode="multiple" aria-label="List example" maxWidth="size-6000">
   <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
   <Item textValue="Adobe InDesign">Adobe InDesign</Item>
   <Item textValue="Adobe AfterEffects">Adobe AfterEffects</Item>
@@ -75,7 +75,7 @@ const items = [
   {id: 9, name: 'Adobe Dreamweaver'}
 ];
 
-<ListView items={items} maxWidth="size-6000" height="250px" aria-label="List example">
+<ListView items={items} selectionMode="multiple" maxWidth="size-6000" height="250px" aria-label="List example">
   {(item) => (
     <Item key={item.key} textValue={item.name}>
       {item.name}
@@ -122,6 +122,7 @@ function AsyncList() {
 
   return (
     <ListView
+        selectionMode="multiple"
         aria-label="example async loading list"
         maxWidth="size-6000"
         height="size-3000"
@@ -141,7 +142,7 @@ function AsyncList() {
 Items within a ListView also allow for additional content used to add context or provide additional actions to Items. Icons, links, and descriptions can be added to the children of Item as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements. Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<ActionMenu>` will be styled appropriately if included within an item.
 
 ```tsx example
-<ListView maxWidth="size-6000" aria-label="List example with complex items">
+<ListView selectionMode="multiple" maxWidth="size-6000" aria-label="List example with complex items">
   <Item textValue="Row with link, icon, and description">
     <Folder />
     <Link>Row with link, icon, and description</Link>
@@ -294,7 +295,7 @@ In the highlight selection style, the `onAction` prop can be used to enable row 
 ### Quiet
 
 ```tsx example
-<ListView isQuiet aria-label="Quiet list example" maxWidth="size-6000">
+<ListView isQuiet selectionMode="multiple" aria-label="Quiet list example" maxWidth="size-6000">
   <Item textValue="row 1">row 1</Item>
   <Item textValue="row 2">row 2</Item>
   <Item textValue="row 3">row 3</Item>
@@ -307,13 +308,13 @@ The amount of vertical padding that each row contains can be modified by providi
 ```tsx example
 <Flex direction="column" gap="size-300">
     <Text>Compact:</Text>
-    <ListView density="compact" aria-label="Compact list example" maxWidth="size-6000">
+    <ListView density="compact" selectionMode="multiple" aria-label="Compact list example" maxWidth="size-6000">
       <Item textValue="row 1">row 1</Item>
       <Item textValue="row 2">row 2</Item>
       <Item textValue="row 3">row 3</Item>
     </ListView>
     <Text>Spacious:</Text>
-    <ListView density="spacious" aria-label="Spacious list example" maxWidth="size-6000">
+    <ListView density="spacious" selectionMode="multiple" aria-label="Spacious list example" maxWidth="size-6000">
       <Item textValue="row 1">row 1</Item>
       <Item textValue="row 2">row 2</Item>
       <Item textValue="row 3">row 3</Item>
@@ -341,6 +342,7 @@ function renderEmptyState() {
 }
 
 <ListView
+  selectionMode="multiple"
   aria-label="Example list for empty state"
   maxWidth="size-6000"
   height="size-3000" 
