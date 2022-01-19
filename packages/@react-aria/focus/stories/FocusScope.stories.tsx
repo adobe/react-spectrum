@@ -123,6 +123,6 @@ KeyboardNavigation.args = {usePortal: false};
 export const KeyboardNavigationInsidePortal = Template().bind({});
 KeyboardNavigationInsidePortal.args = {usePortal: true};
 
-const AllowFocusableFirstInScopeTemplate = (): Story<StoryProps> => ({usePortal}) => <AllowFocusableFirstInScopeExample usePortal={usePortal} />;
+const AllowFocusableFirstInScopeTemplate = (): Story<StoryProps> => () => <AllowFocusableFirstInScopeExample />;
 
 export const AllowFocusableFirstInScope = AllowFocusableFirstInScopeTemplate().bind({});
