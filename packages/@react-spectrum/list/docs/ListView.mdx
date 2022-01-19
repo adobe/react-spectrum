@@ -122,16 +122,16 @@ function AsyncList() {
 
   return (
     <ListView
-        selectionMode="multiple"
-        aria-label="example async loading list"
-        maxWidth="size-6000"
-        height="size-3000"
-        items={list.items}
-        loadingState={list.loadingState}
-        onLoadMore={list.loadMore}>
-        {(item) => (
-          <Item key={item.name} textValue={item.name}>{item.name}</Item>
-        )}
+      selectionMode="multiple"
+      aria-label="example async loading list"
+      maxWidth="size-6000"
+      height="size-3000"
+      items={list.items}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {(item) => (
+        <Item key={item.name} textValue={item.name}>{item.name}</Item>
+      )}
     </ListView>
   );
 }
