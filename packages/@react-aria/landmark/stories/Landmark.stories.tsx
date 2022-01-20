@@ -35,6 +35,8 @@ const Template = (): Story<StoryProps> => (props) => <Example {...props} />;
 const NestedTemplate = (): Story<StoryProps> => (props) => <NestedExample {...props} />;
 const TableTemplate = (): Story<StoryProps> => (props) => <TableExample {...props} />;
 const ApplicationTemplate = (): Story<StoryProps> => (props) => <ApplicationExample {...props} />;
+const DuplicateRolesWithLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesWithLabelsExample {...props} />;
+const DuplicateRolesNoLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesNoLabelExample {...props} />;
 
 
 function Main(props) {
@@ -68,6 +70,54 @@ function Search(props) {
 function Example() {
   return (
     <div>
+      <Navigation>
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </Navigation>
+      <Main>
+        <TextField label="First Name" />
+      </Main>
+    </div>
+  );
+}
+
+function DuplicateRolesWithLabelsExample() {
+  return (
+    <div>
+      <Navigation aria-label="First Nav">
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </Navigation>
+      <Navigation aria-label="Second Nav">
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </Navigation>
+      <Main>
+        <TextField label="First Name" />
+      </Main>
+    </div>
+  );
+}
+
+function DuplicateRolesNoLabelExample() {
+  return (
+    <div>
+      <Navigation>
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </Navigation>
       <Navigation>
         <ul>
           <li><a href="/home">Home</a></li>
@@ -200,3 +250,9 @@ TableLandmark.args = {};
 
 export const ApplicationWithLandmarks = ApplicationTemplate().bind({});
 ApplicationWithLandmarks.args = {};
+
+export const DuplicateRolesWithLabels = DuplicateRolesWithLabelsTemplate().bind({});
+DuplicateRolesWithLabels.args = {};
+
+export const DuplicateRolesNoLabels = DuplicateRolesNoLabelsTemplate().bind({});
+DuplicateRolesNoLabels.args = {};
