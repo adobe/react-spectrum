@@ -17,8 +17,6 @@ import {Key} from 'react';
 import {Scale} from '@react-types/provider';
 
 export interface BaseLayoutOptions {
-  /** The collator used for internationalized string matching. Required to enable type to select behavior in the CardView. */
-  collator?: Intl.Collator,
   /**
    * The scale for the layout (e.g. M for desktop, L for mobile). Affects the default item padding of the card where applicable.
    * @default M
@@ -53,7 +51,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   constructor(options: BaseLayoutOptions = {}) {
     super();
     this.layoutInfos = new Map();
-    this.collator = options.collator;
     this.lastCollection = null;
     this.scale = options.scale || 'medium';
     this.margin = options.margin || 24;

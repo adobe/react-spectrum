@@ -43,7 +43,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout, [layout, collator, cardOrientation, scale]);
+  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({cardOrientation, scale}) : layout, [layout, cardOrientation, scale]);
   let layoutType = cardViewLayout.layoutType;
 
   let formatMessage = useMessageFormatter(intlMessages);

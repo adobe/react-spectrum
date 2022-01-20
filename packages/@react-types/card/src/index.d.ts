@@ -44,7 +44,6 @@ export interface CardViewCardProps {
 interface LayoutOptions {
   // cardSize?: 'S' | 'M' | 'L',
   cardOrientation?: Orientation,
-  collator?: Intl.Collator,
   // TODO: is this valid or is scale a spectrum specific thing that should be left out of the layouts?
   // Added here so we can keep the default item padding options within the layouts instead of having to
   // do extra work in CardView to accomodate different sizing for scales

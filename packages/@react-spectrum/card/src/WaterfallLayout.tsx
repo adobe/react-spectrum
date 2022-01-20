@@ -65,12 +65,9 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     this.maxColumns = options.maxColumns || Infinity;
     // TODO: not entirely sure what this is for since the layout will automatically shift itself to the correct vertical space for the card
     this.itemPadding = options.itemPadding != null ? options.itemPadding : 56;
-
     this.itemWidth = 0;
     this.numColumns = 0;
-
     this.lastCollection = null;
-    this.collator = options.collator;
   }
 
   /** Returns the layout name. */
