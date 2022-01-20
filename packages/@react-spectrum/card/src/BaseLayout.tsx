@@ -34,7 +34,6 @@ export interface BaseLayoutOptions {
 export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected contentSize: Size;
   protected layoutInfos: Map<Key, LayoutInfo>;
-  protected collator: Intl.Collator;
   protected lastCollection: GridCollection<T>;
   /** A collection of items in the CardView. */
   collection:  GridCollection<T>;
@@ -48,6 +47,8 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   scale: Scale;
   /** The margin around the grid view between the edges and the items. */
   margin: number;
+  /** The collator used for internationalized string matching. Required to enable type to select behavior in the CardView. */
+  collator: Intl.Collator;
 
   constructor(options: BaseLayoutOptions = {}) {
     super();

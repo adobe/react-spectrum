@@ -84,9 +84,9 @@ import {Image} from '@react-spectrum/image';
 CardView is a collection component that displays a collection of cards in a variety of layouts. It follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections.
 It expects `<Card>` elements as children, which in turn accept a variety of other content elements as described [here](#cards). Static collections, as in the previous example, can be used when the full list of cards is known ahead of time.
 
-Dynamic collections, as shown below, can be used when the card data come from an external data source such as an API call, or update over time. As seen below, an iterable list of items is passed to the CardView using the `items` prop.
-Each card accepts a key prop, which is passed to the `onSelectionChange` handler to identify the selected card. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a `key` prop is not required.
-See the [Selection](#selection) section for more detail on selection.
+Dynamic collections, as shown below, can be used when the card data comes from an external data source such as an API call, or update over time. Providing the data in this way allows CardView to automatically cache the rendering of each item, which dramatically improves performance.
+
+Each card has a unique key defined by the data. In the example below, the `key` of each card is implicitly defined by the id property of the item object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
 
 ```tsx example
 let items = [
@@ -113,9 +113,10 @@ let items = [
 ### Cards
 A standard Card consists of a preview image and a title, and allows for an optional detail area next to the title and an optional content area immediately below the
 title. The image, title, and content area can be populated by providing an [Image](Image.html), [Heading](Heading.html), and [Content](Content.html) respectively as children to
-the Card. The detail area can be populated through a [Text](Text.html) element with an accompanying `slot="detail"` prop. Please note that a Spectrum compliant Card should not contain
-focusable or interactive content within the content area and that the content itself should only display the most essential pieces of information. If you need to perform actions
-on a selected card(s), please use the ActionBar component in lieu of adding an action menu to the Card itself. See the [Card Actions](#card-actions) section for an example.
+the Card. The detail area can be populated through a [Text](Text.html) element with an accompanying `slot="detail"` prop.
+
+Please note that a Spectrum compliant Card should not contain focusable or interactive content within the content area and that the content itself should only display the most essential pieces of information.
+If you need to perform actions on a card, please use the ActionBar component in lieu of adding an action menu to the Card itself. See the [Card Actions](#card-actions) section for an example.
 
 The properties that the Card supports can be found in the [Props](#props) table below. Note that the `height` and `width` props refer to the image's height and width, not the Card's height and
 width. These values are used to calculate the proper positioning and size of each card within the CardView's container.
@@ -127,7 +128,7 @@ For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout o
 ## Layout
 CardView supports three different visual layouts: <TypeLink links={docs.links} type={docs.exports.GridLayout} />, <TypeLink links={docs.links} type={docs.exports.GalleryLayout} />
 and <TypeLink links={docs.links} type={docs.exports.WaterfallLayout} />. You can set the CardView's layout by passing the imported class directly to the `layout` prop as shown in the previous examples.
-This will handle instantiating said layout with its default options. Alternatively, you can modify the layout's various options (e.g. `margin`, `collator`, etc) by constructing your own instance of the
+This will handle instantiating the layout class with its default options. Alternatively, you can modify the layout's various options (e.g. margins, item sizes, etc) by constructing your own instance of the
 class and providing that to the CardView instead. See the sections below for examples of this.
 
 ### GridLayout
@@ -143,7 +144,6 @@ The example below shows a CardView with a modified GridLayout that decreases the
 
 ```tsx example export=true
 import {Size} from '@react-stately/virtualizer';
-import {useCollator} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 
 function CustomLayout(props) {
@@ -155,15 +155,13 @@ function CustomLayout(props) {
   ];
 
   let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridLayout = React.useMemo(() =>
     new GridLayout({
       scale,
-      collator,
       minSpace: new Size(5, 5),
       maxColumns: 2
     })
-  , [collator, scale]);
+  , [scale]);
 
   let {
     layout = gridLayout,

@@ -66,7 +66,9 @@ interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate {
   /** The name of the layout. */
   layoutType: string,
   /** The margin around the CardView between the edges and the items. */
-  margin?: number
+  margin?: number,
+  /** The collator used for internationalized string matching. Required to enable type to select behavior in the CardView. */
+  collator?: Intl.Collator
 }
 
 export interface CardViewLayoutConstructor<T> {

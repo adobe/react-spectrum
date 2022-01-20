@@ -22,7 +22,6 @@ import React, {useMemo} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
-import {useCollator} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
@@ -66,8 +65,7 @@ let onSelectionChange = jest.fn();
 let getCardStyles = (card) => card.parentNode.parentNode.style;
 
 function StaticCardView(props) {
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
+  let gridLayout = useMemo(() => new GridLayout(), []);
   let {
     layout = gridLayout,
     selectionMode = 'multiple',
@@ -123,9 +121,8 @@ function StaticCardView(props) {
 }
 
 function DynamicCardView(props) {
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let cardOrientation = props.cardOrientation || 'vertical';
-  let gridLayout = useMemo(() => new GridLayout({collator, cardOrientation}), [collator, cardOrientation]);
+  let gridLayout = useMemo(() => new GridLayout({cardOrientation}), [cardOrientation]);
   let {
     layout = gridLayout,
     selectionMode = 'multiple',

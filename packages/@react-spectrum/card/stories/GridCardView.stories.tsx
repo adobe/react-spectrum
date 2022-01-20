@@ -34,7 +34,6 @@ import {SpectrumCardViewProps} from '@react-types/card';
 import {Story} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
-import {useCollator} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 
 let items = [
@@ -185,15 +184,13 @@ CustomLayoutOptions.storyName = 'Custom layout options';
 
 function DynamicCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
       scale,
-      collator,
       cardOrientation
     })
-  , [collator, scale, cardOrientation]);
+  , [scale, cardOrientation]);
   let {
     layout = gridLayout,
     ...otherProps
@@ -238,15 +235,13 @@ function DynamicCardView(props: SpectrumCardViewProps<object>) {
 
 function ControlledCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
       scale,
-      collator,
       cardOrientation
     })
-  , [collator, scale, cardOrientation]);
+  , [scale, cardOrientation]);
   let {
     layout = gridLayout,
     ...otherProps
@@ -322,15 +317,13 @@ function ControlledCardView(props: SpectrumCardViewProps<object>) {
 
 function NoItemCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
       scale,
-      collator,
       cardOrientation
     })
-  , [collator, scale, cardOrientation]);
+  , [scale, cardOrientation]);
   let {
     layout = gridLayout
   } = props;
@@ -362,15 +355,13 @@ function NoItemCardView(props: SpectrumCardViewProps<object>) {
 
 function StaticCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout<object>({
       scale,
-      collator,
       cardOrientation
     })
-  , [collator, scale, cardOrientation]);
+  , [scale, cardOrientation]);
   let {
     layout = gridLayout
   } = props;
@@ -444,15 +435,13 @@ function AsyncLoadingCardView(props: SpectrumCardViewProps<object>) {
   }
 
   let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
       scale,
-      collator,
       cardOrientation
     })
-  , [collator, scale, cardOrientation]);
+  , [scale, cardOrientation]);
   let {
     layout = gridLayout
   } = props;
@@ -504,17 +493,15 @@ interface LayoutOptions {
 
 export function CustomLayout(props: SpectrumCardViewProps<object> & LayoutOptions) {
   let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layoutOptions = props.layoutOptions;
   let cardOrientation = props.cardOrientation || 'vertical';
   let gridLayout = useMemo(() =>
     new GridLayout({
       scale,
-      collator,
       cardOrientation,
       ...layoutOptions
     })
-  , [collator, scale, layoutOptions, cardOrientation]);
+  , [scale, layoutOptions, cardOrientation]);
   let {
     layout = gridLayout,
     ...otherProps

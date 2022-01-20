@@ -29,7 +29,6 @@ import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {Story} from '@storybook/react';
-import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
 import {WaterfallLayout} from '../';
 import {WaterfallLayoutOptions} from '../src/WaterfallLayout';
@@ -130,8 +129,7 @@ function CustomWaterfallLayout(props: SpectrumCardViewProps<object> & LayoutOpti
     layoutOptions,
     ...otherProps
   } = props;
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let waterfallLayout = useMemo(() => new WaterfallLayout<object>({collator, ...layoutOptions}), [collator, layoutOptions]);
+  let waterfallLayout = useMemo(() => new WaterfallLayout<object>({...layoutOptions}), [layoutOptions]);
 
   return CustomLayout({...otherProps, layout: waterfallLayout});
 }
