@@ -176,13 +176,13 @@ describe('LandmarkManager', function () {
     let tree = render(
       <div>
         <Main>
-          <Region>
+          <Region aria-label="Region 1">
             <Checkbox>Checkbox label 1</Checkbox>
           </Region>
 
           <TextField label="First Name" />
 
-          <Region>
+          <Region aria-label="Region 1">
             <Checkbox>Checkbox label 2</Checkbox>
           </Region>
 
@@ -466,5 +466,59 @@ describe('LandmarkManager', function () {
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
     expect(document.activeElement).toBe(table);
+  });
+
+  it('Should allow 2+ landmarks with same role if they are labelled.', function () {
+    render(
+      <div>
+        <Navigation aria-label="First nav">
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Navigation aria-label="Second nav">
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(spyWarn).not.toHaveBeenCalled();
+  });
+
+  it('Should warn if 2+ landmarks with same role are used but not labelled.', function () {
+    render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.');
   });
 });
