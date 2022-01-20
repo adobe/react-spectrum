@@ -40,42 +40,24 @@ import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 
-<CardView height="500px" maxWidth="800px" layout={GridLayout} aria-label="Static CardView Pokemon example">
-  <Card key="1" width={475} height={475} textValue="Bulbasaur">
-    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png" />
-    <Heading>Bulbasaur</Heading>
-    <Text slot="detail">PNG</Text>
-    <Content>Grass, Poison</Content>
+<CardView height="380px" width="100%" layout={GridLayout} aria-label="Static CardView example">
+  <Card key="1" width={1024} height={683} textValue="Shaggy Horse">
+    <Image src="https://lfdanlu.github.io/docPhotos/photos/DSC00527.jpeg" />
+    <Heading>Shaggy Horse</Heading>
+    <Text slot="detail">JPEG</Text>
+    <Content>Size: 366 KB</Content>
   </Card>
-  <Card key="2" width={475} height={475} textValue="Ivysaur">
-    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png" />
-    <Heading>Ivysaur</Heading>
-    <Text slot="detail">PNG</Text>
-    <Content>Grass, Poison</Content>
+  <Card key="2" width={1024} height={683} textValue="Lighthouse">
+    <Image src="https://lfdanlu.github.io/docPhotos/photos/DSC00591.jpeg" />
+    <Heading>Lighthouse</Heading>
+    <Text slot="detail">JPEG</Text>
+    <Content>Size: 182 KB</Content>
   </Card>
-  <Card key="3" width={475} height={475} textValue="Venusaur">
-    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png" />
-    <Heading>Venusaur</Heading>
-    <Text slot="detail">PNG</Text>
-    <Content>Grass, Poison</Content>
-  </Card>
-  <Card key="4" width={475} height={475} textValue="Charmander">
-    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png" />
-    <Heading>Charmander</Heading>
-    <Text slot="detail">PNG</Text>
-    <Content>Fire</Content>
-  </Card>
-  <Card key="5" width={475} height={475} textValue="Charmeleon">
-    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png" />
-    <Heading>Charmeleon</Heading>
-    <Text slot="detail">PNG</Text>
-    <Content>Fire</Content>
-  </Card>
-  <Card key="6" width={475} height={475} textValue="Charizard">
-    <Image src="https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png" />
-    <Heading>Charizard</Heading>
-    <Text slot="detail">PNG</Text>
-    <Content>Fire, Flying</Content>
+  <Card key="3" width={1024} height={683} textValue="Waterfall">
+    <Image src="https://lfdanlu.github.io/docPhotos/photos/DSC00827.jpeg" />
+    <Heading>Waterfall</Heading>
+    <Text slot="detail">JPEG</Text>
+    <Content>Size: 182 KB</Content>
   </Card>
 </CardView>
 ```
@@ -90,21 +72,18 @@ Each card has a unique key defined by the data. In the example below, the `key` 
 
 ```tsx example
 let items = [
-  {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png'},
-  {id: 2, name: 'Ivysaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png'},
-  {id: 3, name: 'Venusaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png'},
-  {id: 4, name: 'Charmander', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'},
-  {id: 5, name: 'Charmeleon', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'},
-  {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'}
+  {id: 1, name: 'Shaggy Horse', size: '366 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00527.jpeg'},
+  {id: 2, name: 'Lighthouse', size: '182 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00591.jpeg'},
+  {id: 3, name: 'Waterfall', size: '182 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00827.jpeg'}
 ];
 
-<CardView items={items} height="500px" maxWidth="800px" layout={GridLayout} aria-label="Dynamic CardView Pokemon example">
+<CardView items={items} height="380px" width="100%" layout={GridLayout} aria-label="Dynamic CardView example">
   {item => (
     <Card textValue={item.name} width={item.width} height={item.height}>
       <Image src={item.src} />
       <Heading>{item.name}</Heading>
-      <Text slot="detail">PNG</Text>
-      <Content>{item.type}</Content>
+      <Text slot="detail">JPEG</Text>
+      <Content>Size: {item.size}</Content>
     </Card>
   )}
 </CardView>
@@ -129,131 +108,93 @@ For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout o
 CardView supports three different visual layouts: <TypeLink links={docs.links} type={docs.exports.GridLayout} />, <TypeLink links={docs.links} type={docs.exports.GalleryLayout} />
 and <TypeLink links={docs.links} type={docs.exports.WaterfallLayout} />. You can set the CardView's layout by passing the imported class directly to the `layout` prop as shown in the previous examples.
 This will handle instantiating the layout class with its default options. Alternatively, you can modify the layout's various options (e.g. margins, item sizes, etc) by constructing your own instance of the
-class and providing that to the CardView instead. See the sections below for examples of this.
+class and providing that to the CardView instead.
 
-### GridLayout
-The GridLayout renders each card with a uniform height and width regardless of the image size. The customizable options available to the GridLayout are as follows:
+The example below demonstrates the differences between each of the layouts as well as showing how you could instantiate a layout instance.
 
-<PropTable component={{
-  props: {
-    properties: Object.fromEntries(Object.entries(docs.exports.GridLayoutOptions.properties))
-  }
-}} links={docs.links} style={{marginBottom: '40px'}} />
-
-The example below shows a CardView with a modified GridLayout that decreases the minimum required space between the cards and sets the maximum number of columns to 2.
-
-```tsx example export=true
-import {Size} from '@react-stately/virtualizer';
+```tsx example
+import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {Flex} from '@react-spectrum/layout';
 import {useProvider} from '@react-spectrum/provider';
 
-function CustomLayout(props) {
+function LayoutDemo() {
   let items = [
     {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Temple Roof', ext: 'JPG'},
+    // ...
+    ///- begin collapse -///
     {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Starry Sky', ext: 'JPG'},
     {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Molten glass', ext: 'JPG'},
     {width: 1215, height: 121, src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Mountain Range', ext: 'JPG'}
+    ///- end collapse -///
   ];
 
   let {scale} = useProvider();
-  let gridLayout = React.useMemo(() =>
-    new GridLayout({
-      scale,
-      minSpace: new Size(5, 5),
-      maxColumns: 2
-    })
-  , [scale]);
-
-  let {
-    layout = gridLayout,
-    ...otherProps
-  } = props;
+  let gridLayout = React.useMemo(() => new GridLayout({scale}), [scale]);
+  let galleryLayout = React.useMemo(() => new GalleryLayout({scale}), [scale]);
+  let waterfallLayout = React.useMemo(() => new WaterfallLayout({scale}), [scale]);
+  let [layout, setLayout] = React.useState(gridLayout);
+  let onAction = (key) => {
+    if (key === 'grid') {
+      setLayout(gridLayout);
+    } else if (key === 'gallery') {
+      setLayout(galleryLayout);
+    } else {
+      setLayout(waterfallLayout);
+    }
+  };
 
   return (
-    <CardView items={items} layout={layout} maxWidth="800px" height="500px" aria-label="CardView with modified GridLayout" {...otherProps}>
-      {item => (
-        <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
-          <Image src={item.src} />
-          <Heading>{item.title}</Heading>
-          <Text slot="detail">{item.ext}</Text>
-          <Content>Image dimensions: {item.width}x{item.height}</Content>
-        </Card>
-      )}
-    </CardView>
+    <Flex direction="column" height="600px" width="100%">
+      <ActionGroup defaultSelectedKeys={['grid']} selectionMode="single" disallowEmptySelection onAction={onAction} aria-label="CardView layout selection">
+        <Item key="grid">Grid layout</Item>
+        <Item key="gallery">Gallery layout</Item>
+        <Item key="waterfall">Waterfall layout</Item>
+      </ActionGroup>
+      <CardView items={items} layout={layout} width="100%" height="100%" aria-label="CardView with changeable layout">
+        {item => (
+          <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
+            <Image src={item.src} />
+            <Heading>{item.title}</Heading>
+            <Text slot="detail">{item.ext}</Text>
+            <Content>Image dimensions: {item.width}x{item.height}</Content>
+          </Card>
+        )}
+      </CardView>
+    </Flex>
   );
 }
-
-<CustomLayout />
 ```
+
+### GridLayout
+As can be seen above, the GridLayout renders each card with a uniform height and width regardless of the image size. The customizable options available to the GridLayout are as follows:
+
+- `minItemSize`
+- `maxItemSize`
+- `minSpace`
+- `maxColumns`
+- `itemPadding`
+- `cardOrientation`
 
 ### GalleryLayout
 The GalleryLayout arranges each card in such a way that each card in a row shares the same height but has a width that accommodates the image's
 aspect ratio. The layout will attempt to take up all available space in the CardView and thus will distribute the cards in each row accordingly.
 The customizable options available to the GalleryLayout are as follows:
 
-<PropTable component={{
-  props: {
-    properties: Object.fromEntries(Object.entries(docs.exports.GalleryLayoutOptions.properties))
-  }
-}} links={docs.links} style={{marginBottom: '40px'}} />
-
-The example below shows a CardView with a modified GalleryLayout that adjusts the space between the cards and increases the ideal row height used
-in the layout calculations.
-
-```tsx example
-// Using the same CardView as above the GridLayout example, but applying a modified GalleryLayout instead
-function CustomGalleryLayout() {
-  let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let galleryLayout = React.useMemo(() =>
-    new GalleryLayout({
-      collator,
-      scale,
-      itemSpacing: new Size(50, 18)
-    })
-  , [collator, scale]);
-
-  return (
-    <CustomLayout layout={galleryLayout} aria-label="CardView with modified GalleryLayout" />
-  );
-}
-
-<CustomGalleryLayout />
-```
-
+- `minItemSize`
+- `idealRowHeight`
+- `itemSpacing`
+- `itemPadding`
+- `threshold`
 
 ### WaterfallLayout
 The WaterfallLayout organizes the cards into equal width columns but allows each card to have a variable height. Similarly to GalleryLayout, it attempts to accommodate
-the aspect ratio of each card's image. The customizable options available to the GalleryLayout are as follows:
+the aspect ratio of each card's image. The customizable options available to the WaterfallLayout are as follows:
 
-<PropTable component={{
-  props: {
-    properties: Object.fromEntries(Object.entries(docs.exports.WaterfallLayoutOptions.properties))
-  }
-}} links={docs.links} style={{marginBottom: '40px'}} />
-
-The example below shows a CardView with a modified WaterfallLayout adjusts the minimum required space between the cards and sets the maximum number of columns to 2.
-
-```tsx example
-// Using the same CardView as above the GridLayout example, but applying a modified WaterfallLayout instead
-function CustomWaterfallLayout() {
-  let {scale} = useProvider();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let waterfallLayout = React.useMemo(() =>
-    new WaterfallLayout({
-      collator,
-      scale,
-      maxColumns: 2,
-      minSpace: new Size(50, 50)
-    })
-  , [collator, scale]);
-
-  return (
-    <CustomLayout layout={waterfallLayout} aria-label="CardView with modified WaterfallLayout" />
-  );
-}
-
-<CustomWaterfallLayout />
-```
+- `minItemSize`
+- `maxItemSize`
+- `minSpace`
+- `maxColumns`
+- `itemPadding`
 
 ## Labeling
 ### Accessibility
@@ -269,43 +210,59 @@ See the docs for more information.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+async function getImageData(page) {
+  // Mock function for getting paged data...
+  ///- begin collapse -///
+  let data = [
+    {id: 1, name: 'Icy Peak', size: '206 KB', width: 670, height: 1005, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00888.jpeg', ext: 'JPEG'},
+    {id: 2, name: 'Grassy Plain', size: '233 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01051.jpeg', ext: 'JPEG'},
+    {id: 3, name: 'Glacier', size: '198 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01062.jpeg', ext: 'JPEG'},
+    {id: 4, name: 'Castle', size: '286 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01817.jpeg', ext: 'JPEG'},
+    {id: 5, name: 'Panorama', size: '156 KB', width: 1024, height: 367, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01822-Pano.jpeg', ext: 'JPEG'},
+    {id: 6, name: 'Cliffside', size: '1.6 MB', width: 825, height: 1005, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC03438.jpeg', ext: 'JPEG'},
+    {id: 7, name: 'Shaggy Horse', size: '366 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00527.jpeg', ext: 'JPEG'},
+    {id: 8, name: 'Lighthouse', size: '182 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00591.jpeg', ext: 'JPEG'},
+    {id: 9, name: 'Waterfall', size: '182 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00827.jpeg', ext: 'JPEG'},
+    {id: 10, name: 'Temple Roof', size: '123 KB', width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg',  ext: 'JPG'},
+    {id: 11, name: 'Starry Sky', size: '231 KB', width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg',  ext: 'JPG'},
+    {id: 12, name: 'Molten glass', size: '173 KB', width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg',  ext: 'JPG'},
+    {id: 13, name: 'Mountain Range', size: '623 KB', width: 1215, height: 121, src: 'https://i.imgur.com/zzwWogn.jpg',  ext: 'JPG'}
+  ];
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({result: data.slice((page - 1) * 4, page * 4), cursor: page < 4 ? page + 1 : null});
+    }, 2000);
+  });
+  ///- end collapse -///
+}
+
 function AsyncLoadingCardView() {
-  let imageLinks = React.useRef(null);
   let list = useAsyncList({
-    async load({signal, cursor}) {
-      if (cursor) {
-        cursor = cursor.replace(/^http:\/\//i, 'https://');
-      }
-
-      if (imageLinks.current == null) {
-        let fullRes = await fetch('https://rawcdn.githack.com/akabab/starwars-api/0.2.1/api/all.json');
-        imageLinks.current = await fullRes.json();
-      }
-
-      let items = [];
-      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search', {signal});
-      let json = await res.json();
-      items = json.results.map((element) => ({src: imageLinks.current.find(char => char.name === element.name)?.image, title: element.name, mass: element.mass}));
-
+    async load({cursor}) {
+      let res = await getImageData(cursor || 1);
       return {
-        items: items,
-        cursor: json.next
+        items: res.result,
+        cursor: res.cursor
       };
     }
   });
 
   return (
-    <CardView items={list.items} onLoadMore={list.loadMore} loadingState={list.loadingState} layout={GridLayout} maxWidth="800px" height="500px" aria-label="Async Star Wars CardView">
+    <CardView items={list.items} onLoadMore={list.loadMore} loadingState={list.loadingState} layout={GridLayout} width="100%" height="500px" aria-label="Async loading CardView">
       {item => (
         <Card key={item.title} textValue={item.title}>
           <Image src={item.src} />
-          <Heading>{item.title}</Heading>
-          <Content>Mass: {item.mass}</Content>
+          <Heading>{item.name}</Heading>
+          <Text slot="detail">{item.ext}</Text>
+          <Content>Size: {item.size}</Content>
         </Card>
       )}
     </CardView>
   );
 }
+
+<AsyncLoadingCardView />
 ```
 
 ## Selection
@@ -316,21 +273,24 @@ The example below enables multiple selection mode, and uses `defaultSelectedKeys
 
 ```tsx example
 let items = [
-  {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png'},
-  {id: 2, name: 'Ivysaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png'},
-  {id: 3, name: 'Venusaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png'},
-  {id: 4, name: 'Charmander', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'},
-  {id: 5, name: 'Charmeleon', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'},
-  {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'}
+  {id: 1, name: 'Icy Peak', size: '206 KB', width: 670, height: 1005, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00888.jpeg'},
+  {id: 2, name: 'Grassy Plain', size: '233 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01051.jpeg'},
+  // ...
+  ///- begin collapse -///
+  {id: 3, name: 'Glacier', size: '198 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01062.jpeg'},
+  {id: 4, name: 'Castle', size: '286 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01817.jpeg'},
+  {id: 5, name: 'Panorama', size: '156 KB', width: 1024, height: 367, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01822-Pano.jpeg'},
+  {id: 6, name: 'Cliffside', size: '1.6 MB', width: 825, height: 1005, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC03438.jpeg'}
+  ///- end collapse -///
 ];
 
-<CardView items={items} height="500px" maxWidth="800px" layout={GridLayout} aria-label="Default selection CardView Pokemon example" selectionMode="multiple" defaultSelectedKeys={[2, 4]}>
+<CardView items={items} height="500px" width="100%" layout={GridLayout} aria-label="Default selection CardView example" selectionMode="multiple" defaultSelectedKeys={[2, 4]}>
   {item => (
     <Card textValue={item.name} width={item.width} height={item.height}>
       <Image src={item.src} />
       <Heading>{item.name}</Heading>
-      <Text slot="detail">PNG</Text>
-      <Content>{item.type}</Content>
+      <Text slot="detail">JPEG</Text>
+      <Content>Size: {item.size}</Content>
     </Card>
   )}
 </CardView>
@@ -343,29 +303,28 @@ be passed into the callback when the card is pressed, allowing you to update sta
 Here is how you would control selection for the above example.
 
 ```tsx example export=true
-function PokemonCardView(props) {
-
+function SelectionCardView(props) {
   let items = [
-    // Same items as in the pokemon examples...
+    // Same items as in the previous...
     ///- begin collapse -///
-    {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png'},
-    {id: 2, name: 'Ivysaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png'},
-    {id: 3, name: 'Venusaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png'},
-    {id: 4, name: 'Charmander', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'},
-    {id: 5, name: 'Charmeleon', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'},
-    {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'}
+    {id: 1, name: 'Icy Peak', size: '206 KB', width: 670, height: 1005, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00888.jpeg'},
+    {id: 2, name: 'Grassy Plain', size: '233 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01051.jpeg'},
+    {id: 3, name: 'Glacier', size: '198 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01062.jpeg'},
+    {id: 4, name: 'Castle', size: '286 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01817.jpeg'},
+    {id: 5, name: 'Panorama', size: '156 KB', width: 1024, height: 367, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01822-Pano.jpeg'},
+    {id: 6, name: 'Cliffside', size: '1.6 MB', width: 825, height: 1005, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC03438.jpeg'}
     ///- end collapse -///
   ];
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
 
   return (
-    <CardView items={items} height="500px" maxWidth="800px" layout={GridLayout} aria-label="Controlled selection CardView Pokemon example" selectionMode="multiple"selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+    <CardView items={items} height="500px" width="100%" layout={GridLayout} aria-label="Controlled selection CardView example" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
       {item => (
         <Card textValue={item.name} width={item.width} height={item.height}>
           <Image src={item.src} />
           <Heading>{item.name}</Heading>
-          <Text slot="detail">PNG</Text>
-          <Content>{item.type}</Content>
+          <Text slot="detail">JPEG</Text>
+          <Content>Size: {item.size}</Content>
         </Card>
       )}
     </CardView>
@@ -378,7 +337,7 @@ To limit users to selecting only a single card at a time, `selectionMode` can be
 
 ```tsx example
 // Using the same CardView as above
-<PokemonCardView selectionMode="single" />
+<SelectionCardView selectionMode="single" />
 ```
 
 ### Disallow empty selection
@@ -387,16 +346,40 @@ In this mode, if a single card is selected and the user presses it, it will not 
 
 ```tsx example
 // Using the same CardView as above
-<PokemonCardView disallowEmptySelection />
+<SelectionCardView disallowEmptySelection />
 ```
 
 ### Disabled cards
 You can disable specific card by providing an array of keys to CardView via the `disabledKeys` prop. This will prevent cards from being selectable as shown in the example below.
 
 ```tsx example
-// Using the same CardView as above
-<PokemonCardView selectionMode="multiple" disabledKeys={[3]} />
+function CardViewDisabledKeys() {
+  let items = [
+    {id: 1, name: 'Icy Peak', type: 'image', size: '198 KB', width: 670, height: 1005, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00888.jpeg'},
+    {id: 2, name: 'Saved Photos 20222', type: 'folder', size: '1.3 GB'},
+    ///- begin collapse -///
+    {id: 3, name: 'Glacier', size: '198 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01062.jpeg'},
+    {id: 4, name: 'Castle', size: '286 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01817.jpeg'},
+    {id: 5, name: 'Panorama', size: '156 KB', width: 1024, height: 367, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01822-Pano.jpeg'},
+    {id: 6, name: 'Cliffside', size: '1.6 MB', width: 825, height: 1005, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC03438.jpeg'}
+    ///- end collapse -///
+  ];
+
+  return (
+    <CardView items={items} height="500px" width="100%" layout={GridLayout} aria-label="Disabled selection CardView example" selectionMode="multiple" disabledKeys={[2]}>
+      {item => (
+        <Card textValue={item.name} >
+          <Image src={item.src} />
+          <Heading>{item.name}</Heading>
+          <Content>Size: {item.size}</Content>
+        </Card>
+      )}
+    </CardView>
+  );
+}
 ```
+
+TODO: add example w/ folders and items. Have items be the images already used, and find a stock folder image/try icon?
 
 ### Card actions
 A common use case is to allow a user to perform actions on one or more cards. The example below illustrates how one could use ActionBar to trigger an action on the
@@ -409,14 +392,14 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 
 let items = [
-  // Same items as in the pokemon examples...
+  // Same items as in the selection examples...
   ///- begin collapse -///
-  {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png'},
-  {id: 2, name: 'Ivysaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/002.png'},
-  {id: 3, name: 'Venusaur', type: 'Grass, Poison', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png'},
-  {id: 4, name: 'Charmander', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/004.png'},
-  {id: 5, name: 'Charmeleon', type: 'Fire', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/005.png'},
-  {id: 6, name: 'Charizard', type: 'Fire, Flying', width: 475, height: 475, src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/006.png'}
+  {id: 1, name: 'Icy Peak', size: '206 KB', width: 670, height: 1005, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC00888.jpeg'},
+  {id: 2, name: 'Grassy Plain', size: '233 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01051.jpeg'},
+  {id: 3, name: 'Glacier', size: '198 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01062.jpeg'},
+  {id: 4, name: 'Castle', size: '286 KB', width: 1024, height: 683, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01817.jpeg'},
+  {id: 5, name: 'Panorama', size: '156 KB', width: 1024, height: 367, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC01822-Pano.jpeg'},
+  {id: 6, name: 'Cliffside', size: '1.6 MB', width: 825, height: 1005, src: 'https://lfdanlu.github.io/docPhotos/photos/DSC03438.jpeg'}
   ///- end collapse -///
 ];
 
@@ -425,7 +408,7 @@ function CardViewActions() {
 
   return (
     <ActionBarContainer height="500px">
-      <CardView items={items} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="500px" maxWidth="800px" layout={GridLayout} aria-label="CardView Pokemon with ActionBar example" selectionMode="single">
+      <CardView items={items} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="500px" width="100%" layout={GridLayout} aria-label="CardView with ActionBar example" selectionMode="multiple">
         {item => (
           <Card textValue={item.name} width={item.width} height={item.height}>
             <Image src={item.src} />
@@ -436,11 +419,12 @@ function CardViewActions() {
         )}
       </CardView>
       <ActionBar
+        isEmphasized
         selectedItemCount={selectedKeys.size}
         onClearSelection={() => {
           setSelectedKeys(new Set());
         }}
-        onAction={key => alert(`Performing ${key} action on ${selectedKeys.keys().next().value}`)}>
+        onAction={key => alert(`Performing ${key} action on ${selectedKeys.size} cards.`)}>
         <Item key="edit">
           <Edit />
           <Text>Edit</Text>
@@ -482,8 +466,8 @@ GridLayout is the only layout that currently supports horizontal cards. To enabl
 to the CardView and to your GridLayout instance if you are instantiating one.
 
 ```tsx example
-// Same CardView from GridLayout example...
-<CustomLayout layout={GridLayout} aria-label="CardView with horizontal cards" height="400px" cardOrientation="horizontal" />
+// Same CardView from controlled selection example...
+<SelectionCardView layout={GridLayout} aria-label="CardView with horizontal cards" height="300px" cardOrientation="horizontal" />
 ```
 
 ### Quiet
@@ -491,8 +475,8 @@ WaterfallLayout is the only layout that currently supports quiet cards. To enabl
 to the CardView.
 
 ```tsx example
-// Same CardView from GridLayout example...
-<CustomLayout layout={WaterfallLayout} aria-label="CardView with quiet cards" isQuiet />
+// Same CardView from controlled selection example...
+<SelectionCardView layout={WaterfallLayout} aria-label="CardView with quiet cards" isQuiet />
 ```
 
 ### Empty state
