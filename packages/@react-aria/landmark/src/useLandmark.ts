@@ -207,8 +207,8 @@ document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandle
 
 /**
  * Provides landmark navigation in an application. Call this with a role and label to register a landmark navigable with F6.
- * @param props - Props for the LandmarkManager.
- * @param state - State for the LandmarkManager.
+ * @param props - Props for the landmark.
+ * @param ref - Ref to the landmark.
  */
 export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTMLElement>): LandmarkAria {
   let manager = LandmarkManager.getInstance();
