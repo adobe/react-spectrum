@@ -69,7 +69,7 @@ function treeDistance(child: HTMLElement, target: HTMLElement): number {
 }
 
 function hasLabel(ref: MutableRefObject<HTMLElement>) {
-  return ref.current.ariaLabel || ref.current.getAttribute('aria-labelledby');
+  return ref.current.getAttribute('aria-label') !== null  || ref.current.getAttribute('aria-labelledby') !== null;
 }
 
 class LandmarkManager {
