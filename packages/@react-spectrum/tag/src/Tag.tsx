@@ -91,6 +91,7 @@ function TagRemoveButton(props) {
       {...styleProps}
       ref={clearBtnRef}>
       <ClearButton
+        preventFocus
         {...props} />
     </span>
   );
