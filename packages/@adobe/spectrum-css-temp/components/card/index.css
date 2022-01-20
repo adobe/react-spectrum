@@ -717,7 +717,7 @@ user-provided
   .spectrum-Card-grid:after {
     z-index: 2;
   }
-  min-inline-size: var(--spectrum-card-quiet-min-size);
+  min-inline-size: 0;
 
   .spectrum-Card-grid {
     block-size: 100%;
