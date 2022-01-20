@@ -12,9 +12,10 @@
 
 import {CollectionBase, DOMProps, ItemProps, MultipleSelection, Node, StyleProps} from '@react-types/shared';
 import {GridState} from '@react-stately/grid';
-import {RefObject} from 'react';
+import {Key, RefObject} from 'react';
 
 export interface TagGroupProps<T> extends CollectionBase<T>, MultipleSelection {
+  disabledKeys?: Iterable<Key>,
   isDisabled?: boolean,
   isRemovable?: boolean,
   onRemove?: (items: any[]) => void
@@ -24,6 +25,7 @@ export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, St
 
 export interface TagProps<T> extends ItemProps<any> {
   isDisabled?: boolean,
+  isFocused: boolean,
   isRemovable?: boolean,
   item: Node<T>,
   onRemove?: (item, e) => void,

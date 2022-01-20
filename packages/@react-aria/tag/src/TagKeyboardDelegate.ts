@@ -16,10 +16,10 @@ import {Key} from 'react';
 
 export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollection<T>> {
   getKeyRightOf(key: Key) {
-    return super.getKeyBelow(key);
+    return this.direction === 'rtl' ? super.getKeyAbove(key) : super.getKeyBelow(key);
   }
 
   getKeyLeftOf(key: Key) {
-    return super.getKeyAbove(key);
+    return this.direction === 'rtl' ? super.getKeyBelow(key) : super.getKeyAbove(key);
   }
 }

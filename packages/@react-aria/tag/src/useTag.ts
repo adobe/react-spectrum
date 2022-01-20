@@ -23,11 +23,11 @@ import {useMessageFormatter} from '@react-aria/i18n';
 export interface TagAria {
   tagProps: HTMLAttributes<HTMLElement>,
   tagRowProps: HTMLAttributes<HTMLElement>,
-  labelProps: HTMLAttributes<HTMLElement>,
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAria {
+  let {isFocused} = props;
   const {
     isDisabled,
     isRemovable,
@@ -45,6 +45,9 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
   let {rowProps} = useGridRow({
     node: item
   }, state, tagRowRef);
+  // Don't want the row to be focusable or accessible via keyboard
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {tabIndex, ...otherRowProps} = rowProps;
 
   let {gridCellProps} = useGridCell({
     node: [...item.childNodes][0],
@@ -61,18 +64,20 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
     onPress: e => onRemove?.(children, e)
   };
 
+  isFocused = isFocused || state.selectionManager.focusedKey === item.childNodes[0].key;
   let domProps = filterDOMProps(props);
   return {
-    tagRowProps: rowProps,
+    tagRowProps: otherRowProps,
     tagProps: mergeProps(domProps, gridCellProps, {
       'aria-errormessage': props['aria-errormessage'],
+      'aria-label': props['aria-label'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
-      tabIndex: isDisabled ? -1 : 0,
+      tabIndex: (isFocused || state.selectionManager.focusedKey == null) && !isDisabled ? 0 : -1,
+      onFocus() {
+        state.selectionManager.setFocusedKey(item.childNodes[0].key);
+      },
       ref: tagRef
     }),
-    labelProps: {
-      id: labelId
-    },
     clearButtonProps: mergeProps(pressProps, {
       'aria-label': removeString,
       'aria-labelledby': `${buttonId} ${labelId}`,

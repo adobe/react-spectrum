@@ -29,7 +29,7 @@ storiesOf('TagGroup', module)
     () => (
       <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
         {item =>
-          <Item key={item.key} aria-label={item.label}><Text>{item.label}</Text></Item>
+          <Item key={item.key} ><Text>{item.label}</Text></Item>
         }
       </TagGroup>
     )
@@ -37,7 +37,7 @@ storiesOf('TagGroup', module)
   .add('icons', () => (
     <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
       {item => (
-        <Item key={item.key} aria-label={item.label}>
+        <Item key={item.key} textValue={item.label}>
           <Icon>
             <Audio />
           </Icon>

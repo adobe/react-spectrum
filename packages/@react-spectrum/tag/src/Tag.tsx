@@ -31,16 +31,18 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
     onRemove,
     ...otherProps
   } = props;
-
+  // @ts-ignore
+  let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let labelRef = useRef();
   let tagRef = useRef();
   let tagRowRef = useRef();
-  let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
+  let {clearButtonProps, tagProps, tagRowProps} = useTag({
     ...props,
-    isRemovable,
     isDisabled,
+    isFocused,
+    isRemovable,
     item,
     onRemove,
     tagRef,
@@ -51,7 +53,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
     <div
       {...tagRowProps}>
       <div
-        {...mergeProps(tagProps, hoverProps, focusProps, otherProps)}
+        {...mergeProps(tagProps, hoverProps, focusProps)}
         role="gridcell"
         className={classNames(
           styles,
@@ -62,15 +64,16 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
             'is-focused': isFocused,
             'not-removable': !isRemovable,
             'is-hovered': isHovered
-          }
-      )}>
+          },
+          styleProps.className
+        )}>
         <SlotProvider
           slots={{
             tagLabel: {UNSAFE_className: classNames(styles, 'spectrum-Tag-label')},
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
             text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable})}
           }}>
-          {typeof children === 'string' ? <div ref={labelRef} {...labelProps}><Text>{children}</Text></div> : children}
+          {typeof children === 'string' ? <div ref={labelRef}><Text>{children}</Text></div> : children}
           {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
         </SlotProvider>
       </div>
@@ -88,7 +91,6 @@ function TagRemoveButton(props) {
       {...styleProps}
       ref={clearBtnRef}>
       <ClearButton
-        preventFocus
         {...props} />
     </span>
   );

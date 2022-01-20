@@ -28,7 +28,7 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
 
   margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
-  padding: 0 0 0 calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
+  padding-inline-start:calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
   block-size: var(--spectrum-tag-height);
   max-inline-size: 100%;
 

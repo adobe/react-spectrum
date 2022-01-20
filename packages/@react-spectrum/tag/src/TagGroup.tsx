@@ -33,15 +33,13 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     onRemove,
     ...otherProps
   } = props;
-
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let {direction} = useLocale();
-  const {tagGroupProps} = useTagGroup(props);
-  let {collection} = useListState(props);
+  let listState = useListState(props);
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: isRemovable ? 2 : 1,
-    items: [...collection].map(item => {
+    items: [...listState.collection].map(item => {
       let childNodes = [{
         ...item,
         index: 0,
@@ -68,14 +66,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         childNodes
       };
     })
-  }), [collection, isRemovable]);
-
+  }), [listState.collection, isRemovable]);
   let state = useGridState({
     ...props,
     collection: gridCollection,
     focusMode: 'cell'
   });
-
   let keyboardDelegate = new TagKeyboardDelegate({
     collection: state.collection,
     disabledKeys: state.disabledKeys,
@@ -87,10 +83,14 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     ...props,
     keyboardDelegate
   }, state, domRef);
+  const {tagGroupProps} = useTagGroup(props, listState);
 
+  // Don't want the grid to be focusable or accessible via keyboard
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {tabIndex, ...otherGridProps} = gridProps;
   return (
     <div
-      {...mergeProps(styleProps, tagGroupProps, gridProps)}
+      {...mergeProps(styleProps, tagGroupProps, otherGridProps)}
       className={
         classNames(
           styles,
@@ -101,7 +101,6 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           styleProps.className
         )
       }
-      tabIndex={isDisabled ? -1 : 0}
       ref={domRef}>
       {[...gridCollection].map(item => (
         <Tag
