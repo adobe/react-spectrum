@@ -163,7 +163,12 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
       });
     };
 
-    return new IntersectionObserver(intersectionObserverCallback, intersectionObserverOptions);
+    // Workaround for tests, where IntersectionObserver will be undefined
+    try {
+      return new IntersectionObserver(intersectionObserverCallback, intersectionObserverOptions);
+    } catch (err) {
+      return undefined;
+    }
   }, []);
 
   let isFocusWithin = useRef(false);
@@ -182,7 +187,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     isFocusWithin.current = e.target !== ref.current;
 
     // Evaluate whether the browser should scroll to bring element receiving focus into view.
-    if (isFocusWithin.current) {
+    if (isFocusWithin.current && intersectionObserver) {
       intersectionObserver.observe(e.target);
     }
   }, [ref, virtualizer, focusedKey, scrollToItem, intersectionObserver]);
