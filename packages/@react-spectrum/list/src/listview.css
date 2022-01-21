@@ -97,6 +97,70 @@
     padding-top: 0px;
     padding-bottom: 0px;
   }
+
+  .react-spectrum-ListViewItem-grid {
+    display: grid;
+    grid-template-columns: auto auto auto 1fr auto auto;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+      "checkbox icon image content actions actionmenu chevron"
+      "checkbox icon image description actions actionmenu chevron"
+    ;
+    align-items: center;
+  }
+  
+  .react-spectrum-ListViewItem-checkbox {
+    grid-area: checkbox;
+    align-items: center;
+    justify-items: center;
+    min-height: 0;
+    height: 100%;
+    > span {
+      margin: 0;
+    }
+  }
+
+  .react-spectrum-ListViewItem-icon,
+  .react-spectrum-ListViewItem-image {
+    grid-area: image;
+    align-items: center;
+    justify-items: center;
+    padding-inline-end: var(--spectrum-global-dimension-size-100);
+  }
+
+  .react-spectrum-ListViewItem-image {
+    border-radius: var(--spectrum-global-dimension-size-25);
+    width: var(--spectrum-global-dimension-size-400);
+    height: var(--spectrum-global-dimension-size-400);
+  }
+
+  .react-spectrum-ListViewItem-content,
+  .react-spectrum-ListViewItem-description {
+    flex-grow: 1;
+  }
+
+  .react-spectrum-ListViewItem-content {
+    grid-area: content;
+  }
+
+  .react-spectrum-ListViewItem-description {
+    grid-area: description;
+  }
+
+  .react-spectrum-ListViewItem-actions {
+    grid-area: actions;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  .react-spectrum-ListViewItem-actionmenu {
+    grid-area: actionmenu;
+  }
+
+  .react-spectrum-ListViewItem-parentIndicator {
+    grid-area: chevron;
+    padding-inline-start: var(--spectrum-global-dimension-size-75);
+  }
   
   /* give first and last items border-radius to match listview container */
   div:first-child > div[role="row"] > & {
@@ -121,71 +185,6 @@
   min-height: var(--spectrum-global-dimension-size-600);
 }
 
-.react-spectrum-ListViewItem-grid {
-  display: grid;
-  grid-template-columns: auto auto auto 1fr auto auto;
-  grid-template-rows: 1fr auto;
-  grid-template-areas:
-    "checkbox icon image content actions actionmenu chevron"
-    "checkbox icon image description actions actionmenu chevron"
-  ;
-  align-items: center;
-}
-
-.react-spectrum-ListViewItem-checkbox {
-  grid-area: checkbox;
-  align-items: center;
-  justify-items: center;
-  min-height: 0;
-  height: 100%;
-  > span {
-    margin: 0;
-  }
-}
-
-.react-spectrum-ListViewItem-icon,
-.react-spectrum-ListViewItem-image {
-  grid-area: image;
-  align-items: center;
-  justify-items: center;
-
-  [dir="ltr"] & {
-    padding-right: var(--spectrum-global-dimension-size-100);
-  }
-  [dir="rtl"] & {
-    padding-left: var(--spectrum-global-dimension-size-100);
-  }
-}
-
-.react-spectrum-ListViewItem-image {
-  border-radius: var(--spectrum-global-dimension-size-25);
-  width: var(--spectrum-global-dimension-size-400);
-  height: var(--spectrum-global-dimension-size-400);
-}
-
-.react-spectrum-ListViewItem-content,
-.react-spectrum-ListViewItem-description {
-  flex-grow: 1;
-}
-
-.react-spectrum-ListViewItem-content {
-  grid-area: content;
-}
-
-.react-spectrum-ListViewItem-description {
-  grid-area: description;
-}
-
-.react-spectrum-ListViewItem-actions {
-  grid-area: actions;
-  flex-grow: 0;
-  flex-shrink: 0;
-}
-
-.react-spectrum-ListViewItem-actionmenu {
-  grid-area: actionmenu;
-}
-
 .react-spectrum-ListView-centeredWrapper {
   display: flex;
   align-items: center;
@@ -194,13 +193,3 @@
   height: 100%;
 }
 
-.react-spectrum-ListViewItem-parentIndicator {
-  grid-area: chevron;
-
-  [dir="ltr"] & {
-    padding-left: var(--spectrum-global-dimension-size-75);
-  }
-  [dir="rtl"] & {
-    padding-right: var(--spectrum-global-dimension-size-75);
-  }
-}
