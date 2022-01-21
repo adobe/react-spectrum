@@ -16,10 +16,76 @@ import {Key} from 'react';
 
 export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollection<T>> {
   getKeyRightOf(key: Key) {
-    return this.direction === 'rtl' ? super.getKeyAbove(key) : super.getKeyBelow(key);
+    return this.direction === 'rtl' ? this.getKeyAbove(key) : this.getKeyBelow(key);
   }
 
   getKeyLeftOf(key: Key) {
-    return this.direction === 'rtl' ? super.getKeyBelow(key) : super.getKeyAbove(key);
+    return this.direction === 'rtl' ? this.getKeyBelow(key) : this.getKeyAbove(key);
+  }
+
+  getKeyBelow(key) {
+    let startItem = this.collection.getItem(key);
+    if (!startItem) {
+      return;
+    }
+
+    // If focus was on a cell, start searching from the parent row
+    if (this.isCell(startItem)) {
+      key = startItem.parentKey;
+    }
+
+    // Find the next item
+    key = this.findNextKey(key);
+    if (key != null) {
+      // If focus was on a cell, focus the cell with the same index in the next row.
+      if (this.isCell(startItem)) {
+        let item = this.collection.getItem(key);
+        let newKey = [...item.childNodes][startItem.index].key;
+
+        // Ignore disabled tags
+        if (this.disabledKeys.has(newKey)) {
+          return this.getKeyBelow(newKey);
+        }
+        return newKey;
+      }
+
+      // Otherwise, focus the next row
+      if (this.focusMode === 'row') {
+        return key;
+      }
+    }
+  }
+
+  getKeyAbove(key) {
+    let startItem = this.collection.getItem(key);
+    if (!startItem) {
+      return;
+    }
+
+    // If focus is on a cell, start searching from the parent row
+    if (this.isCell(startItem)) {
+      key = startItem.parentKey;
+    }
+
+    // Find the previous item
+    key = this.findPreviousKey(key);
+    if (key != null) {
+      // If focus was on a cell, focus the cell with the same index in the previous row.
+      if (this.isCell(startItem)) {
+        let item = this.collection.getItem(key);
+        let newKey = [...item.childNodes][startItem.index].key;
+
+        // ignore disabled tags
+        if (this.disabledKeys.has(newKey)) {
+          return this.getKeyAbove(newKey);
+        }
+        return newKey;
+      }
+
+      // Otherwise, focus the previous row
+      if (this.focusMode === 'row') {
+        return key;
+      }
+    }
   }
 }

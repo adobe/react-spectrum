@@ -25,15 +25,10 @@ storiesOf('TagGroup', module)
     () => render({})
   )
   .add(
-    'items',
-    () => (
-      <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
-        {item =>
-          <Item key={item.key} ><Text>{item.label}</Text></Item>
-        }
-      </TagGroup>
-    )
-  )
+    'disabledKeys',
+    () => render({
+      disabledKeys: ['1']
+    }))
   .add('icons', () => (
     <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
       {item => (
@@ -47,6 +42,11 @@ storiesOf('TagGroup', module)
     </TagGroup>
   ))
   .add(
+    'isDisabled',
+    () => render({
+      isDisabled: true
+    }))
+  .add(
     'onRemove',
     () => render({
       isRemovable: true,
@@ -54,15 +54,31 @@ storiesOf('TagGroup', module)
     })
   )
   .add(
-  'disabled',
-  () => render({
-    isDisabled: true
-  }))
-  .add(
-    'disable individual tag',
+    'onRemove + disabledKeys',
     () => render({
-      disabledKeys: ['2']
-    }))
+      disabledKeys: ['2'],
+      isRemovable: true,
+      onRemove: action('onRemove')
+    })
+  )
+  .add(
+    'onRemove + isDisabled',
+    () => render({
+      isDisabled: true,
+      isRemovable: true,
+      onRemove: action('onRemove')
+    })
+  )
+  .add(
+    'using items prop',
+    () => (
+      <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
+        {item =>
+          <Item key={item.key} textValue={item.label}><Text>{item.label}</Text></Item>
+        }
+      </TagGroup>
+    )
+  )
   .add(
     'with announcing',
     () => (
