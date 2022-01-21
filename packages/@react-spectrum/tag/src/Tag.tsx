@@ -12,6 +12,8 @@
 
 import {classNames, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumTagProps} from '@react-types/tag';
@@ -19,6 +21,7 @@ import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {useTag} from '@react-aria/tag';
 
 export function Tag<T>(props: SpectrumTagProps<T>) {
@@ -31,6 +34,8 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
     onRemove,
     ...otherProps
   } = props;
+
+  console.log(otherProps);
   // @ts-ignore
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -85,10 +90,12 @@ function TagRemoveButton(props) {
   props = useSlotProps(props, 'tagRemoveButton');
   let {styleProps} = useStyleProps(props);
   let clearBtnRef = useRef();
+  let formatMessage = useMessageFormatter(intlMessages);
 
   return (
     <span
       {...styleProps}
+      aria-label={formatMessage('Remove')}
       ref={clearBtnRef}>
       <ClearButton
         preventFocus
