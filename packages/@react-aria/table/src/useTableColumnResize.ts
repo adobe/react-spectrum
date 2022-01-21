@@ -17,17 +17,23 @@ import {useRef} from 'react';
 export function useTableColumnResize(state, layout, item): any {
   const stateRef = useRef(null);
   stateRef.current = state;
+
+  const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
     onMoveStart() {
       stateRef.current.setCurrentResizeColumn(item.key);
       stateRef.current.addResizedColumn(item.key);
+      columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
     },
     onMove({deltaX}) {
-      stateRef.current.setResizeDelta(deltaX);
+      columnResizeWidthRef.current += deltaX;
+      let widthRespectingBoundaries = Math.max(item.props.minWidth || 75, Math.min(columnResizeWidthRef.current, item.props.maxWidth || Infinity));
+      stateRef.current.setResizeDelta(widthRespectingBoundaries);
     },
     onMoveEnd() {
       stateRef.current.setCurrentResizeColumn();      
       stateRef.current.setResizeDelta(0);
+      columnResizeWidthRef.current = 0;
     }
   });
 

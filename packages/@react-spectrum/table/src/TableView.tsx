@@ -279,7 +279,6 @@ function TableView<T extends object>(
             </TooltipTrigger>
           );
         }
-
         return (
           <>
             <TableColumnHeader column={item} />

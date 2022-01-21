@@ -98,7 +98,7 @@ export class TableLayout<T> extends ListLayout<T> {
       if (!isAfterResizeColumn) {
         width = this.getColumnWidth_(column.key);
         if (column.key === this.currentResizeColumn) {
-          width += this.resizeDelta;
+          width = this.resizeDelta;
         }
       } else {
         width = this.hasResizedColumn(column.key) ? this.getColumnWidth_(column.key) : props.width ?? this.getDefaultWidth(props);

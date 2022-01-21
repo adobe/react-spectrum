@@ -99,7 +99,7 @@ export function useTableState<T extends object>(
   resizeDeltaRef.current = resizeDelta;
 
   function getColumnWidth(key: Key): number {
-    return columnWidths.get(key);
+    return columnWidthsRef.current.get(key);
   }
 
   function setColumnWidthNew(key: Key, width: number) {
