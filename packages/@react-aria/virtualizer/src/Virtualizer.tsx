@@ -13,7 +13,7 @@
 import {Collection} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
 
@@ -140,6 +140,32 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     lastFocusedKey.current = focusedKey;
   }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
 
+  // Define an IntersectionObserver to evaluate whether the browser should scroll the element receiving focus into view.
+  let intersectionObserver = useMemo(() => {
+    const intersectionObserverOptions:IntersectionObserverInit = {
+      root: undefined,
+      rootMargin: '0px', 
+      threshold: 1
+    };
+
+    const scrollIntoViewOptions:ScrollIntoViewOptions = {
+      behavior: 'auto',
+      block: 'nearest',
+      inline: 'nearest'
+    };
+
+    const intersectionObserverCallback = (entries:Array<IntersectionObserverEntry>, observer:IntersectionObserver) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+          entry.target.scrollIntoView(scrollIntoViewOptions);
+        }
+        observer.unobserve(entry.target);
+      });
+    };
+
+    return new IntersectionObserver(intersectionObserverCallback, intersectionObserverOptions);
+  }, []);
+
   let isFocusWithin = useRef(false);
   let onFocus = useCallback((e: FocusEvent) => {
     // If the focused item is scrolled out of view and is not in the DOM, the collection
@@ -154,7 +180,12 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     }
 
     isFocusWithin.current = e.target !== ref.current;
-  }, [ref, virtualizer, focusedKey, scrollToItem]);
+
+    // Evaluate whether the browser should scroll to bring element receiving focus into view.
+    if (isFocusWithin.current) {
+      intersectionObserver.observe(e.target);
+    }
+  }, [ref, virtualizer, focusedKey, scrollToItem, intersectionObserver]);
 
   let onBlur = useCallback((e: FocusEvent) => {
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
