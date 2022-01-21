@@ -283,7 +283,7 @@ function TableView<T extends object>(
         return (
           <>
             <TableColumnHeader column={item} />
-            <Resizer state={state} layout={layout} item={item} />
+            {item.props.allowsResizing && <Resizer state={state} item={item} />}
           </>
         );
       case 'loader':

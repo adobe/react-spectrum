@@ -1029,8 +1029,8 @@ storiesOf('TableView', module)
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
           <Column>File Name</Column>
-          <Column>Type</Column>
-          <Column>Size</Column>
+          <Column allowsResizing>Type</Column>
+          <Column allowsResizing>Size</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -1052,9 +1052,9 @@ storiesOf('TableView', module)
     () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
-          <Column>File Name</Column>
-          <Column>Type</Column>
-          <Column width={'flex-2'}>Size</Column>
+          <Column allowsResizing>File Name</Column>
+          <Column allowsResizing>Type</Column>
+          <Column width={'flex-2'} allowsResizing>Size</Column>
         </TableHeader>
         <TableBody>
           <Row>
