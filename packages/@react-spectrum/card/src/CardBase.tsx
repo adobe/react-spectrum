@@ -42,8 +42,9 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   } = props;
 
   let key = item?.key;
+  let allowsInteraction = manager && manager.selectionMode !== 'none';
   let isSelected = manager?.isSelected(key);
-  let isDisabled = state?.disabledKeys.has(key);
+  let isDisabled = state?.disabledKeys.has(key) || !allowsInteraction;
   let onChange = () => manager?.select(key);
 
   let {styleProps} = useStyleProps(props);
@@ -52,11 +53,10 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   let gridRef = useRef<HTMLDivElement>();
 
   // cards are only interactive if there is a selection manager and it allows selection
-  let {hoverProps, isHovered} = useHover({isDisabled: manager === undefined || manager?.selectionMode === 'none' || isDisabled});
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let [isFocused, setIsFocused] = useState(false);
   let {focusWithinProps} = useFocusWithin({
-    onFocusWithinChange: setIsFocused,
-    isDisabled
+    onFocusWithinChange: setIsFocused
   });
 
   let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
@@ -171,7 +171,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           'spectrum-Card--noLayout': layout !== 'waterfall' && layout !== 'gallery' && layout !== 'grid'
         }, styleProps.className)}>
         <div ref={gridRef} className={classNames(styles, 'spectrum-Card-grid')}>
-          {manager && manager.selectionMode !== 'none' && (
+          {manager && manager.selectionMode !== 'none' && !isDisabled && (
             <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
               <Checkbox
                 isDisabled={isDisabled}
