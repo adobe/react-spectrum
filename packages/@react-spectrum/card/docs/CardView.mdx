@@ -10,6 +10,7 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
+import Anatomy from './CardAnatomy.svg';
 import docs from 'docs:@react-spectrum/card';
 import cardViewTypes from 'docs:@react-types/card/src/index.d.ts';
 import {HeaderInfo, PropTable, PageDescription, TypeLink, ClassAPI, FunctionAPI, InterfaceType, TypeContext} from '@react-spectrum/docs';
@@ -90,6 +91,8 @@ let items = [
 ```
 
 ### Cards
+<Anatomy />
+
 A standard Card consists of a preview image and a title, and allows for an optional detail area next to the title and an optional content area immediately below the
 title. The image, title, and content area can be populated by providing an [Image](Image.html), [Heading](Heading.html), and [Content](Content.html) respectively as children to
 the Card. The detail area can be populated through a [Text](Text.html) element with an accompanying `slot="detail"` prop.

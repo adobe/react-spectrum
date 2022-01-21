@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="max-height: 336px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 508 336">
+  <title>Card anatomy diagram</title>
+  <desc>Shows a card component with labels pointing to its parts, including the frame, preview, title, and details.</desc>
+  <g id="cards_quiet-anatomy_desktop" clip-path="url(#clip-cards_quiet-anatomy_desktop)">
+    <rect width="508" height="336" fill="var(--anatomy-gray-100)"/>
+    <text id="Title_detail" data-name="Title, detail" transform="translate(97 273)" fill="var(--anatomy-gray-800)" font-size="14" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-59.514" y="0">Title, detail</tspan></text>
+    <path id="Path_60677" data-name="Path 60677" d="M3424.839-8634.5H3382" transform="translate(-3276.001 8904.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <rect id="Rectangle_145812" data-name="Rectangle 145812" width="208" height="208" rx="4" transform="translate(155 35)" fill="var(--anatomy-gray-200)"/>
+    <text id="Optional_metadata_included_here." data-name="Optional metadata included here." transform="translate(155 299)" fill="var(--anatomy-gray-600)" font-size="14" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="0" y="0">Optional metadata included here.</tspan></text>
+    <g id="Rectangle_145813" data-name="Rectangle 145813" transform="translate(175.521 86)" fill="rgba(189,203,235,0.4)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+      <rect width="166.957" height="105" stroke="none"/>
+      <rect x="0.5" y="0.5" width="165.957" height="104" fill="none"/>
+    </g>
+    <path id="Path_60679" data-name="Path 60679" d="M494,2018.94,659.392,1915" transform="translate(-317.896 -1828.026)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1"/>
+    <path id="Path_60680" data-name="Path 60680" d="M494,1915l166,103.87" transform="translate(-318.002 -1827.87)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1"/>
+    <text id="Enable_Smart_Filters_" data-name="Enable Smart Filters?" transform="translate(155 275)" fill="#486ec2" font-size="16" font-family="AdobeClean-Bold, Adobe Clean" font-weight="700" letter-spacing="0.016em"><tspan x="0" y="0" xml:space="preserve">Card title  </tspan><tspan y="0" fill="var(--anatomy-gray-600)" font-size="12">DETAIL</tspan></text>
+    <text id="Frame" transform="translate(131 64)" fill="var(--anatomy-gray-800)" font-size="14" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-34.748" y="0">Frame</tspan></text>
+    <path id="Path_60681" data-name="Path 60681" d="M3424.839-8634.5H3382" transform="translate(-3242.001 8695.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <path id="Path_60682" data-name="Path 60682" d="M3510.345-8634.5H3382" transform="translate(-3090.507 8774.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <text id="Preview" transform="translate(429 145)" fill="var(--anatomy-gray-800)" font-size="14" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="0" y="0">Preview</tspan></text>
+  </g>
+</svg>
