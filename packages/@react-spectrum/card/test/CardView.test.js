@@ -937,8 +937,7 @@ describe('CardView', function () {
       triggerPress(cards[0]);
       expect(document.activeElement).not.toBe(cards[0]);
       expect(cards[0].parentNode).not.toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('disabled');
-      expect(within(cards[0]).getByRole('checkbox')).not.toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).queryByRole('checkbox')).toBeFalsy();
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 

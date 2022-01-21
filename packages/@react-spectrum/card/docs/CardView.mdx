@@ -169,13 +169,11 @@ function LayoutDemo() {
 ```
 
 ### GridLayout
-As can be seen above, the GridLayout renders each card with a uniform height and width regardless of the image size. The customizable options available to the GridLayout are as follows:
+As can be seen above, the GridLayout renders each card with a uniform height and width regardless of the image size. The customizable options specific to the GridLayout are as follows:
 
-- `minItemSize`
 - `maxItemSize`
 - `minSpace`
 - `maxColumns`
-- `itemPadding`
 - `cardOrientation`
 
 ### GalleryLayout
@@ -183,21 +181,25 @@ The GalleryLayout arranges each card in such a way that each card in a row share
 aspect ratio. The layout will attempt to take up all available space in the CardView and thus will distribute the cards in each row accordingly.
 The customizable options available to the GalleryLayout are as follows:
 
-- `minItemSize`
 - `idealRowHeight`
 - `itemSpacing`
-- `itemPadding`
 - `threshold`
 
 ### WaterfallLayout
 The WaterfallLayout organizes the cards into equal width columns but allows each card to have a variable height. Similarly to GalleryLayout, it attempts to accommodate
-the aspect ratio of each card's image. The customizable options available to the WaterfallLayout are as follows:
+the aspect ratio of each card's image. The customizable options specific to the WaterfallLayout are as follows:
 
-- `minItemSize`
 - `maxItemSize`
 - `minSpace`
 - `maxColumns`
+
+### Shared layout options
+In addition to the layout specific options mentioned above, each of the layouts possess following shared options:
+
+- `minItemSize`
 - `itemPadding`
+- `scale`
+- `margin`
 
 ## Labeling
 ### Accessibility
@@ -419,7 +421,7 @@ function File(props) {
 
 function CardViewDisabledKeys() {
   let items = [
-    {id: 1, name: 'Predictions 2022', type: 'file', size: '1.2 MB', format: 'PDF'},
+    {id: 1, name: 'Vacation ideas', type: 'file', size: '100 KB', format: 'DOCX'},
     {id: 2, name: 'Saved Photos 2022', type: 'folder', size: '1.3 GB'},
     // ...
     ///- begin collapse -///
