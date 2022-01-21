@@ -45,7 +45,6 @@
     "@react-stately/collections": "^3.3.2",
     "@react-stately/grid": "^3.0.0",
     "@react-stately/list": "^3.3.0",
-    "@react-stately/table": "3.0.0-alpha.10",
     "@react-types/shared": "^3.1.0",
     "@react-types/tag": "3.0.0-alpha.1",
     "@spectrum-icons/workflow": "^3.1.0"
