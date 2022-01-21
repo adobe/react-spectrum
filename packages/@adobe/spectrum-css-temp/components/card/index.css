@@ -135,7 +135,7 @@ user-provided
   &.is-focused,
   &.is-selected,
   &.focus-ring, /* only for visible focus */
-  &:hover {
+  &.is-hovered {
     .spectrum-Card-checkboxWrapper {
       /* Ideally, this would simply apply is-open to the QuickActions component */
       visibility: visible;
@@ -1054,7 +1054,7 @@ For now working around it with a useLayoutEffect in CardBase.
   &.is-focused,
   &.is-selected,
   &:focus,
-  &:hover {
+  &.is-hovered {
     .spectrum-Card-checkboxWrapper {
       display: none;
     }
@@ -1150,7 +1150,7 @@ For now working around it with a useLayoutEffect in CardBase.
   &.is-focused,
   &.is-selected,
   &:focus,
-  &:hover {
+  &.is-hovered {
     .spectrum-Card-checkboxWrapper {
       display: none;
     }

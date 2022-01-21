@@ -53,7 +53,7 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-card-border-color);
   background-color: var(--spectrum-card-background-color);
 
-  &:hover {
+  &.is-hovered {
     border-color: var(--spectrum-card-border-color-hover);
     &:before {
       box-shadow: 0 0 0 1px var(--spectrum-card-border-color-hover);
@@ -70,7 +70,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:hover.is-selected {
+  &.is-hovered.is-selected {
     border-color: var(--spectrum-card-border-color-key-focus);
     &:before {
       /* Image needs to go right to the edge, so no border. Adding border on focus causes
@@ -87,7 +87,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring:hover.is-selected {
+  &:focus-ring.is-hovered.is-selected {
     border-color: var(--spectrum-card-border-color-key-focus);
     &:before {
       box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
@@ -100,7 +100,7 @@ governing permissions and limitations under the License.
       background-color: var(--spectrum-global-color-blue-400);
       opacity: 0.15;
     }
-    &:hover {
+    &.is-hovered {
       border-color: var(--spectrum-card-border-color-key-focus);
       &:after {
         background-color: var(--spectrum-global-color-blue-400);
@@ -149,7 +149,7 @@ governing permissions and limitations under the License.
 .spectrum-Card--isQuiet {
   border-color: transparent;
   background-color: transparent;
-  &:hover {
+  &.is-hovered {
     .spectrum-Card-grid {
       &:before {
         background-color: var(--spectrum-card-quiet-preview-background-color-hover);
@@ -170,7 +170,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:hover.is-selected {
+  &.is-hovered.is-selected {
     .spectrum-Card-grid {
       &:after {
         /* Image needs to go right to the edge, so no border. Adding border on focus causes
@@ -189,7 +189,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring:hover.is-selected {
+  &:focus-ring.is-hovered.is-selected {
     .spectrum-Card-grid {
       &:after {
         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
@@ -203,7 +203,7 @@ governing permissions and limitations under the License.
         opacity: 0.15;
       }
     }
-    &:hover {
+    &.is-hovered {
       .spectrum-Card-grid {
         .spectrum-Card-decoration {
           opacity: 0.25;
@@ -248,7 +248,7 @@ governing permissions and limitations under the License.
 .spectrum-Card--horizontal {
   border-color: var(--spectrum-card-border-color);
   background-color: var(--spectrum-card-background-color);
-  &:hover {
+  &.is-hovered {
     border-color: var(--spectrum-card-border-color-hover);
     .spectrum-Card-grid {
       &:before {
@@ -269,7 +269,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:hover.is-selected {
+  &.is-hovered.is-selected {
     border-color: var(--spectrum-card-border-color-key-focus);
     .spectrum-Card-grid {
       &:before {
@@ -290,7 +290,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring:hover.is-selected {
+  &:focus-ring.is-hovered.is-selected {
     border-color: var(--spectrum-card-border-color-key-focus);
     .spectrum-Card-grid {
       &:before {
@@ -307,7 +307,7 @@ governing permissions and limitations under the License.
         opacity: 0.15;
       }
     }
-    &:hover {
+    &.is-hovered {
       border-color: var(--spectrum-card-border-color-key-focus);
       .spectrum-Card-grid {
         &:after {
