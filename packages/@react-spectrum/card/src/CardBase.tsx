@@ -15,7 +15,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useLayoutEffect, useResizeObserver, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useResizeObserver, useSlotId} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {HTMLAttributes, useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
