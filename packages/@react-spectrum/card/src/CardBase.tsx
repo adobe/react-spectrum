@@ -95,57 +95,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')}
   }), [titleProps, contentProps, height, isQuiet, orientation]);
 
-  // This is only for quiet grid cards
-  let [isCloseToSquare, setIsCloseToSquare] = useState(false);
-  useLayoutEffect(() => {
-    if (!(layout === 'grid' && isQuiet)) {
-      return;
-    }
-    // ToDo: how to handle illustrations? what if the illustration looks like an image? What about swatches/fonts https://spectrum-contributions.corp.adobe.com/page/asset-card-beta/#File-type
-    let image = gridRef.current.querySelector(`.${styles['spectrum-Card-image']} img`) as HTMLImageElement;
-    if (!image) {
-      return;
-    }
-    let measure = () => {
-      let height = image.naturalHeight;
-      let width = image.naturalWidth;
-      /*
-      * ToDo: Choose between min-padding and plain ratio
-      * Do we want to just do a ratio measurement when it's close to being a square?
-      * or do we want to actually figure out min-padding?
-      * Min Padding would require us to check that the padding is not less than the min in both Vertical and Horizontal
-      * Unfortunately img contain doesn't actually create padding, which is what this math below can figure out
-      * Vs the commented out straight ratio check
-      * */
-      let imgTagHeight = image.clientHeight;
-      let imgTagWidth = image.clientWidth;
-      let ratio = Math.min(imgTagWidth / width, imgTagHeight / height);
-      let trueHeight = ratio * height;
-      let trueWidth = ratio * width;
-      let paddingVertical = imgTagHeight - trueHeight;
-      let paddingHorizontal = imgTagWidth - trueWidth;
-      if (paddingVertical < 16 && paddingHorizontal < 16) { // ToDo: does this need to be different per scale?
-        setIsCloseToSquare(true);
-      } else {
-        setIsCloseToSquare(false);
-      }
-
-      // let ratio = height / width;
-      // if (ratio > 0.9 && ratio < 1.1) {
-      //   setIsCloseToSquare(true);
-      // }
-    };
-    if (image.complete) {
-      measure();
-    } else {
-      image.addEventListener('load', measure);
-      return () => {
-        image.removeEventListener('load', measure);
-      };
-    }
-    // ToDo: how to re-run if image src changes?
-  }, [children, setIsCloseToSquare, isQuiet, layout]);
-
   useLayoutEffect(() => {
     if (gridRef?.current) {
       let walker = getFocusableTreeWalker(gridRef.current);
@@ -170,7 +119,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           'spectrum-Card--default': !isQuiet && orientation !== 'horizontal',
           'spectrum-Card--isQuiet': isQuiet && orientation !== 'horizontal',
           'spectrum-Card--horizontal': orientation === 'horizontal',
-          'spectrum-Card--closeToSquare': isCloseToSquare,
           'spectrum-Card--noPreview': !hasPreview,
           'is-hovered': isHovered,
           'is-focused': isFocused,

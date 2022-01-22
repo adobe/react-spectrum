@@ -794,20 +794,9 @@ user-provided
       border-radius: var(--spectrum-card-quiet-border-radius);
     }
   }
-  &:not(.spectrum-Card--closeToSquare) .spectrum-Card-image,
-  &:not(.spectrum-Card--closeToSquare) .spectrum-Card-illustration {
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
     box-sizing: border-box; /* so that 100% counts padding as well */
-    block-size: 100%;
-    inline-size: 100%;
-    min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
-
-    align-self: center;
-    justify-self: center;
-  }
-  &.spectrum-Card--closeToSquare .spectrum-Card-image,
-  &.spectrum-Card--closeToSquare .spectrum-Card-illustration {
-    box-sizing: border-box; /* so that 100% counts padding as well */
-    padding: var(--spectrum-global-dimension-size-300);
     block-size: 100%;
     inline-size: 100%;
     min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
