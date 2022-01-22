@@ -35,10 +35,7 @@ interface GridCellProps {
    * Please use onCellAction at the collection level instead.
    * @deprecated
    **/
-  onAction?: () => void,
-  // TODO: perhaps make this a hidden prop
-  /** Whether the cell children should never recieve focus. Makes the cell recieve focus instead if the cell child were to receive focus. */
-  preventChildrenFocus?: boolean
+  onAction?: () => void
 }
 
 interface GridCellAria {
@@ -59,8 +56,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     isVirtualized,
     focusMode = 'child',
     shouldSelectOnPressUp,
-    onAction,
-    preventChildrenFocus
+    onAction
   } = props;
 
   let {direction} = useLocale();
@@ -70,7 +66,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   // it is focused, otherwise the cell itself is focused.
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
-    if (focusMode === 'child' && !preventChildrenFocus) {
+    if (focusMode === 'child') {
       let focusable = state.selectionManager.childFocusStrategy === 'last'
         ? last(treeWalker)
         : treeWalker.firstChild() as HTMLElement;
@@ -115,7 +111,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           focusable = null;
         }
 
-        if (focusable && !preventChildrenFocus) {
+        if (focusable) {
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
@@ -132,7 +128,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
           e.preventDefault();
           e.stopPropagation();
-          if ((focusMode === 'cell' && direction === 'rtl') || preventChildrenFocus) {
+          if (focusMode === 'cell' && direction === 'rtl') {
             focusSafely(ref.current);
           } else {
             walker.currentNode = ref.current;
@@ -155,7 +151,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           focusable = null;
         }
 
-        if (focusable && !preventChildrenFocus) {
+        if (focusable) {
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
@@ -167,7 +163,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
           e.preventDefault();
           e.stopPropagation();
-          if ((focusMode === 'cell' && direction === 'ltr') || preventChildrenFocus) {
+          if (focusMode === 'cell' && direction === 'ltr') {
             focusSafely(ref.current);
           } else {
             walker.currentNode = ref.current;
@@ -216,7 +212,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     // If the cell itself is focused, wait a frame so that focus finishes propagatating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      if (focusMode === 'child' && document.activeElement === ref.current && !preventChildrenFocus) {
+      if (focusMode === 'child' && document.activeElement === ref.current) {
         focus();
       }
     });
