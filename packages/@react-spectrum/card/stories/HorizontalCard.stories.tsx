@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Item} from '@react-spectrum/menu';
 import {Card} from '..';
 import {Content} from '@react-spectrum/view';
 import {
@@ -20,7 +19,6 @@ import {
   LongContent,
   LongDetail,
   LongTitle,
-  NoActionMenu,
   NoDescription,
   NoDescriptionSquare,
   WithIllustration
@@ -65,9 +63,6 @@ HorizontalNoDescription.args = {...Horizontal.args, ...NoDescription.args};
 export const HorizontalNoDescriptionSquare = Template().bind({});
 HorizontalNoDescriptionSquare.args = {...Horizontal.args, ...NoDescriptionSquare.args};
 
-export const HorizontalNoActionMenu = Template().bind({});
-HorizontalNoActionMenu.args = {...Horizontal.args, ...NoActionMenu.args};
-
 export const HorizontalWithIllustration = Template().bind({});
 HorizontalWithIllustration.args = {...Horizontal.args, ...WithIllustration.args};
 
@@ -99,10 +94,6 @@ export const CardGrid = (props: SpectrumCardProps) => (
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
           </Card>
         );
       })
@@ -127,10 +118,6 @@ export const CardFloat = (props: SpectrumCardProps) => (
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
               <Content>Description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
             </Card>
           </div>
         );
@@ -158,10 +145,6 @@ export const CardGridTall = (props: SpectrumCardProps) => (
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
           </Card>
         );
       })
