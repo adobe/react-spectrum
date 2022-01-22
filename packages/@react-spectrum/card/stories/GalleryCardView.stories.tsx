@@ -130,7 +130,7 @@ CustomLayoutOptions.args = {
   'aria-label': 'Test CardView',
   selectionMode: 'multiple',
   items: itemsLowVariance,
-  layoutOptions: {idealRowHeight: 400, itemSpacing: new Size(10, 10), itemPadding: 114, minItemSize: new Size(150, 400)}
+  layoutOptions: {idealRowHeight: 400, itemSpacing: new Size(10, 10), itemPadding: 78, minItemSize: new Size(150, 400)}
 };
 CustomLayoutOptions.storyName = 'Custom layout options';
 
