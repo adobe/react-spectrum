@@ -88,10 +88,7 @@ user-provided
 .spectrum-Card-avatar
 .spectrum-Card-heading
 .spectrum-Card-detail
-.spectrum-Card-actions
 .spectrum-Card-content
-.spectrum-Card-divider
-.spectrum-Card-footer
  */
 
 
@@ -182,20 +179,10 @@ user-provided
   grid-area: detail;
   word-break: break-word;
 }
-.spectrum-Card-actions {
-  grid-area: actionmenu;
-  align-self: start;
-}
 .spectrum-Card-content {
   grid-area: content;
   word-break: break-word;
   overflow: hidden;
-}
-.spectrum-Card-divider {
-  grid-area: divider;
-}
-.spectrum-Card-footer {
-  grid-area: footer;
 }
 .spectrum-Card-decoration {
   display: none;
@@ -238,16 +225,14 @@ user-provided
 
   .spectrum-Card-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-actionbutton-height), auto) 1fr auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-actionbutton-height), auto) 1fr var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
       ".       .       .       .          ."
-      ".       title   detail  actionmenu ."
+      ".       title   detail  .          ."
       ".       content content content    ."
-      ".       divider divider divider    ."
-      ".       footer  footer  footer     ."
       ".       .       .       .          .";
 
     &:before {
@@ -263,14 +248,12 @@ user-provided
   &.spectrum-Card--noPreview .spectrum-Card-grid {
     display: grid;
     grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       ".       .       .       .          ."
-      ".       title   detail  actionmenu ."
+      ".       title   detail  .          ."
       ".       content content content    ."
-      ".       divider divider divider    ."
-      ".       footer  footer  footer     ."
       ".       .       .       .          .";
 
     .spectrum-Card-avatar {
@@ -317,19 +300,8 @@ user-provided
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .spectrum-Card-actions {
-  }
   .spectrum-Card-content {
     margin-block-end: 5px;
-  }
-  .spectrum-Card-divider {
-    margin-block-start: 5px;
-    margin-block-end: 5px;
-  }
-  .spectrum-Card-footer {
-    margin-block-start: 5px;
-    display: flex;
-    justify-content: flex-end;
   }
 }
 
@@ -370,16 +342,14 @@ user-provided
   &:not(.spectrum-Card--noPreview) .spectrum-Card-grid {
     display: grid;
     block-size: 100%;
-    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), 1fr) var(--spectrum-global-dimension-size-200) minmax(var(--spectrum-actionbutton-height), auto) auto auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), 1fr) var(--spectrum-global-dimension-size-200) minmax(var(--spectrum-actionbutton-height), auto) auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
       ".       .       .       .          ."
-      ".       title   detail  actionmenu ."
+      ".       title   detail  .          ."
       ".       content content content    ."
-      ".       divider divider divider    ."
-      ".       footer  footer  footer     ."
       ".       .       .       .          .";
 
     &:before {
@@ -395,15 +365,13 @@ user-provided
   &.spectrum-Card--noPreview .spectrum-Card-grid {
     display: grid;
     block-size: 100%;
-    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       ".       .       .       .          ."
-      ".       title   detail  actionmenu ."
+      ".       title   detail  .          ."
       ".       content content content    ."
-      ".       divider divider divider    ."
-      ".       footer  footer  footer     ."
       ".       .       .       .          .";
 
     .spectrum-Card-avatar {
@@ -450,21 +418,10 @@ user-provided
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .spectrum-Card-actions {
-  }
   .spectrum-Card-content {
     margin-block-end: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
-  }
-  .spectrum-Card-divider {
-    margin-block-start: 5px;
-    margin-block-end: 5px;
-  }
-  .spectrum-Card-footer {
-    margin-block-start: 5px;
-    display: flex;
-    justify-content: flex-end;
   }
 }
 
@@ -504,16 +461,14 @@ user-provided
 
   &:not(.spectrum-Card--noPreview) .spectrum-Card-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-actionbutton-height), auto) 1fr auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-actionbutton-height), auto) 1fr var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
       ".       .       .       .          ."
-      ".       title   detail  actionmenu ."
+      ".       title   detail  .          ."
       ".       content content content    ."
-      ".       divider divider divider    ."
-      ".       footer  footer  footer     ."
       ".       .       .       .          .";
 
     &:before {
@@ -528,15 +483,13 @@ user-provided
 
   &.spectrum-Card--noPreview .spectrum-Card-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) 1fr minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr auto auto var(--spectrum-card-body-padding-bottom);
+    grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
+    grid-template-rows: var(--spectrum-global-dimension-size-300) auto 1fr var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       ".       .       .       .          ."
-      ".       title   detail  actionmenu ."
+      ".       title   detail  .          ."
       ".       content content content    ."
-      ".       divider divider divider    ."
-      ".       footer  footer  footer     ."
       ".       .       .       .          .";
 
     /* TODO: is this accurate? if we don't want to enforce it, then we can
@@ -588,19 +541,8 @@ user-provided
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .spectrum-Card-actions {
-  }
   .spectrum-Card-content {
     margin-block-end: 5px;
-  }
-  .spectrum-Card-divider {
-    margin-block-start: 5px;
-    margin-block-end: 5px;
-  }
-  .spectrum-Card-footer {
-    margin-block-start: 5px;
-    display: flex;
-    justify-content: flex-end;
   }
 }
 /** END Standard Vertical **/
@@ -623,14 +565,13 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
-    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) 1fr var(--spectrum-card-body-padding-bottom);
+    grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) 1fr;
     grid-template-areas:
       "preview preview preview"
-      ".       .       ."
-      "title   detail  actionmenu"
-      "content content content"
-      ".       .       .      ";
+      ".       .       .      "
+      "title   detail  .      "
+      "content content content";
 
     &:before {
       content: ' ';
@@ -692,16 +633,8 @@ user-provided
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-actions {
-  }
   .spectrum-Card-content {
     margin-block-end: 5px;
-  }
-  .spectrum-Card-divider {
-    display: none;
-  }
-  .spectrum-Card-footer {
-    display: none;
   }
 }
 
@@ -722,14 +655,13 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
-    grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) minmax(auto, var(--spectrum-global-dimension-size-600)) var(--spectrum-card-body-padding-bottom);
+    grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
+    grid-template-rows: 1fr var(--spectrum-card-quiet-body-header-margin-top) var(--spectrum-actionbutton-height) var(--spectrum-alias-single-line-height);
     grid-template-areas:
       "preview preview preview"
-      ".       .       ."
-      "title   detail  actionmenu"
-      "content content content"
-      ".       .       .      ";
+      ".       .       .      "
+      "title   detail  .      "
+      "content content content";
 
     &:before {
       content: ' ';
@@ -796,18 +728,10 @@ user-provided
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-actions {
-  }
   .spectrum-Card-content {
     margin-block-end: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
-  }
-  .spectrum-Card-divider {
-    display: none;
-  }
-  .spectrum-Card-footer {
-    display: none;
   }
 }
 
@@ -827,12 +751,12 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
+    grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) var(--spectrum-alias-single-line-height) 1fr;
     grid-template-areas:
       "preview preview preview"
-      ".       .       ."
-      "title   detail  actionmenu"
+      ".       .       .      "
+      "title   detail  .      "
       "content content content"
       ".       .       .      ";
 
@@ -919,18 +843,10 @@ user-provided
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-actions {
-  }
   .spectrum-Card-content {
     margin-block-end: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
-  }
-  .spectrum-Card-divider {
-    display: none;
-  }
-  .spectrum-Card-footer {
-    display: none;
   }
 }
 
@@ -950,12 +866,12 @@ user-provided
   .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
-    grid-template-columns: minmax(0, auto) minmax(30px, 1fr) minmax(0, auto);
+    grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
     grid-template-rows: auto var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) auto var(--spectrum-card-body-padding-bottom);
     grid-template-areas:
       "preview preview preview"
-      ".       .       ."
-      "title   detail  actionmenu"
+      ".       .       .      "
+      "title   detail  .      "
       "content content content"
       ".       .       .      ";
 
@@ -1021,16 +937,8 @@ user-provided
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-actions {
-  }
   .spectrum-Card-content {
     margin-block-end: 5px;
-  }
-  .spectrum-Card-divider {
-    display: none;
-  }
-  .spectrum-Card-footer {
-    display: none;
   }
 }
 /** END Quiet Vertical **/
@@ -1064,9 +972,9 @@ For now working around it with a useLayoutEffect in CardBase.
     display: grid;
     block-size: 100%;
     grid-template-columns: auto var(--spectrum-global-dimension-size-200) 1fr auto var(--spectrum-global-dimension-size-200);
-    grid-template-rows: auto 1fr var(--spectrum-global-dimension-size-200);
+    grid-template-rows: var(--spectrum-global-dimension-size-400) 1fr var(--spectrum-global-dimension-size-200);
     grid-template-areas:
-      "preview . title   actionmenu ."
+      "preview . title   .       ."
       "preview . content content ."
       "preview . .       .       .";
 
@@ -1116,8 +1024,6 @@ For now working around it with a useLayoutEffect in CardBase.
   .spectrum-Card-detail {
     display: none;
   }
-  .spectrum-Card-actions {
-  }
   /* how to handle long description?? */
   .spectrum-Card-content {
     width: 100%;
@@ -1127,12 +1033,6 @@ For now working around it with a useLayoutEffect in CardBase.
     /* not working because this line is removed in css preprocessing */
     -webkit-box-orient: vertical;
     visibility: visible;
-  }
-  .spectrum-Card-divider {
-    display: none;
-  }
-  .spectrum-Card-footer {
-    display: none;
   }
 }
 
@@ -1162,9 +1062,9 @@ For now working around it with a useLayoutEffect in CardBase.
     block-size: 100%;
     max-block-size: 100%;
     grid-template-columns: auto var(--spectrum-global-dimension-size-200) 1fr auto var(--spectrum-global-dimension-size-200);
-    grid-template-rows: auto 1fr var(--spectrum-global-dimension-size-200);
+    grid-template-rows: var(--spectrum-global-dimension-size-400) 1fr var(--spectrum-global-dimension-size-200);
     grid-template-areas:
-      "preview . title   actionmenu ."
+      "preview . title   .       ."
       "preview . content content ."
       "preview . .       .       .";
 
@@ -1221,8 +1121,6 @@ For now working around it with a useLayoutEffect in CardBase.
   .spectrum-Card-detail {
     display: none;
   }
-  .spectrum-Card-actions {
-  }
   /* how to handle long description?? */
   .spectrum-Card-content {
     width: 100%;
@@ -1232,12 +1130,6 @@ For now working around it with a useLayoutEffect in CardBase.
     /* not working because this line is removed in css preprocessing */
     -webkit-box-orient: vertical;
     visibility: visible;
-  }
-  .spectrum-Card-divider {
-    display: none;
-  }
-  .spectrum-Card-footer {
-    display: none;
   }
 }
 /** END Standard Horizontal **/

@@ -30,7 +30,7 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
   itemSpacing?: Size,
   /**
    * The vertical padding for an item.
-   * @default 114
+   * @default 78
    */
   itemPadding?: number,
   /**
@@ -60,8 +60,8 @@ const DEFAULT_OPTIONS = {
     minItemSize: new Size(136, 136),
     itemSpacing: new Size(18, 18),
     itemPadding: {
-      'medium': 114,
-      'large': 143
+      'medium': 78,
+      'large': 99
     },
     dropSpacing: 100,
     margin: 24

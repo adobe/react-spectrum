@@ -35,12 +35,7 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
    * The maximum number of columns.
    * @default Infinity
    */
-  maxColumns?: number,
-  /**
-   * The vertical padding for an item.
-   * @default 56
-   */
-  itemPadding?: number
+  maxColumns?: number
 }
 
 // TODO: this didn't have any options that varied with card size, should it have?
@@ -49,7 +44,6 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
   protected maxItemSize: Size;
   protected minSpace: Size;
   protected maxColumns: number;
-  itemPadding: number;
   protected numColumns: number;
   protected itemWidth: number;
   protected horizontalSpacing: number;
@@ -63,8 +57,6 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     this.margin = options.margin != null ? options.margin : 24;
     this.minSpace = options.minSpace || new Size(18, 18);
     this.maxColumns = options.maxColumns || Infinity;
-    // TODO: not entirely sure what this is for since the layout will automatically shift itself to the correct vertical space for the card
-    this.itemPadding = options.itemPadding != null ? options.itemPadding : 56;
 
     this.itemWidth = 0;
     this.numColumns = 0;
@@ -113,8 +105,8 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       } else if (node.props.width && node.props.height) {
         let nodeWidth = node.props.width;
         let nodeHeight = node.props.height;
-        let scaledHeight = Math.round(nodeWidth * ((itemWidth) / nodeHeight));
-        height = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, scaledHeight)) + this.itemPadding;
+        let scaledHeight = Math.round(nodeHeight * ((itemWidth) / nodeWidth));
+        height = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, scaledHeight));
       } else {
         height = itemWidth;
       }

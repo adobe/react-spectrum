@@ -31,17 +31,6 @@ describe('Card', function () {
     userEvent.tab();
     expect(card).toBe(document.activeElement);
 
-    let buttons = getAllByRole('button');
-    expect(buttons.length).toBe(2);
-
-    userEvent.tab();
-    expect(buttons[0]).toBe(document.activeElement);
-    expect(buttons[0]).toHaveAttribute('aria-label', 'More actions');
-
-    // this is the footer button
-    userEvent.tab();
-    expect(buttons[1]).toBe(document.activeElement);
-
     userEvent.tab();
     expect(document.body).toBe(document.activeElement);
   });
@@ -74,11 +63,5 @@ describe('Card', function () {
 
     userEvent.tab();
     expect(card).toBe(document.activeElement);
-
-    let button = getByRole('button');
-
-    userEvent.tab();
-    expect(button).toBe(document.activeElement);
-    expect(button).toHaveAttribute('aria-label', 'More actions');
   });
 });

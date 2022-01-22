@@ -13,10 +13,10 @@
 import {AriaCardProps, SpectrumCardProps} from '@react-types/card';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
-import {Divider} from '@react-spectrum/divider';
 import {DOMRef, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLayoutEffect, useResizeObserver, useSlotId} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
+import {getFocusableTreeWalker} from  '@react-aria/focus';
 import React, {HTMLAttributes, useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCardViewContext} from './CardViewContext';
@@ -38,7 +38,8 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     orientation = 'vertical',
     articleProps = {},
     item,
-    layout
+    layout,
+    children
   } = props;
 
   let key = item?.key;
@@ -50,6 +51,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   let {cardProps, titleProps, contentProps} = useCard(props);
   let domRef = useDOMRef(ref);
   let gridRef = useRef<HTMLDivElement>();
+  let checkboxRef = useRef(null);
 
   // cards are only interactive if there is a selection manager and it allows selection
   let {hoverProps, isHovered} = useHover({isDisabled: manager === undefined || manager?.selectionMode === 'none' || isDisabled});
@@ -58,8 +60,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     onFocusWithinChange: setIsFocused,
     isDisabled
   });
-
-  let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
 
   // ToDo: see css for comment about avatar under selector .spectrum-Card--noLayout.spectrum-Card--default
   let hasPreviewImage = useHasChild(`.${styles['spectrum-Card-image']}`, gridRef);
@@ -92,10 +92,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     avatar: {UNSAFE_className: classNames(styles, 'spectrum-Card-avatar'), size: 'avatar-size-400'},
     heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
     content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
-    detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')},
-    actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
-    footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer'), isHidden: isQuiet},
-    divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
+    detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')}
   }), [titleProps, contentProps, height, isQuiet, orientation]);
 
   // This is only for quiet grid cards
@@ -147,8 +144,21 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
       };
     }
     // ToDo: how to re-run if image src changes?
-  }, [props.children, setIsCloseToSquare, isQuiet, layout]);
+  }, [children, setIsCloseToSquare, isQuiet, layout]);
 
+  useLayoutEffect(() => {
+    if (gridRef?.current) {
+      let walker = getFocusableTreeWalker(gridRef.current);
+      let nextNode = walker.nextNode();
+      while (nextNode != null) {
+        if (checkboxRef.current && !checkboxRef.current.UNSAFE_getDOMNode().contains(nextNode)) {
+          console.warn('Card does not support focusable elements, please contact the team regarding your use case.');
+          break;
+        }
+        nextNode = walker.nextNode();
+      }
+    }
+  }, [children]);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -174,6 +184,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           {manager && manager.selectionMode !== 'none' && (
             <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
               <Checkbox
+                ref={checkboxRef}
                 isDisabled={isDisabled}
                 excludeFromTabOrder
                 isSelected={isSelected}
@@ -184,8 +195,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
             </div>
           )}
           <SlotProvider slots={slots}>
-            {props.children}
-            {hasFooter && <Divider />}
+            {children}
           </SlotProvider>
           <div className={classNames(styles, 'spectrum-Card-decoration')} />
         </div>
