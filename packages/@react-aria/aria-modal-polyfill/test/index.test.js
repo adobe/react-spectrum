@@ -25,7 +25,7 @@ import {watchModals} from '../';
 describe('watchModals', () => {
   let matchMedia;
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
   afterAll(() => {
     jest.useRealTimers();

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-Datepicker-fieldWrapper.react-spectrum-Datepicker-fieldWrapper {
+.react-spectrum-Datepicker-fieldWrapper.react-spectrum-Datepicker-fieldWrapper.react-spectrum-Datepicker-fieldWrapper {
    width: auto;
    min-width: var(--spectrum-global-dimension-size-2000);
  }
@@ -45,7 +45,7 @@
   min-width: var(--spectrum-global-dimension-size-1250);
 }
 
-.react-spectrum-TimeField-fieldWrapper.react-spectrum-TimeField-fieldWrapper {
+.react-spectrum-TimeField-fieldWrapper.react-spectrum-TimeField-fieldWrapper.react-spectrum-TimeField-fieldWrapper {
   width: auto;
   min-width: var(--spectrum-global-dimension-size-1250);
 }
@@ -135,7 +135,7 @@
   }
 }
 
-.react-spectrum-Datepicker-dialog {
+.react-spectrum-Datepicker-dialog.react-spectrum-Datepicker-dialog {
   width: auto;
 }
 
