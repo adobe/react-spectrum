@@ -18,6 +18,9 @@ import {useCalendar} from '@react-aria/calendar';
 import {useCalendarState} from '@react-stately/calendar';
 import {useLocale} from '@react-aria/i18n';
 
+/**
+ * Calendars display a grid of days in one or more months and allow users to select a single date.
+ */
 export function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>) {
   let {visibleMonths = 1} = props;
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);

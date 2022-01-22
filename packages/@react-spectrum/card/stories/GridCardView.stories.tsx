@@ -11,11 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
-import {ActionButton, Button} from '@react-spectrum/button';
-import {ActionMenu, Item} from '@react-spectrum/menu';
+import {ActionBar, ActionBarContainer, Item} from '@react-spectrum/actionbar';
+import {ActionButton} from '@react-spectrum/button';
 import {Card, CardView, GridLayout} from '../';
-import {Content, Footer} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Duplicate from '@spectrum-icons/workflow/Duplicate';
@@ -38,7 +37,7 @@ import {useProvider} from '@react-spectrum/provider';
 
 let items = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
-  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1'},
+  {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1 really really really really really really really really really really really really long'},
   {width: 182, height: 1009, src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 1'},
   {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 2'},
   {width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 2'},
@@ -218,13 +217,6 @@ function DynamicCardView(props: SpectrumCardViewProps<object>) {
               <Heading>{item.title}</Heading>
               <Text slot="detail">PNG</Text>
               <Content>Very very very very very very very very very very very very very long description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="primary">Something</Button>
-              </Footer>
             </Card>
           )}
         </CardView>
@@ -272,13 +264,6 @@ function ControlledCardView(props: SpectrumCardViewProps<object>) {
                 <Heading>{item.title}</Heading>
                 <Text slot="detail">PNG</Text>
                 <Content>Very very very very very very very very very very very very very long description</Content>
-                <ActionMenu>
-                  <Item>Action 1</Item>
-                  <Item>Action 2</Item>
-                </ActionMenu>
-                <Footer>
-                  <Button variant="primary">Something</Button>
-                </Footer>
               </Card>
             )}
           </CardView>
@@ -339,13 +324,6 @@ function NoItemCardView(props: SpectrumCardViewProps<object>) {
             <Heading>{item.title}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Very very very very very very very very very very very very very long description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
-            <Footer>
-              <Button variant="primary">Something</Button>
-            </Footer>
           </Card>
         )}
       </CardView>
@@ -374,54 +352,29 @@ function StaticCardView(props: SpectrumCardViewProps<object>) {
           <Heading>Bob 1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Very very very very very very very very very very very very very long description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
         </Card>
         <Card key="Joe 1" width={640} height={640} textValue="Joe 1">
           <Image src="https://i.imgur.com/DhygPot.jpg" />
           <Heading>Joe 1</Heading>
           <Text slot="detail">PNG</Text>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
         </Card>
         <Card key="Jane 1" width={182} height={1009} textValue="Jane 1">
           <Image src="https://i.imgur.com/L7RTlvI.png" />
           <Heading>Jane 1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
         </Card>
         <Card key="Bob 2" width={1516} height={1009} textValue="Bob 2">
           <Image src="https://i.imgur.com/1nScMIH.jpg" />
           <Heading>Bob 2</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Very very very very very very very very very very very very very long description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
         </Card>
         <Card key="Joe 2" width={640} height={640} textValue="Joe 2">
           <Image src="https://i.imgur.com/DhygPot.jpg" />
           <Heading>Joe 2</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
         </Card>
       </CardView>
     </div>
@@ -473,13 +426,6 @@ function AsyncLoadingCardView(props: SpectrumCardViewProps<object>) {
             <Heading>{item.title}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Very very very very very very very very very very very very very long description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
-            <Footer>
-              <Button variant="primary">Something</Button>
-            </Footer>
           </Card>
         )}
       </CardView>
@@ -529,13 +475,6 @@ export function CustomLayout(props: SpectrumCardViewProps<object> & LayoutOption
               <Heading>{item.title}</Heading>
               <Text slot="detail">PNG</Text>
               <Content>Very very very very very very very very very very very very very long description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="primary">Something</Button>
-              </Footer>
             </Card>
           )}
         </CardView>
