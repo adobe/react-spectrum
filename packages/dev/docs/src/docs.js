@@ -98,7 +98,13 @@ function LinkPopover({id}) {
 
   useEffect(() => {
     // Set focus to the current breadcrumb.
-    breadcrumbsRef.current && breadcrumbsRef.current.UNSAFE_getDOMNode().querySelector('[aria-current]').focus();
+    if (breadcrumbsRef.current) {
+      let currentBreadcrumb = breadcrumbsRef.current.UNSAFE_getDOMNode().querySelector('[aria-current]');
+      if (currentBreadcrumb) {
+        currentBreadcrumb.tabIndex = -1;
+        currentBreadcrumb.focus();
+      }
+    }
 
     // Update links within the rendered popover content, so that when clicked
     // they will open as the new current breadcrumb and popover content.
