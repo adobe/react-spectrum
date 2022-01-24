@@ -58,16 +58,6 @@ function getLandmarkTreeWalker(root: HTMLElement, opts?) {
   return walker;
 }
 
-function treeDistance(child: HTMLElement, target: HTMLElement): number {
-  let distance = 0;
-  let node = child;
-  while (target && node.parentElement && node !== target) {
-    node = node.parentElement;
-    distance++;
-  }
-  return distance;
-}
-
 function hasLabel(ref: MutableRefObject<HTMLElement>) {
   return ref.current.getAttribute('aria-label') !== null  || ref.current.getAttribute('aria-labelledby') !== null;
 }
@@ -115,11 +105,12 @@ class LandmarkManager {
   // Gets the landmark that is the closest parent in the DOM to the child
   // Useful for nested Landmarks
   private closestLandmark(child: HTMLElement) {
-    return Array.from(this.landmarks.keys())
-      .filter(landmark => (landmark?.current as HTMLElement).contains(child))
-      .sort((landmarkA, landmarkB) =>
-        treeDistance(child, landmarkA?.current) - treeDistance(child, landmarkB?.current)
-      )[0];
+    let registeredLandmarks = new Map([...this.landmarks.keys()].map(l => [l.current, l]));
+    let node = child;
+    while (!registeredLandmarks.has(node) && node !== document.body) {
+      node = node.parentElement;
+    }
+    return registeredLandmarks.get(node);
   }
 
   public getNextLandmark(walker, {backward}) {
