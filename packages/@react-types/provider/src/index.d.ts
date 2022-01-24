@@ -93,23 +93,23 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
 
 export interface ProviderContext extends ContextProps {
   /**
-   * The package version number of the parent Provider.
+   * The package version number of the nearest parent Provider.
    */
   version: string,
   /**
-   * The theme of the immediate parent Provider.
+   * The theme of the nearest parent Provider.
    */
   theme: Theme,
   /**
-   * The color scheme of the immediate parent Provider.
+   * The color scheme of the nearest parent Provider.
    */
   colorScheme: ColorScheme,
   /**
-   * The scale of the immediate parent Provider.
+   * The scale of the nearest parent Provider.
    */
   scale: Scale,
   /**
-   * The breakpoints of the immediate parent Provider used for styleProps.
+   * The breakpoints of the nearest parent Provider used for styleProps.
    */
   breakpoints: Breakpoints
 }
