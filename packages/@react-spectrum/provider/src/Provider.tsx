@@ -185,6 +185,9 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
   );
 });
 
+/**
+ * Returns the various settings and styles applied by the immediate parent Provider.
+ */
 export function useProvider(): ProviderContext {
   return useContext(Context);
 }
