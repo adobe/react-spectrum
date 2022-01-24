@@ -11,6 +11,7 @@
  */
 
 // setup file
+import {intersectionObserver} from '@shopify/jest-dom-mocks';
 import '@testing-library/jest-dom';
 
 // this prints a nice stack like this
@@ -68,3 +69,11 @@ function failTestOnConsoleWarn() {
 
 failTestOnConsoleWarn();
 failTestOnConsoleError();
+
+beforeAll(() => {
+  intersectionObserver.mock();
+});
+
+afterAll(() => {
+  intersectionObserver.restore();
+});

@@ -67,6 +67,7 @@
     "@parcel/transformer-inline": "^2.2.1",
     "@parcel/transformer-svg-react": "^2.2.1",
     "@parcel/transformer-typescript-types": "^2.2.1",
+    "@shopify/jest-dom-mocks": "^3.0.11",
     "@spectrum-css/component-builder": "^1.0.0",
     "@spectrum-css/vars": "^2.3.0",
     "@storybook/addon-a11y": "^6.1.10",

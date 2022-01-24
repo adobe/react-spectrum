@@ -163,7 +163,6 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
       });
     };
 
-    // Workaround for tests, where IntersectionObserver will be undefined
     try {
       return new IntersectionObserver(intersectionObserverCallback, intersectionObserverOptions);
     } catch (err) {
