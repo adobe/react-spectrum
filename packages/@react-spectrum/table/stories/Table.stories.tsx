@@ -1048,13 +1048,13 @@ storiesOf('TableView', module)
     )
   )
   .add(
-    'resizable columns, flex',
+    'resizable columns, uncontrolled, flex',
     () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
           <Column allowsResizing>File Name</Column>
           <Column allowsResizing>Type</Column>
-          <Column width={'flex-2'} allowsResizing>Size</Column>
+          <Column defaultWidth={'flex-2'} allowsResizing>Size</Column>
         </TableHeader>
         <TableBody>
           <Row>

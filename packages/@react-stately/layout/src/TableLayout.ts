@@ -95,13 +95,15 @@ export class TableLayout<T> extends ListLayout<T> {
     for (let column of this.collection.columns) {
       let props = column.props as ColumnProps<T>;
       let width;
-      if (!isAfterResizeColumn) {
+      if (props.width) {
+        width = props.width;
+      } else if (!isAfterResizeColumn) {
         width = this.getColumnWidth_(column.key);
         if (column.key === this.currentResizeColumn) {
           width = this.resizeDelta;
         }
       } else {
-        width = this.hasResizedColumn(column.key) ? this.getColumnWidth_(column.key) : props.width ?? this.getDefaultWidth(props);
+        width = this.hasResizedColumn(column.key) ? this.getColumnWidth_(column.key) : props.defaultWidth ?? this.getDefaultWidth(props);
       }
       if (this.getIsStatic(width)) {
         let w = this.parseWidth(width);
@@ -155,13 +157,13 @@ export class TableLayout<T> extends ListLayout<T> {
 
   mapColumns(remainingColumns, remainingSpace) {
     let remainingFractions = remainingColumns.reduce(
-      (sum, column) => sum + this.parseFractionalUnit(column.props.width),
+      (sum, column) => sum + this.parseFractionalUnit(column.props.defaultWidth),
       0
     );
   
     let columns = [...remainingColumns].map((column, index) => {
       const targetWidth =
-        (this.parseFractionalUnit(column.props.width) * remainingSpace) / remainingFractions;
+        (this.parseFractionalUnit(column.props.defaultWidth) * remainingSpace) / remainingFractions;
   
       return {
         ...column,
@@ -179,7 +181,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
   solveWidths(remainingColumns, remainingSpace) {
     let remainingFractions = remainingColumns.reduce(
-      (sum, col) => sum + this.parseFractionalUnit(col.props.width),
+      (sum, col) => sum + this.parseFractionalUnit(col.props.defaultWidth),
       0
     );
   
@@ -187,7 +189,7 @@ export class TableLayout<T> extends ListLayout<T> {
       const column = remainingColumns[i];
   
       const targetWidth =
-        (this.parseFractionalUnit(column.props.width) * remainingSpace) / remainingFractions;
+        (this.parseFractionalUnit(column.props.defaultWidth) * remainingSpace) / remainingFractions;
   
       let width = Math.max(
         this.getMinWidth(column.minWidth),
@@ -195,7 +197,7 @@ export class TableLayout<T> extends ListLayout<T> {
       );
       column.columnWidth = width;
       remainingSpace -= width;
-      remainingFractions -= this.parseFractionalUnit(column.props.width);
+      remainingFractions -= this.parseFractionalUnit(column.props.defaultWidth);
     }
   
     return remainingColumns;
