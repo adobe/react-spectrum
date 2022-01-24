@@ -17,10 +17,11 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
 import {FocusScope} from '@react-aria/focus';
+import {focusWithoutScrolling, useLayoutEffect} from '@react-aria/utils';
 import highlightCss from './syntax-highlight.css';
 import {Modal} from '@react-spectrum/overlays';
 import {Pressable} from '@react-aria/interactions';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {ThemeProvider} from './ThemeSwitcher';
 import {usePress} from '@react-aria/interactions';
@@ -96,13 +97,13 @@ function LinkPopover({id}) {
   let breadcrumbsRef = useRef();
   let [breadcrumbs, setBreadcrumbs] = useState([document.getElementById(id)]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Set focus to the current breadcrumb.
     if (breadcrumbsRef.current) {
       let currentBreadcrumb = breadcrumbsRef.current.UNSAFE_getDOMNode().querySelector('[aria-current]');
       if (currentBreadcrumb) {
         currentBreadcrumb.tabIndex = -1;
-        currentBreadcrumb.focus();
+        focusWithoutScrolling(currentBreadcrumb);
       }
     }
 
