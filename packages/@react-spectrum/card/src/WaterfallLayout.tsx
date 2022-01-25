@@ -175,8 +175,6 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       newLayoutInfo.rect.height = size.height <= 600 ? size.height : 600;
       newLayoutInfo.estimatedSize = false;
       this.layoutInfos.set(key, newLayoutInfo);
-      // TODO: v2 had layoutInfo.estimatedSize = view.estimatedSize || false; but we can't do the same here?
-      layoutInfo.estimatedSize = false;
       return true;
     }
 
