@@ -224,7 +224,7 @@ user-provided
   }
 
   .spectrum-Card-grid {
-    max-height: 100%;
+    block-size: 100%;
     display: grid;
     grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
     grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), 1fr) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-actionbutton-height), auto) auto var(--spectrum-card-body-padding-bottom);
@@ -564,7 +564,6 @@ user-provided
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
   .spectrum-Card-grid {
-    max-height: 100%;
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
