@@ -27,9 +27,7 @@ export function useTableColumnResize(state, item): any {
     },
     onMove({deltaX}) {
       columnResizeWidthRef.current += deltaX;
-      let widthRespectingBoundaries = Math.max(item.props.minWidth || 75, Math.min(columnResizeWidthRef.current, item.props.maxWidth || Infinity));
-      stateRef.current.setResizeDelta(widthRespectingBoundaries);
-      stateRef.current.setColumnWidth(item.key, widthRespectingBoundaries);
+      stateRef.current.setResizeDelta(columnResizeWidthRef.current);
     },
     onMoveEnd() {
       stateRef.current.setCurrentResizeColumn();

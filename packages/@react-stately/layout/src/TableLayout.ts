@@ -71,11 +71,17 @@ export class TableLayout<T> extends ListLayout<T> {
     this.wasLoading = this.isLoading;
     this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
+    // only rebuild columns that come after the column being resized, if no column is being resized, they will all be built
     const resizeIndex = this.collection.columns.findIndex(column => column.key === this.currentResizeColumn);
-    let affectedResizeColumns = this.collection.columns.slice(resizeIndex + 1, this.collection.columns.length);
-    let remainingSpace = this.virtualizer.visibleRect.width;
-    remainingSpace = this.collection.columns.slice(0, resizeIndex + 1).reduce((acc, column) => acc - this.getColumnWidth_(column.key), this.virtualizer.visibleRect.width);
+    // if resizing, set the column width for the resized column to the delta bounded by it's min/max
+    if (resizeIndex > -1) {
+      const columnProps = this.collection.columns[resizeIndex].props;
+      this.setColumnWidth(this.currentResizeColumn, Math.max(this.getMinWidth(columnProps?.minWidth), Math.min(this.getMaxWidth(columnProps.maxWidth), this.resizeDelta)));
+    }
+    const affectedResizeColumns = this.collection.columns.slice(resizeIndex + 1, this.collection.columns.length);
+    const remainingSpace = this.collection.columns.slice(0, resizeIndex + 1).reduce((acc, column) => acc - this.getColumnWidth_(column.key), this.virtualizer.visibleRect.width);
     this.buildColumnWidths(affectedResizeColumns, remainingSpace);
+
     let header = this.buildHeader();
     let body = this.buildBody(0);
     body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
