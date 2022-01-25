@@ -18,6 +18,9 @@ import {useLocale} from '@react-aria/i18n';
 import {useRangeCalendar} from '@react-aria/calendar';
 import {useRangeCalendarState} from '@react-stately/calendar';
 
+/**
+ * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
+ */
 export function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>) {
   let {visibleMonths = 1} = props;
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);

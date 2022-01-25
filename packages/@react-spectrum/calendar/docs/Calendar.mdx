@@ -1,0 +1,161 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/calendar';
+import i18nDocs from 'docs:@internationalized/date';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/calendar/package.json';
+
+```jsx import
+import {Calendar} from '@react-spectrum/calendar';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Date and Time
+keywords: [date]
+after_version: 3.0.0
+---
+
+# Calendar
+
+<PageDescription>{docs.exports.Calendar.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Calendar']}
+  sourceData={[]} />
+
+## Example
+
+```tsx example
+<Calendar aria-label="Event date" />
+```
+
+## Value
+
+A `Calendar` has no selection by default. An initial, uncontrolled value can be provided to the `Calendar` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date values are provided using objects in the `@internationalized/date` package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
+
+`Calendar` supports values with both date and time components, but only allows users to modify the date. By default, `Calendar` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the date and preserving the time components.
+
+```tsx example
+import {parseDate} from '@internationalized/date';
+
+function Example() {
+  let [value, setValue] = React.useState(parseDate('2020-02-03'));
+
+  return (
+    <Flex gap="size-300" wrap>
+      <Calendar
+        aria-label="Date (uncontrolled)"
+        defaultValue={parseDate('2020-02-03')} />
+      <Calendar
+        aria-label="Date (controlled)"
+        value={value}
+        onChange={setValue} />
+    </Flex>
+  );
+}
+```
+
+### International calendars
+
+`Calendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the `Provider` component.
+
+Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
+
+The below example displays a `Calendar` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
+
+```tsx example
+import {Provider} from '@adobe/react-spectrum';
+
+function Example() {
+  let [date, setDate] = React.useState(null);
+  return (
+    <Provider locale="hi-IN-u-ca-indian">
+      <Calendar aria-label="Date" value={date} onChange={setDate} />
+      <p>Selected date: {date?.toString()}</p>
+    </Provider>
+  );
+}
+```
+
+## Labeling
+
+An aria-label must be provided to the `Calendar` for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
+
+### Internationalization
+
+In order to internationalize a `Calendar`, a localized string should be passed to the `aria-label` prop. For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the `Calendar` is automatically flipped. Dates are automatically formatted using the current locale.
+
+## Events
+
+`Calendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@adobe/react-spectrum';
+
+function Example() {
+  let [date, setDate] = React.useState(parseDate('2022-07-04'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <Calendar aria-label="Event date" value={date} onChange={setDate} />
+      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+    </>
+  );
+}
+```
+
+## Validation
+
+By default, `Calendar` allows selecting any date. The `minValue` and `maxValue` props can also be used to prevent the user from selecting dates outside a certain range.
+
+This example only accepts dates after today.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+<Calendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} />
+```
+
+## Props
+
+<PropTable component={docs.exports.Calendar} links={docs.links} />
+
+## Visual options
+
+### Disabled
+
+```tsx example
+<Calendar aria-label="Event date" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDisabled`, the Calendar remains focusable.
+
+```tsx example
+<Calendar aria-label="Event date" value={today(getLocalTimeZone())} isReadOnly />
+```
+
+### Visible months
+
+By default, the `Calendar` displays a single month. The `visibleMonths` prop allows displaying up to 3 months at a time.
+
+```tsx example
+<Calendar aria-label="Event date" visibleMonths={3} />
+```

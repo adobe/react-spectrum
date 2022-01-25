@@ -28,7 +28,7 @@ function type(key) {
 
 describe('RangeCalendar', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
