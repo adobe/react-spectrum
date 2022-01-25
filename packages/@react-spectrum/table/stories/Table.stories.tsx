@@ -28,7 +28,7 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import {LoadingState, SelectionMode} from '@react-types/shared';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {Key, useState} from 'react';
+import React, {Key, useMemo, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
@@ -1070,6 +1070,12 @@ storiesOf('TableView', module)
         </TableBody>
       </TableView>
     )
+  )
+  .add(
+    'resizable columns, controlled',
+    () => (
+      <ResizableColumnsControlled />
+    )
   );
 
 function AsyncLoadingExample() {
@@ -1417,5 +1423,62 @@ export function TableWithBreadcrumbs() {
       </TableView>
       <ActionButton onPress={() => setSelection(items.some(item => item.key === 'd') ? new Set(['d']) : new Set([]))}>Select D</ActionButton>
     </Flex>
+  );
+}
+
+function ResizableColumnsControlled() {
+  let columns = [
+    {
+      key: 0,
+      label: 'File Name',
+      allowsResizing: true,
+      width: 300
+    },
+    {
+      key: 1,
+      label: 'Type',
+      allowsResizing: true,
+      width: 200
+    },
+    {
+      key: 2,
+      label: 'Size',
+      allowsResizing: true,
+      width: 96
+    }
+  ];
+
+  let [columnState, setColumnState] = useState(columns);
+
+  let onResize = (key, prevWidth, newWidth) => {
+    if (newWidth !== prevWidth) {
+      let updatedColumnState = columnState.map(c => key === c.key ? {...c, width: newWidth} : c);
+      setColumnState(updatedColumnState);
+
+    }
+
+  };
+
+
+  return (
+    <TableView aria-label="TableView with resizable columns" width={600} height={200}>
+      <TableHeader>
+        {
+            columnState.map(c => useMemo(() => (<Column allowsResizing={c.allowsResizing} width={c.width} onResize={(newWidth) => onResize(c.key, c.width, newWidth)}>{c.label}</Column>), [c.width]))
+        }
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>2018 Proposal</Cell>
+          <Cell>PDF</Cell>
+          <Cell>214 KB</Cell>
+        </Row>
+        <Row>
+          <Cell>Budget</Cell>
+          <Cell>XLS</Cell>
+          <Cell>120 KB</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
   );
 }

@@ -21,9 +21,9 @@ type TableLayoutOptions<T> = ListLayoutOptions<T> & {
   getDefaultWidth: (props) => string | number,
   columnWidths: Map<Key, number>,
   getColumnWidth: (key: Key) => number,
-  setColumnWidth: (key: Key, width: number) => void,
+  setColumnWidth: (column: any, width: number) => void,
   hasResizedColumn: (key: Key) => boolean,
-  currentResizeColumn: Key,
+  currentResizeColumn: any,
   resizeDelta: number
 }
 
@@ -35,9 +35,9 @@ export class TableLayout<T> extends ListLayout<T> {
   stickyColumnIndices: number[];
   getDefaultWidth: (props) => string | number;
   getColumnWidth_: (key: Key) => number;
-  setColumnWidth: (key: Key, width: number) => void;
+  setColumnWidth_: (column: any, width: number) => void;
   hasResizedColumn: (key: Key) => boolean;
-  currentResizeColumn: Key;
+  currentResizeColumn: any;
   resizeDelta: number;
   wasLoading = false;
   isLoading = false;
@@ -47,7 +47,7 @@ export class TableLayout<T> extends ListLayout<T> {
     this.getDefaultWidth = options.getDefaultWidth;
     this.columnWidths = options.columnWidths;
     this.getColumnWidth_ = options.getColumnWidth;
-    this.setColumnWidth = options.setColumnWidth;
+    this.setColumnWidth_ = options.setColumnWidth;
     this.hasResizedColumn = options.hasResizedColumn;
     this.currentResizeColumn = options.currentResizeColumn;
     this.columnWidthsRef = this.columnWidths;
@@ -71,11 +71,26 @@ export class TableLayout<T> extends ListLayout<T> {
     this.wasLoading = this.isLoading;
     this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
-    const resizeIndex = this.collection.columns.findIndex(column => column.key === this.currentResizeColumn);
-    let affectedResizeColumns = this.collection.columns.slice(resizeIndex + 1, this.collection.columns.length);
-    let remainingSpace = this.virtualizer.visibleRect.width;
-    remainingSpace = this.collection.columns.slice(0, resizeIndex + 1).reduce((acc, column) => acc - this.getColumnWidth_(column.key), this.virtualizer.visibleRect.width);
+    // only rebuild columns that come after the column being resized, if no column is being resized, they will all be built
+    const resizeIndex = this.collection.columns.findIndex(column => column.key === this.currentResizeColumn?.key);
+    // if resizing, set the column width for the resized column to the delta bounded by it's min/max
+    if (resizeIndex > -1) {
+      const columnProps = this.collection.columns[resizeIndex].props;
+      const boundedResizeDelta = Math.max(this.getMinWidth(columnProps?.minWidth), Math.min(this.getMaxWidth(columnProps.maxWidth), this.resizeDelta));
+
+      if (columnProps.width) {
+        // Controlled component - explicit width is defined and should always win.
+        // Unsure: Set column width to current width but call onResize with the new width?
+        this.setColumnWidth_(this.currentResizeColumn, columnProps.width);
+        columnProps.onResize && columnProps.onResize(boundedResizeDelta);
+      } else {
+        this.setColumnWidth(this.currentResizeColumn, boundedResizeDelta);
+      }
+    }
+    const affectedResizeColumns = this.collection.columns.slice(resizeIndex + 1, this.collection.columns.length);
+    const remainingSpace = this.collection.columns.slice(0, resizeIndex + 1).reduce((acc, column) => acc - this.getColumnWidth_(column.key), this.virtualizer.visibleRect.width);
     this.buildColumnWidths(affectedResizeColumns, remainingSpace);
+
     let header = this.buildHeader();
     let body = this.buildBody(0);
     body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
@@ -84,6 +99,11 @@ export class TableLayout<T> extends ListLayout<T> {
       header,
       body
     ];
+  }
+
+  setColumnWidth(column, newWidth) {
+    this.setColumnWidth_(column, newWidth);
+    column.props.onResize && column.props.onResize(newWidth);
   }
 
   buildColumnWidths(affectedResizeColumns: GridNode<T>[], remainingSpace: number) {
@@ -104,7 +124,7 @@ export class TableLayout<T> extends ListLayout<T> {
       if (this.getIsStatic(width)) {
         let w = this.parseWidth(width);
         this.columnWidthsRef.set(column.key, w);
-        this.setColumnWidth(column.key, w);
+        this.setColumnWidth(column, w);
         remainingSpace -= w;
       } else {
         remainingColumns.add(column);
@@ -126,7 +146,7 @@ export class TableLayout<T> extends ListLayout<T> {
       let i = 0;
       for (let column of remainingColumns) {
         this.columnWidthsRef.set(column.key, remCols[i].columnWidth);
-        this.setColumnWidth(column.key, remCols[i].columnWidth);
+        this.setColumnWidth(column, remCols[i].columnWidth);
         i++;
       }
     }

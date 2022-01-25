@@ -21,15 +21,13 @@ export function useTableColumnResize(state, item): any {
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
     onMoveStart() {
-      stateRef.current.setCurrentResizeColumn(item.key);
+      stateRef.current.setCurrentResizeColumn(item);
       stateRef.current.addResizedColumn(item.key);
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
     },
     onMove({deltaX}) {
       columnResizeWidthRef.current += deltaX;
-      let widthRespectingBoundaries = Math.max(item.props.minWidth || 75, Math.min(columnResizeWidthRef.current, item.props.maxWidth || Infinity));
-      stateRef.current.setResizeDelta(widthRespectingBoundaries);
-      stateRef.current.setColumnWidth(item.key, widthRespectingBoundaries);
+      stateRef.current.setResizeDelta(columnResizeWidthRef.current);
     },
     onMoveEnd() {
       stateRef.current.setCurrentResizeColumn();

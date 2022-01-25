@@ -37,7 +37,7 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
 
   columnWidths(): Map<Key, number>,
   getColumnWidth(key: Key): number,
-  setColumnWidth(key: Key, width: number),
+  setColumnWidth(column: any, width: number),
 
   hasResizedColumn(key: Key): boolean,
   addResizedColumn(key: Key),
@@ -102,8 +102,8 @@ export function useTableState<T extends object>(
     return columnWidthsRef.current.get(key);
   }
 
-  function setColumnWidthNew(key: Key, width: number) {
-    columnWidthsRef.current.set(key, width);
+  function setColumnWidthNew(column: any, width: number) {
+    columnWidthsRef.current.set(column.key, width);
     // new map so that change detection is triggered
     setColumnWidths(new Map(columnWidthsRef.current));
   }
