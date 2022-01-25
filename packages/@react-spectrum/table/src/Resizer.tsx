@@ -5,9 +5,8 @@ import {useTableColumnResize} from '@react-aria/table/src/useTableColumnResize';
 
 
 export default function Resizer(props) {
-  const {state, layout, item} = props;
-  let {resizerProps} = useTableColumnResize(state, layout, item);
-  // console.log('from react-spectrum', state.isResizingColumn());
+  const {state, item} = props;
+  let {resizerProps} = useTableColumnResize(state, item);
   return (
     <div {...resizerProps} className={classNames(styles, 'spectrum-Table-columnResizer')} />
   );

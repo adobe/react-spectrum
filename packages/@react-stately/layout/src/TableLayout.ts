@@ -71,8 +71,11 @@ export class TableLayout<T> extends ListLayout<T> {
     this.wasLoading = this.isLoading;
     this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
-    // TODO: switch this to only pass in the columns that we want to calculate
-    this.buildColumnWidths();
+    const resizeIndex = this.collection.columns.findIndex(column => column.key === this.currentResizeColumn);
+    let affectedResizeColumns = this.collection.columns.slice(resizeIndex + 1, this.collection.columns.length);
+    let remainingSpace = this.virtualizer.visibleRect.width;
+    remainingSpace = this.collection.columns.slice(0, resizeIndex + 1).reduce((acc, column) => acc - this.getColumnWidth_(column.key), this.virtualizer.visibleRect.width);
+    this.buildColumnWidths(affectedResizeColumns, remainingSpace);
     let header = this.buildHeader();
     let body = this.buildBody(0);
     body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
@@ -83,25 +86,18 @@ export class TableLayout<T> extends ListLayout<T> {
     ];
   }
 
-  buildColumnWidths() {
+  buildColumnWidths(affectedResizeColumns: GridNode<T>[], remainingSpace: number) {
     this.stickyColumnIndices = [];
 
     // if there was a column resized, set it's width and mark it as static somehow.
 
     // Pass 1: set widths for all explicitly defined columns.
     let remainingColumns = new Set<GridNode<T>>();
-    let remainingSpace = this.virtualizer.visibleRect.width;
-    let isAfterResizeColumn = this.currentResizeColumn === null;
-    for (let column of this.collection.columns) {
+    for (let column of affectedResizeColumns) {
       let props = column.props as ColumnProps<T>;
       let width;
       if (props.width) {
         width = props.width;
-      } else if (!isAfterResizeColumn) {
-        width = this.getColumnWidth_(column.key);
-        if (column.key === this.currentResizeColumn) {
-          width = this.resizeDelta;
-        }
       } else {
         width = this.hasResizedColumn(column.key) ? this.getColumnWidth_(column.key) : props.defaultWidth ?? this.getDefaultWidth(props);
       }
@@ -119,8 +115,6 @@ export class TableLayout<T> extends ListLayout<T> {
       if (column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
         this.stickyColumnIndices.push(column.index);
       }
-
-      isAfterResizeColumn = isAfterResizeColumn || column.key === this.currentResizeColumn;
     }
 
     // Pass 2: if there are remaining columns, then distribute the remaining space evenly.

@@ -14,7 +14,7 @@
 import {useMove} from '@react-aria/interactions';
 import {useRef} from 'react';
 
-export function useTableColumnResize(state, layout, item): any {
+export function useTableColumnResize(state, item): any {
   const stateRef = useRef(null);
   stateRef.current = state;
 
@@ -29,10 +29,10 @@ export function useTableColumnResize(state, layout, item): any {
       columnResizeWidthRef.current += deltaX;
       let widthRespectingBoundaries = Math.max(item.props.minWidth || 75, Math.min(columnResizeWidthRef.current, item.props.maxWidth || Infinity));
       stateRef.current.setResizeDelta(widthRespectingBoundaries);
+      stateRef.current.setColumnWidth(item.key, widthRespectingBoundaries);
     },
     onMoveEnd() {
-      stateRef.current.setCurrentResizeColumn();      
-      stateRef.current.setResizeDelta(0);
+      stateRef.current.setCurrentResizeColumn();
       columnResizeWidthRef.current = 0;
     }
   });
