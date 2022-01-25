@@ -77,22 +77,14 @@ class LandmarkManager {
   }
 
   // Get list of landmarks with a specific role.
-  private getLandmarksByRole(role) {
-    return [...this.landmarks.keys()].filter((l) => l.current.getAttribute('role') === role);
+  public getLandmarksByRole(role) {
+    return new Set([...this.landmarks.keys()].filter((l) => l.current.getAttribute('role') === role));
   }
 
   public addLandmark(ref: MutableRefObject<HTMLElement>) {
     // could change to a map to track roles, then we could warn if someone provides two of the same role but no labels for them
     if (!this.landmarks.has(ref)) {
       this.landmarks.set(ref, null);
-    }
-
-    // Warn if there are 2+ landmarks with the same role but no label
-    // https://www.w3.org/TR/wai-aria-practices/examples/landmarks/navigation.html
-    let role = ref.current.getAttribute('role');
-    let duplicateRoleLandmarks = this.getLandmarksByRole(role);
-    if (duplicateRoleLandmarks.length >= 2 && duplicateRoleLandmarks.some(r => !hasLabel(r))) {
-      console.warn(`Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.`);
     }
   }
 
@@ -202,10 +194,22 @@ document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandle
  * @param ref - Ref to the landmark.
  */
 export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTMLElement>): LandmarkAria {
+  const {role} = props;
   let manager = LandmarkManager.getInstance();
 
   useLayoutEffect(() => {
     manager.addLandmark(ref);
+
+    // Warn if there are 2+ landmarks with the same role but no label
+    // https://www.w3.org/TR/wai-aria-practices/examples/landmarks/navigation.html
+    let landmarksWithRole = manager.getLandmarksByRole(role);
+    if (
+      landmarksWithRole.size >= 2 &&
+      [...landmarksWithRole].some(r => !hasLabel(r))
+      ) {
+      console.warn(`Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.`);
+    }
+
     return () => {
       manager.removeLandmark(ref);
     };
