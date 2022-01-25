@@ -14,7 +14,7 @@ import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInv
 import {
   Calendar,
   CalendarDate,
-  Duration,
+  DateDuration,
   GregorianCalendar,
   isSameDay,
   toCalendar,
@@ -30,7 +30,7 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
   locale: string,
   createCalendar: (name: string) => Calendar,
-  visibleDuration?: Duration,
+  visibleDuration?: DateDuration,
   selectionAlignment?: 'start' | 'center' | 'end'
 }
 

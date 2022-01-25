@@ -268,7 +268,7 @@ function mergeInterface(obj) {
 
 function merge(a, b) {
   for (let key in b) {
-    if (!(key in a)) {
+    if (!Object.prototype.hasOwnProperty.call(a, key)) {
       a[key] = b[key];
     }
   }
