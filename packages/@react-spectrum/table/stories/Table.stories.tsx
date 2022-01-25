@@ -1081,12 +1081,12 @@ function AsyncLoadingExample() {
   });
 
   return (
-    <div>
+    <div style={{width: 'calc(100% - 4rem)', maxWidth: '1000px', margin: '2rem'}}>
       <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
-      <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <TableView aria-label="Top news from Reddit" selectionMode="multiple" overflowMode="wrap" maxWidth="100%" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
           <Column key="score" width={100} allowsSorting>Score</Column>
-          <Column key="title" isRowHeader allowsSorting>Title</Column>
+          <Column key="title" minWidth={400} isRowHeader allowsSorting>Title</Column>
           <Column key="author" width={200} allowsSorting>Author</Column>
           <Column key="num_comments" width={100} allowsSorting>Comments</Column>
         </TableHeader>
@@ -1260,7 +1260,7 @@ function AsyncServerFilterTable(props) {
   };
 
   return (
-    <div>
+    <div style={{width: 'calc(100% - 4rem)', maxWidth: '600px', margin: '2rem'}}>
       <SearchField
         marginStart={'size-200'}
         marginBottom={'size-200'}
@@ -1273,6 +1273,7 @@ function AsyncServerFilterTable(props) {
       <TableView
         aria-label={'Star Wars Characters'}
         height={200}
+        maxWidth="100%"
         width={600}
         isQuiet
         sortDescriptor={list.sortDescriptor}
