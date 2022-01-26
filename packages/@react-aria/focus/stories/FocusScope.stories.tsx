@@ -93,6 +93,7 @@ function Example({usePortal}: StoryProps) {
 }
 
 function AllowFocusableFirstInScopeExample() {
+  let [allowFocusableFirstInScope, setAllowFocusableFirstInScope] = useState(true);
   let [contentIndex, setContentIndex] = useState(0);
   function DialogContent(index = 0) {
     const nextIndex = index === 2 ? 0 : index + 1;
@@ -109,9 +110,14 @@ function AllowFocusableFirstInScopeExample() {
     contents.push(DialogContent(i));
   }
   return (
-    <FocusScope contain allowFocusableFirstInScope>
+    <FocusScope contain allowFocusableFirstInScope={allowFocusableFirstInScope}>
       <div role="dialog" tabIndex={-1} aria-labelledby={`heading-${contentIndex}`} style={{border: '1px solid currentColor', borderRadius: '5px', padding: '0 1.5rem 1.5rem'}}>
         {contents[contentIndex]}
+        <p>
+          <label htmlFor="checkbox-id">
+            <input type="checkbox" id="checkbox-id" checked={allowFocusableFirstInScope} onChange={e => setAllowFocusableFirstInScope(e.target.checked)} /> allowFocusableFirstInScope
+          </label>
+        </p>
       </div>
     </FocusScope>
   );

@@ -381,7 +381,16 @@ function focusFirstInScope(scope: HTMLElement[], tabbable:boolean = true) {
   let sentinel = scope[0].previousElementSibling;
   let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
   walker.currentNode = sentinel;
-  focusElement(walker.nextNode() as HTMLElement);
+  let nextNode = walker.nextNode();
+
+  // If the scope does not contain a tabbable element, use the first focusable element.
+  if (tabbable && !nextNode) {
+    walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: false}, scope);
+    walker.currentNode = sentinel;
+    nextNode = walker.nextNode();
+  }
+
+  focusElement(nextNode as HTMLElement);
 }
 
 function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
