@@ -1,0 +1,140 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/actionbar';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/actionbar/package.json';
+
+```jsx import
+import {ActionBar, ActionBarContainer, Item} from '@react-spectrum/actionbar';
+```
+
+// TODO: Is Collections the right category? Maybe Overlays?
+---
+category: Collections
+keywords: [actionbar, selection, actions]
+after_version: 3.0.0-alpha.4
+---
+
+# ActionBar
+
+<PageDescription>{docs.exports.ActionBar.description}</PageDescription>
+
+// TODO: Attach Spectrum link when it leaves contributions site
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['{{componentName}}']}
+ />
+
+## Example
+
+// TODO: overkill for first example? Are we cool just rendering the ActionBar component by itself?
+```tsx example
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Edit from '@spectrum-icons/workflow/Edit';
+
+function ActionBarExample(props) {
+  let columns = [
+    {name: 'Name', uid: 'name'},
+    {name: 'Type', uid: 'type'},
+    {name: 'Level', uid: 'level'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
+  let {containerHeight, ...otherProps} = props;
+
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+  return (
+    <ActionBarContainer height={containerHeight || 400}>
+      <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        <TableHeader columns={columns}>
+          {column => (
+            <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row>
+              {columnKey => <Cell>{item[columnKey]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+      <ActionBar
+        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
+        onClearSelection={() => {
+          setSelectedKeys(new Set());
+        }}
+        onAction={key => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}>
+        {...otherProps}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+        <Item key="move">
+          <Move />
+          <Text>Move</Text>
+        </Item>
+        <Item key="duplicate">
+          <Duplicate />
+          <Text>Duplicate</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+```
+
+## Content
+
+// TODO: talk about ActionBarContainer expected contents, ActionBar expected contents and expected contents
+// Use language similar to the Trigger components for the ActionBarContainer?
+// Use language similar to the Collection components for ActionBar.
+// Add anatomy diagram for ActionBar
+
+### Layout
+// TODO: go into more depth about ActionBarContainer container height, show style props?
+
+## Events
+
+// TODO: talk about ActionBar onAction, onClearSelection
+
+## Props
+
+### ActionBarContainer Props
+<PropTable component={docs.exports.ActionBarContainer} links={docs.links} style={{marginBottom: '40px'}} />
+
+### ActionBar Props
+<PropTable component={docs.exports.ActionBarProps} links={docs.links} />
+
+## Visual options
+
+### isEmphasized
+
+// TODO add example for isEmphasized (and blurb describing it)
