@@ -30,8 +30,8 @@ const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
  * according to the locale.
  */
 export class NumberParser {
-  locale: string;
-  options: Intl.NumberFormatOptions;
+  private locale: string;
+  private options: Intl.NumberFormatOptions;
 
   constructor(locale: string, options: Intl.NumberFormatOptions = {}) {
     this.locale = locale;

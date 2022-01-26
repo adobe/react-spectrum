@@ -15,7 +15,7 @@ according to the locale.
 import {NumberParser} from '@internationalized/number';
 
 let parser = new NumberParser('en-US', {style: 'percent'});
-parser.parse('10%')); // -> 0.1
+parser.parse('10%'); // -> 0.1
 ```
 
 ### Validation
@@ -24,10 +24,10 @@ parser.parse('10%')); // -> 0.1
 import {NumberParser} from '@internationalized/number';
 
 let parser = new NumberParser('en-US', {style: 'unit', unit: 'inch'});
-parser.isValidPartialNumber('10 ')); // -> true
-parser.isValidPartialNumber('10 in')); // -> true
-parser.isValidPartialNumber('10 i')); // -> false
-parser.isValidPartialNumber('10 x')); // -> false
+parser.isValidPartialNumber('10 '); // -> true
+parser.isValidPartialNumber('10 in'); // -> true
+parser.isValidPartialNumber('10 i'); // -> false
+parser.isValidPartialNumber('10 x'); // -> false
 ```
 
 ### Detecting the numbering system
