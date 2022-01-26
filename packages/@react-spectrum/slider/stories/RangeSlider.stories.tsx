@@ -79,5 +79,10 @@ function render(props: SpectrumRangeSliderProps = {}) {
       action('change')(v.start, v.end);
     };
   }
+  if (props.onChangeEnd == null) {
+    props.onChangeEnd = (v) => {
+      action('changeEnd')(v.start, v.end);
+    };
+  }
   return  <RangeSlider {...props} />;
 }

@@ -121,5 +121,8 @@ function render(props: SpectrumSliderProps = {}) {
   if (props.onChange == null) {
     props.onChange = action('change');
   }
+  if (props.onChangeEnd == null) {
+    props.onChangeEnd = action('changeEnd');
+  }
   return <Slider {...props} />;
 }
