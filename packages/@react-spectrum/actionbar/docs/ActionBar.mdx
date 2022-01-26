@@ -32,7 +32,7 @@ after_version: 3.0.0-alpha.4
 // TODO: Attach Spectrum link when it leaves contributions site
 <HeaderInfo
   packageData={packageData}
-  componentNames={['{{componentName}}']}
+  componentNames={['ActionBar, ActionBarContainer, Item']}
  />
 
 ## Example
@@ -57,9 +57,9 @@ function ActionBarExample(props) {
     {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
     {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
   ];
-  let {containerHeight, ...otherProps} = props;
 
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+  let {containerHeight, ...otherProps} = props;
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
   return (
     <ActionBarContainer height={containerHeight || 400}>
       <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
@@ -83,7 +83,7 @@ function ActionBarExample(props) {
         onClearSelection={() => {
           setSelectedKeys(new Set());
         }}
-        onAction={key => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}>
+        onAction={key => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
         {...otherProps}>
         <Item key="edit">
           <Edit />
@@ -97,18 +97,12 @@ function ActionBarExample(props) {
           <Delete />
           <Text>Delete</Text>
         </Item>
-        <Item key="move">
-          <Move />
-          <Text>Move</Text>
-        </Item>
-        <Item key="duplicate">
-          <Duplicate />
-          <Text>Duplicate</Text>
-        </Item>
       </ActionBar>
     </ActionBarContainer>
   );
 }
+
+<ActionBarExample />
 ```
 
 ## Content
@@ -127,11 +121,11 @@ function ActionBarExample(props) {
 
 ## Props
 
-### ActionBarContainer Props
+### ActionBarContainer props
 <PropTable component={docs.exports.ActionBarContainer} links={docs.links} style={{marginBottom: '40px'}} />
 
-### ActionBar Props
-<PropTable component={docs.exports.ActionBarProps} links={docs.links} />
+### ActionBar props
+<PropTable component={docs.exports.ActionBar} links={docs.links} />
 
 ## Visual options
 
