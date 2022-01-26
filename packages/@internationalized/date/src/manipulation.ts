@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyCalendarDate, AnyTime, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, DateDuration, TimeDuration, DateTimeDuration, TimeField, TimeFields} from './types';
+import {AnyCalendarDate, AnyTime, CycleOptions, CycleTimeOptions, DateDuration, DateField, DateFields, DateTimeDuration, Disambiguation, TimeDuration, TimeField, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {epochFromDate, fromAbsolute, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
 import {GregorianCalendar} from './calendars/GregorianCalendar';

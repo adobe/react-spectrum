@@ -92,7 +92,7 @@ export interface DateDuration {
   days?: number
 }
 
-/** Represents an amount of time, for use whe performing arithmetic */
+/** Represents an amount of time, for use whe performing arithmetic. */
 export interface TimeDuration {
   /** The number of hours to add or subtract. */
   hours?: number,

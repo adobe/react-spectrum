@@ -36,7 +36,7 @@ export class DateFormatter implements Intl.DateTimeFormat {
     return this.formatter.format(value);
   }
 
-  /** Formats a date to an array of parts such as separators, numbers, etc. */
+  /** Formats a date to an array of parts such as separators, numbers, punctuation, and more. */
   formatToParts(value: Date): Intl.DateTimeFormatPart[] {
     return this.formatter.formatToParts(value);
   }
