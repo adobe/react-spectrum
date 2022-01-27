@@ -98,7 +98,7 @@ title. The image, title, and content area can be populated by providing an [Imag
 the Card. The detail area can be populated through a [Text](Text.html) element with an accompanying `slot="detail"` prop.
 
 Please note that a Spectrum compliant Card should not contain focusable or interactive content within the content area and that the content itself should only display the most essential pieces of information.
-If you need to perform actions on a card, please use the ActionBar component in lieu of adding an action menu to the Card itself. See the [Card Actions](#card-actions) section for an example.
+If you need to perform actions on a card, please use the [ActionBar component](./ActionBar.html) in lieu of adding an action menu to the Card itself. See the [Card Actions](#card-actions) section for an example.
 
 The properties that the Card supports can be found in the [Props](#props) table below. Note that the `height` and `width` props refer to the image's height and width, not the Card's height and
 width. These values are used to calculate the proper positioning and size of each card within the CardView's container.
@@ -450,7 +450,7 @@ function CardViewDisabledKeys() {
 ```
 
 ### Card actions
-A common use case is to allow a user to perform actions on one or more cards. The example below illustrates how one could use ActionBar to trigger an action on the
+A common use case is to allow a user to perform actions on one or more cards. The example below illustrates how one could use [ActionBar](./ActionBar.html) to trigger an action on the
 currently selected card.
 
 ```tsx example
