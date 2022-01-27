@@ -55,7 +55,8 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
     onAction,
     onClearSelection,
     selectedItemCount,
-    isOpen
+    isOpen,
+    items
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -99,6 +100,7 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
         )}>
         <div className={classNames(styles, 'react-spectrum-ActionBar-bar')}>
           <ActionGroup
+            items={items}
             aria-label={formatMessage('actions')}
             isQuiet
             staticColor={isEmphasized ? 'white' : null}
