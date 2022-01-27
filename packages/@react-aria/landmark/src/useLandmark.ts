@@ -13,7 +13,6 @@
 import {AriaLabelingProps} from '@react-types/shared';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {HTMLAttributes, MutableRefObject} from 'react';
-import {isElementVisible} from '@react-aria/focus/src/isElementVisible';
 import {useLayoutEffect} from '@react-aria/utils';
 
 export interface AriaLandmarkProps  extends AriaLabelingProps {
@@ -24,46 +23,15 @@ interface LandmarkAria {
   landmarkProps: HTMLAttributes<HTMLElement>
 }
 
-let landmarkRoles = ['main', 'region', 'search', 'navigation', 'form', 'banner', 'contentinfo', 'complementary'];
-const LANDMARK_ELEMENT_SELECTOR = landmarkRoles.map(value => `[role=${value}]`).join(',');
-
-function getLandmarkTreeWalker(root: HTMLElement, opts?) {
-  let selector = LANDMARK_ELEMENT_SELECTOR;
-  let walker = document.createTreeWalker(
-    root,
-    NodeFilter.SHOW_ELEMENT,
-    {
-      acceptNode(node) {
-        // Not sure we need this, can landmarks be nested?
-        // Skip nodes inside the starting node.
-        // if (opts?.from?.contains(node)) {
-        //   return NodeFilter.FILTER_REJECT;
-        // }
-
-        if ((node as HTMLElement).matches(selector)
-          && isElementVisible(node as HTMLElement)
-          && opts?.registeredLandmarks.includes(node)) {
-          return NodeFilter.FILTER_ACCEPT;
-        }
-
-        return NodeFilter.FILTER_SKIP;
-      }
-    }
-  );
-
-  if (opts?.from) {
-    walker.currentNode = opts.from;
-  }
-
-  return walker;
-}
-
-function hasLabel(ref: MutableRefObject<HTMLElement>) {
-  return ref.current.getAttribute('aria-label') !== null  || ref.current.getAttribute('aria-labelledby') !== null;
-}
+type Landmark = {
+  ref: MutableRefObject<HTMLElement>,
+  role: string,
+  label?: string,
+  lastFocused?: HTMLElement
+};
 
 class LandmarkManager {
-  private landmarks = new Map<MutableRefObject<HTMLElement>, HTMLElement>();
+  private landmarks: Array<Landmark> = [];
   private static instance: LandmarkManager;
 
   private constructor() {}
@@ -78,56 +46,57 @@ class LandmarkManager {
 
   // Get list of landmarks with a specific role.
   public getLandmarksByRole(role) {
-    return new Set([...this.landmarks.keys()].filter((l) => l.current.getAttribute('role') === role));
+    return new Set(this.landmarks.filter(l => l.role === role));
   }
 
-  public addLandmark(ref: MutableRefObject<HTMLElement>) {
-    // could change to a map to track roles, then we could warn if someone provides two of the same role but no labels for them
-    if (!this.landmarks.has(ref)) {
-      this.landmarks.set(ref, null);
+  public addLandmark(ref: MutableRefObject<HTMLElement>, {role, label}: Omit<Landmark, 'ref' |'lastFocused'>) {
+    if (!this.landmarks.find(landmark => landmark.ref === ref)) {
+
+       // TODO: Nested case?
+       // Inside should be after (DFS). So maybe we need to accept 4 or 8?
+      let insertPosition = 0;
+      // p1.compareDocumentPosition(p2) returns 4 for when p1 is positioned before p2.
+      // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
+      while (
+        insertPosition < this.landmarks.length &&
+        (ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node) & Node.DOCUMENT_POSITION_PRECEDING)
+        ) {
+        insertPosition++;
+      }
+      this.landmarks.splice(insertPosition, 0, {ref, role, label});
     }
   }
 
   public removeLandmark(ref: MutableRefObject<HTMLElement>) {
-    if (this.landmarks.has(ref)) {
-      this.landmarks.delete(ref);
-    }
+    this.landmarks = this.landmarks.filter(landmark => landmark.ref !== ref);
   }
 
   // Gets the landmark that is the closest parent in the DOM to the child
   // Useful for nested Landmarks
-  private closestLandmark(child: HTMLElement) {
-    let registeredLandmarks = new Map([...this.landmarks.keys()].map(l => [l.current, l]));
-    let node = child;
-    while (!registeredLandmarks.has(node) && node !== document.body) {
-      node = node.parentElement;
+  private closestLandmark(element: HTMLElement) {
+    let landmarkMap = new Map(this.landmarks.map(l => [l.ref.current, l]));
+    let currentElement = element;
+    while (!landmarkMap.has(currentElement) && currentElement !== document.body) {
+      currentElement = currentElement.parentElement;
     }
-    return registeredLandmarks.get(node);
+    return landmarkMap.get(currentElement);
   }
 
-  public getNextLandmark(walker, {backward}) {
-    let nextLandmark;
-    if (backward) {
-      nextLandmark = walker.previousNode();
-      if (!nextLandmark) {
-        walker.currentNode = document.body;
-        // in nested cases, this won't return any of the nested, so traverse down the tree until there is not longer a lastChild
-        nextLandmark = walker.lastChild();
-        let temp = nextLandmark;
-        while (temp) {
-          nextLandmark = temp;
-          walker.currentNode = temp;
-          temp = walker.lastChild();
-        }
-      }
-    } else {
-      nextLandmark = walker.nextNode();
-      if (!nextLandmark) {
-        walker.currentNode = document.body;
-        nextLandmark = walker.firstChild();
-      }
+  public getNextLandmark(element: HTMLElement, {backward}: {backward?: boolean }) {
+    let currentLandmark = this.closestLandmark(element);
+    let nextLandmarkIndex = 0;
+    if (currentLandmark) {
+      nextLandmarkIndex = this.landmarks.findIndex(landmark => landmark === currentLandmark) + (backward ? -1 : 1);
     }
-    return nextLandmark;
+
+    // Wrap if necessary
+    if (nextLandmarkIndex < 0) {
+      nextLandmarkIndex = this.landmarks.length - 1;
+    } else if (nextLandmarkIndex >= this.landmarks.length) {
+      nextLandmarkIndex = 0;
+    }
+
+    return this.landmarks[nextLandmarkIndex];
   }
 
   // skipping nodes in the current landmark, look for the next landmark, wrap if needed
@@ -141,47 +110,31 @@ class LandmarkManager {
       e.preventDefault();
       e.stopPropagation();
 
-      let currentLandmark = this.closestLandmark(e.target as HTMLElement)?.current;
-      let walker = getLandmarkTreeWalker(
-        document.body,
-        {
-          from: currentLandmark || document.body,
-          registeredLandmarks: Array.from(this.landmarks.keys()).map(ref => ref.current)
-        }
-      );
-      let nextLandmark = this.getNextLandmark(walker, {backward: e.shiftKey});
-
-      if (nextLandmark) {
-        // if something was previously focused in this landmark, then return focus to it
-        let key = Array.from(this.landmarks.keys()).find(ref => ref.current === nextLandmark);
-        if (key && this.landmarks.has(key)) {
-          let lastFocused = this.landmarks.get(key);
-          if (document.body.contains(lastFocused)) {
-            lastFocused.focus();
-            return;
-          }
-        }
-        // otherwise find an element to focus
-        let focusableWalker = getFocusableTreeWalker(nextLandmark);
-        let nextElement = focusableWalker.nextNode() as HTMLElement;
-        if (!nextElement) {
-          walker.currentNode = nextLandmark;
-          nextElement = focusableWalker.firstChild() as HTMLElement;
-        }
-        while (this.closestLandmark(nextElement)?.current !== nextLandmark) {
-          nextElement = focusableWalker.nextNode() as HTMLElement;
-        }
-        if (nextElement) {
-          nextElement.focus();
+      let nextLandmark = this.getNextLandmark(e.target as HTMLElement, {backward: e.shiftKey});
+      
+      // If something was previously focused in the next landmark, then return focus to it
+      if (nextLandmark.lastFocused) {
+        let lastFocused = nextLandmark.lastFocused;
+        if (document.body.contains(lastFocused)) {
+          lastFocused.focus();
+          return;
         }
       }
+
+      // Otherwise, focus the first focusable element in the next landmark
+      let walker = getFocusableTreeWalker(nextLandmark.ref.current, {tabbable: true});
+      let nextNode = walker.nextNode() as HTMLElement;
+      if (!nextNode) {
+        nextNode = walker.firstChild() as HTMLElement;
+      }
+      nextNode.focus();
     }
   }
 
   // Only the closest landmark cares about focus inside of it
   public focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as HTMLElement);
-    this.landmarks.set(currentLandmark, e.target as HTMLElement);
+    this.landmarks = this.landmarks.map((landmark) => ({...landmark, ...(landmark === currentLandmark && {lastFocused: e.target as HTMLElement})}));
   }
 }
 
@@ -194,20 +147,29 @@ document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandle
  * @param ref - Ref to the landmark.
  */
 export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTMLElement>): LandmarkAria {
-  const {role} = props;
+  const {
+    role,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby
+  } = props;
   let manager = LandmarkManager.getInstance();
+  let label = ariaLabel || ariaLabelledby;
 
   useLayoutEffect(() => {
-    manager.addLandmark(ref);
+    manager.addLandmark(ref, {label, role});
 
-    // Warn if there are 2+ landmarks with the same role but no label
+    // Warn if there are 2+ landmarks with the same role but no label.
+    // Labels for landmarks with the same role must also be unique.
     // https://www.w3.org/TR/wai-aria-practices/examples/landmarks/navigation.html
+    // TODO: Handle duplicate labels more precisely.
     let landmarksWithRole = manager.getLandmarksByRole(role);
-    if (
-      landmarksWithRole.size >= 2 &&
-      [...landmarksWithRole].some(r => !hasLabel(r))
-      ) {
-      console.warn(`Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.`);
+    if (landmarksWithRole.size > 1) {
+      if ([...landmarksWithRole].some(landmark => !landmark.label)) {
+        console.warn(`Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.`);
+      } else if ([...landmarksWithRole].filter(landmark => landmark.label === label).length > 1) {
+        console.log([...landmarksWithRole]);
+        console.warn(`Page contains more than one landmark with the '${role}' role and ${label} label. If two or more landmarks on a page share the same role, they must have unique labels.`);
+      }
     }
 
     return () => {
