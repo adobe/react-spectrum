@@ -229,35 +229,23 @@ export function usePress(props: PressHookProps): PressResult {
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
         const {currentTarget, target, nativeEvent, repeat} = e;
-        if (currentTarget.contains(target as HTMLElement)) {
-          const isValid = isValidKeyboardEvent(nativeEvent);
-          if (isValid) {
-            e.stopPropagation();
+        if (currentTarget.contains(target as HTMLElement) && isValidKeyboardEvent(nativeEvent, currentTarget)) {
+          e.stopPropagation();
+          
+          if (shouldPreventDefaultKeyboard(target as Element)) {
+            e.preventDefault();
           }
-          if (isValid ||
-            // If the target is a link, but the currentTarget containing it is something else, 
-            // like a table row, treat the space key as a valid keyboard event as well.
-            (
-              currentTarget !== target &&
-              isLinkRole(target as HTMLElement) &&
-              isSpaceKey(nativeEvent)
-            )
-          ) {
-            if (shouldPreventDefaultKeyboard(target as Element)) {
-              e.preventDefault();
-            }
-            // If the event is repeating, it may have started on a different element
-            // after which focus moved to the current element. Ignore these events and
-            // only handle the first key down event.
-            if (!state.isPressed && !repeat) {
-              state.target = currentTarget as HTMLElement;
-              state.isPressed = true;
-              triggerPressStart(e, 'keyboard');
+          // If the event is repeating, it may have started on a different element
+          // after which focus moved to the current element. Ignore these events and
+          // only handle the first key down event.
+          if (!state.isPressed && !repeat) {
+            state.target = currentTarget as HTMLElement;
+            state.isPressed = true;
+            triggerPressStart(e, 'keyboard');
 
-              // Focus may move before the key up event, so register the event on the document
-              // instead of the same element where the key down event occurred.
-              addGlobalListener(document, 'keyup', onKeyUp, false);
-            }
+            // Focus may move before the key up event, so register the event on the document
+            // instead of the same element where the key down event occurred.
+            addGlobalListener(document, 'keyup', onKeyUp, false);
           }
         }
       },
@@ -303,21 +291,8 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
-      const isValid = isValidKeyboardEvent(e);
-      if (
-        state.isPressed &&
-        (
-          isValid ||
-          (
-            state.target.contains(target) &&
-            isLinkRole(target as HTMLElement) &&
-            isSpaceKey(e)
-          )
-        )
-      ) {
-        if (isValid) {
-          e.stopPropagation();
-        }
+      if (state.isPressed && isValidKeyboardEvent(e, state.target)) {
+        e.stopPropagation();
 
         if (shouldPreventDefaultKeyboard(target as Element)) {
           e.preventDefault();
@@ -681,9 +656,10 @@ export function usePress(props: PressHookProps): PressResult {
   // Remove user-select: none in case component unmounts immediately after pressStart
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
+    let refCurrent = ref.current;
     return () => {
       if (!allowTextSelectionOnPress) {
-        restoreTextSelection(ref.current.target);
+        restoreTextSelection(refCurrent.target);
       }
     };
   }, [allowTextSelectionOnPress]);
@@ -716,9 +692,10 @@ function isLinkRole(target: HTMLElement): boolean {
   return isHTMLAnchorLink(target) || target.getAttribute('role') === 'link';
 }
 
-function isValidKeyboardEvent(event: KeyboardEvent, currentTarget?: HTMLElement): boolean {
+function isValidKeyboardEvent(event: KeyboardEvent, currentTarget?: EventTarget): boolean {
   const {target} = event;
-  const element = (currentTarget || target) as HTMLElement;
+  const element = target as HTMLElement;
+  const currentTargetElement = currentTarget as HTMLElement;
   const role = element.getAttribute('role');
   const isEnter = isEnterKey(event);
 
@@ -726,15 +703,28 @@ function isValidKeyboardEvent(event: KeyboardEvent, currentTarget?: HTMLElement)
   // "Spacebar" is for IE 11
   return (
     (isEnter || isSpaceKey(event)) &&
-    !isEditableText(event) &&
     (
-      // A link with a valid href should be handled natively,
-      !isHTMLAnchorLink(element) || 
-      // unless it also has role='button' and was triggered using Space.
-      (role === 'button' && !isEnter)
-    ) &&
-    // An element with role='link' should only trigger with Enter key.
-    !(role === 'link' && !isEnter)
+      (
+        !isEditableText(event) &&
+        (
+          // A link with a valid href should be handled natively,
+          !isHTMLAnchorLink(element) || 
+          // unless it also has role='button' and was triggered using Space.
+          (role === 'button' && !isEnter)
+        ) &&
+        // An element with role='link' should only trigger with Enter key.
+        !(role === 'link' && !isEnter)
+      ) ||
+      (
+        // If the target is a link, but the currentTarget containing it is something else, 
+        // like a table row, treat the space key as a valid keyboard event as well.
+        currentTargetElement &&
+        currentTargetElement !== element &&
+        currentTargetElement.contains(currentTargetElement as HTMLElement) && 
+        isLinkRole(element) &&
+        !isEnter
+      )
+    )
   );
 }
 
