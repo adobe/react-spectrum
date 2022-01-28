@@ -92,7 +92,7 @@ class LandmarkManager {
         let duplicateLabels = labels.filter((item, index) => labels.indexOf(item) !== index);
   
         duplicateLabels.forEach((label) => {
-          console.warn(`Page contains more than one landmark with the '${role}' role and ${label} label. If two or more landmarks on a page share the same role, they must have unique labels.`);
+          console.warn(`Page contains more than one landmark with the '${role}' role and '${label}' label. If two or more landmarks on a page share the same role, they must have unique labels.`);
         });
       }
     }

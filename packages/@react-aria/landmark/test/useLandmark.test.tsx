@@ -521,4 +521,31 @@ describe('LandmarkManager', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.');
   });
+
+  it('Should warn if 2+ landmarks with same role and same label', function () {
+    render(
+      <div>
+        <Navigation aria-label="First nav">
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Navigation aria-label="First nav">
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'First nav\' label. If two or more landmarks on a page share the same role, they must have unique labels.');
+  });
 });
