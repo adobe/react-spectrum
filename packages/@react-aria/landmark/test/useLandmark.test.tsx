@@ -92,6 +92,20 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(tree.getByRole('textbox'));
   });
 
+  it('can F6 to a landmark region when there is only one landmark', function () {
+    let tree = render(
+      <div>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+  });
+
   it('can F6 to a nested landmark region that is first', function () {
     let tree = render(
       <div>
