@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps} from '@react-types/shared';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {HTMLAttributes, MutableRefObject} from 'react';
+import {HTMLAttributes, MutableRefObject, useEffect} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 export interface AriaLandmarkProps  extends AriaLabelingProps {
@@ -67,8 +67,35 @@ class LandmarkManager {
     }
   }
 
+  public updateLandmark(landmark: Landmark) {
+    this.landmarks = this.landmarks.map((prevLandmark) => prevLandmark === landmark ? {...prevLandmark, ...landmark} : prevLandmark);
+    this.checkLabels(landmark.role);
+  }
+
   public removeLandmark(ref: MutableRefObject<HTMLElement>) {
     this.landmarks = this.landmarks.filter(landmark => landmark.ref !== ref);
+  }
+
+  /**
+   * Warn if there are 2+ landmarks with the same role but no label.
+   * Labels for landmarks with the same role must also be unique.
+   * 
+   * See https://www.w3.org/TR/wai-aria-practices/examples/landmarks/navigation.html.
+   */
+  private checkLabels(role) {
+    let landmarksWithRole = this.getLandmarksByRole(role);
+    if (landmarksWithRole.size > 1) {
+      if ([...landmarksWithRole].some(landmark => !landmark.label)) {
+        console.warn(`Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.`);
+      } else {
+        let labels = [...landmarksWithRole].map(landmark => landmark.label);
+        let duplicateLabels = labels.filter((item, index) => labels.indexOf(item) !== index);
+  
+        duplicateLabels.forEach((label) => {
+          console.warn(`Page contains more than one landmark with the '${role}' role and ${label} label. If two or more landmarks on a page share the same role, they must have unique labels.`);
+        });
+      }
+    }
   }
 
   // Gets the landmark that is the closest parent in the DOM to the child
@@ -157,25 +184,15 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
 
   useLayoutEffect(() => {
     manager.addLandmark({ref, role, label});
-
-    // Warn if there are 2+ landmarks with the same role but no label.
-    // Labels for landmarks with the same role must also be unique.
-    // https://www.w3.org/TR/wai-aria-practices/examples/landmarks/navigation.html
-    // TODO: Handle duplicate labels more precisely.
-    let landmarksWithRole = manager.getLandmarksByRole(role);
-    if (landmarksWithRole.size > 1) {
-      if ([...landmarksWithRole].some(landmark => !landmark.label)) {
-        console.warn(`Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.`);
-      } else if ([...landmarksWithRole].filter(landmark => landmark.label === label).length > 1) {
-        console.log([...landmarksWithRole]);
-        console.warn(`Page contains more than one landmark with the '${role}' role and ${label} label. If two or more landmarks on a page share the same role, they must have unique labels.`);
-      }
-    }
-
+    
     return () => {
       manager.removeLandmark(ref);
     };
   }, []);
+
+  useEffect(() => {
+    manager.updateLandmark({ref, label, role});
+  }, [label, ref, role]);
 
   // let everything through? or only return role + labelling?
   return {landmarkProps: props};
