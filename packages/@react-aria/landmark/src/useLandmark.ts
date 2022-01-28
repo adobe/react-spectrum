@@ -111,7 +111,7 @@ class LandmarkManager {
 
   public getNextLandmark(element: HTMLElement, {backward}: {backward?: boolean }) {
     let currentLandmark = this.closestLandmark(element);
-    let nextLandmarkIndex = 0;
+    let nextLandmarkIndex = backward ? -1 : 0;
     if (currentLandmark) {
       nextLandmarkIndex = this.landmarks.findIndex(landmark => landmark === currentLandmark) + (backward ? -1 : 1);
     }
@@ -154,10 +154,18 @@ class LandmarkManager {
       }
 
       // Otherwise, focus the first focusable element in the next landmark
+      let leadingSentinal = nextLandmark.ref.current.previousSibling || nextLandmark.ref.current.parentElement;
+      // If we want to add a scope, this is what we're thinking:
+      // let trailingSentinal = nextLandmark.ref.current.nextSibling;
+      // let scope = [leadingSentinal, trailingSentinal];
       let walker = getFocusableTreeWalker(nextLandmark.ref.current, {tabbable: true});
       let nextNode = walker.nextNode() as HTMLElement;
       if (!nextNode) {
-        nextNode = walker.firstChild() as HTMLElement;
+        walker.currentNode = leadingSentinal;
+        nextNode = walker.nextNode() as HTMLElement;
+      }
+      while (this.closestLandmark(nextNode) !== nextLandmark) {
+        nextNode = walker.nextNode() as HTMLElement;
       }
       nextNode.focus();
     }
