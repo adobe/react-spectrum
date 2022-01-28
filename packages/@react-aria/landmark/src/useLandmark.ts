@@ -49,7 +49,7 @@ class LandmarkManager {
     return new Set(this.landmarks.filter(l => l.role === role));
   }
 
-  public addLandmark(ref: MutableRefObject<HTMLElement>, {role, label}: Omit<Landmark, 'ref' |'lastFocused'>) {
+  public addLandmark({ref, role, label}: Landmark) {
     if (!this.landmarks.find(landmark => landmark.ref === ref)) {
 
        // TODO: Nested case?
@@ -156,7 +156,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   let label = ariaLabel || ariaLabelledby;
 
   useLayoutEffect(() => {
-    manager.addLandmark(ref, {label, role});
+    manager.addLandmark({ref, role, label});
 
     // Warn if there are 2+ landmarks with the same role but no label.
     // Labels for landmarks with the same role must also be unique.
