@@ -92,7 +92,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(tree.getByRole('textbox'));
   });
 
-  it.skip('can F6 to a nested landmark region that is first', function () {
+  it('can F6 to a nested landmark region that is first', function () {
     let tree = render(
       <div>
         <Main>
@@ -172,7 +172,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(checkbox);
   });
 
-  it.skip('goes in dom order with two nested landmarks', function () {
+  it('goes in dom order with two nested landmarks', function () {
     let tree = render(
       <div>
         <Main>
@@ -299,7 +299,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(tree.getAllByRole('link')[2]);
   });
 
-  it.skip('can shift+F6 to a landmark region', function () {
+  it('can shift+F6 to a landmark region', function () {
     let tree = render(
       <div>
         <Navigation>
