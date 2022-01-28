@@ -22,7 +22,7 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 let iconMap = {
@@ -527,6 +527,9 @@ storiesOf('MenuTrigger', module)
         <Item key="3">Three</Item>
       </Menu>
     )
+  )
+  .add('controlled isOpen',
+    () => <ControlledOpeningMenuTrigger />
   );
 
 let customMenuItem = (item) => {
@@ -567,3 +570,25 @@ let defaultMenu = (
     )}
   </Menu>
 );
+
+function ControlledOpeningMenuTrigger() {
+  let [isOpen, setIsOpen] = useState(false);
+  return (
+    <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+      <MenuTrigger onOpenChange={setIsOpen} isOpen={isOpen}>
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}>
+          Menu Button
+        </ActionButton>
+        <Menu onAction={action('onAction')}>
+          <Item key="1">One</Item>
+          <Item key="">Two</Item>
+          <Item key="3">Three</Item>
+        </Menu>
+      </MenuTrigger>
+    </div>
+  );
+}
+
