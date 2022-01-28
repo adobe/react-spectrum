@@ -138,6 +138,11 @@ class LandmarkManager {
       e.stopPropagation();
 
       let nextLandmark = this.getNextLandmark(e.target as HTMLElement, {backward: e.shiftKey});
+
+      // If no landmarks, return
+      if (!nextLandmark) {
+        return;
+      }
       
       // If something was previously focused in the next landmark, then return focus to it
       if (nextLandmark.lastFocused) {
