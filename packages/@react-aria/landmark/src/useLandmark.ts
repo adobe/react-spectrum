@@ -15,8 +15,10 @@ import {getFocusableTreeWalker} from '@react-aria/focus';
 import {HTMLAttributes, MutableRefObject, useEffect} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
-export interface AriaLandmarkProps  extends AriaLabelingProps {
-  role: 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary'
+export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
+
+export interface AriaLandmarkProps extends AriaLabelingProps {
+  role: AriaLandmarkRole
 }
 
 interface LandmarkAria {
@@ -25,7 +27,7 @@ interface LandmarkAria {
 
 type Landmark = {
   ref: MutableRefObject<HTMLElement>,
-  role: string,
+  role: AriaLandmarkRole,
   label?: string,
   lastFocused?: HTMLElement
 };
@@ -47,7 +49,7 @@ class LandmarkManager {
   /**
    * Return set of landmarks with a specific role.
    */
-  public getLandmarksByRole(role) {
+  public getLandmarksByRole(role: AriaLandmarkRole) {
     return new Set(this.landmarks.filter(l => l.role === role));
   }
 
@@ -84,7 +86,7 @@ class LandmarkManager {
    * 
    * See https://www.w3.org/TR/wai-aria-practices/examples/landmarks/navigation.html.
    */
-  private checkLabels(role) {
+  private checkLabels(role: AriaLandmarkRole) {
     let landmarksWithRole = this.getLandmarksByRole(role);
     if (landmarksWithRole.size > 1) {
       if ([...landmarksWithRole].some(landmark => !landmark.label)) {
