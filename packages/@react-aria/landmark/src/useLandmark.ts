@@ -44,7 +44,9 @@ class LandmarkManager {
     return LandmarkManager.instance;
   }
 
-  // Get list of landmarks with a specific role.
+  /**
+   * Return set of landmarks with a specific role.
+   */
   public getLandmarksByRole(role) {
     return new Set(this.landmarks.filter(l => l.role === role));
   }
@@ -98,8 +100,10 @@ class LandmarkManager {
     }
   }
 
-  // Gets the landmark that is the closest parent in the DOM to the child
-  // Useful for nested Landmarks
+  /**
+   * Get the landmark that is the closest parent in the DOM.
+   * Returns undefined if no parent is a landmark.
+   */
   private closestLandmark(element: HTMLElement) {
     let landmarkMap = new Map(this.landmarks.map(l => [l.ref.current, l]));
     let currentElement = element;
@@ -109,6 +113,13 @@ class LandmarkManager {
     return landmarkMap.get(currentElement);
   }
 
+  /**
+   * Gets the next landmark, in DOM focus order, or previous if backwards is specified.
+   * If nested, next should be the child landmark. 
+   * If last landmark, next should be the first landmark.
+   * If not inside a landmark, will return first landmark.
+   * Returns undefined if there are no landmarks.
+   */
   public getNextLandmark(element: HTMLElement, {backward}: {backward?: boolean }) {
     if (this.landmarks.length === 0) {
       return undefined;
@@ -130,12 +141,12 @@ class LandmarkManager {
     return this.landmarks[nextLandmarkIndex];
   }
 
-  // skipping nodes in the current landmark, look for the next landmark, wrap if needed
-  // if that landmark had something focused in it previously, focus that
-  // else focus the first focusable element
-  // hopefully getFocusableTreeWalker will do the searching, or some derivative of it
-  // can we use FocusScope to handle the refocusing inside the landmark?
-  // essentially treat landmarks as a focus scope but without wrapping or restore or containment
+  /**
+   * Look at next landmark. If an element was previously focused inside, restore focus there.
+   * If not, focus the first focusable element inside the lanemark.
+   * If no focusable elements inside, go to the next landmark.
+   * If no landmarks at all, or none with focusable elements, don't move focus.
+   */
   public f6Handler(e: KeyboardEvent) {
     if (e.key === 'F6') {
       e.preventDefault();
