@@ -207,7 +207,6 @@ describe('LandmarkManager', function () {
     let checkbox1 = tree.getByLabelText('Checkbox label 1');
     let checkbox2 = tree.getByLabelText('Checkbox label 2');
     let textbox1 = tree.getByLabelText('First Name');
-    // let textbox2 = tree.getByLabelText('Last Name');
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
@@ -255,7 +254,7 @@ describe('LandmarkManager', function () {
     );
 
     userEvent.tab();
-    expect(tree.getAllByRole('link')[0]).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
@@ -279,7 +278,7 @@ describe('LandmarkManager', function () {
     );
 
     userEvent.tab();
-    expect(tree.getAllByRole('link')[0]).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
@@ -382,7 +381,7 @@ describe('LandmarkManager', function () {
     );
 
     userEvent.tab();
-    expect(tree.getAllByRole('link')[0]).toBe(document.activeElement);
+    expect(document.activeElement).toBe(document.activeElement);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
