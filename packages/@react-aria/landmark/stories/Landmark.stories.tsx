@@ -36,7 +36,8 @@ const NestedTemplate = (): Story<StoryProps> => (props) => <NestedExample {...pr
 const TableTemplate = (): Story<StoryProps> => (props) => <TableExample {...props} />;
 const ApplicationTemplate = (): Story<StoryProps> => (props) => <ApplicationExample {...props} />;
 const DuplicateRolesWithLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesWithLabelsExample {...props} />;
-const DuplicateRolesNoLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesNoLabelExample {...props} />;
+const DuplicateRolesWithNoLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesNoLabelExample {...props} />;
+const DuplicateRolesWithSameLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesWithSameLabelsExample {...props} />;
 const OneWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <OneWithNoFocusableChildrenExample {...props} />;
 const AllWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <AllWithNoFocusableChildrenExample {...props} />;
 
@@ -100,6 +101,33 @@ function DuplicateRolesWithLabelsExample() {
       </Navigation>
       <Navigation aria-label="Second Nav">
         <div>Navigation Landmark with 'Second Nav' label</div>
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </Navigation>
+      <Main>
+        <div>Main Landmark</div>
+        <TextField label="First Name" />
+      </Main>
+    </div>
+  );
+}
+
+function DuplicateRolesWithSameLabelsExample() {
+  return (
+    <div>
+      <Navigation aria-label="First Nav">
+        <div>Navigation Landmark with 'First Nav' label</div>
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </Navigation>
+      <Navigation aria-label="First Nav">
+        <div>Navigation Landmark with 'First Nav' label</div>
         <ul>
           <li><a href="/home">Home</a></li>
           <li><a href="/about">About</a></li>
@@ -294,8 +322,11 @@ ApplicationWithLandmarks.args = {};
 export const DuplicateRolesWithLabels = DuplicateRolesWithLabelsTemplate().bind({});
 DuplicateRolesWithLabels.args = {};
 
-export const DuplicateRolesNoLabels = DuplicateRolesNoLabelsTemplate().bind({});
-DuplicateRolesNoLabels.args = {};
+export const DuplicateRolesWithNoLabels = DuplicateRolesWithNoLabelsTemplate().bind({});
+DuplicateRolesWithNoLabels.args = {};
+
+export const DuplicateRolesWithSameLabels = DuplicateRolesWithSameLabelsTemplate().bind({});
+DuplicateRolesWithSameLabels.args = {};
 
 export const OneWithNoFocusableChildren = OneWithNoFocusableChildrenExampleTemplate().bind({});
 OneWithNoFocusableChildren.args = {};
