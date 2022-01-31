@@ -62,7 +62,7 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
       <FocusScope contain={contain} restoreFocus autoFocus>
         {!showNew && (
           <div role="dialog" onKeyDown={onKeyDown}>
-            <input autoFocus />
+            <input />
             <input />
             <input />
             <button onClick={() => setShowNew(true)}>replace focusscope children</button>
