@@ -230,10 +230,12 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
     return () => {
       manager.removeLandmark(ref);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     manager.updateLandmark({ref, label, role});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
 
   // let everything through? or only return role + labelling?
