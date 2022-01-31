@@ -14,7 +14,7 @@ import {classNames} from '@react-spectrum/utils';
 import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
-import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
+import {DateValue, SpectrumDateFieldProps} from '@react-types/datepicker';
 import {Field} from '@react-spectrum/label';
 import {Input} from './Input';
 import React, {useRef} from 'react';
@@ -24,7 +24,11 @@ import {useFormatHelpText} from './utils';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export function DateField<T extends DateValue>(props: SpectrumDatePickerProps<T>) {
+/**
+ * DateFields allow users to enter and edit date and time values using a keyboard.
+ * Each part of a date value is displayed in an individually editable segment.
+ */
+export function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>) {
   props = useProviderProps(props);
   let {
     autoFocus,

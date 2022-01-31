@@ -34,6 +34,9 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
+/**
+ * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ */
 export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>) {
   props = useProviderProps(props);
   let {
