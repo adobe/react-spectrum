@@ -110,6 +110,10 @@ class LandmarkManager {
   }
 
   public getNextLandmark(element: HTMLElement, {backward}: {backward?: boolean }) {
+    if (this.landmarks.length === 0) {
+      return undefined;
+    }
+    
     let currentLandmark = this.closestLandmark(element);
     let nextLandmarkIndex = backward ? -1 : 0;
     if (currentLandmark) {
@@ -137,37 +141,49 @@ class LandmarkManager {
       e.preventDefault();
       e.stopPropagation();
 
-      let nextLandmark = this.getNextLandmark(e.target as HTMLElement, {backward: e.shiftKey});
+      let backward = e.shiftKey;
+      let nextLandmark = this.getNextLandmark(e.target as HTMLElement, {backward});
 
       // If no landmarks, return
       if (!nextLandmark) {
         return;
       }
-      
-      // If something was previously focused in the next landmark, then return focus to it
-      if (nextLandmark.lastFocused) {
-        let lastFocused = nextLandmark.lastFocused;
-        if (document.body.contains(lastFocused)) {
-          lastFocused.focus();
+
+      // Iterate through landmarks, starting at next landmark
+      // until we reach a landmark with a focusble element.
+      let initialNextLandmark = nextLandmark;
+      do {
+        // If something was previously focused in the next landmark, then return focus to it
+        if (nextLandmark.lastFocused) {
+          let lastFocused = nextLandmark.lastFocused;
+          if (document.body.contains(lastFocused)) {
+            lastFocused.focus();
+            return;
+          }
+        }
+
+        // Otherwise, focus the first focusable element in the next landmark
+        let leadingSentinal = nextLandmark.ref.current.previousSibling || nextLandmark.ref.current.parentElement;
+        // If we want to add a scope, this is what we're thinking:
+        // let trailingSentinal = nextLandmark.ref.current.nextSibling;
+        // let scope = [leadingSentinal, trailingSentinal];
+        let walker = getFocusableTreeWalker(nextLandmark.ref.current, {tabbable: true});
+        let nextNode = walker.nextNode() as HTMLElement;
+        if (!nextNode) {
+          walker.currentNode = leadingSentinal;
+          nextNode = walker.nextNode() as HTMLElement;
+        }
+        while (nextNode && this.closestLandmark(nextNode) !== nextLandmark) {
+          nextNode = walker.nextNode() as HTMLElement;
+        }
+        if (document.body.contains(nextNode)) {
+          nextNode.focus();
           return;
         }
-      }
-
-      // Otherwise, focus the first focusable element in the next landmark
-      let leadingSentinal = nextLandmark.ref.current.previousSibling || nextLandmark.ref.current.parentElement;
-      // If we want to add a scope, this is what we're thinking:
-      // let trailingSentinal = nextLandmark.ref.current.nextSibling;
-      // let scope = [leadingSentinal, trailingSentinal];
-      let walker = getFocusableTreeWalker(nextLandmark.ref.current, {tabbable: true});
-      let nextNode = walker.nextNode() as HTMLElement;
-      if (!nextNode) {
-        walker.currentNode = leadingSentinal;
-        nextNode = walker.nextNode() as HTMLElement;
-      }
-      while (this.closestLandmark(nextNode) !== nextLandmark) {
-        nextNode = walker.nextNode() as HTMLElement;
-      }
-      nextNode.focus();
+        
+        nextLandmark = this.getNextLandmark(nextLandmark.ref.current, {backward});
+      } while (nextLandmark !== initialNextLandmark);
+     
     }
   }
 
