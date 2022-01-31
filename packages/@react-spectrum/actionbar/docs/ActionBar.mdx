@@ -36,10 +36,79 @@ after_version: 3.0.0-alpha.4
 
 ## Example
 ```tsx example
+function StaticActionBar() {
+  return (
+    <ActionBarContainer>
+      <ActionBar
+        isEmphasized
+        selectedItemCount={3}>
+        <Item key="edit">
+          Edit
+        </Item>
+        <Item key="copy">
+          Copy
+        </Item>
+        <Item key="delete">
+          Delete
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+<StaticActionBar />
+```
+
+## Content
+<Anatomy />
+
+An ActionBar is a popover that consists of an ActionGroup, a clear button, and a count of selected items. It accepts a list of <TypeLink links={docs.links} type={docs.exports.Item} />
+elements as children, each with a `key` prop. Alternatively, a function that returns `Item` elements is also supported as seen below. See the [collection components](../react-stately/collections.html)
+docs for more details about this API. These `Item` elements are used to populate the ActionBar's ActionGroup and thus follows the [same content guidelines](./ActionGroup.html#content) when it comes to customization and labeling.
+
+```tsx example
+function DynamicActionBar() {
+  let barItems = [
+    {key: 'edit', label: 'Edit'},
+    {key: 'copy', label: 'Copy'},
+    {key: 'delete', label: 'Delete'}
+  ];
+
+  return (
+    <ActionBarContainer>
+      <ActionBar
+        items={barItems}
+        selectedItemCount={3}
+        isEmphasized>
+        {item => (
+          <Item key={item.key}>
+            {item.label}
+          </Item>
+        )}
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+
+<DynamicActionBar />
+```
+
+### Layout
+ActionBarContainer accepts an ActionBar alongside any renderable children. It accepts the typical selection of [style props](#props), allowing you to customize its layout.
+The example below applies a static height on the ActionBarContainer instead of matching the height of the TableView.
+
+```tsx example
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Text} from '@react-spectrum/text';
 
-function StaticActionBar() {
+function ActionBarTable(props) {
+  // Same bar items as example above...
+  ///- begin collapse -///
+  let barItems = [
+    {key: 'edit', label: 'Edit'},
+    {key: 'copy', label: 'Copy'},
+    {key: 'delete', label: 'Delete'}
+  ];
+  ///- end collapse -///
   let columns = [
     {name: 'Name', uid: 'name'},
     {name: 'Type', uid: 'type'},
@@ -55,7 +124,7 @@ function StaticActionBar() {
 
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
   return (
-    <ActionBarContainer>
+    <ActionBarContainer height="size-5000">
       <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="size-3000">
         <TableHeader columns={columns}>
           {column => (
@@ -73,63 +142,59 @@ function StaticActionBar() {
         </TableBody>
       </TableView>
       <ActionBar
+        items={barItems}
         isEmphasized
-        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
-        onClearSelection={() => {
-          setSelectedKeys(new Set());
-        }}>
-        <Item key="edit">
-          Edit
-        </Item>
-        <Item key="copy">
-          Copy
-        </Item>
-        <Item key="delete">
-          Delete
-        </Item>
+        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}>
+        {item => (
+          <Item key={item.key}>
+            {item.label}
+          </Item>
+        )}
       </ActionBar>
     </ActionBarContainer>
   );
 }
-
-<StaticActionBar />
 ```
 
-## Content
-<Anatomy />
+### Accessibility
+The contents of the ActionBar should follow the same accessibility guidelines as ActionGroup's items, see the [ActionGroup docs](./ActionGroup.html#accessibility) for more details.
 
-An ActionBar is a popover that consists of an ActionGroup, a clear button, and a count of selected items. It accepts a list of <TypeLink links={docs.links} type={docs.exports.Item} />
-elements as children, each with a `key` prop. Alternatively, a function that returns `Item` elements is also supported as seen below. See the [collection components](../react-stately/collections.html)
-docs for more details about this API. These `Item` elements are used to populate the ActionBar's ActionGroup and thus follows the [same content guidelines](./ActionGroup.html#content) when it comes to customization and labeling.
+### Internationalization
+To internationalize an ActionBar, the content provided to all child items should be localized. A localized string for the selection count and clear button `aria-label` will be provided
+automatically. For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the ActionBar is automatically flipped.
 
-```tsx example export=true
-function DynamicActionBar(props) {
+## Events
+Use the `onClearSelection` prop as a callback to handle when the clear button in the ActionBar is pressed. Additionally, the `onAction` prop can be used as a callback for when the user
+presses any of the buttons in the ActionBar's ActionGroup. The `key` from the pressed button will be passed into the callback.
+
+The following example clears row selection within the TableView when the clear button is pressed and alerts the user as to what
+action is being taken on the selected rows when the ActionButtons are pressed.
+
+```tsx example
+function ActionBarActions(props) {
+  // Same bar items, table columns, and table rows as example above...
+  ///- begin collapse -///
   let columns = [
-    // Same table columns and rows as above...
-    ///- begin collapse -///
     {name: 'Name', uid: 'name'},
     {name: 'Type', uid: 'type'},
     {name: 'Level', uid: 'level'}
   ];
-
   let rows = [
     {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
     {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
     {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
     {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
-    ///- end collapse -///
-  ];
 
+  ];
   let barItems = [
     {key: 'edit', label: 'Edit'},
     {key: 'copy', label: 'Copy'},
     {key: 'delete', label: 'Delete'}
   ];
-  let {containerHeight, ...otherProps} = props;
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
-
+  ///- end collapse -///
   return (
-    <ActionBarContainer height={containerHeight}>
+    <ActionBarContainer>
       <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="size-3000">
         <TableHeader columns={columns}>
           {column => (
@@ -153,8 +218,7 @@ function DynamicActionBar(props) {
         onClearSelection={() => {
           setSelectedKeys(new Set());
         }}
-        onAction={key => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
-        {...otherProps}>
+        onAction={key => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}>
         {item => (
           <Item key={item.key}>
             {item.label}
@@ -164,36 +228,6 @@ function DynamicActionBar(props) {
     </ActionBarContainer>
   );
 }
-
-<DynamicActionBar />
-```
-
-### Layout
-ActionBarContainer accepts an ActionBar alongside any renderable children. It accepts the typical selection of [style props](#props), allowing you to customize its layout.
-The example below applies a static height on the ActionBarContainer instead of matching the height of the TableView.
-
-```tsx example
-// Same example as above
-<DynamicActionBar containerHeight="size-5000" />
-```
-
-### Accessibility
-The contents of the ActionBar should follow the same accessibility guidelines as ActionGroup's items, see the [ActionGroup docs](./ActionGroup.html#accessibility) for more details.
-
-### Internationalization
-To internationalize an ActionBar, the content provided to all child items should be localized. A localized string for the selection count and clear button `aria-label` will be provided
-automatically. For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the ActionBar is automatically flipped.
-
-## Events
-Use the `onClearSelection` prop as a callback to handle when the clear button in the ActionBar is pressed. Additionally, the `onAction` prop can be used as a callback for when the user
-presses any of the buttons in the ActionBar's ActionGroup. The `key` from the pressed button will be passed into the callback.
-
-The following example clears row selection within the TableView when the clear button is pressed and alerts the user as to what
-action is being taken on the selected rows when the ActionButtons are pressed.
-
-```tsx example
-// Same example as above
-<DynamicActionBar />
 ```
 
 ## Props
