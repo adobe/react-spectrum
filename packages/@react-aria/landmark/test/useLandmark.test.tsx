@@ -261,6 +261,54 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(tree.getByRole('textbox'));
   });
 
+  it('F6 skips a landmark that has no focusable children', function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <div>No focusable children</div>
+        </Main>
+        <Region>
+          <Checkbox>Checkbox label</Checkbox>
+        </Region>
+      </div>
+    );
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(tree.getByRole('checkbox'));
+  });
+
+  it('F6 doesn\'t move focus if all landmarks have no focusable children', function () {
+    let tree = render(
+      <div>
+        <TextField label="First Name" />
+        <Main>
+          <div>Non-focusable content</div>
+        </Main>
+        <Region>
+          <div> Non-focusable content</div>
+        </Region>
+      </div>
+    );
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+  });
+
   it('landmark navigation forward wraps', function () {
     let tree = render(
       <div>
