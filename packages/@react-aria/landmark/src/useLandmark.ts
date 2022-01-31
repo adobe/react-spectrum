@@ -200,7 +200,9 @@ class LandmarkManager {
     }
   }
 
-  // Only the closest landmark cares about focus inside of it
+  /**
+   * Sets lastFocused for a landmark, if focus is moved within that landmark.
+   */
   public focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as HTMLElement);
     this.landmarks = this.landmarks.map((landmark) => ({...landmark, ...(landmark === currentLandmark && {lastFocused: e.target as HTMLElement})}));
