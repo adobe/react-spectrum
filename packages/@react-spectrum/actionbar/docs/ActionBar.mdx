@@ -20,7 +20,7 @@ import {ActionBar, ActionBarContainer, Item} from '@react-spectrum/actionbar';
 ```
 
 ---
-category: Overlays
+category: Collection Actions
 keywords: [actionbar, selection, actions]
 after_version: 3.0.0-alpha.4
 ---
@@ -61,7 +61,7 @@ function StaticActionBar() {
 ## Content
 <Anatomy />
 
-An ActionBar is a popover that consists of an ActionGroup, a clear button, and a count of selected items. It accepts a list of <TypeLink links={docs.links} type={docs.exports.Item} />
+An ActionBar is a companion component intended to facilitate bulk actions on selected items within a collection component. It consists of an ActionGroup, a clear button, and a count of selected items. It accepts a list of <TypeLink links={docs.links} type={docs.exports.Item} />
 elements as children, each with a `key` prop. Alternatively, a function that returns `Item` elements is also supported as seen below. See the [collection components](../react-stately/collections.html)
 docs for more details about this API. These `Item` elements are used to populate the ActionBar's ActionGroup and thus follows the [same content guidelines](./ActionGroup.html#content) when it comes to customization and labeling.
 
