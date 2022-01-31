@@ -32,7 +32,8 @@ export function useHighlightSelectionDescription(props: UseHighlightSelectionDes
   let formatMessage = useMessageFormatter(intlMessages);
   let modality = useInteractionModality();
   // null is the default if the user hasn't interacted with the table at all yet or the rest of the page
-  let shouldLongPress = (modality === 'pointer' || modality === 'virtual' || modality == null) && 'ontouchstart' in window;
+  let shouldLongPress = (modality === 'pointer' || modality === 'virtual' || modality == null)
+    && typeof window !== 'undefined' && 'ontouchstart' in window;
 
   let interactionDescription = useMemo(() => {
     let selectionMode = props.selectionManager.selectionMode;
