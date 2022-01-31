@@ -106,7 +106,7 @@ describe('TableView', function () {
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterAll(function () {

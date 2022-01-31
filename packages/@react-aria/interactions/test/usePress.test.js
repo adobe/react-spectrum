@@ -42,17 +42,12 @@ function pointerEvent(type, opts) {
 
 describe('usePress', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
-  afterAll(() => {
-    jest.useRealTimers();
-    window.requestAnimationFrame.mockRestore();
-  });
-
   afterEach(() => {
-    jest.runAllTimers();
+    act(() => {jest.runAllTimers();});
   });
 
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
@@ -2591,7 +2586,7 @@ describe('usePress', function () {
     }
 
     beforeAll(() => {
-      jest.useFakeTimers();
+      jest.useFakeTimers('legacy');
     });
     afterAll(() => {
       jest.useRealTimers();
