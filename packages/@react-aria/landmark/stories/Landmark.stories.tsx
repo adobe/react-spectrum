@@ -37,7 +37,8 @@ const TableTemplate = (): Story<StoryProps> => (props) => <TableExample {...prop
 const ApplicationTemplate = (): Story<StoryProps> => (props) => <ApplicationExample {...props} />;
 const DuplicateRolesWithLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesWithLabelsExample {...props} />;
 const DuplicateRolesNoLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesNoLabelExample {...props} />;
-
+const OneWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <OneWithNoFocusableChildrenExample {...props} />;
+const AllWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <AllWithNoFocusableChildrenExample {...props} />;
 
 function Main(props) {
   let ref = useRef();
@@ -127,6 +128,32 @@ function DuplicateRolesNoLabelExample() {
       </Navigation>
       <Main>
         <TextField label="First Name" />
+      </Main>
+    </div>
+  );
+}
+
+function OneWithNoFocusableChildrenExample() {
+  return (
+    <div>
+      <TextField label="First Name" />
+      <Main>
+        <div>No focusable children</div>
+      </Main>
+      <TextField label="First Name" />
+    </div>
+  );
+}
+
+function AllWithNoFocusableChildrenExample() {
+  return (
+    <div>
+      <Region>
+        <div>No focusable children</div>
+      </Region>
+      <TextField label="First Name" />
+      <Main>
+        <div>No focusable children</div>
       </Main>
     </div>
   );
@@ -256,3 +283,9 @@ DuplicateRolesWithLabels.args = {};
 
 export const DuplicateRolesNoLabels = DuplicateRolesNoLabelsTemplate().bind({});
 DuplicateRolesNoLabels.args = {};
+
+export const OneWithNoFocusableChildren = OneWithNoFocusableChildrenExampleTemplate().bind({});
+OneWithNoFocusableChildren.args = {};
+
+export const AllWithNoFocusableChildren = AllWithNoFocusableChildrenExampleTemplate().bind({});
+AllWithNoFocusableChildren.args = {};
