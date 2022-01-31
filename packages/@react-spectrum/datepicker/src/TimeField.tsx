@@ -23,6 +23,10 @@ import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTimeFieldState} from '@react-stately/datepicker';
 
+/**
+ * TimeFields allow users to enter and edit time values using a keyboard.
+ * Each part of the time is displayed in an individually editable segment.
+ */
 export function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>) {
   props = useProviderProps(props);
   let {
