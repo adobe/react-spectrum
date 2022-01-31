@@ -18,6 +18,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
 import {Meta, Story} from '@storybook/react';
 import React, {useRef} from 'react';
+import {SearchField} from '@react-spectrum/searchfield';
 import styles from './index.css';
 import {TextField} from '@react-spectrum/textfield';
 import {useLandmark} from '../';
@@ -66,7 +67,11 @@ function Search(props) {
   let ref = useRef();
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'search'}, ref);
-  return <input type="search" ref={ref} {...landmarkProps} {...styleProps}>{props.children}</input>;
+  return (
+    <form ref={ref} {...landmarkProps} {...styleProps}>
+      <SearchField label="Search" />
+    </form>
+  );
 }
 
 function Example() {
