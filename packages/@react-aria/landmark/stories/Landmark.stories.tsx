@@ -72,6 +72,7 @@ function Example() {
   return (
     <div>
       <Navigation>
+        <div>Navigation Landmark</div>
         <ul>
           <li><a href="/home">Home</a></li>
           <li><a href="/about">About</a></li>
@@ -79,6 +80,7 @@ function Example() {
         </ul>
       </Navigation>
       <Main>
+        <div>Main Landmark</div>
         <TextField label="First Name" />
       </Main>
     </div>
@@ -89,6 +91,7 @@ function DuplicateRolesWithLabelsExample() {
   return (
     <div>
       <Navigation aria-label="First Nav">
+        <div>Navigation Landmark with 'First Nav' label</div>
         <ul>
           <li><a href="/home">Home</a></li>
           <li><a href="/about">About</a></li>
@@ -96,6 +99,7 @@ function DuplicateRolesWithLabelsExample() {
         </ul>
       </Navigation>
       <Navigation aria-label="Second Nav">
+        <div>Navigation Landmark with 'Second Nav' label</div>
         <ul>
           <li><a href="/home">Home</a></li>
           <li><a href="/about">About</a></li>
@@ -103,6 +107,7 @@ function DuplicateRolesWithLabelsExample() {
         </ul>
       </Navigation>
       <Main>
+        <div>Main Landmark</div>
         <TextField label="First Name" />
       </Main>
     </div>
@@ -113,6 +118,7 @@ function DuplicateRolesNoLabelExample() {
   return (
     <div>
       <Navigation>
+        <div>Navigation Landmark with no label</div>
         <ul>
           <li><a href="/home">Home</a></li>
           <li><a href="/about">About</a></li>
@@ -120,6 +126,7 @@ function DuplicateRolesNoLabelExample() {
         </ul>
       </Navigation>
       <Navigation>
+        <div>Navigation Landmark with no label</div>
         <ul>
           <li><a href="/home">Home</a></li>
           <li><a href="/about">About</a></li>
@@ -127,6 +134,7 @@ function DuplicateRolesNoLabelExample() {
         </ul>
       </Navigation>
       <Main>
+        <div>Main Landmark</div>
         <TextField label="First Name" />
       </Main>
     </div>
@@ -138,6 +146,7 @@ function OneWithNoFocusableChildrenExample() {
     <div>
       <TextField label="First Name" />
       <Main>
+        <div>Main Landmark</div>
         <div>No focusable children</div>
       </Main>
       <TextField label="First Name" />
@@ -149,10 +158,12 @@ function AllWithNoFocusableChildrenExample() {
   return (
     <div>
       <Region>
+        <div>Region Landmark</div>
         <div>No focusable children</div>
       </Region>
       <TextField label="First Name" />
       <Main>
+        <div>Main Landmark</div>
         <div>No focusable children</div>
       </Main>
     </div>
@@ -163,9 +174,11 @@ function NestedExample() {
   return (
     <div>
       <Main>
+        <div>Main Landmark</div>
         <TextField label="First Name" />
 
         <Region>
+          <div>Region Landmark inside Main</div>
           <Checkbox>Checkbox label</Checkbox>
         </Region>
       </Main>
