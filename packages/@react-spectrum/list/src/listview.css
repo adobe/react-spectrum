@@ -191,7 +191,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  .loadingMore {
+  &.react-spectrum-ListView-centeredWrapper--loadingMore {
     padding-top: var(--spectrum-global-dimension-size-50);
   }
 }
