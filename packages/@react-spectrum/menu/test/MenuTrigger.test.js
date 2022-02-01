@@ -797,6 +797,9 @@ describe('MenuTrigger', function () {
     it('should open the menu on longPress', function () {
       const props = {onOpenChange, trigger: 'longPress'};
       verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
+        expect(button).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Long press or press Alt + ArrowDown to open menu');
+
         if (!menu) {
           triggerLongPress(button);
         } else {
@@ -833,25 +836,29 @@ describe('MenuTrigger', function () {
       });
     });
 
-    it('should open the menu on Enter', function () {
+    it('should not open the menu on Enter', function () {
       const props = {onOpenChange, trigger: 'longPress'};
-      verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
-        if (!menu) {
-          fireEvent.keyDown(button, {key: 'Enter'});
-        } else {
-          triggerTouch(button);
-        }
+      let tree = renderComponent(MenuTrigger, props, {});
+      let button = tree.getByRole('button');
+      act(() => {
+        triggerTouch(button);
+        setTimeout(() => {
+          expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
+        }, 0, tree, button);
+        jest.runAllTimers();
       });
     });
 
-    it('should open the menu on Space', function () {
+    it('should not open the menu on Space', function () {
       const props = {onOpenChange, trigger: 'longPress'};
-      verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
-        if (!menu) {
-          fireEvent.keyDown(button, {key: ' '});
-        } else {
-          triggerTouch(button);
-        }
+      let tree = renderComponent(MenuTrigger, props, {});
+      let button = tree.getByRole('button');
+      act(() => {
+        triggerTouch(button);
+        setTimeout(() => {
+          expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
+        }, 0, tree, button);
+        jest.runAllTimers();
       });
     });
 
@@ -876,7 +883,6 @@ describe('MenuTrigger', function () {
         }
       });
     });
-
   });
 
   describe('MenuTrigger trigger="longPress" focus behavior', function () {

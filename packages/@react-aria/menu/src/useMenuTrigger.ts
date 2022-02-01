@@ -12,10 +12,13 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject} from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
 import {mergeProps, useId} from '@react-aria/utils';
 import {useLongPress} from '@react-aria/interactions';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuTriggerAriaProps {
@@ -55,11 +58,19 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
       return;
     }
 
+    if (trigger === 'longPress' && !e.altKey) {
+      return;
+    }
+
     if (ref && ref.current) {
       switch (e.key) {
-        case 'ArrowDown':
         case 'Enter':
         case ' ':
+          if (trigger === 'longPress') {
+            return;
+          }
+          // fallthrough
+        case 'ArrowDown':
           // Stop propagation, unless it would already be handled by useKeyboard.
           if (!('continuePropagation' in e)) {
             e.stopPropagation();
@@ -78,7 +89,9 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     }
   };
 
+  let formatMessage = useMessageFormatter(intlMessages);
   let {longPressProps} = useLongPress({
+    accessibilityDescription: formatMessage('longPressMessage'),
     onLongPressStart() {
       state.close();
     },
