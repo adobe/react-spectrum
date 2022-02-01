@@ -10,14 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  CollectionBase,
-  Node,
-  SelectionMode,
-  Sortable,
-  SortDescriptor,
-  SortDirection
-} from '@react-types/shared';
+import {CollectionBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key, useMemo, useRef, useState} from 'react';
@@ -145,10 +138,7 @@ export function useTableState<T extends object>(
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
-  let {disabledKeys, selectionManager} = useGridState({
-    ...props,
-    collection
-  });
+  let {disabledKeys, selectionManager} = useGridState({...props, collection});
 
   return {
     collection,
@@ -159,10 +149,9 @@ export function useTableState<T extends object>(
     sort(columnKey: Key) {
       props.onSortChange({
         column: columnKey,
-        direction:
-          props.sortDescriptor?.column === columnKey
-            ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
-            : 'ascending'
+        direction: props.sortDescriptor?.column === columnKey
+          ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
+          : 'ascending'
       });
     },
     columnWidths: () => columnWidths,
