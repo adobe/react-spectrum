@@ -1,4 +1,4 @@
-import {act, fireEvent, render, screen} from '@testing-library/react';
+import {fireEvent, render, screen} from '@testing-library/react';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import * as React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
@@ -379,7 +379,7 @@ describe('useSliderThumb', () => {
       it('can be moved with keys', () => {
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]}/>);
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
 
         // Drag thumb
         let thumb0 = screen.getByTestId('thumb').firstChild;
@@ -443,8 +443,7 @@ describe('useSliderThumb', () => {
       it('can be moved with keys (vertical)', () => {
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]}
-                        orientation="vertical"/>);
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} orientation="vertical" />);
 
         // Drag thumb
         let thumb0 = screen.getByTestId('thumb').firstChild;
