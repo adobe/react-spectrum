@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {CalendarDate, CalendarDateTime, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, toZoned} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {DatePicker} from '../';
 import {DateValue} from '@react-types/calendar';
@@ -112,8 +112,8 @@ storiesOf('Date and Time/DatePicker', module)
   .add(
     'multiple disabled intervals',
     () => render({isDateDisabled: (date: DateValue) => {
-      const disabledIntervals = [[new CalendarDate(2021, 12, 2), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 21), new CalendarDate(2021, 12, 30)]];
-      return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
     }})
   )
   .add(

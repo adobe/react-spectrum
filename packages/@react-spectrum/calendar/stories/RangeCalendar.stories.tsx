@@ -59,8 +59,8 @@ storiesOf('Date and Time/RangeCalendar', module)
   .add(
     'multiple disabled intervals',
     () => render({isDateDisabled: (date: DateValue) => {
-      const disabledIntervals = [[new CalendarDate(2021, 12, 2), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 21), new CalendarDate(2021, 12, 30)]];
-      return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
     }})
   )
   .add(
