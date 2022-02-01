@@ -11,6 +11,7 @@
  */
 
 const exec = require('child_process').execSync;
+const spawn = require('child_process').spawnSync;
 const fs = require('fs');
 const fetch = require('node-fetch');
 const semver = require('semver');
@@ -134,22 +135,19 @@ class VersionManager {
       return;
     }
 
-    let sinceIndex = process.argv.findIndex(arg => arg === '--since');
-    let since = sinceIndex >= 0 ? process.argv[sinceIndex + 1] : '$(git describe --tags --abbrev=0)';
-    let res = exec(`git diff ${since}..HEAD --name-only packages ':!**/dev/**' ':!**/docs/**' ':!**/test/**' ':!**/stories/**' ':!**/chromatic/**'`, {encoding: 'utf8'});
-
-    for (let line of res.trim().split('\n')) {
-      let parts = line.split('/').slice(1, 3);
-      if (!parts[0].startsWith('@')) {
-        parts.pop();
-      }
-
-      let name = parts.join('/');
-      try {
-        let pkg = JSON.parse(fs.readFileSync(`packages/${name}/package.json`, 'utf8'));
-        this.changedPackages.add(name);
-      } catch (err) {
-        console.log(err);
+    // Diff each package individually. Some packages might have been skipped during last release,
+    // so we cannot simply look at the last tag on the whole repo.
+    for (let name in this.workspacePackages) {
+      let filePath = this.workspacePackages[name].location + '/package.json';
+      let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (!pkg.private) {
+        // Diff this package since the last published version, according to the package.json.
+        // We create a git tag for each package version.
+        let tag = `${pkg.name}@${pkg.version}`;
+        let res = spawn('git', ['diff', '--exit-code', tag + '..HEAD',  this.workspacePackages[name].location, ':!**/docs/**', ':!**/test/**', ':!**/stories/**', ':!**/chromatic/**']);
+        if (res.status !== 0) {
+          this.changedPackages.add(name);
+        }
       }
     }
 
