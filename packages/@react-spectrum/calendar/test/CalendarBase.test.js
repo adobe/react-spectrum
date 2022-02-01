@@ -254,6 +254,21 @@ describe('CalendarBase', () => {
       expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
       expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
     });
+
+    it.each`
+      Name                   | Calendar         | props
+      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2021, 12, 15)}}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}}
+    `('$Name should set aria-disabled on cells for which isDateDisabled returns true', ({Calendar, props}) => {
+      const isDateDisabled = (date) => {
+        const disabledIntervals = [[new CalendarDate(2021, 12, 2), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 21), new CalendarDate(2021, 12, 30)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+      let {getAllByRole} = render(<Calendar {...props} isDateDisabled={isDateDisabled} />);
+
+      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      expect(gridCells.length).toBe(12);
+    });
   });
 
   describe('labeling', () => {
