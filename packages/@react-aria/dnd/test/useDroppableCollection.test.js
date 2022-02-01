@@ -63,7 +63,7 @@ describe('useDroppableCollection', () => {
       return this.getBoundingClientRect().height;
     });
 
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {
