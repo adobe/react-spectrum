@@ -57,7 +57,7 @@ keywords: [listview, collections]
 ## Content
 ListView is a [collection component](../react-stately/collections.html) that provides users with a way to view, select, navigate, or drag and drop items in a list.
 
-Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView is hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data in this way allows ListView to automatically cache the rendering of each item, which dramatically improves performance.
+Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView is hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data dynamically allows ListView to automatically cache the rendering of each item, which dramatically improves performance.
 
 Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
 
@@ -185,7 +185,7 @@ Items within a ListView also allow for additional content used to add context or
 
 ## Selection
 
-By default, ListView doesn't allow row selection but this can be enabled using the `selectionMode` prop.
+By default, ListView doesn't allow row selection, but this can be enabled using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the value of the selected keys must match the `key` prop of the Item.
 
 The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "row1" and "row3".
@@ -210,7 +210,7 @@ The example below enables multiple selection mode, and uses `defaultSelectedKeys
 ### Controlled selection
 
 To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
-be passed into the callback when the row is pressed, allowing you to update state accordingly.
+be passed into the callback when the row is pressed, allowing you to update state accordingly. Note that the value of the selected keys must match the `key` prop of the Item.
 
 Here is how you would control selection for the above example.
 
