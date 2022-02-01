@@ -172,7 +172,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       // TODO: also not sure about copying layout info vs mutating it. Listlayout does the below
       // but I feel that is because it actually maintained a layoutNode map cache which this doesn't have
       let newLayoutInfo = layoutInfo.copy();
-      newLayoutInfo.rect.height = size.height <= 600 ? size.height : 600;
+      newLayoutInfo.rect.height = size.height < 600 ? size.height : 600;
       newLayoutInfo.estimatedSize = false;
       this.layoutInfos.set(key, newLayoutInfo);
       return true;
