@@ -186,7 +186,8 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
                 onChange={state.setDateRange}
                 visibleMonths={visibleMonths}
                 minValue={props.minValue}
-                maxValue={props.maxValue} />
+                maxValue={props.maxValue}
+                isDateDisabled={props.isDateDisabled} />
               {showTimeField &&
                 <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
                   <TimeField
