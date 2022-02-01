@@ -612,4 +612,43 @@ describe('LandmarkManager', function () {
 
     expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'First nav\' label. If two or more landmarks on a page share the same role, they must have unique labels.');
   });
+
+  it('Should not navigate to a landmark that has been removed from the DOM', function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Region>
+          <TextField label="First Name" />
+        </Region>
+        <Main>
+          <TextField label="Last Name" />
+        </Main>
+      </div>
+    );
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[1]);
+
+
+    tree.getByRole('region').remove();
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+  });
 });
