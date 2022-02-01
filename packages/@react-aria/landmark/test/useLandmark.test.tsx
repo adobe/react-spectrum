@@ -614,22 +614,31 @@ describe('LandmarkManager', function () {
   });
 
   it('Should not navigate to a landmark that has been removed from the DOM', function () {
+
+    function Container({children = null}) {
+      return (
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          {children}
+          <Main>
+            <TextField label="Last Name" />
+          </Main>
+        </div>
+      );
+    }
+
     let tree = render(
-      <div>
-        <Navigation>
-          <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-          </ul>
-        </Navigation>
+      <Container>
         <Region>
           <TextField label="First Name" />
         </Region>
-        <Main>
-          <TextField label="Last Name" />
-        </Main>
-      </div>
+      </Container>
     );
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
@@ -645,7 +654,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(tree.getAllByRole('textbox')[1]);
 
 
-    tree.getByRole('region').remove();
+    tree.rerender(<Container />);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
