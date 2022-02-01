@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
+import {DateValue} from '@react-types/calendar';
 import {Flex, Grid, repeat} from '@react-spectrum/layout';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {RangeCalendar} from '../';
@@ -54,6 +55,13 @@ storiesOf('Date and Time/RangeCalendar', module)
   .add(
     'isDisabled',
     () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, isDisabled: true})
+  )
+  .add(
+    'multiple disabled intervals',
+    () => render({isDateDisabled: (date: DateValue) => {
+      const disabledIntervals = [[new CalendarDate(2021, 12, 2), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 21), new CalendarDate(2021, 12, 30)]];
+      return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+    }})
   )
   .add(
     'isReadOnly',
