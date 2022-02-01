@@ -221,7 +221,7 @@ function CenteredWrapper({children}) {
           'react-spectrum-ListView-centeredWrapper',
           {
             'react-spectrum-ListView-centeredWrapper--loadingMore': state.collection.size > 0
-          },
+          }
         )}>
       <div role="gridcell">
         {children}
