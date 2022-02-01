@@ -72,7 +72,7 @@ class LandmarkManager {
   }
 
   public updateLandmark(landmark: Landmark) {
-    this.landmarks = this.landmarks.map((prevLandmark) => prevLandmark === landmark ? {...prevLandmark, ...landmark} : prevLandmark);
+    this.landmarks = this.landmarks.map((prevLandmark) => prevLandmark.ref.current === landmark.ref.current ? {...prevLandmark, ...landmark} : prevLandmark);
     this.checkLabels(landmark.role);
   }
 
