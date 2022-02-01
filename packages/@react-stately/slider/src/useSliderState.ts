@@ -120,6 +120,15 @@ export interface SliderState {
   setThumbEditable(index: number, editable: boolean): void,
 
   /**
+   * Increments the value of the thumb by the step or page amount.
+   */
+  incrementThumb(index: number, stepSize?: number): void,
+  /**
+   * Decrements the value of the thumb by the step or page amount.
+   */
+  decrementThumb(index: number, stepSize?: number): void,
+
+  /**
    * The step amount for the slider.
    */
   readonly step: number
@@ -220,6 +229,14 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     return clamp(getRoundedValue(val), minValue, maxValue);
   }
 
+  function incrementThumb(index: number, stepSize: number) {
+    updateValue(index, snapValueToStep(values[index] + stepSize, minValue, maxValue, stepSize));
+  }
+
+  function decrementThumb(index: number, stepSize: number) {
+    updateValue(index, snapValueToStep(values[index] - stepSize, minValue, maxValue, stepSize));
+  }
+
   return {
     values: values,
     getThumbValue: (index: number) => values[index],
@@ -238,6 +255,8 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     getPercentValue,
     isThumbEditable,
     setThumbEditable,
+    incrementThumb,
+    decrementThumb,
     step
   };
 }

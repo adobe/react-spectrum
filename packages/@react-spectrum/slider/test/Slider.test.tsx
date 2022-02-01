@@ -207,13 +207,17 @@ describe('Slider', function () {
   });
 
   describe('keyboard interactions', () => {
-    // Can't test arrow/page up/down, home/end arrows because they are handled by the browser and JSDOM doesn't feel like it.
-
     it.each`
       Name                                 | props                                 | commands
       ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
       ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
       ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
+      ${'(up/down arrows, ltr)'}           | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(up/down arrows, rtl)'}           | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                  | ${[{left: press.PageUp, result: +1}, {left: press.PageDown, result: -1}]}
+      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                  | ${[{left: press.PageUp, result: +1}, {left: press.PageDown, result: -1}]}
+      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
+      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
     `('$Name moves the slider in the correct direction', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
@@ -225,9 +229,32 @@ describe('Slider', function () {
     });
 
     it.each`
+      Name                                 | props                                 | commands
+      ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
+      ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
+      ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
+      ${'(up/down arrows, ltr)'}           | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(up/down arrows, rtl)'}           | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                  | ${[{left: press.PageUp, result: +1}, {left: press.PageDown, result: -1}]}
+      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                  | ${[{left: press.PageUp, result: +1}, {left: press.PageDown, result: -1}]}
+      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
+      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
+    `('$Name moves the slider in the correct direction orientation vertical', function ({props, commands}) {
+      let tree = render(
+        <Provider theme={theme} {...props}>
+          <Slider label="Label" defaultValue={50} minValue={0} maxValue={100} orientation="vertical" />
+        </Provider>
+      );
+      let slider = tree.getByRole('slider');
+      testKeypresses([slider, slider], commands);
+    });
+
+    it.each`
       Name                          | props                 | commands
       ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +10}, {left: press.ArrowLeft, result: -10}]}
       ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -10}, {left: press.ArrowLeft, result: +10}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
     `('$Name respects the step size', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>

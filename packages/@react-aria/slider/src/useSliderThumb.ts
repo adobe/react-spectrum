@@ -6,7 +6,7 @@ import {SliderState} from '@react-stately/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
-import {useMove} from '@react-aria/interactions';
+import {useKeyboard, useMove} from '@react-aria/interactions';
 
 interface SliderThumbAria {
   /** Props for the root thumb element; handles the dragging motion. */
@@ -77,44 +77,79 @@ export function useSliderThumb(
   stateRef.current = state;
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
-  let {moveProps} = useMove({
-    onMoveStart({pointerType}) {
-      currentPosition.current = null;
-      // Don't start dragging for keyboard events unless the value has changed.
-      if (pointerType !== 'keyboard') {
-        stateRef.current.setThumbDragging(index, true);
-      }
-    },
-    onMove({deltaX, deltaY, pointerType}) {
-      const {
-        getThumbPercent, 
-        getThumbMaxValue, 
-        getThumbMinValue, 
-        getThumbValue, 
-        setThumbDragging, 
-        setThumbPercent, 
-        setThumbValue, 
+
+  let pageSize = 1;
+  let {keyboardProps} = useKeyboard({
+    onKeyDown(e) {
+      let {
+        getThumbMaxValue,
+        getThumbMinValue,
         step
       } = stateRef.current;
+      // these are the cases that useMove or useSlider don't handle
+      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
+        e.continuePropagation();
+        return;
+      }
+      // same handling as useMove, stopPropagation to prevent useSlider from handling the event as well.
+      e.preventDefault();
+      let pageStep = Math.max(pageSize, step);
+      // remember to set this so that onChangeEnd is fired
+      state.setThumbDragging(index, true);
+      switch (e.key) {
+        case 'PageUp':
+          stateRef.current.incrementThumb(index, pageStep);
+          break;
+        case 'PageDown':
+          stateRef.current.decrementThumb(index, pageStep);
+          break;
+        case 'Home':
+          state.setThumbValue(index, getThumbMinValue(index));
+          break;
+        case 'End':
+          state.setThumbValue(index, getThumbMaxValue(index));
+          break;
+      }
+      state.setThumbDragging(index, false);
+    }
+  });
+
+  let {moveProps} = useMove({
+    onMoveStart() {
+      currentPosition.current = null;
+      // Don't start dragging for keyboard events unless the value has changed.
+      stateRef.current.setThumbDragging(index, true);
+    },
+    onMove({deltaX, deltaY, pointerType, shiftKey}) {
+      const {
+        getThumbPercent,
+        setThumbPercent,
+        step
+      } = stateRef.current;
+      let pageStep = Math.max(pageSize, step);
       let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
 
       if (currentPosition.current == null) {
         currentPosition.current = getThumbPercent(index) * size;
       }
       if (pointerType === 'keyboard') {
-        const currentValue = getThumbValue(index);
-        // (invert left/right according to language direction) + (according to vertical)
-        const delta = ((reverseX ? -deltaX : deltaX) + (isVertical ? -deltaY : -deltaY)) * step;
-        if (delta > 0 && currentValue === getThumbMaxValue(index)) {
-          return;
+        if (deltaX > 0) {
+          if (direction === 'rtl') {
+            stateRef.current.decrementThumb(index, shiftKey ? pageStep : step);
+          } else {
+            stateRef.current.incrementThumb(index, shiftKey ? pageStep : step);
+          }
+        } else if (deltaY < 0) {
+          stateRef.current.incrementThumb(index, shiftKey ? pageStep : step);
+        } else if (deltaX < 0) {
+          if (direction === 'rtl') {
+            stateRef.current.incrementThumb(index, shiftKey ? pageStep : step);
+          } else {
+            stateRef.current.decrementThumb(index, shiftKey ? pageStep : step);
+          }
+        } else if (deltaY > 0) {
+          stateRef.current.decrementThumb(index, shiftKey ? pageStep : step);
         }
-        if (delta < 0 && currentValue === getThumbMinValue(index)) {
-          return;
-        }
-        currentPosition.current += delta * size;
-        setThumbDragging(index, true);
-        setThumbValue(index, currentValue + delta);
-        setThumbDragging(index, false);
       } else {
         let delta = isVertical ? deltaY : deltaX;
         if (isVertical || reverseX) {
@@ -125,11 +160,8 @@ export function useSliderThumb(
         setThumbPercent(index, clamp(currentPosition.current / size, 0, 1));
       }
     },
-    onMoveEnd({pointerType}) {
-      // Don't end dragging, triggering onChangeEnd, for keyboard events unless the value has changed.
-      if (pointerType !== 'keyboard') {
-        stateRef.current.setThumbDragging(index, false);
-      }
+    onMoveEnd() {
+      stateRef.current.setThumbDragging(index, false);
     }
   });
 
@@ -167,8 +199,6 @@ export function useSliderThumb(
     }
   };
 
-  let inputting = false;
-
   // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
   // we focus the range input, and let the browser handle the keyboard
@@ -187,22 +217,12 @@ export function useSliderThumb(
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': opts['aria-errormessage'],
-      onInput: () => {
-        // Flag native keyboard input.
-        inputting = true;
-      },
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        if (parseFloat(e.target.value) !== state.getThumbValue(index)) {
-          // On native keyboard input, set thumb dragging so that onChangeEnd will be fired.
-          inputting && state.setThumbDragging(index, true);
-          state.setThumbValue(index, parseFloat(e.target.value));
-          // After native keyboard input, unset thumb dragging so that onChangeEnd will be fired.
-          inputting && state.setThumbDragging(index, false);
-        }
-        inputting = false;
+        stateRef.current.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
     thumbProps: !isDisabled ? mergeProps(
+      keyboardProps,
       moveProps,
       {
         onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
