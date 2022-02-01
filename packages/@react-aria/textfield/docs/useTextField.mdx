@@ -1,23 +1,20 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/textfield';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/textfield/package.json';
 import Anatomy from './anatomy.svg';
 
-```jsx import
-import {useTextField} from '@react-aria/textfield';
-```
 
 ---
 category: Forms
@@ -26,7 +23,7 @@ keywords: [textfield, textbox, input, label, aria]
 
 # useTextField
 
-<p>{docs.exports.useTextField.description}</p>
+<PageDescription>{docs.exports.useTextField.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -52,6 +49,7 @@ allowing for custom styling.
 * Visual and ARIA labeling support
 * Change, clipboard, composition, selection, and input event support
 * Required and invalid states exposed to assistive technology via ARIA
+* Support for description and error message help text linked to the input via ARIA
 
 ## Anatomy
 
@@ -61,10 +59,14 @@ Text fields consist of an input element and a label. `useTextField` automaticall
 the relationship between the two elements using the `for` attribute on the `<label>` element
 and the `aria-labelledby` attribute on the `<input>` element.
 
-`useTextField` returns two sets of props that you should spread onto the appropriate element:
+`useTextField` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
+
+`useTextField` returns props that you should spread onto the appropriate element:
 
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.links[docs.exports.useTextField.return.id].properties} />
+  <InterfaceType properties={docs.links[docs.exports.useTextField.return.base?.id ?? docs.exports.useTextField.return.id].properties} />
 </TypeContext.Provider>
 
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
@@ -72,16 +74,20 @@ to identify the element to screen readers.
 
 ## Example
 
-```tsx example
+```tsx example export=true
+import {useTextField} from '@react-aria/textfield';
+
 function TextField(props) {
   let {label} = props;
   let ref = React.useRef();
-  let {labelProps, inputProps} = useTextField(props, ref);
+  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField(props, ref);
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
       <label {...labelProps}>{label}</label>
       <input {...inputProps} ref={ref} />
+      {props.description && <div {...descriptionProps} style={{fontSize: 12}}>{props.description}</div>}
+      {props.errorMessage && <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{props.errorMessage}</div>}
     </div>
   );
 }
@@ -89,6 +95,24 @@ function TextField(props) {
 <TextField
   label="Email"
   placeholder="abc@example.com" />
+```
+
+### Description
+
+```tsx example
+<TextField
+  label="Email"
+  placeholder="abc@example.com"
+  description="Enter an email for us to contact you about your order." />
+```
+
+### Error message
+
+```tsx example
+<TextField
+  label="Email"
+  placeholder="abc@example.com"
+  errorMessage="Please enter a valid email address." />
 ```
 
 ## Internationalization

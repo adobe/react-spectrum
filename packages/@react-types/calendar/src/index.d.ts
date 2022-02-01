@@ -10,19 +10,54 @@
  * governing permissions and limitations under the License.
  */
 
+import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {DOMProps, RangeValue, StyleProps, ValueBase} from '@react-types/shared';
 
-export type DateValue = string | number | Date;
+export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
+type MappedDateValue<T> =
+  T extends ZonedDateTime ? ZonedDateTime :
+  T extends CalendarDateTime ? CalendarDateTime :
+  T extends CalendarDate ? CalendarDate :
+  never;
+
 export interface CalendarPropsBase {
+  /** The minimum allowed date that a user may select. */
   minValue?: DateValue,
+  /** The maximum allowed date that a user may select. */
   maxValue?: DateValue,
+  /**
+   * Whether the calendar is disabled.
+   * @default false
+   */
   isDisabled?: boolean,
+  /**
+   * Whether the calendar value is immutable.
+   * @default false
+   */
   isReadOnly?: boolean,
+  /**
+   * Whether to automatically focus the calendar when it mounts.
+   * @default false
+   */
   autoFocus?: boolean
 }
 
-export interface CalendarProps extends CalendarPropsBase, ValueBase<DateValue> {}
-export interface RangeCalendarProps extends CalendarPropsBase, ValueBase<RangeValue<DateValue>> {}
+export type DateRange = RangeValue<DateValue>;
+export interface CalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<T, MappedDateValue<T>> {}
+export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<RangeValue<T>, RangeValue<MappedDateValue<T>>> {}
 
-export interface SpectrumCalendarProps extends CalendarProps, DOMProps, StyleProps {}
-export interface SpectrumRangeCalendarProps extends RangeCalendarProps, DOMProps, StyleProps {}
+export interface SpectrumCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, StyleProps {
+  /**
+   * The number of months to display at once. Up to 3 months are supported.
+   * @default 1
+   */
+  visibleMonths?: number
+}
+
+export interface SpectrumRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, StyleProps {
+  /**
+   * The number of months to display at once. Up to 3 months are supported.
+   * @default 1
+   */
+  visibleMonths?: number
+}

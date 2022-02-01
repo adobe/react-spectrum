@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DragEvent, HTMLAttributes, RefObject, useLayoutEffect, useRef, useState} from 'react';
+import {DragEvent, HTMLAttributes, RefObject,  useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, readFromDataTransfer} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 interface DropOptions {
@@ -43,12 +44,13 @@ export function useDrop(options: DropOptions): DropResult {
     x: 0,
     y: 0,
     dragEnterCount: 0,
-    dropEffect: 'none',
+    dropEffect: 'none' as DataTransfer['dropEffect'],
     dropActivateTimer: null
   }).current;
 
   let onDragOver = (e: DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (e.clientX === state.x && e.clientY === state.y) {
       e.dataTransfer.dropEffect = state.dropEffect;
@@ -92,6 +94,7 @@ export function useDrop(options: DropOptions): DropResult {
   };
 
   let onDragEnter = (e: DragEvent) => {
+    e.stopPropagation();
     state.dragEnterCount++;
     if (state.dragEnterCount > 1) {
       return;
@@ -132,6 +135,7 @@ export function useDrop(options: DropOptions): DropResult {
   };
 
   let onDragLeave = (e: DragEvent) => {
+    e.stopPropagation();
     state.dragEnterCount--;
     if (state.dragEnterCount > 0) {
       return;
@@ -152,6 +156,7 @@ export function useDrop(options: DropOptions): DropResult {
 
   let onDrop = (e: DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (typeof options.onDrop === 'function') {
       let dropOperation = DROP_EFFECT_TO_DROP_OPERATION[state.dropEffect];

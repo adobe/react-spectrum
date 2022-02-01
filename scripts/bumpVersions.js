@@ -11,6 +11,7 @@
  */
 
 const exec = require('child_process').execSync;
+const spawn = require('child_process').spawnSync;
 const fs = require('fs');
 const fetch = require('node-fetch');
 const semver = require('semver');
@@ -64,6 +65,25 @@ class VersionManager {
       this.addReleasedPackage(pkg, bump);
     }
 
+    let all = process.argv.findIndex(arg => arg === '--all');
+    if (all >= 0) {
+      let bump = process.argv[all + 1] ?? 'patch';
+      for (let name in this.workspacePackages) {
+        if (this.versionBumps[name]) {
+          continue;
+        }
+
+        let filePath = this.workspacePackages[name].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (!pkg.private) {
+          let prerelease = semver.parse(pkg.version).prerelease;
+          let b = prerelease.length === 0 ? bump : prerelease[0];
+          this.changedPackages.add(name);
+          this.addReleasedPackage(name, b);
+        }
+      }
+    }
+
     let versions = this.getVersions();
     await this.promptVersions(versions);
     this.bumpVersions(versions);
@@ -74,6 +94,12 @@ class VersionManager {
     // Find what packages already exist on npm
     let promises = [];
     for (let name in this.workspacePackages) {
+      let filePath = this.workspacePackages[name].location + '/package.json';
+      let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (pkg.private) {
+        continue;
+      }
+
       promises.push(
         fetch(`https://registry.npmjs.com/${name}`)
           .then(res => {
@@ -109,35 +135,25 @@ class VersionManager {
       return;
     }
 
-    let sinceIndex = process.argv.findIndex(arg => arg === '--since');
-    let since = sinceIndex >= 0 ? process.argv[sinceIndex + 1] : '$(git describe --tags --abbrev=0)';
-    let res = exec(`git diff ${since}..HEAD --name-only packages ':!**/dev/**' ':!**/docs/**' ':!**/test/**' ':!**/stories/**' ':!**/chromatic/**'`, {encoding: 'utf8'});
-
-    for (let line of res.trim().split('\n')) {
-      let parts = line.split('/').slice(1, 3);
-      if (!parts[0].startsWith('@')) {
-        parts.pop();
+    // Diff each package individually. Some packages might have been skipped during last release,
+    // so we cannot simply look at the last tag on the whole repo.
+    for (let name in this.workspacePackages) {
+      let filePath = this.workspacePackages[name].location + '/package.json';
+      let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (!pkg.private) {
+        // Diff this package since the last published version, according to the package.json.
+        // We create a git tag for each package version.
+        let tag = `${pkg.name}@${pkg.version}`;
+        let res = spawn('git', ['diff', '--exit-code', tag + '..HEAD',  this.workspacePackages[name].location, ':!**/docs/**', ':!**/test/**', ':!**/stories/**', ':!**/chromatic/**']);
+        if (res.status !== 0) {
+          this.changedPackages.add(name);
+        }
       }
-
-      let name = parts.join('/');
-      let pkg = JSON.parse(fs.readFileSync(`packages/${name}/package.json`, 'utf8'));
-      this.changedPackages.add(name);
     }
 
     // Always bump monopackages
     for (let pkg of monopackages) {
       this.changedPackages.add(pkg);
-    }
-
-    let all = process.argv.find(arg => arg === '--all');
-    if (all) {
-      for (let name in this.workspacePackages) {
-        let filePath = this.workspacePackages[name].location + '/package.json';
-        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        if (!pkg.private) {
-          this.changedPackages.add(name);
-        }
-      }
     }
   }
 
@@ -263,7 +279,13 @@ class VersionManager {
 
         if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
           if (this.existingPackages.has(p)) {
-            this.addReleasedPackage(p, bump, true);
+            // Bump a patch version of the dependent package if it's not also a prerelease.
+            // Otherwise, bump to the next prerelease in the existing status.
+            let filePath = this.workspacePackages[p].location + '/package.json';
+            let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            let prerelease = semver.parse(pkg.version).prerelease;
+            let b = prerelease.length === 0 ? 'patch' : prerelease[0];
+            this.addReleasedPackage(p, b, true);
           }
         }
       }

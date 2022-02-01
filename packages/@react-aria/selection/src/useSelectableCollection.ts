@@ -10,21 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect} from 'react';
+import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {focusWithoutScrolling, isMac, mergeProps} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, scrollIntoView, useEvent} from '@react-aria/utils';
+import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
-
-function isCtrlKeyPressed(e: KeyboardEvent) {
-  if (isMac()) {
-    return e.metaKey;
-  }
-
-  return e.ctrlKey;
-}
 
 interface SelectableCollectionOptions {
   /**
@@ -76,7 +69,16 @@ interface SelectableCollectionOptions {
   /**
    * Whether navigation through tab key is enabled.
    */
-  allowsTabNavigation?: boolean
+  allowsTabNavigation?: boolean,
+  /**
+   * Whether the collection items are contained in a virtual scroller.
+   */
+  isVirtualized?: boolean,
+  /**
+   * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
+   * If not provided, defaults to the collection ref.
+   */
+  scrollRef?: RefObject<HTMLElement>
 }
 
 interface SelectableCollectionAria {
@@ -96,18 +98,26 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     shouldFocusWrap = false,
     disallowEmptySelection = false,
     disallowSelectAll = false,
-    selectOnFocus = false,
+    selectOnFocus = manager.selectionBehavior === 'replace',
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
-    allowsTabNavigation = false
+    allowsTabNavigation = false,
+    isVirtualized,
+    // If no scrollRef is provided, assume the collection ref is the scrollable region
+    scrollRef = ref
   } = options;
   let {direction} = useLocale();
 
+
   let onKeyDown = (e: KeyboardEvent) => {
-    // Let child element (e.g. menu button) handle the event if the Alt key is pressed.
+    // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
+    if (e.altKey && e.key === 'Tab') {
+      e.preventDefault();
+    }
+
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (e.altKey || !ref.current.contains(e.target as HTMLElement)) {
+    if (!ref.current.contains(e.target as HTMLElement)) {
       return;
     }
 
@@ -117,7 +127,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
         if (e.shiftKey && manager.selectionMode === 'multiple') {
           manager.extendSelection(key);
-        } else if (selectOnFocus) {
+        } else if (selectOnFocus && !isNonContiguousSelectionModifier(e)) {
           manager.replaceSelection(key);
         }
       }
@@ -247,6 +257,15 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   };
 
+  // Store the scroll position so we can restore it later.
+  let scrollPos = useRef({top: 0, left: 0});
+  useEvent(scrollRef, 'scroll', isVirtualized ? null : () => {
+    scrollPos.current = {
+      top: scrollRef.current.scrollTop,
+      left: scrollRef.current.scrollLeft
+    };
+  });
+
   let onFocus = (e: FocusEvent) => {
     if (manager.isFocused) {
       // If a focus event bubbled through a portal, reset focus state.
@@ -265,14 +284,34 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     manager.setFocused(true);
 
     if (manager.focusedKey == null) {
+      let navigateToFirstKey = (key: Key | undefined) => {
+        if (key != null) {
+          manager.setFocusedKey(key);
+          if (selectOnFocus) {
+            manager.replaceSelection(key);
+          }
+        }
+      };
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
       // and either focus the first or last item accordingly.
       let relatedTarget = e.relatedTarget as Element;
       if (relatedTarget && (e.currentTarget.compareDocumentPosition(relatedTarget) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-        manager.setFocusedKey(manager.lastSelectedKey ?? delegate.getLastKey());
+        navigateToFirstKey(manager.lastSelectedKey ?? delegate.getLastKey());
       } else {
-        manager.setFocusedKey(manager.firstSelectedKey ?? delegate.getFirstKey());
+        navigateToFirstKey(manager.firstSelectedKey ?? delegate.getFirstKey());
+      }
+    } else if (!isVirtualized) {
+      // Restore the scroll position to what it was before.
+      scrollRef.current.scrollTop = scrollPos.current.top;
+      scrollRef.current.scrollLeft = scrollPos.current.left;
+
+      // Refocus and scroll the focused item into view if it exists within the scrollable region.
+      let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+      if (element) {
+        // This prevents a flash of focus on the first/last element in the collection
+        focusWithoutScrolling(element);
+        scrollIntoView(scrollRef.current, element);
       }
     }
   };
@@ -284,8 +323,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   };
 
+  const autoFocusRef = useRef(autoFocus);
   useEffect(() => {
-    if (autoFocus) {
+    if (autoFocusRef.current) {
       let focusedKey = null;
 
       // Check focus strategy to determine which item to focus
@@ -309,8 +349,20 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         focusSafely(ref.current);
       }
     }
+    autoFocusRef.current = false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // If not virtualized, scroll the focused element into view when the focusedKey changes.
+  // When virtualized, Virtualizer handles this internally.
+  useEffect(() => {
+    if (!isVirtualized && manager.focusedKey && scrollRef?.current) {
+      let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+      if (element) {
+        scrollIntoView(scrollRef.current, element);
+      }
+    }
+  }, [isVirtualized, scrollRef, manager.focusedKey]);
 
   let handlers = {
     onKeyDown,

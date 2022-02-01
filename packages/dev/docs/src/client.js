@@ -13,14 +13,17 @@
 import {ActionButton} from '@react-spectrum/button';
 import docsStyle from './docs.css';
 import {listen} from 'quicklink';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {SearchField} from '@react-spectrum/searchfield';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
 import {watchModals} from '@react-aria/aria-modal-polyfill';
 
-window.addEventListener('load', () => listen());
+if (process.env.NODE_ENV === 'production') {
+  window.addEventListener('load', () => listen());
+}
+
 window.addEventListener('load', () => watchModals());
 
 let title = document.querySelector('h1');
@@ -65,6 +68,8 @@ if (typeof ResizeObserver !== 'undefined') {
 
 function Hamburger() {
   let [isPressed, setIsPressed] = useState(false);
+  let hamburgerRef = useRef(null);
+  let hamburgerButtonRef = useRef(null);
 
   let onPress = (event) => {
     let nav = document.querySelector('.' + docsStyle.nav);
@@ -97,17 +102,14 @@ function Hamburger() {
     let mediaQueryList = window.matchMedia('(max-width: 1020px)');
     let nav = document.querySelector('.' + docsStyle.nav);
     let main = document.querySelector('main');
-    let hamburgerButton = document.querySelector('.' + docsStyle.hamburgerButton);
-    let themeSwitcher = hamburgerButton.nextElementSibling;
+    let hamburgerButton = hamburgerButtonRef.current;
+    let themeSwitcher = hamburgerRef.current.nextElementSibling;
 
-    /* remove visible className and aria-attributes that make nav behave as a modal */
     let removeVisible = (isNotResponsive = false) => {
       setIsPressed(false);
-      let button = hamburgerButton.querySelector('button');
-      if (button) {
-        if (nav.contains(document.activeElement) && !isNotResponsive) {
-          button.focus();
-        }
+
+      if (nav.contains(document.activeElement) && !isNotResponsive) {
+        hamburgerButton.focus();
       }
 
       nav.classList.remove(docsStyle.visible);
@@ -176,11 +178,13 @@ function Hamburger() {
         mediaQueryList.removeListener(mediaQueryTest);
       }
     };
-  }, []);
+  }, [setIsPressed, hamburgerRef, hamburgerButtonRef]);
+
+  let hamburgerButtonLabel = `${isPressed ? 'Close' : 'Open'} navigation panel`;
 
   return (
-    <div className={docsStyle.hamburgerButton} title="Open navigation panel" role="presentation">
-      <ActionButton onPress={onPress} aria-label="Open navigation panel" aria-pressed={isPressed ? isPressed : 'false'}>
+    <div ref={hamburgerRef} className={docsStyle.hamburgerButton} title={hamburgerButtonLabel} role="presentation">
+      <ActionButton ref={hamburgerButtonRef} onPress={onPress} aria-label={hamburgerButtonLabel} aria-pressed={isPressed ? isPressed : undefined}>
         <ShowMenu />
       </ActionButton>
     </div>

@@ -15,17 +15,16 @@ import {AriaLabelingProps, DOMProps, KeyboardDelegate, Selection} from '@react-t
 import {filterDOMProps, mergeProps, useId, useUpdateEffect} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
-import {gridKeyboardDelegates} from './utils';
+import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
 import {useSelectableCollection} from '@react-aria/selection';
 
 export interface GridProps extends DOMProps, AriaLabelingProps {
-  /** The ref attached to the grid element. */
-  ref: RefObject<HTMLElement>,
   /** Whether the grid uses virtual scrolling. */
   isVirtualized?: boolean,
   /**
@@ -42,7 +41,15 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
    * @default (key) => state.collection.getItem(key)?.textValue
    */
-  getRowText?: (key: Key) => string
+  getRowText?: (key: Key) => string,
+  /**
+   * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
+   */
+  scrollRef?: RefObject<HTMLElement>,
+  /** Handler that is called when a user performs an action on the row. */
+  onRowAction?: (key: Key) => void,
+  /** Handler that is called when a user performs an action on the cell. */
+  onCellAction?: (key: Key) => void
 }
 
 export interface GridAria {
@@ -55,14 +62,17 @@ export interface GridAria {
  * A grid displays data in one or more rows and columns and enables a user to navigate its contents via directional navigation keys.
  * @param props - Props for the grid.
  * @param state - State for the grid, as returned by `useGridState`.
+ * @param ref - The ref attached to the grid element.
  */
-export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>): GridAria {
+export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>, ref: RefObject<HTMLElement>): GridAria {
   let {
-    ref,
     isVirtualized,
     keyboardDelegate,
     focusMode,
-    getRowText = (key) => state.collection.getItem(key)?.textValue
+    getRowText = (key) => state.collection.getItem(key)?.textValue,
+    scrollRef,
+    onRowAction,
+    onCellAction
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -82,22 +92,34 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     collator,
     focusMode
   }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, focusMode]);
+
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: state.selectionManager,
-    keyboardDelegate: delegate
+    keyboardDelegate: delegate,
+    isVirtualized,
+    scrollRef
   });
 
   let id = useId();
-  gridKeyboardDelegates.set(state, delegate);
+  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
+
+  let descriptionProps = useHighlightSelectionDescription({
+    selectionManager: state.selectionManager,
+    hasItemActions: !!(onRowAction || onCellAction)
+  });
 
   let domProps = filterDOMProps(props, {labelable: true});
-  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(domProps, {
-    role: 'grid',
-    id,
-    'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
-    ...collectionProps
-  });
+  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(
+    domProps,
+    {
+      role: 'grid',
+      id,
+      'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
+    },
+    collectionProps,
+    descriptionProps
+  );
 
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size;
@@ -110,6 +132,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let lastSelection = useRef(selection);
   useUpdateEffect(() => {
     if (!state.selectionManager.isFocused) {
+      lastSelection.current = selection;
+
       return;
     }
 
@@ -117,22 +141,33 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     let removedKeys = diffSelection(lastSelection.current, selection);
 
     // If adding or removing a single row from the selection, announce the name of that item.
+    let isReplace = state.selectionManager.selectionBehavior === 'replace';
     let messages = [];
-    if (addedKeys.size === 1 && removedKeys.size === 0) {
+
+    if ((state.selectionManager.selectedKeys.size === 1 && isReplace)) {
+      if (state.collection.getItem(state.selectionManager.selectedKeys.keys().next().value)) {
+        let currentSelectionText = getRowText(state.selectionManager.selectedKeys.keys().next().value);
+        if (currentSelectionText) {
+          messages.push(formatMessage('selectedItem', {item: currentSelectionText}));
+        }
+      }
+    } else if (addedKeys.size === 1 && removedKeys.size === 0) {
       let addedText = getRowText(addedKeys.keys().next().value);
       if (addedText) {
         messages.push(formatMessage('selectedItem', {item: addedText}));
       }
     } else if (removedKeys.size === 1 && addedKeys.size === 0) {
-      let removedText = getRowText(removedKeys.keys().next().value);
-      if (removedText) {
-        messages.push(formatMessage('deselectedItem', {item: removedText}));
+      if (state.collection.getItem(removedKeys.keys().next().value)) {
+        let removedText = getRowText(removedKeys.keys().next().value);
+        if (removedText) {
+          messages.push(formatMessage('deselectedItem', {item: removedText}));
+        }
       }
     }
 
     // Announce how many items are selected, except when selecting the first item.
     if (state.selectionManager.selectionMode === 'multiple') {
-      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current.size > 1) {
+      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current?.size > 1) {
         messages.push(selection === 'all'
           ? formatMessage('selectedAll')
           : formatMessage('selectedCount', {count: selection.size})

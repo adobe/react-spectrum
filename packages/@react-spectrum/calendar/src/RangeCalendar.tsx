@@ -11,18 +11,31 @@
  */
 
 import {CalendarBase} from './CalendarBase';
-import React from 'react';
-import {SpectrumRangeCalendarProps} from '@react-types/calendar';
+import {createCalendar} from '@internationalized/date';
+import {DateValue, SpectrumRangeCalendarProps} from '@react-types/calendar';
+import React, {useMemo} from 'react';
+import {useLocale} from '@react-aria/i18n';
 import {useRangeCalendar} from '@react-aria/calendar';
 import {useRangeCalendarState} from '@react-stately/calendar';
 
-export function RangeCalendar(props: SpectrumRangeCalendarProps) {
-  let state = useRangeCalendarState(props);
-  let aria = useRangeCalendar(props, state);
+/**
+ * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
+ */
+export function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>) {
+  let {visibleMonths = 1} = props;
+  let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
+  let {locale} = useLocale();
+  let state = useRangeCalendarState({
+    ...props,
+    locale,
+    visibleDuration,
+    createCalendar
+  });
+
   return (
     <CalendarBase
       {...props}
       state={state}
-      aria={aria} />
+      useCalendar={useRangeCalendar} />
   );
 }

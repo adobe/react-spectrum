@@ -123,7 +123,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key,
-    getChildren = (item: any) => item.children || []
+    getChildren = (item: any) => item.children
   } = options;
   let map = useMemo(() => new Map<Key, TreeNode<T>>(), []);
 
@@ -133,7 +133,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   let [items, setItems] = useState(initialNodes);
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
-  function buildTree(initialItems: T[], parentKey?: Key | null) {
+  function buildTree(initialItems: T[] = [], parentKey?: Key | null) {
     return initialItems.map(item => {
       let node: TreeNode<T> = {
         key: getKey(item),
@@ -316,13 +316,19 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         }
 
         items = updateTree(items, key, () => null);
+
+        const movedNode = {
+          ...node,
+          parentKey: toParentKey
+        };
+
         return updateTree(items, toParentKey, parentNode => ({
           key: parentNode.key,
           parentKey: parentNode.parentKey,
           value: parentNode.value,
           children: [
             ...parentNode.children.slice(0, index),
-            node,
+            movedNode,
             ...parentNode.children.slice(index)
           ]
         }));

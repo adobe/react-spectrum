@@ -57,13 +57,13 @@ describe('Slider', function () {
   });
 
   it('supports showValueLabel: false', function () {
-    let {getByRole} = render(<Slider label="The Label" showValueLabel={false} />);
+    let {getByRole, queryByRole} = render(<Slider label="The Label" showValueLabel={false} />);
     let group = getByRole('group');
     expect(group.textContent).toBe('The Label');
 
     let slider = getByRole('slider');
     expect(slider).toHaveAttribute('aria-valuetext', '0');
-    expect(() => getByRole('status')).toThrow();
+    expect(queryByRole('status')).toBeNull();
   });
 
   it('supports disabled', function () {
@@ -257,10 +257,6 @@ describe('Slider', function () {
     beforeAll(() => {
       jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
     });
-    afterAll(() => {
-      // @ts-ignore
-      window.HTMLElement.prototype.offsetWidth.mockReset();
-    });
 
     installMouseEvent();
 
@@ -392,10 +388,6 @@ describe('Slider', function () {
   describe('touch interactions', () => {
     beforeAll(() => {
       jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
-    });
-    afterAll(() => {
-      // @ts-ignore
-      window.HTMLElement.prototype.offsetWidth.mockReset();
     });
 
     it('doesn\'t jump to second touch on track while already dragging', () => {

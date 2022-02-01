@@ -1,14 +1,19 @@
 {
   "calendar": "Kalendar",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} do {end, date, long}",
   "date": "Datum",
   "dateRange": "Opseg datuma",
-  "day": "Dan",
-  "dayPeriod": "Dnevni period",
+  "day": "дан",
+  "dayPeriod": "пре подне/по подне",
   "endDate": "Datum završetka",
-  "hour": "Čas",
-  "minute": "Minut",
-  "month": "Mesec",
-  "second": "Drugi",
+  "era": "ера",
+  "hour": "сат",
+  "minute": "минут",
+  "month": "месец",
+  "second": "секунд",
   "startDate": "Datum početka",
-  "year": "Godina"
+  "year": "година",
+  "weekday": "дан у недељи",
+  "timeZoneName": "временска зона"
 }

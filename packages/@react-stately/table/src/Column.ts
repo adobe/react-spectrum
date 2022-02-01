@@ -22,10 +22,15 @@ function Column<T>(props: ColumnProps<T>): ReactElement { // eslint-disable-line
 
 Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, GridNode<T>[]> {
   let {title, children, childColumns} = props;
+
+  let rendered = title || children;
+  let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'];
+
   let fullNodes = yield {
     type: 'column',
     hasChildNodes: !!childColumns || (title && React.Children.count(children) > 0),
-    rendered: title || children,
+    rendered,
+    textValue,
     props,
     *childNodes() {
       if (childColumns) {
@@ -68,6 +73,11 @@ Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>,
   updateContext(context);
 };
 
+/**
+ * A Column represents a field of each item within a Table. Columns may also contain nested
+ * Column elements to represent column groups. Nested columns can be statically defined as
+ * children, or dynamically generated using a function based on the `childColumns` prop.
+ */
 // We don't want getCollectionNode to show up in the type definition
 let _Column = Column as <T>(props: ColumnProps<T>) => JSX.Element;
 export {_Column as Column};

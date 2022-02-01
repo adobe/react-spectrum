@@ -1,14 +1,19 @@
 {
   "calendar": "Calendar",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} - {end, date, long}",
   "date": "Dată",
   "dateRange": "Raza datei",
-  "day": "Zi",
-  "dayPeriod": "Perioada zilei",
+  "day": "zi",
+  "dayPeriod": "a.m/p.m.",
   "endDate": "Dată final",
-  "hour": "Oră",
-  "minute": "Minut",
-  "month": "Lună",
-  "second": "Secundă",
+  "era": "eră",
+  "hour": "oră",
+  "minute": "minut",
+  "month": "lună",
+  "second": "secundă",
   "startDate": "Dată început",
-  "year": "An"
+  "year": "an",
+  "weekday": "ziua din săptămână",
+  "timeZoneName": "fus orar"
 }

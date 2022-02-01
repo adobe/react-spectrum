@@ -67,6 +67,12 @@ export class LayoutInfo {
   zIndex: number;
 
   /**
+   * Whether the layout info allows its contents to overflow its container.
+   * @default false
+   */
+  allowOverflow: boolean;
+
+  /**
    * @param type A string representing the view type. Should be `'item'` for item views.
                             Other types are used by supplementary views.
    * @param key The unique key for this view.
@@ -82,6 +88,7 @@ export class LayoutInfo {
     this.opacity = 1;
     this.transform = null;
     this.zIndex = 0;
+    this.allowOverflow = false;
   }
 
   /**
@@ -94,6 +101,8 @@ export class LayoutInfo {
     res.transform = this.transform;
     res.parentKey = this.parentKey;
     res.isSticky = this.isSticky;
+    res.zIndex = this.zIndex;
+    res.allowOverflow = this.allowOverflow;
     return res;
   }
 }

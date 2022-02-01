@@ -1,17 +1,17 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/searchfield';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/searchfield/package.json';
 
 ```jsx import
@@ -27,7 +27,7 @@ keywords: [search field, input]
 
 # SearchField
 
-<p>{docs.exports.SearchField.description}</p>
+<PageDescription>{docs.exports.SearchField.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -156,7 +156,7 @@ function Example() {
 
 ### Read only
 
-The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled` the SearchField remains focusable
+The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled`, the SearchField remains focusable
 and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
 
 ```tsx example
@@ -169,6 +169,30 @@ By default, the label is positioned above the SearchField. The `labelPosition` p
 
 ```tsx example
 <SearchField label="Search" labelPosition="side" labelAlign="end" />
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
+
+Both a description and an error message can be supplied to a ComboBox. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState('0');
+  let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+
+  return (
+    <SearchField
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Search your favorite number"
+      maxLength={1}
+      description="Enter a single digit number."
+      errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9.'}
+    />
+  );
+}
 ```
 
 ### Custom width

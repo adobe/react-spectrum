@@ -1,14 +1,19 @@
 {
   "calendar": "Kalender",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} bis {end, date, long}",
   "date": "Datum",
   "dateRange": "Datumsbereich",
   "day": "Tag",
-  "dayPeriod": "Zeitraum",
+  "dayPeriod": "Tageshälfte",
   "endDate": "Enddatum",
+  "era": "Epoche",
   "hour": "Stunde",
   "minute": "Minute",
   "month": "Monat",
   "second": "Sekunde",
   "startDate": "Anfangsdatum",
-  "year": "Jahr"
+  "year": "Jahr",
+  "weekday": "Wochentag",
+  "timeZoneName": "Zeitzone"
 }

@@ -10,6 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+.spectrum-Table-headWrapper {
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
 .spectrum-Table-headCell {
   color: var(--spectrum-table-header-text-color);
   background-color: var(--spectrum-alias-background-color-default);
@@ -19,7 +24,7 @@ governing permissions and limitations under the License.
       color: var(--spectrum-table-header-sort-icon-color);
     }
 
-    &:hover {
+    &.is-hovered {
       color: var(--spectrum-table-header-text-color-hover);
 
       .spectrum-Table-sortedIcon {
@@ -119,7 +124,7 @@ tbody.spectrum-Table-body {
 
   /* We apply background color to the cell rather than the row so that
    * cells can overlap (e.g. sticky row headers). */
-  &:hover .spectrum-Table-cell {
+  &.is-hovered .spectrum-Table-cell {
     background-color: var(--spectrum-table-row-background-color-hover);
   }
 
@@ -143,7 +148,8 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-table-row-background-color-selected);
     }
 
-    &:hover .spectrum-Table-cell {
+    &.is-hovered .spectrum-Table-cell,
+    &.is-active .spectrum-Table-cell:not(.is-disabled) {
       background-color: var(--spectrum-table-row-background-color-selected-hover);
     }
 
@@ -151,6 +157,10 @@ tbody.spectrum-Table-body {
     &.is-focused .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected-key-focus);
     }
+  }
+
+  &.spectrum-Table-row--highlightSelection {
+    border-bottom-color: var(--spectrum-global-color-blue-500);
   }
 
   &.is-drop-target {
@@ -191,7 +201,7 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-alias-background-color-default);
     }
 
-    &:hover .spectrum-Table-cell {
+    &.is-hovered .spectrum-Table-cell {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
 
@@ -209,7 +219,7 @@ tbody.spectrum-Table-body {
         background-color: var(--spectrum-table-quiet-row-background-color-selected);
       }
 
-      &:hover .spectrum-Table-cell {
+      &.is-hovered .spectrum-Table-cell {
         background-color: var(--spectrum-table-quiet-row-background-color-selected-hover);
       }
 

@@ -11,18 +11,31 @@
  */
 
 import {CalendarBase} from './CalendarBase';
-import React from 'react';
-import {SpectrumCalendarProps} from '@react-types/calendar';
+import {createCalendar} from '@internationalized/date';
+import {DateValue, SpectrumCalendarProps} from '@react-types/calendar';
+import React, {useMemo} from 'react';
 import {useCalendar} from '@react-aria/calendar';
 import {useCalendarState} from '@react-stately/calendar';
+import {useLocale} from '@react-aria/i18n';
 
-export function Calendar(props: SpectrumCalendarProps) {
-  let state = useCalendarState(props);
-  let aria = useCalendar(props, state);
+/**
+ * Calendars display a grid of days in one or more months and allow users to select a single date.
+ */
+export function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>) {
+  let {visibleMonths = 1} = props;
+  let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
+  let {locale} = useLocale();
+  let state = useCalendarState({
+    ...props,
+    locale,
+    visibleDuration,
+    createCalendar
+  });
+
   return (
     <CalendarBase
       {...props}
       state={state}
-      aria={aria} />
+      useCalendar={useCalendar} />
   );
 }

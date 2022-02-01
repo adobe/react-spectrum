@@ -10,15 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
 import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Layout} from '@react-stately/virtualizer';
+import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
+import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
-import {useId} from '@react-aria/utils';
-import {useMemo} from 'react';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface TableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
@@ -27,13 +31,14 @@ interface TableProps<T> extends GridProps {
 
 /**
  * Provides the behavior and accessibility implementation for a table component.
- * A table displays data in one or more rows and columns and enables a user to navigate its contents via directional navigation keys.
+ * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
+ * and optionally supports row selection and sorting.
  * @param props - Props for the table.
  * @param state - State for the table, as returned by `useTableState`.
+ * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: TableProps<T>, state: TableState<T>): GridAria {
+export function useTable<T>(props: TableProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
   let {
-    ref,
     keyboardDelegate,
     isVirtualized,
     layout
@@ -59,8 +64,11 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>): GridAri
     ...props,
     id,
     keyboardDelegate: delegate,
-    getRowText(key) {
+    getRowText(key): string {
       let added = state.collection.getItem(key);
+      if (!added) {
+        return '';
+      }
 
       // If the row has a textValue, use that.
       if (added.textValue != null) {
@@ -87,14 +95,35 @@ export function useTable<T>(props: TableProps<T>, state: TableState<T>): GridAri
 
       return '';
     }
-  }, state);
+  }, state, ref);
 
   // Override to include header rows
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
+  let {column, direction: sortDirection} = state.sortDescriptor || {};
+  let formatMessage = useMessageFormatter(intlMessages);
+  let sortDescription = useMemo(() => {
+    let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
+    return sortDirection && column ? formatMessage(`${sortDirection}Sort`, {columnName}) : undefined;
+  }, [sortDirection, column, state.collection.columns]);
+
+  let descriptionProps = useDescription(sortDescription);
+
+  // Only announce after initial render, tabbing to the table will tell you the initial sort info already
+  useUpdateEffect(() => {
+    announce(sortDescription, 'assertive', 500);
+  }, [sortDescription]);
+
   return {
-    gridProps
+    gridProps: mergeProps(
+      gridProps,
+      descriptionProps,
+      {
+        // merge sort description with long press information
+        'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')
+      }
+    )
   };
 }

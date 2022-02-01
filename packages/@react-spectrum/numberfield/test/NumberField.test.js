@@ -34,7 +34,7 @@ describe('NumberField', function () {
   let onKeyUpSpy = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterAll(() => {
@@ -58,11 +58,10 @@ describe('NumberField', function () {
 
     let root = props.label ? container.firstChild.firstChild : undefined;
     container = within(container).queryByRole('group');
-    let textField = container.firstChild;
+    let textField = within(container).queryByRole('textbox');
     let buttons = within(container).queryAllByRole('button');
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
-    textField = textField.firstChild;
     return {
       root,
       container,
@@ -1614,6 +1613,27 @@ describe('NumberField', function () {
       expect(decrementButton).not.toHaveAttribute('id');
       expect(decrementButton).not.toHaveAttribute('aria-labelledby');
     });
+
+    it('error message', () => {
+      let {textField, root} = renderNumberField({
+        label: 'Width',
+        errorMessage: 'This is a error.',
+        validationState: 'invalid'
+      });
+
+      let errorText = within(root).getByText('This is a error.');
+      expect(textField).toHaveAttribute('aria-describedby', errorText.id);
+    });
+
+    it('description', () => {
+      let {textField, root} = renderNumberField({
+        label: 'Width',
+        description: 'This is a description.'
+      });
+
+      let description = within(root).getByText('This is a description.');
+      expect(textField).toHaveAttribute('aria-describedby', description.id);
+    });
   });
 
   it.each`
@@ -1922,7 +1942,7 @@ describe('NumberField', function () {
       InputEvent.prototype.getTargetRanges = getTargetRanges;
     });
 
-    it.each(['deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('allows %s of whole currency symbol', (inputType) => {
+    it.each(['deleteHardLineBackward', 'deleteSoftLineBackward', 'deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('allows %s of whole currency symbol', (inputType) => {
       let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
 
       act(() => {textField.focus();});
@@ -1934,15 +1954,13 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(0, 3);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
     });
 
-    it.each(['deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('prevents %s of partial currency symbol', (inputType) => {
+    it.each(['deleteHardLineBackward', 'deleteSoftLineBackward', 'deleteContentBackward', 'deleteContentForward', 'deleteContent', 'deleteByCut', 'deleteByDrag'])('prevents %s of partial currency symbol', (inputType) => {
       let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD', currencyDisplay: 'code'}});
 
       act(() => {textField.focus();});
@@ -1954,9 +1972,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(1, 3);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(false);
@@ -1974,9 +1990,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(1, 1);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(false);
@@ -1994,9 +2008,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(5, 5);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2', inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2014,9 +2026,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(4, 10);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2', inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2034,9 +2044,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(1, 1);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true, data: '2'});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, data: '2', inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(false);
@@ -2054,9 +2062,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(2, 2);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2074,9 +2080,7 @@ describe('NumberField', function () {
       act(() => {textField.focus();});
       textField.setSelectionRange(0, 0);
 
-      // JSDOM doesn't support the beforeinput event
-      let e = new InputEvent('beforeinput', {cancelable: true});
-      e.inputType = inputType;
+      let e = new InputEvent('beforeinput', {cancelable: true, inputType});
       let proceed = fireEvent(textField, e);
 
       expect(proceed).toBe(true);
@@ -2092,8 +2096,7 @@ describe('NumberField', function () {
 
     // fire compositionstart and beforeinput
     fireEvent.compositionStart(textField);
-    let e = new InputEvent('beforeinput', {cancelable: false, data: 'ü'});
-    e.inputType = 'insertCompositionText';
+    let e = new InputEvent('beforeinput', {cancelable: false, data: 'ü', inputType: 'insertCompositionText'});
     let proceed = fireEvent(textField, e);
     expect(proceed).toBe(true);
 
@@ -2111,6 +2114,12 @@ describe('NumberField', function () {
     expect(textField.value).toBe('123');
     expect(textField.selectionStart).toBe(1);
     expect(textField.selectionEnd).toBe(1);
+  });
+
+  it('adds data attributes to textField', () => {
+    let {textField} = renderNumberField({'data-testid': '123'});
+
+    expect(textField).toHaveAttribute('data-testid', '123');
   });
 
   describe('locale specific', () => {

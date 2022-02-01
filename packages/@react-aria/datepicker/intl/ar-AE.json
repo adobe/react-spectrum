@@ -1,14 +1,19 @@
 {
   "calendar": "التقويم",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} إلى {end, date, long}",
   "date": "التاريخ",
   "dateRange": "نطاق التاريخ",
-  "day": "اليوم",
-  "dayPeriod": "الفترة خلال اليوم",
+  "day": "يوم",
+  "dayPeriod": "ص/م",
   "endDate": "تاريخ الانتهاء",
-  "hour": "الساعة",
-  "minute": "الدقيقة",
+  "era": "العصر",
+  "hour": "الساعات",
+  "minute": "الدقائق",
   "month": "الشهر",
-  "second": "الثانية",
+  "second": "الثواني",
   "startDate": "تاريخ البدء",
-  "year": "العام"
+  "year": "السنة",
+  "weekday": "اليوم",
+  "timeZoneName": "التوقيت"
 }

@@ -1,14 +1,19 @@
 {
   "calendar": "Koledar",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "{start, date, long} do {end, date, long}",
   "date": "Datum",
   "dateRange": "Datumski obseg",
-  "day": "Dan",
-  "dayPeriod": "Obdobje dneva",
+  "day": "dan",
+  "dayPeriod": "dop/pop",
   "endDate": "Datum konca",
-  "hour": "Ura",
-  "minute": "Minuta",
-  "month": "Mesec",
-  "second": "Sekunda",
+  "era": "doba",
+  "hour": "ura",
+  "minute": "minuta",
+  "month": "mesec",
+  "second": "sekunda",
   "startDate": "Datum začetka",
-  "year": "Leto"
+  "year": "leto",
+  "weekday": "dan v tednu",
+  "timeZoneName": "časovni pas"
 }

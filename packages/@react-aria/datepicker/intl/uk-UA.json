@@ -1,14 +1,19 @@
 {
   "calendar": "Календар",
+  "currentDate": "{date, date, full}",
+  "currentDateRange": "Від {start, date, long} до {end, date, long}",
   "date": "Дата",
   "dateRange": "Діапазон дат",
-  "day": "День",
-  "dayPeriod": "Період дня",
+  "day": "день",
+  "dayPeriod": "дп/пп",
   "endDate": "Дата завершення",
-  "hour": "Година",
-  "minute": "Хвилина",
-  "month": "Місяць",
-  "second": "Секунда",
+  "era": "ера",
+  "hour": "година",
+  "minute": "хвилина",
+  "month": "місяць",
+  "second": "секунда",
   "startDate": "Дата початку",
-  "year": "Рік"
+  "year": "рік",
+  "weekday": "день тижня",
+  "timeZoneName": "часовий пояс"
 }

@@ -10,51 +10,53 @@
  * governing permissions and limitations under the License.
  */
 
+import {CalendarDate} from '@internationalized/date';
+import {DateValue} from '@react-types/calendar';
 import {RangeValue} from '@react-types/shared';
 
 export interface CalendarStateBase {
   isDisabled: boolean,
   isReadOnly: boolean,
-  currentMonth: Date,
-  focusedDate: Date,
-  setFocusedDate(value: Date): void,
+  visibleRange: RangeValue<CalendarDate>,
+  timeZone: string,
+  focusedDate: CalendarDate,
+  setFocusedDate(value: CalendarDate): void,
   focusNextDay(): void,
   focusPreviousDay(): void,
-  focusNextWeek(): void,
-  focusPreviousWeek(): void,
-  focusNextMonth(): void,
-  focusPreviousMonth(): void,
-  focusStartOfMonth(): void,
-  focusEndOfMonth(): void,
-  focusNextYear(): void,
-  focusPreviousYear(): void,
+  focusNextRow(): void,
+  focusPreviousRow(): void,
+  focusNextPage(): void,
+  focusPreviousPage(): void,
+  focusPageStart(): void,
+  focusPageEnd(): void,
+  focusNextSection(): void,
+  focusPreviousSection(): void,
+  focusNextPage(): void,
+  focusPreviousPage(): void,
   selectFocusedDate(): void,
-  selectDate(date: Date): void,
+  selectDate(date: CalendarDate): void,
   isFocused: boolean,
   setFocused(value: boolean): void,
-  weeksInMonth: number,
-  weekStart: number,
-  daysInMonth: number,
-  weekDays: Array<Date>,
-  getCellDate(weekIndex: number, dayIndex: number): Date,
-  isInvalid(date: Date): boolean,
-  isSelected(date: Date): boolean,
-  isCellFocused(date: Date): boolean,
-  isCellDisabled(date: Date): boolean,
-  isPreviousMonthInvalid(): boolean,
-  isNextMonthInvalid(): boolean
+  isInvalid(date: CalendarDate): boolean,
+  isSelected(date: CalendarDate): boolean,
+  isCellFocused(date: CalendarDate): boolean,
+  isCellDisabled(date: CalendarDate): boolean,
+  isPreviousVisibleRangeInvalid(): boolean,
+  isNextVisibleRangeInvalid(): boolean
 }
 
 export interface CalendarState extends CalendarStateBase {
-  value: Date,
-  setValue(value: Date): void
+  value: CalendarDate,
+  setValue(value: CalendarDate): void
 }
 
 export interface RangeCalendarState extends CalendarStateBase {
-  value: RangeValue<Date>,
-  setValue(value: RangeValue<Date>): void,
-  highlightDate(date: Date): void,
-  anchorDate: Date | null,
-  setAnchorDate(date: Date | null): void,
-  highlightedRange: RangeValue<Date>
+  value: RangeValue<DateValue>,
+  setValue(value: RangeValue<DateValue>): void,
+  highlightDate(date: CalendarDate): void,
+  anchorDate: CalendarDate | null,
+  setAnchorDate(date: CalendarDate | null): void,
+  highlightedRange: RangeValue<CalendarDate>,
+  isDragging: boolean,
+  setDragging(isDragging: boolean): void
 }

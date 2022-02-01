@@ -31,10 +31,14 @@ module.exports = new Transformer({
       allowReturnOutsideFunction: true,
       strictMode: false,
       sourceType: 'module',
-      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx']
+      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods']
     });
 
     let exports = {};
+
+    asset.symbols.ensure();
+    asset.symbols.set('*', `$${asset.id}$exports`);
+    asset.isBundleSplittable = false;
 
     traverse(ast, {
       ExportNamedDeclaration(path) {
@@ -46,7 +50,8 @@ module.exports = new Transformer({
           }
 
           asset.addDependency({
-            moduleSpecifier: path.node.source.value,
+            specifier: path.node.source.value,
+            specifierType: 'esm',
             symbols,
             pipeline: 'docs-json'
           });
@@ -56,7 +61,8 @@ module.exports = new Transformer({
             exports[path.node.declaration.id.name] = processExport(path.get('declaration'));
           } else {
             let identifiers = t.getBindingIdentifiers(path.node.declaration);
-            for (let id of Object.keys(identifiers)) {
+            for (let [index, id] of Object.keys(identifiers).entries()) {
+              exports[identifiers[id].name] = processExport(path.get('declaration.declarations')[index]);
               asset.symbols.set(identifiers[id].name, identifiers[id].name);
             }
           }
@@ -73,7 +79,8 @@ module.exports = new Transformer({
 
       ExportAllDeclaration(path) {
         asset.addDependency({
-          moduleSpecifier: path.node.source.value,
+          specifier: path.node.source.value,
+          specifierType: 'esm',
           symbols: new Map([['*', {local: '*'}]]),
           pipeline: 'docs-json'
         });
@@ -243,7 +250,8 @@ module.exports = new Transformer({
 
       if (path.isImportSpecifier()) {
         asset.addDependency({
-          moduleSpecifier: path.parent.source.value,
+          specifier: path.parent.source.value,
+          specifierType: 'esm',
           symbols: new Map([[path.node.imported.name, {local: path.node.local.name}]]),
           pipeline: 'docs-json'
         });
@@ -549,7 +557,7 @@ module.exports = new Transformer({
             result.default = tag.description;
           } else if (tag.title === 'access') {
             result.access = tag.description;
-          } else if (tag.title === 'private') {
+          } else if (tag.title === 'private' || tag.title === 'deprecated') {
             result.access = 'private';
           } else if (tag.title === 'protected') {
             result.access = 'protected';
