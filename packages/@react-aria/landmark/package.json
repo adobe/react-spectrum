@@ -20,9 +20,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.5.0",
-    "@react-aria/interactions": "^3.7.0",
     "@react-aria/utils": "^3.11.0",
-    "@react-types/button": "^3.4.1",
     "@react-types/shared": "^3.10.1"
   },
   "peerDependencies": {
