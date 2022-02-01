@@ -205,7 +205,9 @@ class LandmarkManager {
    */
   public focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as HTMLElement);
-    this.landmarks = this.landmarks.map((landmark) => ({...landmark, ...(landmark === currentLandmark && {lastFocused: e.target as HTMLElement})}));
+    if (currentLandmark) {
+      this.updateLandmark({...currentLandmark, lastFocused: e.target as HTMLElement});
+    }
   }
 }
 
