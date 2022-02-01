@@ -25,13 +25,8 @@ let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, '
 
 describe('CalendarBase', () => {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-    window.requestAnimationFrame.mockRestore();
   });
 
   afterEach(() => {

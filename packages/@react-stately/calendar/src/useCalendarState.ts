@@ -40,7 +40,6 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
   let {
     locale,
     createCalendar,
-    timeZone = resolvedOptions.timeZone,
     visibleDuration = {months: 1},
     minValue,
     maxValue,
@@ -51,7 +50,8 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
 
   let [value, setControlledValue] = useControlledState<DateValue>(props.value, props.defaultValue, props.onChange);
   let calendarDateValue = useMemo(() => value ? toCalendar(toCalendarDate(value), calendar) : null, [value, calendar]);
-  let defaultDate = useMemo(() => calendarDateValue || toCalendar(today(timeZone), calendar), [calendarDateValue, timeZone, calendar]);
+  let timeZone = useMemo(() => value && 'timeZone' in value ? value.timeZone : resolvedOptions.timeZone, [value, resolvedOptions.timeZone]);
+  let defaultDate = useMemo(() => calendarDateValue || constrainValue(toCalendar(today(timeZone), calendar), minValue, maxValue), [calendarDateValue, timeZone, calendar, minValue, maxValue]);
   let [startDate, setStartDate] = useState(() => {
     switch (selectionAlignment) {
       case 'start':
@@ -120,7 +120,10 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     },
     focusedDate,
     timeZone,
-    setFocusedDate,
+    setFocusedDate(date) {
+      setFocusedDate(date);
+      setFocused(true);
+    },
     focusNextDay() {
       focusCell(focusedDate.add({days: 1}));
     },

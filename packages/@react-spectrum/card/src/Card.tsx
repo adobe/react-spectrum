@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {CardBase} from './CardBase';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue, ItemProps} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, ForwardRefExoticComponent, PropsWithoutRef, RefAttributes} from 'react';
 import {SpectrumCardProps} from '@react-types/card';
 import {useCardViewContext} from './CardViewContext';
+
 
 let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) => {
   let context = useCardViewContext();
@@ -29,10 +29,8 @@ let Card = forwardRef((props: SpectrumCardProps, ref: DOMRef<HTMLDivElement>) =>
   }
 });
 
-// TODO: Update the typescript for the below and the export
 // @ts-ignore
-// eslint-disable-next-line
-Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Generator<PartialNode<T>> {
+Card.getCollectionNode = function* getCollectionNode<T>(props: any): Generator<PartialNode<T>> {
   let {children, textValue} = props;
 
   yield {
@@ -45,6 +43,5 @@ Card.getCollectionNode = function* getCollectionNode<T>(props, context: any): Ge
   };
 };
 
-// eslint-disable-next-line
-let _Card = Card as <T>(props, ref) => JSX.Element;
+let _Card = Card as ForwardRefExoticComponent<ItemProps<SpectrumCardProps> & PropsWithoutRef<SpectrumCardProps> & RefAttributes<DOMRefValue<HTMLDivElement>>>;
 export {_Card as Card};

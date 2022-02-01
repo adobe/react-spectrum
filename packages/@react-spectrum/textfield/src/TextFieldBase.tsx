@@ -20,9 +20,7 @@ import {PressEvents} from '@react-types/shared';
 import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
-import {useProviderProps} from '@react-spectrum/provider';
 
 interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, PressEvents {
   wrapperChildren?: ReactElement | ReactElement[],
@@ -39,8 +37,6 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, P
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
   let {
     label,
     validationState,

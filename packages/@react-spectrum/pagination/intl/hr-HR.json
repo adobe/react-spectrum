@@ -1,3 +1,3 @@
 {
-  "page_count": "od {n, plural, =one{# stranica} other{# stranica}}"
+  "page_count": "od {n, plural, one{# stranica} other{# stranica}}"
 }

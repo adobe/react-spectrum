@@ -39,7 +39,6 @@ import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useFormProps} from '@react-spectrum/form';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
@@ -47,9 +46,9 @@ import {useSelectState} from '@react-stately/select';
 function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'picker');
   props = useProviderProps(props);
-  props = useFormProps(props);
   let formatMessage = useMessageFormatter(intlMessages);
   let {
+    autoComplete,
     isDisabled,
     direction = 'bottom',
     align = 'start',
@@ -201,6 +200,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         )
       }>
       <HiddenSelect
+        autoComplete={autoComplete}
         isDisabled={isDisabled}
         state={state}
         triggerRef={unwrappedTriggerRef}

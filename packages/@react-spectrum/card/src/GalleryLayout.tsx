@@ -30,7 +30,7 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
   itemSpacing?: Size,
   /**
    * The vertical padding for an item.
-   * @default 114
+   * @default 78
    */
   itemPadding?: number,
   /**
@@ -43,22 +43,14 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
    * will be targeted.
    * @type {number}
    */
-  threshold?: number,
-  /**
-   * The margin around the grid view between the edges and the items.
-   * @default 24
-   */
-  margin?: number // TODO: Perhaps should accept Responsive<DimensionValue>
+  threshold?: number
 }
 
-// TODO: copied from V2, update this with the proper spectrum values
-// Should these be affected by Scale as well?
 const DEFAULT_OPTIONS = {
   S: {
     idealRowHeight: 112,
     minItemSize: new Size(96, 96),
     itemSpacing: new Size(8, 16),
-    // TODO: will need to update as well
     itemPadding: 24,
     dropSpacing: 50,
     margin: 8
@@ -67,8 +59,10 @@ const DEFAULT_OPTIONS = {
     idealRowHeight: 208,
     minItemSize: new Size(136, 136),
     itemSpacing: new Size(18, 18),
-    // TODO: updated to work with new v3 cards (there is additional space required for the descriptions if there is a description)
-    itemPadding: 114,
+    itemPadding: {
+      'medium': 78,
+      'large': 99
+    },
     dropSpacing: 100,
     margin: 24
   }
@@ -76,7 +70,6 @@ const DEFAULT_OPTIONS = {
 
 export class GalleryLayout<T> extends BaseLayout<T> {
   protected idealRowHeight: number;
-  protected margin: number;
   protected itemSpacing: Size;
   itemPadding: number;
   protected minItemSize: Size;
@@ -84,11 +77,10 @@ export class GalleryLayout<T> extends BaseLayout<T> {
 
   constructor(options: GalleryLayoutOptions = {}) {
     super(options);
-    // TODO: restore cardSize option when we support different size cards
     let cardSize = 'L';
     this.idealRowHeight = options.idealRowHeight || DEFAULT_OPTIONS[cardSize].idealRowHeight;
     this.itemSpacing = options.itemSpacing || DEFAULT_OPTIONS[cardSize].itemSpacing;
-    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
+    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding[this.scale];
     this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
     this.threshold = options.threshold || 1;
     this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
@@ -146,104 +138,107 @@ export class GalleryLayout<T> extends BaseLayout<T> {
     let y = this.margin;
     let availableWidth = visibleWidth - this.margin * 2;
 
-    // Compute aspect ratios for all of the items, and the total width if all items were on in a single row.
-    let ratios = [];
-    let totalWidth = 0;
-    let minRatio = this.minItemSize.width / this.minItemSize.height;
-    let maxRatio = availableWidth / this.minItemSize.height;
+    // If avaliable width is not greater than 0, skip node layout calculations
+    if (availableWidth > 0) {
+      // Compute aspect ratios for all of the items, and the total width if all items were on in a single row.
+      let ratios = [];
+      let totalWidth = 0;
+      let minRatio = this.minItemSize.width / this.minItemSize.height;
+      let maxRatio = availableWidth / this.minItemSize.height;
 
-    for (let node of this.collection) {
-      let ratio = node.props.width / node.props.height;
-      if (ratio < minRatio) {
-        ratio = minRatio;
-      } else if (ratio > maxRatio && ratio !== minRatio) {
-        ratio = maxRatio;
+      for (let node of this.collection) {
+        let ratio = node.props.width / node.props.height;
+        if (ratio < minRatio) {
+          ratio = minRatio;
+        } else if (ratio > maxRatio && ratio !== minRatio) {
+          ratio = maxRatio;
+        }
+
+        let itemWidth = ratio * this.minItemSize.height;
+        ratios.push(ratio);
+        totalWidth += itemWidth;
       }
 
-      let itemWidth = ratio * this.minItemSize.height;
-      ratios.push(ratio);
-      totalWidth += itemWidth;
+      totalWidth += this.itemSpacing.width * (this.collection.size - 1);
+
+      // Determine how many rows we'll need, and partition the items into rows
+      // using the aspect ratios as weights.
+      let rows = Math.max(1, Math.ceil(totalWidth / availableWidth));
+      // if the available width can't hold two items, then every item will get its own row
+      // this leads to a faster run through linear partition and more dependable output for small row widths
+      if (availableWidth <= (this.minItemSize.width * 2) + (this.itemPadding * 2)) {
+        rows = this.collection.size;
+      }
+
+      let weightedRatios = ratios.map(ratio => ratio < this.threshold ? ratio + (0.5 * (1 / ratio)) : ratio);
+      let partition = linearPartition(weightedRatios, rows);
+
+      let index = 0;
+      for (let row of partition) {
+        // Compute the total weight for this row
+        let totalWeight = 0;
+        for (let j = index; j < index + row.length; j++) {
+          totalWeight += ratios[j];
+        }
+
+        // Determine the row height based on the total available width and weight of this row.
+        let bestRowHeight = (availableWidth - (row.length - 1) * this.itemSpacing.width) / totalWeight;
+
+        // if this is the last row and the row height is >2x the ideal row height, then cap to the ideal height
+        // probably doing this because if the last row has one extremely tall image, then the row becomes huge
+        // though that can happen anywhere if a row has lots of tall images... so i'm not sure why this one matters
+        if (row === partition[partition.length - 1] && bestRowHeight > this.idealRowHeight * 2) {
+          bestRowHeight = this.idealRowHeight;
+        }
+        let itemHeight = Math.round(bestRowHeight) + this.itemPadding;
+        let x = this.margin;
+
+        // if any items are going to end up too small, add a bit of width to them and subtract it from wider objects
+        let widths = [];
+        for (let j = index; j < index + row.length; j++) {
+          let width = Math.round(bestRowHeight * ratios[j]);
+          widths.push([j - index, width]);
+        }
+        this._distributeWidths(widths);
+
+        // Create items for this row.
+        for (let j = index; j < index + row.length; j++) {
+          let node = this.collection.rows[j];
+          let itemWidth = Math.max(widths[j - index][1], this.minItemSize.width);
+          let rect = new Rect(x, y, itemWidth, itemHeight);
+          let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+          layoutInfo.allowOverflow = true;
+          this.layoutInfos.set(node.key, layoutInfo);
+          x += itemWidth + this.itemSpacing.width;
+        }
+
+        y += itemHeight + this.itemSpacing.height;
+        index += row.length;
+      }
+
+      if (this.isLoading) {
+        let loaderY = y;
+        let loaderHeight = 60;
+        // If there aren't any items, make loader take all avaliable room and remove margin from y calculation
+        // so it doesn't scroll
+        if (this.collection.size === 0) {
+          loaderY = 0;
+          loaderHeight = visibleHeight || 60;
+        }
+
+        let rect = new Rect(0, loaderY, visibleWidth, loaderHeight);
+        let loader = new LayoutInfo('loader', 'loader', rect);
+        this.layoutInfos.set('loader', loader);
+        y = loader.rect.maxY;
+      }
+
+      if (this.collection.size === 0 && !this.isLoading) {
+        let rect = new Rect(0, 0, visibleWidth, visibleHeight);
+        let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
+        this.layoutInfos.set('placeholder', placeholder);
+        y = placeholder.rect.maxY;
+      }
     }
-
-    totalWidth += this.itemSpacing.width * (this.collection.size - 1);
-
-    // Determine how many rows we'll need, and partition the items into rows
-    // using the aspect ratios as weights.
-    let rows = Math.max(1, Math.ceil(totalWidth / availableWidth));
-    // if the available width can't hold two items, then every item will get its own row
-    // this leads to a faster run through linear partition and more dependable output for small row widths
-    if (availableWidth <= (this.minItemSize.width * 2) + (this.itemPadding * 2)) {
-      rows = this.collection.size;
-    }
-
-    let weightedRatios = ratios.map(ratio => ratio < this.threshold ? ratio + (0.5 * (1 / ratio)) : ratio);
-    let partition = linearPartition(weightedRatios, rows);
-
-    let index = 0;
-    for (let row of partition) {
-      // Compute the total weight for this row
-      let totalWeight = 0;
-      for (let j = index; j < index + row.length; j++) {
-        totalWeight += ratios[j];
-      }
-
-      // Determine the row height based on the total available width and weight of this row.
-      let bestRowHeight = (availableWidth - (row.length - 1) * this.itemSpacing.width) / totalWeight;
-
-      // if this is the last row and the row height is >2x the ideal row height, then cap to the ideal height
-      // probably doing this because if the last row has one extremely tall image, then the row becomes huge
-      // though that can happen anywhere if a row has lots of tall images... so i'm not sure why this one matters
-      if (row === partition[partition.length - 1] && bestRowHeight > this.idealRowHeight * 2) {
-        bestRowHeight = this.idealRowHeight;
-      }
-      let itemHeight = Math.round(bestRowHeight) + this.itemPadding;
-      let x = this.margin;
-
-      // if any items are going to end up too small, add a bit of width to them and subtract it from wider objects
-      let widths = [];
-      for (let j = index; j < index + row.length; j++) {
-        let width = Math.round(bestRowHeight * ratios[j]);
-        widths.push([j - index, width]);
-      }
-      this._distributeWidths(widths);
-
-      // Create items for this row.
-      for (let j = index; j < index + row.length; j++) {
-        let node = this.collection.rows[j];
-        let itemWidth = Math.max(widths[j - index][1], this.minItemSize.width);
-        let rect = new Rect(x, y, itemWidth, itemHeight);
-        let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-        this.layoutInfos.set(node.key, layoutInfo);
-        x += itemWidth + this.itemSpacing.width;
-      }
-
-      y += itemHeight + this.itemSpacing.height;
-      index += row.length;
-    }
-
-    if (this.isLoading) {
-      let loaderY = y;
-      let loaderHeight = 60;
-      // If there aren't any items, make loader take all avaliable room and remove margin from y calculation
-      // so it doesn't scroll
-      if (this.collection.size === 0) {
-        loaderY = 0;
-        loaderHeight = visibleHeight || 60;
-      }
-
-      let rect = new Rect(0, loaderY, visibleWidth, loaderHeight);
-      let loader = new LayoutInfo('loader', 'loader', rect);
-      this.layoutInfos.set('loader', loader);
-      y = loader.rect.maxY;
-    }
-
-    if (this.collection.size === 0 && !this.isLoading) {
-      let rect = new Rect(0, 0, visibleWidth, visibleHeight);
-      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
-      this.layoutInfos.set('placeholder', placeholder);
-      y = placeholder.rect.maxY;
-    }
-
     this.contentSize = new Size(visibleWidth, y);
   }
 }

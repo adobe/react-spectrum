@@ -11,10 +11,8 @@
  */
 
 import {act, fireEvent, render, within} from '@testing-library/react';
-import {ActionMenu, Item} from '@react-spectrum/menu';
-import {Button} from '@react-spectrum/button';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
-import {Content, Footer} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Provider} from '@react-spectrum/provider';
@@ -83,39 +81,18 @@ function StaticCardView(props) {
           <Heading>Title  1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
         </Card>
         <Card width={640} height={640} textValue="Title  1">
           <Image src="https://i.imgur.com/DhygPot.jpg" />
           <Heading>Title  1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
         </Card>
         <Card width={182} height={1009} textValue="Title  1">
           <Image src="https://i.imgur.com/L7RTlvI.png" />
           <Heading>Title  1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
         </Card>
       </CardView>
     </Provider>
@@ -124,7 +101,8 @@ function StaticCardView(props) {
 
 function DynamicCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
+  let cardOrientation = props.cardOrientation || 'vertical';
+  let gridLayout = useMemo(() => new GridLayout({collator, cardOrientation}), [collator, cardOrientation]);
   let {
     layout = gridLayout,
     selectionMode = 'multiple',
@@ -142,13 +120,6 @@ function DynamicCardView(props) {
             <Heading>{item.title}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
-            <Footer>
-              <Button variant="primary">Something</Button>
-            </Footer>
           </Card>
         )}
       </CardView>
@@ -161,7 +132,7 @@ describe('CardView', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => mockWidth);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => mockHeight);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {
@@ -204,18 +175,6 @@ describe('CardView', function () {
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
       expect(within(cell).getByText('Title', {exact: false})).toBeTruthy();
-
-      if (Name === 'Waterfall layout') {
-        let buttons = within(cell).getAllByRole('button');
-        expect(buttons.length).toEqual(2);
-        expect(buttons[0]).toHaveAttribute('aria-label', 'More actions');
-        expect(buttons[1]).toHaveTextContent('Something');
-      } else {
-        // Grid and Gallery only support quiet cards for now.
-        let actionMenuButton = within(cell).getByRole('button');
-        expect(actionMenuButton).toBeTruthy();
-        expect(actionMenuButton).toHaveAttribute('aria-label', 'More actions');
-      }
     }
   });
 
@@ -247,24 +206,16 @@ describe('CardView', function () {
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
       expect(within(cell).getByText('Title', {exact: false})).toBeTruthy();
-
-      if (Name === 'Waterfall layout') {
-        let buttons = within(cell).getAllByRole('button');
-        expect(buttons.length).toEqual(2);
-        expect(buttons[0]).toHaveAttribute('aria-label', 'More actions');
-        expect(buttons[1]).toHaveTextContent('Something');
-      } else {
-        // Grid and Gallery only support quiet cards for now.
-        let actionMenuButton = within(cell).getByRole('button');
-        expect(actionMenuButton).toBeTruthy();
-        expect(actionMenuButton).toHaveAttribute('aria-label', 'More actions');
-      }
     }
   });
 
   describe('Grid layout and some shared gallery layout behavior', function () {
-    it('renders each card with the same height and width', function () {
-      let tree = render(<DynamicCardView />);
+    it.each`
+      cardOrientation
+      ${'vertical'}
+      ${'horizontal'}
+    `('grid layout CardView renders each card with the same height and width (card orientation: $cardOrientation)', function ({cardOrientation}) {
+      let tree = render(<DynamicCardView cardOrientation={cardOrientation} />);
       act(() => {
         jest.runAllTimers();
       });
@@ -275,6 +226,7 @@ describe('CardView', function () {
       let currentLeft;
       let expectedWidth;
       let expectedHeight;
+      let expectedSpacing;
       for (let [index, div] of wrappers.entries()) {
         if (index === 0) {
           continue;
@@ -285,6 +237,17 @@ describe('CardView', function () {
           currentLeft = div.style.left;
           expectedWidth = div.style.width;
           expectedHeight = div.style.height;
+
+          // Calculate the horizontal spacing between the cards based off the available width and number of cards
+          if (!expectedSpacing) {
+            let cardsInRow = Math.floor((mockWidth - 24 * 2) /  parseInt(expectedWidth, 10));
+            if (cardsInRow > 1) {
+              expectedSpacing = (mockWidth - (24 * 2) - (cardsInRow *  parseInt(expectedWidth, 10))) / (cardsInRow - 1);
+            } else {
+              expectedSpacing = 0;
+            }
+          }
+
           // default margin size is 24px
           expect(div.style.top).toEqual('24px');
           expect(div.style.left).toEqual('24px');
@@ -292,8 +255,7 @@ describe('CardView', function () {
           expect(div.style.width).toEqual(expectedWidth);
           expect(div.style.height).toEqual(expectedHeight);
           if (currentTop === div.style.top) {
-            // 19px due to how horizontal spacing is calculated in the layout
-            currentLeft = `${parseInt(currentLeft, 10) + parseInt(expectedWidth, 10) + 19}px`;
+            currentLeft = `${parseInt(currentLeft, 10) + parseInt(expectedWidth, 10) + expectedSpacing}px`;
           } else {
             // default space between the two cards vertically is 18px
             currentTop = `${parseInt(currentTop, 10) + parseInt(expectedHeight, 10) + 18}px`;
@@ -302,6 +264,12 @@ describe('CardView', function () {
           }
           expect(div.style.left).toEqual(currentLeft);
         }
+      }
+
+      if (cardOrientation === 'horizontal') {
+        expect(expectedWidth > expectedHeight).toBeTruthy();
+      } else {
+        expect(expectedHeight > expectedWidth).toBeTruthy();
       }
     });
 
@@ -387,14 +355,73 @@ describe('CardView', function () {
         expect(cardStyles.left).toEqual(expectedLeft);
       });
 
-      // TODO: update the below two tests when we decide on exact keyboard behavior for entering the card
-      // it('should move focus via Arrow Left (RTL)', function () {
+      it.each`
+        Name                  | layout
+        ${'Grid layout'}      | ${GridLayout}
+        ${'Gallery layout'}   | ${GalleryLayout}
+      `('$Name CardView should move focus via Arrow Left (RTL)', function ({Name, layout}) {
+        let tree = render(<DynamicCardView locale="ar-AE" layout={layout} />);
+        act(() => {
+          jest.runAllTimers();
+        });
 
-      // });
+        let expectedRight;
+        let expectedTop;
+        let cards = tree.getAllByRole('gridcell');
 
-      // it('should move focus via Arrow Right', function () {
+        triggerPress(cards[0]);
+        expect(document.activeElement).toBe(cards[0]);
+        let cardStyles = getCardStyles(cards[0]);
+        expectedRight = cardStyles.right;
+        expectedTop = cardStyles.top;
 
-      // });
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+          jest.runAllTimers();
+        });
+
+        expect(document.activeElement).toBe(cards[1]);
+        // horizontal spacing in grid is minimum 18px, but in this specific setup the calculated horizontal spacing is 19px due to margins
+        let horizontalSpacing = Name === 'Grid layout' ? 19 : 18;
+        expectedRight = `${parseInt(expectedRight, 10) + parseInt(cardStyles.width, 10) + horizontalSpacing}px`;
+        cardStyles = getCardStyles(document.activeElement);
+        expect(cardStyles.top).toEqual(expectedTop);
+        expect(cardStyles.right).toEqual(expectedRight);
+      });
+
+      it.each`
+        Name                  | layout
+        ${'Grid layout'}      | ${GridLayout}
+        ${'Gallery layout'}   | ${GalleryLayout}
+      `('$Name CardView should move focus via Arrow Right', function ({Name, layout}) {
+        let tree = render(<DynamicCardView layout={layout} />);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let cards = tree.getAllByRole('gridcell');
+
+        triggerPress(cards[0]);
+        expect(document.activeElement).toBe(cards[0]);
+        let cardStyles = getCardStyles(cards[0]);
+        let expectedLeft = cardStyles.left;
+        let expectedTop = cardStyles.top;
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+          jest.runAllTimers();
+        });
+
+        expect(document.activeElement).toBe(cards[1]);
+        // horizontal spacing in grid is minimum 18px, but in this specific setup the calculated horizontal spacing is 19px due to margins
+        let horizontalSpacing = Name === 'Grid layout' ? 19 : 18;
+        expectedLeft = `${parseInt(expectedLeft, 10) + parseInt(cardStyles.width, 10) + horizontalSpacing}px`;
+        cardStyles = getCardStyles(document.activeElement);
+        expect(cardStyles.top).toEqual(expectedTop);
+        expect(cardStyles.left).toEqual(expectedLeft);
+      });
 
       it.each`
         Name                  | layout
@@ -770,8 +797,7 @@ describe('CardView', function () {
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
       });
 
-      // TODO: figure out why the spacing is only 16px between each item
-      it.skip('should move focus via Arrow Left', function () {
+      it('should move focus via Arrow Left', function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
         act(() => {
           jest.runAllTimers();
@@ -801,18 +827,94 @@ describe('CardView', function () {
         expect(cardStyles.left).toEqual(expectedLeft);
       });
 
-      // TODO: update the below two tests when we decide on exact keyboard behavior for entering the card
-      // it('should move focus via Arrow Left (RTL)', function () {
+      it('should move focus via Arrow Left (RTL)', function () {
+        let tree = render(<DynamicCardView locale="ar-AE" layout={WaterfallLayout} />);
+        act(() => {
+          jest.runAllTimers();
+        });
 
-      // });
+        let cards = tree.getAllByRole('gridcell');
+        triggerPress(cards[0]);
+        act(() => {
+          jest.runAllTimers();
+        });
+        expect(document.activeElement).toBe(cards[0]);
+        let cardStyles = getCardStyles(cards[0]);
+        let expectedRight = cardStyles.right;
+        let expectedTop = cardStyles.top;
 
-      // it('should move focus via Arrow Right', function () {
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+          jest.runAllTimers();
+        });
 
-      // });
+        expect(document.activeElement).toBe(cards[1]);
+        cardStyles = getCardStyles(document.activeElement);
+        expectedRight = `${parseInt(expectedRight, 10) + parseInt(cardStyles.width, 10) + 18}px`;
+        expect(cardStyles.top).toEqual(expectedTop);
+        expect(cardStyles.right).toEqual(expectedRight);
+      });
 
-      // it('should move focus via Arrow Right (RTL)', function () {
+      it('should move focus via Arrow Right', function () {
+        let tree = render(<DynamicCardView layout={WaterfallLayout} />);
+        act(() => {
+          jest.runAllTimers();
+        });
 
-      // });
+        let cards = tree.getAllByRole('gridcell');
+
+        triggerPress(cards[0]);
+        act(() => {
+          jest.runAllTimers();
+        });
+        expect(document.activeElement).toBe(cards[0]);
+        let cardStyles = getCardStyles(cards[0]);
+        let expectedLeft = cardStyles.left;
+        let expectedTop = cardStyles.top;
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+          jest.runAllTimers();
+        });
+
+        expect(document.activeElement).toBe(cards[1]);
+        cardStyles = getCardStyles(document.activeElement);
+        expectedLeft = `${parseInt(expectedLeft, 10) + parseInt(cardStyles.width, 10) + 18}px`;
+        expect(cardStyles.top).toEqual(expectedTop);
+        expect(cardStyles.left).toEqual(expectedLeft);
+      });
+
+      it('should move focus via Arrow Right (RTL)', function () {
+        let tree = render(<DynamicCardView locale="ar-AE" layout={WaterfallLayout} />);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let cards = tree.getAllByRole('gridcell');
+
+        triggerPress(cards[1]);
+        act(() => {
+          jest.runAllTimers();
+        });
+        expect(document.activeElement).toBe(cards[1]);
+        let cardStyles = getCardStyles(cards[1]);
+        let expectedRight = cardStyles.right;
+        let expectedTop = cardStyles.top;
+
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+          jest.runAllTimers();
+        });
+
+        expect(document.activeElement).toBe(cards[0]);
+        cardStyles = getCardStyles(document.activeElement);
+        expectedRight = `${parseInt(expectedRight, 10) - parseInt(cardStyles.width, 10) - 18}px`;
+        expect(cardStyles.top).toEqual(expectedTop);
+        expect(cardStyles.right).toEqual(expectedRight);
+      });
 
       // TODO: Can't test PageUp/Down of WaterfallLayout because it is setting the heights of the items to 0. Figure out why
       // seems to be the updateItemSize
@@ -1025,6 +1127,10 @@ describe('CardView', function () {
       expect(row.parentNode.style.height).toBe(`${mockHeight}px`);
 
       tree.rerender(<DynamicCardView layout={layout} />);
+      // Run timers for transitions
+      act(() => {
+        jest.runAllTimers();
+      });
       let grid = tree.getByRole('grid');
       expect(within(grid).queryByRole('progressbar')).toBeNull();
       expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
@@ -1076,7 +1182,7 @@ describe('CardView', function () {
       let cards = tree.getAllByRole('gridcell');
       expect(cards).toBeTruthy();
       // Virtualizer calls onLoadMore twice due to initial layout
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
       triggerPress(cards[1]);
 
       act(() => {
@@ -1088,7 +1194,7 @@ describe('CardView', function () {
       let grid = tree.getByRole('grid');
       grid.scrollTop = 3000;
       fireEvent.scroll(grid);
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
 
     it.each`
