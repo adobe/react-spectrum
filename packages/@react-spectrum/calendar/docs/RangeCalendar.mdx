@@ -1,0 +1,177 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/calendar';
+import i18nDocs from 'docs:@internationalized/date';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/calendar/package.json';
+
+```jsx import
+import {RangeCalendar} from '@react-spectrum/calendar';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Date and Time
+keywords: [date]
+after_version: 3.0.0
+---
+
+# RangeCalendar
+
+<PageDescription>{docs.exports.RangeCalendar.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['RangeCalendar']}
+  sourceData={[]} />
+
+## Example
+
+```tsx example
+<RangeCalendar aria-label="Trip dates" />
+```
+
+## Value
+
+A `RangeCalendar` has no selection by default. An initial, uncontrolled value can be provided to the `RangeCalendar` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date ranges are objects with `start` and `end` properties containing date values, which are provided using objects in the `@internationalized/date` package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
+
+`RangeCalendar` supports values with both date and time components, but only allows users to modify the dates. By default, `RangeCalendar` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the date and preserving the time components.
+
+```tsx example
+import {parseDate} from '@internationalized/date';
+
+function Example() {
+  let [value, setValue] = React.useState({
+    start: parseDate('2020-02-03'),
+    end: parseDate('2020-02-12')
+  });
+
+  return (
+    <Flex gap="size-300" wrap>
+      <RangeCalendar
+        aria-label="Date range (uncontrolled)"
+        defaultValue={{
+          start: parseDate('2020-02-03'),
+          end: parseDate('2020-02-12')
+        }} />
+      <RangeCalendar
+        aria-label="Date range (controlled)"
+        value={value}
+        onChange={setValue} />
+    </Flex>
+  );
+}
+```
+
+### International calendars
+
+`RangeCalendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the `Provider` component.
+
+Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
+
+The below example displays a `RangeCalendar` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
+
+```tsx example
+import {Provider} from '@adobe/react-spectrum';
+
+function Example() {
+  let [range, setRange] = React.useState(null);
+  return (
+    <Provider locale="hi-IN-u-ca-indian">
+      <RangeCalendar aria-label="Date range" value={range} onChange={setRange} />
+      <p>Start date: {range?.start.toString()}</p>
+      <p>End date: {range?.end.toString()}</p>
+    </Provider>
+  );
+}
+```
+
+## Labeling
+
+An aria-label must be provided to the `RangeCalendar` for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
+
+### Internationalization
+
+In order to internationalize a `RangeCalendar`, a localized string should be passed to the `aria-label` prop. For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the `RangeCalendar` is automatically flipped. Dates are automatically formatted using the current locale.
+
+## Events
+
+`RangeCalendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@adobe/react-spectrum';
+
+function Example() {
+  let [range, setRange] = React.useState({
+    start: parseDate('2020-07-03'),
+    end: parseDate('2020-07-10')
+  });
+  let formatter = useDateFormatter({dateStyle: 'long'});
+
+  return (
+    <>
+      <RangeCalendar aria-label="Date range" value={range} onChange={setRange} />
+      <p>
+        Selected date:{' '}
+        {formatter.formatRange(
+          range.start.toDate(getLocalTimeZone()),
+          range.end.toDate(getLocalTimeZone())
+        )}
+      </p>
+    </>
+  );
+}
+```
+
+## Validation
+
+By default, `RangeCalendar` allows selecting any date range. The `minValue` and `maxValue` props can also be used to prevent the user from selecting dates outside a certain range.
+
+This example only accepts dates after today.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+<RangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} />
+```
+
+## Props
+
+<PropTable component={docs.exports.RangeCalendar} links={docs.links} />
+
+## Visual options
+
+### Disabled
+
+```tsx example
+<RangeCalendar aria-label="Trip dates" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDisabled`, the RangeCalendar remains focusable.
+
+```tsx example
+<RangeCalendar aria-label="Trip dates" value={{start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ weeks: 1 })}} isReadOnly />
+```
+
+### Visible months
+
+By default, a `RangeCalendar` displays a single month. The `visibleMonths` prop allows displaying up to 3 months at a time.
+
+```tsx example
+<RangeCalendar aria-label="Trip dates" visibleMonths={3} />
+```

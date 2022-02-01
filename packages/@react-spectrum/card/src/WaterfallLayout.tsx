@@ -27,11 +27,6 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
    */
   maxItemSize?: Size,
   /**
-   * The margin around the grid view between the edges and the items.
-   * @default 24
-   */
-  margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
-  /**
    * The minimum space required between items.
    * @default 18 x 18
    */
@@ -40,22 +35,15 @@ export interface WaterfallLayoutOptions extends BaseLayoutOptions {
    * The maximum number of columns.
    * @default Infinity
    */
-  maxColumns?: number,
-  /**
-   * The vertical padding for an item.
-   * @default 56
-   */
-  itemPadding?: number
+  maxColumns?: number
 }
 
 // TODO: this didn't have any options that varied with card size, should it have?
 export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegate {
   protected minItemSize: Size;
   protected maxItemSize: Size;
-  protected margin: number;
   protected minSpace: Size;
   protected maxColumns: number;
-  itemPadding: number;
   protected numColumns: number;
   protected itemWidth: number;
   protected horizontalSpacing: number;
@@ -69,8 +57,6 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     this.margin = options.margin != null ? options.margin : 24;
     this.minSpace = options.minSpace || new Size(18, 18);
     this.maxColumns = options.maxColumns || Infinity;
-    // TODO: not entirely sure what this is for since the layout will automatically shift itself to the correct vertical space for the card
-    this.itemPadding = options.itemPadding != null ? options.itemPadding : 56;
 
     this.itemWidth = 0;
     this.numColumns = 0;
@@ -119,8 +105,8 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       } else if (node.props.width && node.props.height) {
         let nodeWidth = node.props.width;
         let nodeHeight = node.props.height;
-        let scaledHeight = Math.round(nodeWidth * ((itemWidth) / nodeHeight));
-        height = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, scaledHeight)) + this.itemPadding;
+        let scaledHeight = Math.round(nodeHeight * ((itemWidth) / nodeWidth));
+        height = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, scaledHeight));
       } else {
         height = itemWidth;
       }
@@ -133,6 +119,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       let rect = new Rect(x, y, itemWidth, height);
       let layoutInfo = new LayoutInfo(node.type, key, rect);
       layoutInfo.estimatedSize = estimatedSize;
+      layoutInfo.allowOverflow = true;
       this.layoutInfos.set(key, layoutInfo);
 
       // TODO: From v2 figure out this bit, when does this get called and what to replace this.collectionView._transaction with?

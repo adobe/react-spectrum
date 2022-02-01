@@ -55,6 +55,8 @@ export function useSpinButton(
     onIncrementToMax
   } = props;
   const formatMessage = useMessageFormatter(intlMessages);
+  const propsRef = useRef(props);
+  propsRef.current = props;
 
   const clearAsync = () => clearTimeout(_async.current);
 
@@ -136,7 +138,7 @@ export function useSpinButton(
   const onIncrementPressStart = useCallback(
     (initialStepDelay: number) => {
       clearAsync();
-      onIncrement();
+      propsRef.current.onIncrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
@@ -153,7 +155,7 @@ export function useSpinButton(
   const onDecrementPressStart = useCallback(
     (initialStepDelay: number) => {
       clearAsync();
-      onDecrement();
+      propsRef.current.onDecrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
@@ -166,6 +168,10 @@ export function useSpinButton(
     },
     [onDecrement, minValue, value]
   );
+
+  let cancelContextMenu = (e) => {
+    e.preventDefault();
+  };
 
   return {
     spinButtonProps: {
@@ -182,14 +188,26 @@ export function useSpinButton(
       onBlur
     },
     incrementButtonProps: {
-      onPressStart: () => onIncrementPressStart(400),
-      onPressEnd: clearAsync,
+      onPressStart: () => {
+        onIncrementPressStart(400);
+        window.addEventListener('contextmenu', cancelContextMenu);
+      },
+      onPressEnd: () => {
+        clearAsync();
+        window.removeEventListener('contextmenu', cancelContextMenu);
+      },
       onFocus,
       onBlur
     },
     decrementButtonProps: {
-      onPressStart: () => onDecrementPressStart(400),
-      onPressEnd: clearAsync,
+      onPressStart: () => {
+        onDecrementPressStart(400);
+        window.addEventListener('contextmenu', cancelContextMenu);
+      },
+      onPressEnd: () => {
+        clearAsync();
+        window.removeEventListener('contextmenu', cancelContextMenu);
+      },
       onFocus,
       onBlur
     }

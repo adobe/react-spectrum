@@ -41,6 +41,6 @@ export function useTagGroup(props: AriaTagGroupProps): TagGroupAria {
       'aria-live': isFocusWithin ? 'polite' : 'off',
       'aria-disabled': isDisabled,
       ...focusWithinProps
-    })
+    } as HTMLAttributes<HTMLElement>)
   };
 }

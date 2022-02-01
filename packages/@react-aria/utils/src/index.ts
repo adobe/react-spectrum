@@ -32,3 +32,4 @@ export * from './useDescription';
 export * from './platform';
 export * from './useEvent';
 export * from './useValueEffect';
+export * from './scrollIntoView';

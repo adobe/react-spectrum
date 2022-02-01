@@ -10,15 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Item} from '@react-spectrum/menu';
 import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Avatar} from '@react-spectrum/avatar';
-import {Button} from '@react-spectrum/button';
 import {Card} from '..';
 import {CardBase} from '../src/CardBase';
 import {CardViewContext} from '../src/CardViewContext';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {Content, Footer} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import {getDescription, getImage} from './utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
@@ -100,13 +98,6 @@ Default.args = {children: (
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Description</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -117,13 +108,6 @@ DefaultSquare.args = {children: (
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Description</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -134,13 +118,6 @@ DefaultTall.args = {children: (
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Description</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -151,13 +128,6 @@ DefaultPreviewAlt.args = {children: (
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Description</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -168,13 +138,6 @@ LongContent.args = {children: (
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>This is the description that never ends, it goes on and on my friends. Someone started typing without knowing what it was.</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -185,13 +148,6 @@ LongContentSquare.args = {children: (
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>This is the description that never ends, it goes on and on my friends. Someone started typing without knowing what it was.</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -202,13 +158,6 @@ LongContentPoorWordSize.args = {children: (
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -218,13 +167,6 @@ NoDescription.args = {children: (
     <Image src="https://i.imgur.com/Z7AzH2c.png" />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -234,53 +176,6 @@ NoDescriptionSquare.args = {children: (
     <Image src="https://i.imgur.com/DhygPot.jpg" />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
-  </>
-)};
-
-export const NoFooter = Template().bind({});
-NoFooter.args = {children: (
-  <>
-    <Image src="https://i.imgur.com/Z7AzH2c.png" />
-    <Heading>Title</Heading>
-    <Text slot="detail">PNG</Text>
-    <Content>Description</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-  </>
-)};
-
-export const NoActionMenu = Template().bind({});
-NoActionMenu.args = {children: (
-  <>
-    <Image src="https://i.imgur.com/Z7AzH2c.png" />
-    <Heading>Title</Heading>
-    <Text slot="detail">PNG</Text>
-    <Content>Description</Content>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
-  </>
-)};
-
-export const NoFooterOrDescription = Template().bind({});
-NoFooterOrDescription.args = {children: (
-  <>
-    <Image src="https://i.imgur.com/Z7AzH2c.png" />
-    <Heading>Title</Heading>
-    <Text slot="detail">PNG</Text>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
   </>
 )};
 
@@ -289,10 +184,6 @@ NoImage.args = {children: (
   <>
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
   </>
 )};
 
@@ -322,13 +213,6 @@ export const CardGrid = (props: SpectrumCardProps) => {
                 <Heading>Title {index}</Heading>
                 <Text slot="detail">PNG</Text>
                 <Content>Description</Content>
-                <ActionMenu>
-                  <Item>Action 1</Item>
-                  <Item>Action 2</Item>
-                </ActionMenu>
-                <Footer>
-                  <Button variant="secondary">Button</Button>
-                </Footer>
               </Card>
             </div>
           );
@@ -359,13 +243,6 @@ export const CardWaterfall = (props: SpectrumCardProps) => (
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
               <Content>{getDescription(index)}</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="secondary">Button</Button>
-              </Footer>
             </Card>
           </div>
         );
@@ -390,13 +267,6 @@ export const CardFloat = (props: SpectrumCardProps) => (
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
               <Content>Description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="secondary">Button</Button>
-              </Footer>
             </Card>
           </div>
         );
@@ -431,13 +301,6 @@ export const CardGridMessyText = (props: SpectrumCardProps) => {
                 <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
                 <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
                 <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-                <ActionMenu>
-                  <Item>Action 1</Item>
-                  <Item>Action 2</Item>
-                </ActionMenu>
-                <Footer>
-                  <Button variant="primary">Something</Button>
-                </Footer>
               </Card>
             </div>
           );
@@ -468,13 +331,6 @@ export const CardWaterfallMessyText = (props: SpectrumCardProps) => (
               <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
               <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
               <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="primary">Something</Button>
-              </Footer>
             </Card>
           </div>
         );
@@ -508,13 +364,6 @@ export const CardGridNoPreview = (props: SpectrumCardProps) => {
                 <Heading>Title {index}</Heading>
                 <Text slot="detail">PNG</Text>
                 <Content>Description</Content>
-                <ActionMenu>
-                  <Item>Action 1</Item>
-                  <Item>Action 2</Item>
-                </ActionMenu>
-                <Footer>
-                  <Button variant="secondary">Button</Button>
-                </Footer>
               </Card>
             </div>
           );
@@ -544,13 +393,6 @@ export const CardWaterfallNoPreview = (props: SpectrumCardProps) => (
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
               <Content>{getDescription(index)}</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
-              <Footer>
-                <Button variant="secondary">Button</Button>
-              </Footer>
             </Card>
           </div>
         );
@@ -565,10 +407,6 @@ WithIllustration.args = {children: (
     <File alt="file" slot="illustration" width={50} height={50} />
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
   </>
 )};
 
@@ -578,10 +416,6 @@ WithColorfulIllustration.args = {children: (
     <IllustrationContainer><ColorfulIllustration /></IllustrationContainer>
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
   </>
 )};
 WithColorfulIllustration.decorators = [(Story) => (
@@ -598,10 +432,6 @@ WithColorfulIllustratedMessage.args = {children: (
     <IllustratedMessage><ColorfulIllustration /></IllustratedMessage>
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
   </>
 )};
 WithColorfulIllustratedMessage.decorators = [(Story) => (
@@ -618,13 +448,6 @@ LongTitle.args = {children: (
     <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out</Heading>
     <Text slot="detail">PNG</Text>
     <Content>Description</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -636,13 +459,6 @@ LongDescription.args = {children: (
     <Heading>Title</Heading>
     <Text slot="detail">PNG</Text>
     <Content>This is a long description about the Pterodactyl, a pterosaur of the late Jurassic period, with a long slender head and neck and a very short tail.</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -653,13 +469,6 @@ LongDetail.args = {children: (
     <Heading>Title</Heading>
     <Text slot="detail">Stats: Genus: Pterodactylus; Rafinesque, 1815 Order: Pterosauria Kingdom: Animalia Phylum: Chordata</Text>
     <Content>Description</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
@@ -670,13 +479,6 @@ LongEverything.args = {children: (
     <Heading>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
     <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
     <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-    <ActionMenu>
-      <Item>Action 1</Item>
-      <Item>Action 2</Item>
-    </ActionMenu>
-    <Footer>
-      <Button variant="primary">Something</Button>
-    </Footer>
   </>
 )};
 
