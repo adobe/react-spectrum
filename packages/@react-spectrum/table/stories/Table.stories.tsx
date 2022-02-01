@@ -1024,13 +1024,12 @@ storiesOf('TableView', module)
   )
   .add('table with breadcrumb navigation', () => <TableWithBreadcrumbs />)
   .add(
-    'resizable columns',
-    () => (
+    'allowsresizing, uncontrolled, static widths', () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
-          <Column allowsResizing>File Name</Column>
-          <Column allowsResizing>Type</Column>
-          <Column allowsResizing>Size</Column>
+          <Column allowsResizing defaultWidth="50%">File Name</Column>
+          <Column allowsResizing defaultWidth={200}>Type</Column>
+          <Column allowsResizing defaultWidth={200}>Size</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -1048,13 +1047,39 @@ storiesOf('TableView', module)
     )
   )
   .add(
-    'resizable columns, uncontrolled, flex',
+    'allowsResizing, uncontrolled, dynamic widths',
     () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
-          <Column allowsResizing>File Name</Column>
-          <Column allowsResizing>Type</Column>
-          <Column defaultWidth={'flex-2'} allowsResizing>Size</Column>
+          <Column allowsResizing defaultWidth="flex-1">File Name</Column>
+          <Column allowsResizing defaultWidth="flex-2">Type</Column>
+          <Column allowsResizing defaultWidth="flex-2">Size</Column>
+          <Column allowsResizing defaultWidth="flex-1">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsresizing, uncontrolled, min/max widths', () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>File Name</Column>
+          <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>Type</Column>
+          <Column allowsResizing defaultWidth="flex-1" minWidth={175} maxWidth={500}>Size</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -1070,6 +1095,56 @@ storiesOf('TableView', module)
         </TableBody>
       </TableView>
     )
+  )
+  .add(
+    'allowsresizing, uncontrolled, some columns not allowed resizing', () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing >File Name</Column>
+          <Column defaultWidth="flex-1">Type</Column>
+          <Column defaultWidth="flex-2">Size</Column>
+          <Column allowsResizing defaultWidth="flex-2">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, many columns and rows',
+    () => (
+      <>
+        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
+          <TableHeader columns={manyColunns}>
+            {column =>
+              <Column allowsResizing minWidth={100}>{column.name}</Column>
+            }
+          </TableHeader>
+          <TableBody items={manyRows}>
+            {item =>
+              (<Row key={item.foo}>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </TableView>
+        <input aria-label="Focusable after" placeholder="Focusable after" />
+      </>
+    ),
+    {chromatic: {disable: true}}
   );
 
 function AsyncLoadingExample() {
