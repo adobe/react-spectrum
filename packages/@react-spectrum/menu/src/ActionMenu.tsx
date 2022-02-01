@@ -35,6 +35,8 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
     <ClearSlots>
       <MenuTrigger
         isOpen={props.isOpen}
+        defaultOpen={props.defaultOpen}
+        onOpenChange={props.onOpenChange}
         align={props.align}
         direction={props.direction}
         shouldFlip={props.shouldFlip}>

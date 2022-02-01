@@ -10,11 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
+import {Table as BackwardCompatTable} from './example-backwards-compat';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
+import {Meta, Story} from '@storybook/react';
 import React from 'react';
+import {SpectrumTableProps} from '@react-types/table';
 import {Table} from './example';
 
-const meta = {
+const meta: Meta<SpectrumTableProps<any>> = {
   title: 'useTable'
 };
 
@@ -41,10 +45,10 @@ let rows = [
   {id: 12, name: 'Pikachu', type: 'Electric', level: '100'}
 ];
 
-const Template = () => () => (
+const Template: Story<SpectrumTableProps<any>> = (args) => (
   <>
     <input aria-label="Focusable before" placeholder="Focusable before" />
-    <Table aria-label="Table with selection" selectionMode="multiple">
+    <Table aria-label="Table with selection" selectionMode="multiple" {...args}>
       <TableHeader columns={columns}>
         {column => (
           <Column key={column.uid}>
@@ -64,5 +68,34 @@ const Template = () => () => (
   </>
 );
 
-export const ScrollTesting = Template().bind({});
+const TemplateBackwardsCompat: Story<SpectrumTableProps<any>> = (args) => (
+  <>
+    <input aria-label="Focusable before" placeholder="Focusable before" />
+    <BackwardCompatTable aria-label="Table with selection" selectionMode="multiple" {...args}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column key={column.uid}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </BackwardCompatTable>
+    <input aria-label="Focusable after" placeholder="Focusable after" />
+  </>
+);
+
+export const ScrollTesting = Template.bind({});
 ScrollTesting.args = {};
+
+export const ActionTesting = Template.bind({});
+ActionTesting.args = {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')};
+
+export const BackwardCompatActionTesting = TemplateBackwardsCompat.bind({});
+BackwardCompatActionTesting.args = {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')};

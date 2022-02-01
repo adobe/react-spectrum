@@ -114,7 +114,8 @@
   text-decoration: underline;
 }
 
-:global(.source) {
+:global(.source),
+:global(.embedded) {
   display: block;
   padding: 0.5em;
   color: var(--hljs-color);
@@ -135,56 +136,57 @@
   hyphens: none;
 }
 
-:global(.embedded.source) {
+:global(.embedded) {
   display: inline;
   padding: 0;
 }
 
-:global(.constant) {
+:global(.constant),
+:global(.number),
+:global(.number .type) {
   color: var(--hljs-literal-color);
 }
 
-:global(.storage.type),
-:global(.storage.modifier),
-:global(.constant.color),
-:global(.support.property-value.css) {
-  color: var(--hljs-keyword-color);
-}
-
-:global(.entity.function),
-:global(.support.function) {
+:global(.function) {
   color: var(--hljs-function-color);
 }
 
-:global(.keyword.control) {
+:global(.keyword) {
   color: var(--hljs-keyword-color);
 }
 
-:global(.class-name) {
-  color: var(--hljs-class-color);
-}
-
-:global(.entity.attribute-name) {
+:global(.attribute) {
   color: var(--hljs-attribute-color);
 }
-:global(.entity.name.tag),
-:global(.support.type) {
+:global(.tag),
+:global(.type) {
   color: var(--hljs-section-color);
 }
 
-:global(.punctuation.section) {
+:global(.punctuation.special) {
   color: var(--hljs-title-color);
 }
 
-:global(.variable.other.object.property) {
+:global(.property) {
   color: var(--hljs-variable-color);
 }
 
-:global(.string.quoted) {
+:global(.string) {
   color: var(--hljs-string-color);
 }
 
 :global(.comment) {
   color: var(--hljs-comment-color);
   font-style: italic;
+}
+
+/* regex */
+:global(.string.special) {
+  :global(.operator) {
+    color: var(--hljs-keyword-color);
+  }
+
+  :global(.punctuation.bracket) {
+    color: var(--hljs-attribute-color);
+  }
 }
