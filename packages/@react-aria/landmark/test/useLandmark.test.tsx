@@ -651,4 +651,47 @@ describe('LandmarkManager', function () {
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
     expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
   });
+
+  it('Should navigate to a landmark that has been added to the DOM', function () {
+
+    function Container({children = null}) {
+      return (
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          <Main>
+            <TextField label="Last Name" />
+          </Main>
+          {children}
+        </div>
+      );
+    }
+
+    let tree = render(<Container />);
+  
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[0]);
+
+    tree.rerender(
+      <Container>
+        <Region>
+          <TextField label="First Name" />
+        </Region>
+      </Container>
+    );
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[1]);
+  });
 });
