@@ -56,14 +56,15 @@ class LandmarkManager {
   public addLandmark({ref, role, label}: Landmark) {
     if (!this.landmarks.find(landmark => landmark.ref === ref)) {
 
-       // TODO: Nested case?
-       // Inside should be after (DFS). So maybe we need to accept 4 or 8?
       let insertPosition = 0;
-      // p1.compareDocumentPosition(p2) returns 4 for when p1 is positioned before p2.
+      // Compare position of element being added to existing landmarks.
+      // Iterate through landmarks, and insert when a landmark is found that is positioned before the newly added element,
+      // or is contained by the newly added element (for nested landmarks).
       // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
       while (
         insertPosition < this.landmarks.length &&
-        (ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node) & Node.DOCUMENT_POSITION_PRECEDING)
+        ((ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node) & Node.DOCUMENT_POSITION_PRECEDING) ||
+        (ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node) & Node.DOCUMENT_POSITION_CONTAINS))
         ) {
         insertPosition++;
       }
