@@ -12,8 +12,6 @@
 
 import {classNames, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumTagProps} from '@react-types/tag';
@@ -21,7 +19,6 @@ import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
 import {useTag} from '@react-aria/tag';
 
 export function Tag<T>(props: SpectrumTagProps<T>) {
@@ -35,7 +32,6 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
     ...otherProps
   } = props;
 
-  console.log(otherProps);
   // @ts-ignore
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -43,7 +39,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let labelRef = useRef();
   let tagRef = useRef();
   let tagRowRef = useRef();
-  let {clearButtonProps, tagProps, tagRowProps} = useTag({
+  let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
     ...props,
     isDisabled,
     isFocused,
@@ -53,6 +49,8 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
     tagRef,
     tagRowRef
   }, state);
+
+  console.log(children);
 
   return (
     <div
@@ -78,7 +76,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
             text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable})}
           }}>
-          {typeof children === 'string' ? <div ref={labelRef}><Text>{children}</Text></div> : children}
+          {typeof children === 'string' ? <div ref={labelRef} {...labelProps}><Text>{children}</Text></div> : children}
           {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
         </SlotProvider>
       </div>
@@ -90,12 +88,10 @@ function TagRemoveButton(props) {
   props = useSlotProps(props, 'tagRemoveButton');
   let {styleProps} = useStyleProps(props);
   let clearBtnRef = useRef();
-  let formatMessage = useMessageFormatter(intlMessages);
 
   return (
     <span
       {...styleProps}
-      aria-label={formatMessage('Remove')}
       ref={clearBtnRef}>
       <ClearButton
         preventFocus

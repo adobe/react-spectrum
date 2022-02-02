@@ -21,6 +21,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 
 
 export interface TagAria {
+  labelProps: HTMLAttributes<HTMLElement>,
   tagProps: HTMLAttributes<HTMLElement>,
   tagRowProps: HTMLAttributes<HTMLElement>,
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
@@ -67,6 +68,15 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
   isFocused = isFocused || state.selectionManager.focusedKey === item.childNodes[0].key;
   let domProps = filterDOMProps(props);
   return {
+    clearButtonProps: mergeProps(pressProps, {
+      'aria-label': removeString,
+      'aria-labelledby': `${buttonId} ${labelId}`,
+      id: buttonId,
+      isDisabled
+    }),
+    labelProps: {
+      id: labelId
+    },
     tagRowProps: otherRowProps,
     tagProps: mergeProps(domProps, gridCellProps, {
       'aria-errormessage': props['aria-errormessage'],
@@ -77,13 +87,6 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
         state.selectionManager.setFocusedKey(item.childNodes[0].key);
       },
       ref: tagRef
-    }),
-    clearButtonProps: mergeProps(pressProps, {
-      'aria-label': removeString,
-      'aria-labelledby': `${buttonId} ${labelId}`,
-      id: buttonId,
-      title: removeString,
-      isDisabled
     })
   };
 }
