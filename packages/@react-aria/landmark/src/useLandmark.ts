@@ -75,6 +75,7 @@ class LandmarkManager {
         ((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) ||
         (comparedPosition & Node.DOCUMENT_POSITION_CONTAINS))
         ) {
+      comparedPosition = ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
       insertPosition++;
     }
     this.landmarks.splice(insertPosition, 0, {ref, role, label});
