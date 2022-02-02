@@ -56,15 +56,17 @@ const ROW_HEIGHTS = {
 export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let isEmpty = state.collection.size === 0;
   let layout = useMemo(() =>
       new ListLayout<T>({
         estimatedRowHeight: ROW_HEIGHTS[density][scale],
         padding: 0,
-        collator
         // TODO: fix loader height, may need to adjust the list layout
         // loader calc to properly position the loader
+        collator,
+        loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale]
       })
-    , [collator, scale, density]);
+    , [collator, scale, density, isEmpty]);
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
@@ -226,7 +228,14 @@ function CenteredWrapper({children}) {
     <div
       role="row"
       aria-rowindex={state.collection.size + 1}
-      className={classNames(listStyles, 'react-spectrum-ListView-centeredWrapper')}>
+      className={
+        classNames(
+          listStyles,
+          'react-spectrum-ListView-centeredWrapper',
+          {
+            'react-spectrum-ListView-centeredWrapper--loadingMore': state.collection.size > 0
+          }
+        )}>
       <div role="gridcell">
         {children}
       </div>
