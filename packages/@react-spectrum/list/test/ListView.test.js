@@ -283,10 +283,11 @@ describe('ListView', function () {
   });
 
   it('should display loading affordance with proper height (isLoading)', function () {
-    let {getByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
-    let progressbar = getByRole('progressbar');
+    let {getAllByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
+    let row = getAllByRole('row')[0];
+    expect(row.parentNode.style.height).toBe('1000px');
+    let progressbar = within(row).getByRole('progressbar');
     expect(progressbar).toBeTruthy();
-    expect(progressbar.parentNode.parentNode.parentNode.style.height).toBe('1000px');
   });
 
   it('should display loading affordance with proper height (isLoadingMore)', function () {
