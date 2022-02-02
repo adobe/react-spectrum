@@ -27,11 +27,22 @@
   [role="row"] {
     outline: none;
   }
+
+  /* give first and last items border-radius to match listview container */
+  &:not(.react-spectrum-ListView--quiet) div:first-child > div[role="row"] > .react-spectrum-ListViewItem {
+    border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
+    border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
+  }
+  &:not(.react-spectrum-ListView--quiet) div:last-child > div[role="row"] > .react-spectrum-ListViewItem {
+    border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
+    border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
+  }
 }
 
 .react-spectrum-ListView--quiet {
   background-color: var(--spectrum-alias-background-color-transparent);
   border-width: 0;
+  border-radius: 0;
 }
 
 .react-spectrum-ListViewItem {
@@ -66,6 +77,10 @@
         }
       }
     }
+  }
+
+  .react-spectrum-ListView--quiet & {
+    border-bottom-color: transparent;
   }
 
   &.is-hovered,
@@ -160,16 +175,6 @@
   .react-spectrum-ListViewItem-parentIndicator {
     grid-area: chevron;
     padding-inline-start: var(--spectrum-global-dimension-size-75);
-  }
-
-  /* give first and last items border-radius to match listview container */
-  div:first-child > div[role="row"] > & {
-    border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
-    border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
-  }
-  div:last-child > div[role="row"] > & {
-    border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
-    border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
 }
 
