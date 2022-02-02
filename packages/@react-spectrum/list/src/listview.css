@@ -23,6 +23,7 @@
   padding: 0;
   background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
   outline: 0;
+  user-select: none;
 
   [role="row"] {
     outline: none;
