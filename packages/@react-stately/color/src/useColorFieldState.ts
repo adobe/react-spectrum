@@ -74,20 +74,7 @@ export function useColorFieldState(
   let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
   let [inputValue, setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
 
-  let safelySetColorValue = (newColor: Color | ((prevState: Color) => Color)) => {
-    if (typeof newColor === 'function') {
-      setColorValue((prev:Color) => {
-        let resolved: Color = newColor(prev);
-        if (!prev || !resolved) {
-          return resolved;
-        }
-        if (resolved.toHexInt() !== prev.toHexInt()) {
-          return resolved;
-        }
-        return prev;
-      });
-      return;
-    }
+  let safelySetColorValue = (newColor: Color) => {
     if (!colorValue || !newColor) {
       setColorValue(newColor);
       return;
@@ -138,30 +125,26 @@ export function useColorFieldState(
   };
 
   let increment = () => {
-    safelySetColorValue((prevColor: Color) => {
-      let newValue = addColorValue(parsed.current, step);
-      // if we've arrived at the same value that was previously in the state, the
-      // input value should be updated to match
-      // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
-      // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
-      if (newValue === prevColor) {
-        setInputValue(newValue.toString('hex'));
-      }
-      return newValue;
-    });
+    let newValue = addColorValue(parsed.current, step);
+    // if we've arrived at the same value that was previously in the state, the
+    // input value should be updated to match
+    // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
+    // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
+    if (newValue === colorValue) {
+      setInputValue(newValue.toString('hex'));
+    }
+    safelySetColorValue(newValue);
   };
   let decrement = () => {
-    safelySetColorValue((prevColor: Color) => {
-      let newValue = addColorValue(parsed.current, -step);
-      // if we've arrived at the same value that was previously in the state, the
-      // input value should be updated to match
-      // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
-      // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
-      if (newValue === prevColor) {
-        setInputValue(newValue.toString('hex'));
-      }
-      return newValue;
-    });
+    let newValue = addColorValue(parsed.current, -step);
+    // if we've arrived at the same value that was previously in the state, the
+    // input value should be updated to match
+    // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
+    // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
+    if (newValue === colorValue) {
+      setInputValue(newValue.toString('hex'));
+    }
+    safelySetColorValue(newValue);
   };
   let incrementToMax = () => safelySetColorValue(MAX_COLOR);
   let decrementToMin = () => safelySetColorValue(MIN_COLOR);

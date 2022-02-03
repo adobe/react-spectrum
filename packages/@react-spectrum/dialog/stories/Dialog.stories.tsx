@@ -23,7 +23,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React from 'react';
+import React, {useState} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
@@ -81,6 +81,10 @@ storiesOf('Dialog', module)
   .add(
     'three buttons, vertical orientation',
     () => renderWithThreeButtonsVertical({})
+  )
+  .add(
+    'three buttons, footer',
+    () => <RenderWithThreeButtonsAndFooter />
   )
   .add(
     'cleared content',
@@ -471,6 +475,44 @@ function renderWithThreeButtonsVertical({width = 'auto', ...props}) {
             <ButtonGroup orientation="vertical">
               <Button variant="secondary" onPress={close}>Secondary</Button>
               <Button variant="primary" onPress={close}>Primary</Button>
+              <Button variant="cta" onPress={close} autoFocus>CTA</Button>
+            </ButtonGroup>
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function RenderWithThreeButtonsAndFooter({width = 'auto', ...props}) {
+  let labels = [
+    {
+      checkboxLabel: 'I have read and accept',
+      secondaryButtonLabel: 'Secondary',
+      primaryButtonLabel: 'Primary'
+    }, {
+      checkboxLabel: 'I have read and accept the terms of use and privacy policy',
+      secondaryButtonLabel: 'Secondary and best button',
+      primaryButtonLabel: 'Primary and worst'
+    }
+  ];
+  let [whichLabels, setWhichLabels] = useState(0);
+
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <Button variant="primary" onPress={() => {whichLabels ? setWhichLabels(0) : setWhichLabels(1);}}>Toggle labels</Button>
+      <DialogTrigger defaultOpen>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog {...props}>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            <Footer><Checkbox>{labels[whichLabels].checkboxLabel}</Checkbox></Footer>
+            <ButtonGroup>
+              <Button variant="secondary" onPress={close}>{labels[whichLabels].secondaryButtonLabel}</Button>
+              <Button variant="primary" onPress={close}>{labels[whichLabels].primaryButtonLabel}</Button>
               <Button variant="cta" onPress={close} autoFocus>CTA</Button>
             </ButtonGroup>
           </Dialog>

@@ -20,6 +20,13 @@ interface MoveResult {
   moveProps: HTMLAttributes<HTMLElement>
 }
 
+interface EventBase {
+  shiftKey: boolean,
+  ctrlKey: boolean,
+  metaKey: boolean,
+  altKey: boolean
+}
+
 /**
  * Handles move interactions across mouse, touch, and keyboard, including dragging with
  * the mouse or touch, and using the arrow keys. Normalizes behavior across browsers and
@@ -43,7 +50,7 @@ export function useMove(props: MoveEvents): MoveResult {
       disableTextSelection();
       state.current.didMove = false;
     };
-    let move = (pointerType: PointerType, deltaX: number, deltaY: number) => {
+    let move = (originalEvent: EventBase, pointerType: PointerType, deltaX: number, deltaY: number) => {
       if (deltaX === 0 && deltaY === 0) {
         return;
       }
@@ -52,22 +59,34 @@ export function useMove(props: MoveEvents): MoveResult {
         state.current.didMove = true;
         onMoveStart?.({
           type: 'movestart',
-          pointerType
+          pointerType,
+          shiftKey: originalEvent.shiftKey,
+          metaKey: originalEvent.metaKey,
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
         });
       }
       onMove({
         type: 'move',
         pointerType,
         deltaX: deltaX,
-        deltaY: deltaY
+        deltaY: deltaY,
+        shiftKey: originalEvent.shiftKey,
+        metaKey: originalEvent.metaKey,
+        ctrlKey: originalEvent.ctrlKey,
+        altKey: originalEvent.altKey
       });
     };
-    let end = (pointerType: PointerType) => {
+    let end = (originalEvent: EventBase, pointerType: PointerType) => {
       restoreTextSelection();
       if (state.current.didMove) {
         onMoveEnd?.({
           type: 'moveend',
-          pointerType
+          pointerType,
+          shiftKey: originalEvent.shiftKey,
+          metaKey: originalEvent.metaKey,
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
         });
       }
     };
@@ -75,13 +94,13 @@ export function useMove(props: MoveEvents): MoveResult {
     if (typeof PointerEvent === 'undefined') {
       let onMouseMove = (e: MouseEvent) => {
         if (e.button === 0) {
-          move('mouse', e.pageX - state.current.lastPosition.pageX, e.pageY - state.current.lastPosition.pageY);
+          move(e, 'mouse', e.pageX - state.current.lastPosition.pageX, e.pageY - state.current.lastPosition.pageY);
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
         }
       };
       let onMouseUp = (e: MouseEvent) => {
         if (e.button === 0) {
-          end('mouse');
+          end(e, 'mouse');
           removeGlobalListener(window, 'mousemove', onMouseMove, false);
           removeGlobalListener(window, 'mouseup', onMouseUp, false);
         }
@@ -98,19 +117,17 @@ export function useMove(props: MoveEvents): MoveResult {
       };
 
       let onTouchMove = (e: TouchEvent) => {
-        // @ts-ignore
         let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
         if (touch >= 0) {
           let {pageX, pageY} = e.changedTouches[touch];
-          move('touch', pageX - state.current.lastPosition.pageX, pageY - state.current.lastPosition.pageY);
+          move(e, 'touch', pageX - state.current.lastPosition.pageX, pageY - state.current.lastPosition.pageY);
           state.current.lastPosition = {pageX, pageY};
         }
       };
       let onTouchEnd = (e: TouchEvent) => {
-        // @ts-ignore
         let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
         if (touch >= 0) {
-          end('touch');
+          end(e, 'touch');
           state.current.id = null;
           removeGlobalListener(window, 'touchmove', onTouchMove);
           removeGlobalListener(window, 'touchend', onTouchEnd);
@@ -135,22 +152,20 @@ export function useMove(props: MoveEvents): MoveResult {
     } else {
       let onPointerMove = (e: PointerEvent) => {
         if (e.pointerId === state.current.id) {
-          // @ts-ignore
-          let pointerType: PointerType = e.pointerType || 'mouse';
+          let pointerType = (e.pointerType || 'mouse') as PointerType;
 
           // Problems with PointerEvent#movementX/movementY:
           // 1. it is always 0 on macOS Safari.
           // 2. On Chrome Android, it's scaled by devicePixelRatio, but not on Chrome macOS
-          move(pointerType, e.pageX - state.current.lastPosition.pageX, e.pageY - state.current.lastPosition.pageY);
+          move(e, pointerType, e.pageX - state.current.lastPosition.pageX, e.pageY - state.current.lastPosition.pageY);
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
         }
       };
 
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.current.id) {
-            // @ts-ignore
-          let pointerType: PointerType = e.pointerType || 'mouse';
-          end(pointerType);
+          let pointerType = (e.pointerType || 'mouse') as PointerType;
+          end(e, pointerType);
           state.current.id = null;
           removeGlobalListener(window, 'pointermove', onPointerMove, false);
           removeGlobalListener(window, 'pointerup', onPointerUp, false);
@@ -172,10 +187,10 @@ export function useMove(props: MoveEvents): MoveResult {
       };
     }
 
-    let triggerKeyboardMove = (deltaX: number, deltaY: number) => {
+    let triggerKeyboardMove = (e: EventBase, deltaX: number, deltaY: number) => {
       start();
-      move('keyboard', deltaX, deltaY);
-      end('keyboard');
+      move(e, 'keyboard', deltaX, deltaY);
+      end(e, 'keyboard');
     };
 
     moveProps.onKeyDown = (e) => {
@@ -184,25 +199,25 @@ export function useMove(props: MoveEvents): MoveResult {
         case 'ArrowLeft':
           e.preventDefault();
           e.stopPropagation();
-          triggerKeyboardMove(-1, 0);
+          triggerKeyboardMove(e, -1, 0);
           break;
         case 'Right':
         case 'ArrowRight':
           e.preventDefault();
           e.stopPropagation();
-          triggerKeyboardMove(1, 0);
+          triggerKeyboardMove(e, 1, 0);
           break;
         case 'Up':
         case 'ArrowUp':
           e.preventDefault();
           e.stopPropagation();
-          triggerKeyboardMove(0, -1);
+          triggerKeyboardMove(e, 0, -1);
           break;
         case 'Down':
         case 'ArrowDown':
           e.preventDefault();
           e.stopPropagation();
-          triggerKeyboardMove(0, 1);
+          triggerKeyboardMove(e, 0, 1);
           break;
       }
     };
