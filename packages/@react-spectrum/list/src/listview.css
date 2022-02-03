@@ -73,9 +73,7 @@
 
       /* avoid double border for adjacent selected items */
       &.is-previous-selected {
-        &:not(.is-focused) {
-          border-top-color: transparent;
-        }
+        border-top-color: transparent;
       }
     }
   }
@@ -91,8 +89,16 @@
 
   &:focus-ring {
     background-color: var(--spectrum-table-row-background-color-hover);
-    box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
-    border-color: var(--spectrum-global-color-blue-500);
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -1px;
+      width: var(--spectrum-selectlist-border-size-key-focus);
+      z-index: 3;
+      background: var(--spectrum-selectlist-option-focus-indicator-color);
+    }
   }
 
   &.is-active {
@@ -105,6 +111,10 @@
     &.is-hovered,
     &.is-active {
       background-color: var(--spectrum-table-row-background-color-hover);
+    }
+
+    &:focus-ring {
+      background-color: var(--spectrum-table-row-background-color-selected-key-focus);
     }
   }
 
