@@ -164,6 +164,12 @@ tbody.spectrum-Table-body {
     &.is-selected {
       border-inline-start: 1px solid var(--spectrum-global-color-blue-500);
       border-inline-end: 1px solid var(--spectrum-global-color-blue-500);
+      &.spectrum-Table-row--firstRow {
+        border-block-start: 1px solid var(--spectrum-global-color-blue-500);
+      }
+      &.spectrum-Table-row--lastRow {
+        border-block-end: 1px solid var(--spectrum-global-color-blue-500);
+      }
     }
   }
 

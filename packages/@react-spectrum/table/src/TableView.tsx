@@ -545,6 +545,8 @@ function TableRow({item, children, hasActions, ...otherProps}) {
     hoverProps,
     pressProps
   );
+  let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
+  let isLastRow = item.nextKey === null;
 
   return (
     <div
@@ -561,7 +563,9 @@ function TableRow({item, children, hasActions, ...otherProps}) {
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
             'is-hovered': isHovered,
-            'is-disabled': isDisabled
+            'is-disabled': isDisabled,
+            'spectrum-Table-row--firstRow': isFirstRow,
+            'spectrum-Table-row--lastRow': isLastRow
           }
         )
       }>

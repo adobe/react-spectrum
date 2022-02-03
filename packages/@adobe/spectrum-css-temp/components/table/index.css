@@ -16,6 +16,7 @@ governing permissions and limitations under the License.
   --spectrum-table-cell-compact-padding-y: var(--spectrum-global-dimension-size-75);
   --spectrum-table-cell-regular-padding-y: var(--spectrum-global-dimension-size-125);
   --spectrum-table-cell-spacious-padding-y: var(--spectrum-global-dimension-size-175);
+  --spectrum-table-row-start-end-border-radius : calc(var(--spectrum-table-border-radius) - 1px);
 }
 
 .spectrum-Table {
@@ -260,6 +261,18 @@ svg.spectrum-Table-sortedIcon {
 
   &.is-drop-target {
     @inherit: %drop-target;
+  }
+
+  &.spectrum-Table-row--highlightSelection {
+    &.is-selected.spectrum-Table-row--firstRow {
+      border-start-start-radius: var(--spectrum-table-row-start-end-border-radius);
+      border-start-end-radius: var(--spectrum-table-row-start-end-border-radius);
+    }
+
+    &.is-selected.spectrum-Table-row--lastRow {
+      border-end-start-radius: var(--spectrum-table-row-start-end-border-radius);
+      border-end-end-radius: var(--spectrum-table-row-start-end-border-radius);
+    }
   }
 }
 
