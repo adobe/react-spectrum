@@ -27,7 +27,7 @@ interface DragOptions {
   onDragStart?: (e: DragStartEvent) => void,
   onDragMove?: (e: DragMoveEvent) => void,
   onDragEnd?: (e: DragEndEvent) => void,
-  getItems: () => DragItem[],
+  getItems?: () => DragItem[],
   renderPreview?: (items: DragItem[]) => JSX.Element,
   getAllowedDropOperations?: () => DropOperation[]
 }

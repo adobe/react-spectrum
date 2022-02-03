@@ -14,7 +14,7 @@ import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEv
 import {Key, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
-interface DraggableCollectionOptions extends DraggableCollectionProps {
+export interface DraggableCollectionOptions extends DraggableCollectionProps {
   collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager
 }
@@ -28,7 +28,8 @@ export interface DraggableCollectionState {
   renderPreview(key: Key): JSX.Element,
   startDrag(key: Key, event: DragStartEvent): void,
   moveDrag(event: DragMoveEvent): void,
-  endDrag(event: DragEndEvent): void
+  endDrag(event: DragEndEvent): void,
+  isDraggable(key: Key): boolean
 }
 
 export function useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState {
@@ -105,6 +106,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       }
 
       setDraggingKeys(new Set());
-    }
+    },
+    isDraggable: (key: Key) => itemAllowsDragging(key)
   };
 }

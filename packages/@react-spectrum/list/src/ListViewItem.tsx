@@ -14,6 +14,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
+import {DraggableItemResult, useDraggableItem} from '@react-aria/dnd';
 import DragHandle from './DragHandle';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -22,7 +23,6 @@ import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
-import {useDraggableItem} from '@react-aria/dnd';
 import {useGridCell, useGridRow, useGridSelectionCheckbox} from '@react-aria/grid';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -33,7 +33,7 @@ export function ListViewItem(props) {
     isEmphasized
   } = props;
   let cellNode = [...item.childNodes][0];
-  let {state, dragState, onAction, isListDraggable, itemAllowsDragging} = useContext(ListViewContext);
+  let {state, dragState, onAction, isListDraggable} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();
@@ -44,7 +44,7 @@ export function ListViewItem(props) {
   let {isFocusVisible, focusProps} = useFocusRing();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
-  let isDraggable = itemAllowsDragging ? itemAllowsDragging(item.key) && !isDisabled : false;
+  let isDraggable = dragState?.isDraggable(item.key) && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {pressProps, isPressed} = usePress({isDisabled});
   let {rowProps} = useGridRow({
@@ -57,7 +57,11 @@ export function ListViewItem(props) {
     node: cellNode,
     focusMode: 'cell'
   }, state, cellRef);
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let draggableItem: DraggableItemResult;
+  if (dragState) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    draggableItem = useDraggableItem({key: item.key}, dragState);
+  }
   const mergedProps = mergeProps(
     gridCellProps,
     hoverProps,
@@ -68,7 +72,7 @@ export function ListViewItem(props) {
 
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({
-    ...dragButtonProps,
+    ...draggableItem?.dragButtonProps,
     elementType: 'div'
   }, dragButtonRef);
 
@@ -92,7 +96,7 @@ export function ListViewItem(props) {
   let showDragHandle = isDraggable && (isFocusVisibleWithin || isHovered || isPressed);
   return (
     <div
-      {...mergeProps(rowProps, pressProps, isDraggable && dragProps)}
+      {...mergeProps(rowProps, pressProps, isDraggable && draggableItem?.dragProps)}
       ref={rowRef}>
       <div
         className={

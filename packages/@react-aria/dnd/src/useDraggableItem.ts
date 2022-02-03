@@ -22,7 +22,7 @@ interface DraggableItemProps {
   key: Key
 }
 
-interface DraggableItemResult {
+export interface DraggableItemResult {
   dragProps: HTMLAttributes<HTMLElement>,
   dragButtonProps: AriaButtonProps
 }

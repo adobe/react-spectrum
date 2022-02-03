@@ -19,6 +19,7 @@ import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {useDragHooks} from '@react-aria/dnd';
 
 const items = [
   {key: 'a', textValue: 'Item a', isDraggable: true},
@@ -374,17 +375,21 @@ export function DragExample(props?) {
     return item.isDraggable;
   };
 
+  let dragHooks = useDragHooks({
+    onDragStart: action('dragStart'),
+    onDragEnd: action('dragEnd'),
+    itemAllowsDragging,
+    getItems
+  });
+
   return (
     <ListView
       aria-label="draggable list view"
       width="300px"
       selectionMode="multiple"
       items={items}
-      getItems={getItems}
       disabledKeys={['f']}
-      itemAllowsDragging={itemAllowsDragging}
-      onDragStart={action('dragStart')}
-      onDragEnd={action('dragEnd')}
+      dragHooks={dragHooks}
       {...props}>
       {(item: any) => (
         <Item key={item.key} textValue={item.textValue}>

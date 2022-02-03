@@ -17,3 +17,4 @@ export * from './useDroppableItem';
 export * from './useDropIndicator';
 export * from './useDraggableItem';
 export * from './useClipboard';
+export * from './useDragHooks';
