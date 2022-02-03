@@ -18,7 +18,7 @@ import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
-
+import {useAsyncList} from '@react-stately/data';
 
 function renderEmptyState() {
   return (
@@ -117,6 +117,16 @@ storiesOf('ListView', module)
     <ListView width="300px" height="300px" loadingState="loading">
       {[]}
     </ListView>
+  ))
+  .add('loadingMore', () => (
+    <ListView width="300px" height="300px" loadingState="loadingMore">
+      <Item textValue="row 1">row 1</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
+    </ListView>
+  ))
+  .add('async listview loading', () => (
+    <AsyncList />
   ))
   .add('density: compact', () => (
     <ListView width="250px" density="compact">
@@ -348,5 +358,43 @@ function EmptyTest() {
         </div>
       </Flex>
     </div>
+  );
+}
+
+function AsyncList() {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+  return (
+    <ListView
+      selectionMode="multiple"
+      aria-label="example async loading list"
+      width="size-6000"
+      height="size-3000"
+      items={list.items}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {(item) => (
+        <Item key={item.name} textValue={item.name}>{item.name}</Item>
+      )}
+    </ListView>
   );
 }
