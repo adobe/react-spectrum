@@ -81,6 +81,15 @@ export function ListViewItem(props) {
   return (
     <div
       {...mergeProps(rowProps, pressProps)}
+      className={
+        classNames(
+          listStyles,
+          'react-spectrum-ListView-row',
+          {
+            'focus-ring': isFocusVisible,
+          }
+        )
+      }
       ref={rowRef}>
       <div
         className={

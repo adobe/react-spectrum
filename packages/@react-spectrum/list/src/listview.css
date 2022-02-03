@@ -25,18 +25,33 @@
   outline: 0;
   user-select: none;
 
-  [role="row"] {
+  .react-spectrum-ListView-row {
     outline: none;
   }
 
   /* give first and last items border-radius to match listview container */
-  &:not(.react-spectrum-ListView--quiet) div:first-child > div[role="row"] > .react-spectrum-ListViewItem {
+  &:not(.react-spectrum-ListView--quiet) div:first-child > .react-spectrum-ListView-row > .react-spectrum-ListViewItem {
     border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
-  &:not(.react-spectrum-ListView--quiet) div:last-child > div[role="row"] > .react-spectrum-ListViewItem {
+  &:not(.react-spectrum-ListView--quiet) div:last-child > .react-spectrum-ListView-row > .react-spectrum-ListViewItem {
     border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
+  }
+}
+
+.react-spectrum-ListView-row {
+  &:focus-ring {
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0px;
+      width: var(--spectrum-selectlist-border-size-key-focus);
+      z-index: 3;
+      background: var(--spectrum-selectlist-option-focus-indicator-color);
+    }
   }
 }
 
@@ -73,7 +88,7 @@
 
       /* avoid double border for adjacent selected items */
       &.is-previous-selected {
-        border-top-color: transparent;
+        border-top: none;
       }
     }
   }
@@ -89,16 +104,6 @@
 
   &:focus-ring {
     background-color: var(--spectrum-table-row-background-color-hover);
-    &:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: -1px;
-      width: var(--spectrum-selectlist-border-size-key-focus);
-      z-index: 3;
-      background: var(--spectrum-selectlist-option-focus-indicator-color);
-    }
   }
 
   &.is-active {
