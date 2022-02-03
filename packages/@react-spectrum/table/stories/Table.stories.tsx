@@ -284,9 +284,9 @@ storiesOf('TableView', module)
   .add(
     'selectionStyle: highlight',
     () => (
-      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={400} height={400} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column minWidth={200}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
@@ -301,9 +301,9 @@ storiesOf('TableView', module)
   .add(
     'selectionStyle: highlight, onAction',
     () => (
-      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={400} height={400} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column minWidth={200}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
@@ -318,9 +318,9 @@ storiesOf('TableView', module)
    .add(
     'selectionMode: none, onAction',
     () => (
-      <TableView aria-label="TableView with dynamic contents" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+      <TableView aria-label="TableView with dynamic contents" width={400} height={400} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column minWidth={200}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>

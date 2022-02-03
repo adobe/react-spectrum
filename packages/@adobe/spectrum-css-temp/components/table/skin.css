@@ -161,6 +161,10 @@ tbody.spectrum-Table-body {
 
   &.spectrum-Table-row--highlightSelection {
     border-bottom-color: var(--spectrum-global-color-blue-500);
+    &.is-selected {
+      border-inline-start: 1px solid var(--spectrum-global-color-blue-500);
+      border-inline-end: 1px solid var(--spectrum-global-color-blue-500);
+    }
   }
 
   &.is-drop-target {
