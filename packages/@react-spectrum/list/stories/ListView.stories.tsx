@@ -224,7 +224,7 @@ storiesOf('ListView', module)
       <>
         <input />
         <Droppable />
-        <DragExample />
+        <DragExample dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </>
     )
   );
@@ -363,6 +363,7 @@ function EmptyTest() {
 
 
 export function DragExample(props?) {
+  let {listViewProps, dragHookOptions} = props;
   let getItems = (keys) => [...keys].map(key => {
     let item = items.find(item => item.key === key);
     return {
@@ -376,8 +377,7 @@ export function DragExample(props?) {
   };
 
   let dragHooks = useDragHooks({
-    onDragStart: action('dragStart'),
-    onDragEnd: action('dragEnd'),
+    ...dragHookOptions,
     itemAllowsDragging,
     getItems
   });
@@ -390,7 +390,7 @@ export function DragExample(props?) {
       items={items}
       disabledKeys={['f']}
       dragHooks={dragHooks}
-      {...props}>
+      {...listViewProps}>
       {(item: any) => (
         <Item key={item.key} textValue={item.textValue}>
           <Content>

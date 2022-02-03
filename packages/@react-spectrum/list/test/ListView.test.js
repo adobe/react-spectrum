@@ -607,10 +607,11 @@ describe('ListView', function () {
 
   describe('drag and drop', function () {
     function DraggableListView(props) {
+      let {dragHookOptions, listViewProps} = props;
       return (
         <>
           <Droppable onDrop={onDrop} />
-          <DragExample onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} onSelectionChange={onSelectionChange} {...props} />
+          <DragExample dragHookOptions={{onDragStart, onDragMove, onDragEnd, ...dragHookOptions}} listViewProps={{onSelectionChange, ...listViewProps}} />
         </>
       );
     }
@@ -798,7 +799,7 @@ describe('ListView', function () {
 
       it('should not allow drag operations on a disabled row', function () {
         let {getAllByRole} = render(
-          <DraggableListView disabledKeys={['a']} />
+          <DraggableListView listViewProps={{disabledKeys: ['a']}} />
         );
 
         let row = getAllByRole('row')[0];
@@ -821,7 +822,7 @@ describe('ListView', function () {
         };
 
         let {getAllByRole} = render(
-          <DraggableListView itemAllowsDragging={itemAllowsDragging} />
+          <DraggableListView dragHookOptions={{itemAllowsDragging}} />
         );
 
         let rows = getAllByRole('row');
@@ -893,7 +894,7 @@ describe('ListView', function () {
 
       it('should allow drag and drop of multiple rows', async function () {
         let {getAllByRole, getByText} = render(
-          <DraggableListView selectedKeys={['a', 'b', 'c', 'd']} />
+          <DraggableListView listViewProps={{selectedKeys: ['a', 'b', 'c', 'd']}} />
         );
 
         let droppable = getByText('Drop here');
@@ -1000,7 +1001,7 @@ describe('ListView', function () {
       };
 
       let {getAllByRole} = render(
-        <DraggableListView itemAllowsDragging={itemAllowsDragging} disabledKeys={['a']} />
+        <DraggableListView dragHookOptions={{itemAllowsDragging}} listViewProps={{disabledKeys: ['a']}} />
       );
 
       let rows = getAllByRole('row');
@@ -1011,18 +1012,16 @@ describe('ListView', function () {
       act(() => cellA.focus());
       expect(within(cellA).queryByTestId('draghandle')).toBeFalsy();
       moveFocus('ArrowDown');
-      expect(within(cellB).queryByTestId('draghandle')).toBeFalsy();
-      moveFocus('ArrowDown');
-      expect(within(cellC).queryByTestId('draghandle')).toBeTruthy();
+      expect(within(cellB).queryByTestId('draghandle')).toBeTruthy();
       moveFocus('ArrowDown');
       expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
 
       fireEvent.mouseDown(cellA, {detail: 1});
       expect(within(cellA).queryByTestId('draghandle')).toBeFalsy();
       fireEvent.mouseDown(cellB, {detail: 1});
-      expect(within(cellB).queryByTestId('draghandle')).toBeFalsy();
+      expect(within(cellB).queryByTestId('draghandle')).toBeTruthy();
       fireEvent.mouseDown(cellC, {detail: 1});
-      expect(within(cellC).queryByTestId('draghandle')).toBeTruthy();
+      expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
       fireEvent.mouseUp(cellC, {detail: 1});
       expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
 
