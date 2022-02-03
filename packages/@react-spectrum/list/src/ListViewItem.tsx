@@ -86,7 +86,7 @@ export function ListViewItem(props) {
           listStyles,
           'react-spectrum-ListView-row',
           {
-            'focus-ring': isFocusVisible,
+            'focus-ring': isFocusVisible
           }
         )
       }
