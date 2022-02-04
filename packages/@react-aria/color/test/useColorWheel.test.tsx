@@ -52,7 +52,7 @@ function ColorWheel(props: ColorWheelProps) {
 describe('useColorWheel', () => {
   let onChangeSpy = jest.fn();
   
-    beforeAll(() => {
+  beforeAll(() => {
     // @ts-ignore
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
     // @ts-ignore
@@ -63,13 +63,6 @@ describe('useColorWheel', () => {
     onChangeSpy.mockClear();
     // for restoreTextSelection
     jest.runAllTimers();
-  });
-
-  afterEach(() => {
-    onChangeSpy.mockClear();
-    // for restoreTextSelection
-    jest.runAllTimers();
-    onChangeSpy.mockClear();
   });
 
   it('sets input props', () => {
