@@ -159,7 +159,7 @@ describe('TagGroup', function () {
     ${'(left/right arrows, ltr + horizontal) TagGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 1}, {action: pressArrowLeft, index: 0}, {action: pressArrowLeft, index: 0}]}
     ${'(left/right arrows, rtl + horizontal) TagGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 0}, {action: pressArrowLeft, index: 1}, {action: pressArrowLeft, index: 2}]}
     ${'(up/down arrows, ltr + horizontal) TagGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowDown, index: 1}, {action: pressArrowUp, index: 0}, {action: pressArrowUp, index: 0}]}
-    ${'(up/down arrows, rtl + horizontal) TagGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowDown, index: 1}, {action: pressArrowUp, index: 0}, {action: pressArrowUp, index: 0}]}
+    ${'(up/down arrows, rtl + horizontal) TagGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowUp, index: 0}, {action: pressArrowDown, index: 1}, {action: pressArrowDown, index: 2}]}
   `('$Name shifts button focus in the correct direction on key press', function ({Name, props, orders}) {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
@@ -252,12 +252,12 @@ describe('TagGroup', function () {
 
     let tagGroup = getByRole('grid');
     expect(tagGroup).not.toHaveAttribute('aria-disabled', 'true');
-    let inputs = getAllByRole('gridcell');
+    let tags = getAllByRole('gridcell');
 
     userEvent.tab();
-    expect(document.activeElement).toBe(inputs[0]);
-    pressArrowRight(inputs[0]);
-    expect(document.activeElement).toBe(inputs[1]);
+    expect(document.activeElement).toBe(tags[0]);
+    pressArrowRight(tags[0]);
+    expect(document.activeElement).toBe(tags[1]);
   });
 
   it('should remember last focused item', function () {
@@ -274,20 +274,20 @@ describe('TagGroup', function () {
 
     let buttonBefore = getByLabelText('ButtonBefore');
     let buttonAfter = getByLabelText('ButtonAfter');
-    let inputs = getAllByRole('gridcell');
+    let tags = getAllByRole('gridcell');
     act(() => {buttonBefore.focus();});
 
     userEvent.tab();
-    expect(document.activeElement).toBe(inputs[0]);
+    expect(document.activeElement).toBe(tags[0]);
 
-    pressArrowRight(inputs[0]);
-    expect(document.activeElement).toBe(inputs[1]);
+    pressArrowRight(tags[0]);
+    expect(document.activeElement).toBe(tags[1]);
 
     userEvent.tab();
     expect(document.activeElement).toBe(buttonAfter);
 
     userEvent.tab({shift: true});
-    expect(document.activeElement).toBe(inputs[1]);
+    expect(document.activeElement).toBe(tags[1]);
   });
 
   it('should be focusable from Tab', async function () {
@@ -304,11 +304,11 @@ describe('TagGroup', function () {
 
     let buttonBefore = getByLabelText('ButtonBefore');
     let buttonAfter = getByLabelText('ButtonAfter');
-    let inputs = getAllByRole('gridcell');
+    let tags = getAllByRole('gridcell');
     act(() => {buttonBefore.focus();});
     expect(buttonBefore).toHaveFocus();
     userEvent.tab();
-    expect(inputs[0]).toHaveFocus();
+    expect(tags[0]).toHaveFocus();
     userEvent.tab();
     expect(buttonAfter).toHaveFocus();
   });
@@ -327,10 +327,10 @@ describe('TagGroup', function () {
 
     let buttonBefore = getByLabelText('ButtonBefore');
     let buttonAfter = getByLabelText('ButtonAfter');
-    let inputs = getAllByRole('gridcell');
+    let tags = getAllByRole('gridcell');
     act(() => {buttonAfter.focus();});
     userEvent.tab({shift: true});
-    expect(document.activeElement).toBe(inputs[1]);
+    expect(document.activeElement).toBe(tags[1]);
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(buttonBefore);
     expect(buttonBefore).toHaveFocus();

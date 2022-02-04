@@ -79,13 +79,11 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
     },
     tagRowProps: otherRowProps,
     tagProps: mergeProps(domProps, gridCellProps, {
+      'aria-disabled': isDisabled,
       'aria-errormessage': props['aria-errormessage'],
       'aria-label': props['aria-label'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
       tabIndex: (isFocused || state.selectionManager.focusedKey == null) && !isDisabled ? 0 : -1,
-      onFocus() {
-        state.selectionManager.setFocusedKey(item.childNodes[0].key);
-      },
       ref: tagRef
     })
   };
