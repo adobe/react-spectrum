@@ -34,11 +34,6 @@ describe('ColorWheel', () => {
   let onChangeSpy = jest.fn();
   let onChangeEndSpy = jest.fn();
 
-  afterEach(() => {
-    onChangeSpy.mockClear();
-    onChangeEndSpy.mockClear();
-  });
-
   beforeAll(() => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
     // @ts-ignore
@@ -50,6 +45,8 @@ describe('ColorWheel', () => {
   afterEach(() => {
     // for restoreTextSelection
     jest.runAllTimers();
+    onChangeSpy.mockClear();
+    onChangeEndSpy.mockClear();
   });
 
   it('sets input props', () => {

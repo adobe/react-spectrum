@@ -41,7 +41,6 @@ describe('ColorArea', () => {
   });
   afterAll(() => {
     // @ts-ignore
-    window.HTMLElement.prototype.offsetWidth.mockReset();
     jest.useRealTimers();
   });
 
