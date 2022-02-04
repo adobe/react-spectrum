@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnProps, TableCollection} from '@react-types/table';
+import {TableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
@@ -19,39 +19,22 @@ import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
   getDefaultWidth: (props) => string | number,
-  columnWidths: Map<Key, number>,
-  getColumnWidth: (key: Key) => number,
-  setColumnWidth: (key: Key, width: number) => void,
-  hasResizedColumn: (key: Key) => boolean,
-  currentResizeColumn: Key,
-  resizeDelta: number
+  getColumnWidth: (key: Key) => number
 }
 
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
   lastCollection: TableCollection<T>;
-  columnWidths: Map<Key, number>;
+  getColumnWidth_: (key: Key) => number;
   columnWidthsRef: Map<Key, number>;
   stickyColumnIndices: number[];
-  getDefaultWidth: (props) => string | number;
-  getColumnWidth_: (key: Key) => number;
-  setColumnWidth: (key: Key, width: number) => void;
-  hasResizedColumn: (key: Key) => boolean;
-  currentResizeColumn: Key;
-  resizeDelta: number;
   wasLoading = false;
   isLoading = false;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
-    this.getDefaultWidth = options.getDefaultWidth;
-    this.columnWidths = options.columnWidths;
     this.getColumnWidth_ = options.getColumnWidth;
-    this.setColumnWidth = options.setColumnWidth;
-    this.hasResizedColumn = options.hasResizedColumn;
-    this.currentResizeColumn = options.currentResizeColumn;
-    this.columnWidthsRef = this.columnWidths;
-    this.resizeDelta = options.resizeDelta;
+    this.stickyColumnIndices = [];
   }
 
 
@@ -71,17 +54,6 @@ export class TableLayout<T> extends ListLayout<T> {
     this.wasLoading = this.isLoading;
     this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
-    // only rebuild columns that come after the column being resized, if no column is being resized, they will all be built
-    const resizeIndex = this.collection.columns.findIndex(column => column.key === this.currentResizeColumn);
-    // if resizing, set the column width for the resized column to the delta bounded by it's min/max
-    if (resizeIndex > -1) {
-      const columnProps = this.collection.columns[resizeIndex].props;
-      this.setColumnWidth(this.currentResizeColumn, Math.max(this.getMinWidth(columnProps?.minWidth), Math.min(this.getMaxWidth(columnProps.maxWidth), this.resizeDelta)));
-    }
-    const affectedResizeColumns = this.collection.columns.slice(resizeIndex + 1, this.collection.columns.length);
-    const remainingSpace = this.collection.columns.slice(0, resizeIndex + 1).reduce((acc, column) => acc - this.getColumnWidth_(column.key), this.virtualizer.visibleRect.width);
-    this.buildColumnWidths(affectedResizeColumns, remainingSpace);
-
     let header = this.buildHeader();
     let body = this.buildBody(0);
     body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
@@ -90,53 +62,6 @@ export class TableLayout<T> extends ListLayout<T> {
       header,
       body
     ];
-  }
-
-  buildColumnWidths(affectedResizeColumns: GridNode<T>[], remainingSpace: number) {
-    this.stickyColumnIndices = [];
-
-    // if there was a column resized, set it's width and mark it as static somehow.
-
-    // Pass 1: set widths for all explicitly defined columns.
-    let remainingColumns = new Set<GridNode<T>>();
-    for (let column of affectedResizeColumns) {
-      let props = column.props as ColumnProps<T>;
-      let width;
-      if (props.width) {
-        width = props.width;
-      } else {
-        width = this.hasResizedColumn(column.key) ? this.getColumnWidth_(column.key) : props.defaultWidth ?? this.getDefaultWidth(props);
-      }
-      if (this.getIsStatic(width)) {
-        let w = this.parseWidth(width);
-        this.columnWidthsRef.set(column.key, w);
-        this.setColumnWidth(column.key, w);
-        remainingSpace -= w;
-      } else {
-        remainingColumns.add(column);
-      }
-
-      // The selection cell and any other sticky columns always need to be visible.
-      // In addition, row headers need to be in the DOM for accessibility labeling.
-      if (column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
-        this.stickyColumnIndices.push(column.index);
-      }
-    }
-
-    // Pass 2: if there are remaining columns, then distribute the remaining space evenly.
-    if (remainingColumns.size > 0) {
-      const remCols = this.getDynamicColumnWidths(
-        Array.from(remainingColumns),
-        remainingSpace
-      );
-      let i = 0;
-      for (let column of remainingColumns) {
-        this.columnWidthsRef.set(column.key, remCols[i].columnWidth);
-        this.setColumnWidth(column.key, remCols[i].columnWidth);
-        i++;
-      }
-    }
-
   }
 
   getIsStatic(width: number | string): boolean {

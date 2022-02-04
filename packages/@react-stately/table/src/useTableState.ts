@@ -20,7 +20,7 @@ import {
 } from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
-import {Key, useMemo, useRef, useState} from 'react';
+import {Key, useEffect, useMemo, useRef, useState} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
@@ -35,18 +35,7 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
   sort(columnKey: Key): void,
 
-  columnWidths(): Map<Key, number>,
-  getColumnWidth(key: Key): number,
-  setColumnWidth(key: Key, width: number),
-
-  hasResizedColumn(key: Key): boolean,
-  addResizedColumn(key: Key),
-
-  currentResizeColumn(): Key,
-  setCurrentResizeColumn(key: Key),
-
-  resizeDelta(): number,
-  setResizeDelta(deltaX: number)
+  getColumnWidth(key: Key): number
 }
 
 export interface CollectionBuilderContext<T> {
@@ -75,61 +64,6 @@ const OPPOSITE_SORT_DIRECTION = {
 export function useTableState<T extends object>(
   props: TableStateProps<T>
 ): TableState<T> {
-  let {selectionMode = 'none'} = props;
-
-  // map of the columns and their width, key is the column key, value is the width
-  // TODO: switch to useControlledState
-  const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(new Map<Key, number>());
-  // set of all the column keys that have been resized
-  const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set<Key>());
-  // current column key that is being resized
-  const [currentResizeColumn, setCurrentResizeColumn] = useState<Key>(null);
-  // resize delta
-  const [resizeDelta, setResizeDelta] = useState<number>(0);
-
-
-  // map of the columns and their width, key is the column key, value is the width
-  const columnWidthsRef = useRef<Map<Key, number>>(null);
-  columnWidthsRef.current = columnWidths;
-  const resizedColumnsRef = useRef<Set<Key>>(null);
-  resizedColumnsRef.current = resizedColumns;
-  const currentResizeColumnRef = useRef<Key>(null);
-  currentResizeColumnRef.current = currentResizeColumn;
-  const resizeDeltaRef = useRef<number>(null);
-  resizeDeltaRef.current = resizeDelta;
-
-  function getColumnWidth(key: Key): number {
-    return columnWidthsRef.current.get(key);
-  }
-
-  function setColumnWidthNew(key: Key, width: number) {
-    columnWidthsRef.current.set(key, width);
-    // new map so that change detection is triggered
-    setColumnWidths(new Map(columnWidthsRef.current));
-  }
-
-  function hasResizedColumn(key: Key): boolean {
-    return resizedColumns.has(key);
-  }
-
-  function addResizedColumn(key: Key) {
-    if (resizedColumnsRef.current.has(key)) {
-      return;
-    }
-    resizedColumnsRef.current.add(key);
-    setResizedColumns(new Set(resizedColumnsRef.current));
-  }
-
-  function updatedCurrentResizeColumn(key: Key) {
-    currentResizeColumnRef.current = key;
-    setCurrentResizeColumn(currentResizeColumnRef.current);
-  }
-
-  function updateResizeDelta(deltaX: number) {
-    resizeDeltaRef.current = deltaX;
-    setResizeDelta(resizeDeltaRef.current);
-  }
-
   let context = useMemo(
     () => ({
       showSelectionCheckboxes:
@@ -145,6 +79,20 @@ export function useTableState<T extends object>(
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
+
+  let {selectionMode = 'none'} = props;
+
+  // map of the columns and their width, key is the column key, value is the width
+  // TODO: switch to useControlledState
+  const [columnWidths, recalculateColumnWidths] = useColumnResizeWidthState(collection.columns);
+
+  function getColumnWidth(key: Key): number {
+    return columnWidths.current.get(key);
+  }
+
+  function onColumnResize(column: any, deltaX: number) {
+    recalculateColumnWidths(column, deltaX);
+  }
   let {disabledKeys, selectionManager} = useGridState({
     ...props,
     collection
@@ -165,14 +113,49 @@ export function useTableState<T extends object>(
             : 'ascending'
       });
     },
-    columnWidths: () => columnWidths,
+    columnWidths,
     getColumnWidth,
-    setColumnWidth: setColumnWidthNew,
-    hasResizedColumn,
-    addResizedColumn,
-    currentResizeColumn: () => currentResizeColumn,
-    setCurrentResizeColumn: updatedCurrentResizeColumn,
-    resizeDelta: () => resizeDelta,
-    setResizeDelta: updateResizeDelta
+    onColumnResize
   };
 }
+
+const useColumnResizeWidthState = (columns) => {
+
+  let [columnWidths, setColumnWidths] = useState<Map<Key, number>>(new Map<Key, number>());
+  const columnWidthsRef = useRef<Map<Key, number>>(new Map<Key, number>());
+
+  function setColumnWidthsForRef(newWidths) {
+    columnWidthsRef.current = newWidths;
+    // new map so that change detection is triggered
+    setColumnWidths(newWidths);
+  }
+
+  // initialize column widths
+  useEffect(() => {
+    let newWidths = new Map<Key, number>();
+    newWidths.set('row-header-column-sqbeipf04y', 50);
+    newWidths.set('$.0', 500);
+    newWidths.set('$.1', 200);
+    newWidths.set('$.2', 100);
+    setColumnWidthsForRef(newWidths);
+  }, []);
+
+  // TODO: evaluate if we need useCallback or not
+  let calculateColumnWidths = (column, newWidth) => {
+    let newWidths = new Map<Key, number>();
+    newWidths.set('row-header-column-sqbeipf04y', 50);
+    newWidths.set('$.0', 250);
+    newWidths.set('$.1', 75);
+    newWidths.set('$.2', 75);
+    setColumnWidthsForRef(newWidths);
+  };
+
+
+  return [columnWidthsRef, calculateColumnWidths];
+};
+
+/*
+  //fake current table width
+  //TableLayout needs to recieve widths from useTableState
+  //useTableColumnResizer should call onResize(column, newWidth)
+*/

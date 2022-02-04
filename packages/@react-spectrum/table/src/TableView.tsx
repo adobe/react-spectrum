@@ -116,9 +116,7 @@ function TableView<T extends object>(
       props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
 
-  let columnWidths = state.columnWidths();
-  let currentResizeColumn = state.currentResizeColumn();
-  let resizeDelta = state.resizeDelta();
+  let columnWidths = state.columnWidths;
   
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
@@ -152,14 +150,9 @@ function TableView<T extends object>(
           return SELECTION_CELL_DEFAULT_WIDTH[scale];
         }
       },
-      columnWidths,
-      getColumnWidth: state.getColumnWidth,
-      setColumnWidth: state.setColumnWidth,
-      hasResizedColumn: state.hasResizedColumn,
-      currentResizeColumn,
-      resizeDelta
+      getColumnWidth: state.getColumnWidth
     }),
-    [props.overflowMode, scale, density, resizeDelta]
+    [props.overflowMode, scale, density, columnWidths.current]
   );
   let {direction} = useLocale();
   layout.collection = state.collection;

@@ -21,16 +21,14 @@ export function useTableColumnResize(state, item): any {
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
     onMoveStart() {
-      stateRef.current.setCurrentResizeColumn(item.key);
-      stateRef.current.addResizedColumn(item.key);
+      // stateRef.current.addResizedColumn(item.key);
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
     },
     onMove({deltaX}) {
       columnResizeWidthRef.current += deltaX;
-      stateRef.current.setResizeDelta(columnResizeWidthRef.current);
+      stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
     },
     onMoveEnd() {
-      stateRef.current.setCurrentResizeColumn();
       columnResizeWidthRef.current = 0;
     }
   });
