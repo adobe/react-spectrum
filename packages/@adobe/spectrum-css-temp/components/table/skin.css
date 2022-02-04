@@ -167,9 +167,6 @@ tbody.spectrum-Table-body {
       &.spectrum-Table-row--firstRow {
         border-block-start: 1px solid var(--spectrum-global-color-blue-500);
       }
-      &.spectrum-Table-row--lastRow {
-        border-block-end: 1px solid var(--spectrum-global-color-blue-500);
-      }
     }
   }
 
