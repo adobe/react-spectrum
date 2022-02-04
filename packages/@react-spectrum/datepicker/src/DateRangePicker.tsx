@@ -34,6 +34,9 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
+/**
+ * DatePickers combine two DateFields and a Calendar popover to allow users to enter or select a range of dates and times.
+ */
 export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProps<T>) {
   props = useProviderProps(props);
   let {
@@ -133,6 +136,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             onChange={start => state.setDateTime('start', start)}
             granularity={props.granularity}
             hourCycle={props.hourCycle}
+            hideTimeZone={props.hideTimeZone}
             inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
           <DateRangeDash />
           <DatePickerField
@@ -148,6 +152,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             onChange={end => state.setDateTime('end', end)}
             granularity={props.granularity}
             hourCycle={props.hourCycle}
+            hideTimeZone={props.hideTimeZone}
             inputClassName={classNames(
               styles,
               'spectrum-Datepicker-endField',

@@ -39,7 +39,7 @@ describe('ListView', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterAll(function () {
@@ -47,11 +47,16 @@ describe('ListView', function () {
     offsetHeight.mockReset();
   });
 
-  let render = (children, locale = 'en-US', scale = 'medium') => renderComponent(
-    <Provider theme={theme} scale={scale} locale={locale}>
-      {children}
-    </Provider>
-  );
+  let render = (children, locale = 'en-US', scale = 'medium') => {
+    let tree = renderComponent(
+      <Provider theme={theme} scale={scale} locale={locale}>
+        {children}
+      </Provider>
+    );
+    // Allow for Virtualizer layout to update
+    act(() => {jest.runAllTimers();});
+    return tree;
+  };
 
   let getCell = (tree, text) => {
     // Find by text, then go up to the element with the cell role.
@@ -277,9 +282,30 @@ describe('ListView', function () {
     });
   });
 
-  it('should display loading affordance', function () {
-    let {getByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
-    expect(getByRole('progressbar')).toBeTruthy();
+  it('should display loading affordance with proper height (isLoading)', function () {
+    let {getAllByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
+    let row = getAllByRole('row')[0];
+    expect(row.parentNode.style.height).toBe('1000px');
+    let progressbar = within(row).getByRole('progressbar');
+    expect(progressbar).toBeTruthy();
+  });
+
+  it('should display loading affordance with proper height (isLoadingMore)', function () {
+    let items = [
+      {key: 'foo', label: 'Foo'},
+      {key: 'bar', label: 'Bar'},
+      {key: 'baz', label: 'Baz'}
+    ];
+    let {getByRole} = render(
+      <ListView items={items} aria-label="List" loadingState="loadingMore">
+        {item =>
+          <Item textValue={item.key}>{item.label}</Item>
+        }
+      </ListView>
+    );
+    let progressbar = getByRole('progressbar');
+    expect(progressbar).toBeTruthy();
+    expect(progressbar.parentNode.parentNode.parentNode.style.height).toBe('40px');
   });
 
   it('should render empty state', function () {

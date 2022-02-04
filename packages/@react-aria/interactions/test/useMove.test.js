@@ -25,11 +25,12 @@ function Example(props) {
 describe('useMove', function () {
   beforeAll(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
-  afterAll(() => {
-    jest.useRealTimers();
-    window.requestAnimationFrame.mockRestore();
+
+  afterEach(() => {
+    // for restoreTextSelection
+    jest.runAllTimers();
   });
 
   afterEach(() => {
@@ -223,7 +224,7 @@ describe('useMove', function () {
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, pageX: 10, pageY: 25}]});
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
-      act(() => {jest.advanceTimersByTime(300);});
+      act(() => {jest.advanceTimersByTime(316);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
 
@@ -426,3 +427,4 @@ describe('useMove', function () {
     });
   });
 });
+
