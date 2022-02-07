@@ -528,6 +528,10 @@ storiesOf('MenuTrigger', module)
       </Menu>
     )
   )
+  .add(
+    'MenuTrigger with trigger="longPress"',
+    () => render(defaultMenu, {trigger: 'longPress'})
+  )
   .add('controlled isOpen',
     () => <ControlledOpeningMenuTrigger />
   );
