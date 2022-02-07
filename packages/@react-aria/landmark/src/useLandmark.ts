@@ -11,9 +11,8 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-import {getFocusableTreeWalker} from '@react-aria/focus';
 import {HTMLAttributes, MutableRefObject, useEffect} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
 
@@ -172,41 +171,19 @@ class LandmarkManager {
         return;
       }
 
-      // Iterate through landmarks, starting at next landmark
-      // until we reach a landmark with a focusble element.
-      let initialNextLandmark = nextLandmark;
-      do {
-        // If something was previously focused in the next landmark, then return focus to it
-        if (nextLandmark.lastFocused) {
-          let lastFocused = nextLandmark.lastFocused;
-          if (document.body.contains(lastFocused)) {
-            lastFocused.focus();
-            return;
-          }
-        }
-
-        // Otherwise, focus the first focusable element in the next landmark
-        let leadingSentinal = nextLandmark.ref.current.previousSibling || nextLandmark.ref.current.parentElement;
-        // If we want to add a scope, this is what we're thinking:
-        // let trailingSentinal = nextLandmark.ref.current.nextSibling;
-        // let scope = [leadingSentinal, trailingSentinal];
-        let walker = getFocusableTreeWalker(nextLandmark.ref.current, {tabbable: true});
-        let nextNode = walker.nextNode() as HTMLElement;
-        if (!nextNode) {
-          walker.currentNode = leadingSentinal;
-          nextNode = walker.nextNode() as HTMLElement;
-        }
-        while (nextNode && this.closestLandmark(nextNode) !== nextLandmark) {
-          nextNode = walker.nextNode() as HTMLElement;
-        }
-        if (document.body.contains(nextNode)) {
-          nextNode.focus();
+      // If something was previously focused in the next landmark, then return focus to it
+      if (nextLandmark.lastFocused) {
+        let lastFocused = nextLandmark.lastFocused;
+        if (document.body.contains(lastFocused)) {
+          lastFocused.focus();
           return;
         }
-        
-        nextLandmark = this.getNextLandmark(nextLandmark.ref.current, {backward});
-      } while (nextLandmark !== initialNextLandmark);
-     
+      }
+
+      // Otherwise, focus the landmark itself
+      if (document.contains(nextLandmark.ref.current)) {
+        nextLandmark.ref.current.focus();
+      }
     }
   }
 
@@ -253,5 +230,9 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   }, [label, ref, role]);
 
   // let everything through? or only return role + labelling?
-  return {landmarkProps: props};
+  return {
+    landmarkProps: mergeProps(props, {
+      tabIndex: -1
+    })
+  };
 }
