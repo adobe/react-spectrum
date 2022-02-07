@@ -21,8 +21,6 @@ import {theme} from '@react-spectrum/theme-default';
 import {useLandmark} from '../';
 import userEvent from '@testing-library/user-event';
 
-// ['main', 'region', 'search', 'navigation', 'form', 'banner', 'contentinfo', 'complementary']
-
 function Main(props) {
   let ref = useRef();
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
@@ -82,14 +80,16 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
+    let navigation = tree.getByRole('navigation');
+    let main = tree.getByRole('main');
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(navigation);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+    expect(document.activeElement).toBe(main);
   });
 
   it('can F6 to a landmark region when there is only one landmark', function () {
@@ -100,10 +100,11 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
+    let main = tree.getByRole('main');
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+    expect(document.activeElement).toBe(main);
   });
 
   it('can F6 to a nested landmark region that is first', function () {
@@ -118,32 +119,32 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
-    let checkbox = tree.getByRole('checkbox');
-    let textbox = tree.getByRole('textbox');
+    let main = tree.getByRole('main');
+    let region = tree.getByRole('region');
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(textbox);
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(checkbox);
+    expect(document.activeElement).toBe(region);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(textbox);
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(checkbox);
+    expect(document.activeElement).toBe(region);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(textbox);
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(checkbox);
+    expect(document.activeElement).toBe(region);
   });
 
   it('can F6 to a nested landmark region that is last', function () {
@@ -158,32 +159,32 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
-    let checkbox = tree.getByRole('checkbox');
-    let textbox = tree.getByRole('textbox');
+    let main = tree.getByRole('main');
+    let region = tree.getByRole('region');
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(textbox);
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(checkbox);
+    expect(document.activeElement).toBe(region);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(textbox);
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(checkbox);
+    expect(document.activeElement).toBe(region);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(textbox);
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(checkbox);
+    expect(document.activeElement).toBe(region);
   });
 
   it('goes in dom order with two nested landmarks', function () {
@@ -204,37 +205,37 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
-    let checkbox1 = tree.getByLabelText('Checkbox label 1');
-    let checkbox2 = tree.getByLabelText('Checkbox label 2');
-    let textbox1 = tree.getByLabelText('First Name');
+    let main = tree.getByRole('main');
+    let region1 = tree.getAllByRole('region')[0];
+    let region2 = tree.getAllByRole('region')[1];
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(textbox1);
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(checkbox1);
+    expect(document.activeElement).toBe(region1);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(checkbox2);
+    expect(document.activeElement).toBe(region2);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(textbox1);
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(checkbox2);
+    expect(document.activeElement).toBe(region2);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(checkbox1);
+    expect(document.activeElement).toBe(region1);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(textbox1);
+    expect(document.activeElement).toBe(main);
   });
 
   it('can F6 to the next landmark region', function () {
@@ -252,62 +253,16 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
+    let main = tree.getByRole('main');
 
     userEvent.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+    expect(document.activeElement).toBe(main);
   });
 
-  it('F6 skips a landmark that has no focusable children', function () {
-    let tree = render(
-      <div>
-        <Navigation>
-          <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-          </ul>
-        </Navigation>
-        <Main>
-          <div>No focusable children</div>
-        </Main>
-        <Region>
-          <Checkbox>Checkbox label</Checkbox>
-        </Region>
-      </div>
-    );
-
-    userEvent.tab();
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getByRole('checkbox'));
-  });
-
-  it('F6 doesn\'t move focus if all landmarks have no focusable children', function () {
-    let tree = render(
-      <div>
-        <TextField label="First Name" />
-        <Main>
-          <div>Non-focusable content</div>
-        </Main>
-        <Region>
-          <div> Non-focusable content</div>
-        </Region>
-      </div>
-    );
-
-    userEvent.tab();
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
-
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
-  });
 
   it('landmark navigation forward wraps', function () {
     let tree = render(
@@ -324,13 +279,14 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
+    let main = tree.getByRole('main');
 
     userEvent.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
@@ -375,14 +331,16 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
+    let navigation = tree.getByRole('navigation');
+    let main = tree.getByRole('main');
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(navigation);
   });
 
   it('can shift+F6 to the previous landmark region', function () {
@@ -427,13 +385,14 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
+    let main = tree.getByRole('main');
 
     userEvent.tab();
-    expect(document.activeElement).toBe(document.activeElement);
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+    expect(document.activeElement).toBe(main);
   });
 
   it('F6 should focus the last focused element in a landmark region', function () {
@@ -641,24 +600,28 @@ describe('LandmarkManager', function () {
       </Container>
     );
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    let navigation = tree.getByRole('navigation');
+    let region = tree.getByRole('region');
+    let main = tree.getByRole('main');
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[0]);
+    expect(document.activeElement).toBe(navigation);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[1]);
+    expect(document.activeElement).toBe(region);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(main);
 
 
     tree.rerender(<Container />);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(navigation);
   });
 
   it('Should navigate to a landmark that has been added to the DOM', function () {
@@ -682,14 +645,16 @@ describe('LandmarkManager', function () {
     }
 
     let tree = render(<Container />);
+    let navigation = tree.getByRole('navigation');
+    let main = tree.getByRole('main');
   
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(navigation);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[0]);
+    expect(document.activeElement).toBe(main);
 
     tree.rerender(
       <Container>
@@ -699,9 +664,11 @@ describe('LandmarkManager', function () {
       </Container>
     );
 
+    let region = tree.getByRole('region');
+
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[1]);
+    expect(document.activeElement).toBe(region);
   });
 
   it('Should navigate to a landmark that has been added as a child to an existing landmark.', function () {
@@ -723,20 +690,21 @@ describe('LandmarkManager', function () {
         </div>
       );
     }
-
     let tree = render(<Container />);
+    let main = tree.getByRole('main');
+    let navigation = tree.getByRole('navigation');
   
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(navigation);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[0]);
+    expect(document.activeElement).toBe(main);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(navigation);
 
     tree.rerender(
       <Container>
@@ -746,9 +714,11 @@ describe('LandmarkManager', function () {
       </Container>
     );
 
+    let region = tree.getByRole('region');
+
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[1]);
+    expect(document.activeElement).toBe(region);
   });
 
   it('Should navigate to a landmark that has been added as a parent to an existing landmark.', function () {
@@ -771,18 +741,20 @@ describe('LandmarkManager', function () {
     }
 
     let tree = render(<Contained />);
+    let navigation = tree.getByRole('navigation');
+    let region = tree.getByRole('region');
   
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(navigation);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[0]);
+    expect(document.activeElement).toBe(region);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(navigation);
 
     tree.rerender(
       <Main>
@@ -791,12 +763,10 @@ describe('LandmarkManager', function () {
       </Main>
     );
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('textbox')[0]);
+    let main = tree.getByRole('main');
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    expect(document.activeElement).toBe(main);
   });
 });
