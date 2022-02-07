@@ -152,7 +152,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, isLoading}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}

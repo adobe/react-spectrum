@@ -31,7 +31,7 @@ export function ListViewItem(props) {
     isEmphasized
   } = props;
   let cellNode = [...item.childNodes][0];
-  let {state} = useContext(ListViewContext);
+  let {state, isLoading} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();
@@ -60,7 +60,6 @@ export function ListViewItem(props) {
     focusProps
   );
   let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
-
   let chevron = null;
   if (item.props.hasChildItems) {
     chevron = direction === 'ltr'
@@ -78,6 +77,7 @@ export function ListViewItem(props) {
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
+  let isLastRow = item.nextKey === null;
   return (
     <div
       {...mergeProps(rowProps, pressProps)}
@@ -103,6 +103,8 @@ export function ListViewItem(props) {
               'is-hovered': isHovered,
               'is-selected': isSelected,
               'is-previous-selected': state.selectionManager.isSelected(item.prevKey),
+              // Hide bottom border for last row so we don't get overlap with the container border.
+              'is-lastRow': isLastRow && !isLoading,
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey))
             }
           )
