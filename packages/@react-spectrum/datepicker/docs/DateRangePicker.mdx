@@ -92,7 +92,7 @@ import {parseZonedDateTime} from '@internationalized/date';
 
 <DateRangePicker
   label="Date range"
-  maxWidth="90vw"
+  maxWidth="70vw"
   defaultValue={{
     start: parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]'),
     end: parseZonedDateTime('2022-11-08T11:15[America/Los_Angeles]')
@@ -106,7 +106,7 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 
 <DateRangePicker
   label="Date range"
-  maxWidth="90vw"
+  maxWidth="70vw"
   defaultValue={{
     start: parseAbsoluteToLocal('2021-11-07T07:45:00Z'),
     end: parseAbsoluteToLocal('2021-11-08T14:25:00Z')
@@ -342,7 +342,7 @@ When `ZonedDateTime` objects are provided as the value of a `DateRangePicker`, t
 ```tsx example
 <DateRangePicker
   label="Date range"
-  maxWidth="90vw"
+  maxWidth="70vw"
   defaultValue={{
     start: parseZonedDateTime('2022-11-07T10:45[America/Los_Angeles]'),
     end: parseZonedDateTime('2022-11-08T19:45[America/Los_Angeles]')
@@ -357,7 +357,7 @@ By default, `DateRangePicker` displays times in either 12 or 24 hour hour format
 ```tsx example
 <DateRangePicker
   label="Date range"
-  maxWidth="90vw"
+  maxWidth="70vw"
   granularity="minute"
   hourCycle={24} />
 ```
