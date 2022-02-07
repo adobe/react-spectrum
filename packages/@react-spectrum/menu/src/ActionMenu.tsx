@@ -55,7 +55,7 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
 }
 
 /**
- * Convenience component to display an ActionButton with a Menu.
+ * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
  */
 let _ActionMenu = React.forwardRef(ActionMenu);
 export {_ActionMenu as ActionMenu};
