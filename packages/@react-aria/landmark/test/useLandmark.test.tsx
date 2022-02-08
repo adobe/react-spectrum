@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {act, fireEvent, render, within} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {TextField} from '@react-spectrum/textfield';
