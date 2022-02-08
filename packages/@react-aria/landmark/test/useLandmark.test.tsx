@@ -13,7 +13,7 @@
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {TextField} from '@react-spectrum/textfield';
@@ -41,6 +41,27 @@ function Region(props) {
 
 
 describe('LandmarkManager', function () {
+  let offsetWidth, offsetHeight;
+
+  beforeAll(function () {
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.useFakeTimers();
+  });
+
+  afterAll(function () {
+    offsetWidth.mockReset();
+    offsetHeight.mockReset();
+  });
+
+  beforeEach(() => {
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+  });
+
+  afterEach(() => {
+    act(() => {jest.runAllTimers();});
+  });
+  
   it('can tab into a landmark region', function () {
     let tree = render(
       <div>
@@ -464,6 +485,8 @@ describe('LandmarkManager', function () {
     );
     let buttons = tree.getAllByRole('button');
     let table = tree.getByRole('grid');
+    let rows = within(table).getAllByRole('row');
+    let cells = within(rows[1]).getAllByRole('gridcell');
 
     userEvent.tab();
     expect(document.activeElement).toBe(buttons[0]);
@@ -472,12 +495,12 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(buttons[1]);
 
     userEvent.tab();
-    expect(document.activeElement).toBe(table);
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+    expect(document.activeElement).toBe(rows[1]);
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    expect(document.activeElement).toBe(table);
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    expect(document.activeElement).toBe(cells[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
@@ -485,7 +508,7 @@ describe('LandmarkManager', function () {
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(table);
+    expect(document.activeElement).toBe(cells[0]);
   });
 
   it('Should allow 2+ landmarks with same role if they are labelled.', function () {
