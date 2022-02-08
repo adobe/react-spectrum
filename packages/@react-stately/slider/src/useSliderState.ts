@@ -229,11 +229,11 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     return clamp(getRoundedValue(val), minValue, maxValue);
   }
 
-  function incrementThumb(index: number, stepSize: number) {
+  function incrementThumb(index: number, stepSize: number = 1) {
     updateValue(index, snapValueToStep(values[index] + stepSize, minValue, maxValue, stepSize));
   }
 
-  function decrementThumb(index: number, stepSize: number) {
+  function decrementThumb(index: number, stepSize: number = 1) {
     updateValue(index, snapValueToStep(values[index] - stepSize, minValue, maxValue, stepSize));
   }
 
