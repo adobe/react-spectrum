@@ -92,16 +92,16 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog .spectrum-Dialog-grid {
   display: grid;
-  grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding-x);
+  grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr 1fr 1fr minmax(0, auto) var(--spectrum-dialog-padding-x);
   grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto 1fr auto var(--spectrum-dialog-padding-y);
   grid-template-areas:
-    "hero hero    hero    hero        hero        hero"
-    ".    .       .       .           .           ."
-    ".    heading header  header      typeIcon    ."
-    ".    divider divider divider     divider     ."
-    ".    content content content     content     ."
-    ".    footer  footer  buttonGroup buttonGroup ."
-    ".    .       .       .           .           .";
+    "hero hero    hero    hero        hero        hero        hero"
+    ".    .       .       .           .           .           ."
+    ".    heading header  header      header      typeIcon    ."
+    ".    divider divider divider     divider     divider     ."
+    ".    content content content     content     content     ."
+    ".    footer  footer  buttonGroup buttonGroup buttonGroup ."
+    ".    .       .       .           .           .           .";
   width: 100%;
 }
 
