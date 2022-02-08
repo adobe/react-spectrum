@@ -369,7 +369,7 @@ function TableVirtualizer({
           // Offset scroll position by width of selection cell
           // (which is sticky and will overlap the cell we're scrolling to).
           offsetX: column.props.isSelectionCell
-            ? layout.columnWidths.get(column.key)
+            ? layout.getColumnWidth_(column.key)
             : 0
         });
       }
