@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps} from '@react-types/shared';
 import {HTMLAttributes, MutableRefObject, useEffect} from 'react';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
 
