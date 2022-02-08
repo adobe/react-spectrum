@@ -229,10 +229,10 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
 
-  // let everything through? or only return role + labelling?
   return {
-    landmarkProps: mergeProps(props, {
+    landmarkProps: {
+      role,
       tabIndex: -1
-    })
+    }
   };
 }
