@@ -92,7 +92,6 @@ import {parseZonedDateTime} from '@internationalized/date';
 
 <DateRangePicker
   label="Date range"
-  maxWidth="100%"
   defaultValue={{
     start: parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]'),
     end: parseZonedDateTime('2022-11-08T11:15[America/Los_Angeles]')
@@ -106,7 +105,6 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 
 <DateRangePicker
   label="Date range"
-  maxWidth="100%"
   defaultValue={{
     start: parseAbsoluteToLocal('2021-11-07T07:45:00Z'),
     end: parseAbsoluteToLocal('2021-11-08T14:25:00Z')
@@ -176,7 +174,7 @@ function Example() {
   let [range, setRange] = React.useState(null);
   return (
     <Provider locale="hi-IN-u-ca-indian">
-      <DateRangePicker label="Date range" maxWidth="100%" value={range} onChange={setRange} />
+      <DateRangePicker label="Date range" value={range} onChange={setRange} />
       <p>Start date: {range?.start.toString()}</p>
       <p>End date: {range?.end.toString()}</p>
     </Provider>
@@ -225,7 +223,7 @@ function Example() {
 
   return (
     <>
-      <DateRangePicker label="Date range" maxWidth="100%" value={range} onChange={setRange} />
+      <DateRangePicker label="Date range" value={range} onChange={setRange} />
       <p>Selected date: {formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone()))}</p>
     </>
   );
@@ -342,7 +340,6 @@ When `ZonedDateTime` objects are provided as the value of a `DateRangePicker`, t
 ```tsx example
 <DateRangePicker
   label="Date range"
-  maxWidth="100%"
   defaultValue={{
     start: parseZonedDateTime('2022-11-07T10:45[America/Los_Angeles]'),
     end: parseZonedDateTime('2022-11-08T19:45[America/Los_Angeles]')
@@ -357,7 +354,6 @@ By default, `DateRangePicker` displays times in either 12 or 24 hour hour format
 ```tsx example
 <DateRangePicker
   label="Date range"
-  maxWidth="100%"
   granularity="minute"
   hourCycle={24} />
 ```
