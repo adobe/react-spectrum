@@ -267,6 +267,22 @@ describe('Slider', function () {
 
     it.each`
       Name                          | props                 | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+    `('$Name respects the page size', function ({props, commands}) {
+      let tree = render(
+        <Provider theme={theme} {...props}>
+          <Slider label="Label" pageSize={10} defaultValue={50} />
+        </Provider>
+      );
+      let slider = tree.getByRole('slider');
+      testKeypresses([slider, slider], commands);
+    });
+
+    it.each`
+      Name                          | props                 | commands
       ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowLeft, result: -1}, {left: press.ArrowLeft, result: 0}]}
       ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowRight, result: 0}]}
     `('$Name is clamped by min/max', function ({props, commands}) {

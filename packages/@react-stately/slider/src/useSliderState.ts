@@ -131,7 +131,12 @@ export interface SliderState {
   /**
    * The step amount for the slider.
    */
-  readonly step: number
+  readonly step: number,
+
+  /**
+   * The page size for the slider, used to do a bigger step.
+   */
+  readonly pageSize: number
 }
 
 const DEFAULT_MIN_VALUE = 0;
@@ -149,7 +154,14 @@ interface SliderStateOptions extends SliderProps {
  * @param props
  */
 export function useSliderState(props: SliderStateOptions): SliderState {
-  const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, numberFormatter: formatter, step = DEFAULT_STEP_VALUE} = props;
+  const {
+    isDisabled,
+    minValue = DEFAULT_MIN_VALUE,
+    maxValue = DEFAULT_MAX_VALUE,
+    numberFormatter: formatter,
+    step = DEFAULT_STEP_VALUE,
+    pageSize = DEFAULT_STEP_VALUE
+  } = props;
 
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
@@ -230,11 +242,13 @@ export function useSliderState(props: SliderStateOptions): SliderState {
   }
 
   function incrementThumb(index: number, stepSize: number = 1) {
-    updateValue(index, snapValueToStep(values[index] + stepSize, minValue, maxValue, stepSize));
+    let s = Math.max(stepSize, step);
+    updateValue(index, snapValueToStep(values[index] + s, minValue, maxValue, stepSize));
   }
 
   function decrementThumb(index: number, stepSize: number = 1) {
-    updateValue(index, snapValueToStep(values[index] - stepSize, minValue, maxValue, stepSize));
+    let s = Math.max(stepSize, step);
+    updateValue(index, snapValueToStep(values[index] - s, minValue, maxValue, stepSize));
   }
 
   return {
@@ -257,7 +271,8 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     setThumbEditable,
     incrementThumb,
     decrementThumb,
-    step
+    step,
+    pageSize
   };
 }
 

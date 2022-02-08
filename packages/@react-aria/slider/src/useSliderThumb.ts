@@ -78,13 +78,12 @@ export function useSliderThumb(
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
 
-  let pageSize = 1;
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
       let {
         getThumbMaxValue,
         getThumbMinValue,
-        step
+        pageSize
       } = stateRef.current;
       // these are the cases that useMove or useSlider don't handle
       if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
@@ -93,15 +92,14 @@ export function useSliderThumb(
       }
       // same handling as useMove, stopPropagation to prevent useSlider from handling the event as well.
       e.preventDefault();
-      let pageStep = Math.max(pageSize, step);
       // remember to set this so that onChangeEnd is fired
       state.setThumbDragging(index, true);
       switch (e.key) {
         case 'PageUp':
-          stateRef.current.incrementThumb(index, pageStep);
+          stateRef.current.incrementThumb(index, pageSize);
           break;
         case 'PageDown':
-          stateRef.current.decrementThumb(index, pageStep);
+          stateRef.current.decrementThumb(index, pageSize);
           break;
         case 'Home':
           state.setThumbValue(index, getThumbMinValue(index));
@@ -124,9 +122,9 @@ export function useSliderThumb(
       const {
         getThumbPercent,
         setThumbPercent,
-        step
+        step,
+        pageSize
       } = stateRef.current;
-      let pageStep = Math.max(pageSize, step);
       let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
 
       if (currentPosition.current == null) {
@@ -135,20 +133,20 @@ export function useSliderThumb(
       if (pointerType === 'keyboard') {
         if (deltaX > 0) {
           if (direction === 'rtl') {
-            stateRef.current.decrementThumb(index, shiftKey ? pageStep : step);
+            stateRef.current.decrementThumb(index, shiftKey ? pageSize : step);
           } else {
-            stateRef.current.incrementThumb(index, shiftKey ? pageStep : step);
+            stateRef.current.incrementThumb(index, shiftKey ? pageSize : step);
           }
         } else if (deltaY < 0) {
-          stateRef.current.incrementThumb(index, shiftKey ? pageStep : step);
+          stateRef.current.incrementThumb(index, shiftKey ? pageSize : step);
         } else if (deltaX < 0) {
           if (direction === 'rtl') {
-            stateRef.current.incrementThumb(index, shiftKey ? pageStep : step);
+            stateRef.current.incrementThumb(index, shiftKey ? pageSize : step);
           } else {
-            stateRef.current.decrementThumb(index, shiftKey ? pageStep : step);
+            stateRef.current.decrementThumb(index, shiftKey ? pageSize : step);
           }
         } else if (deltaY > 0) {
-          stateRef.current.decrementThumb(index, shiftKey ? pageStep : step);
+          stateRef.current.decrementThumb(index, shiftKey ? pageSize : step);
         }
       } else {
         let delta = isVertical ? deltaY : deltaX;
