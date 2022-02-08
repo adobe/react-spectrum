@@ -121,10 +121,10 @@ export function useTableState<T extends object>(
 }
 
 function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
-  const [, setColumnWidths] = useState<Map<Key, number>>(new Map<Key, number>());
-  const columnWidthsRef = useRef<Map<Key, number>>(new Map<Key, number>());
+  const [initialColumns, setColumnWidths] = useState<Map<Key, number>>(buildColumnWidths(columns, 800));
+  const columnWidthsRef = useRef<Map<Key, number>>(initialColumns);
   // TODO: switch to the virtualizer width
-  const tableWidth = 1000;
+  const tableWidth = 800;
 
   function setColumnWidthsForRef(newWidths: Map<Key, number>) {
     columnWidthsRef.current = newWidths;
@@ -132,19 +132,11 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
     setColumnWidths(newWidths);
   }
 
-  // initialize column widths
-  useEffect(() => {
-    setColumnWidthsForRef(buildColumnWidths(columns, 1000));
-  }, []);
-
   // TODO: evaluate if we need useCallback or not
   const calculateColumnWidths = (column, newWidth) => {
-    const newWidths = new Map<Key, number>();
-    newWidths.set('row-header-column-gah1rbff8ol', 50);
-    newWidths.set('$.0', 250);
-    newWidths.set('$.1', 75);
-    newWidths.set('$.2', 75);
-    setColumnWidthsForRef(newWidths);
+    const [firstColumn, secondColumn, ...remainingColumns] = columns;
+    let widths = buildColumnWidths(remainingColumns, 800 - newWidth);
+    setColumnWidthsForRef(widths);
   };
 
   function buildColumnWidths(affectedColumns: GridNode<T>[], availableSpace: number): Map<Key, number> {
@@ -163,7 +155,6 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
       } else {
         remainingColumns.add(column);
       }
-      console.log(remainingColumns, remainingSpace);
     }
 
     // dynamic columns
