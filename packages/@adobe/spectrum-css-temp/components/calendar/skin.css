@@ -37,7 +37,7 @@ governing permissions and limitations under the License.
     background: var(--background);
   }
 
-  &.is-range-selection {
+  &.is-range-selection:not(.is-disabled) {
     background: var(--spectrum-calendar-day-background-color-selected);
   }
 
@@ -58,7 +58,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-calendar-day-text-color-hover);
     --background: var(--spectrum-calendar-day-background-color-hover);
 
-    &.is-range-selection {
+    &.is-range-selection:not(.is-disabled) {
       color: var(--spectrum-calendar-day-text-color-selected-hover);
       --background: var(--spectrum-alias-highlight-selected);
     }
@@ -79,7 +79,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-calendar-day-text-color-hover);
     --background: var(--spectrum-calendar-day-background-color-down);
 
-    &.is-range-selection {
+    &.is-range-selection:not(.is-disabled) {
       color: var(--spectrum-calendar-day-text-color-selected-hover);
       --background:  var(--spectrum-alias-highlight-selected-hover);
     }
@@ -112,14 +112,6 @@ governing permissions and limitations under the License.
     &.is-today,
     &.is-selected {
       color: var(--spectrum-calendar-day-text-color-disabled);
-    }
-
-    &.is-range-selection {
-      background: var(--spectrum-global-color-gray-200);
-    }
-
-    &.is-selected {
-      --background: var(--spectrum-global-color-gray-200);
     }
   }
 }
