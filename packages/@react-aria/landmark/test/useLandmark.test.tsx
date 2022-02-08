@@ -691,8 +691,17 @@ describe('LandmarkManager', function () {
       );
     }
     let tree = render(<Container />);
+
+    tree.rerender(
+      <Container>
+        <Region>
+          <TextField label="First Name" />
+        </Region>
+      </Container>
+    );
     let main = tree.getByRole('main');
     let navigation = tree.getByRole('navigation');
+    let region = tree.getByRole('region');
   
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
@@ -704,20 +713,6 @@ describe('LandmarkManager', function () {
 
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
-
-    tree.rerender(
-      <Container>
-        <Region>
-          <TextField label="First Name" />
-        </Region>
-      </Container>
-    );
-
-    let region = tree.getByRole('region');
-
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
     expect(document.activeElement).toBe(region);
   });
 
@@ -740,21 +735,7 @@ describe('LandmarkManager', function () {
       );
     }
 
-    let tree = render(<Contained />);
-    let navigation = tree.getByRole('navigation');
-    let region = tree.getByRole('region');
-  
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
-
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(region);
-
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
+    let tree = render(<Contained />); 
 
     tree.rerender(
       <Main>
