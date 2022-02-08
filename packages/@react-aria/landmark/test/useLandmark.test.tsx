@@ -54,15 +54,10 @@ describe('LandmarkManager', function () {
     offsetHeight.mockReset();
   });
 
-  beforeEach(() => {
-    // @ts-ignore
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
-  });
-
   afterEach(() => {
     act(() => {jest.runAllTimers();});
   });
-  
+
   it('can tab into a landmark region', function () {
     let tree = render(
       <div>
@@ -484,6 +479,7 @@ describe('LandmarkManager', function () {
         </div>
       </Provider>
     );
+    act(() => {jest.runAllTimers();});
     let buttons = tree.getAllByRole('button');
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -671,7 +667,7 @@ describe('LandmarkManager', function () {
     let tree = render(<Container />);
     let navigation = tree.getByRole('navigation');
     let main = tree.getByRole('main');
-  
+
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
     expect(document.activeElement).toBe(navigation);
@@ -726,7 +722,7 @@ describe('LandmarkManager', function () {
     let main = tree.getByRole('main');
     let navigation = tree.getByRole('navigation');
     let region = tree.getByRole('region');
-  
+
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
     expect(document.activeElement).toBe(navigation);
@@ -759,7 +755,7 @@ describe('LandmarkManager', function () {
       );
     }
 
-    let tree = render(<Contained />); 
+    let tree = render(<Contained />);
 
     tree.rerender(
       <Main>
