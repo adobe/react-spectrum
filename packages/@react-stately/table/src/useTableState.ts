@@ -53,7 +53,9 @@ export interface TableStateProps<T>
     MultipleSelectionStateProps,
     Sortable {
   /** Whether the row selection checkboxes should be displayed. */
-  showSelectionCheckboxes?: boolean
+  showSelectionCheckboxes?: boolean,
+  /** Function for determining the default width of columns. */
+  getDefaultWidth: (props) => string | number
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -88,7 +90,7 @@ export function useTableState<T extends object>(
 
   // map of the columns and their width, key is the column key, value is the width
   // TODO: switch to useControlledState
-  const [columnWidths, recalculateColumnWidths] = useColumnResizeWidthState(collection.columns);
+  const [columnWidths, recalculateColumnWidths] = useColumnResizeWidthState(collection.columns, props.getDefaultWidth);
 
   function getColumnWidth(key: Key): number {
     return columnWidths.current.get(key);
@@ -124,7 +126,10 @@ export function useTableState<T extends object>(
 }
 
 
-function useColumnResizeWidthState<T>(columns: GridNode<T>[]): [MutableRefObject<Map<Key, number>>, (column: GridNode<T>, newWidth: number) => void] {
+function useColumnResizeWidthState<T>(
+    columns: GridNode<T>[],
+    getDefaultWidth: (props) => string | number
+  ): [MutableRefObject<Map<Key, number>>, (column: GridNode<T>, newWidth: number) => void] {
   // TODO: switch to the virtualizer width
   const tableWidth = 800;
   const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(buildColumnWidths(columns, tableWidth));
@@ -144,7 +149,7 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]): [MutableRefObject
     let widths = new Map<Key, number>(columnWidthsRef.current);
     widths.set(column.key, Math.max(
       getMinWidth(column.props.minWidth),
-      Math.min(newWidth, getMaxWidth(column.props.maxWidth))
+      Math.min(Math.round(newWidth), getMaxWidth(column.props.maxWidth))
     ));
 
     // keep track of all columns that have been seized
@@ -169,7 +174,7 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]): [MutableRefObject
     // static columns
     for (let column of affectedColumns) {
       let props = column.props as ColumnProps<T>;
-      let width = resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : props.width ?? props.defaultWidth ?? 75;
+      let width = resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : props.width ?? props.defaultWidth ?? getDefaultWidth(column.props);
       if (isStatic(width)) {
         let w = parseWidth(width);
         widths.set(column.key, w);
@@ -190,8 +195,18 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]): [MutableRefObject
     return widths;
   }
 
+  // function getDefaultWidth({hideHeader, isSelectionCell, showDivider}) {
+  //   if (hideHeader) {
+  //     let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
+  //     return showDivider ? width + 1 : width;
+  //   } else if (isSelectionCell) {
+  //     return SELECTION_CELL_DEFAULT_WIDTH[scale];
+  //   }
+  //   return;
+  // }
+
   function isStatic(width: number | string): boolean {
-    return width !== null && (typeof width === 'number' || width.match(/^(\d+)%$/) !== null);
+    return width !== null && width !== undefined && (typeof width === 'number' || width.match(/^(\d+)%$/) !== null);
   }
 
   function parseWidth(width: number | string): number {
@@ -259,7 +274,7 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]): [MutableRefObject
   
       let width = Math.max(
         getMinWidth(column.props.minWidth),
-        Math.min(targetWidth, getMaxWidth(column.props.maxWidth))
+        Math.min(Math.round(targetWidth), getMaxWidth(column.props.maxWidth))
       );
       column.calculatedWidth = width;
       remainingSpace -= width;

@@ -109,27 +109,35 @@ function TableView<T extends object>(
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(
     props.selectionStyle !== 'highlight'
   );
+  let {scale} = useProvider();
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
     selectionBehavior:
-      props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+    props.selectionStyle === 'highlight' ? 'replace' : 'toggle',
+    getDefaultWidth: ({hideHeader, isSelectionCell, showDivider}) => {
+      if (hideHeader) {
+        let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
+        return showDivider ? width + 1 : width;
+      } else if (isSelectionCell) {
+        return SELECTION_CELL_DEFAULT_WIDTH[scale];
+      }
+    }
   });
-
+  
   let columnWidths = state.columnWidths;
   
-
+  
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes =
-    state.selectionManager.selectionBehavior !== 'replace';
+  state.selectionManager.selectionBehavior !== 'replace';
   if (shouldShowCheckboxes !== showSelectionCheckboxes) {
     setShowSelectionCheckboxes(shouldShowCheckboxes);
   }
-
+  
   let domRef = useDOMRef(ref);
   let formatMessage = useMessageFormatter(intlMessages);
 
-  let {scale} = useProvider();
   let density = props.density || 'regular';
   let layout = useMemo(
     () => new TableLayout({
@@ -142,14 +150,6 @@ function TableView<T extends object>(
           props.overflowMode === 'wrap' ? null : DEFAULT_HEADER_HEIGHT[scale],
       estimatedHeadingHeight:
           props.overflowMode === 'wrap' ? DEFAULT_HEADER_HEIGHT[scale] : null,
-      getDefaultWidth: ({hideHeader, isSelectionCell, showDivider}) => {
-        if (hideHeader) {
-          let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
-          return showDivider ? width + 1 : width;
-        } else if (isSelectionCell) {
-          return SELECTION_CELL_DEFAULT_WIDTH[scale];
-        }
-      },
       getColumnWidth: state.getColumnWidth
     }),
     [props.overflowMode, scale, density, columnWidths.current]

@@ -18,7 +18,6 @@ import {TableCollection} from '@react-types/table';
 
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
-  getDefaultWidth: (props) => string | number,
   getColumnWidth: (key: Key) => number
 }
 
