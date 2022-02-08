@@ -40,9 +40,15 @@ class LandmarkManager {
   public static getInstance(): LandmarkManager {
     if (!LandmarkManager.instance) {
       LandmarkManager.instance = new LandmarkManager();
+      LandmarkManager.instance.setup();
     }
 
     return LandmarkManager.instance;
+  }
+
+  private setup() {
+    document.addEventListener('keydown', LandmarkManager.getInstance().f6Handler.bind(LandmarkManager.getInstance()), {capture: true});
+    document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandler.bind(LandmarkManager.getInstance()), {capture: true});
   }
 
   /**
@@ -197,9 +203,6 @@ class LandmarkManager {
     }
   }
 }
-
-document.addEventListener('keydown', LandmarkManager.getInstance().f6Handler.bind(LandmarkManager.getInstance()), {capture: true});
-document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandler.bind(LandmarkManager.getInstance()), {capture: true});
 
 /**
  * Provides landmark navigation in an application. Call this with a role and label to register a landmark navigable with F6.
