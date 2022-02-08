@@ -56,6 +56,8 @@ export class TableLayout<T> extends ListLayout<T> {
 
     let header = this.buildHeader();
     let body = this.buildBody(0);
+    this.stickyColumnIndices = this.collection.columns.filter(c => c.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(c.key)).map(c => c.index);
+
     body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
     this.contentSize = new Size(body.layoutInfo.rect.width, body.layoutInfo.rect.maxY);
     return [
