@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {TableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
+import {TableCollection} from '@react-types/table';
 
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {

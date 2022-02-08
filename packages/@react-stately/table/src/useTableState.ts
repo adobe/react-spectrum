@@ -21,7 +21,7 @@ import {
 import {ColumnProps, TableCollection as ITableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {GridState, useGridState} from '@react-stately/grid';
-import {Key, useEffect, useMemo, useRef, useState} from 'react';
+import {Key, MutableRefObject, useMemo, useRef, useState} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
@@ -35,8 +35,11 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   sortDescriptor: SortDescriptor,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
   sort(columnKey: Key): void,
-
-  getColumnWidth(key: Key): number
+  /** A map of all the column widths by key. */
+  columnWidths: MutableRefObject<Map<Key, number>>,
+  /** Getter for column widths. */
+  getColumnWidth(key: Key): number,
+  onColumnResize: (column: GridNode<T>, width: number) => void
 }
 
 export interface CollectionBuilderContext<T> {
@@ -65,6 +68,7 @@ const OPPOSITE_SORT_DIRECTION = {
 export function useTableState<T extends object>(
   props: TableStateProps<T>
 ): TableState<T> {
+  let {selectionMode = 'none'} = props;
   let context = useMemo(
     () => ({
       showSelectionCheckboxes:
@@ -81,7 +85,6 @@ export function useTableState<T extends object>(
     context
   );
 
-  let {selectionMode = 'none'} = props;
 
   // map of the columns and their width, key is the column key, value is the width
   // TODO: switch to useControlledState
@@ -91,8 +94,8 @@ export function useTableState<T extends object>(
     return columnWidths.current.get(key);
   }
 
-  function onColumnResize(column: any, deltaX: number) {
-    recalculateColumnWidths(column, deltaX);
+  function onColumnResize(column: any, width: number) {
+    recalculateColumnWidths(column, width);
   }
   let {disabledKeys, selectionManager} = useGridState({
     ...props,
@@ -120,7 +123,8 @@ export function useTableState<T extends object>(
   };
 }
 
-function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
+
+function useColumnResizeWidthState<T>(columns: GridNode<T>[]): [MutableRefObject<Map<Key, number>>, (column: GridNode<T>, newWidth: number) => void] {
   // TODO: switch to the virtualizer width
   const tableWidth = 800;
   const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(buildColumnWidths(columns, tableWidth));
@@ -139,8 +143,8 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
     // copy the columnWidths map and set the new width for the column being resized
     let widths = new Map<Key, number>(columnWidthsRef.current);
     widths.set(column.key, Math.max(
-      getMinWidth(column.minWidth),
-      Math.min(newWidth, getMaxWidth(column.maxWidth))
+      getMinWidth(column.props.minWidth),
+      Math.min(newWidth, getMaxWidth(column.props.maxWidth))
     ));
 
     // keep track of all columns that have been seized
@@ -178,10 +182,8 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
     // dynamic columns
     if (remainingColumns.size > 0) {
       const newColumnWidths = getDynamicColumnWidths(Array.from(remainingColumns), remainingSpace);
-      let i = 0;
       for (let column of newColumnWidths) {
-        widths.set(column.key, newColumnWidths[i].columnWidth);
-        i++;
+        widths.set(column.key, column.calculatedWidth);
       }
     }
 
@@ -213,7 +215,13 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
     return columns;
   }
 
-  function mapColumns(remainingColumns: GridNode<T>[], remainingSpace: number) {
+  type mappedColumn = GridNode<T> & {
+    index: number,
+    delta: number,
+    calculatedWidth?: number
+  };
+
+  function mapColumns(remainingColumns: GridNode<T>[], remainingSpace: number): mappedColumn[] {
     let remainingFractions = remainingColumns.reduce(
       (sum, column) => sum + parseFractionalUnit(column.props.defaultWidth),
       0
@@ -228,8 +236,8 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
         index,
         delta: Math.max(
           0,
-          getMinWidth(column.minWidth) - targetWidth,
-          targetWidth - getMaxWidth(column.maxWidth)
+          getMinWidth(column.props.minWidth) - targetWidth,
+          targetWidth - getMaxWidth(column.props.maxWidth)
         )
       };
     });
@@ -237,7 +245,7 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
     return columns;
   }
 
-  function solveWidths(remainingColumns: GridNode<T>[], remainingSpace: number) {
+  function solveWidths(remainingColumns: mappedColumn[], remainingSpace: number): mappedColumn[] {
     let remainingFractions = remainingColumns.reduce(
       (sum, col) => sum + parseFractionalUnit(col.props.defaultWidth),
       0
@@ -250,10 +258,10 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
         (parseFractionalUnit(column.props.defaultWidth) * remainingSpace) / remainingFractions;
   
       let width = Math.max(
-        getMinWidth(column.minWidth),
-        Math.min(targetWidth, getMaxWidth(column.maxWidth))
+        getMinWidth(column.props.minWidth),
+        Math.min(targetWidth, getMaxWidth(column.props.maxWidth))
       );
-      column.columnWidth = width;
+      column.calculatedWidth = width;
       remainingSpace -= width;
       remainingFractions -= parseFractionalUnit(column.props.defaultWidth);
     }
