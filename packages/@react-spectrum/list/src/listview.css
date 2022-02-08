@@ -60,7 +60,7 @@
       }
 
       /* avoid double border for adjacent selected items */
-      &.is-previous-selected {        
+      &.is-previous-selected {
         &:not(.is-focused) {
           border-top-color: transparent;
         }
@@ -108,7 +108,7 @@
     ;
     align-items: center;
   }
-  
+
   .react-spectrum-ListViewItem-checkbox {
     grid-area: checkbox;
     align-items: center;
@@ -161,7 +161,7 @@
     grid-area: chevron;
     padding-inline-start: var(--spectrum-global-dimension-size-75);
   }
-  
+
   /* give first and last items border-radius to match listview container */
   div:first-child > div[role="row"] > & {
     border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
@@ -191,5 +191,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+  &.react-spectrum-ListView-centeredWrapper--loadingMore {
+    padding-top: var(--spectrum-global-dimension-size-50);
+  }
 }
-
