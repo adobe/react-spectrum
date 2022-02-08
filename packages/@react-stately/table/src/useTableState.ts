@@ -121,10 +121,12 @@ export function useTableState<T extends object>(
 }
 
 function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
-  const [initialColumns, setColumnWidths] = useState<Map<Key, number>>(buildColumnWidths(columns, 800));
-  const columnWidthsRef = useRef<Map<Key, number>>(initialColumns);
   // TODO: switch to the virtualizer width
   const tableWidth = 800;
+  const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(buildColumnWidths(columns, tableWidth));
+  const columnWidthsRef = useRef<Map<Key, number>>(columnWidths);
+  const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
+  const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
   function setColumnWidthsForRef(newWidths: Map<Key, number>) {
     columnWidthsRef.current = newWidths;
@@ -133,24 +135,40 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
   }
 
   // TODO: evaluate if we need useCallback or not
-  const calculateColumnWidths = (column, newWidth) => {
-    const [firstColumn, secondColumn, ...remainingColumns] = columns;
-    let widths = buildColumnWidths(remainingColumns, 800 - newWidth);
+  const calculateColumnWidths = (column: GridNode<T>, newWidth: number) => {
+    // copy the columnWidths map and set the new width for the column being resized
+    let widths = new Map<Key, number>(columnWidthsRef.current);
+    widths.set(column.key, Math.max(
+      getMinWidth(column.minWidth),
+      Math.min(newWidth, getMaxWidth(column.maxWidth))
+    ));
+
+    // keep track of all columns that have been seized
+    resizedColumnsRef.current.add(column.key);
+    setResizedColumns(resizedColumnsRef.current);
+
+    // get the columns affected by resize and remaining space
+    const resizeIndex = columns.findIndex(col => col.key === column.key);
+    let affectedColumns = columns.slice(resizeIndex + 1);
+    const availableSpace = columns.slice(0, resizeIndex + 1).reduce((acc, col) => acc - widths.get(col.key), tableWidth);
+
+    // merge the unaffected column widths and the recalculated column widths
+    widths = new Map<Key, number>([...widths, ...buildColumnWidths(affectedColumns, availableSpace)]);
     setColumnWidthsForRef(widths);
   };
 
   function buildColumnWidths(affectedColumns: GridNode<T>[], availableSpace: number): Map<Key, number> {
-    const columnWidths = new Map<Key, number>();
+    const widths = new Map<Key, number>();
     const remainingColumns = new Set<GridNode<T>>();
     let remainingSpace = availableSpace;
     
     // static columns
     for (let column of affectedColumns) {
       let props = column.props as ColumnProps<T>;
-      let width = props.width ?? props.defaultWidth ?? 100;
+      let width = resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : props.width ?? props.defaultWidth ?? 75;
       if (isStatic(width)) {
         let w = parseWidth(width);
-        columnWidths.set(column.key, w);
+        widths.set(column.key, w);
         remainingSpace -= w;
       } else {
         remainingColumns.add(column);
@@ -162,12 +180,12 @@ function useColumnResizeWidthState<T>(columns: GridNode<T>[]) {
       const newColumnWidths = getDynamicColumnWidths(Array.from(remainingColumns), remainingSpace);
       let i = 0;
       for (let column of newColumnWidths) {
-        columnWidths.set(column.key, newColumnWidths[i].columnWidth);
+        widths.set(column.key, newColumnWidths[i].columnWidth);
         i++;
       }
     }
 
-    return columnWidths;
+    return widths;
   }
 
   function isStatic(width: number | string): boolean {
