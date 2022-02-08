@@ -246,7 +246,8 @@ governing permissions and limitations under the License.
     border-radius: var(--spectrum-calendar-border-radius-reset);
 
     &.is-range-start,
-    &.is-selection-start {
+    &.is-selection-start,
+    &.is-first-selected-after-disabled {
       border-start-start-radius: var(--spectrum-calendar-day-width);
       border-end-start-radius: var(--spectrum-calendar-day-width);
       /* reduce the width by the "auto" margin and end align so the background doesn't extend to the left */
@@ -267,7 +268,8 @@ governing permissions and limitations under the License.
     }
 
     &.is-range-end,
-    &.is-selection-end {
+    &.is-selection-end,
+    &.is-last-selected-before-disabled {
       border-start-end-radius: var(--spectrum-calendar-day-width);
       border-end-end-radius: var(--spectrum-calendar-day-width);
       /* reduce the width by the "auto" margin and start align so the background doesn't extend to the right */
@@ -292,7 +294,11 @@ governing permissions and limitations under the License.
     &.is-selection-start.is-selection-end,
     &.is-selection-start.is-range-end,
     &.is-selection-end.is-range-start,
-    &.is-range-start.is-range-end {
+    &.is-range-start.is-range-end,
+    &.is-selection-end.is-first-selected-after-disabled,
+    &.is-range-end.is-first-selected-after-disabled,
+    &.is-selection-start.is-last-selected-before-disabled,
+    &.is-range-start.is-last-selected-before-disabled {
       width: var(--spectrum-calendar-day-width);
       inset-inline-start: 0;
       inset-inline-end: 0;
