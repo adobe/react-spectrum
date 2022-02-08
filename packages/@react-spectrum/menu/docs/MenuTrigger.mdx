@@ -71,39 +71,28 @@ import CropRotate from '@spectrum-icons/workflow/CropRotate';
 import Slice from '@spectrum-icons/workflow/Slice';
 import {Text} from '@react-spectrum/text';
 
-function Tools() {
-  let tools = [
-    {label: 'Clone Stamp', icon: CloneStamp},
-    {label: 'Crop Tool', icon: Crop},
-    {label: 'Crop Rotate', icon: CropRotate},
-    {label: 'Slice', icon: Slice}
-  ];
-
-  let [selectedTool, setSelectedTool] = React.useState('Crop Tool');
-  let SelectedIcon = React.useMemo(() => tools.find(tool => tool.label === selectedTool).icon, [selectedTool]);
-  return (
-    <MenuTrigger trigger="longPress">
-      <ActionButton
-        aria-label={selectedTool}
-        onPress={() => alert(`Using ${selectedTool}!`)}>
-        <SelectedIcon />
-      </ActionButton>
-      <Menu items={tools} selectedKeys={[selectedTool]} selectionMode="single" onAction={(tool) => setSelectedTool(tool)}>
-        {item => {
-          let Icon = item.icon;
-          return (
-            <Item textValue={item.label} key={item.label}>
-              <Icon />
-              <Text>{item.label}</Text>
-            </Item>
-          );
-        }}
-      </Menu>
-    </MenuTrigger>
-  );
-}
-
-<Tools />
+<MenuTrigger trigger="longPress">
+  <ActionButton
+    aria-label="Crop tool"
+    onPress={() => alert('Cropping!')}>
+    <Crop />
+  </ActionButton>
+  <Menu>
+    <Item textValue="Crop Rotate">
+      <CropRotate />
+      <Text>Crop Rotate</Text>
+    </Item>
+    <Item textValue="Slice">
+      <Slice />
+      <Text>Slice</Text>
+    </Item>
+    <Item textValue="Clone stamp">
+      <CloneStamp />
+      <Text>Clone Stamp</Text>
+    </Item>
+  </Menu>
+</MenuTrigger>
+```
 ```
 
 ## Events
