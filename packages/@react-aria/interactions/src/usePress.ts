@@ -770,7 +770,7 @@ function shouldPreventDefault(target: Element) {
 }
 
 function shouldPreventDefaultKeyboard(target: Element) {
-  return !((target.tagName === 'INPUT' || target.tagName === 'BUTTON') && (target as HTMLButtonElement | HTMLInputElement).type === 'submit');
+  return !((target.tagName === 'INPUT' || target.tagName === 'BUTTON') && ((target as HTMLButtonElement | HTMLInputElement).type === 'submit' || (target as HTMLButtonElement | HTMLInputElement).type === 'reset'));
 }
 
 function isVirtualPointerEvent(event: PointerEvent) {
