@@ -195,16 +195,6 @@ function useColumnResizeWidthState<T>(
     return widths;
   }
 
-  // function getDefaultWidth({hideHeader, isSelectionCell, showDivider}) {
-  //   if (hideHeader) {
-  //     let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
-  //     return showDivider ? width + 1 : width;
-  //   } else if (isSelectionCell) {
-  //     return SELECTION_CELL_DEFAULT_WIDTH[scale];
-  //   }
-  //   return;
-  // }
-
   function isStatic(width: number | string): boolean {
     return width !== null && width !== undefined && (typeof width === 'number' || width.match(/^(\d+)%$/) !== null);
   }
