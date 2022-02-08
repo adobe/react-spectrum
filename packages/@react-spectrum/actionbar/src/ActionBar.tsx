@@ -130,7 +130,7 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
 });
 
 /**
- * Action bars are used for single and bulk selection patterns, when a user needs to perform actions on a single or multiple items at the same time.
+ * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
  */
 const _ActionBar = React.forwardRef(ActionBar) as <T>(props: SpectrumActionBarProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionBar as ActionBar};
