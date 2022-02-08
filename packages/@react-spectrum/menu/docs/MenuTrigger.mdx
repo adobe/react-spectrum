@@ -43,7 +43,7 @@ keywords: [menu, dropdown, action menu]
 ```tsx example
 <MenuTrigger>
   <ActionButton>
-      Edit
+    Edit
   </ActionButton>
   <Menu>
     <Item>Cut</Item>
@@ -58,8 +58,8 @@ keywords: [menu, dropdown, action menu]
 The MenuTrigger accepts exactly two children: the element which triggers the opening of the Menu and the Menu itself. The trigger element must be the first child passed into the MenuTrigger and should support press events.
 
 ## Long press
-By default, a MenuTrigger's Menu is opened by pressing the trigger element or activating it via the <Keyboard>Space</Keyboard> and <Keyboard>Enter</Keyboard> keys. However, there may be cases in which your trigger element
-should perform a separate default action on press and should only display the Menu when long pressed. This behavior can be set by providing "longPress" to the `trigger` prop. When done, the Menu will only be opened upon
+By default, a MenuTrigger's Menu is opened by pressing the trigger element or activating it via the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys. However, there may be cases in which your trigger element
+should perform a separate default action, such as selection, on press and should only display the Menu when long pressed. This behavior can be set by providing "longPress" to the `trigger` prop. Now, the Menu will only be opened upon
 pressing and holding the trigger element or by using the <Keyboard>Option</Keyboard> (<Keyboard>Alt</Keyboard> on Windows) + <Keyboard>Down Arrow</Keyboard> keys while focusing the trigger element.
 
 The example below illustrates how one would setup a MenuTrigger to have long press behavior.
@@ -71,27 +71,39 @@ import CropRotate from '@spectrum-icons/workflow/CropRotate';
 import Slice from '@spectrum-icons/workflow/Slice';
 import {Text} from '@react-spectrum/text';
 
-<MenuTrigger trigger="longPress">
-  <ActionButton
-    aria-label="Crop tool"
-    onPress={() => alert('Cropping!')}>
-    <Crop />
-  </ActionButton>
-  <Menu>
-    <Item>
-      <CropRotate />
-      <Text>Crop Rotate</Text>
-    </Item>
-    <Item textValue="Slice">
-      <Slice />
-      <Text>Slice</Text>
-    </Item>
-    <Item textValue="Clone stamp">
-      <CloneStamp />
-      <Text>Clone Stamp</Text>
-    </Item>
-  </Menu>
-</MenuTrigger>
+function Tools() {
+  let tools = [
+    {label: 'Clone Stamp', icon: CloneStamp},
+    {label: 'Crop Tool', icon: Crop},
+    {label: 'Crop Rotate', icon: CropRotate},
+    {label: 'Slice', icon: Slice}
+  ];
+
+  let [selectedTool, setSelectedTool] = React.useState('Crop Tool');
+  let SelectedIcon = React.useMemo(() => tools.find(tool => tool.label === selectedTool).icon, [selectedTool]);
+  return (
+    <MenuTrigger trigger="longPress">
+      <ActionButton
+        aria-label={selectedTool}
+        onPress={() => alert(`Using ${selectedTool}!`)}>
+        <SelectedIcon />
+      </ActionButton>
+      <Menu items={tools} selectedKeys={[selectedTool]} selectionMode="single" onAction={(tool) => setSelectedTool(tool)}>
+        {item => {
+          let Icon = item.icon;
+          return (
+            <Item textValue={item.label} key={item.label}>
+              <Icon />
+              <Text>{item.label}</Text>
+            </Item>
+          );
+        }}
+      </Menu>
+    </MenuTrigger>
+  );
+}
+
+<Tools />
 ```
 
 ## Events
