@@ -50,7 +50,6 @@ governing permissions and limitations under the License.
   margin-top: var(--spectrum-fieldlabel-asterisk-margin-y);
   margin-inline-end: 0;
   margin-bottom: 0;
-  margin-inline-start: var(--spectrum-fieldlabel-asterisk-gap);
 }
 
 .spectrum-FieldLabel--alignEnd {

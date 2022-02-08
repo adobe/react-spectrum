@@ -25,3 +25,6 @@ governing permissions and limitations under the License.
 .spectrum-FieldLabel-requiredIcon {
   color: var(--spectrum-fieldlabel-asterisk-color);
 }
+.spectrum-FieldLabel-necessityIndicator {
+  margin-inline-start: var(--spectrum-global-dimension-size-40);
+}
