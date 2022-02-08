@@ -77,17 +77,20 @@ describe('Form', function () {
 
   it('supports form attributes', () => {
     let onSubmit = jest.fn().mockImplementation(e => e.preventDefault());
+    let onReset = jest.fn();
     let {getByLabelText, getByRole} = render(
       <Provider theme={theme}>
         <Form
           aria-label="Test"
           onSubmit={onSubmit}
+          onReset={onReset}
           action="/action_page.php"
           method="get"
           target="_self"
           encType="text/plain"
           autoComplete="on">
           <Button variant="primary" type="submit" aria-label="Submit" />
+          <Button variant="secondary" type="reset" aria-label="Reset" />
         </Form>
       </Provider>
     );
@@ -101,6 +104,9 @@ describe('Form', function () {
     let submit = getByLabelText('Submit');
     userEvent.click(submit);
     expect(onSubmit).toHaveBeenCalled();
+    let reset = getByLabelText('Reset');
+    userEvent.click(reset);
+    expect(onReset).toHaveBeenCalledTimes(1);
   });
 
   it('supports aria-label', () => {

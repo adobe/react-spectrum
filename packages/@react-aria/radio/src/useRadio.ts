@@ -62,7 +62,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
-  let tabIndex = state.lastFocusedValue === value || state.lastFocusedValue == null ? 0 : -1;
+  let tabIndex = state.lastFocusedValue === value || state.lastFocusedValue == null || checked ? 0 : -1;
   if (isDisabled) {
     tabIndex = undefined;
   }

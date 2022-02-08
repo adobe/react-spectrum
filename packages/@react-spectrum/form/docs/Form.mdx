@@ -77,6 +77,70 @@ technology as a form landmark region to which assistive technology can navigate.
 </Form>
 ```
 
+## Events
+Form accepts an `onSubmit` and `onReset` prop for handling form submission and resets respectively. In cases where your form elements' values are controlled, you must handle
+resetting each element's value to their original default via the callback provided via `onReset`. This is particularly important when using form elements such as RadioGroup and NumberField
+whose values are inherently controlled through their implementation.
+
+The example below demonstrates how one would go about handling Form submission and resetting.
+
+```tsx example
+import {Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+
+function Example() {
+  let [name, setName] = React.useState('');
+  let [email, setEmail] = React.useState('');
+  let [role, setRole] = React.useState('Employee');
+
+  let onSubmit = (e) => {
+    e.preventDefault();
+    alert('Submitting form!');
+  };
+
+  let onReset = (e) => {
+    setName('');
+    setEmail('');
+    setRole('Employee');
+  };
+
+  return (
+    <Form maxWidth="size-3600" aria-label="Sign up form example" onSubmit={onSubmit} onReset={onReset}>
+      <TextField
+        label="Full name"
+        placeholder="John Doe"
+        value={name}
+        onChange={setName} />
+      <TextField
+        label="Email address"
+        type="email"
+        placeholder="123@abc.com"
+        value={email}
+        onChange={setEmail} />
+      <RadioGroup
+        label="Job"
+        value={role}
+        onChange={setRole}>
+        <Radio value="Employee">
+          Employee
+        </Radio>
+        <Radio value="Contractor">
+          Contractor
+        </Radio>
+        <Radio value="Other">
+          Other
+        </Radio>
+      </RadioGroup>
+      <ButtonGroup>
+        <Button variant="cta" type="submit">Submit</Button>
+        <Button variant="secondary" type="reset">Reset</Button>
+      </ButtonGroup>
+    </Form>
+  );
+}
+
+<Example />
+```
 
 ## Props
 

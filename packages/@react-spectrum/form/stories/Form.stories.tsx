@@ -186,7 +186,7 @@ storiesOf('Form', module)
     () => <FormWithControls />
   )
   .add(
-    'form with submit',
+    'controlled form with submit and reset',
     () => <FormWithSubmit />
   )
   .add(
@@ -498,7 +498,7 @@ function FormWithSubmit() {
     action('onSubmit')(e);
   };
 
-  let reset = () => {
+  let handleReset: React.FormEventHandler<Element> = (e) => {
     setSubmitted(false);
     setPolicies([]);
     setPet('');
@@ -509,10 +509,11 @@ function FormWithSubmit() {
     setEmail('');
     setEmailDirty(false);
     setFormStatus('progress');
+    action('onReset')(e);
   };
 
   return (
-    <Form onSubmit={handleSubmit} isReadOnly={formStatus === 'valid'}>
+    <Form onSubmit={handleSubmit} onReset={handleReset} isReadOnly={formStatus === 'valid'}>
       <TextField
         label="Email address"
         type="email"
@@ -572,7 +573,7 @@ function FormWithSubmit() {
       </RadioGroup>
 
       <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
-      <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>
+      <Button variant="secondary" type="reset">Reset</Button>
       <Status formStatus={formStatus} />
     </Form>
   );

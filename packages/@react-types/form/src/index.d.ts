@@ -50,5 +50,9 @@ export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StylePro
   /**
    * Fired on form submission.
    */
-  onSubmit?: FormEventHandler
+  onSubmit?: FormEventHandler,
+  /**
+   * Fired on form reset.
+   */
+  onReset?: FormEventHandler
 }
