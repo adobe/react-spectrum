@@ -25,7 +25,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 function ContextualHelp(props: SpectrumContextualHelpProps) {
   let {
     variant = 'help',
-    placement = 'bottom end',
+    placement = 'bottom start',
     children,
     ...otherProps} = props;
 
