@@ -214,8 +214,8 @@ describe('Slider', function () {
       ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
       ${'(up/down arrows, ltr)'}           | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
       ${'(up/down arrows, rtl)'}           | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
-      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                  | ${[{left: press.PageUp, result: +1}, {left: press.PageDown, result: -1}]}
-      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                  | ${[{left: press.PageUp, result: +1}, {left: press.PageDown, result: -1}]}
+      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
       ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
       ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
     `('$Name moves the slider in the correct direction', function ({props, commands}) {
@@ -235,8 +235,8 @@ describe('Slider', function () {
       ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
       ${'(up/down arrows, ltr)'}           | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
       ${'(up/down arrows, rtl)'}           | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
-      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                  | ${[{left: press.PageUp, result: +1}, {left: press.PageDown, result: -1}]}
-      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                  | ${[{left: press.PageUp, result: +1}, {left: press.PageDown, result: -1}]}
+      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
       ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
       ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
     `('$Name moves the slider in the correct direction orientation vertical', function ({props, commands}) {
@@ -251,14 +251,14 @@ describe('Slider', function () {
 
     it.each`
       Name                          | props                 | commands
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +10}, {left: press.ArrowLeft, result: -10}]}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -10}, {left: press.ArrowLeft, result: +10}]}
-      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
-      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +20}, {left: press.ArrowLeft, result: -20}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -20}, {left: press.ArrowLeft, result: +20}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
     `('$Name respects the step size', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
-          <Slider label="Label" step={10} defaultValue={50} />
+          <Slider label="Label" step={20} defaultValue={40} />
         </Provider>
       );
       let slider = tree.getByRole('slider');
@@ -269,12 +269,12 @@ describe('Slider', function () {
       Name                          | props                 | commands
       ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
       ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
-      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
-      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
     `('$Name respects the page size', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
-          <Slider label="Label" pageSize={10} defaultValue={50} />
+          <Slider label="Label" pageSize={20} defaultValue={50} />
         </Provider>
       );
       let slider = tree.getByRole('slider');

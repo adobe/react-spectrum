@@ -160,7 +160,7 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     maxValue = DEFAULT_MAX_VALUE,
     numberFormatter: formatter,
     step = DEFAULT_STEP_VALUE,
-    pageSize = DEFAULT_STEP_VALUE
+    pageSize = Math.max((maxValue - minValue) / 10, step)
   } = props;
 
   const [values, setValues] = useControlledState<number[]>(
@@ -243,12 +243,12 @@ export function useSliderState(props: SliderStateOptions): SliderState {
 
   function incrementThumb(index: number, stepSize: number = 1) {
     let s = Math.max(stepSize, step);
-    updateValue(index, snapValueToStep(values[index] + s, minValue, maxValue, stepSize));
+    updateValue(index, snapValueToStep(values[index] + s, minValue, maxValue, step));
   }
 
   function decrementThumb(index: number, stepSize: number = 1) {
     let s = Math.max(stepSize, step);
-    updateValue(index, snapValueToStep(values[index] - s, minValue, maxValue, stepSize));
+    updateValue(index, snapValueToStep(values[index] - s, minValue, maxValue, step));
   }
 
   return {
