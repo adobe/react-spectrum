@@ -157,6 +157,10 @@ function TableView<T extends object>(
   let {direction} = useLocale();
   layout.collection = state.collection;
 
+  if (layout.virtualizer?.visibleRect?.width) {
+    state.setTableWidth(layout.virtualizer.visibleRect.width);
+  }
+
   let {gridProps} = useTable({
     ...props,
     isVirtualized: true,

@@ -21,7 +21,7 @@ import {
 import {ColumnProps, TableCollection as ITableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {GridState, useGridState} from '@react-stately/grid';
-import {Key, MutableRefObject, useMemo, useRef, useState} from 'react';
+import {Key, MutableRefObject, useCallback, useMemo, useRef, useState} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
@@ -39,7 +39,10 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   columnWidths: MutableRefObject<Map<Key, number>>,
   /** Getter for column widths. */
   getColumnWidth(key: Key): number,
-  onColumnResize: (column: GridNode<T>, width: number) => void
+  /** Trigger a resize and recalc. */
+  onColumnResize: (column: GridNode<T>, width: number) => void,
+  /** Need to be able to set the table width so that it can be used to calculate the column widths, this will trigger a recalc. */
+  setTableWidth: (width: number) => void
 }
 
 export interface CollectionBuilderContext<T> {
@@ -90,7 +93,7 @@ export function useTableState<T extends object>(
 
   // map of the columns and their width, key is the column key, value is the width
   // TODO: switch to useControlledState
-  const [columnWidths, recalculateColumnWidths] = useColumnResizeWidthState(collection.columns, props.getDefaultWidth);
+  const [columnWidths, recalculateColumnWidths, setTableWidth] = useColumnResizeWidthState(collection.columns, props.getDefaultWidth);
 
   function getColumnWidth(key: Key): number {
     return columnWidths.current.get(key);
@@ -99,6 +102,11 @@ export function useTableState<T extends object>(
   function onColumnResize(column: any, width: number) {
     recalculateColumnWidths(column, width);
   }
+
+  // function setVisibleTableWidth(width: number) {
+  //   setTableWidth(width);
+  // }
+
   let {disabledKeys, selectionManager} = useGridState({
     ...props,
     collection
@@ -121,7 +129,8 @@ export function useTableState<T extends object>(
     },
     columnWidths,
     getColumnWidth,
-    onColumnResize
+    onColumnResize,
+    setTableWidth
   };
 }
 
@@ -129,18 +138,34 @@ export function useTableState<T extends object>(
 function useColumnResizeWidthState<T>(
     columns: GridNode<T>[],
     getDefaultWidth: (props) => string | number
-  ): [MutableRefObject<Map<Key, number>>, (column: GridNode<T>, newWidth: number) => void] {
+  ): [MutableRefObject<Map<Key, number>>, (column: GridNode<T>, newWidth: number) => void, (width: number) => void] {
   // TODO: switch to the virtualizer width
-  const tableWidth = 800;
-  const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(buildColumnWidths(columns, tableWidth));
+  const tableWidth = useRef<number>(100);
+  const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(initializeColumnWidths(columns));
   const columnWidthsRef = useRef<Map<Key, number>>(columnWidths);
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
+
+  function initializeColumnWidths(columns: GridNode<T>[]): Map<Key, number> {
+    const widths = new Map();
+    columns.forEach(column => widths.set(column.key, 100));
+    return widths;
+  }
 
   function setColumnWidthsForRef(newWidths: Map<Key, number>) {
     columnWidthsRef.current = newWidths;
     // new map so that change detection is triggered
     setColumnWidths(newWidths);
+  }
+
+  let setTableWidth = useCallback(updateTableWidth, [tableWidth.current]);
+
+  function updateTableWidth(width: number) {
+    if (width) {
+      tableWidth.current = width;
+      const widths = buildColumnWidths(columns, width);
+      setColumnWidthsForRef(widths);
+    }
   }
 
   // TODO: evaluate if we need useCallback or not
@@ -159,7 +184,7 @@ function useColumnResizeWidthState<T>(
     // get the columns affected by resize and remaining space
     const resizeIndex = columns.findIndex(col => col.key === column.key);
     let affectedColumns = columns.slice(resizeIndex + 1);
-    const availableSpace = columns.slice(0, resizeIndex + 1).reduce((acc, col) => acc - widths.get(col.key), tableWidth);
+    const availableSpace = columns.slice(0, resizeIndex + 1).reduce((acc, col) => acc - widths.get(col.key), tableWidth.current);
 
     // merge the unaffected column widths and the recalculated column widths
     widths = new Map<Key, number>([...widths, ...buildColumnWidths(affectedColumns, availableSpace)]);
@@ -205,7 +230,7 @@ function useColumnResizeWidthState<T>(
       if (!match) {
         throw new Error('Only percentages are supported as column widths');
       }
-      return tableWidth * (parseInt(match[1], 10) / 100);
+      return tableWidth.current * (parseInt(match[1], 10) / 100);
     }
     return width;
   }
@@ -294,7 +319,7 @@ function useColumnResizeWidthState<T>(
   }
 
 
-  return [columnWidthsRef, calculateColumnWidths];
+  return [columnWidthsRef, calculateColumnWidths, setTableWidth];
 }
 
 /*

@@ -1028,19 +1028,19 @@ storiesOf('TableView', module)
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
           <Column allowsResizing defaultWidth="50%">File Name</Column>
-          <Column allowsResizing defaultWidth={200}>Type</Column>
-          <Column allowsResizing defaultWidth={200}>Size</Column>
+          <Column allowsResizing defaultWidth="50%">Type</Column>
+          {/* <Column allowsResizing defaultWidth={199}>Size</Column> */}
         </TableHeader>
         <TableBody>
           <Row>
             <Cell>2018 Proposal</Cell>
             <Cell>PDF</Cell>
-            <Cell>214 KB</Cell>
+            {/* <Cell>214 KB</Cell> */}
           </Row>
           <Row>
             <Cell>Budget</Cell>
             <Cell>XLS</Cell>
-            <Cell>120 KB</Cell>
+            {/* <Cell>120 KB</Cell> */}
           </Row>
         </TableBody>
       </TableView>
