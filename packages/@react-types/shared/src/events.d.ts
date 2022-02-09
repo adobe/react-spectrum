@@ -110,7 +110,15 @@ export interface FocusableProps extends FocusEvents, KeyboardEvents {
 
 interface BaseMoveEvent {
   /** The pointer type that triggered the move event. */
-  pointerType: PointerType
+  pointerType: PointerType,
+  /** Whether the shift keyboard modifier was held during the move event. */
+  shiftKey: boolean,
+  /** Whether the ctrl keyboard modifier was held during the move event. */
+  ctrlKey: boolean,
+  /** Whether the meta keyboard modifier was held during the move event. */
+  metaKey: boolean,
+  /** Whether the alt keyboard modifier was held during the move event. */
+  altKey: boolean
 }
 
 export interface MoveStartEvent extends BaseMoveEvent {
