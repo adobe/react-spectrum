@@ -8,10 +8,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "browserslist": [
-    "chrome >= 80",
-    "firefox >= 76",
+    "chrome >= 88",
+    "firefox >= 85",
     "safari >= 13",
-    "edge >= 80"
+    "edge >= 88"
   ],
   "scripts": {
     "check-types": "tsc",
