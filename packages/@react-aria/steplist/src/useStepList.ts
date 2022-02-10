@@ -54,6 +54,8 @@ export function useStepList<T>(props: SpectrumStepListProps<T>, state: StepListS
     scrollRef: ref
   });
 
+  console.log('collectionProps', collectionProps);
+
   const formatMessage = useMessageFormatter(intlMessages);
   const listProps: HTMLAttributes<HTMLElement> = {
     ...mergeProps(collectionProps, filterDOMProps(props)),
