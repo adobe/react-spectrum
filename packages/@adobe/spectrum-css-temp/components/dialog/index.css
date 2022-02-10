@@ -288,6 +288,12 @@ governing permissions and limitations under the License.
     font-size: var(--spectrum-dialog-fullscreen-header-text-size);
   }
 
+  .spectrum-Dialog-header {
+    &.spectrum-Dialog-header--noTypeIcon {
+      grid-area: header;
+    }
+  }
+
   .spectrum-Dialog-content {
     max-height: none;
   }
