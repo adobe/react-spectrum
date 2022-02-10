@@ -670,4 +670,51 @@ describe('Tabs', function () {
     expect(onSelectionChange).toBeCalledTimes(1);
     expect(onSelectionChange).toHaveBeenCalledWith(items[0].name);
   });
+
+  it.only('updates the tab index of the selected tab if programatically changed', function () {
+    let {getAllByRole, rerender} = render(
+      <Provider theme={theme}>
+        <Tabs aria-label="Test Tabs" items={items} selectedKey={'Tab 3'}>
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+
+    let tabs = getAllByRole('tab');
+    expect(tabs[2]).toHaveAttribute('tabindex', '0');
+
+    rerender(
+      <Provider theme={theme}>
+        <Tabs aria-label="Test Tabs" items={items} selectedKey={'Tab 1'}>
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+
+    tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('tabindex', '0');
+    expect(tabs[2]).toHaveAttribute('tabindex', '-1');
+  });
 });
