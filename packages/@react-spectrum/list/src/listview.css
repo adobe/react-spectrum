@@ -6,6 +6,8 @@
   --spectrum-listview-border-width: var(--spectrum-table-border-size, var(--spectrum-alias-border-size-thin));
   --spectrum-listview-border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
   --spectrum-listview-item-start-end-border-radius: calc(var(--spectrum-listview-border-radius) - var(--spectrum-listview-border-width));
+  /* Override the border size from 2px to 3px as per updated tableview/listview selection style XD */
+  --spectrum-selectlist-border-size-key-focus: 3px;
 }
 
 .react-spectrum-ListView {

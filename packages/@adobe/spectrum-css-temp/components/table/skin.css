@@ -168,6 +168,11 @@ tbody.spectrum-Table-body {
         border-block-start: 1px solid var(--spectrum-global-color-blue-500);
       }
     }
+
+    /* Remove row left border so it doesn't overlap with focus ring */
+    &:focus-ring {
+      border-inline-start: none;
+    }
   }
 
   &.is-drop-target {
