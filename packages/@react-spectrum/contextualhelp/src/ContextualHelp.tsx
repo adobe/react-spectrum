@@ -12,6 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {FocusableRef} from '@react-types/shared';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
 import helpStyles from './contextualhelp.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
@@ -22,12 +23,13 @@ import {SlotProvider} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-function ContextualHelp(props: SpectrumContextualHelpProps) {
+function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
     variant = 'help',
     placement = 'bottom start',
     children,
-    ...otherProps} = props;
+    ...otherProps
+  } = props;
 
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -41,6 +43,7 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
   return (
     <DialogTrigger type="popover" placement={placement} hideArrow {...otherProps}>
       <ActionButton
+        ref={ref}
         UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-button']}
         isQuiet
         aria-label={formatMessage('open')}>
@@ -51,7 +54,6 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
           {children}
         </Dialog>
       </SlotProvider>
-
     </DialogTrigger>
   );
 }
@@ -59,4 +61,5 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
 /**
  * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
  */
-export {ContextualHelp};
+let _ContextualHelp = React.forwardRef(ContextualHelp);
+export {_ContextualHelp as ContextualHelp};
