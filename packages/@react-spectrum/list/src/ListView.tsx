@@ -11,6 +11,7 @@
  */
 import {
   AriaLabelingProps,
+  AsyncLoadable,
   CollectionBase,
   DOMProps,
   DOMRef,
@@ -55,20 +56,22 @@ const ROW_HEIGHTS = {
 export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let isEmpty = state.collection.size === 0;
   let layout = useMemo(() =>
       new ListLayout<T>({
         estimatedRowHeight: ROW_HEIGHTS[density][scale],
         padding: 0,
-        collator
+        collator,
+        loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale]
       })
-    , [collator, scale, density]);
+    , [collator, scale, density, isEmpty]);
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps {
+interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -84,6 +87,7 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
+    onLoadMore,
     loadingState,
     isQuiet,
     transitionDuration = 0,
@@ -92,6 +96,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
   let formatMessage = useMessageFormatter(intlMessages);
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
   let {direction} = useLocale();
@@ -138,7 +143,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }, state, domRef);
 
   // Sync loading state into the layout.
-  layout.isLoading = loadingState === 'loading';
+  layout.isLoading = isLoading;
 
   let focusedKey = state.selectionManager.focusedKey;
   let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
@@ -151,6 +156,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       <Virtualizer
         {...gridProps}
         {...styleProps}
+        isLoading={isLoading}
+        onLoadMore={onLoadMore}
         ref={domRef}
         focusedKey={focusedKey}
         scrollDirection="vertical"
@@ -208,7 +215,14 @@ function CenteredWrapper({children}) {
     <div
       role="row"
       aria-rowindex={state.collection.size + 1}
-      className={classNames(listStyles, 'react-spectrum-ListView-centeredWrapper')}>
+      className={
+        classNames(
+          listStyles,
+          'react-spectrum-ListView-centeredWrapper',
+          {
+            'react-spectrum-ListView-centeredWrapper--loadingMore': state.collection.size > 0
+          }
+        )}>
       <div role="gridcell">
         {children}
       </div>

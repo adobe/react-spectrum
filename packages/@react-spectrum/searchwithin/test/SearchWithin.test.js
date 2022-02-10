@@ -53,9 +53,9 @@ describe('SearchWithin', function () {
   });
 
   it('renders correctly', function () {
-    let {getAllByText, getByRole, getByLabelText} = renderSearchWithin();
+    let {getAllByText, getByRole} = renderSearchWithin();
 
-    let searchfield = getByLabelText('Test', {selector: 'input'});
+    let searchfield = getByRole('searchbox');
     expect(searchfield).toBeVisible();
     expect(searchfield).toHaveAttribute('type', 'search');
 
@@ -69,8 +69,8 @@ describe('SearchWithin', function () {
 
   it('can type in search and get onChange', function () {
     let onChange = jest.fn();
-    let {getByLabelText} = renderSearchWithin({}, {onChange});
-    let searchfield = getByLabelText('Test', {selector: 'input'});
+    let {getByRole} = renderSearchWithin({}, {onChange});
+    let searchfield = getByRole('searchbox');
     expect(searchfield).toHaveAttribute('value', '');
 
     act(() => {searchfield.focus();});
@@ -94,24 +94,24 @@ describe('SearchWithin', function () {
   });
 
   it('searchfield and picker are labelled correctly', function () {
-    let {getByRole, getAllByText, getByLabelText} = renderSearchWithin();
+    let {getByRole, getAllByText} = renderSearchWithin();
 
-    let searchfield = getByLabelText('Test', {selector: 'input'});
+    let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let group = getByRole('group');
     triggerPress(picker);
 
     let listbox = getByRole('listbox');
     let label = getAllByText('Test')[0];
-    expect(listbox).toHaveAttribute('aria-labelledby', label.id);
-    expect(searchfield).toHaveAttribute('aria-labelledby', label.id);
+    expect(listbox).toHaveAttribute('aria-labelledby', `${label.id} ${picker.id}`);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${picker.id} ${picker.childNodes[0].id}`);
     expect(group).toHaveAttribute('aria-labelledby', label.id);
   });
 
   it('isDisabled=true disables both the searchfield and picker', function () {
-    let {getByRole, getByLabelText} = renderSearchWithin({isDisabled: true});
+    let {getByRole} = renderSearchWithin({isDisabled: true});
 
-    let searchfield = getByLabelText('Test', {selector: 'input'});
+    let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
 
     expect(searchfield).toHaveAttribute('disabled');
@@ -119,9 +119,9 @@ describe('SearchWithin', function () {
   });
 
   it('autoFocus=true on searchfield will automatically focus the input', function () {
-    let {getByLabelText} = renderSearchWithin({}, {autoFocus: true});
+    let {getByRole} = renderSearchWithin({}, {autoFocus: true});
 
-    let searchfield = getByLabelText('Test', {selector: 'input'});
+    let searchfield = getByRole('searchbox');
 
     expect(searchfield).toHaveFocus();
   });
@@ -135,13 +135,13 @@ describe('SearchWithin', function () {
   });
 
   it('slot props override props provided to children', function () {
-    let {getByRole, getAllByText, getByLabelText} = renderSearchWithin(
+    let {getByRole, getAllByText} = renderSearchWithin(
       {isDisabled: true, isRequired: false, label: 'Test1'},
       {isDisabled: false, isRequired: true, label: 'Test2', isQuiet: true},
       {isDisabled: false, isRequired: true, label: 'Test3', isQuiet: true}
     );
 
-    let searchfield = getByLabelText('Test1', {selector: 'input'});
+    let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let group = getByRole('group');
     triggerPress(picker);
@@ -152,20 +152,87 @@ describe('SearchWithin', function () {
 
     expect(searchfield).not.toHaveAttribute('aria-required');
 
-    expect(searchfield).toHaveAttribute('aria-labelledby', label.id);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${picker.id} ${picker.childNodes[0].id}`);
     expect(group).toHaveAttribute('aria-labelledby', label.id);
 
     expect(searchfield.classList.contains('is-quiet')).toBeFalsy();
     expect(picker.classList.contains('spectrum-Dropdown--quiet')).toBeFalsy();
   });
+});
 
-  it('searchfield and group are labelled correctly if aria-label used', function () {
-    let {getByRole, getByLabelText} = renderSearchWithin({label: undefined, 'aria-label': 'Aria Label'});
+describe('SearchWithin labeling', function () {
+  it('no label - default', function () {
+    let {getByRole} = renderSearchWithin({label: undefined});
 
-    let searchfield = getByLabelText('Aria Label', {selector: 'input'});
     let group = getByRole('group');
+    let searchfield = getByRole('searchbox');
+    let picker = getByRole('button');
 
-    expect(searchfield).toHaveAttribute('aria-label', 'Aria Label');
-    expect(group).toHaveAttribute('aria-labelledby', 'Aria Label');
+    expect(group).toHaveAttribute('aria-label', 'Search');
+
+    expect(group).not.toHaveAttribute('aria-labelledby');
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${picker.id} ${picker.childNodes[0].id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.id} ${picker.childNodes[0].id}`);
+  });
+
+  it('label = foo', function () {
+    let {getByRole, getByText} = renderSearchWithin({label: 'foo'});
+
+    let group = getByRole('group');
+    let searchfield = getByRole('searchbox');
+    let picker = getByRole('button');
+    let label = getByText('foo');
+
+    expect(group).not.toHaveAttribute('aria-label');
+
+    expect(group).toHaveAttribute('aria-labelledby', label.id);
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${picker.id} ${picker.childNodes[0].id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${label.id} ${picker.id} ${picker.childNodes[0].id}`);
+
+    expect(label).toHaveAttribute('for', searchfield.id);
+  });
+
+  it('aria-label = bar', function () {
+    let {getByRole} = renderSearchWithin({'aria-label': 'bar', label: undefined});
+
+    let group = getByRole('group');
+    let searchfield = getByRole('searchbox');
+    let picker = getByRole('button');
+
+    expect(group).toHaveAttribute('aria-label', 'bar');
+
+    expect(group).not.toHaveAttribute('aria-labelledby');
+    expect(searchfield).toHaveAttribute('aria-labelledby', `${group.id} ${picker.id} ${picker.childNodes[0].id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${group.id} ${picker.id} ${picker.childNodes[0].id}`);
+  });
+
+  it('aria-labelledby = {id}', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <label id="id-foo-label" htmlFor="id-searchfield">
+          Foo
+        </label>
+        <SearchWithin aria-labelledby="id-foo-label">
+          <SearchField id="id-searchfield" placeholder="Search"  />
+          <Picker defaultSelectedKey="all">
+            <Item key="all">All</Item>
+            <Item key="campaigns">Campaigns</Item>
+            <Item key="audiences">Audiences</Item>
+            <Item key="tags">Tags</Item>
+          </Picker>
+        </SearchWithin>
+      </Provider>
+    );
+
+    let group = getByRole('group');
+    let searchfield = getByRole('searchbox');
+    let picker = getByRole('button');
+
+    expect(group).not.toHaveAttribute('aria-label');
+
+    expect(group).toHaveAttribute('aria-labelledby', 'id-foo-label');
+    expect(searchfield).toHaveAttribute('aria-labelledby', `id-foo-label ${picker.id} ${picker.childNodes[0].id}`);
+    expect(searchfield).toHaveAttribute('id', 'id-searchfield');
+    expect(picker).toHaveAttribute('aria-labelledby', `id-foo-label ${picker.id} ${picker.childNodes[0].id}`);
   });
 });

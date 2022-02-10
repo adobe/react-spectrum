@@ -168,31 +168,27 @@ export function useNumberFieldState(
   };
 
   let increment = () => {
-    setNumberValue((previousValue) => {
-      let newValue = safeNextStep('+', minValue);
+    let newValue = safeNextStep('+', minValue);
 
-      // if we've arrived at the same value that was previously in the state, the
-      // input value should be updated to match
-      // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
-      // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
-      if (newValue === previousValue) {
-        setInputValue(format(newValue));
-      }
+    // if we've arrived at the same value that was previously in the state, the
+    // input value should be updated to match
+    // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
+    // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
+    if (newValue === numberValue) {
+      setInputValue(format(newValue));
+    }
 
-      return newValue;
-    });
+    setNumberValue(newValue);
   };
 
   let decrement = () => {
-    setNumberValue((previousValue) => {
-      let newValue = safeNextStep('-', maxValue);
+    let newValue = safeNextStep('-', maxValue);
 
-      if (newValue === previousValue) {
-        setInputValue(format(newValue));
-      }
+    if (newValue === numberValue) {
+      setInputValue(format(newValue));
+    }
 
-      return newValue;
-    });
+    setNumberValue(newValue);
   };
 
   let incrementToMax = () => {

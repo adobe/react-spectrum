@@ -215,3 +215,44 @@ export function minDate<A extends DateValue, B extends DateValue>(a: A, b: B): A
 export function maxDate<A extends DateValue, B extends DateValue>(a: A, b: B): A | B {
   return a.compare(b) >= 0 ? a : b;
 }
+
+const WEEKEND_DATA = {
+  AF: [4, 5],
+  AE: [5, 6],
+  BH: [5, 6],
+  DZ: [5, 6],
+  EG: [5, 6],
+  IL: [5, 6],
+  IQ: [5, 6],
+  IR: [5, 5],
+  JO: [5, 6],
+  KW: [5, 6],
+  LY: [5, 6],
+  OM: [5, 6],
+  QA: [5, 6],
+  SA: [5, 6],
+  SD: [5, 6],
+  SY: [5, 6],
+  YE: [5, 6]
+};
+
+export function isWeekend(date: DateValue, locale: string) {
+  let julian = date.calendar.toJulianDay(date);
+
+  // If julian is negative, then julian % 7 will be negative, so we adjust
+  // accordingly.  Julian day 0 is Monday.
+  let dayOfWeek = Math.ceil(julian + 1) % 7;
+  if (dayOfWeek < 0) {
+    dayOfWeek += 7;
+  }
+
+  let region = getRegion(locale);
+  // Use Intl.Locale for this once weekInfo is supported.
+  // https://github.com/tc39/proposal-intl-locale-info
+  let [start, end] = WEEKEND_DATA[region] || [6, 0];
+  return dayOfWeek === start || dayOfWeek === end;
+}
+
+export function isWeekday(date: DateValue, locale: string) {
+  return !isWeekend(date, locale);
+}
