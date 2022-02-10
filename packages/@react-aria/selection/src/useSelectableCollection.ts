@@ -31,7 +31,7 @@ interface SelectableCollectionOptions {
   /**
    * The ref attached to the element representing the collection.
    */
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | HTMLOListElement>,
   /**
    * Whether the collection or one of its items should be automatically focused upon render.
    * @default false
@@ -78,7 +78,7 @@ interface SelectableCollectionOptions {
    * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
    * If not provided, defaults to the collection ref.
    */
-  scrollRef?: RefObject<HTMLElement>
+  scrollRef?: RefObject<HTMLElement | HTMLOListElement>
 }
 
 interface SelectableCollectionAria {
