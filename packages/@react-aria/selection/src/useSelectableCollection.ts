@@ -86,19 +86,17 @@ interface SelectableCollectionAria {
   collectionProps: HTMLAttributes<HTMLElement>
 }
 
-function equalSets(setA, setB) {
-  if (setA instanceof Set && setB instanceof Set) {
-    if (setA.size !== setB.size) {
+function equalSets(setA: Set<Key>, setB: Set<Key>) {
+  if (setA.size !== setB.size) {
+    return false;
+  }
+
+  for (let item of setA) {
+    if (!setB.has(item)) {
       return false;
     }
-
-    for (let item of setA) {
-      if (!setB.has(item)) {
-        return false;
-      }
-    }
-    return true;
   }
+  return true;
 }
 
 /**

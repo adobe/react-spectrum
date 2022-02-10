@@ -692,6 +692,8 @@ describe('Tabs', function () {
     );
 
     let tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('tabindex', '-1');
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1');
     expect(tabs[2]).toHaveAttribute('tabindex', '0');
 
     rerender(
@@ -715,6 +717,7 @@ describe('Tabs', function () {
 
     tabs = getAllByRole('tab');
     expect(tabs[0]).toHaveAttribute('tabindex', '0');
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1');
     expect(tabs[2]).toHaveAttribute('tabindex', '-1');
   });
 });

@@ -18,7 +18,8 @@ import {useSideNav} from '../';
 describe('useSideNav', function () {
   let mockState = {
     selectionManager: {
-      isSelected: jest.fn()
+      isSelected: jest.fn(),
+      selectedKeys: new Set()
     }
   };
   let mockLayout = new ListLayout({
