@@ -17,12 +17,15 @@ import helpStyles from './contextualhelp.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {forwardRef} from 'react';
+import React from 'react';
 import {SlotProvider} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-function ContextualHelp(props: SpectrumContextualHelpProps) {
+/**
+ * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
+ */
+export function ContextualHelp(props: SpectrumContextualHelpProps) {
   let {
     variant = 'help',
     placement = 'bottom start',
@@ -55,9 +58,3 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
     </DialogTrigger>
   );
 }
-
-/**
- * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
- */
-let _ContextualHelp = forwardRef(ContextualHelp);
-export {_ContextualHelp as ContextualHelp};
