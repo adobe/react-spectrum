@@ -115,7 +115,6 @@ export function useSliderThumb(
   let {moveProps} = useMove({
     onMoveStart() {
       currentPosition.current = null;
-      // Don't start dragging for keyboard events unless the value has changed.
       stateRef.current.setThumbDragging(index, true);
     },
     onMove({deltaX, deltaY, pointerType, shiftKey}) {
@@ -132,7 +131,7 @@ export function useSliderThumb(
       }
       if (pointerType === 'keyboard') {
         if (deltaX > 0) {
-          if (direction === 'rtl') {
+          if (reverseX) {
             stateRef.current.decrementThumb(index, shiftKey ? pageSize : step);
           } else {
             stateRef.current.incrementThumb(index, shiftKey ? pageSize : step);
@@ -140,7 +139,7 @@ export function useSliderThumb(
         } else if (deltaY < 0) {
           stateRef.current.incrementThumb(index, shiftKey ? pageSize : step);
         } else if (deltaX < 0) {
-          if (direction === 'rtl') {
+          if (reverseX) {
             stateRef.current.incrementThumb(index, shiftKey ? pageSize : step);
           } else {
             stateRef.current.decrementThumb(index, shiftKey ? pageSize : step);
