@@ -27,7 +27,6 @@ export class StepListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getKeyLeftOf(key: Key) {
-    console.log('this.flipDirection', this.flipDirection);
     if (this.flipDirection) {
       return this.getNextKey(key);
     } else {
@@ -39,7 +38,6 @@ export class StepListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getKeyRightOf(key: Key) {
-    console.log('this.flipDirection RIGHT', this.flipDirection);
     if (this.flipDirection) {
       return this.getPreviousKey(key);
     } else {
