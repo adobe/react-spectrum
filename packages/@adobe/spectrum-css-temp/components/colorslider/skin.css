@@ -25,3 +25,13 @@
     margin: 0;
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-ColorSlider {
+    forced-color-adjust: none;
+    --spectrum-colorslider-fill-color-disabled: GrayText;
+    --spectrum-colorslider-border-color-disabled: GrayText;
+    --spectrum-colorslider-border-color: ButtonText;
+    --spectrum-colorarea-border-color: ButtonText;
+  }
+}
