@@ -19,6 +19,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Content, Footer} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
+import {Flex} from '@react-spectrum/layout';
 ```
 
 ---
@@ -57,17 +58,20 @@ Each of these components are required in a Spectrum compliant ContextualHelp exc
 
 ContextualHelp accepts an `onOpenChange` prop, triggered when the ContextualHelp's popover opens or closes.
 
-The example below uses `onOpenChange` to tell the user when the ContextualHelp popover opened or closed.
+The example below uses `onOpenChange` to update a separate element with the current open state of the Dialog.
 
 ```tsx example
 function Example() {
-  let onOpenChange = () => alert('Popover open changed.');
+  let [state, setState] = React.useState(false);
 
   return (
-    <ContextualHelp variant="info" onOpenChange={onOpenChange}>
-      <Heading>Permission required</Heading>
-      <Content><Text>Your admin must grant you permission before you can create a segment.</Text></Content>
-    </ContextualHelp>
+    <Flex alignItems="center" gap="size-100">
+      <ContextualHelp variant="info" onOpenChange={(isOpen) => setState(isOpen)}>
+        <Heading>Permission required</Heading>
+        <Content><Text>Your admin must grant you permission before you can create a segment.</Text></Content>
+      </ContextualHelp>
+      <Text>Current open state: {state.toString()}</Text>
+    </Flex>
   );
 }
 ```
