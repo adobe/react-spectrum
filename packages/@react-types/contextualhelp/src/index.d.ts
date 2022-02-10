@@ -14,8 +14,13 @@ import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
 import {ReactNode} from 'react';
 
 export interface SpectrumContextualHelpProps extends OverlayTriggerProps, PositionProps {
-  /** Contents of the Contextual Help popover. */
+  /**
+   * Contents of the Contextual Help popover.
+   */
   children: ReactNode,
-  /** Indicates whether contents are informative or provides helpful guidance. */
+  /**
+   * Indicates whether contents are informative or provides helpful guidance.
+   * @default 'help'
+   */
   variant?: 'help' | 'info'
 }
