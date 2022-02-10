@@ -217,3 +217,38 @@ governing permissions and limitations under the License.
     }
   }
 }
+@media (forced-colors: active) {
+  .spectrum-InputGroup {
+    --spectrum-dropdown-border-color-error: Highlight;
+    --spectrum-dropdown-border-color-key-focus: Highlight;
+    --spectrum-textfield-border-color-error: Highlight;
+    --spectrum-textfield-border-color-hover: Highlight;
+    --spectrum-textfield-border-color-key-focus: Highlight;
+    --spectrum-textfield-quiet-border-color: Canvas;
+    --spectrum-textfield-quiet-border-color-disabled: GrayText;
+    --spectrum-textfield-quiet-border-color-hover: Highlight;
+    --spectrum-textfield-quiet-border-color-key-focus: Highlight;
+    --spectrum-textfield-text-color-disabled: GrayText;
+      forced-color-adjust: none;
+      .spectrum-InputGroup-input {
+        forced-color-adjust: auto;
+     }
+      .spectrum-FieldButton {
+        forced-color-adjust: auto;
+      }  
+    
+  .spectrum-FieldButton:not(.spectrum-InputGroup--quiet) {
+    &:not(.is-disabled) {
+      &:disabled,
+      &:disabled:hover {
+        border-color: GrayText;
+        border-width: 1px;
+      }
+    }
+  }
+}
+
+  .spectrum-InputGroup:focus-ring:not(.spectrum-InputGroup--quiet) {
+    outline:2px solid Highlight;
+  }
+}
