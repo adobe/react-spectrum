@@ -671,7 +671,7 @@ describe('Tabs', function () {
     expect(onSelectionChange).toHaveBeenCalledWith(items[0].name);
   });
 
-  it.only('updates the tab index of the selected tab if programatically changed', function () {
+  it('updates the tab index of the selected tab if programatically changed', function () {
     let {getAllByRole, rerender} = render(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={items} selectedKey={'Tab 3'}>

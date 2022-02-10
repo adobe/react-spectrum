@@ -384,7 +384,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   useEffect(() => {
     if (!equalSets(lastSelectedKeys.current, manager.selectedKeys)) {
       if (!manager.isSelected(manager.focusedKey) && !manager.isFocused && !shouldUseVirtualFocus) {
-        manager.firstSelectedKey && manager.setFocusedKey(manager.firstSelectedKey);
+        manager.firstSelectedKey != null && manager.setFocusedKey(manager.firstSelectedKey);
       }
     }
 
