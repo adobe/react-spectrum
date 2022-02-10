@@ -40,6 +40,8 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
   });
   let isSelected = state.isSelected(props.date);
   let isDisabled = state.isCellDisabled(props.date);
+  let isLastSelectedBeforeDisabled = isSelected && !isDisabled && state.isCellDisabled(props.date.add({days: 1}));
+  let isFirstSelectedAfterDisabled = isSelected && !isDisabled && state.isCellDisabled(props.date.subtract({days: 1}));
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
   let isSelectionStart = highlightedRange && isSameDay(props.date, highlightedRange.start);
   let isSelectionEnd = highlightedRange && isSameDay(props.date, highlightedRange.end);
@@ -61,15 +63,6 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
 
   let nativeDate = useMemo(() => date.toDate(state.timeZone), [date, state.timeZone]);
   let formatted = useMemo(() => dateFormatter.format(nativeDate), [dateFormatter, nativeDate]);
-  
-  const currentCell = ref.current;
-  const previousCell = currentCell?.parentElement?.previousElementSibling?.firstElementChild;
-  const nextCell = currentCell?.parentElement?.nextElementSibling?.firstElementChild;
-
-  const isCellDisabled = (cell: Element): boolean => cell?.classList.value.includes('is-disabled');
-  const isCurrentCellSelected = isSelected && !isDisabled;
-  const isLastSelectedBeforeDisabled = isCurrentCellSelected && isCellDisabled(nextCell);
-  const isFirstSelectedAfterDisabled = isCurrentCellSelected && isCellDisabled(previousCell);
 
   return (
     <td
