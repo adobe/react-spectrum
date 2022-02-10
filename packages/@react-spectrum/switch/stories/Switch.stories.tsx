@@ -11,11 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import { Flex } from '@react-spectrum/layout';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '../';
-import { isDisabled } from '@react-spectrum/autocomplete/stories/SearchAutocomplete.stories';
 
 storiesOf('Switch', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
