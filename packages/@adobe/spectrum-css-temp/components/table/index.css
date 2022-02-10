@@ -280,18 +280,6 @@ svg.spectrum-Table-sortedIcon {
       border-end-start-radius: var(--spectrum-table-row-start-end-border-radius);
       border-end-end-radius: var(--spectrum-table-row-start-end-border-radius);
     }
-
-    &:focus-ring {
-      &:before {
-        display: inline-block;
-        content: '';
-        position: sticky;
-        left: 0;
-        height: 100%;
-        width: var(--spectrum-selectlist-border-size-key-focus);
-        z-index: 3;
-      }
-    }
   }
 }
 
