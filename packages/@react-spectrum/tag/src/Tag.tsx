@@ -50,8 +50,6 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
     tagRowRef
   }, state);
 
-  console.log(children);
-
   return (
     <div
       {...tagRowProps}>
