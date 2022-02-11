@@ -127,4 +127,61 @@ describe('ContextualHelp', function () {
     expect(content).toBeVisible();
     expect(content.parentElement).toHaveClass('react-spectrum-ContextualHelp-footer');
   });
+
+  it('includes a default aria-label', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ContextualHelp>
+          <Header>Test title</Header>
+          <Content>Help content</Content>
+        </ContextualHelp>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Help');
+  });
+
+  it('includes a default aria-label for info variant', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ContextualHelp variant="info">
+          <Header>Test title</Header>
+          <Content>Help content</Content>
+        </ContextualHelp>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Information');
+  });
+
+  it('supports a custom aria-label', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ContextualHelp aria-label="test">
+          <Header>Test title</Header>
+          <Content>Help content</Content>
+        </ContextualHelp>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('supports a custom aria-labelledby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ContextualHelp aria-labelledby="test">
+          <Header>Test title</Header>
+          <Content>Help content</Content>
+        </ContextualHelp>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-label');
+    expect(button).toHaveAttribute('aria-labelledby', 'test');
+  });
 });
