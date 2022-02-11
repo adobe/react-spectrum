@@ -38,6 +38,7 @@
     "@react-spectrum/dialog": "^3.3.4",
     "@react-spectrum/utils": "^3.6.2",
     "@react-types/contextualhelp": "3.0.0-alpha.1",
+    "@react-types/shared": "^3.10.1",
     "@spectrum-icons/workflow": "^3.2.1"
   },
   "devDependencies": {
