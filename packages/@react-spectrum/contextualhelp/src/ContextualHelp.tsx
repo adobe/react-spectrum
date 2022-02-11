@@ -40,13 +40,19 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
     footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
   };
 
+  let ariaLabel = otherProps['aria-label'];
+  if (!ariaLabel && !otherProps['aria-labelledby']) {
+    ariaLabel = formatMessage(variant);
+  }
+
   return (
-    <DialogTrigger type="popover" placement={placement} hideArrow {...otherProps}>
+    <DialogTrigger {...otherProps} type="popover" placement={placement} hideArrow>
       <ActionButton
+        {...otherProps}
         ref={ref}
         UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-button']}
         isQuiet
-        aria-label={formatMessage('open')}>
+        aria-label={ariaLabel}>
         {icon}
       </ActionButton>
       <SlotProvider slots={slots}>
