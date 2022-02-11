@@ -94,12 +94,12 @@ describe('SearchWithin', function () {
   });
 
   it('searchfield and picker are labelled correctly', function () {
-    let {getByRole, getAllByText, getByTestId} = renderSearchWithin();
+    let {getByRole, getAllByText, getByText} = renderSearchWithin();
 
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let group = getByRole('group');
-    let hiddenLabel = getByTestId('searchwith-label');
+    let hiddenLabel = getByText('Search within');
     triggerPress(picker);
 
     let listbox = getByRole('listbox');
@@ -136,7 +136,7 @@ describe('SearchWithin', function () {
   });
 
   it('slot props override props provided to children', function () {
-    let {getByRole, getAllByText, getByTestId} = renderSearchWithin(
+    let {getByRole, getAllByText, getByText} = renderSearchWithin(
       {isDisabled: true, isRequired: false, label: 'Test1'},
       {isDisabled: false, isRequired: true, label: 'Test2', isQuiet: true},
       {isDisabled: false, isRequired: true, label: 'Test3', isQuiet: true}
@@ -145,7 +145,7 @@ describe('SearchWithin', function () {
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let group = getByRole('group');
-    let hiddenLabel = getByTestId('searchwith-label');
+    let hiddenLabel = getByText('Search within');
     triggerPress(picker);
     let label = getAllByText('Test1')[0];
 
@@ -164,12 +164,12 @@ describe('SearchWithin', function () {
 
 describe('SearchWithin labeling', function () {
   it('no label - default', function () {
-    let {getByRole, getByTestId} = renderSearchWithin({label: undefined});
+    let {getByRole, getByText} = renderSearchWithin({label: undefined});
 
     let group = getByRole('group');
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
-    let hiddenLabel = getByTestId('searchwith-label');
+    let hiddenLabel = getByText('Search within');
 
     expect(group).toHaveAttribute('aria-label', 'Search');
 
@@ -179,13 +179,13 @@ describe('SearchWithin labeling', function () {
   });
 
   it('label = foo', function () {
-    let {getByRole, getByText, getByTestId} = renderSearchWithin({label: 'foo'});
+    let {getByRole, getByText} = renderSearchWithin({label: 'foo'});
 
     let group = getByRole('group');
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
     let label = getByText('foo');
-    let hiddenLabel = getByTestId('searchwith-label');
+    let hiddenLabel = getByText('Search within');
 
     expect(group).not.toHaveAttribute('aria-label');
 
@@ -197,12 +197,12 @@ describe('SearchWithin labeling', function () {
   });
 
   it('aria-label = bar', function () {
-    let {getByRole, getByTestId} = renderSearchWithin({'aria-label': 'bar', label: undefined});
+    let {getByRole, getByText} = renderSearchWithin({'aria-label': 'bar', label: undefined});
 
     let group = getByRole('group');
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
-    let hiddenLabel = getByTestId('searchwith-label');
+    let hiddenLabel = getByText('Search within');
 
     expect(group).toHaveAttribute('aria-label', 'bar');
 
@@ -212,7 +212,7 @@ describe('SearchWithin labeling', function () {
   });
 
   it('aria-labelledby = {id}', function () {
-    let {getByRole, getByTestId} = render(
+    let {getByRole, debug, getByText} = render(
       <Provider theme={theme}>
         <label id="id-foo-label" htmlFor="id-searchfield">
           Foo
@@ -228,11 +228,12 @@ describe('SearchWithin labeling', function () {
         </SearchWithin>
       </Provider>
     );
+    debug();
 
     let group = getByRole('group');
     let searchfield = getByRole('searchbox');
     let picker = getByRole('button');
-    let hiddenLabel = getByTestId('searchwith-label');
+    let hiddenLabel = getByText('Search within');
 
     expect(group).not.toHaveAttribute('aria-label');
 
