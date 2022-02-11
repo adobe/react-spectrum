@@ -21,7 +21,7 @@ import {
 import {ColumnProps, TableCollection as ITableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {GridState, useGridState} from '@react-stately/grid';
-import {Key, MutableRefObject, useCallback, useMemo, useRef, useState} from 'react';
+import {Key, MutableRefObject, useMemo, useRef, useState} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
@@ -140,7 +140,7 @@ function useColumnResizeWidthState<T>(
     getDefaultWidth: (props) => string | number
   ): [MutableRefObject<Map<Key, number>>, (column: GridNode<T>, newWidth: number) => void, (width: number) => void] {
   // TODO: switch to the virtualizer width
-  const tableWidth = useRef<number>(100);
+  const tableWidth = useRef<number>(null);
   const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(initializeColumnWidths(columns));
   const columnWidthsRef = useRef<Map<Key, number>>(columnWidths);
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
@@ -148,7 +148,7 @@ function useColumnResizeWidthState<T>(
 
   function initializeColumnWidths(columns: GridNode<T>[]): Map<Key, number> {
     const widths = new Map();
-    columns.forEach(column => widths.set(column.key, 100));
+    columns.forEach(column => widths.set(column.key, 800));
     return widths;
   }
 
@@ -158,10 +158,11 @@ function useColumnResizeWidthState<T>(
     setColumnWidths(newWidths);
   }
 
-  let setTableWidth = useCallback(updateTableWidth, [tableWidth.current]);
+  // let setTableWidth = useCallback(updateTableWidth, [tableWidth.current]);
 
-  function updateTableWidth(width: number) {
-    if (width) {
+  function setTableWidth(width: number) {
+    if (width && width !== tableWidth.current) {
+      console.log('calculating');
       tableWidth.current = width;
       const widths = buildColumnWidths(columns, width);
       setColumnWidthsForRef(widths);

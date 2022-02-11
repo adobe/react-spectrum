@@ -157,10 +157,6 @@ function TableView<T extends object>(
   let {direction} = useLocale();
   layout.collection = state.collection;
 
-  if (layout.virtualizer?.visibleRect?.width) {
-    state.setTableWidth(layout.virtualizer.visibleRect.width);
-  }
-
   let {gridProps} = useTable({
     ...props,
     isVirtualized: true,
@@ -327,6 +323,7 @@ function TableView<T extends object>(
         focusedKey={state.selectionManager.focusedKey}
         renderView={renderView}
         renderWrapper={renderWrapper}
+        setTableWidth={state.setTableWidth}
         domRef={domRef} />
     </TableContext.Provider>
   );
@@ -340,6 +337,7 @@ function TableVirtualizer({
   renderView,
   renderWrapper,
   domRef,
+  setTableWidth,
   ...otherProps
 }) {
   let {direction} = useLocale();
@@ -393,6 +391,10 @@ function TableVirtualizer({
   let onVisibleRectChange = useCallback(
     (rect: Rect) => {
       state.setVisibleRect(rect);
+      console.log('content size', state.virtualizer.contentSize, 'rect', rect);
+      if (state.virtualizer.contentSize.height > 0) {
+        setTableWidth(rect.width);
+      }
 
       if (!isLoading && onLoadMore) {
         let scrollOffset =
