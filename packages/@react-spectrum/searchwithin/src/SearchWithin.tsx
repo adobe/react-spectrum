@@ -128,7 +128,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
         role="group"
         className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
         ref={groupRef}>
-        <VisuallyHidden id={visuallyHiddenId}>{formatMessage('searchWithin')}</VisuallyHidden>
+        <VisuallyHidden id={visuallyHiddenId} data-testid="searchwith-label">{formatMessage('searchWithin')}</VisuallyHidden>
         <SlotProvider slots={slots}>
           {children}
         </SlotProvider>
