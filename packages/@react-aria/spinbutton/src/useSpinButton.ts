@@ -17,6 +17,7 @@ import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/sha
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useGlobalListeners} from '@react-aria/utils';
 
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
@@ -173,6 +174,8 @@ export function useSpinButton(
     e.preventDefault();
   };
 
+  let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
+
   return {
     spinButtonProps: {
       role: 'spinbutton',
@@ -190,11 +193,11 @@ export function useSpinButton(
     incrementButtonProps: {
       onPressStart: () => {
         onIncrementPressStart(400);
-        window.addEventListener('contextmenu', cancelContextMenu);
+        addGlobalListener(window, 'contextmenu', cancelContextMenu);
       },
       onPressEnd: () => {
         clearAsync();
-        window.removeEventListener('contextmenu', cancelContextMenu);
+        removeAllGlobalListeners();
       },
       onFocus,
       onBlur
@@ -202,11 +205,11 @@ export function useSpinButton(
     decrementButtonProps: {
       onPressStart: () => {
         onDecrementPressStart(400);
-        window.addEventListener('contextmenu', cancelContextMenu);
+        addGlobalListener(window, 'contextmenu', cancelContextMenu);
       },
       onPressEnd: () => {
         clearAsync();
-        window.removeEventListener('contextmenu', cancelContextMenu);
+        removeAllGlobalListeners();
       },
       onFocus,
       onBlur
