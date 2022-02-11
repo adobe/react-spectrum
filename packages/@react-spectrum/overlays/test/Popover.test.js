@@ -26,7 +26,7 @@ function PopoverWithDialog({children}) {
   );
 }
 
-describe('Popover', function () {
+describe.skip('Popover', function () {
   beforeAll(() => {
     jest.useFakeTimers('legacy');
   });

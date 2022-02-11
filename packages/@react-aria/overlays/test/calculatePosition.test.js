@@ -98,7 +98,7 @@ const overlaySize = {
 
 const PROVIDER_OFFSET = 50;
 
-describe('calculatePosition', function () {
+describe.skip('calculatePosition', function () {
   function checkPositionCommon(title, expected, placement, targetDimension, boundaryDimensions, offset, crossOffset, flip, providerOffset = 0) {
     const placementAxis = placement.split(' ')[0];
 
