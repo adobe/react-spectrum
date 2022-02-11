@@ -2,7 +2,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/provider';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/provider/package.json';
 
 ```jsx import
@@ -27,7 +27,7 @@ keywords: [theme, locale, application, colorstop]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Provider']} />
+  componentNames={['Provider', 'useProvider']} />
 
 ## Example
 
@@ -146,6 +146,42 @@ function Register() {
 }
 ```
 
+## useProvider
+<TypeLink links={docs.links} type={docs.exports.useProvider} /> can be used to access the various properties applied by the nearest parent Provider. This can be useful for adapting a component's various features, such as its icon, to the current color scheme or
+scale.
+
+The example below uses `useProvider` to dynamically change the button's icon when the docs theme is flipped. Note how the icon inside the nested Provider doesn't change when you toggle the theme switcher.
+
+```tsx example
+import Light from '@spectrum-icons/workflow/Light';
+import Moon from '@spectrum-icons/workflow/Moon';
+import {useProvider} from '@react-spectrum/provider';
+
+function ColorSchemeIcon() {
+  let {colorScheme} = useProvider();
+  let label = colorScheme === 'dark' ? 'Moon icon button for dark theme' : 'Light icon button for light theme';
+  return (
+    <ActionButton aria-label={label}>
+      {colorScheme === 'dark' ? <Moon /> : <Light />}
+    </ActionButton>
+  );
+}
+
+function Example() {
+  return (
+    <Flex direction="column" gap="size-100" alignItems="start">
+      <ColorSchemeIcon />
+      <Provider colorScheme="light">
+        <ColorSchemeIcon />
+      </Provider>
+    </Flex>
+  );
+}
+
+<Example />
+```
+
 ## Props
 
+### Provider Props
 <PropTable component={docs.exports.Provider} links={docs.links} />
