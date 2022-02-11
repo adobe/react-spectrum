@@ -1,4 +1,4 @@
-import {act, fireEvent, render, screen} from '@testing-library/react';
+import {fireEvent, render, screen} from '@testing-library/react';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import * as React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
@@ -384,6 +384,7 @@ describe('useSliderThumb', () => {
         // Drag thumb
         let thumb0 = screen.getByTestId('thumb').firstChild;
         fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowRight'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([11]);
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([11]);
@@ -391,47 +392,51 @@ describe('useSliderThumb', () => {
         expect(stateRef.current.values).toEqual([11]);
 
         fireEvent.keyDown(thumb0, {key: 'ArrowLeft'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowLeft'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([10]);
         expect(onChangeSpy).toHaveBeenCalledTimes(2);
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([10]);
         expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
         expect(stateRef.current.values).toEqual([10]);
+      });
 
-        // Note: Unlike ArrowLeft/ArrowRight/ArrowUp/ArrowDown added by the useMove hook, 
-        // Home/End/PageUp/PageDown events are executed natively by the HTML input[type="range"], 
-        // without the need for an additional keyboard event handlers in React Aria.
-        // This make it harder to test using the testing-library.
+      it('can be moved with keys at the beginning of the slider', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[0]} />);
 
-        act(() => stateRef.current.setThumbPercent(0, 0));
-
-        onChangeSpy.mockClear();
-        onChangeEndSpy.mockClear();
-
+        let thumb0 = screen.getByTestId('thumb').firstChild;
         fireEvent.keyDown(thumb0, {key: 'ArrowLeft'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowLeft'});
         expect(onChangeSpy).not.toHaveBeenCalled();
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).toHaveBeenCalledWith([0]);
 
         fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowRight'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([1]);
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([1]);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
         expect(stateRef.current.values).toEqual([1]);
+      });
 
-        act(() => stateRef.current.setThumbPercent(0, 1));
+      it('can be moved with keys at the end of the slider', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[100]} />);
 
-        onChangeSpy.mockClear();
-        onChangeEndSpy.mockClear();
-
+        let thumb0 = screen.getByTestId('thumb').firstChild;
         fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowRight'});
         expect(onChangeSpy).not.toHaveBeenCalled();
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).toHaveBeenCalledWith([100]);
 
         fireEvent.keyDown(thumb0, {key: 'ArrowLeft'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowLeft'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([99]);
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([99]);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
         expect(stateRef.current.values).toEqual([99]);
       });
 
@@ -443,53 +448,62 @@ describe('useSliderThumb', () => {
         // Drag thumb
         let thumb0 = screen.getByTestId('thumb').firstChild;
         fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowRight'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([11]);
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
         fireEvent.keyDown(thumb0, {key: 'ArrowUp'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowUp'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([12]);
         expect(onChangeSpy).toHaveBeenCalledTimes(2);
         fireEvent.keyDown(thumb0, {key: 'ArrowDown'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowDown'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([11]);
         expect(onChangeSpy).toHaveBeenCalledTimes(3);
         fireEvent.keyDown(thumb0, {key: 'ArrowLeft'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowLeft'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([10]);
         expect(onChangeSpy).toHaveBeenCalledTimes(4);
+      });
 
-        // Note: Unlike ArrowLeft/ArrowRight/ArrowUp/ArrowDown added by the useMove hook, 
-        // Home/End/PageUp/PageDown events are executed natively by the HTML input[type="range"], 
-        // without the need for an additional keyboard event handlers in React Aria.
-        // This make it harder to test using the testing-library.
+      it('can be moved with keys (vertical) at the bottom of the slider', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[0]} orientation="vertical" />);
 
-        act(() => stateRef.current.setThumbPercent(0, 0));
-
-        onChangeSpy.mockClear();
-        onChangeEndSpy.mockClear();
-
+        // Drag thumb
+        let thumb0 = screen.getByTestId('thumb').firstChild;
         fireEvent.keyDown(thumb0, {key: 'ArrowDown'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowDown'});
         expect(onChangeSpy).not.toHaveBeenCalled();
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).toHaveBeenCalledWith([0]);
 
         fireEvent.keyDown(thumb0, {key: 'ArrowUp'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowUp'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([1]);
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([1]);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
         expect(stateRef.current.values).toEqual([1]);
+      });
 
-        act(() => stateRef.current.setThumbPercent(0, 1));
+      it('can be moved with keys (vertical) at the top of the slider', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[100]} orientation="vertical" />);
 
-        onChangeSpy.mockClear();
-        onChangeEndSpy.mockClear();
-
+        // Drag thumb
+        let thumb0 = screen.getByTestId('thumb').firstChild;
         fireEvent.keyDown(thumb0, {key: 'ArrowUp'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowUp'});
         expect(onChangeSpy).not.toHaveBeenCalled();
-        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).toHaveBeenCalledWith([100]);
 
         fireEvent.keyDown(thumb0, {key: 'ArrowDown'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowDown'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([99]);
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([99]);
-        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
         expect(stateRef.current.values).toEqual([99]);
       });
     });
