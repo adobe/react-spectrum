@@ -84,3 +84,20 @@ governing permissions and limitations under the License.
     color: var(--spectrum-dropdown-icon-color-key-focus)
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-Dropdown {
+    --spectrum-dropdown-icon-color: ButtonText;
+    --spectrum-dropdown-icon-color-disabled: GrayText;
+    --spectrum-dropdown-icon-color-hover: ButtonText;
+    --spectrum-dropdown-icon-color-key-focus: ButtonText;
+    --spectrum-dropdown-placeholder-text-color: GrayText;
+    --spectrum-dropdown-placeholder-text-color-disabled: GrayText;
+    --spectrum-dropdown-placeholder-text-color-down: GrayText;
+    --spectrum-dropdown-placeholder-text-color-hover: GrayText;
+    --spectrum-dropdown-placeholder-text-color-key-focus: GrayText;
+    --spectrum-dropdown-placeholder-text-color-mouse-focus: GrayText;
+    --spectrum-dropdown-text-color-disabled: GrayText;
+    --spectrum-dropdown-validation-icon-color-error: ButtonText;
+  }
+}
