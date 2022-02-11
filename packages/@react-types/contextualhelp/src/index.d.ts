@@ -10,12 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
+import {OverlayTriggerProps, Placement, PositionProps} from '@react-types/overlays';
 import {ReactNode} from 'react';
 
 export interface SpectrumContextualHelpProps extends OverlayTriggerProps, PositionProps {
-  /** Contents of the Contextual Help popover. */
+  /**
+   * Contents of the Contextual Help popover.
+   */
   children: ReactNode,
-  /** Indicates whether contents are informative or provides helpful guidance. */
-  variant?: 'help' | 'info'
+  /**
+   * Indicates whether contents are informative or provides helpful guidance.
+   * @default 'help'
+   */
+  variant?: 'help' | 'info',
+  /**
+   * The placement of the popover with respect to the action button.
+   * @default 'bottom start'
+   */
+  placement?: Placement
 }
