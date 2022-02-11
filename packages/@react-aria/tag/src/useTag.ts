@@ -79,6 +79,7 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
     },
     tagRowProps: otherRowProps,
     tagProps: mergeProps(domProps, gridCellProps, {
+      'aria-disabled': isDisabled,
       'aria-errormessage': props['aria-errormessage'],
       'aria-label': props['aria-label'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
