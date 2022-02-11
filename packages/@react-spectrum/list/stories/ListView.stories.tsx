@@ -405,8 +405,7 @@ function AsyncList() {
 function FalsyIds() {
   let items = [
     {id: 1, name: 'key=1'},
-    {id: 0, name: 'key=0'},
-    {id: '', name: 'key=""'}
+    {id: 0, name: 'key=0'}
   ];
 
   return (
