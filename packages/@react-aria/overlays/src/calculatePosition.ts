@@ -322,6 +322,27 @@ export function calculatePositionInternal(
     }
   }
 
+  let boundaryLimits = {
+    top: boundaryDimensions.top + boundaryDimensions.scroll.top,
+    bottom: boundaryDimensions.top + boundaryDimensions.scroll.top + boundaryDimensions.height,
+    left: boundaryDimensions.left + boundaryDimensions.scroll.left,
+    right: boundaryDimensions.left + boundaryDimensions.scroll.left + boundaryDimensions.width
+  };
+
+  // for popover triggers close to the edge decrease the padding
+  if (placementInfo.placement === 'left' || placementInfo.placement === 'right') {
+    let centerOfButtonVertical = childOffset.top + childOffset.height / 2;
+    // Really it should be center of button center + padding + half of arrow width > boundary but we don't have access to arrow dimensions
+    if (centerOfButtonVertical + padding * 2 > boundaryLimits.bottom || centerOfButtonVertical - padding * 2 < boundaryLimits.top) {
+      padding = 6; // setting the padding to 6px as defined by Spectrum for this case
+    }
+  } else if (placementInfo.placement === 'top' || placementInfo.placement === 'bottom') {
+    let centerOfButtonHorizontal = childOffset.left + childOffset.width / 2;
+    if (centerOfButtonHorizontal + padding * 2 > boundaryLimits.right || centerOfButtonHorizontal - padding * 2 < boundaryLimits.left) {
+      padding = 6; // setting the padding to 6px as defined by Spectrum for this case
+    }
+  }
+
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
   position[crossAxis] += delta;
 
@@ -346,6 +367,21 @@ export function calculatePositionInternal(
 
   let arrowPosition: Position = {};
   arrowPosition[crossAxis] = (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
+
+
+  // keeping the arrow placement on the popover when near the edge
+  if (crossAxis === 'left' || crossAxis === 'top') {
+    // for the start and top
+    if (12 > arrowPosition[crossAxis] && arrowPosition[crossAxis] > 0) {
+      arrowPosition[crossAxis] = 12; // using the default padding for proper arrow placement
+    // for the end and bottom, math must catch the position in a small window where is still points at the
+    } else if (arrowPosition[crossAxis] > overlaySize[crossSize] - 12 && arrowPosition[crossAxis] + 2 <= overlaySize[crossSize]) {
+      arrowPosition[crossAxis] = overlaySize[crossSize] - 12;
+  // trigger is too far off the page, hiding the arrow per Spectrum
+  } else if (arrowPosition[crossAxis] <= 0 || arrowPosition[crossAxis] + 2 > overlaySize[crossSize]) {
+      arrowPosition[crossAxis] = undefined;
+    }
+  }
 
   return {
     position,
