@@ -371,6 +371,8 @@ storiesOf('DialogTrigger', module)
         rows={['size-450', 'auto', 'size-450']}
         height="1600px"
         width="100%"
+        marginTop="20px"
+        marginBottom="20px"
         gap="size-100">
         <View gridArea="top" justifySelf="center">
           <DialogTrigger type="popover" placement="end" shouldFlip={false}>
