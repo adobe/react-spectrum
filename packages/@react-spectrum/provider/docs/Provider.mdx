@@ -150,7 +150,8 @@ function Register() {
 <TypeLink links={docs.links} type={docs.exports.useProvider} /> can be used to access the various properties applied by the nearest parent Provider. This can be useful for adapting a component's various features, such as its icon, to the current color scheme or
 scale.
 
-The example below uses `useProvider` to dynamically change the button's icon when the docs theme is flipped. Note how the icon inside the nested Provider doesn't change when you toggle the theme switcher.
+The example below uses the `colorScheme` sourced from `useProvider` to determine the top button's icon when the docs theme is flipped. Note how the icon of the ActionButton within the nested Provider doesn't change when you toggle the theme switcher since the `colorScheme` for its
+parent Provider is fixed.
 
 ```tsx example
 import Light from '@spectrum-icons/workflow/Light';
