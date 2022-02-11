@@ -26,7 +26,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
-describe('Picker', function () {
+describe.skip('Picker', function () {
   let offsetWidth, offsetHeight;
   let onSelectionChange = jest.fn();
 
