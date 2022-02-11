@@ -48,7 +48,7 @@ class VersionManager {
       this.workspacePackages = JSON.parse(JSON.parse(exec('yarn workspaces info --json').toString()).data);
     } catch (e) {
       try {
-        // I don't know what version of yarn this supports, but it's how the line originally was, so keep it in because devon probably uses it.
+        // Unknown what versions of yarn return this, but it was the original implementation.
         this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
       } catch (e) {
         // If that failed to parse, then it's because we have yarn 1.22 and this is how we need to parse it.
@@ -284,22 +284,23 @@ class VersionManager {
 
     // Bump anything that depends on this package if it's a prerelease
     // because dependencies will be pinned rather than caret ranges.
-    if (status !== 'released') {
-      for (let p in this.workspacePackages) {
-        if (this.releasedPackages.has(p)) {
-          continue;
-        }
+    // Bump anything that has this as a dep by a patch, all the way up the tree
+    for (let p in this.workspacePackages) {
+      if (this.releasedPackages.has(p)) {
+        continue;
+      }
 
-        if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
-          if (this.existingPackages.has(p)) {
-            // Bump a patch version of the dependent package if it's not also a prerelease.
-            // Otherwise, bump to the next prerelease in the existing status.
-            let filePath = this.workspacePackages[p].location + '/package.json';
-            let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-            let prerelease = semver.parse(pkg.version).prerelease;
-            let b = prerelease.length === 0 ? 'patch' : prerelease[0];
-            this.addReleasedPackage(p, b, true);
-          }
+      if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
+        let filePath = this.workspacePackages[p].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        let prerelease = semver.parse(pkg.version).prerelease;
+        let b = prerelease.length === 0 ? 'patch' : prerelease[0];
+        if (this.existingPackages.has(p) && status !== 'released') {
+          // Bump a patch version of the dependent package if it's not also a prerelease.
+          // Otherwise, bump to the next prerelease in the existing status.
+          this.addReleasedPackage(p, b, true);
+        } else if (this.existingPackages.has(p) && status === 'released') {
+          this.addReleasedPackage(p, b);
         }
       }
     }
@@ -308,26 +309,6 @@ class VersionManager {
     for (let dep of this.workspacePackages[pkg].workspaceDependencies) {
       if (!this.existingPackages.has(dep) || this.changedPackages.has(dep)) {
         this.addReleasedPackage(dep, bump);
-      }
-    }
-
-    // Bump anything that has this as a dep by a patch, all the way up the tree
-    if (status === 'released') {
-      for (let p in this.workspacePackages) {
-        if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
-          if (this.releasedPackages.has(p)) {
-            continue;
-          }
-          let filePath = this.workspacePackages[p].location + '/package.json';
-          let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-          if (pkg.private) {
-            continue;
-          }
-          let version = semver.parse(pkg.version);
-          let prerelease = version.prerelease;
-          let b = prerelease.length === 0 ? 'patch' : prerelease[0];
-          this.addReleasedPackage(p, b);
-        }
       }
     }
   }
