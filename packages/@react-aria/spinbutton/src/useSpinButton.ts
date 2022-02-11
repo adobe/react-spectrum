@@ -16,8 +16,8 @@ import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useMessageFormatter} from '@react-aria/i18n';
 import {useGlobalListeners} from '@react-aria/utils';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
