@@ -157,11 +157,11 @@ import Light from '@spectrum-icons/workflow/Light';
 import Moon from '@spectrum-icons/workflow/Moon';
 import {useProvider} from '@react-spectrum/provider';
 
-function ColorSchemeIcon() {
+function ColorSchemeButton() {
   let {colorScheme} = useProvider();
   let label = colorScheme === 'dark' ? 'Moon icon button for dark theme' : 'Light icon button for light theme';
   return (
-    <ActionButton aria-label={label}>
+    <ActionButton aria-label={label} margin="size-100">
       {colorScheme === 'dark' ? <Moon /> : <Light />}
     </ActionButton>
   );
@@ -170,9 +170,9 @@ function ColorSchemeIcon() {
 function Example() {
   return (
     <Flex direction="column" gap="size-100" alignItems="start">
-      <ColorSchemeIcon />
+      <ColorSchemeButton />
       <Provider colorScheme="light">
-        <ColorSchemeIcon />
+        <ColorSchemeButton />
       </Provider>
     </Flex>
   );
