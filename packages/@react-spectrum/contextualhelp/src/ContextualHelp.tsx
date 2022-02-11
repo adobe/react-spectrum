@@ -22,10 +22,7 @@ import {SlotProvider} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-/**
- * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
- */
-export function ContextualHelp(props: SpectrumContextualHelpProps) {
+function ContextualHelp(props: SpectrumContextualHelpProps) {
   let {
     variant = 'help',
     placement = 'bottom start',
@@ -58,3 +55,8 @@ export function ContextualHelp(props: SpectrumContextualHelpProps) {
     </DialogTrigger>
   );
 }
+
+/**
+ * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
+ */
+export {ContextualHelp};

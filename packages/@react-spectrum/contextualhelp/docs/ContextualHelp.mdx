@@ -24,7 +24,7 @@ import {Flex} from '@react-spectrum/layout';
 
 ---
 category: Overlays
-keywords: [popover]
+keywords: [popover, field, input]
 after_version: 3.0.0
 ---
 
@@ -54,9 +54,24 @@ can be populated by providing the following components to your ContextualHelp as
 [Heading](Heading.html) (title), [Content](Content.html) (body), and [Footer](Footer.html) (link).
 Each of these components are required in a Spectrum compliant ContextualHelp except for `Footer` since including a link is optional.
 
+```tsx example
+<ContextualHelp variant="help">
+  <Heading>What is a segment?</Heading>
+  <Content><Text>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Text></Content>
+  <Footer><Link>Learn more about segments</Link></Footer>
+</ContextualHelp>
+```
+
 ## Placement
 
-ContextualHelp supports [Dialog placement](./Dialog.html#dialog-placement) options for when the positioning of the popover needs to customized.
+ContextualHelp supports [Dialog placement](./DialogTrigger.html#dialog-placement) options for when the positioning of the popover needs to customized.
+
+```tsx example
+<ContextualHelp variant="info" placement="top start">
+  <Heading>Placement</Heading>
+  <Content><Text>The placement of this contextual help popover has been customized to use top start.</Text></Content>
+</ContextualHelp>
+```
 
 ## Events
 
@@ -86,9 +101,7 @@ function Example() {
 
 ## Visual options
 
-### Variant
-
-#### Info
+### Info
 
 Use the info icon for brief, specific, contextual guidance. This is best for supplemental or nice-to-know information,
 in-line with a label or a component (if there is no label). The content for an info icon’s popover should be [instructive](https://spectrum.adobe.com/page/voice-and-tone/#Tone-spectrum) in tone.
@@ -100,7 +113,7 @@ in-line with a label or a component (if there is no label). The content for an i
 </ContextualHelp>
 ```
 
-#### Help
+### Help
 
 Use the help icon for content that offers more detailed, in-depth guidance about a task, UI element, tool, or keyboard shortcuts.
 This may include an image, video, or link and should be [helpful](https://spectrum.adobe.com/page/voice-and-tone/#Tone-spectrum) in tone.
