@@ -559,7 +559,8 @@ function TableRow({item, children, hasActions, ...otherProps}) {
           {
             'is-active': isPressed,
             'is-selected': isSelected,
-            'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
+            'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace',
+            'is-next-selected': state.selectionManager.isSelected(item.nextKey),
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
             'is-hovered': isHovered,

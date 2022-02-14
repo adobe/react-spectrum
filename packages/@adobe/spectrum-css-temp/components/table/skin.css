@@ -160,18 +160,23 @@ tbody.spectrum-Table-body {
   }
 
   &.spectrum-Table-row--highlightSelection {
-    border-bottom-color: var(--spectrum-global-color-blue-500);
-    &.is-selected {
-      border-inline-start: 1px solid var(--spectrum-global-color-blue-500);
-      border-inline-end: 1px solid var(--spectrum-global-color-blue-500);
-      &.spectrum-Table-row--firstRow {
-        border-block-start: 1px solid var(--spectrum-global-color-blue-500);
+    &.spectrum-Table-row--firstRow {
+      border-block-start: 1px solid transparent;
+      &.is-hovered {
+        /* Fill in extra gap that cell hover style doesn't quite fill since the cell is 1px shorter than the row. */
+        background-color: var(--spectrum-table-row-background-color-hover);
       }
     }
 
-    /* Remove row left border so it doesn't overlap with focus ring */
-    &:focus-ring {
-      border-inline-start: none;
+    &.is-next-selected,
+    &.is-selected {
+      border-block-end-color: var(--spectrum-global-color-blue-500);
+    }
+
+    &.is-selected {
+      &.spectrum-Table-row--firstRow {
+        border-block-start-color: var(--spectrum-global-color-blue-500);
+      }
     }
   }
 

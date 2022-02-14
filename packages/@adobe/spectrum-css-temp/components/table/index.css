@@ -257,12 +257,32 @@ svg.spectrum-Table-sortedIcon {
       left: 0;
       height: 100%;
       width: var(--spectrum-selectlist-border-size-key-focus);
-      z-index: 3;
+      z-index: 4;
       margin-inline-end: calc(var(--spectrum-selectlist-border-size-key-focus) * -1)
     }
 
     .spectrum-Table-cellWrapper:first-of-type {
       display: inline-block;
+    }
+  }
+
+  /* Alternative to border-left/right. Using box shadow for the row left/right since they don't take room unlike border which would cause wiggles
+   * in the hightlight case and displace the sticky indicator.
+   */
+  &.spectrum-Table-row--highlightSelection {
+    &.is-selected {
+      /* this is the box shadow for left and right border outline */
+      &:after {
+        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 var(--spectrum-global-color-blue-500);
+        content: '';
+        display: block;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        z-index: 3;
+      }
     }
   }
 

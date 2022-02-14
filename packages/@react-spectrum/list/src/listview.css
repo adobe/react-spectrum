@@ -79,10 +79,6 @@
   outline: 0;
   min-height: var(--spectrum-global-dimension-size-500);
 
-  &.is-lastRow:not(.is-selected) {
-    border-bottom: none;
-  }
-
   .react-spectrum-ListView--emphasized & {
     &.is-selected {
       background-color: var(--spectrum-table-row-background-color-selected);

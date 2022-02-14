@@ -103,8 +103,6 @@ export function ListViewItem(props) {
               'is-hovered': isHovered,
               'is-selected': isSelected,
               'is-previous-selected': state.selectionManager.isSelected(item.prevKey),
-              // Hide bottom border for last row so we don't get overlap with the container border.
-              'is-lastRow': isLastRow && !isLoading,
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey))
             }
           )
