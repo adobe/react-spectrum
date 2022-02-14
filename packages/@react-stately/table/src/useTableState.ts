@@ -175,7 +175,7 @@ function useColumnResizeWidthState<T>(
     let widths = new Map<Key, number>(columnWidthsRef.current);
     widths.set(column.key, Math.max(
       getMinWidth(column.props.minWidth),
-      Math.min(Math.round(newWidth), getMaxWidth(column.props.maxWidth))
+      Math.min(roundWidth(newWidth), getMaxWidth(column.props.maxWidth))
     ));
 
     // keep track of all columns that have been seized
@@ -290,7 +290,7 @@ function useColumnResizeWidthState<T>(
   
       let width = Math.max(
         getMinWidth(column.props.minWidth),
-        Math.min(Math.round(targetWidth), getMaxWidth(column.props.maxWidth))
+        Math.min(roundWidth(targetWidth), getMaxWidth(column.props.maxWidth))
       );
       column.calculatedWidth = width;
       remainingSpace -= width;
@@ -298,6 +298,11 @@ function useColumnResizeWidthState<T>(
     }
   
     return remainingColumns;
+  }
+
+  // Add Number.EPSILON to ensure accurate rounding, then multiply and divide by 100 to get 2 decimal places of rounding
+  function roundWidth(targetWidth: number): number {
+    return Math.round((targetWidth + Number.EPSILON) * 100) / 100;
   }
 
   function parseFractionalUnit(width: string): number {

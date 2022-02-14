@@ -4215,9 +4215,9 @@ describe('TableView', function () {
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('320.6666666666667px');
-          expect(row.childNodes[2].style.width).toBe('320.6666666666667px');
-          expect(row.childNodes[3].style.width).toBe('320.6666666666667px');
+          expect(row.childNodes[1].style.width).toBe('320.67px');
+          expect(row.childNodes[2].style.width).toBe('320.66px');
+          expect(row.childNodes[3].style.width).toBe('320.67px');
         }
       });
 
@@ -4241,9 +4241,9 @@ describe('TableView', function () {
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('48px');
-          expect(row.childNodes[1].style.width).toBe('317.3333333333333px');
-          expect(row.childNodes[2].style.width).toBe('317.3333333333333px');
-          expect(row.childNodes[3].style.width).toBe('317.3333333333333px');
+          expect(row.childNodes[1].style.width).toBe('317.33px');
+          expect(row.childNodes[2].style.width).toBe('317.34px');
+          expect(row.childNodes[3].style.width).toBe('317.33px');
         }
       });
 
