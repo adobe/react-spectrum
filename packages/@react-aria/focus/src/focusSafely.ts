@@ -50,6 +50,7 @@ const intersectionObserver = (() => {
  */
 export function focusSafely(element: HTMLElement) {
   const modality = getInteractionModality();
+  const lastFocusedElement = document.activeElement;
 
   // If the user is interacting with a virtual cursor, e.g. screen reader, then
   // wait until after any animated transitions that are currently occurring on
@@ -57,7 +58,6 @@ export function focusSafely(element: HTMLElement) {
   // causing the page to scroll when moving focus if the element is transitioning
   // from off the screen.
   if (modality === 'virtual') {
-    let lastFocusedElement = document.activeElement;
     runAfterTransition(() => {
       // If focus did not move and the element is still in the document, focus it.
       if (document.activeElement === lastFocusedElement && document.contains(element)) {
@@ -69,7 +69,19 @@ export function focusSafely(element: HTMLElement) {
     });
   } else {
     focusWithoutScrolling(element);
-    if (intersectionObserver && modality !== 'pointer') {
+    if (intersectionObserver &&
+      (
+        // Don't test for intersectionObserver to scroll the element into view
+        // within the document body on pointer events, unless the element being focused
+        // focusing safely is not the element that received interaction to focus it.
+        modality !== 'pointer' || 
+        !(
+          lastFocusedElement.contains(element) || 
+          element.contains(lastFocusedElement) || 
+          element === lastFocusedElement
+        )
+      )
+    ) {
       intersectionObserver.observe(element);
     }
   }

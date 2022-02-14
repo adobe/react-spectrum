@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusScope} from '../';
+import {focusSafely, FocusScope} from '../';
 import {Meta, Story} from '@storybook/react';
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 const dialogsRoot = 'dialogsRoot';
@@ -116,3 +116,41 @@ KeyboardNavigationNoContain.args = {usePortal: false, contain: false};
 
 export const KeyboardNavigationInsidePortalNoContain = Template().bind({});
 KeyboardNavigationInsidePortalNoContain.args = {usePortal: true, contain: false};
+
+const FocusSafelyTemplate = (): Story => () => <FocusSafelyExample />;
+
+function FocusSafelyExample() {
+  const ref = useRef<HTMLButtonElement>();
+  const w = 12.5;
+  return (
+    <div>  
+      <button
+        type="button"
+        onClick={() => focusSafely(ref.current)}>
+        Focus Safely
+      </button>
+      <div
+        style={{
+          background: 'var(--spectrum-global-color-gray-50)',
+          border: '1px solid lightgray',
+          display: 'block',
+          margin: '1rem 0',
+          maxHeight: `${1.5 * w}rem`,
+          minWidth: `${w}rem`,
+          overflow: 'auto',
+          padding: '0 1rem'
+        }}>
+        <p><code>button</code> below the fold ⬇︎</p>
+        <button
+          type="button"
+          ref={ref} 
+          style={{
+            margin: `${1.6 * w}rem 0`
+          }}>Button to focus safely</button>
+        <p><code>button</code> above the fold ⬆︎</p>
+      </div>
+    </div>
+  );
+}
+
+export const FocusSafely = FocusSafelyTemplate().bind({});
