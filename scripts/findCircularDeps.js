@@ -1,6 +1,7 @@
 const exec = require('child_process').execSync;
 
-let workspaces = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+let output = exec('yarn workspaces info --json').toString().replace(/^(.|\n)*?\{/, '{').replace(/\}\nDone in .*\n?$/, '}');
+let workspaces = JSON.parse(output);
 
 for (let pkg in workspaces) {
   addDep(pkg);
