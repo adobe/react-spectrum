@@ -127,7 +127,6 @@ function TableView<T extends object>(
   
   let columnWidths = state.columnWidths;
   
-  
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes =
   state.selectionManager.selectionBehavior !== 'replace';
@@ -340,6 +339,7 @@ function TableVirtualizer({
   setTableWidth,
   ...otherProps
 }) {
+  console.log(layout);
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
   let bodyRef = useRef<HTMLDivElement>();
@@ -390,11 +390,12 @@ function TableVirtualizer({
 
   let onVisibleRectChange = useCallback(
     (rect: Rect) => {
-      state.setVisibleRect(rect);
-      console.log('content size', state.virtualizer.contentSize, 'rect', rect);
+      // setting the table width will recalculate column widths which we only want to do once the virtualizer is done initializing
       if (state.virtualizer.contentSize.height > 0) {
         setTableWidth(rect.width);
       }
+      
+      state.setVisibleRect(rect);
 
       if (!isLoading && onLoadMore) {
         let scrollOffset =

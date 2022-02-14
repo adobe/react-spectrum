@@ -21,7 +21,7 @@ import {
 import {ColumnProps, TableCollection as ITableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {GridState, useGridState} from '@react-stately/grid';
-import {Key, MutableRefObject, useMemo, useRef, useState} from 'react';
+import {Key, MutableRefObject, useEffect, useMemo, useRef, useState} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
@@ -84,28 +84,25 @@ export function useTableState<T extends object>(
     [props.children, props.showSelectionCheckboxes, selectionMode]
   );
 
+  
   let collection = useCollection<T, TableCollection<T>>(
     props,
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
-  );
-
-
+    );
+    
+    
   // map of the columns and their width, key is the column key, value is the width
   // TODO: switch to useControlledState
   const [columnWidths, recalculateColumnWidths, setTableWidth] = useColumnResizeWidthState(collection.columns, props.getDefaultWidth);
 
   function getColumnWidth(key: Key): number {
-    return columnWidths.current.get(key);
+    return columnWidths.current.get(key) ?? 0;
   }
 
   function onColumnResize(column: any, width: number) {
     recalculateColumnWidths(column, width);
   }
-
-  // function setVisibleTableWidth(width: number) {
-  //   setTableWidth(width);
-  // }
 
   let {disabledKeys, selectionManager} = useGridState({
     ...props,
@@ -146,9 +143,16 @@ function useColumnResizeWidthState<T>(
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
+  // if the columns change, need to 
+  useEffect(() => {
+    const widths = buildColumnWidths(columns, tableWidth.current);
+    setColumnWidthsForRef(widths);
+  }, [columns]);
+  
+
   function initializeColumnWidths(columns: GridNode<T>[]): Map<Key, number> {
     const widths = new Map();
-    columns.forEach(column => widths.set(column.key, 800));
+    columns.forEach(column => widths.set(column.key, 0));
     return widths;
   }
 
@@ -162,7 +166,6 @@ function useColumnResizeWidthState<T>(
 
   function setTableWidth(width: number) {
     if (width && width !== tableWidth.current) {
-      console.log('calculating');
       tableWidth.current = width;
       const widths = buildColumnWidths(columns, width);
       setColumnWidthsForRef(widths);
