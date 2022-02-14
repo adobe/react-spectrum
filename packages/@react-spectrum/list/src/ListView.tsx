@@ -77,10 +77,21 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
+  /** Whether the ListView should be displayed with a quiet style. */
   isQuiet?: boolean,
+  /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
   loadingState?: LoadingState,
+  /** Sets what the ListView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
+  /**
+   * The duration of animated layout changes, in milliseconds. Used by the Virtualizer.
+   * @default 0
+   */
   transitionDuration?: number,
+  /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
   onAction?: (key: string) => void
 }
 
@@ -230,5 +241,8 @@ function CenteredWrapper({children}) {
   );
 }
 
+/**
+ * Lists display a linear collection of data. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
 const _ListView = React.forwardRef(ListView) as <T>(props: ListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};
