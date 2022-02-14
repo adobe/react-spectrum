@@ -31,7 +31,7 @@ export function ListViewItem(props) {
     isEmphasized
   } = props;
   let cellNode = [...item.childNodes][0];
-  let {state, isLoading} = useContext(ListViewContext);
+  let {state} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();
@@ -77,7 +77,6 @@ export function ListViewItem(props) {
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
-  let isLastRow = item.nextKey === null;
   return (
     <div
       {...mergeProps(rowProps, pressProps)}
