@@ -33,9 +33,10 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "^3.3.2",
-    "@react-spectrum/form": "^3.2.3",
     "@react-aria/label": "^3.2.1",
     "@react-aria/utils": "^3.10.0",
+    "@react-aria/visually-hidden": "^3.2.3",
+    "@react-spectrum/form": "^3.2.3",
     "@react-spectrum/label": "^3.4.1",
     "@react-spectrum/utils": "^3.6.3",
     "@react-types/searchwithin": "3.0.0-alpha.0",
