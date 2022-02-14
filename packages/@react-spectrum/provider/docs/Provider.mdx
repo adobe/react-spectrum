@@ -156,16 +156,20 @@ parent Provider is fixed.
 ```tsx example
 import Light from '@spectrum-icons/workflow/Light';
 import Moon from '@spectrum-icons/workflow/Moon';
-import {useProvider} from '@react-spectrum/provider';
 import {ToggleButton} from '@react-spectrum/button';
+import {useProvider} from '@react-spectrum/provider';
+import {View} from '@react-spectrum/view';
 
 function ColorSchemeButton() {
   let {colorScheme} = useProvider();
   let label = colorScheme === 'dark' ? 'Moon icon button for dark theme' : 'Light icon button for light theme';
   return (
-    <ActionButton aria-label={label} margin="size-100">
-      {colorScheme === 'dark' ? <Moon /> : <Light />}
-    </ActionButton>
+    <>
+      <View>Parent provider color scheme: {colorScheme}</View>
+      <ActionButton aria-label={label} margin="size-100">
+        {colorScheme === 'dark' ? <Moon /> : <Light />}
+      </ActionButton>
+    </>
   );
 }
 
@@ -177,11 +181,17 @@ function Example() {
       <ToggleButton onChange={(selected) => setColorScheme(selected ? 'light' : 'dark')}>
         Toggle light mode
       </ToggleButton>
-      <Provider colorScheme={colorScheme} UNSAFE_style={{padding: 20, textAlign: 'center', width: 300}}>
-        <ColorSchemeButton />
-        <Provider colorScheme="light" UNSAFE_style={{padding: 20, textAlign: 'center', margin: 20}}>
+      <Provider colorScheme={colorScheme}>
+        <View width={300} borderWidth="thickest" padding="size-200">
           <ColorSchemeButton />
+          <Provider colorScheme="light">
+          <Flex direction="column" alignContent="center">
+            <View width="100%" borderWidth="thickest" padding="size-200">
+              <ColorSchemeButton />
+            </View>
+          </Flex>
         </Provider>
+        </View>
       </Provider>
     </Flex>
   );
