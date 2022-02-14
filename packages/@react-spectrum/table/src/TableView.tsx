@@ -339,7 +339,6 @@ function TableVirtualizer({
   setTableWidth,
   ...otherProps
 }) {
-  console.log(layout);
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
   let bodyRef = useRef<HTMLDivElement>();

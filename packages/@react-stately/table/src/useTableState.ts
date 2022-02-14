@@ -84,7 +84,6 @@ export function useTableState<T extends object>(
     [props.children, props.showSelectionCheckboxes, selectionMode]
   );
 
-  
   let collection = useCollection<T, TableCollection<T>>(
     props,
     (nodes, prev) => new TableCollection(nodes, prev, context),
