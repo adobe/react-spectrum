@@ -1,9 +1,8 @@
 {
   "name": "@react-aria/tag",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "private": true,
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
@@ -26,7 +25,7 @@
     "@react-stately/grid": "^3.0.0",
     "@react-types/grid": "^3.0.0",
     "@react-types/shared": "^3.1.0",
-    "@react-types/tag": "3.0.0-alpha.1"
+    "@react-types/tag": "3.0.0-alpha.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1"
