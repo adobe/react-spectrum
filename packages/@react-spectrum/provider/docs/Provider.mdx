@@ -164,12 +164,12 @@ function ColorSchemeButton() {
   let {colorScheme} = useProvider();
   let label = colorScheme === 'dark' ? 'Moon icon button for dark theme' : 'Light icon button for light theme';
   return (
-    <>
+    <Flex gap="size-100" direction="column" alignItems="start" marginBottom="size-100">
       <View>Parent provider color scheme: {colorScheme}</View>
-      <ActionButton aria-label={label} margin="size-100">
+      <ActionButton aria-label={label}>
         {colorScheme === 'dark' ? <Moon /> : <Light />}
       </ActionButton>
-    </>
+    </Flex>
   );
 }
 
@@ -185,12 +185,12 @@ function Example() {
         <View width="size-3600" borderWidth="thickest" padding="size-200">
           <ColorSchemeButton />
           <Provider colorScheme="light">
-          <Flex direction="column" alignContent="center">
-            <View width="100%" borderWidth="thickest" padding="size-200">
-              <ColorSchemeButton />
-            </View>
-          </Flex>
-        </Provider>
+            <Flex direction="column" alignContent="center">
+              <View width="100%" borderWidth="thickest" padding="size-200">
+                <ColorSchemeButton />
+              </View>
+            </Flex>
+          </Provider>
         </View>
       </Provider>
     </Flex>
