@@ -157,6 +157,7 @@ parent Provider is fixed.
 import Light from '@spectrum-icons/workflow/Light';
 import Moon from '@spectrum-icons/workflow/Moon';
 import {useProvider} from '@react-spectrum/provider';
+import {ToggleButton} from '@react-spectrum/button';
 
 function ColorSchemeButton() {
   let {colorScheme} = useProvider();
@@ -169,11 +170,18 @@ function ColorSchemeButton() {
 }
 
 function Example() {
+  let [colorScheme, setColorScheme] = React.useState('dark');
+
   return (
     <Flex direction="column" gap="size-100" alignItems="start">
-      <ColorSchemeButton />
-      <Provider colorScheme="light">
+      <ToggleButton onChange={(selected) => setColorScheme(selected ? 'light' : 'dark')}>
+        Toggle light mode
+      </ToggleButton>
+      <Provider colorScheme={colorScheme} UNSAFE_style={{padding: 20, textAlign: 'center', width: 300}}>
         <ColorSchemeButton />
+        <Provider colorScheme="light" UNSAFE_style={{padding: 20, textAlign: 'center', margin: 20}}>
+          <ColorSchemeButton />
+        </Provider>
       </Provider>
     </Flex>
   );
