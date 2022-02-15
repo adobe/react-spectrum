@@ -321,6 +321,9 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   private _renderView(reusableView: ReusableView<T, V>) {
+    if (!reusableView.layoutInfo) {
+      return;
+    }
     let {type, key} = reusableView.layoutInfo;
     reusableView.content = this.getItem(key);
     reusableView.rendered = this._renderContent(type, reusableView.content);
@@ -782,6 +785,9 @@ export class Virtualizer<T extends object, V, W> {
     // method to build the final tree.
     let viewsByParentKey = new Map([[null, []]]);
     for (let view of this._children) {
+      if (!view.layoutInfo) {
+        return;
+      }
       if (!viewsByParentKey.has(view.layoutInfo.parentKey)) {
         viewsByParentKey.set(view.layoutInfo.parentKey, []);
       }
@@ -833,6 +839,9 @@ export class Virtualizer<T extends object, V, W> {
     if (this._transaction) {
       for (let view of this._transaction.toRemove.values()) {
         let cur = view.layoutInfo;
+        if (!cur) {
+          return;
+        }
         let layoutInfo = this.layout.getLayoutInfo(cur.key);
         if (this._applyLayoutInfo(view, layoutInfo)) {
           updated = true;
@@ -841,6 +850,9 @@ export class Virtualizer<T extends object, V, W> {
 
       for (let view of this._transaction.removed.values()) {
         let cur = view.layoutInfo;
+        if (!cur) {
+          return;
+        }
         let layoutInfo = this._transaction.finalLayoutInfo.get(cur.key) || cur;
         layoutInfo = this.layout.getFinalLayoutInfo(layoutInfo.copy());
         if (this._applyLayoutInfo(view, layoutInfo)) {

@@ -161,8 +161,6 @@ function useColumnResizeWidthState<T>(
     setColumnWidths(newWidths);
   }
 
-  // let setTableWidth = useCallback(updateTableWidth, [tableWidth.current]);
-
   function setTableWidth(width: number) {
     if (width && width !== tableWidth.current) {
       tableWidth.current = width;
