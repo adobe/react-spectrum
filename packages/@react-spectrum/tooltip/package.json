@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/tooltip",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -32,19 +32,19 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.4.1",
-    "@react-aria/interactions": "^3.5.1",
-    "@react-aria/overlays": "^3.7.2",
-    "@react-aria/tooltip": "^3.1.3",
-    "@react-aria/utils": "^3.8.2",
-    "@react-spectrum/overlays": "^3.4.4",
-    "@react-spectrum/utils": "^3.6.2",
-    "@react-stately/tooltip": "^3.0.5",
-    "@react-stately/utils": "^3.2.2",
-    "@react-types/overlays": "^3.5.1",
-    "@react-types/shared": "^3.8.0",
-    "@react-types/tooltip": "^3.1.2",
-    "@spectrum-icons/ui": "^3.2.1"
+    "@react-aria/focus": "^3.5.1",
+    "@react-aria/interactions": "^3.8.0",
+    "@react-aria/overlays": "^3.7.4",
+    "@react-aria/tooltip": "^3.1.4",
+    "@react-aria/utils": "^3.11.1",
+    "@react-spectrum/overlays": "^3.4.5",
+    "@react-spectrum/utils": "^3.6.4",
+    "@react-stately/tooltip": "^3.0.6",
+    "@react-stately/utils": "^3.4.0",
+    "@react-types/overlays": "^3.5.2",
+    "@react-types/shared": "^3.11.0",
+    "@react-types/tooltip": "^3.1.3",
+    "@spectrum-icons/ui": "^3.2.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
