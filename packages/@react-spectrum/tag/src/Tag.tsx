@@ -10,82 +10,90 @@
  * governing permissions and limitations under the License.
  */
 
-import Alert from '@spectrum-icons/workflow/Alert';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {useRef} from 'react';
 import {SpectrumTagProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
+import {Text} from '@react-spectrum/text';
+import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
-import {useTagGroupProvider} from './TagGroup';
 
-export const Tag = ((props: SpectrumTagProps) => {
+export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
+    children,
     isDisabled,
     isRemovable,
-    validationState,
+    item,
+    state,
+    onRemove,
     ...otherProps
   } = props;
+
+  // @ts-ignore
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
-  const {
-    isDisabled: isGroupDisabled,
-    isRemovable: isGroupRemovable,
-    validationState: groupValidationState,
-    onRemove,
-    role
-  } =  useTagGroupProvider();
-
-  let removable = isGroupRemovable !== undefined ? isGroupRemovable : isRemovable;
-  let disabled = isGroupDisabled !== undefined ? isGroupDisabled : isDisabled;
-  let isInvalid = (validationState !== undefined ? validationState : groupValidationState) === 'invalid';
-  let {clearButtonProps, labelProps, tagProps} = useTag({
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
+  let labelRef = useRef();
+  let tagRef = useRef();
+  let tagRowRef = useRef();
+  let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
     ...props,
-    isRemovable: removable,
-    isDisabled: disabled,
-    validationState: validationState !== undefined ? validationState : groupValidationState,
-    onRemove: props.onRemove || onRemove,
-    role
-  });
-  let {role: buttonRole, ...otherButtonProps} = clearButtonProps;
-  let icon = props.icon || (isInvalid && <Alert />);
+    isDisabled,
+    isFocused,
+    isRemovable,
+    item,
+    onRemove,
+    tagRef,
+    tagRowRef
+  }, state);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <div
+      {...tagRowProps}>
       <div
-        {...styleProps}
-        {...mergeProps(tagProps, hoverProps)}
+        {...mergeProps(tagProps, hoverProps, focusProps)}
+        role="gridcell"
         className={classNames(
           styles,
           'spectrum-Tags-item',
           {
-            'is-disabled': disabled,
-            // 'is-selected': isSelected,
-            'spectrum-Tags-item--removable': removable,
-            'is-invalid': isInvalid,
+            'is-disabled': isDisabled,
+            'focus-ring': isFocusVisible,
+            'is-focused': isFocused,
+            'not-removable': !isRemovable,
             'is-hovered': isHovered
           },
           styleProps.className
         )}>
-        {icon && React.cloneElement(icon, {size: 'S', UNSAFE_className: classNames(styles, 'spectrum-Tags-itemIcon')})}
-        <span
-          {...labelProps}
-          className={classNames(styles, 'spectrum-Tags-itemLabel')}>
-          {props.children}
-        </span>
-        {removable &&
-          <span role={buttonRole}>
-            <ClearButton
-              tabIndex={tagProps.tabIndex}
-              focusClassName={classNames(styles, 'is-focused')}
-              UNSAFE_className={classNames(styles, 'spectrum-Tags-itemClearButton')}
-              {...otherButtonProps} />
-          </span>
-        }
+        <SlotProvider
+          slots={{
+            tagLabel: {UNSAFE_className: classNames(styles, 'spectrum-Tag-label')},
+            icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable})}
+          }}>
+          {typeof children === 'string' ? <div ref={labelRef} {...labelProps}><Text>{children}</Text></div> : children}
+          {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
+        </SlotProvider>
       </div>
-    </FocusRing>
+    </div>
   );
-});
+}
+
+function TagRemoveButton(props) {
+  props = useSlotProps(props, 'tagRemoveButton');
+  let {styleProps} = useStyleProps(props);
+  let clearBtnRef = useRef();
+
+  return (
+    <span
+      {...styleProps}
+      ref={clearBtnRef}>
+      <ClearButton
+        preventFocus
+        {...props} />
+    </span>
+  );
+}
