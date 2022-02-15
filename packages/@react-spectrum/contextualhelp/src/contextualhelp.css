@@ -30,7 +30,7 @@
 
 }
 
-.react-spectrum-ContextualHelp-dialog {
+.react-spectrum-ContextualHelp-dialog.react-spectrum-ContextualHelp-dialog {
   width: var(--spectrum-contexualhelp-dialog-width);
   --spectrum-dialog-padding-x: var(--spectrum-contextualhelp-dialog-padding);
   --spectrum-dialog-padding-y: var(--spectrum-contextualhelp-dialog-padding);

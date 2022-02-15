@@ -20,6 +20,7 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TimeField} from '@react-spectrum/datepicker';
 import {useLocale} from '@react-aria/i18n';
+import {View} from '@react-spectrum/view';
 
 storiesOf('Date and Time/Calendar', module)
   .add(
@@ -148,7 +149,9 @@ function Example(props) {
         </Picker>
       </Flex>
       <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
-        <Calendar {...props} />
+        <View maxWidth="100vw" overflow="auto">
+          <Calendar {...props} />
+        </View>
       </Provider>
     </Flex>
   );
