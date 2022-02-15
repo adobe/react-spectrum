@@ -77,6 +77,8 @@ export function ListViewItem(props) {
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
+  let isFirstItem = item.prevKey == null;
+  let isLastItem = item.nextKey == null;
   return (
     <div
       {...mergeProps(rowProps, pressProps)}
@@ -102,7 +104,9 @@ export function ListViewItem(props) {
               'is-hovered': isHovered,
               'is-selected': isSelected,
               'is-previous-selected': state.selectionManager.isSelected(item.prevKey),
-              'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey))
+              'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
+              'react-spectrum-ListViewItem--firstItem': isFirstItem,
+              'react-spectrum-ListViewItem--lastItem': isLastItem
             }
           )
         }

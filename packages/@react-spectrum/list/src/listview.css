@@ -32,11 +32,11 @@
   }
 
   /* give first and last items border-radius to match listview container */
-  &:not(.react-spectrum-ListView--quiet) div:first-child > .react-spectrum-ListView-row > .react-spectrum-ListViewItem {
+  &:not(.react-spectrum-ListView--quiet) .react-spectrum-ListViewItem--firstItem {
     border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
-  &:not(.react-spectrum-ListView--quiet) div:last-child > .react-spectrum-ListView-row > .react-spectrum-ListViewItem {
+  &:not(.react-spectrum-ListView--quiet) .react-spectrum-ListViewItem--lastItem {
     border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
@@ -83,20 +83,24 @@
     &.is-selected {
       background-color: var(--spectrum-table-row-background-color-selected);
       border-color: var(--spectrum-global-color-blue-500);
+      /* Rely on the next item having a blue top border so we can avoid double borders */
+      &:not(.react-spectrum-ListViewItem--lastItem) {
+        border-block-end-color: transparent;
+      }
       &.is-hovered,
       &.is-active {
         background-color: var(--spectrum-table-row-background-color-selected-hover);
       }
+    }
 
-      /* avoid double border for adjacent selected items */
-      &.is-previous-selected {
-        border-top: none;
-      }
+    /* avoid double border for adjacent selected items */
+    &.is-previous-selected {
+      border-block-start-color: var(--spectrum-global-color-blue-500);
     }
   }
 
   .react-spectrum-ListView--quiet & {
-    border-bottom-color: transparent;
+    border-block-end-color: transparent;
   }
 
   &.is-hovered,

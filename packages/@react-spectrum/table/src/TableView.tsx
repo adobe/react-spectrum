@@ -546,7 +546,7 @@ function TableRow({item, children, hasActions, ...otherProps}) {
     pressProps
   );
   let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
-  let isLastRow = item.nextKey === null;
+  let isLastRow = item.nextKey == null;
 
   return (
     <div
