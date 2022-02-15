@@ -146,60 +146,27 @@ function Register() {
 }
 ```
 
-## useProvider
-<TypeLink links={docs.links} type={docs.exports.useProvider} /> can be used to access the various properties applied by the nearest parent Provider. This can be useful for adapting a component's various features, such as its icon, to the current color scheme or
-scale.
+## Props
 
-The example below uses the `colorScheme` sourced from `useProvider` to determine the top button's icon when its parent Provider's `colorScheme` is flipped. Note how the icon of the ActionButton within the nested Provider doesn't change since the `colorScheme` for its
-parent Provider is fixed.
+<PropTable component={docs.exports.Provider} links={docs.links} />
+
+## useProvider
+The <TypeLink links={docs.links} type={docs.exports.useProvider} /> hook can be used to access the various properties applied by the nearest parent Provider. This can be useful for adapting a custom component to the current color scheme or scale.
+
+The example below uses the `colorScheme` returned from `useProvider` to display either a moon or sun icon depending on the current color scheme. Toggle the theme using the switcher in the top right corner of the page to see the icon change.
 
 ```tsx example
 import Light from '@spectrum-icons/workflow/Light';
 import Moon from '@spectrum-icons/workflow/Moon';
-import {ToggleButton} from '@react-spectrum/button';
 import {useProvider} from '@react-spectrum/provider';
-import {View} from '@react-spectrum/view';
-
-function ColorSchemeButton() {
-  let {colorScheme} = useProvider();
-  let label = colorScheme === 'dark' ? 'Moon icon button for dark theme' : 'Light icon button for light theme';
-  return (
-    <Flex gap="size-100" direction="column" alignItems="start" marginBottom="size-100">
-      <View>Parent provider color scheme: {colorScheme}</View>
-      <ActionButton aria-label={label}>
-        {colorScheme === 'dark' ? <Moon /> : <Light />}
-      </ActionButton>
-    </Flex>
-  );
-}
 
 function Example() {
-  let [colorScheme, setColorScheme] = React.useState('dark');
+  let {colorScheme} = useProvider();
 
-  return (
-    <Flex direction="column" gap="size-100" alignItems="start">
-      <ToggleButton onChange={(selected) => setColorScheme(selected ? 'light' : 'dark')}>
-        Toggle light mode
-      </ToggleButton>
-      <Provider colorScheme={colorScheme}>
-        <View width="size-3600" borderWidth="thickest" padding="size-200">
-          <ColorSchemeButton />
-          <Provider colorScheme="light">
-            <Flex direction="column" alignContent="center">
-              <View width="100%" borderWidth="thickest" padding="size-200">
-                <ColorSchemeButton />
-              </View>
-            </Flex>
-          </Provider>
-        </View>
-      </Provider>
-    </Flex>
-  );
+  return colorScheme === 'dark'
+    ? <Moon aria-label="In dark theme" />
+    : <Light aria-label="In light theme" />
 }
 
 <Example />
 ```
-
-## Props
-
-<PropTable component={docs.exports.Provider} links={docs.links} />
