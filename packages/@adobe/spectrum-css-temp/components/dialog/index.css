@@ -123,9 +123,9 @@ governing permissions and limitations under the License.
     padding-inline-end: 0;
   }
 
-  &.spectrum-Dialog-heading--noTypeIcon {
-    grid-column-start: heading;
-    grid-column-end: typeIcon;
+  &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+    grid-area: heading-start / heading-start / typeIcon-end / typeIcon-end;
+    padding-inline-end: 0;
   }
 }
 
@@ -141,8 +141,8 @@ governing permissions and limitations under the License.
   outline: none; /* Hide focus outline around header */
 
   &.spectrum-Dialog-header--noTypeIcon {
-    grid-column-start: header;
-    grid-column-end: typeIcon;
+    grid-area: header-start / header-start / typeIcon-end / typeIcon-end;
+    padding-inline-end: 0;
   }
 }
 
@@ -291,11 +291,22 @@ governing permissions and limitations under the License.
 
   .spectrum-Dialog-heading {
     font-size: var(--spectrum-dialog-fullscreen-header-text-size);
-  }
 
+    &.spectrum-Dialog-heading--noHeader {
+      grid-area: heading-start / heading-start / header-end / header-end;
+      padding-inline-end: 0;
+    }
+
+    /* there will never be a typeIcon here */
+    &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+      grid-area: heading-start / heading-start / header-end / header-end;
+      padding-inline-end: 0;
+    }
+  }
   .spectrum-Dialog-header {
     &.spectrum-Dialog-header--noTypeIcon {
       grid-area: header;
+      padding-inline-end: 0;
     }
   }
 
@@ -335,6 +346,21 @@ governing permissions and limitations under the License.
       ".    content content content     content     ."
       ".    footer  footer  buttonGroup buttonGroup ."
       ".    .       .       .           .           .";
+  }
+  .spectrum-Dialog-heading {
+    &.spectrum-Dialog-heading--noHeader {
+      grid-area: heading;
+    }
+
+    /* there will never be a typeIcon here */
+    &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+      grid-area: heading-start / heading-start / typeIcon-end / typeIcon-end;
+    }
+  }
+  .spectrum-Dialog-header {
+    &.spectrum-Dialog-header--noTypeIcon {
+      grid-area: header;
+    }
   }
 
   .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
@@ -379,6 +405,21 @@ governing permissions and limitations under the License.
          ".    buttonGroup  ."
          ".    .            .";
     }
+    .spectrum-Dialog-heading {
+      &.spectrum-Dialog-heading--noHeader {
+        grid-area: heading;
+      }
+
+      /* there will never be a typeIcon here */
+      &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+        grid-area: heading;
+      }
+    }
+    .spectrum-Dialog-header {
+      &.spectrum-Dialog-header--noTypeIcon {
+        grid-area: header;
+      }
+    }
 
     .spectrum-Dialog-buttonGroup {
       padding-block-start: var(--spectrum-global-dimension-static-size-500);
@@ -409,6 +450,23 @@ governing permissions and limitations under the License.
       ".    footer      footer      footer      footer      ."
       ".    buttonGroup buttonGroup buttonGroup buttonGroup ."
       ".    .           .           .           .           .";
+  }
+  .spectrum-Dialog-heading {
+    &.spectrum-Dialog-heading--noHeader {
+      grid-area: heading;
+      padding-inline-end: 0;
+    }
+
+    &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+      grid-area: heading-start / heading-start / typeIcon-end / typeIcon-end;
+      padding-inline-end: 0;
+    }
+  }
+  .spectrum-Dialog-header {
+    &.spectrum-Dialog-header--noTypeIcon {
+      grid-area: header;
+      padding-inline-end: 0;
+    }
   }
 
   .spectrum-Dialog-content {
