@@ -381,15 +381,10 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   // Don't do this for virtual focus collections because the user is never focused within the collection and thus we don't
   // want to mistakenly change their focus position.
   let lastSelectedKeys = useRef(manager.selectedKeys);
-  useEffect(() => {
-    if (!equalSets(lastSelectedKeys.current, manager.selectedKeys)) {
-      if (!manager.isSelected(manager.focusedKey) && !manager.isFocused && !shouldUseVirtualFocus) {
-        manager.firstSelectedKey != null && manager.setFocusedKey(manager.firstSelectedKey);
-      }
-    }
-
-    lastSelectedKeys.current = manager.selectedKeys;
-  }, [manager.focusedKey, manager.isFocused, manager.firstSelectedKey, manager.selectedKeys, shouldUseVirtualFocus]);
+  if (!manager.isFocused && !shouldUseVirtualFocus && !manager.isSelected(manager.focusedKey) && !equalSets(lastSelectedKeys.current, manager.selectedKeys)) {
+    manager.firstSelectedKey != null && manager.setFocusedKey(manager.firstSelectedKey);
+  }
+  lastSelectedKeys.current = manager.selectedKeys;
 
   let handlers = {
     onKeyDown,
