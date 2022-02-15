@@ -1,8 +1,8 @@
 diff --git a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
-index 9e563e8..08a2af7 100644
+index 4792915..5149bd0 100644
 --- a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
 +++ b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
-@@ -135,10 +135,10 @@ var _default = new (_plugin().Transformer)({
+@@ -139,10 +139,10 @@ var _default = new (_plugin().Transformer)({
      const postcss = await loadPostcss(options, asset.filePath);
      return {
        type: 'postcss',
@@ -15,16 +15,16 @@ index 9e563e8..08a2af7 100644
      };
    },
  
-@@ -168,7 +168,7 @@ var _default = new (_plugin().Transformer)({
-     }
+@@ -172,7 +172,7 @@ var _default = new (_plugin().Transformer)({
  
+     const postcss = await loadPostcss(options, asset.filePath);
      let ast = (0, _nullthrows().default)(await asset.getAST());
 -    let program = postcss.fromJSON(ast.program);
 +    let program = ast.program;
-     let code = asset.isASTDirty() ? null : await asset.getCode();
+     let plugins = [...config.hydrated.plugins];
+     let cssModules = null;
  
-     if (code == null || COMPOSES_RE.test(code)) {
-@@ -204,8 +204,8 @@ var _default = new (_plugin().Transformer)({
+@@ -220,8 +220,8 @@ var _default = new (_plugin().Transformer)({
      } = await postcss(plugins).process(program, config.hydrated);
      asset.setAST({
        type: 'postcss',
@@ -35,7 +35,7 @@ index 9e563e8..08a2af7 100644
      });
  
      for (let msg of messages) {
-@@ -246,13 +246,13 @@ var _default = new (_plugin().Transformer)({
+@@ -262,13 +262,13 @@ var _default = new (_plugin().Transformer)({
          ([className, classNameHashed]) => `module.exports[${JSON.stringify(className)}] = ${JSON.stringify(classNameHashed)};`).join('\n');
        }
  
@@ -54,7 +54,7 @@ index 9e563e8..08a2af7 100644
        assets.push({
          type: 'js',
          content: code
-@@ -269,7 +269,7 @@ var _default = new (_plugin().Transformer)({
+@@ -285,7 +285,7 @@ var _default = new (_plugin().Transformer)({
    }) {
      const postcss = await loadPostcss(options, asset.filePath);
      let code = '';
