@@ -4195,7 +4195,7 @@ describe('TableView', function () {
     });
 
     describe('column widths', function () {
-      it('should divide the available width by default', function () {
+      it('should divide the available width by default if no defaultWidth is provided', function () {
         let tree = render(
           <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader columns={columns}>
@@ -4274,7 +4274,7 @@ describe('TableView', function () {
         }
       });
 
-      it('should divide remaining width amoung remaining columns', function () {
+      it('should divide remaining width among remaining columns', function () {
         let tree = render(
           <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader>
@@ -4381,8 +4381,65 @@ describe('TableView', function () {
           expect(row.childNodes[0].style.width).toBe('200px');
           expect(row.childNodes[1].style.width).toBe('300px');
           expect(row.childNodes[2].style.width).toBe('500px');
-
         }
+      });
+
+      describe('bounded constraint on columns where dynamic columns exist before the bounded columns', () => {
+        it('should fulfill the constraints of the static columns and give remaining width to previously defined dynamic columns', () => {
+          let tree = render(
+            <TableView aria-label="Table">
+              <TableHeader>
+                <Column key="foo">Foo</Column>
+                <Column key="bar" maxWidth={200}>Bar</Column>
+                <Column key="baz" maxWidth={200}>Baz</Column>
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell>{item[key]}</Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+  
+          let rows = tree.getAllByRole('row');
+  
+          for (let row of rows) {
+            expect(row.childNodes[0].style.width).toBe('600px');
+            expect(row.childNodes[1].style.width).toBe('200px');
+            expect(row.childNodes[2].style.width).toBe('200px');
+          }
+        });
+      });
+
+      describe("mutiple columns are bounded but earlier columns are 'less bounded' than future columns", () => {
+        it("should satisfy the conditions of all columns but also allocate remaining space to the 'less bounded' previous columns", () => {
+          let tree = render(
+            <TableView aria-label="Table">
+              <TableHeader>
+                <Column key="foo" minWidth={100}>Foo</Column>
+                <Column key="bar" minWidth={500}>Bar</Column>
+                <Column key="baz" maxWidth={200}>Baz</Column>
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell>{item[key]}</Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+  
+          let rows = tree.getAllByRole('row');
+  
+          for (let row of rows) {
+            expect(row.childNodes[0].style.width).toBe('300px');
+            expect(row.childNodes[1].style.width).toBe('500px');
+            expect(row.childNodes[2].style.width).toBe('200px');
+          }
+        });
       });
 
       it('should compute the correct widths for tiered headings with selection', function () {
