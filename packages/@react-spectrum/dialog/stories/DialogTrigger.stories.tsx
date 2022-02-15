@@ -13,15 +13,18 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
-import {Content, Header} from '@react-spectrum/view';
+import {Checkbox} from '@react-spectrum/checkbox';
+import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
+import {Image} from '@react-spectrum/image';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('DialogTrigger', module)
@@ -355,6 +358,10 @@ storiesOf('DialogTrigger', module)
         </DialogTrigger>
       </Flex>
     )
+  )
+  .add(
+    'adjustable dialog',
+    () => <AdjustableDialog />
   );
 
 function render({width = 'auto', ...props}) {
@@ -444,5 +451,50 @@ function renderAlert({width = 'auto', ...props}) {
         )}
       </DialogTrigger>
     </div>
+  );
+}
+
+function AdjustableDialog() {
+  let headingStrings = ['The Heading', 'The Heading of Maximum Truth That is Really Long to Go On and On a a a a a Again and Wraps'];
+  let [showHero, setShowHero] = useState(false);
+  let [heading, setHeading] = useState(headingStrings[0]);
+  let [showHeader, setShowHeader] = useState(false);
+  let [showTypeIcon, setShowTypeIcon] = useState(false);
+  let [isDismissable, setIsDismissable] = useState(false);
+  let [showFooter, setShowFooter] = useState(false);
+  let [longButtonLabels, setLongButtonLabels] = useState(false);
+
+  return (
+    <Flex gap="size-200">
+      <Flex direction="column" width="size-2000" gap="size-100">
+        <Checkbox onChange={setShowHero}>Show Hero</Checkbox>
+        <Checkbox onChange={(isChecked) => {isChecked ? setHeading(headingStrings[1]) : setHeading(headingStrings[0]);}}>Toggle Heading Values</Checkbox>
+        <Checkbox onChange={setShowHeader}>Show Header</Checkbox>
+        <Checkbox onChange={setShowTypeIcon}>Show TypeIcon</Checkbox>
+        <Checkbox onChange={setIsDismissable}>Show Dismissable</Checkbox>
+        <Checkbox onChange={setShowFooter}>Show Footer</Checkbox>
+        <Checkbox onChange={setLongButtonLabels}>Show Long Button Labels</Checkbox>
+      </Flex>
+      <DialogTrigger isDismissable={isDismissable}>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog>
+            {showHero && <Image slot="hero" alt="" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />}
+            <Heading>{heading}</Heading>
+            {showHeader && <Header>This is a long header</Header>}
+            {showTypeIcon && <AlertMedium
+              slot="typeIcon"
+              aria-label="Alert" />}
+            <Divider />
+            <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+            {showFooter && <Footer><Checkbox>I have read and accept the terms of use and privacy policy</Checkbox></Footer>}
+            <ButtonGroup>
+              <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel {longButtonLabels && 'and close this dialog'}</Button>
+              <Button variant="cta" onPress={chain(close, action('confirm'))}>Confirm {longButtonLabels && 'and close this dialog'}</Button>
+            </ButtonGroup>
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </Flex>
   );
 }

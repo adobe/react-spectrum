@@ -64,7 +64,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let slots = useMemo(() => ({
     hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
     header: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-header', {'spectrum-Dialog-header--noTypeIcon': !hasTypeIcon})},
-    heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), level: 2, ...titleProps},
+    heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader, 'spectrum-Dialog-heading--noTypeIcon': !hasTypeIcon}), level: 2, ...titleProps},
     typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
     divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
     content: {UNSAFE_className: styles['spectrum-Dialog-content']},

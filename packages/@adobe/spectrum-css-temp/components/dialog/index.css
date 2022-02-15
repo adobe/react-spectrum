@@ -122,6 +122,11 @@ governing permissions and limitations under the License.
     grid-area: heading-start / heading-start / header-end / header-end;
     padding-inline-end: 0;
   }
+
+  &.spectrum-Dialog-heading--noTypeIcon {
+    grid-column-start: heading;
+    grid-column-end: typeIcon;
+  }
 }
 
 .spectrum-Dialog-header {
