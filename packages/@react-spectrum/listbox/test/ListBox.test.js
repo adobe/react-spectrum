@@ -213,7 +213,7 @@ describe('ListBox', function () {
       // Trigger a menu item via space
       let item = options[4];
       // Focus item so we have the proper selection manager focus state and don't get a setState in render warning
-      item.focus();
+      act(() => {item.focus();});
       fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32});
       expect(item).toHaveAttribute('aria-selected', 'true');
       let checkmark = within(item).getByRole('img', {hidden: true});
