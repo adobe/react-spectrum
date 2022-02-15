@@ -282,6 +282,7 @@ svg.spectrum-Table-sortedIcon {
         bottom: 0;
         top: 0;
         z-index: 3;
+        pointer-events: none;
       }
     }
   }
