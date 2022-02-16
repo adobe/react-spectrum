@@ -245,7 +245,7 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
   }
 }
 
-describe.skip('ComboBox', function () {
+describe('ComboBox', function () {
   beforeAll(function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);

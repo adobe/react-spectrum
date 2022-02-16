@@ -50,7 +50,7 @@ function renderComponent(Component, triggerProps = {}, menuProps = {}, buttonPro
   );
 }
 
-describe.skip('MenuTrigger', function () {
+describe('MenuTrigger', function () {
   let offsetWidth, offsetHeight;
   let onOpenChange = jest.fn();
   let onOpen = jest.fn();

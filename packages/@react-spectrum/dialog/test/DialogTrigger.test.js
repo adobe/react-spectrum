@@ -26,7 +26,7 @@ import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 
-describe.skip('DialogTrigger', function () {
+describe('DialogTrigger', function () {
   let matchMedia;
   beforeAll(() => {
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);

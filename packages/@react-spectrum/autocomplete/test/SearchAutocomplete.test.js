@@ -137,7 +137,7 @@ function testSearchAutocompleteOpen(searchAutocomplete, listbox, focusedItemInde
   }
 }
 
-describe.skip('SearchAutocomplete', function () {
+describe('SearchAutocomplete', function () {
   beforeAll(function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);

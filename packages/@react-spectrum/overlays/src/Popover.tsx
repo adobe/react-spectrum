@@ -103,7 +103,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     isDisabled: isNonModal
   });
 
-  if (arrowProps.style.left === undefined && arrowProps.style.top === undefined) {
+  if (arrowProps?.style.left === undefined && arrowProps?.style.top === undefined) {
     hideArrow = true;
   }
 
