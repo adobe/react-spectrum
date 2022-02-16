@@ -120,6 +120,30 @@ describe('ListView', function () {
     expect(gridCells[0]).toHaveTextContent('Foo');
   });
 
+  it('renders a falsy ids', function () {
+    let items = [
+      {id: 0, label: 'Foo'},
+      {id: 1, label: 'Bar'}
+    ];
+    let {getByRole, getAllByRole} = render(
+      <ListView items={items} aria-label="List">
+        {item =>
+          <Item textValue={item.label}>{item.label}</Item>
+        }
+      </ListView>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toBeVisible();
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(2);
+
+    let gridCells = within(rows[0]).getAllByRole('gridcell');
+    expect(gridCells).toHaveLength(1);
+    expect(gridCells[0]).toHaveTextContent('Foo');
+  });
+
   describe('keyboard focus', function () {
     let items = [
       {key: 'foo', label: 'Foo'},
