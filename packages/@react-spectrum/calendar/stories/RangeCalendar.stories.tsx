@@ -20,6 +20,7 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {TimeField} from '@react-spectrum/datepicker';
+import {View} from '@react-spectrum/view';
 
 storiesOf('Date and Time/RangeCalendar', module)
   .add(
@@ -131,7 +132,11 @@ storiesOf('Date and Time/RangeCalendar/cell', module)
 );
 
 function render(props = {}) {
-  return <RangeCalendar onChange={action('change')} {...props} />;
+  return (
+    <View maxWidth="100vw" overflow="auto">
+      <RangeCalendar onChange={action('change')} {...props} />
+    </View>
+  );
 }
 
 function RangeCalendarWithTime() {

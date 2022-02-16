@@ -168,17 +168,9 @@ class DragSession {
       document.addEventListener(event, this.cancelEvent, true);
     }
 
-    this.mutationObserver = new MutationObserver(() => {
-      // JSDOM has a bug where MutationObserver enters an infinite loop if mutations
-      // occur inside a MutationObserver callback. If running in Node, wait until
-      // the next tick to update valid drop targets.
-      // See https://github.com/jsdom/jsdom/issues/3096
-      if (typeof setImmediate === 'function') {
-        this.mutationImmediate = setImmediate(() => this.updateValidDropTargets());
-      } else {
-        this.updateValidDropTargets();
-      }
-    });
+    this.mutationObserver = new MutationObserver(() =>
+      this.updateValidDropTargets()
+    );
     this.updateValidDropTargets();
 
     announce(this.formatMessage(MESSAGES[getDragModality()]));

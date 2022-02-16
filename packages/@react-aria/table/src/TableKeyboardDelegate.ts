@@ -35,7 +35,12 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
         return child.key;
       }
 
-      let firstItem = this.collection.getItem(this.getFirstKey());
+      let firstKey = this.getFirstKey();
+      if (firstKey == null) {
+        return;
+      }
+
+      let firstItem = this.collection.getItem(firstKey);
       return [...firstItem.childNodes][startItem.index].key;
     }
 
@@ -60,7 +65,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     // only return above row key if not header row
     let superKey = super.getKeyAbove(key);
-    if (superKey && this.collection.getItem(superKey).type !== 'headerrow') {
+    if (superKey != null && this.collection.getItem(superKey).type !== 'headerrow') {
       return superKey;
     }
 
@@ -147,6 +152,9 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     let collection = this.collection;
     let key = fromKey ?? this.getFirstKey();
+    if (key == null) {
+      return null;
+    }
 
     // If the starting key is a cell, search from its parent row.
     let startItem = collection.getItem(key);

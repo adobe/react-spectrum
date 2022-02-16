@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/virtualizer",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,10 +18,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.3.3",
-    "@react-aria/utils": "^3.10.0",
-    "@react-stately/virtualizer": "^3.1.6",
-    "@react-types/shared": "^3.10.0"
+    "@react-aria/i18n": "^3.3.5",
+    "@react-aria/utils": "^3.11.1",
+    "@react-stately/virtualizer": "3.1.7-alpha.0",
+    "@react-types/shared": "^3.11.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
