@@ -77,13 +77,13 @@ let withSection = [
 ];
 
 let itemsWithFalsyId = [
-  {id: 1, name: 'Animals', children: [
-    {id: 0, name: 'key=0'},
+  {id: 0, name: 'key=0', children: [
+    {id: 1, name: 'Aardvark'},
     {id: 2, name: 'Kangaroo'},
     {id: 3, name: 'Snake'}
   ]},
-  {id: 4, name: 'People', children: [
-    {id: '', name: 'key=""'},
+  {id: '', name: 'key=""', children: [
+    {id: 4, name: 'Danni'},
     {id: 5, name: 'Devon'},
     {id: 6, name: 'Ross'}
   ]}
