@@ -12,7 +12,7 @@
 
 import {HTMLAttributes} from 'react';
 
-interface GridRowGroupAria {
+export interface GridRowGroupAria {
   /** Props for the row group element. */
   rowGroupProps: HTMLAttributes<HTMLElement>
 }
