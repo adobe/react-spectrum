@@ -294,7 +294,13 @@ class VersionManager {
     // Ensure all dependencies of this package are published and up to date
     for (let dep of this.workspacePackages[pkg].workspaceDependencies) {
       if (!this.existingPackages.has(dep) || this.changedPackages.has(dep)) {
-        this.addReleasedPackage(dep, bump);
+        // Bump a patch version of the dependent package if it's not also a prerelease.
+        // Otherwise, bump to the next prerelease in the existing status.
+        let filePath = this.workspacePackages[dep].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        let prerelease = semver.parse(pkg.version).prerelease;
+        let b = prerelease.length === 0 ? 'patch' : prerelease[0];
+        this.addReleasedPackage(dep, b);
       }
     }
   }
