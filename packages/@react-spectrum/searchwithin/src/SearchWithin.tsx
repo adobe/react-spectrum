@@ -24,6 +24,7 @@ import {useLabel} from '@react-aria/label';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
@@ -87,13 +88,14 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
 
   let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
   let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
+  let visuallyHiddenId = useId();
 
   let slots = {
     searchfield: {
       ...defaultSlotValues,
       UNSAFE_className: searchFieldClassName,
       // Apply aria-labelledby of group or the group id to searchfield. No need to pass the group id (we want a new one) and aria-label (aria-labelledby will suffice)
-      'aria-labelledby': `${labelledBy} ${pickerId} ${pickerId}-value`,
+      'aria-labelledby': `${labelledBy} ${visuallyHiddenId} ${pickerId}`,
       // When label is provided, input should have id referenced by htmlFor of label, instead of group
       id: label && fieldProps.id
     },
@@ -103,8 +105,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
       UNSAFE_className: pickerClassName,
       menuWidth,
       align: 'end',
-      'aria-label': formatMessage('searchWithin'),
-      'aria-labelledby': `${labelledBy} ${pickerId}`
+      'aria-labelledby': `${labelledBy} ${visuallyHiddenId}`
     }
   };
 
@@ -127,6 +128,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
         role="group"
         className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
         ref={groupRef}>
+        <VisuallyHidden id={visuallyHiddenId}>{formatMessage('searchWithin')}</VisuallyHidden>
         <SlotProvider slots={slots}>
           {children}
         </SlotProvider>
