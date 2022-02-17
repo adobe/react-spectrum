@@ -7,12 +7,6 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
-  "browserslist": [
-    "chrome >= 88",
-    "firefox >= 85",
-    "safari >= 13",
-    "edge >= 88"
-  ],
   "scripts": {
     "check-types": "tsc",
     "install-16": "yarn add -W react@^16.8.0 react-dom@^16.8.0",
