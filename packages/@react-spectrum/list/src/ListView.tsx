@@ -107,7 +107,11 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     onAction,
     dragHooks
   } = props;
-  let isListDraggable = dragHooks !== undefined;
+  let isListDraggable = !!dragHooks;
+  let dragHooksProvided = useRef(isListDraggable);
+  if (dragHooksProvided.current && !isListDraggable) {
+    console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+  }
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
   let formatMessage = useMessageFormatter(intlMessages);
@@ -213,13 +217,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       itemAllowsDragging: () => true
     });
   }
-
-  let dragHooksProvided = useRef(isListDraggable);
-  useEffect(() => {
-    if (!dragHooksProvided.current && isListDraggable) {
-      console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-    }
-  }, [isListDraggable]);
 
   let {gridProps} = useGrid({
     ...props,
