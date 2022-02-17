@@ -161,6 +161,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
 
+    // If allowsDifferentPressOrigin, make selection happen on pressUp (e.g. open menu on press down, selection on menu item happens on press up.)
+    // Otherwise, have selection happen onPress (prevents listview row selection when clicking on interactable elements in the row)
     if (!allowsDifferentPressOrigin) {
       itemPressProps.onPress = (e) => {
         if (e.pointerType !== 'keyboard') {

@@ -94,8 +94,6 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number,
   onAction?: (key: string) => void,
-  // TODO: If we go with the plugin structure for adding drag and drop, this name is fine as is. If we don't, we should rename
-  // this to something like getDragItems. To be done in follow up PR
   dragHooks?: DragHooks
 }
 
