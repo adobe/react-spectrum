@@ -121,6 +121,8 @@ export function useSliderThumb(
       const {
         getThumbPercent,
         setThumbPercent,
+        decrementThumb,
+        incrementThumb,
         step,
         pageSize
       } = stateRef.current;
@@ -130,22 +132,10 @@ export function useSliderThumb(
         currentPosition.current = getThumbPercent(index) * size;
       }
       if (pointerType === 'keyboard') {
-        if (deltaX > 0) {
-          if (reverseX) {
-            stateRef.current.decrementThumb(index, shiftKey ? pageSize : step);
-          } else {
-            stateRef.current.incrementThumb(index, shiftKey ? pageSize : step);
-          }
-        } else if (deltaY < 0) {
-          stateRef.current.incrementThumb(index, shiftKey ? pageSize : step);
-        } else if (deltaX < 0) {
-          if (reverseX) {
-            stateRef.current.incrementThumb(index, shiftKey ? pageSize : step);
-          } else {
-            stateRef.current.decrementThumb(index, shiftKey ? pageSize : step);
-          }
-        } else if (deltaY > 0) {
-          stateRef.current.decrementThumb(index, shiftKey ? pageSize : step);
+        if ((deltaX > 0 && reverseX) || (deltaX < 0 && !reverseX) || deltaY > 0) {
+          decrementThumb(index, shiftKey ? pageSize : step);
+        } else {
+          incrementThumb(index, shiftKey ? pageSize : step);
         }
       } else {
         let delta = isVertical ? deltaY : deltaX;
