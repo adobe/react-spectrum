@@ -44,7 +44,18 @@ let monopackages = new Set([
 class VersionManager {
   constructor() {
     // Get dependency tree from yarn workspaces
-    this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+    try {
+      // yarn 1.21 returns this structure
+      this.workspacePackages = JSON.parse(JSON.parse(exec('yarn workspaces info --json').toString()).data);
+    } catch (e) {
+      try {
+        // Unknown what versions of yarn return this, but it was the original implementation.
+        this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+      } catch (e) {
+        // If that failed to parse, then it's because we have yarn 1.22 and this is how we need to parse it.
+        this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString());
+      }
+    }
     this.existingPackages = new Set();
     this.changedPackages = new Set();
     this.versionBumps = {};
@@ -135,6 +146,7 @@ class VersionManager {
       return;
     }
 
+
     // Diff each package individually. Some packages might have been skipped during last release,
     // so we cannot simply look at the last tag on the whole repo.
     for (let name in this.workspacePackages) {
@@ -144,7 +156,7 @@ class VersionManager {
         // Diff this package since the last published version, according to the package.json.
         // We create a git tag for each package version.
         let tag = `${pkg.name}@${pkg.version}`;
-        let res = spawn('git', ['diff', '--exit-code', tag + '..HEAD',  this.workspacePackages[name].location, ':!**/docs/**', ':!**/test/**', ':!**/stories/**', ':!**/chromatic/**']);
+        let res = spawn('git', ['diff', '--exit-code', tag + '..HEAD',  this.workspacePackages[name].location, ':!**/docs/**', ':!**/test/**', ':!**/test-utils/**', ':!**/stories/**', ':!**/chromatic/**']);
         if (res.status !== 0) {
           this.changedPackages.add(name);
         }
@@ -271,22 +283,23 @@ class VersionManager {
 
     // Bump anything that depends on this package if it's a prerelease
     // because dependencies will be pinned rather than caret ranges.
-    if (status !== 'released') {
-      for (let p in this.workspacePackages) {
-        if (this.releasedPackages.has(p)) {
-          continue;
-        }
+    // Bump anything that has this as a dep by a patch, all the way up the tree
+    for (let p in this.workspacePackages) {
+      if (this.releasedPackages.has(p)) {
+        continue;
+      }
 
-        if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
-          if (this.existingPackages.has(p)) {
-            // Bump a patch version of the dependent package if it's not also a prerelease.
-            // Otherwise, bump to the next prerelease in the existing status.
-            let filePath = this.workspacePackages[p].location + '/package.json';
-            let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-            let prerelease = semver.parse(pkg.version).prerelease;
-            let b = prerelease.length === 0 ? 'patch' : prerelease[0];
-            this.addReleasedPackage(p, b, true);
-          }
+      if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
+        let filePath = this.workspacePackages[p].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        let prerelease = semver.parse(pkg.version).prerelease;
+        let b = prerelease.length === 0 ? 'patch' : prerelease[0];
+        if (this.existingPackages.has(p) && status !== 'released') {
+          // Bump a patch version of the dependent package if it's not also a prerelease.
+          // Otherwise, bump to the next prerelease in the existing status.
+          this.addReleasedPackage(p, b, true);
+        } else if (this.existingPackages.has(p) && status === 'released') {
+          this.addReleasedPackage(p, b);
         }
       }
     }
@@ -333,6 +346,8 @@ class VersionManager {
         versions.set(name, [pkg.version, newVersion, pkg.private]);
       }
     }
+
+
 
     return versions;
   }
