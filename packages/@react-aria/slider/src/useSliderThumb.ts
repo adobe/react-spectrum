@@ -83,6 +83,10 @@ export function useSliderThumb(
       let {
         getThumbMaxValue,
         getThumbMinValue,
+        decrementThumb,
+        incrementThumb,
+        setThumbValue,
+        setThumbDragging,
         pageSize
       } = stateRef.current;
       // these are the cases that useMove or useSlider don't handle
@@ -93,22 +97,22 @@ export function useSliderThumb(
       // same handling as useMove, stopPropagation to prevent useSlider from handling the event as well.
       e.preventDefault();
       // remember to set this so that onChangeEnd is fired
-      state.setThumbDragging(index, true);
+      setThumbDragging(index, true);
       switch (e.key) {
         case 'PageUp':
-          stateRef.current.incrementThumb(index, pageSize);
+          incrementThumb(index, pageSize);
           break;
         case 'PageDown':
-          stateRef.current.decrementThumb(index, pageSize);
+          decrementThumb(index, pageSize);
           break;
         case 'Home':
-          state.setThumbValue(index, getThumbMinValue(index));
+          setThumbValue(index, getThumbMinValue(index));
           break;
         case 'End':
-          state.setThumbValue(index, getThumbMaxValue(index));
+          setThumbValue(index, getThumbMaxValue(index));
           break;
       }
-      state.setThumbDragging(index, false);
+      setThumbDragging(index, false);
     }
   });
 
