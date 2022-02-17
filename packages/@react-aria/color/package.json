@@ -26,8 +26,8 @@
     "@react-aria/textfield": "^3.5.0",
     "@react-aria/utils": "^3.11.0",
     "@react-aria/visually-hidden": "^3.2.3",
-    "@react-stately/color": "3.0.0-beta.5",
-    "@react-types/color": "3.0.0-beta.3",
+    "@react-stately/color": "3.0.0-beta.7",
+    "@react-types/color": "3.0.0-beta.5",
     "@react-types/shared": "^3.10.1",
     "@react-types/slider": "^3.0.2"
   },
