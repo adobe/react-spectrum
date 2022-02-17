@@ -1,6 +1,6 @@
 {
   "name": "@adobe/react-spectrum",
-  "version": "3.16.2",
+  "version": "3.16.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -50,7 +50,7 @@
     "@react-spectrum/slider": "^3.0.6",
     "@react-spectrum/statuslight": "^3.2.4",
     "@react-spectrum/switch": "^3.1.5",
-    "@react-spectrum/table": "^3.1.4",
+    "@react-spectrum/table": "^3.1.5",
     "@react-spectrum/tabs": "^3.1.3",
     "@react-spectrum/text": "^3.1.5",
     "@react-spectrum/textfield": "^3.3.2",
