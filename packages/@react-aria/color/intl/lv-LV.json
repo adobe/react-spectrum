@@ -1,3 +1,5 @@
 {
-  "twoDimensionalSlider": "Plaknes slīdnis"
+  "twoDimensionalSlider": "Plaknes slīdnis",
+  "colorNameAndValue": "{name}: {value}",
+  "x/y": "{x} / {y}"
 }

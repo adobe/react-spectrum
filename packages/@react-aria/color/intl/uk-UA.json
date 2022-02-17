@@ -1,3 +1,5 @@
 {
-  "twoDimensionalSlider": "Повзунок 2D"
+  "twoDimensionalSlider": "Повзунок 2D",
+  "colorNameAndValue": "{name}: {value}",
+  "x/y": "{x} / {y}"
 }

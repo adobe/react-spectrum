@@ -106,26 +106,40 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       stateRef.current.setDragging(true);
     },
     onMove({deltaX, deltaY, pointerType, shiftKey}) {
+      let {
+        incrementX,
+        decrementX,
+        incrementY,
+        decrementY,
+        xChannelPageStep,
+        xChannelStep,
+        yChannelPageStep,
+        yChannelStep,
+        getThumbPosition,
+        setColorFromPoint
+      } = stateRef.current;
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPosition();
+        currentPosition.current = getThumbPosition();
       }
       let {width, height} = containerRef.current.getBoundingClientRect();
       if (pointerType === 'keyboard') {
-        if (deltaX > 0) {
-          stateRef.current.incrementX(shiftKey ? stateRef.current.xChannelPageStep : stateRef.current.xChannelStep);
-        } else if (deltaX < 0) {
-          stateRef.current.decrementX(shiftKey ? stateRef.current.xChannelPageStep : stateRef.current.xChannelStep);
+        let deltaXValue = shiftKey && xChannelPageStep > xChannelStep ? xChannelPageStep : xChannelStep;
+        let deltaYValue = shiftKey && yChannelPageStep > yChannelStep ? yChannelPageStep : yChannelStep;
+        if ((deltaX > 0 && direction === 'ltr') || (deltaX < 0 && direction === 'rtl')) {
+          incrementX(deltaXValue);
+        } else if ((deltaX < 0 && direction === 'ltr') || (deltaX > 0 && direction === 'rtl')) {
+          decrementX(deltaXValue);
         } else if (deltaY > 0) {
-          stateRef.current.decrementY(shiftKey ? stateRef.current.yChannelPageStep : stateRef.current.yChannelStep);
+          decrementY(deltaYValue);
         } else if (deltaY < 0) {
-          stateRef.current.incrementY(shiftKey ? stateRef.current.yChannelPageStep : stateRef.current.yChannelStep);
+          incrementY(deltaYValue);
         }
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
       } else {
         currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
         currentPosition.current.y += deltaY / height;
-        stateRef.current.setColorFromPoint(currentPosition.current.x, currentPosition.current.y);
+        setColorFromPoint(currentPosition.current.x, currentPosition.current.y);
       }
     },
     onMoveEnd() {
@@ -305,9 +319,12 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       ...colorAreaInteractions,
       role: 'group'
     },
-    gradientProps: {},
+    gradientProps: {
+      role: 'presentation'
+    },
     thumbProps: {
-      ...thumbInteractions
+      ...thumbInteractions,
+      role: 'presentation'
     },
     xInputProps: {
       ...xInputLabellingProps,
@@ -317,10 +334,15 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       max: state.value.getChannelRange(xChannel).maxValue,
       step: xChannelStep,
       'aria-roledescription': ariaRoleDescription,
-      'aria-valuetext': (isMobile ? formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)}) : [
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)}),
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
-      ].join(', ')),
+      'aria-valuetext': (
+        isMobile ?
+          formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)})
+          :
+          [
+            formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)}),
+            formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
+          ].join(', ')
+      ),
       title: getValueTitle(),
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),
@@ -337,10 +359,15 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
       max: state.value.getChannelRange(yChannel).maxValue,
       step: yChannelStep,
       'aria-roledescription': ariaRoleDescription,
-      'aria-valuetext': (isMobile ? formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)}) : [
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)}),
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)})
-      ].join(', ')),
+      'aria-valuetext': (
+        isMobile ?
+          formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
+          :
+          [
+            formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)}),
+            formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)})
+          ].join(', ')
+      ),
       'aria-orientation': 'vertical',
       title: getValueTitle(),
       disabled: isDisabled,

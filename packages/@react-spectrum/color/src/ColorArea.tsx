@@ -79,7 +79,7 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
         className={classNames(styles, 'spectrum-ColorArea-handle')}
         {...thumbProps}
         {...thumbStyleProps}>
-        <div>
+        <div role="presentation">
           <input className={classNames(styles, 'spectrum-ColorArea-slider')} {...mergeProps(xInputProps, focusProps)} ref={xInputRef} />
           <input className={classNames(styles, 'spectrum-ColorArea-slider')} {...mergeProps(yInputProps, focusProps)} ref={yInputRef} />
         </div>

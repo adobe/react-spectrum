@@ -1,3 +1,5 @@
 {
-  "twoDimensionalSlider": "מחוון דו-ממדי"
+  "twoDimensionalSlider": "מחוון דו-ממדי",
+  "colorNameAndValue": "{name}: {value}",
+  "x/y": "{x} / {y}"
 }

@@ -1,3 +1,5 @@
 {
-  "twoDimensionalSlider": "2D csúszka"
+  "twoDimensionalSlider": "2D csúszka",
+  "colorNameAndValue": "{name}: {value}",
+  "x/y": "{x} / {y}"
 }

@@ -77,27 +77,31 @@ XBlueYGreen.args = {xChannel: 'blue', yChannel: 'green', onChange: action('onCha
 
 export let XGreenYBlue = Template.bind({});
 XGreenYBlue.storyName = 'RGB xChannel="green", yChannel="blue"';
-XGreenYBlue.args = {xChannel: 'green', yChannel: 'blue', onChange: action('onChange')};
+XGreenYBlue.args = {...XBlueYGreen.args, xChannel: 'green', yChannel: 'blue'};
 
 export let XBlueYRed = Template.bind({});
 XBlueYRed.storyName = 'RGB xChannel="blue", yChannel="red"';
-XBlueYRed.args = {xChannel: 'blue', yChannel: 'red', onChange: action('onChange')};
+XBlueYRed.args = {...XBlueYGreen.args, xChannel: 'blue', yChannel: 'red'};
 
 export let XRedYBlue = Template.bind({});
 XRedYBlue.storyName = 'GB xChannel="red", yChannel="blue"';
-XRedYBlue.args = {xChannel: 'red', yChannel: 'blue', onChange: action('onChange')};
+XRedYBlue.args = {...XBlueYGreen.args, xChannel: 'red', yChannel: 'blue'};
 
 export let XRedYGreen = Template.bind({});
 XRedYGreen.storyName = 'RGB xChannel="red", yChannel="green"';
-XRedYGreen.args = {xChannel: 'red', yChannel: 'green', onChange: action('onChange')};
+XRedYGreen.args = {...XBlueYGreen.args, xChannel: 'red', yChannel: 'green'};
 
 export let XGreenYRed = Template.bind({});
 XGreenYRed.storyName = 'RGB xChannel="green", yChannel="red"';
-XGreenYRed.args = {xChannel: 'green', yChannel: 'red', onChange: action('onChange')};
+XGreenYRed.args = {...XBlueYGreen.args, xChannel: 'green', yChannel: 'red'};
 
 export let XBlueYGreenStep16 = Template.bind({});
 XBlueYGreenStep16.storyName = 'RGB xChannel="blue", yChannel="green", step="16"';
 XBlueYGreenStep16.args = {...XBlueYGreen.args, xChannelStep: 16, yChannelStep: 16};
+
+export let XBlueYGreenPageStep32 = Template.bind({});
+XBlueYGreenPageStep32.storyName = 'RGB xChannel="blue", yChannel="green", pageStep="32"';
+XBlueYGreenPageStep32.args = {...XBlueYGreen.args, xChannelPageStep: 32, yChannelPageStep: 32};
 
 /* TODO: what does a disabled color area look like? */
 export let XBlueYGreenisDisabled = Template.bind({});

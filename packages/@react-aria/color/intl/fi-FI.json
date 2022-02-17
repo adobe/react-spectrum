@@ -1,3 +1,5 @@
 {
-  "twoDimensionalSlider": "2D-liukusäädin"
+  "twoDimensionalSlider": "2D-liukusäädin",
+  "colorNameAndValue": "{name}: {value}",
+  "x/y": "{x} / {y}"
 }

@@ -1,3 +1,5 @@
 {
-  "twoDimensionalSlider": "Dispositivo di scorrimento 2D"
+  "twoDimensionalSlider": "Dispositivo di scorrimento 2D",
+  "colorNameAndValue": "{name}: {value}",
+  "x/y": "{x} / {y}"
 }

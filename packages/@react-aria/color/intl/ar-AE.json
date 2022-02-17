@@ -1,3 +1,5 @@
 {
-  "twoDimensionalSlider": "شريط تمرير ثنائي الأبعاد"
+  "twoDimensionalSlider": "شريط تمرير ثنائي الأبعاد",
+  "colorNameAndValue": "{name}: {value}",
+  "x/y": "{x} / {y}"
 }

@@ -1,3 +1,5 @@
 {
-  "twoDimensionalSlider": "2D-reglage"
+  "twoDimensionalSlider": "2D-reglage",
+  "colorNameAndValue": "{name}: {value}",
+  "x/y": "{x} / {y}"
 }
