@@ -368,7 +368,6 @@ export function calculatePositionInternal(
   let arrowPosition: Position = {};
   arrowPosition[crossAxis] = (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
 
-
   // keeping the arrow placement on the popover when near the edge
   if (crossAxis === 'left' || crossAxis === 'top') {
     // for the start and top
