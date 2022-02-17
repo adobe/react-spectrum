@@ -1,5 +1,5 @@
 diff --git a/node_modules/@babel/types/lib/retrievers/getBindingIdentifiers.js b/node_modules/@babel/types/lib/retrievers/getBindingIdentifiers.js
-index e0f321e..1c27c38 100644
+index 4daaf8b..f22bb5a 100644
 --- a/node_modules/@babel/types/lib/retrievers/getBindingIdentifiers.js
 +++ b/node_modules/@babel/types/lib/retrievers/getBindingIdentifiers.js
 @@ -72,6 +72,13 @@ getBindingIdentifiers.keys = {

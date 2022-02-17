@@ -2,7 +2,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/provider';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/provider/package.json';
 
 ```jsx import
@@ -27,7 +27,7 @@ keywords: [theme, locale, application, colorstop]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Provider']} />
+  componentNames={['Provider', 'useProvider']} />
 
 ## Example
 
@@ -149,3 +149,24 @@ function Register() {
 ## Props
 
 <PropTable component={docs.exports.Provider} links={docs.links} />
+
+## useProvider
+The <TypeLink links={docs.links} type={docs.exports.useProvider} /> hook can be used to access the various properties applied by the nearest parent Provider. This can be useful for adapting a custom component to the current color scheme or scale.
+
+The example below uses the `colorScheme` returned from `useProvider` to display either a moon or sun icon depending on the current color scheme. Toggle the theme using the switcher in the top right corner of the page to see the icon change.
+
+```tsx example
+import Light from '@spectrum-icons/workflow/Light';
+import Moon from '@spectrum-icons/workflow/Moon';
+import {useProvider} from '@react-spectrum/provider';
+
+function Example() {
+  let {colorScheme} = useProvider();
+
+  return colorScheme === 'dark'
+    ? <Moon aria-label="In dark theme" />
+    : <Light aria-label="In light theme" />
+}
+
+<Example />
+```
