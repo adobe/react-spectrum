@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/dnd",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-alpha.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,16 +18,16 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.3.5",
-    "@react-aria/interactions": "^3.8.0",
-    "@react-aria/live-announcer": "^3.0.2",
-    "@react-aria/overlays": "^3.7.4",
-    "@react-aria/utils": "^3.11.1",
-    "@react-aria/visually-hidden": "^3.2.4",
-    "@react-stately/dnd": "3.0.0-alpha.3",
-    "@react-stately/selection": "^3.9.1",
-    "@react-types/button": "^3.4.2",
-    "@react-types/shared": "^3.11.0"
+    "@react-aria/i18n": "^3.3.6",
+    "@react-aria/interactions": "^3.8.1",
+    "@react-aria/live-announcer": "^3.0.3",
+    "@react-aria/overlays": "^3.7.5",
+    "@react-aria/utils": "^3.11.2",
+    "@react-aria/visually-hidden": "^3.2.5",
+    "@react-stately/dnd": "3.0.0-alpha.4",
+    "@react-stately/selection": "^3.9.2",
+    "@react-types/button": "^3.4.3",
+    "@react-types/shared": "^3.11.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
