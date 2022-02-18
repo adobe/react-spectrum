@@ -169,20 +169,20 @@ class LandmarkManager {
       e.preventDefault();
       e.stopPropagation();
 
-      // If alt key pressed, focus main landmark.
-      if (e.altKey) { 
-        let main = this.getLandmarksByRole('main');
-        if (main.size > 0) {
-          [...main][0].ref.current.focus();
-        }
-        return;
-      }
-
       let backward = e.shiftKey;
       let nextLandmark = this.getNextLandmark(e.target as HTMLElement, {backward});
 
       // If no landmarks, return
       if (!nextLandmark) {
+        return;
+      }
+
+      // If alt key pressed, focus main landmark
+      if (e.altKey) { 
+        let main = this.getLandmarksByRole('main');
+        if (main.size > 0) {
+          [...main][0].ref.current.focus();
+        }
         return;
       }
 
