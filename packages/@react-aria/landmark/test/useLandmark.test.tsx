@@ -770,4 +770,42 @@ describe('LandmarkManager', function () {
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
     expect(document.activeElement).toBe(main);
   });
+
+  it('can alt+F6 to main landmark', function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Region>
+          <TextField label="Last Name" />
+        </Region>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+      );
+    let navigation = tree.getByRole('navigation');
+    let main = tree.getByRole('main');
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(navigation);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6', altKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'F6', altKey: true});
+    expect(document.activeElement).toBe(main);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6', altKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'F6', altKey: true});
+    expect(document.activeElement).toBe(main);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(navigation);
+  });
 });
