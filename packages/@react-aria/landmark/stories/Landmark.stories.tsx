@@ -46,21 +46,21 @@ function Main(props) {
   let ref = useRef();
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
-  return <main ref={ref} {...landmarkProps} {...styleProps}>{props.children}</main>;
+  return <main aria-label="Main landmark" ref={ref} {...landmarkProps} {...styleProps}>{props.children}</main>;
 }
 
 function Navigation(props) {
   let ref = useRef();
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
-  return <nav ref={ref} {...landmarkProps} {...styleProps}>{props.children}</nav>;
+  return <nav aria-label="Navigation landmark"  ref={ref} {...landmarkProps} {...styleProps}>{props.children}</nav>;
 }
 
 function Region(props) {
   let ref = useRef();
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'region'}, ref);
-  return <article ref={ref} {...landmarkProps} {...styleProps}>{props.children}</article>;
+  return <article aria-label="Region landmark" ref={ref} {...landmarkProps} {...styleProps}>{props.children}</article>;
 }
 
 function Search(props) {
@@ -68,7 +68,7 @@ function Search(props) {
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'search'}, ref);
   return (
-    <form ref={ref} {...landmarkProps} {...styleProps}>
+    <form aria-label="Search landmark" ref={ref} {...landmarkProps} {...styleProps}>
       <SearchField label="Search" />
     </form>
   );
