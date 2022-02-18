@@ -10,12 +10,20 @@ export type DragHookOptions = Omit<DraggableCollectionOptions, 'collection' | 's
 export function useDragHooks(options: DragHookOptions): DragHooks {
   return useMemo(() => ({
     useDraggableCollectionState(props: DraggableCollectionOptions) {
+      let {
+        collection,
+        selectionManager,
+        itemAllowsDragging = () => true,
+        getItems,
+        renderPreview
+      } = props;
+      
       return useDraggableCollectionState({
-        collection: props.collection,
-        selectionManager: props.selectionManager,
-        itemAllowsDragging: props.itemAllowsDragging,
-        getItems: props.getItems,
-        renderPreview: props.renderPreview,
+        collection,
+        selectionManager,
+        itemAllowsDragging,
+        getItems,
+        renderPreview,
         ...options
       });
     }
