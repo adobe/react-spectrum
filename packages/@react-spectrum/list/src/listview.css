@@ -215,6 +215,12 @@
   padding-inline-start: 0;
 }
 
+.react-spectrum-ListViewItem--draggable {
+  .react-spectrum-ListViewItem-checkbox input {
+    inset-inline-start: 0;
+  }
+}
+
 .react-spectrum-ListView-centeredWrapper {
   display: flex;
   align-items: center;
