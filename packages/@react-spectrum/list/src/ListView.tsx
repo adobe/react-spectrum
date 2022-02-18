@@ -36,7 +36,7 @@ import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
-import React, {ReactElement, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {Virtualizer} from '@react-aria/virtualizer';
 
