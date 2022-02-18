@@ -16,12 +16,7 @@ import {renderHook} from '@testing-library/react-hooks';
 import {useSideNav} from '../';
 
 describe('useSideNav', function () {
-  let mockState = {
-    selectionManager: {
-      isSelected: jest.fn(),
-      selectedKeys: new Set()
-    }
-  };
+  let mockState = {selectionManager: {}};
   let mockLayout = new ListLayout({
     rowHeight: 40
   });
