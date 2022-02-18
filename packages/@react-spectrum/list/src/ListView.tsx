@@ -163,12 +163,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     dragState = dragHooks.useDraggableCollectionState({
       collection: state.collection,
       selectionManager: state.selectionManager,
-      getItems: (keys) => [...keys].map(key => {
-        let item = [...state.collection].find(item => item.key === key);
-        return {
-          'text/plain': item.textValue
-        };
-      }),
       renderPreview(selectedKeys, draggedKey) {
         let item = state.collection.getItem(draggedKey);
         let itemWidth = domRef.current.offsetWidth;

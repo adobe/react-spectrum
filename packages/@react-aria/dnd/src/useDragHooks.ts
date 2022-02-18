@@ -14,7 +14,12 @@ export function useDragHooks(options: DragHookOptions): DragHooks {
         collection,
         selectionManager,
         itemAllowsDragging = () => true,
-        getItems,
+        getItems = (keys) => [...keys].map(key => {
+          let item = [...collection].find(item => item.key === key);
+          return {
+            'text/plain': item.textValue
+          };
+        }),
         renderPreview
       } = props;
       
