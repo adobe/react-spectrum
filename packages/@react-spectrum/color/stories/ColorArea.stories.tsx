@@ -29,27 +29,15 @@ const Template: Story<SpectrumColorAreaProps> = (args) => (
   <ColorAreaExample {...args} />
 );
 
-let RGB: Set<ColorChannel> = new Set(['red', 'green', 'blue']);
-let HSL: Set<ColorChannel> = new Set(['hue', 'saturation', 'lightness']);
-let HSB: Set<ColorChannel> = new Set(['hue', 'saturation', 'brightness']);
 let difference = (a, b): Set<ColorChannel> => new Set([...a].filter(x => !b.has(x)));
 
 function ColorAreaExample(props: SpectrumColorAreaProps) {
   let {xChannel, yChannel, isDisabled} = props;
   let defaultValue = typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
   let [color, setColor] = useState(defaultValue || parseColor('#ff00ff'));
-  let channels = new Set([xChannel, yChannel]);
-  let colorSpace = color.getColorSpace();
-  let colorSpaceSet = RGB;
-  switch (colorSpace) {
-    case 'hsl':
-      colorSpaceSet = HSL;
-      break;
-    case 'hsb':
-      colorSpaceSet = HSB;
-      break;
-  } 
-  let zChannel: ColorChannel = difference(colorSpaceSet, channels).keys().next().value;
+  let xyChannels = new Set([xChannel, yChannel]);
+  let colorSpace = color.getColorSpace(); 
+  let zChannel: ColorChannel = difference(color.getColorChannels(), xyChannels).keys().next().value;
   let isHue = zChannel === 'hue';
   function onChange(e) {
     try {

@@ -81,7 +81,11 @@ export interface Color {
   /**
    * Returns the color space, 'rgb', 'hsb' or 'hsl', for the current color.
    */
-  getColorSpace(): ColorFormat
+  getColorSpace(): ColorFormat,
+  /**
+   * Returns an array of the color channels within the current color space space.
+   */
+  getColorChannels(): Set<ColorChannel>
 }
 
 export interface ColorFieldProps extends Omit<ValueBase<string | Color>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {

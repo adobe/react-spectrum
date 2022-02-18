@@ -64,9 +64,6 @@ export interface ColorAreaState {
 }
 
 const DEFAULT_COLOR = parseColor('#ffffff');
-const RGBSet: Set<ColorChannel> = new Set(['red', 'green', 'blue']);
-const HSLSet: Set<ColorChannel> = new Set(['hue', 'saturation', 'lightness']);
-const HSBSet: Set<ColorChannel> = new Set(['hue', 'saturation', 'brightness']);
 let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x => !b.has(x)));
 
 /**
@@ -88,72 +85,13 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let channels = useMemo(() => {
     // determine the color space from the color value
     let colorSpace = valueRef.current.getColorSpace();
-    let colorSpaceSet = RGBSet;
 
-    if (colorSpace === 'hsb') {
-      colorSpaceSet = HSBSet;
-      if (!xChannel) {
-        switch (yChannel) {
-          case 'hue':
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            xChannel = 'brightness';
-            break;
-          case 'brightness':
-            xChannel = 'saturation';
-            break;
-          default:
-            xChannel = 'saturation';
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            yChannel = 'brightness';
-            break;
-        }
-      } else if (!yChannel) {
-        switch (xChannel) {
-          case 'hue':
-            yChannel = 'brightness';
-            break;
-          case 'brightness':
-            yChannel = 'saturation';
-            break;
-          default:
-            xChannel = 'saturation';
-            yChannel = 'brightness';
-            break;
-        }
-      }
-    } else if (colorSpace === 'hsl') {
-      colorSpaceSet = HSLSet;
-      if (!xChannel) {
-        switch (yChannel) {
-          case 'hue':
-            xChannel = 'lightness';
-            break;
-          case 'lightness':
-            xChannel = 'saturation';
-          default:
-            xChannel = 'saturation';
-            yChannel = 'lightness';
-            break;
-        }
-      } else if (!yChannel) {
-        switch (xChannel) {
-          case 'hue':
-            yChannel = 'lightness';
-            break;
-          case 'lightness':
-            yChannel = 'saturation';
-          default:
-            xChannel = 'saturation';
-            yChannel = 'lightness';
-            break;
-        }
-      }
-    } else if (colorSpace === 'rgb') {
-      colorSpaceSet = RGBSet;
+    if (colorSpace === 'rgb') {
       if (!xChannel) {
         switch (yChannel) {
           case 'red':
           case 'green':
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             xChannel = 'blue';
             break;
           case 'blue':
@@ -161,6 +99,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
             break;
           default:
             xChannel = 'blue';
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             yChannel = 'green';
         }
       } else if (!yChannel) {
@@ -176,10 +115,38 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
             yChannel = 'green';
         }
       }
+    } else if (!xChannel) {
+      switch (yChannel) {
+        case 'hue':
+          xChannel = colorSpace === 'hsb' ? 'brightness' : 'lightness';
+          break;
+        case 'brightness':
+        case 'lightness':
+          xChannel = 'saturation';
+          break;
+        default:
+          xChannel = 'saturation';
+          yChannel = colorSpace === 'hsb' ? 'brightness' : 'lightness';
+          break;
+      }
+    } else if (!yChannel) {
+      switch (xChannel) {
+        case 'hue':
+          yChannel = colorSpace === 'hsb' ? 'brightness' : 'lightness';
+          break;
+        case 'brightness':
+        case 'lightness':
+          yChannel = 'saturation';
+          break;
+        default:
+          xChannel = 'saturation';
+          yChannel = colorSpace === 'hsb' ? 'brightness' : 'lightness';
+          break;
+      }
     }
 
     let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
-    let zChannel = difference(colorSpaceSet, xyChannels).values().next().value as ColorChannel;
+    let zChannel = difference(valueRef.current.getColorChannels(), xyChannels).values().next().value as ColorChannel;
 
     return {xChannel, yChannel, zChannel};
   }, [xChannel, yChannel]);
