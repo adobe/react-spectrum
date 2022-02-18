@@ -86,19 +86,6 @@ interface SelectableCollectionAria {
   collectionProps: HTMLAttributes<HTMLElement>
 }
 
-function equalSets(setA: Set<Key>, setB: Set<Key>) {
-  if (setA.size !== setB.size) {
-    return false;
-  }
-
-  for (let item of setA) {
-    if (!setB.has(item)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 /**
  * Handles interactions with selectable collections.
  */
@@ -376,15 +363,6 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       }
     }
   }, [isVirtualized, scrollRef, manager.focusedKey]);
-
-  // Update the focused key if the collection isn't focused and the selected keys changes to something that doesn't contain the focused key.
-  // Don't do this for virtual focus collections because the user is never focused within the collection and thus we don't
-  // want to mistakenly change their focus position.
-  let lastSelectedKeys = useRef(manager.selectedKeys);
-  if (!manager.isFocused && !shouldUseVirtualFocus && !manager.isSelected(manager.focusedKey) && !equalSets(lastSelectedKeys.current, manager.selectedKeys)) {
-    manager.firstSelectedKey != null && manager.setFocusedKey(manager.firstSelectedKey);
-  }
-  lastSelectedKeys.current = manager.selectedKeys;
 
   let handlers = {
     onKeyDown,

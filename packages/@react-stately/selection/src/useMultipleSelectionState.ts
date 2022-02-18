@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Collection, MultipleSelection, Node, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {Key, useMemo, useRef, useState} from 'react';
-import {MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
@@ -37,15 +37,25 @@ export interface MultipleSelectionStateProps extends MultipleSelection {
   allowDuplicateSelectionEvents?: boolean
 }
 
+interface MultipleSelectionStateOptions<T> extends MultipleSelectionStateProps {
+  /** The collection of items. */
+  collection?: Collection<Node<T>>
+}
+
 /**
  * Manages state for multiple selection and focus in a collection.
  */
-export function useMultipleSelectionState(props: MultipleSelectionStateProps): MultipleSelectionState {
+export function useMultipleSelectionState<T>(props: MultipleSelectionStateOptions<T>): MultipleSelectionState {
   let {
     selectionMode = 'none' as SelectionMode,
     disallowEmptySelection,
-    allowDuplicateSelectionEvents
+    allowDuplicateSelectionEvents,
+    collection
   } = props;
+
+  if (!collection) {
+    console.warn('If a collection is not provided, the focused key will not be automatically updated on programatic selectedKey change.')
+  }
 
   // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.
   // But we also need to trigger a react re-render. So, we have both a ref (sync) and state (async).
@@ -65,12 +75,44 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
   let [selectionBehavior, setSelectionBehavior] = useState(props.selectionBehavior || 'toggle');
+  let updateFocusedKey = (k, childFocusStrategy = 'first') => {
+    focusedKeyRef.current = k;
+    childFocusStrategyRef.current = childFocusStrategy;
+    setFocusedKey(k);
+  };
 
   // If the selectionBehavior prop is set to replace, but the current state is toggle (e.g. due to long press
   // to enter selection mode on touch), and the selection becomes empty, reset the selection behavior.
   if (props.selectionBehavior === 'replace' && selectionBehavior === 'toggle' && typeof selectedKeys === 'object' && selectedKeys.size === 0) {
     setSelectionBehavior('replace');
   }
+
+  let lastSelectedKeysProp = useRef(selectedKeysProp);
+  let focusedKeySelected = selectedKeys === 'all' || selectedKeys.has(focusedKeyRef.current);
+  // If the collection doesn't have focus and the selected keys change, move focus to the first selected key.
+  // Only do this selection is controlled and there is something actually selected (not empty set)
+  if (
+    collection &&
+    selectedKeysProp != null &&
+    (selectedKeysProp === 'all' || selectedKeysProp.size > 0) &&
+    !isFocusedRef.current &&
+    !focusedKeySelected &&
+    !equalSets(selectedKeysProp, lastSelectedKeysProp.current)
+  ) {
+    let firstSelectedKey = null;
+    if (selectedKeysProp === 'all') {
+      firstSelectedKey = collection.getFirstKey();
+    } else {
+      for (let key of selectedKeysProp) {
+        let item = collection.getItem(key);
+        if (!firstSelectedKey || item?.index < firstSelectedKey.index) {
+          firstSelectedKey = item.key;
+        }
+      }
+    }
+    updateFocusedKey(firstSelectedKey, childFocusStrategyRef.current);
+  }
+  lastSelectedKeysProp.current = selectedKeysProp;
 
   return {
     selectionMode,
@@ -90,11 +132,7 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
     get childFocusStrategy() {
       return childFocusStrategyRef.current;
     },
-    setFocusedKey(k, childFocusStrategy = 'first') {
-      focusedKeyRef.current = k;
-      childFocusStrategyRef.current = childFocusStrategy;
-      setFocusedKey(k);
-    },
+    setFocusedKey: updateFocusedKey,
     selectedKeys,
     setSelectedKeys(keys) {
       if (allowDuplicateSelectionEvents || !equalSets(keys, selectedKeys)) {

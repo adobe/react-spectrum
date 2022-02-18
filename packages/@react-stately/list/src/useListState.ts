@@ -40,8 +40,6 @@ export interface ListState<T> {
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
   let {filter} = props;
-
-  let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
@@ -50,7 +48,7 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   let context = useMemo(() => ({suppressTextValueWarning: props.suppressTextValueWarning}), [props.suppressTextValueWarning]);
 
   let collection = useCollection(props, factory, context, [filter]);
-
+  let selectionState = useMultipleSelectionState({...props, collection});
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
