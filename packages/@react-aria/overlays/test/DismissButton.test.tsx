@@ -37,7 +37,7 @@ describe('DismissButton', function () {
     expect(getByRole('button', {hidden: true})).not.toHaveAttribute('aria-label');
   });
 
-  it('should accept an aria-labelledby', function () {
+  it('should accept an aria-labelledby and aria-label', function () {
     let {getByRole} = render(
       <>
         <span id="span-id">bar</span>
