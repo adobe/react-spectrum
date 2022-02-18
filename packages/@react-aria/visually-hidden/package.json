@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/visually-hidden",
-  "version": "3.2.4",
+  "version": "3.2.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -20,8 +20,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/interactions": "^3.8.0",
-    "@react-aria/utils": "^3.11.1",
+    "@react-aria/interactions": "^3.8.1",
+    "@react-aria/utils": "^3.11.2",
     "clsx": "^1.1.1"
   },
   "peerDependencies": {

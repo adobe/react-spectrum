@@ -384,11 +384,60 @@ describe('useSliderThumb', () => {
         // Drag thumb
         let thumb0 = screen.getByTestId('thumb').firstChild;
         fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowRight'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([11]);
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([11]);
         expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
         expect(stateRef.current.values).toEqual([11]);
+
+        fireEvent.keyDown(thumb0, {key: 'ArrowLeft'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowLeft'});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([10]);
+        expect(onChangeSpy).toHaveBeenCalledTimes(2);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([10]);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+        expect(stateRef.current.values).toEqual([10]);
+      });
+
+      it('can be moved with keys at the beginning of the slider', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[0]} />);
+
+        let thumb0 = screen.getByTestId('thumb').firstChild;
+        fireEvent.keyDown(thumb0, {key: 'ArrowLeft'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowLeft'});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).toHaveBeenCalledWith([0]);
+
+        fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowRight'});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([1]);
+        expect(onChangeSpy).toHaveBeenCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([1]);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+        expect(stateRef.current.values).toEqual([1]);
+      });
+
+      it('can be moved with keys at the end of the slider', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[100]} />);
+
+        let thumb0 = screen.getByTestId('thumb').firstChild;
+        fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowRight'});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).toHaveBeenCalledWith([100]);
+
+        fireEvent.keyDown(thumb0, {key: 'ArrowLeft'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowLeft'});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([99]);
+        expect(onChangeSpy).toHaveBeenCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([99]);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+        expect(stateRef.current.values).toEqual([99]);
       });
 
       it('can be moved with keys (vertical)', () => {
@@ -399,17 +448,63 @@ describe('useSliderThumb', () => {
         // Drag thumb
         let thumb0 = screen.getByTestId('thumb').firstChild;
         fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowRight'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([11]);
         expect(onChangeSpy).toHaveBeenCalledTimes(1);
         fireEvent.keyDown(thumb0, {key: 'ArrowUp'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowUp'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([12]);
         expect(onChangeSpy).toHaveBeenCalledTimes(2);
         fireEvent.keyDown(thumb0, {key: 'ArrowDown'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowDown'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([11]);
         expect(onChangeSpy).toHaveBeenCalledTimes(3);
         fireEvent.keyDown(thumb0, {key: 'ArrowLeft'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowLeft'});
         expect(onChangeSpy).toHaveBeenLastCalledWith([10]);
         expect(onChangeSpy).toHaveBeenCalledTimes(4);
+      });
+
+      it('can be moved with keys (vertical) at the bottom of the slider', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[0]} orientation="vertical" />);
+
+        // Drag thumb
+        let thumb0 = screen.getByTestId('thumb').firstChild;
+        fireEvent.keyDown(thumb0, {key: 'ArrowDown'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowDown'});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).toHaveBeenCalledWith([0]);
+
+        fireEvent.keyDown(thumb0, {key: 'ArrowUp'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowUp'});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([1]);
+        expect(onChangeSpy).toHaveBeenCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([1]);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+        expect(stateRef.current.values).toEqual([1]);
+      });
+
+      it('can be moved with keys (vertical) at the top of the slider', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[100]} orientation="vertical" />);
+
+        // Drag thumb
+        let thumb0 = screen.getByTestId('thumb').firstChild;
+        fireEvent.keyDown(thumb0, {key: 'ArrowUp'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowUp'});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).toHaveBeenCalledWith([100]);
+
+        fireEvent.keyDown(thumb0, {key: 'ArrowDown'});
+        fireEvent.keyUp(thumb0, {key: 'ArrowDown'});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([99]);
+        expect(onChangeSpy).toHaveBeenCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([99]);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+        expect(stateRef.current.values).toEqual([99]);
       });
     });
   });
