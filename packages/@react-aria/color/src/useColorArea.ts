@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorAreaProps} from '@react-types/color';
+import {AriaColorAreaProps, ColorChannel} from '@react-types/color';
 import {ColorAreaState} from '@react-stately/color';
 import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
@@ -298,11 +298,16 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
 
   let colorAriaLabellingProps = useLabels(props);
 
-  let getValueTitle = () =>  [
-    formatMessage('colorNameAndValue', {name: state.value.getChannelName('red', locale), value: state.value.formatChannelValue('red', locale)}),
-    formatMessage('colorNameAndValue', {name: state.value.getChannelName('green', locale), value: state.value.formatChannelValue('green', locale)}),
-    formatMessage('colorNameAndValue', {name: state.value.getChannelName('blue', locale), value: state.value.formatChannelValue('blue', locale)})
-  ].join(', ');
+  let getValueTitle = () => {
+    const channels: Set<ColorChannel> = state.value.getColorChannels();
+    const colorNamesAndValues = [];
+    channels.forEach(channel =>
+      colorNamesAndValues.push(
+        formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)})
+      )
+    );
+    return colorNamesAndValues.length ? colorNamesAndValues.join(', ') : null;
+  };
 
   let ariaRoleDescription = isMobile ? null : formatMessage('twoDimensionalSlider');
 

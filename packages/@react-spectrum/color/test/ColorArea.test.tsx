@@ -540,12 +540,13 @@ describe('ColorArea', () => {
     });
 
     it('the slider is focusable', () => {
-      let {getAllByRole} = render(<div>
+      let {getAllByRole, getByRole} = render(<div>
         <button>A</button>
         <DefaultColorArea defaultValue={'#ff00ff'} />
         <button>B</button>
       </div>);
       let sliders = getAllByRole('slider');
+      let colorField = getByRole('textbox');
       let [buttonA, buttonB] = getAllByRole('button');
 
       userEvent.tab();
@@ -555,7 +556,10 @@ describe('ColorArea', () => {
       userEvent.tab();
       expect(document.activeElement).toBe(sliders[2]);
       userEvent.tab();
+      expect(document.activeElement).toBe(colorField);
+      userEvent.tab();
       expect(document.activeElement).toBe(buttonB);
+      userEvent.tab({shift: true});
       userEvent.tab({shift: true});
       expect(document.activeElement).toBe(sliders[2]);
     });

@@ -71,6 +71,7 @@ abstract class Color implements IColor {
   }
 
   abstract getColorSpace(): ColorFormat
+  abstract getColorChannels(): Set<ColorChannel>
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
@@ -266,6 +267,11 @@ class RGBColor extends Color {
   getColorSpace(): ColorFormat {
     return 'rgb';
   }
+
+  private static colorChannels: Set<ColorChannel> = new Set(['red', 'green', 'blue']);
+  getColorChannels(): Set<ColorChannel> {
+    return RGBColor.colorChannels;
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -398,6 +404,11 @@ class HSBColor extends Color {
 
   getColorSpace(): ColorFormat {
     return 'hsb';
+  }
+
+  private static colorChannels: Set<ColorChannel> = new Set(['hue', 'saturation', 'brightness']);
+  getColorChannels(): Set<ColorChannel> {
+    return HSBColor.colorChannels;
   }
 }
 
@@ -533,5 +544,10 @@ class HSLColor extends Color {
 
   getColorSpace(): ColorFormat {
     return 'hsl';
+  }
+
+  private static colorChannels: Set<ColorChannel> = new Set(['hue', 'saturation', 'lightness']);
+  getColorChannels(): Set<ColorChannel> {
+    return HSLColor.colorChannels;
   }
 }

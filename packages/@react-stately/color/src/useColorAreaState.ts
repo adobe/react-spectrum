@@ -64,7 +64,6 @@ export interface ColorAreaState {
 }
 
 const DEFAULT_COLOR = parseColor('#ffffff');
-const RGBSet: Set<ColorChannel> = new Set(['red', 'green', 'blue']);
 let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x => !b.has(x)));
 
 /**
@@ -72,7 +71,6 @@ let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x =>
  * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
  */
 export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
-  // TODO: docs say the step props should be one, but should it be two different values?
   let {value, defaultValue, xChannel, yChannel, onChange, onChangeEnd, xChannelStep, yChannelStep} = props;
 
   if (!value && !defaultValue) {
@@ -84,36 +82,72 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   valueRef.current = color;
 
   let channels = useMemo(() => {
-    if (!xChannel) {
+    let xCh = xChannel;
+    let yCh = yChannel;
+    // determine the color space from the color value
+    let colorSpace = valueRef.current.getColorSpace();
+
+    if (colorSpace === 'rgb') {
+      if (!xChannel) {
+        switch (yChannel) {
+          case 'red':
+          case 'green':
+            xCh = 'blue';
+            break;
+          case 'blue':
+            xCh = 'red';
+            break;
+          default:
+            xCh = 'blue';
+            yCh = 'green';
+        }
+      } else if (!yChannel) {
+        switch (xChannel) {
+          case 'red':
+            yCh = 'green';
+            break;
+          case 'blue':
+            yCh = 'red';
+            break;
+          default:
+            xCh = 'blue';
+            yCh = 'green';
+        }
+      }
+    } else if (!xChannel) {
       switch (yChannel) {
-        case 'red':
-        case 'green':
-          xChannel = 'blue';
+        case 'hue':
+          xCh = colorSpace === 'hsb' ? 'brightness' : 'lightness';
           break;
-        case 'blue':
-          xChannel = 'red';
+        case 'brightness':
+        case 'lightness':
+          xCh = 'saturation';
           break;
         default:
-          xChannel = 'blue';
-          yChannel = 'green';
+          xCh = 'saturation';
+          yCh = colorSpace === 'hsb' ? 'brightness' : 'lightness';
+          break;
       }
     } else if (!yChannel) {
       switch (xChannel) {
-        case 'red':
-          yChannel = 'green';
+        case 'hue':
+          yCh = colorSpace === 'hsb' ? 'brightness' : 'lightness';
           break;
-        case 'blue':
-          yChannel = 'red';
+        case 'brightness':
+        case 'lightness':
+          yCh = 'saturation';
           break;
         default:
-          xChannel = 'blue';
-          yChannel = 'green';
+          xCh = 'saturation';
+          yCh = colorSpace === 'hsb' ? 'brightness' : 'lightness';
+          break;
       }
     }
-    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
-    let zChannel = difference(RGBSet, xyChannels).values().next().value;
 
-    return {xChannel, yChannel, zChannel};
+    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
+    let zChannel = difference(valueRef.current.getColorChannels(), xyChannels).values().next().value as ColorChannel;
+
+    return {xChannel: xCh, yChannel: yCh, zChannel};
   }, [xChannel, yChannel]);
 
   let xChannelRange = color.getChannelRange(channels.xChannel);
@@ -169,8 +203,6 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     yValue,
     setYValue,
     setColorFromPoint(x: number, y: number) {
-      let {minValue: minValueX, maxValue: maxValueX} = color.getChannelRange(channels.xChannel);
-      let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(channels.yChannel);
       let newXValue = minValueX + clamp(x, 0, 1) * (maxValueX - minValueX);
       let newYValue = minValueY + (1 - clamp(y, 0, 1)) * (maxValueY - minValueY);
       let newColor:Color;
