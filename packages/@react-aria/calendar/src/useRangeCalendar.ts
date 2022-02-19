@@ -17,6 +17,10 @@ import {RefObject, useRef} from 'react';
 import {useCalendarBase} from './useCalendarBase';
 import {useEvent, useId} from '@react-aria/utils';
 
+/**
+ * Provides the behavior and accessibility implementation for a range calendar component.
+ * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
+ */
 export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<HTMLElement>): CalendarAria {
   let res = useCalendarBase(props, state);
   res.nextButtonProps.id = useId();

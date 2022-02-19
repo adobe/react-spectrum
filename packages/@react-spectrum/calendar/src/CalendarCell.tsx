@@ -28,17 +28,19 @@ interface CalendarCellProps extends AriaCalendarCellProps {
 
 export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps) {
   let ref = useRef<HTMLElement>();
-  let {cellProps, buttonProps, isPressed} = useCalendarCell({
+  let {
+    cellProps,
+    buttonProps,
+    isPressed,
+    isSelected,
+    isDisabled,
+    isFocused,
+    formattedDate
+  } = useCalendarCell({
     ...props,
     isDisabled: !isSameMonth(props.date, currentMonth)
   }, state, ref);
   let {hoverProps, isHovered} = useHover({});
-  let dateFormatter = useDateFormatter({
-    day: 'numeric',
-    timeZone: state.timeZone,
-    calendar: currentMonth.calendar.identifier
-  });
-  let isSelected = state.isSelected(props.date);
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
   let isSelectionStart = highlightedRange && isSameDay(props.date, highlightedRange.start);
   let isSelectionEnd = highlightedRange && isSameDay(props.date, highlightedRange.end);
@@ -47,19 +49,6 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
   let isRangeStart = isSelected && (dayOfWeek === 0 || props.date.day === 1);
   let isRangeEnd = isSelected && (dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
-
-  // For performance, reuse the same date object as before if the new date prop is the same.
-  // This allows subsequent useMemo results to be reused.
-  let date = props.date;
-  let lastDate = useRef(null);
-  if (lastDate.current && isEqualDay(date, lastDate.current)) {
-    date = lastDate.current;
-  }
-
-  lastDate.current = date;
-
-  let nativeDate = useMemo(() => date.toDate(state.timeZone), [date, state.timeZone]);
-  let formatted = useMemo(() => dateFormatter.format(nativeDate), [dateFormatter, nativeDate]);
 
   return (
     <td
@@ -71,8 +60,8 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
         className={classNames(styles, 'spectrum-Calendar-date', {
           'is-today': isToday(props.date, state.timeZone),
           'is-selected': isSelected,
-          'is-focused': state.isCellFocused(props.date) && isFocusVisible,
-          'is-disabled': state.isCellDisabled(props.date),
+          'is-focused': isFocused && isFocusVisible,
+          'is-disabled': isDisabled,
           'is-outsideMonth': !isSameMonth(props.date, currentMonth),
           'is-range-start': isRangeStart,
           'is-range-end': isRangeEnd,
@@ -82,7 +71,7 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
           'is-hovered': isHovered,
           'is-pressed': isPressed
         })}>
-        <span className={classNames(styles, 'spectrum-Calendar-dateText')}>{formatted}</span>
+        <span className={classNames(styles, 'spectrum-Calendar-dateText')}>{formattedDate}</span>
       </span>
     </td>
   );
