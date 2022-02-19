@@ -13,6 +13,7 @@
 .react-spectrum-Datepicker-fieldWrapper.react-spectrum-Datepicker-fieldWrapper.react-spectrum-Datepicker-fieldWrapper {
    width: auto;
    min-width: var(--spectrum-global-dimension-size-2000);
+   max-width: 100%;
  }
 
 .react-spectrum-Datepicker-startField {

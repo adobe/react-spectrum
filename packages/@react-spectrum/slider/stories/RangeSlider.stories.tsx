@@ -71,12 +71,21 @@ storiesOf('Slider/RangeSlider', module)
   .add(
     'min/max',
     () => render({label: 'Label', minValue: 30, maxValue: 70})
+  )
+  .add(
+    'pageSize',
+    () => render({label: 'Label', minValue: 0, maxValue: 360, pageSize: 15, formatOptions: {style: 'unit', unit: 'degree', unitDisplay: 'narrow'}})
   );
 
 function render(props: SpectrumRangeSliderProps = {}) {
   if (props.onChange == null) {
     props.onChange = (v) => {
       action('change')(v.start, v.end);
+    };
+  }
+  if (props.onChangeEnd == null) {
+    props.onChangeEnd = (v) => {
+      action('changeEnd')(v.start, v.end);
     };
   }
   return  <RangeSlider {...props} />;

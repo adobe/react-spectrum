@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {ReactNode, useContext, useMemo, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
+// We must avoid a circular dependency with @react-aria/utils, and this useLayoutEffect is
+// guarded by a check that it only runs on the client side.
+// eslint-disable-next-line rulesdir/useLayoutEffectRule
+import React, {ReactNode, useContext, useLayoutEffect, useMemo, useState} from 'react';
 
 // To support SSR, the auto incrementing id counter is stored in a context. This allows
 // it to be reset on every request to ensure the client and server are consistent.
