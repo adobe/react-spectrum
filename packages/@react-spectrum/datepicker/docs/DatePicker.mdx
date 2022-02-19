@@ -45,7 +45,7 @@ after_version: 3.0.0
 
 A `DatePicker` displays a placeholder date by default. An initial, uncontrolled value can be provided to the `DatePicker` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
 
-Date values are provided using objects in the `@internationalized/date` package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns. `DatePicker` supports values of the following types:
+Date values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns. `DatePicker` supports values of the following types:
 
 * <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> – a date without any time components. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDate} /> function. Use this type to represent dates where the time is not important, such as a birthday or an all day calendar event.
 * <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> – a date with a time, but not in any specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDateTime} /> function. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a `ZonedDateTime`.
@@ -75,7 +75,7 @@ function Example() {
 
 `DatePicker` is time zone aware when a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account when the value is manipulated.
 
-In most cases, your data will come from and be sent to a server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string. `@internationalized/date` includes functions for parsing strings in multiple formats into <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> objects. Which format you use will depend on what information you need to store.
+In most cases, your data will come from and be sent to a server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string. [@internationalized/date](../internationalized/date/) includes functions for parsing strings in multiple formats into <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> objects. Which format you use will depend on what information you need to store.
 
 * <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} /> – This function parses a date with an explicit time zone and optional UTC offset attached (e.g. `"2021-11-07T00:45[America/Los_Angeles]"` or `"2021-11-07T00:45-07:00[America/Los_Angeles]"`). This format preserves the maximum amount of information. If the exact local time and time zone that a user selected is important, use this format. Storing the time zone and offset that was selected rather than converting to UTC ensures that the local time is correct regardless of daylight saving rule changes (e.g. if a locale abolishes DST). Examples where this applies include calendar events, reminders, and other times that occur in a particular location.
 * <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} /> – This function parses an absolute date and time that occurs at the same instant at all locations on Earth. It can be represented in UTC (e.g. `"2021-11-07T07:45:00Z"`), or stored with a particular offset (e.g. `"2021-11-07T07:45:00-07:00"`). A time zone identifier, e.g. `America/Los_Angeles`, must be passed, and the result will be converted into that time zone. Absolute times are the best way to represent events that occurred in the past, or future events where an exact time regardless of time zone is needed.
@@ -89,7 +89,7 @@ import {parseZonedDateTime} from '@internationalized/date';
   defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
 ```
 
-`DatePicker` displays times in the time zone included in the `ZoneDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. `@internationalized/date` includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+`DatePicker` displays times in the time zone included in the `ZoneDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
 
 ```tsx example
 import {parseAbsoluteToLocal} from '@internationalized/date';
@@ -246,52 +246,6 @@ This example only accepts dates after today.
 <DatePicker label="Appointment date" minValue={today(getLocalTimeZone())} />
 ```
 
-## Props
-
-<PropTable component={docs.exports.DatePicker} links={docs.links} />
-
-## Visual options
-
-### Quiet
-
-```tsx example
-<DatePicker label="Birth date" isQuiet />
-```
-
-### Disabled
-
-```tsx example
-<DatePicker label="Birth date" isDisabled />
-```
-
-### Read only
-
-The `isReadOnly` boolean prop makes the DatePicker's value immutable. Unlike `isDisabled`, the DatePicker remains focusable.
-
-```tsx example
-<DatePicker label="Birth date" value={today(getLocalTimeZone())} isReadOnly />
-```
-
-### Label alignment and position
-[View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
-
-By default, the label is positioned above the `DatePicker`. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the `DatePicker` and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
-
-```tsx example
-<DatePicker label="Birth date" labelPosition="side" labelAlign="end" />
-```
-
-### Help text
-[View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
-
-Both a description and an error message can be supplied to a DatePicker. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized. See the [Validation](#validation) section above for an example.
-
-`DatePicker` also supports displaying the expected date format for the user's locale automatically using the `showFormatHelpText` prop.
-
-```tsx example
-<DatePicker label="Birth date" showFormatHelpText />
-```
-
 ### Placeholder value
 
 When no value is set, a placeholder value is shown. By default, this is today's date at midnight. However, this can be overridden by setting the `placeholderValue` prop to a more appropriate placeholder for your specific usecase.
@@ -300,14 +254,6 @@ When no value is set, a placeholder value is shown. By default, this is today's 
 import {CalendarDate} from '@internationalized/date';
 
 <DatePicker label="Birth date" placeholderValue={new CalendarDate(1980, 1, 1)} />
-```
-
-### Maximum visible months
-
-By default, the calendar popover displays a single month. The `maxVisibleMonths` prop allows displaying up to 3 months at a time, if screen space permits.
-
-```tsx example
-<DatePicker label="Appointment date" maxVisibleMonths={3} />
 ```
 
 ### Hide time zone
