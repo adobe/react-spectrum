@@ -10,15 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, getLocalTimeZone, Time, toCalendarDateTime, today, toTime} from '@internationalized/date';
 import {DateValue, TimePickerProps, TimeValue} from '@react-types/datepicker';
+import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime} from '@internationalized/date';
 import {useControlledState} from '@react-stately/utils';
 import {useDatePickerFieldState} from '.';
 import {useMemo} from 'react';
 
 interface TimeFieldProps<T extends TimeValue> extends TimePickerProps<T> {
-  locale: string,
-  createCalendar: (name: string) => Calendar
+  locale: string
 }
 
 export function useTimeFieldState<T extends TimeValue>(props: TimeFieldProps<T>) {
@@ -55,7 +54,9 @@ export function useTimeFieldState<T extends TimeValue>(props: TimeFieldProps<T>)
     onChange,
     granularity: granularity || 'minute',
     maxGranularity: 'hour',
-    placeholderValue: placeholderDate
+    placeholderValue: placeholderDate,
+    // Calendar should not matter for time fields.
+    createCalendar: () => new GregorianCalendar()
   });
 }
 

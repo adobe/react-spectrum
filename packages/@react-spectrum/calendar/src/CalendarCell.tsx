@@ -11,15 +11,15 @@
  */
 
 import {AriaCalendarCellProps, useCalendarCell} from '@react-aria/calendar';
-import {CalendarDate, getDayOfWeek, isEqualDay, isSameDay, isSameMonth, isToday} from '@internationalized/date';
+import {CalendarDate, getDayOfWeek, isSameDay, isSameMonth, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
-import React, {useMemo, useRef} from 'react';
+import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
-import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
+import {useLocale} from '@react-aria/i18n';
 
 interface CalendarCellProps extends AriaCalendarCellProps {
   state: CalendarState | RangeCalendarState,

@@ -347,13 +347,13 @@ describe('DatePickerBase', function () {
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
-    `('$Name should focus the next segment on mouse down on a literal segment', ({Component}) => {
+    `('$Name should focus the previous segment on mouse down on a literal segment', ({Component}) => {
       let {getAllByRole, getAllByText} = render(<Component label="Date" />);
       let literals = getAllByText('/');
       let segments = getAllByRole('spinbutton');
 
       fireEvent(literals[0], pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      expect(segments[1]).toHaveFocus();
+      expect(segments[0]).toHaveFocus();
     });
 
     it.each`

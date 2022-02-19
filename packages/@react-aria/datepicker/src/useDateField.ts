@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
-import {createFocusManager} from '@react-aria/focus';
+import {AriaDatePickerProps, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
+import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DatePickerFieldState} from '@react-stately/datepicker';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {focusManagerSymbol} from './useDateRangePicker';
+import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 import {mergeProps, useDescription} from '@react-aria/utils';
 import {useDateFormatter} from '@react-aria/i18n';
 import {useDatePickerGroup} from './useDatePickerGroup';
@@ -24,7 +25,9 @@ import {useFocusWithin} from '@react-aria/interactions';
 interface DateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
 
 interface DateFieldAria {
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+   /** Props for the field's visible label element, if any. */
+  labelProps: HTMLAttributes<HTMLElement>,
+   /** Props for the field grouping element. */
   fieldProps: HTMLAttributes<HTMLElement>,
   /** Props for the description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
@@ -32,8 +35,20 @@ interface DateFieldAria {
   errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
-export const labelIds = new WeakMap<DatePickerFieldState, {ariaLabelledBy: string, ariaDescribedBy: string}>();
+// Data that is passed between useDateField and useDateSegment.
+interface HookData {
+  ariaLabelledBy: string,
+  ariaDescribedBy: string,
+  focusManager: FocusManager
+}
 
+export const hookData = new WeakMap<DatePickerFieldState, HookData>();
+
+/**
+ * Provides the behavior and accessibility implementation for a date field component.
+ * A date field allows users to enter and edit date and time values using a keyboard.
+ * Each part of a date value is displayed in an individually editable segment.
+ */
 export function useDateField<T extends DateValue>(props: DateFieldProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
@@ -53,17 +68,28 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
 
   let segmentLabelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
   let describedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
+  let propsFocusManager = props[focusManagerSymbol];
+  let focusManager = useMemo(() => propsFocusManager || createFocusManager(ref), [propsFocusManager, ref]);
 
-  labelIds.set(state, {
+  hookData.set(state, {
     ariaLabelledBy: segmentLabelledBy,
-    ariaDescribedBy: describedBy
+    ariaDescribedBy: describedBy,
+    focusManager
   });
+
+  let autoFocusRef = useRef(props.autoFocus);
+
+  useEffect(() => {
+    if (autoFocusRef.current) {
+      focusManager.focusFirst();
+    }
+    autoFocusRef.current = false;
+  }, [focusManager]);
 
   return {
     labelProps: {
       ...labelProps,
       onClick: () => {
-        let focusManager = createFocusManager(ref);
         focusManager.focusFirst();
       }
     },
@@ -75,4 +101,13 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
     descriptionProps,
     errorMessageProps
   };
+}
+
+/**
+ * Provides the behavior and accessibility implementation for a time field component.
+ * A time field allows users to enter and edit time values using a keyboard.
+ * Each part of a time value is displayed in an individually editable segment.
+ */
+export function useTimeField<T extends TimeValue>(props: AriaTimeFieldProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+  return useDateField(props, state, ref);
 }

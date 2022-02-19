@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useDatePicker';
-export * from './useDateSegment';
-export * from './useDateField';
-export * from './useDateRangePicker';
+export {useDatePicker} from './useDatePicker';
+export {useDateSegment} from './useDateSegment';
+export {useDateField, useTimeField} from './useDateField';
+export {useDateRangePicker} from './useDateRangePicker';
 export * from './useDisplayNames';

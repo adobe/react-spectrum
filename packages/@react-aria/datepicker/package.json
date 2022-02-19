@@ -28,6 +28,7 @@
     "@react-aria/utils": "^3.11.2",
     "@react-stately/datepicker": "3.0.0-alpha.3",
     "@react-types/button": "^3.4.3",
+    "@react-types/calendar": "3.0.0-alpha.3",
     "@react-types/datepicker": "3.0.0-alpha.3",
     "@react-types/dialog": "^3.3.3",
     "@react-types/shared": "^3.11.1"

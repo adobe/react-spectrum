@@ -58,6 +58,7 @@ export function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>)
   return (
     <Field
       {...props}
+      elementType="span"
       description={description}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
