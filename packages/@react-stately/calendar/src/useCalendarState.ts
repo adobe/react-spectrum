@@ -196,7 +196,7 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
       return isFocused && focusedDate && isSameDay(date, focusedDate);
     },
     isCellDisabled(date) {
-      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || isInvalid(date, minValue, maxValue) || props.isDateDisabled && props.isDateDisabled(date);
+      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || isInvalid(date, minValue, maxValue) || (props.isDateDisabled && props.isDateDisabled(date));
     },
     isPreviousVisibleRangeInvalid() {
       return isInvalid(startDate.subtract({days: 1}), minValue, maxValue);
