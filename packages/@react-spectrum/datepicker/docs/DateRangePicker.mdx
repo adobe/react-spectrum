@@ -287,7 +287,7 @@ This example only accepts dates after today.
 <DateRangePicker label="Date range" isDisabled />
 ```
 
-The `isDateDisabled` callback prop makes it possible to disable custom dates from the `RangeCalendar`. It is being called for each date and if it returns `true`, the date cell is disabled.
+The `isDateDisabled` callback prop acts like a filter function. It is called for each visible date and if it returns `true`, the date cell is disabled.
 
 ```tsx example
 import {today} from '@internationalized/date';
