@@ -11,13 +11,14 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-import {HTMLAttributes, MutableRefObject, useEffect} from 'react';
+import {HTMLAttributes, MutableRefObject, useEffect, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
 
 export interface AriaLandmarkProps extends AriaLabelingProps {
-  role: AriaLandmarkRole
+  role: AriaLandmarkRole,
+  tabIndex?: number
 }
 
 interface LandmarkAria {
@@ -51,16 +52,8 @@ class LandmarkManager {
     document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandler.bind(LandmarkManager.getInstance()), {capture: true});
   }
 
-  private onBlurLandmark(event) {
-    let {target: landmark} = event;
-    landmark.removeAttribute('tabindex');
-    landmark.removeEventListener('blur', this.onBlurLandmark);
-  }
-
   private focusLandmark(landmark: HTMLElement) {
-    landmark.setAttribute('tabindex', '-1');
-    landmark.addEventListener('blur', this.onBlurLandmark);
-    landmark.focus();
+    landmark.dispatchEvent(new CustomEvent('landmarkFocus'));
   }
 
   /**
@@ -233,17 +226,28 @@ class LandmarkManager {
 export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTMLElement>): LandmarkAria {
   const {
     role,
+    tabIndex,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
   let manager = LandmarkManager.getInstance();
   let label = ariaLabel || ariaLabelledby;
+  let [isLandmarkFocused, setIsLandmarkFocused] = useState(false);
+
+  let onFocusLandmark = () => setIsLandmarkFocused(true);
+  let onBlurLandmark = () => setIsLandmarkFocused(false);
 
   useLayoutEffect(() => {
     manager.addLandmark({ref, role, label});
+
+    let landmark = ref.current;
+    landmark.addEventListener('landmarkFocus', onFocusLandmark);
+    landmark.addEventListener('blur', onBlurLandmark);
     
     return () => {
       manager.removeLandmark(ref);
+      landmark.removeEventListener('focusLandmark', onFocusLandmark);
+      landmark.removeEventListener('blur', onBlurLandmark);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -253,9 +257,16 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
 
+  useEffect(() => {
+    if (isLandmarkFocused) {
+      ref.current.focus();
+    }
+  }, [isLandmarkFocused, ref]);
+
   return {
     landmarkProps: {
-      role
+      role,
+      tabIndex: isLandmarkFocused ? -1 : tabIndex
     }
   };
 }
