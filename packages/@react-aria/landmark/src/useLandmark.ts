@@ -51,6 +51,18 @@ class LandmarkManager {
     document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandler.bind(LandmarkManager.getInstance()), {capture: true});
   }
 
+  private onBlurLandmark(event) {
+    let {target: landmark} = event;
+    landmark.removeAttribute('tabindex');
+    landmark.removeEventListener('blur', this.onBlurLandmark);
+  }
+
+  private focusLandmark(landmark: HTMLElement) {
+    landmark.setAttribute('tabindex', '-1');
+    landmark.addEventListener('blur', this.onBlurLandmark);
+    landmark.focus();
+  }
+
   /**
    * Return set of landmarks with a specific role.
    */
@@ -181,7 +193,7 @@ class LandmarkManager {
       if (e.altKey) { 
         let main = this.getLandmarksByRole('main');
         if (main.size > 0) {
-          [...main][0].ref.current.focus();
+          this.focusLandmark([...main][0].ref.current);
         }
         return;
       }
@@ -190,14 +202,14 @@ class LandmarkManager {
       if (nextLandmark.lastFocused) {
         let lastFocused = nextLandmark.lastFocused;
         if (document.body.contains(lastFocused)) {
-          lastFocused.focus();
+          this.focusLandmark(lastFocused);
           return;
         }
       }
 
       // Otherwise, focus the landmark itself
       if (document.contains(nextLandmark.ref.current)) {
-        nextLandmark.ref.current.focus();
+        this.focusLandmark(nextLandmark.ref.current);
       }
     }
   }
