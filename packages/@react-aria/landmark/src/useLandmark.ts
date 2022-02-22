@@ -246,7 +246,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
     
     return () => {
       manager.removeLandmark(ref);
-      landmark.removeEventListener('focusLandmark', onFocusLandmark);
+      landmark.removeEventListener('landmarkFocus', onFocusLandmark);
       landmark.removeEventListener('blur', onBlurLandmark);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
