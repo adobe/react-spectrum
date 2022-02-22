@@ -103,8 +103,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     shouldFocusWrap,
     ref: inputRef,
     // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
-    isVirtualized: true,
-    shouldUseVirtualFocus: true
+    isVirtualized: true
   });
 
   // For textfield specific keydown operations

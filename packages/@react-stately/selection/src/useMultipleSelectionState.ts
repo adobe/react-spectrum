@@ -53,8 +53,10 @@ export function useMultipleSelectionState<T>(props: MultipleSelectionStateOption
     collection
   } = props;
 
-  if (!collection) {
+  let hasWarned = useRef(false);
+  if (!collection && !hasWarned.current) {
     console.warn('If a collection is not provided, the focused key will not be automatically updated on programatic selectedKey change.');
+    hasWarned.current = true;
   }
 
   // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.
