@@ -255,8 +255,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
 
   return {
     landmarkProps: {
-      role,
-      tabIndex: -1
+      role
     }
   };
 }
