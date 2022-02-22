@@ -1,6 +1,6 @@
 {
   "name": "react-aria",
-  "version": "3.13.1",
+  "version": "3.13.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -42,7 +42,7 @@
     "@react-aria/slider": "^3.0.5",
     "@react-aria/ssr": "^3.1.2",
     "@react-aria/switch": "^3.1.5",
-    "@react-aria/table": "^3.2.2",
+    "@react-aria/table": "^3.2.3",
     "@react-aria/tabs": "^3.1.2",
     "@react-aria/textfield": "^3.5.2",
     "@react-aria/tooltip": "^3.1.5",
