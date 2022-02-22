@@ -37,7 +37,9 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   /** Sets what the TableView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
   /** Handler that is called when a user performs an action on a row. */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  /** Handler that is called when a user performs a column resize. */
+  onColumnResize?: (width: number) => void
 }
 
 export interface TableHeaderProps<T> {
@@ -66,8 +68,6 @@ export interface ColumnProps<T> {
   defaultWidth?: number | string,
   /** Whether the column allows resizing. */
   allowsResizing?: boolean,
-  /** Whether the column allows resizing. */
-  onResize?: (width: number) => void,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
   /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
