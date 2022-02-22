@@ -808,4 +808,59 @@ describe('LandmarkManager', function () {
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
     expect(document.activeElement).toBe(navigation);
   });
+
+  it('landmark has tabIndex="-1" when focused', function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+      );
+    let navigation = tree.getByRole('navigation');
+    let main = tree.getByRole('main');
+    expect(navigation).not.toHaveAttribute('tabIndex');
+    expect(main).not.toHaveAttribute('tabIndex');
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(navigation);
+    expect(navigation).toHaveAttribute('tabIndex', '-1');
+    expect(main).not.toHaveAttribute('tabIndex');
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(main).toHaveAttribute('tabIndex', '-1');
+    expect(navigation).not.toHaveAttribute('tabIndex');
+  });
+
+  it('cannot focus landmark with mouse', function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+      );
+    let navigation = tree.getByRole('navigation');
+
+    fireEvent.mouseDown(navigation);
+    fireEvent.mouseUp(navigation);
+
+    expect(document.activeElement).toBe(document.body);
+  });
 });
