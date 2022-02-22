@@ -487,6 +487,16 @@ function TableColumnHeader({column}) {
   );
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
+
+  // Can these be enforced with prop type validation?
+  if (columnProps.width && columnProps.allowsResizing) {
+    throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
+  }
+
+  if (columnProps.width && columnProps.defaultWidth) {
+    throw new Error('Column props can only support either width or defaultWidth.');
+  }
+
   let {hoverProps, isHovered} = useHover({});
 
   return (
