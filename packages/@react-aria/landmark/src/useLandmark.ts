@@ -29,7 +29,9 @@ type Landmark = {
   ref: MutableRefObject<HTMLElement>,
   role: AriaLandmarkRole,
   label?: string,
-  lastFocused?: HTMLElement
+  lastFocused?: HTMLElement,
+  onFocus: () => void,
+  onBlur: () => void
 };
 
 class LandmarkManager {
@@ -53,7 +55,8 @@ class LandmarkManager {
   }
 
   private focusLandmark(landmark: HTMLElement) {
-    landmark.dispatchEvent(new CustomEvent('landmarkFocus'));
+    this.landmarks.find((l) => l.ref.current === document.activeElement)?.onBlur();
+    this.landmarks.find(l => l.ref.current === landmark)?.onFocus();
   }
 
   /**
@@ -63,18 +66,18 @@ class LandmarkManager {
     return new Set(this.landmarks.filter(l => l.role === role));
   }
 
-  public addLandmark({ref, role, label}: Landmark) {
-    if (this.landmarks.find(landmark => landmark.ref === ref)) {
+  public addLandmark(newLandmark: Landmark) {
+    if (this.landmarks.find(landmark => landmark.ref === newLandmark.ref)) {
       return;
     }
 
     if (this.landmarks.length === 0) {
-      this.landmarks = [{ref, role, label}];
+      this.landmarks = [newLandmark];
       return;
     }
 
     let insertPosition = 0;
-    let comparedPosition = ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
+    let comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
       // Compare position of landmark being added with existing landmarks.
       // Iterate through landmarks (which are sorted in document order),
       // and insert when a landmark is found that is positioned before the newly added element,
@@ -85,10 +88,10 @@ class LandmarkManager {
         ((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) ||
         (comparedPosition & Node.DOCUMENT_POSITION_CONTAINS))
         ) {
-      comparedPosition = ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
+      comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
       insertPosition++;
     }
-    this.landmarks.splice(insertPosition, 0, {ref, role, label});
+    this.landmarks.splice(insertPosition, 0, newLandmark);
   }
 
   public updateLandmark(landmark: Landmark) {
@@ -234,36 +237,25 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   let label = ariaLabel || ariaLabelledby;
   let [isLandmarkFocused, setIsLandmarkFocused] = useState(false);
 
-  let onFocusLandmark = (e: Event) => {
-    if (e.target === ref.current) {
-      setIsLandmarkFocused(true);
-      e.stopPropagation();
-    }
+  let onFocus = () => {
+    setIsLandmarkFocused(true);
   };
   
-  let onBlurLandmark = (e: Event) => {
-    if (e.target === ref.current) {
-      setIsLandmarkFocused(false);
-    }
+  let onBlur = () => {
+    setIsLandmarkFocused(false);
   };
 
   useLayoutEffect(() => {
-    manager.addLandmark({ref, role, label});
-
-    let landmark = ref.current;
-    landmark.addEventListener('landmarkFocus', onFocusLandmark);
-    landmark.addEventListener('blur', onBlurLandmark);
+    manager.addLandmark({ref, role, label, onFocus, onBlur});
     
     return () => {
       manager.removeLandmark(ref);
-      landmark.removeEventListener('landmarkFocus', onFocusLandmark);
-      landmark.removeEventListener('blur', onBlurLandmark);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    manager.updateLandmark({ref, label, role});
+    manager.updateLandmark({ref, label, role, onFocus, onBlur});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
 
