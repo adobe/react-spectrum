@@ -234,8 +234,18 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   let label = ariaLabel || ariaLabelledby;
   let [isLandmarkFocused, setIsLandmarkFocused] = useState(false);
 
-  let onFocusLandmark = () => setIsLandmarkFocused(true);
-  let onBlurLandmark = () => setIsLandmarkFocused(false);
+  let onFocusLandmark = (e: Event) => {
+    if (e.target === ref.current) {
+      setIsLandmarkFocused(true);
+      e.stopPropagation();
+    }
+  };
+  
+  let onBlurLandmark = (e: Event) => {
+    if (e.target === ref.current) {
+      setIsLandmarkFocused(false);
+    }
+  };
 
   useLayoutEffect(() => {
     manager.addLandmark({ref, role, label});
