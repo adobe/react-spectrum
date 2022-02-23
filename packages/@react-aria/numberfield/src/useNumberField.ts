@@ -199,7 +199,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onKeyDown,
     onKeyUp,
     description,
-    errorMessage}, state, inputRef);
+    errorMessage
+  }, state, inputRef);
 
   let inputProps = mergeProps(
     spinButtonProps,
