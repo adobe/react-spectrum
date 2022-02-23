@@ -88,27 +88,31 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-columnResizer {
   display: flex;
-  align-items: center;
   justify-content: end;
   box-sizing: border-box;
   position: absolute;
-  top: 0;
+  top: 0px;
   right: 0px;
   width: 6px;
   height: 100%;
   cursor: col-resize;
   user-select: none;
-  z-index: 3;
-
+  
   &::after {
     content: "";
     position: absolute;
-    z-index: 2;
     display: block;
     box-sizing: border-box;
     width: 1px;
     height: 100%;
-    background-color: red;
+    background-color: var(--spectrum-table-divider-border-color);;
+  }
+  
+  &:active {
+    &::after {
+      width: 2px;
+      background-color: var(--spectrum-global-color-blue-400);
+    }
   }
 }
 
