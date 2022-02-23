@@ -12,7 +12,6 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {AriaTextFieldProps} from '@react-types/textfield';
 import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {
   HTMLAttributes,
@@ -67,9 +66,18 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     isRequired,
     minValue,
     maxValue,
+    autoFocus,
     validationState,
+    label,
     formatOptions,
-    onBlur
+    onBlur,
+    onFocus,
+    onFocusChange,
+    onKeyDown,
+    onKeyUp,
+    description,
+    errorMessage,
+    ...otherProps
   } = props;
 
   let {
@@ -168,12 +176,16 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let domProps = filterDOMProps(props);
 
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
-    ...(props as Omit<AriaTextFieldProps, 'defaultValue' | 'onChange' | 'value'>),
+    ...otherProps,
     ...domProps,
+    label,
+    autoFocus,
     isDisabled,
     isReadOnly,
     isRequired,
+    validationState,
     value: state.inputValue,
+    defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
     'aria-label': props['aria-label'] || null,
     'aria-labelledby': props['aria-labelledby'] || null,
@@ -181,8 +193,13 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
     inputMode,
     onChange,
-    onBlur
-  }, state, inputRef);
+    onBlur,
+    onFocus,
+    onFocusChange,
+    onKeyDown,
+    onKeyUp,
+    description,
+    errorMessage}, state, inputRef);
 
   let inputProps = mergeProps(
     spinButtonProps,
