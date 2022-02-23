@@ -76,6 +76,19 @@ let withSection = [
   ]}
 ];
 
+let itemsWithFalsyId = [
+  {id: 0, name: 'key=0', children: [
+    {id: 1, name: 'Aardvark'},
+    {id: 2, name: 'Kangaroo'},
+    {id: 3, name: 'Snake'}
+  ]},
+  {id: '', name: 'key=""', children: [
+    {id: 4, name: 'Danni'},
+    {id: 5, name: 'Devon'},
+    {id: 6, name: 'Ross'}
+  ]}
+];
+
 let lotsOfSections: any[] = [];
 for (let i = 0; i < 50; i++) {
   let children = [];
@@ -122,6 +135,18 @@ storiesOf('ListBox', module)
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {(item: any) => <Item key={item.name}>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
+    )
+  )
+  .add(
+    'ListBox w/ sections and falsy ids',
+    () => (
+      <ListBox flexGrow={1} aria-labelledby="label" items={itemsWithFalsyId} selectionMode="multiple" onSelectionChange={action('onSelectionChange')}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
           </Section>
         )}
       </ListBox>

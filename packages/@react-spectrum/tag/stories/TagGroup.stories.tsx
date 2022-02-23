@@ -11,30 +11,75 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import React, {useState} from 'react';
+import Audio from '@spectrum-icons/workflow/Audio';
+import {Icon} from '@react-spectrum/icon';
+import {Item} from '@react-stately/collections';
+import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Tag, TagGroup} from '../src';
+import {TagGroup} from '../src';
+import {Text} from '@react-spectrum/text';
 
 storiesOf('TagGroup', module)
   .add(
     'default',
     () => render({})
-  ).add(
-    'onRemove',
-    () => renderWithRemovableTags({
-      onRemove: action('onRemove')
-    })
-  ).add(
-    'is Disabled',
+  )
+  .add(
+    'disabledKeys',
+    () => render({
+      disabledKeys: ['1']
+    }))
+  .add('icons', () => (
+    <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
+      {item => (
+        <Item key={item.key} textValue={item.label}>
+          <Icon>
+            <Audio />
+          </Icon>
+          <Text>{item.label}</Text>
+        </Item>
+      )}
+    </TagGroup>
+  ))
+  .add(
+    'isDisabled',
     () => render({
       isDisabled: true
+    }))
+  .add(
+    'onRemove',
+    () => render({
+      isRemovable: true,
+      onRemove: action('onRemove')
     })
-  ).add(
-    'isReadOnly',
-    () => renderWithRemovableTags({
-      isReadOnly: true
+  )
+  .add(
+    'onRemove + disabledKeys',
+    () => render({
+      disabledKeys: ['2'],
+      isRemovable: true,
+      onRemove: action('onRemove')
     })
-  ).add(
+  )
+  .add(
+    'onRemove + isDisabled',
+    () => render({
+      isDisabled: true,
+      isRemovable: true,
+      onRemove: action('onRemove')
+    })
+  )
+  .add(
+    'using items prop',
+    () => (
+      <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
+        {item =>
+          <Item key={item.key} textValue={item.label}><Text>{item.label}</Text></Item>
+        }
+      </TagGroup>
+    )
+  )
+  .add(
     'with announcing',
     () => (
       <WithAnnouncing />
@@ -43,39 +88,21 @@ storiesOf('TagGroup', module)
 
 function render(props: any = {}) {
   return (
-    <TagGroup {...props}>
-      <Tag>Cool Tag 1</Tag>
-      <Tag>Cool Tag 2</Tag>
-      <Tag>Cool Tag 3</Tag>
-    </TagGroup>
-  );
-}
-
-function renderWithRemovableTags(props: any = {}) {
-  return (
-    <TagGroup {...props}>
-      <Tag isRemovable>Cool Tag 1</Tag>
-      <Tag isRemovable>Cool Tag 2</Tag>
-      <Tag isRemovable>Cool Tag 3</Tag>
+    <TagGroup {...props} aria-label="tag group">
+      <Item key="1">Cool Tag 1</Item>
+      <Item key="2">Cool Tag 2</Item>
+      <Item key="3">Cool Tag 3</Item>
     </TagGroup>
   );
 }
 
 function WithAnnouncing() {
-  let [tags, setTags] = useState(['Tag']);
+  let tags = ['Testing tag', 'Other testing label'];
 
-  function handleKeyDown(e) {
-    if (e.ctrlKey && e.key === 'd') {
-      e.preventDefault();
-      setTags([...tags, 'New Tag']);
-    }
-  }
   return (
     <React.Fragment>
-      {/*
-        // @ts-ignore */}
-      <TagGroup onKeyDown={handleKeyDown}>
-        {tags.map((t, index) => <Tag key={index}>{t}</Tag>)}
+      <TagGroup aria-label="tag group">
+        {tags.map((t, index) => <Item key={index}>{t}</Item>)}
       </TagGroup>
     </React.Fragment>
   );

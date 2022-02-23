@@ -68,6 +68,11 @@ let items = [
   {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
+let itemsWithFalsyId = [
+  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 0},
+  {test: 'Test 1', foo: 'Foo 2', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 1}
+];
+
 let manyColunns = [];
 for (let i = 0; i < 100; i++) {
   manyColunns.push({name: 'Column ' + i, key: 'C' + i});
@@ -155,6 +160,23 @@ storiesOf('TableView', module)
         <TableBody items={items}>
           {item =>
             (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'dynamic, falsy row keys',
+    () => (
+      <TableView aria-label="TableView with dynamic contents and falsy keys" width={300} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={itemsWithFalsyId}>
+          {item =>
+            (<Row>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
