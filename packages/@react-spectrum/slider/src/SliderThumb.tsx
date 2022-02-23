@@ -46,8 +46,6 @@ export function SliderThumb(props: SliderThumbProps) {
   let {direction} = useLocale();
   let cssDirection = direction === 'rtl' ? 'right' : 'left';
 
-  console.log('SliderThumb.tsx', state.isThumbDragging(index));
-
   return (
     <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
       <div
