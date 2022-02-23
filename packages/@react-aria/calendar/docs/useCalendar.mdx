@@ -81,7 +81,7 @@ Note that much of this anatomy is shared with [range calendars](useRangeCalendar
 
 ## Example
 
-A `Calendar` consists of three components: the main calendar wrapper element with previous and next buttons for navigating, one or more `CalendarGrid` components to display a month grid, and `CalendarCell` components for each date cell. We'll go through them one by one.
+A `Calendar` consists of three components: the main calendar wrapper element with previous and next buttons for navigating, one or more `CalendarGrid` components to display each month, and `CalendarCell` components for each date cell. We'll go through them one by one.
 
 For simplicity, this example only displays a single month at a time. See the [styled examples](#styled-examples) section for more examples with multiple months, as well as other time ranges like weeks.
 
@@ -129,9 +129,9 @@ import {useCalendarGrid} from '@react-aria/calendar';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {startOfWeek, getWeeksInMonth} from '@internationalized/date';
 
-function CalendarGrid({state}) {
+function CalendarGrid({state, ...props}) {
   let {locale} = useLocale();
-  let {gridProps, weekDays} = useCalendarGrid({}, state);
+  let {gridProps, weekDays} = useCalendarGrid(props, state);
 
   // Find the start date of the grid, which is the beginning
   // of the week the month starts in. Also get the number of
@@ -211,7 +211,7 @@ function CalendarCell({state, date}) {
 That's it! Now we can render an example of our `Calendar` component in action.
 
 ```tsx example
-<Calendar />
+<Calendar aria-label="Event date" />
 ```
 
 <details>
@@ -319,6 +319,27 @@ function Example() {
 }
 ```
 
+### Events
+
+`useCalendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+
+function Example() {
+  let [date, setDate] = React.useState(parseDate('2022-07-04'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <Calendar aria-label="Event date" value={date} onChange={setDate} />
+      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+    </>
+  );
+}
+```
+
 ### International calendars
 
 `useCalendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
@@ -341,27 +362,6 @@ function Example() {
 }
 ```
 
-### Events
-
-`useCalendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
-
-```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@adobe/react-spectrum';
-
-function Example() {
-  let [date, setDate] = React.useState(parseDate('2022-07-04'));
-  let formatter = useDateFormatter({dateStyle: 'full'});
-
-  return (
-    <>
-      <Calendar aria-label="Event date" value={date} onChange={setDate} />
-      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
-    </>
-  );
-}
-```
-
 ### Validation
 
 By default, `useCalendar` allows selecting any date. The `minValue` and `maxValue` props can also be used to prevent the user from selecting dates outside a certain range.
@@ -375,6 +375,8 @@ import {today} from '@internationalized/date';
 ```
 
 ### Disabled
+
+The `isDisabled` boolean prop makes the Calendar disabled. Cells cannot be focused or selected.
 
 ```tsx example
 <Calendar aria-label="Event date" isDisabled />
@@ -394,4 +396,4 @@ An aria-label must be provided to the `Calendar` for accessibility. If it is lab
 
 ### Internationalization
 
-In order to internationalize a `Calendar`, a localized string should be passed to the `aria-label` prop. For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the `Calendar` is automatically flipped. Dates are automatically formatted using the current locale.
+In order to internationalize a `Calendar`, a localized string should be passed to the `aria-label` prop. For languages that are read right-to-left (e.g. Hebrew and Arabic), keyboard navigation is automatically flipped. Ensure that your CSS accounts for this as well. Dates are automatically formatted using the current locale.

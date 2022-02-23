@@ -116,7 +116,7 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 
 The `granularity` prop allows you to control the smallest unit that is displayed by a `DateRangePicker`. By default, `CalendarDate` values are displayed with `"day"` granularity, and `CalendarDateTime` and `ZonedDateTime` values are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
 
-In addition, when a value with a time is passed, but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DateRangePickers are synchronized with the same value, but display different granularities.
+In addition, when a value with a time is provided but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DateRangePickers are synchronized with the same value, but display different granularities.
 
 ```tsx example
 function Example() {
@@ -266,7 +266,13 @@ The `minValue` and `maxValue` props can also be used to perform builtin validati
 This example only accepts dates after today.
 
 ```tsx example
-<DateRangePicker label="Appointment date" minValue={today(getLocalTimeZone())} />
+<DateRangePicker
+  label="Trip dates"
+  minValue={today(getLocalTimeZone())}
+  defaultValue={{
+    start: parseDate('2022-02-03'),
+    end: parseDate('2022-05-03')
+  }}  />
 ```
 
 ## Props

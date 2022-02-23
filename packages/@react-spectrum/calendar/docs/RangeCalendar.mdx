@@ -162,7 +162,7 @@ import {today} from '@internationalized/date';
 
 ### Read only
 
-The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDisabled`, the RangeCalendar remains focusable.
+The `isReadOnly` boolean prop makes the RangeCalendar's value immutable. Unlike `isDisabled`, the RangeCalendar remains focusable.
 
 ```tsx example
 <RangeCalendar aria-label="Trip dates" value={{start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ weeks: 1 })}} isReadOnly />

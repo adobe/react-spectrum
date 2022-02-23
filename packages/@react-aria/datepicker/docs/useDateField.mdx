@@ -106,6 +106,9 @@ export function DateField(props) {
         {state.segments.map((segment, i) =>
           <DateSegment key={i} segment={segment} state={state} />
         )}
+        {state.validationState === 'invalid' &&
+          <span aria-hidden="true">🚫</span>
+        }
       </div>
     </div>
   );
@@ -213,6 +216,27 @@ function Example() {
 }
 ```
 
+### Events
+
+`useDateField` accepts an `onChange` prop which is triggered whenever the date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@adobe/react-spectrum';
+
+function Example() {
+  let [date, setDate] = React.useState(parseDate('1985-07-03'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <DateField label="Birth date" value={date} onChange={setDate} />
+      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+    </>
+  );
+}
+```
+
 ### Time zones
 
 `useDateField` is time zone aware when a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account when the value is manipulated.
@@ -246,7 +270,7 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 
 The `granularity` prop allows you to control the smallest unit that is displayed by `useDateField`. By default, `CalendarDate` values are displayed with `"day"` granularity, and `CalendarDateTime` and `ZonedDateTime` values are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
 
-In addition, when a value with a time is passed, but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DateFields are synchronized with the same value, but display different granularities.
+In addition, when a value with a time is provided but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DateFields are synchronized with the same value, but display different granularities.
 
 ```tsx example
 function Example() {
@@ -286,57 +310,39 @@ import {now} from '@internationalized/date';
 
 ### International calendars
 
-`useDateField` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the `Provider` component.
+`useDateField` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
 
 Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
 
 The below example displays a `DateField` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
 
 ```tsx example
-import {Provider} from '@adobe/react-spectrum';
+import {I18nProvider} from '@react-aria/i18n';
 
 function Example() {
   let [date, setDate] = React.useState(null);
   return (
-    <Provider locale="hi-IN-u-ca-indian">
+    <I18nProvider locale="hi-IN-u-ca-indian">
       <DateField label="Date" value={date} onChange={setDate} />
       <p>Selected date: {date?.toString()}</p>
-    </Provider>
-  );
-}
-```
-
-### Events
-
-`useDateField` accepts an `onChange` prop which is triggered whenever the date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
-
-```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@adobe/react-spectrum';
-
-function Example() {
-  let [date, setDate] = React.useState(parseDate('1985-07-03'));
-  let formatter = useDateFormatter({dateStyle: 'full'});
-
-  return (
-    <>
-      <DateField label="Birth date" value={date} onChange={setDate} />
-      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
-    </>
+    </I18nProvider>
   );
 }
 ```
 
 ### Minimum and maximum values
 
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This displays an invalid state if the user enters an invalid date.
+The `minValue` and `maxValue` props can also be used to perform builtin validation. This marks the date field as invalid using ARIA if the user enters an invalid date. You should implement a visual indication that the date field is invalid as well.
 
 This example only accepts dates after today.
 
 ```tsx example
 import {today} from '@internationalized/date';
 
-<DateField label="Appointment date" minValue={today(getLocalTimeZone())} />
+<DateField
+  label="Appointment date"
+  minValue={today(getLocalTimeZone())}
+  defaultValue={parseDate('2022-02-03')} />
 ```
 
 ### Placeholder value

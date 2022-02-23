@@ -59,16 +59,17 @@ function EditableSegment({segment, state}: DatePickerSegmentProps) {
   let isNumeric = useMemo(() => parser.isValidPartialNumber(segment.text), [segment.text, parser]);
   return (
     <div
+      {...segmentProps}
       ref={ref}
       className={classNames(styles, 'react-spectrum-DatePicker-cell', {
         'is-placeholder': segment.isPlaceholder,
         'is-read-only': !segment.isEditable
       })}
       style={{
+        ...segmentProps.style,
         minWidth: !isNumeric ? null : String(segment.maxValue).length + 'ch'
       }}
-      data-testid={segment.type}
-      {...segmentProps}>
+      data-testid={segment.type}>
       {segment.isPlaceholder ? '' : segment.text}
     </div>
   );

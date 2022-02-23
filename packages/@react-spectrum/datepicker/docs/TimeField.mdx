@@ -185,7 +185,11 @@ The `minValue` and `maxValue` props can also be used to perform builtin validati
 This example only accepts times between 9 AM and 5 PM.
 
 ```tsx example
-<TimeField label="Meeting time" minValue={new Time(9)} maxValue={new Time(17)} />
+<TimeField
+  label="Meeting time"
+  minValue={new Time(9)}
+  maxValue={new Time(17)}
+  defaultValue={new Time(8)} />
 ```
 
 ## Props
@@ -233,7 +237,7 @@ Both a description and an error message can be supplied to a TimeField. The desc
 When no value is set, a placeholder value is shown. By default, this is midnight. However, this can be overridden by setting the `placeholderValue` prop to a more appropriate placeholder for your specific usecase.
 
 ```tsx example
-<TimeField label="Birth date" placeholderValue={new Time(9)} />
+<TimeField label="Appointment time" placeholderValue={new Time(9)} />
 ```
 
 ### Hide time zone

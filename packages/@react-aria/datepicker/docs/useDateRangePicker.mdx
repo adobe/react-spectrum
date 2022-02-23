@@ -46,7 +46,7 @@ A date range picker can be built using two separate `<input type="date">` elemen
 * **Dates and times** – Support for dates and times with configurable granularity.
 * **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, hour cycles, and right-to-left support are available as well.
 * **Time zone aware** – Dates and times can optionally include a time zone. All modifications follow time zone rules such as daylight saving time.
-* **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale. Users can also open a calendar popover to select date ranges in a standard month grid.
+* **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale. Users can also open a calendar popover to select date ranges in a standard month grid. Localized screen reader messages are included to announce when the selection and visible date range change.
 * **Touch friendly** – Date segments are editable using an easy to use numeric keypad, date ranges can be selected by dragging over dates in the calendar using a touch screen, and all interactions are accessible using touch-based screen readers.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
@@ -54,7 +54,7 @@ A date range picker can be built using two separate `<input type="date">` elemen
 
 <Anatomy />
 
-A date range picker consists of a label, and group containing two [date fields](useDateField.html) and a button. Clicking the button opens a popup containing a [range calendar](useRangeCalendar.html). The date fields include segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable by the user using the keyboard. The calendar popup offers a more visual way of choosing a date range.
+A date range picker consists of a label, and group containing two [date fields](useDateField.html) and a button. Clicking the button opens a popup containing a [range calendar](useRangeCalendar.html). The date fields include segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date range.
 
 `useDateRangePicker` also supports optional description and error message elements, which can be used
 to provide more context about the field, and any validation messages. These are linked with the
@@ -90,11 +90,14 @@ function DateRangePicker(props) {
   return (
     <div style={{position: 'relative'}}>
       <span {...labelProps}>{props.label}</span>
-      <div {...groupProps} ref={ref} style={{display: 'flex'}}>
+      <div {...groupProps} ref={ref} style={{display: 'flex', maxWidth: '100%'}}>
         <div className="field">
           <DateField {...startFieldProps} />
           <span style={{padding: '0 4px'}}>–</span>
           <DateField {...endFieldProps} />
+          {state.validationState === 'invalid' &&
+            <span aria-hidden="true">🚫</span>
+          }
         </div>
         <Button {...buttonProps}>🗓</Button>
       </div>
@@ -257,6 +260,7 @@ function DateSegment({segment, state}) {
   border: 1px solid gray;
   background: Field;
   color: FieldText;
+  overflow: auto;
 }
 
 .field:focus-within {
@@ -489,6 +493,30 @@ function Example() {
 }
 ```
 
+### Events
+
+`useDateRangePicker` accepts an `onChange` prop which is triggered whenever the start or end date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date range in the user's locale and local time zone. This is done by converting the dates to native JavaScript `Date` objects to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+
+function Example() {
+  let [range, setRange] = React.useState({
+    start: parseDate('2020-07-03'),
+    end: parseDate('2020-07-10')
+  });
+  let formatter = useDateFormatter({dateStyle: 'long'});
+
+  return (
+    <>
+      <DateRangePicker label="Date range" value={range} onChange={setRange} />
+      <p>Selected date: {formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone()))}</p>
+    </>
+  );
+}
+```
+
 ### Time zones
 
 `useDateRangePicker` is time zone aware when <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> objects are provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account when the value is manipulated.
@@ -528,7 +556,7 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 
 The `granularity` prop allows you to control the smallest unit that is displayed by `useDateRangePicker`. By default, `CalendarDate` values are displayed with `"day"` granularity, and `CalendarDateTime` and `ZonedDateTime` values are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
 
-In addition, when a value with a time is passed, but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DateRangePickers are synchronized with the same value, but display different granularities.
+In addition, when a value with a time is provided but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DateRangePickers are synchronized with the same value, but display different granularities.
 
 ```tsx example
 function Example() {
@@ -592,40 +620,22 @@ function Example() {
 }
 ```
 
-### Events
-
-`useDateRangePicker` accepts an `onChange` prop which is triggered whenever the start or end date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date range in the user's locale and local time zone. This is done by converting the dates to native JavaScript `Date` objects to pass to the formatter.
-
-```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
-
-function Example() {
-  let [range, setRange] = React.useState({
-    start: parseDate('2020-07-03'),
-    end: parseDate('2020-07-10')
-  });
-  let formatter = useDateFormatter({dateStyle: 'long'});
-
-  return (
-    <>
-      <DateRangePicker label="Date range" value={range} onChange={setRange} />
-      <p>Selected date: {formatter.formatRange(range.start.toDate(getLocalTimeZone()), range.end.toDate(getLocalTimeZone()))}</p>
-    </>
-  );
-}
-```
-
 ### Minimum and maximum values
 
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This prevents the user from selecting dates outside the valid range in the calendar, and displays an invalid state if the user enters an invalid date into the date field.
+The `minValue` and `maxValue` props can also be used to perform builtin validation. This prevents the user from selecting dates outside the valid range in the calendar, and marks the date fields as invalid using ARIA. `useDateRangePicker` also validates that the end date is after the start date. You should implement a visual indication that the date range picker is invalid as well.
 
 This example only accepts dates after today.
 
 ```tsx example
 import {today} from '@internationalized/date';
 
-<DateRangePicker label="Appointment date" minValue={today(getLocalTimeZone())} />
+<DateRangePicker
+  label="Trip dates"
+  minValue={today(getLocalTimeZone())}
+  defaultValue={{
+    start: parseDate('2022-02-03'),
+    end: parseDate('2022-05-03')
+  }} />
 ```
 
 ### Hide time zone

@@ -102,6 +102,9 @@ export function TimeField(props) {
         {state.segments.map((segment, i) =>
           <DateSegment key={i} segment={segment} state={state} />
         )}
+        {state.validationState === 'invalid' &&
+          <span aria-hidden="true">🚫</span>
+        }
       </div>
     </div>
   );
@@ -239,17 +242,6 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 />
 ```
 
-### Granularity
-
-The `granularity` prop allows you to control the smallest unit that is displayed by `useTimeField`. By default, times are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
-
-```tsx example
-<TimeField
-  label="Event time"
-  granularity="second"
-  defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')} />
-```
-
 ### Events
 
 `useTimeField` accepts an `onChange` prop which is triggered whenever the time is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter. `useTimeField` allows editing the time components while keeping the date fixed.
@@ -271,14 +263,29 @@ function Example() {
 }
 ```
 
+### Granularity
+
+The `granularity` prop allows you to control the smallest unit that is displayed by `useTimeField`. By default, times are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
+
+```tsx example
+<TimeField
+  label="Event time"
+  granularity="second"
+  defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')} />
+```
+
 ### Minimum and maximum values
 
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This displays an invalid state if the user enters an invalid time into the time field.
+The `minValue` and `maxValue` props can also be used to perform builtin validation. This marks the time field as invalid using ARIA if the user enters an invalid time. You should implement a visual indication that the time field is invalid as well.
 
 This example only accepts times between 9 AM and 5 PM.
 
 ```tsx example
-<TimeField label="Meeting time" minValue={new Time(9)} maxValue={new Time(17)} />
+<TimeField
+  label="Meeting time"
+  minValue={new Time(9)}
+  maxValue={new Time(17)}
+  defaultValue={new Time(8)} />
 ```
 
 ### Placeholder value
@@ -286,7 +293,7 @@ This example only accepts times between 9 AM and 5 PM.
 When no value is set, a placeholder value is shown. By default, this is midnight. However, this can be overridden by setting the `placeholderValue` prop to a more appropriate placeholder for your specific usecase.
 
 ```tsx example
-<TimeField label="Birth date" placeholderValue={new Time(9)} />
+<TimeField label="Meeting time" placeholderValue={new Time(9)} />
 ```
 
 ### Hide time zone

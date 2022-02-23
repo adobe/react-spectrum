@@ -38,7 +38,6 @@ after_version: 3.0.0
 ## API
 
 <FunctionAPI function={docs.exports.useDatePicker} links={docs.links} />
-<FunctionAPI function={docs.exports.useDateSegment} links={docs.links} />
 
 ## Features
 
@@ -47,7 +46,7 @@ A date picker can be built using `<input type="date">`, but this is very limited
 * **Dates and times** – Support for dates and times with configurable granularity.
 * **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, hour cycles, and right-to-left support are available as well.
 * **Time zone aware** – Dates and times can optionally include a time zone. All modifications follow time zone rules such as daylight saving time.
-* **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale. Users can also open a calendar popover to select dates in a standard month grid.
+* **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale. Users can also open a calendar popover to select dates in a standard month grid. Localized screen reader messages are included to announce when the selection and visible date range change.
 * **Touch friendly** – Date segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
@@ -55,7 +54,7 @@ A date picker can be built using `<input type="date">`, but this is very limited
 
 <Anatomy />
 
-A date picker consists of a label, and group containing a [date field](useDateField.html) and a button. Clicking the button opens a popup containing a [calendar](useCalendar.html). The date field includes segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable by the user using the keyboard. The calendar popup offers a more visual way of choosing a date.
+A date picker consists of a label, and group containing a [date field](useDateField.html) and a button. Clicking the button opens a popup containing a [calendar](useCalendar.html). The date field includes segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date.
 
 `useDatePicker` also supports optional description and error message elements, which can be used
 to provide more context about the field, and any validation messages. These are linked with the
@@ -217,6 +216,9 @@ function DateField(props) {
         {state.segments.map((segment, i) =>
           <DateSegment key={i} segment={segment} state={state} />
         )}
+        {state.validationState === 'invalid' &&
+          <span aria-hidden="true">🚫</span>
+        }
       </div>
     </div>
   );
@@ -474,6 +476,27 @@ function Example() {
 }
 ```
 
+### Events
+
+`useDatePicker` accepts an `onChange` prop which is triggered whenever the date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+
+function Example() {
+  let [date, setDate] = React.useState(parseDate('1985-07-03'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <DatePicker label="Birth date" value={date} onChange={setDate} />
+      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+    </>
+  );
+}
+```
+
 ### Time zones
 
 `useDatePicker` is time zone aware when a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account when the value is manipulated.
@@ -507,7 +530,7 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 
 The `granularity` prop allows you to control the smallest unit that is displayed by `useDatePicker`. By default, `CalendarDate` values are displayed with `"day"` granularity, and `CalendarDateTime` and `ZonedDateTime` values are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
 
-In addition, when a value with a time is passed, but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DatePickers are synchronized with the same value, but display different granularities.
+In addition, when a value with a time is provided but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DatePickers are synchronized with the same value, but display different granularities.
 
 ```tsx example
 function Example() {
@@ -566,37 +589,19 @@ function Example() {
 }
 ```
 
-### Events
-
-`useDatePicker` accepts an `onChange` prop which is triggered whenever the date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
-
-```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
-
-function Example() {
-  let [date, setDate] = React.useState(parseDate('1985-07-03'));
-  let formatter = useDateFormatter({dateStyle: 'full'});
-
-  return (
-    <>
-      <DatePicker label="Birth date" value={date} onChange={setDate} />
-      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
-    </>
-  );
-}
-```
-
 ### Minimum and maximum values
 
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This prevents the user from selecting dates outside the valid range in the calendar, and displays an invalid state if the user enters an invalid date into the date field.
+The `minValue` and `maxValue` props can also be used to perform builtin validation. This prevents the user from selecting dates outside the valid range in the calendar, and marks the date field as invalid using ARIA. You should implement a visual indication that the date picker is invalid as well.
 
 This example only accepts dates after today.
 
 ```tsx example
 import {today} from '@internationalized/date';
 
-<DatePicker label="Appointment date" minValue={today(getLocalTimeZone())} />
+<DatePicker
+  label="Appointment date"
+  minValue={today(getLocalTimeZone())}
+  defaultValue={parseDate('2022-02-03')} />
 ```
 
 ### Placeholder value
@@ -611,7 +616,7 @@ import {CalendarDate} from '@internationalized/date';
 
 ### Hide time zone
 
-When a `ZonedDateTime` object is provided as the value to `useDateField`, the time zone abbreviation is displayed by default. However, if this is displayed elsewhere or implicit based on the usecase, it can be hidden using the `hideTimeZone` option.
+When a `ZonedDateTime` object is provided as the value to `useDatePicker`, the time zone abbreviation is displayed by default. However, if this is displayed elsewhere or implicit based on the usecase, it can be hidden using the `hideTimeZone` option.
 
 ```tsx example
 <DatePicker
@@ -622,7 +627,7 @@ When a `ZonedDateTime` object is provided as the value to `useDateField`, the ti
 
 ### Hour cycle
 
-By default, `useDateField` displays times in either 12 or 24 hour hour format depending on the user's locale. However, this can be overridden using the `hourCycle` prop if needed for a specific usecase. This example forces `useDateField` to use 24-hour time, regardless of the locale.
+By default, `useDatePicker` displays times in either 12 or 24 hour hour format depending on the user's locale. However, this can be overridden using the `hourCycle` prop if needed for a specific usecase. This example forces `useDatePicker` to use 24-hour time, regardless of the locale.
 
 ```tsx example
 <DatePicker
