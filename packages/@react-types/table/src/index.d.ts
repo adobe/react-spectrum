@@ -39,7 +39,9 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
   /** Handler that is called when a user performs a column resize. */
-  onColumnResize?: (width: number) => void
+  onColumnResize?: (value: T) => void,
+  /** Handler that is called when a column resize ends. */
+  onColumnResizeEnd?: (value: T) => void
 }
 
 export interface TableHeaderProps<T> {

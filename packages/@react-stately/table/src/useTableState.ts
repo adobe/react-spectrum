@@ -43,6 +43,8 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   getColumnWidth(key: Key): number,
   /** Trigger a resize and recalc. */
   onColumnResize: (column: GridNode<T>, width: number) => void,
+  /** Triggers the onColumnResizeEnd prop. */
+  onColumnResizeEnd: (column: GridNode<T>, width: number) => void,
   /** Need to be able to set the table width so that it can be used to calculate the column widths, this will trigger a recalc. */
   setTableWidth: (width: number) => void
 }
@@ -61,7 +63,8 @@ export interface TableStateProps<T>
   showSelectionCheckboxes?: boolean,
   /** Function for determining the default width of columns. */
   getDefaultWidth: (props) => string | number,
-  onColumnResize?: (affectedColumnWidths: { key: Key, width: number }[]) => void
+  onColumnResize?: (affectedColumnWidths: { key: Key, width: number }[]) => void,
+  onColumnResizeEnd?: (affectedColumnWidths: { key: Key, width: number }[]) => void
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -91,7 +94,7 @@ export function useTableState<T extends object>(
     props,
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
-    );
+  );
     
     
   // map of the columns and their width, key is the column key, value is the width
@@ -102,9 +105,16 @@ export function useTableState<T extends object>(
     return columnWidths.current.get(key) ?? 0;
   }
 
-  function onColumnResize(column: any, width: number) {
+  function onColumnResize(column: GridNode<T>, width: number) {
     let widthsObj = resizeColumn(column, width);
     props.onColumnResize && props.onColumnResize(widthsObj);
+  }
+
+  function onColumnResizeEnd(column: GridNode<T>, width: number) {
+    if (props.onColumnResizeEnd) {
+      let widthsObj = resizeColumn(column, width);
+      props.onColumnResizeEnd(widthsObj);
+    }
   }
 
   let {disabledKeys, selectionManager} = useGridState({
@@ -130,6 +140,7 @@ export function useTableState<T extends object>(
     columnWidths,
     getColumnWidth,
     onColumnResize,
+    onColumnResizeEnd,
     setTableWidth
   };
 }
