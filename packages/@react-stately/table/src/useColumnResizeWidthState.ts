@@ -59,8 +59,13 @@ export default function useColumnResizeWidthState<T>(
 
     // we only care about the columns that CAN be resized, we ignore static columns.
     let {dynamicColumns} = getStaticAndDynamicColumns(affectedColumns);
-    const availableSpace = columns.slice(0, resizeIndex + 1).reduce((acc, col) => acc - widths.get(col.key), tableWidth.current);
 
+    // columns to the left of the resized column
+    let availableSpace = columns.slice(0, resizeIndex + 1).reduce((acc, col) => acc - widths.get(col.key), tableWidth.current);
+    // columns to the right of the resize column that have already been resized
+    availableSpace = columns.slice(resizeIndex + 1).filter(column => resizedColumns.has(column.key))
+      .reduce((acc, col) => acc - widths.get(col.key), availableSpace);
+    
     // merge the unaffected column widths and the recalculated column widths
     let recalculatedColumnWidths = buildColumnWidths(dynamicColumns, availableSpace);
     widths = new Map<Key, number>([...widths, ...recalculatedColumnWidths]);
@@ -100,8 +105,7 @@ export default function useColumnResizeWidthState<T>(
     return widths;
   }
 
-  // TODO: Types
-  function getStaticAndDynamicColumns(columns: any) : { staticColumns: any, dynamicColumns: any } {
+  function getStaticAndDynamicColumns(columns: GridNode<T>[]) : { staticColumns: GridNode<T>[], dynamicColumns: GridNode<T>[] } {
     return columns.reduce((acc, column) => {
       let width = getRealColumnWidth(column);
       return isStatic(width) ? {...acc, staticColumns: [...acc.staticColumns, column]} : {...acc, dynamicColumns: [...acc.dynamicColumns, column]}; 
