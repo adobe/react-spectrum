@@ -60,11 +60,13 @@ export default function useColumnResizeWidthState<T>(
     // we only care about the columns that CAN be resized, we ignore static columns.
     let {dynamicColumns} = getStaticAndDynamicColumns(affectedColumns);
 
-    // columns to the left of the resized column
-    let availableSpace = columns.slice(0, resizeIndex + 1).reduce((acc, col) => acc - widths.get(col.key), tableWidth.current);
-    // columns to the right of the resize column that have already been resized
-    availableSpace = columns.slice(resizeIndex + 1).filter(column => resizedColumns.has(column.key))
-      .reduce((acc, col) => acc - widths.get(col.key), availableSpace);
+    // available space for affected columns
+    let availableSpace = columns.reduce((acc, column, index) => {
+      if (index <= resizeIndex || isStatic(getRealColumnWidth(column))) {
+        return acc - widths.get(column.key);
+      }
+      return acc;
+    }, tableWidth.current);
     
     // merge the unaffected column widths and the recalculated column widths
     let recalculatedColumnWidths = buildColumnWidths(dynamicColumns, availableSpace);
