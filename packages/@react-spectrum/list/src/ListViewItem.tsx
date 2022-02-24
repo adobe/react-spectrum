@@ -58,7 +58,7 @@ export function ListViewItem(props) {
     focusMode: 'cell'
   }, state, cellRef);
   let draggableItem: DraggableItemResult;
-  if (dragState) {
+  if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     draggableItem = useDraggableItem({key: item.key}, dragState);
   }

@@ -173,7 +173,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             {...provider}
             UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')}
             UNSAFE_style={{width: itemWidth, paddingInlineStart: 0}}>
-            <div className={listStyles['react-spectrum-ListViewItem-grid']} data-testid="dragpreview">
+            <div className={listStyles['react-spectrum-ListViewItem-grid']}>
               <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
                 <div className={listStyles['react-spectrum-ListViewItem-draghandle-button']}>
                   <DragHandle />
@@ -255,8 +255,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              // Moved most of the item props to ListViewContext since Virtualizer doesn't rerender on selection change since GridCollection is memoized. This meant
-              // the ListViewItem onDrag were referencing a stale SelectionManager and thus broke multi row drag and drop
+              // Moved onAction, dragState, and isDraggable to ListViewContext since Virtualizer doesn't rerender on
+              // selection change since GridCollection is memoized. This meant the ListViewItem onDrag were referencing
+              // a stale SelectionManager and thus broke multi row drag and drop
               <ListViewItem item={item} isEmphasized />
             );
           } else if (type === 'loader') {

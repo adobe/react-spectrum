@@ -49,20 +49,14 @@ describe('ListView', function () {
     expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
   };
 
-
-  afterEach(function () {
-    jest.clearAllMocks();
-  });
-
-  beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-  });
-
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
+  });
+
+  afterEach(function () {
+    jest.clearAllMocks();
   });
 
   afterAll(function () {
@@ -654,12 +648,14 @@ describe('ListView', function () {
 
     describe('via mouse', function () {
       it('should show a default drag preview on drag', function () {
-        let {getAllByRole, getByTestId} = render(
+        let {getAllByRole, getAllByText} = render(
           <DraggableListView />
         );
 
         let row = getAllByRole('row')[0];
         let cell = within(row).getByRole('gridcell');
+        let cellText = getAllByText(cell.textContent);
+        expect(cellText).toHaveLength(1);
 
         // Need raf to be async so the drag preview shows up properly
         jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
@@ -668,7 +664,9 @@ describe('ListView', function () {
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
         expect(dataTransfer._dragImage.x).toBe(5);
         expect(dataTransfer._dragImage.y).toBe(5);
-        expect(getByTestId('dragpreview')).toBeTruthy();
+
+        cellText = getAllByText(cell.textContent);
+        expect(cellText).toHaveLength(2);
       });
 
       it('should allow drag and drop of a single row', async function () {
@@ -1046,15 +1044,12 @@ describe('ListView', function () {
       fireEvent.mouseUp(cellC, {detail: 1});
       expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
 
-      // TODO: for some reason this doesn't seem to be triggering the hover listeners properly...
-      // fireEvent.mouseEnter(cellA);
-      // expect(within(cellA).queryByTestId('draghandle')).toBeFalsy();
-      // fireEvent.mouseEnter(cellB);
-      // expect(within(cellB).queryByTestId('draghandle')).toBeFalsy();
-      // fireEvent.mouseEnter(cellC);
-      // expect(within(cellC).queryByTestId('draghandle')).toBeTruthy();
-      // fireEvent.mouseLeave(cellC);
-      // expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
+      fireEvent.mouseEnter(cellA);
+      expect(within(cellA).queryByTestId('draghandle')).toBeFalsy();
+      fireEvent.mouseEnter(cellB);
+      expect(within(cellB).queryByTestId('draghandle')).toBeFalsy();
+      fireEvent.mouseEnter(cellC);
+      expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
     });
   });
 });
