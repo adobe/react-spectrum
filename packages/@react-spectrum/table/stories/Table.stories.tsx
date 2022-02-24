@@ -1073,10 +1073,10 @@ storiesOf('TableView', module)
     () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
-          <Column allowsResizing defaultWidth="flex-1">File Name</Column>
-          <Column allowsResizing defaultWidth="flex-2">Type</Column>
-          <Column allowsResizing defaultWidth="flex-2">Size</Column>
-          <Column allowsResizing defaultWidth="flex-1">Weight</Column>
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -1100,7 +1100,7 @@ storiesOf('TableView', module)
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
           <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>File Name</Column>
-          <Column allowsResizing defaultWidth="flex-1" minWidth={175} maxWidth={500}>Size</Column>
+          <Column allowsResizing defaultWidth="1fr" minWidth={175} maxWidth={500}>Size</Column>
           <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>Type</Column>
         </TableHeader>
         <TableBody>
@@ -1123,9 +1123,9 @@ storiesOf('TableView', module)
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
           <Column allowsResizing >File Name</Column>
-          <Column defaultWidth="flex-1">Type</Column>
-          <Column defaultWidth="flex-2">Size</Column>
-          <Column allowsResizing defaultWidth="flex-2">Weight</Column>
+          <Column defaultWidth="1fr">Type</Column>
+          <Column defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="2fr">Weight</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -1173,10 +1173,10 @@ storiesOf('TableView', module)
     () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResize={action('onColumnResize')}>
         <TableHeader>
-          <Column allowsResizing defaultWidth="flex-1">File Name</Column>
-          <Column allowsResizing defaultWidth="flex-2">Type</Column>
-          <Column allowsResizing defaultWidth="flex-2">Size</Column>
-          <Column allowsResizing defaultWidth="flex-1">Weight</Column>
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -1199,10 +1199,10 @@ storiesOf('TableView', module)
     () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResizeEnd={action('onColumnResizeEnd')}>
         <TableHeader>
-          <Column allowsResizing defaultWidth="flex-1">File Name</Column>
-          <Column allowsResizing defaultWidth="flex-2">Type</Column>
-          <Column allowsResizing defaultWidth="flex-2">Size</Column>
-          <Column allowsResizing defaultWidth="flex-1">Weight</Column>
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
         </TableHeader>
         <TableBody>
           <Row>

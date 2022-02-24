@@ -18,6 +18,7 @@ interface GridCollectionOptions {
 }
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
+const RESIZE_BUFFER_COLUMN_KEY = 'resize-buffer-column' + Math.random().toString(36).slice(2);
 
 function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
   let columns = [];
@@ -89,31 +90,31 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
             childNodes: [],
             textValue: null
           };
-
+          
           if (row.length > 0) {
             row[row.length - 1].nextKey = placeholder.key;
             placeholder.prevKey = row[row.length - 1].key;
           }
-
+          
           row.push(placeholder);
         }
-
+        
         if (row.length > 0) {
           row[row.length - 1].nextKey = item.key;
           item.prevKey = row[row.length - 1].key;
         }
-
+        
         item.level = i;
         item.index = colIndex;
         row.push(item);
       }
-
+      
       i--;
     }
-
+    
     colIndex++;
   }
-
+  
   // Add placeholders at the end of each row that is shorter than the maximum
   let i = 0;
   for (let row of headerRows) {
@@ -216,6 +217,27 @@ export class TableCollection<T> extends GridCollection<T> {
     for (let node of nodes) {
       visit(node);
     }
+
+    // add a hidden buffer column to the end of the table
+    // this will be used to allow for smooth scrolling when
+    // resizing columns while a horizontal scroll bar is present
+    let resizeBufferColumn: GridNode<T> = {
+      type: 'column',
+      key: RESIZE_BUFFER_COLUMN_KEY,
+      value: null,
+      textValue: '',
+      level: 0,
+      index: columns.length,
+      hasChildNodes: false,
+      rendered: null,
+      childNodes: [],
+      props: {
+        isResizeBuffer: true,
+        defaultWidth: 0
+      }
+    };
+    columns.push(resizeBufferColumn);
+
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
 

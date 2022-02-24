@@ -43,6 +43,7 @@ export default function useColumnResizeWidthState<T>(
 
   function resizeColumn(column: GridNode<T>, newWidth: number) : { key: Key, width: number }[] {
     // copy the columnWidths map and set the new width for the column being resized
+    console.log(newWidth);
     let widths = new Map<Key, number>(columnWidthsRef.current);
     widths.set(column.key, Math.max(
       getMinWidth(column.props.minWidth),
@@ -207,7 +208,7 @@ export default function useColumnResizeWidthState<T>(
     if (!width) {
       return 1;
     } 
-    return parseInt(width.match(/(?<=^flex-)(\d+)/g)[0], 10);
+    return parseInt(width.match(/^(\d+)(?=fr$)/)[0], 10);
   }
 
   function getMinWidth(minWidth: number | string): number {
