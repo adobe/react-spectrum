@@ -200,7 +200,7 @@ class LandmarkManager {
       // If alt key pressed, focus main landmark
       if (e.altKey) {
         let main = this.getLandmarkByRole('main');
-        if (document.contains(main.ref.current)) {
+        if (main && document.contains(main.ref.current)) {
           this.focusLandmark(main.ref.current);
         }
         return;
