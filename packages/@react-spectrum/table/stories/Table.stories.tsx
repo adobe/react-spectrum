@@ -1046,29 +1046,6 @@ storiesOf('TableView', module)
   )
   .add('table with breadcrumb navigation', () => <TableWithBreadcrumbs />)
   .add(
-    'allowsResizing, uncontrolled, static widths', () => (
-      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
-        <TableHeader>
-          <Column allowsResizing defaultWidth="50%">File Name</Column>
-          <Column allowsResizing defaultWidth="50%">Type</Column>
-          {/* <Column allowsResizing defaultWidth={199}>Size</Column> */}
-        </TableHeader>
-        <TableBody>
-          <Row>
-            <Cell>2018 Proposal</Cell>
-            <Cell>PDF</Cell>
-            {/* <Cell>214 KB</Cell> */}
-          </Row>
-          <Row>
-            <Cell>Budget</Cell>
-            <Cell>XLS</Cell>
-            {/* <Cell>120 KB</Cell> */}
-          </Row>
-        </TableBody>
-      </TableView>
-    )
-  )
-  .add(
     'allowsResizing, uncontrolled, dynamic widths',
     () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
@@ -1090,6 +1067,29 @@ storiesOf('TableView', module)
             <Cell>XLS</Cell>
             <Cell>120 KB</Cell>
             <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, static widths', () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth="50%">File Name</Column>
+          <Column allowsResizing defaultWidth="20%">Type</Column>
+          <Column allowsResizing defaultWidth={239}>Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
           </Row>
         </TableBody>
       </TableView>

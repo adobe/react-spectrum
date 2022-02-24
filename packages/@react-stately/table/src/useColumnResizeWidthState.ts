@@ -7,14 +7,14 @@ export default function useColumnResizeWidthState<T>(
     columns: GridNode<T>[],
     getDefaultWidth: (props) => string | number
   ): [MutableRefObject<Map<Key, number>>, (column: GridNode<T>, newWidth: number) => { key: Key, width: number }[], (width: number) => void] {
-  // TODO: switch to the virtualizer width
+
   const tableWidth = useRef<number>(null);
   const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(initializeColumnWidths(columns));
   const columnWidthsRef = useRef<Map<Key, number>>(columnWidths);
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
-  // if the columns change, need to 
+  // if the columns change, need to rebuild widths.
   useEffect(() => {
     const widths = buildColumnWidths(columns, tableWidth.current);
     setColumnWidthsForRef(widths);
