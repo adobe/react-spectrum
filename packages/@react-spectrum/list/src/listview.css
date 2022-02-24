@@ -119,10 +119,10 @@
     align-items: center;
     justify-items: center;
     width: var(--spectrum-global-dimension-size-250);
+    display: flex;
 
     .react-spectrum-ListViewItem-draghandle-button {
       margin: auto var(--spectrum-global-dimension-size-25);
-      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
