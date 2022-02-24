@@ -29,7 +29,8 @@ type Landmark = {
   role: AriaLandmarkRole,
   label?: string,
   lastFocused?: HTMLElement,
-  onFocus: () => void
+  onFocus: () => void,
+  onBlur: () => void
 };
 
 class LandmarkManager {
@@ -223,11 +224,19 @@ class LandmarkManager {
 
   /**
    * Sets lastFocused for a landmark, if focus is moved within that landmark.
+   * Lets the last focused landmark know it was blurred if something else is focused.
    */
   public focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as HTMLElement);
     if (currentLandmark && currentLandmark.ref.current !== e.target) {
       this.updateLandmark({...currentLandmark, lastFocused: e.target as HTMLElement});
+    }
+    let previousFocusedElment = e.relatedTarget as HTMLElement;
+    if (previousFocusedElment) {
+      let closestPreviousLandmark = this.closestLandmark(previousFocusedElment);
+      if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElment) {
+        closestPreviousLandmark.onBlur();
+      }
     }
   }
 }
@@ -251,26 +260,21 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
     setIsLandmarkFocused(true);
   }, [setIsLandmarkFocused]);
 
-  let onBlur = useCallback((e: FocusEvent) => {
-    if (e.target === ref.current) {
-      setIsLandmarkFocused(false);
-    }
+  let onBlur = useCallback(() => {
+    setIsLandmarkFocused(false);
   }, [setIsLandmarkFocused]);
 
   useLayoutEffect(() => {
-    manager.addLandmark({ref, role, label, onFocus});
+    manager.addLandmark({ref, role, label, onFocus, onBlur});
 
-    let landmark = ref.current;
-    landmark.addEventListener('blur', onBlur);
     return () => {
       manager.removeLandmark(ref);
-      landmark.removeEventListener('blur', onBlur);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    manager.updateLandmark({ref, label, role, onFocus});
+    manager.updateLandmark({ref, label, role, onFocus, onBlur});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
 
