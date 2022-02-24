@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, screen, within} from '@testing-library/react';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
@@ -39,6 +39,35 @@ function Region(props) {
   return <article ref={ref} {...landmarkProps}>{props.children}</article>;
 }
 
+// taken from useFocusVisible tests
+function toggleBrowserTabs() {
+  // this describes Chrome behaviour only, for other browsers visibilitychange fires after all focus events.
+  // leave tab
+  const lastActiveElement = document.activeElement;
+  fireEvent(lastActiveElement, new Event('blur'));
+  fireEvent(window, new Event('blur'));
+  Object.defineProperty(document, 'visibilityState', {
+    value: 'hidden',
+    writable: true
+  });
+  Object.defineProperty(document, 'hidden', {value: true, writable: true});
+  fireEvent(document, new Event('visibilitychange'));
+  // return to tab
+  Object.defineProperty(document, 'visibilityState', {
+    value: 'visible',
+    writable: true
+  });
+  Object.defineProperty(document, 'hidden', {value: false, writable: true});
+  fireEvent(document, new Event('visibilitychange'));
+  fireEvent(window, new Event('focus'));
+  fireEvent(lastActiveElement, new Event('focus'));
+}
+
+function toggleBrowserWindow() {
+  fireEvent(window, new Event('blur'));
+  fireEvent(window, new Event('focus'));
+}
+
 
 describe('LandmarkManager', function () {
   let offsetWidth, offsetHeight;
@@ -55,6 +84,7 @@ describe('LandmarkManager', function () {
   });
 
   afterEach(() => {
+
     act(() => {jest.runAllTimers();});
   });
 
@@ -904,12 +934,68 @@ describe('LandmarkManager', function () {
           <TextField label="First Name" />
         </Main>
       </div>
-      );
+    );
     let navigation = tree.getByRole('navigation');
 
     fireEvent.mouseDown(navigation);
     fireEvent.mouseUp(navigation);
 
     expect(document.activeElement).toBe(document.body);
+  });
+
+  it('focuses the landmark again after toggling browser tabs', function () {
+    let {getByRole} = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+    let nav = getByRole('navigation');
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(nav).toHaveAttribute('tabIndex', '-1');
+    expect(document.activeElement).toBe(nav);
+
+    toggleBrowserTabs();
+
+    expect(document.activeElement).toBe(nav);
+    expect(nav).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it('focuses the landmark again after toggling browser windows', function () {
+    let {getByRole} = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+    let nav = getByRole('navigation');
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(nav).toHaveAttribute('tabIndex', '-1');
+    expect(document.activeElement).toBe(nav);
+
+    toggleBrowserWindow();
+
+    expect(document.activeElement).toBe(nav);
+    expect(nav).toHaveAttribute('tabIndex', '-1');
   });
 });

@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-import {HTMLAttributes, MutableRefObject, useEffect} from 'react';
+import {HTMLAttributes, MutableRefObject, useCallback, useEffect, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
@@ -28,7 +28,9 @@ type Landmark = {
   ref: MutableRefObject<HTMLElement>,
   role: AriaLandmarkRole,
   label?: string,
-  lastFocused?: HTMLElement
+  lastFocused?: HTMLElement,
+  onFocus: () => void,
+  onBlur: () => void
 };
 
 class LandmarkManager {
@@ -51,16 +53,8 @@ class LandmarkManager {
     document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandler.bind(LandmarkManager.getInstance()), {capture: true});
   }
 
-  private onBlurLandmark(event) {
-    let {target: landmark} = event;
-    landmark.removeAttribute('tabindex');
-    landmark.removeEventListener('blur', this.onBlurLandmark);
-  }
-
   private focusLandmark(landmark: HTMLElement) {
-    landmark.setAttribute('tabindex', '-1');
-    landmark.addEventListener('blur', this.onBlurLandmark);
-    landmark.focus();
+    this.landmarks.find(l => l.ref.current === landmark)?.onFocus();
   }
 
   /**
@@ -70,18 +64,32 @@ class LandmarkManager {
     return new Set(this.landmarks.filter(l => l.role === role));
   }
 
-  public addLandmark({ref, role, label}: Landmark) {
-    if (this.landmarks.find(landmark => landmark.ref === ref)) {
+  /**
+   * Return first landmark with a specific role.
+   */
+  public getLandmarkByRole(role: AriaLandmarkRole) {
+    let landmarks = this.landmarks.filter(l => l.role === role);
+    if (landmarks.length > 0) {
+      return landmarks[0];
+    }
+  }
+
+  public addLandmark(newLandmark: Landmark) {
+    if (this.landmarks.find(landmark => landmark.ref === newLandmark.ref)) {
       return;
     }
 
+    if (this.landmarks.filter(landmark => landmark.role === 'main').length > 1) {
+      console.error('Page can contain no more than one landmark with the role "main".');
+    }
+
     if (this.landmarks.length === 0) {
-      this.landmarks = [{ref, role, label}];
+      this.landmarks = [newLandmark];
       return;
     }
 
     let insertPosition = 0;
-    let comparedPosition = ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
+    let comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
       // Compare position of landmark being added with existing landmarks.
       // Iterate through landmarks (which are sorted in document order),
       // and insert when a landmark is found that is positioned before the newly added element,
@@ -92,10 +100,10 @@ class LandmarkManager {
         ((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) ||
         (comparedPosition & Node.DOCUMENT_POSITION_CONTAINS))
         ) {
-      comparedPosition = ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
+      comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
       insertPosition++;
     }
-    this.landmarks.splice(insertPosition, 0, {ref, role, label});
+    this.landmarks.splice(insertPosition, 0, newLandmark);
   }
 
   public updateLandmark(landmark: Landmark) {
@@ -110,7 +118,7 @@ class LandmarkManager {
   /**
    * Warn if there are 2+ landmarks with the same role but no label.
    * Labels for landmarks with the same role must also be unique.
-   * 
+   *
    * See https://www.w3.org/TR/wai-aria-practices/examples/landmarks/navigation.html.
    */
   private checkLabels(role: AriaLandmarkRole) {
@@ -121,7 +129,7 @@ class LandmarkManager {
       } else {
         let labels = [...landmarksWithRole].map(landmark => landmark.label);
         let duplicateLabels = labels.filter((item, index) => labels.indexOf(item) !== index);
-  
+
         duplicateLabels.forEach((label) => {
           console.warn(`Page contains more than one landmark with the '${role}' role and '${label}' label. If two or more landmarks on a page share the same role, they must have unique labels.`);
         });
@@ -144,7 +152,7 @@ class LandmarkManager {
 
   /**
    * Gets the next landmark, in DOM focus order, or previous if backwards is specified.
-   * If nested, next should be the child landmark. 
+   * If nested, next should be the child landmark.
    * If last landmark, next should be the first landmark.
    * If not inside a landmark, will return first landmark.
    * Returns undefined if there are no landmarks.
@@ -153,7 +161,7 @@ class LandmarkManager {
     if (this.landmarks.length === 0) {
       return undefined;
     }
-    
+
     let currentLandmark = this.closestLandmark(element);
     let nextLandmarkIndex = backward ? -1 : 0;
     if (currentLandmark) {
@@ -190,10 +198,10 @@ class LandmarkManager {
       }
 
       // If alt key pressed, focus main landmark
-      if (e.altKey) { 
-        let main = this.getLandmarksByRole('main');
-        if (main.size > 0) {
-          this.focusLandmark([...main][0].ref.current);
+      if (e.altKey) {
+        let main = this.getLandmarkByRole('main');
+        if (document.contains(main.ref.current)) {
+          this.focusLandmark(main.ref.current);
         }
         return;
       }
@@ -202,7 +210,7 @@ class LandmarkManager {
       if (nextLandmark.lastFocused) {
         let lastFocused = nextLandmark.lastFocused;
         if (document.body.contains(lastFocused)) {
-          this.focusLandmark(lastFocused);
+          lastFocused.focus();
           return;
         }
       }
@@ -216,11 +224,19 @@ class LandmarkManager {
 
   /**
    * Sets lastFocused for a landmark, if focus is moved within that landmark.
+   * Lets the last focused landmark know it was blurred if something else is focused.
    */
   public focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as HTMLElement);
-    if (currentLandmark) {
+    if (currentLandmark && currentLandmark.ref.current !== e.target) {
       this.updateLandmark({...currentLandmark, lastFocused: e.target as HTMLElement});
+    }
+    let previousFocusedElment = e.relatedTarget as HTMLElement;
+    if (previousFocusedElment) {
+      let closestPreviousLandmark = this.closestLandmark(previousFocusedElment);
+      if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElment) {
+        closestPreviousLandmark.onBlur();
+      }
     }
   }
 }
@@ -238,10 +254,19 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   } = props;
   let manager = LandmarkManager.getInstance();
   let label = ariaLabel || ariaLabelledby;
+  let [isLandmarkFocused, setIsLandmarkFocused] = useState(false);
+
+  let onFocus = useCallback(() => {
+    setIsLandmarkFocused(true);
+  }, [setIsLandmarkFocused]);
+
+  let onBlur = useCallback(() => {
+    setIsLandmarkFocused(false);
+  }, [setIsLandmarkFocused]);
 
   useLayoutEffect(() => {
-    manager.addLandmark({ref, role, label});
-    
+    manager.addLandmark({ref, role, label, onFocus, onBlur});
+
     return () => {
       manager.removeLandmark(ref);
     };
@@ -249,13 +274,20 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   }, []);
 
   useEffect(() => {
-    manager.updateLandmark({ref, label, role});
+    manager.updateLandmark({ref, label, role, onFocus, onBlur});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
 
+  useEffect(() => {
+    if (isLandmarkFocused) {
+      ref.current.focus();
+    }
+  }, [isLandmarkFocused, ref]);
+
   return {
     landmarkProps: {
-      role
+      role,
+      tabIndex: isLandmarkFocused ? -1 : undefined
     }
   };
 }
