@@ -1,7 +1,7 @@
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
- * you may not use file except in compliance with the License. You may obtain a copy
+ * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software distributed under
@@ -10,14 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  CollectionBase,
-  Node,
-  SelectionMode,
-  Sortable,
-  SortDescriptor,
-  SortDirection
-} from '@react-types/shared';
+import {CollectionBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
@@ -55,10 +48,7 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface TableStateProps<T>
-  extends CollectionBase<T>,
-    MultipleSelectionStateProps,
-    Sortable {
+export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean,
   /** Function for determining the default width of columns. */
@@ -76,26 +66,21 @@ const OPPOSITE_SORT_DIRECTION = {
  * Provides state management for a table component. Handles building a collection
  * of columns and rows from props. In addition, it tracks row selection and manages sort order changes.
  */
-export function useTableState<T extends object>(
-  props: TableStateProps<T>
-): TableState<T> {
+export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
   let {selectionMode = 'none'} = props;
-  let context = useMemo(
-    () => ({
-      showSelectionCheckboxes:
-        props.showSelectionCheckboxes && selectionMode !== 'none',
-      selectionMode,
-      columns: []
-    }),
-    [props.children, props.showSelectionCheckboxes, selectionMode]
-  );
+
+  let context = useMemo(() => ({
+    showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
+    selectionMode,
+    columns: []
+  }), [props.children, props.showSelectionCheckboxes, selectionMode]);
 
   let collection = useCollection<T, TableCollection<T>>(
     props,
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
-    
+  let {disabledKeys, selectionManager} = useGridState({...props, collection});
     
   // map of the columns and their width, key is the column key, value is the width
   // TODO: switch to useControlledState
@@ -117,11 +102,6 @@ export function useTableState<T extends object>(
     }
   }
 
-  let {disabledKeys, selectionManager} = useGridState({
-    ...props,
-    collection
-  });
-
   return {
     collection,
     disabledKeys,
@@ -131,10 +111,9 @@ export function useTableState<T extends object>(
     sort(columnKey: Key) {
       props.onSortChange({
         column: columnKey,
-        direction:
-          props.sortDescriptor?.column === columnKey
-            ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
-            : 'ascending'
+        direction: props.sortDescriptor?.column === columnKey
+          ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
+          : 'ascending'
       });
     },
     columnWidths,

@@ -1,21 +1,7 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {
-  clamp,
-  focusWithoutScrolling,
-  mergeProps,
-  useGlobalListeners
-} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {getSliderThumbId, sliderIds} from './utils';
-import React, {
-  ChangeEvent,
-  HTMLAttributes,
-  InputHTMLAttributes,
-  LabelHTMLAttributes,
-  RefObject,
-  useCallback,
-  useEffect,
-  useRef
-} from 'react';
+import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useKeyboard, useMove} from '@react-aria/interactions';
@@ -190,6 +176,7 @@ export function useSliderThumb(
     addGlobalListener(window, 'mouseup', onUp, false);
     addGlobalListener(window, 'touchend', onUp, false);
     addGlobalListener(window, 'pointerup', onUp, false);
+
   };
 
   let onUp = (e) => {
@@ -241,11 +228,9 @@ export function useSliderThumb(
           }
           onDown(e.pointerId);
         },
-        onTouchStart: (e: React.TouchEvent<HTMLElement>) => {
-          onDown(e.changedTouches[0].identifier);
-        }
-      })
-      : {},
+        onTouchStart: (e: React.TouchEvent<HTMLElement>) => {onDown(e.changedTouches[0].identifier);}
+      }
+    ) : {},
     labelProps
   };
 }

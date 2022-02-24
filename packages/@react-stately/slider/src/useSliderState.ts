@@ -165,16 +165,12 @@ export function useSliderState(props: SliderStateOptions): SliderState {
 
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
-    props.defaultValue ?? ([minValue] as any),
+    props.defaultValue ?? [minValue] as any,
     props.onChange as any
   );
-  const [isDraggings, setDraggings] = useState<boolean[]>(
-    new Array(values.length).fill(false)
-  );
+  const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
-  const [focusedIndex, setFocusedIndex] = useState<number | undefined>(
-    undefined
-  );
+  const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
   const valuesRef = useRef<number[]>(null);
   valuesRef.current = values;
@@ -219,19 +215,11 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     }
 
     const wasDragging = isDraggingsRef.current[index];
-    isDraggingsRef.current = replaceIndex(
-      isDraggingsRef.current,
-      index,
-      dragging
-    );
+    isDraggingsRef.current = replaceIndex(isDraggingsRef.current, index, dragging);
     setDraggings(isDraggingsRef.current);
 
     // Call onChangeEnd if no handles are dragging.
-    if (
-      props.onChangeEnd &&
-      wasDragging &&
-      !isDraggingsRef.current.some(Boolean)
-    ) {
+    if (props.onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
       props.onChangeEnd(valuesRef.current);
     }
   }
@@ -268,7 +256,7 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     getThumbValue: (index: number) => values[index],
     setThumbValue: updateValue,
     setThumbPercent,
-    isThumbDragging: (index: number) => isDraggingsRef.current[index],
+    isThumbDragging: (index: number) => isDraggings[index],
     setThumbDragging: updateDragging,
     focusedThumb: focusedIndex,
     setFocusedThumb: setFocusedIndex,

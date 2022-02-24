@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// import {snapValueToStep} from '@react-aria/utils';
 import {useMove} from '@react-aria/interactions';
 import {useRef} from 'react';
 
@@ -21,7 +20,6 @@ export function useTableColumnResize(state, item): any {
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
     onMoveStart() {
-      // stateRef.current.addResizedColumn(item.key);
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
     },
     onMove({deltaX}) {

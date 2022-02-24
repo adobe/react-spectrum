@@ -1046,37 +1046,14 @@ storiesOf('TableView', module)
   )
   .add('table with breadcrumb navigation', () => <TableWithBreadcrumbs />)
   .add(
-    'allowsResizing, uncontrolled, static widths', () => (
-      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
-        <TableHeader>
-          <Column allowsResizing defaultWidth="50%">File Name</Column>
-          <Column allowsResizing defaultWidth="50%">Type</Column>
-          {/* <Column allowsResizing defaultWidth={199}>Size</Column> */}
-        </TableHeader>
-        <TableBody>
-          <Row>
-            <Cell>2018 Proposal</Cell>
-            <Cell>PDF</Cell>
-            {/* <Cell>214 KB</Cell> */}
-          </Row>
-          <Row>
-            <Cell>Budget</Cell>
-            <Cell>XLS</Cell>
-            {/* <Cell>120 KB</Cell> */}
-          </Row>
-        </TableBody>
-      </TableView>
-    )
-  )
-  .add(
     'allowsResizing, uncontrolled, dynamic widths',
     () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
-          <Column allowsResizing defaultWidth="1fr">File Name</Column>
-          <Column allowsResizing defaultWidth="2fr">Type</Column>
-          <Column allowsResizing defaultWidth="2fr">Size</Column>
-          <Column allowsResizing defaultWidth="1fr">Weight</Column>
+          <Column allowsResizing defaultWidth="flex-1">File Name</Column>
+          <Column allowsResizing defaultWidth="flex-2">Type</Column>
+          <Column allowsResizing defaultWidth="flex-2">Size</Column>
+          <Column allowsResizing defaultWidth="flex-1">Weight</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -1090,6 +1067,36 @@ storiesOf('TableView', module)
             <Cell>XLS</Cell>
             <Cell>120 KB</Cell>
             <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, static widths', () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+<<<<<<< HEAD
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
+=======
+          <Column allowsResizing defaultWidth="50%">File Name</Column>
+          <Column allowsResizing defaultWidth="20%">Type</Column>
+          <Column allowsResizing defaultWidth={239}>Size</Column>
+>>>>>>> f45fcb7a61acde4add65454af52e84242bd7d0ee
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
           </Row>
         </TableBody>
       </TableView>
