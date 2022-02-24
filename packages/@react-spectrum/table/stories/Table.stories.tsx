@@ -1076,16 +1076,9 @@ storiesOf('TableView', module)
     'allowsResizing, uncontrolled, static widths', () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
-<<<<<<< HEAD
-          <Column allowsResizing defaultWidth="1fr">File Name</Column>
-          <Column allowsResizing defaultWidth="2fr">Type</Column>
-          <Column allowsResizing defaultWidth="2fr">Size</Column>
-          <Column allowsResizing defaultWidth="1fr">Weight</Column>
-=======
           <Column allowsResizing defaultWidth="50%">File Name</Column>
           <Column allowsResizing defaultWidth="20%">Type</Column>
           <Column allowsResizing defaultWidth={239}>Size</Column>
->>>>>>> f45fcb7a61acde4add65454af52e84242bd7d0ee
         </TableHeader>
         <TableBody>
           <Row>
