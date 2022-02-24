@@ -65,7 +65,8 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
               props.onChange(e);
             }
             setColor(e);
-          }} />
+          }}
+          onChangeEnd={props.onChangeEnd} />
         {isHue ? (
           <ColorWheel
             value={color}
@@ -95,7 +96,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
             isDisabled={isDisabled} />
         )}
       </Flex>
-      <Flex direction="column" alignItems="center" gap="size-100" minWidth={'size-2000'}>
+      <Flex direction="column" alignItems="center" gap="size-200" minWidth={'size-2000'}>
         <div role="img" aria-label={`color swatch: ${color.toString('rgb')}`} title={`${color.toString('hex')}`} style={{width: '100px', height: '100px', background: color.toString('css')}} />
         <Text>{color.toString('hex')}</Text>
       </Flex>
@@ -155,11 +156,11 @@ XBlueYGreenSize600.args = {...XBlueYGreen.args, size: 'size-600'};
 
 export let XSaturationYLightness = Template.bind({});
 XSaturationYLightness.storyName = 'HSL xChannel="saturation", yChannel="lightness"';
-XSaturationYLightness.args = {xChannel: 'saturation', yChannel: 'lightness', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange')};
+XSaturationYLightness.args = {xChannel: 'saturation', yChannel: 'lightness', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XLightnessYSaturation = Template.bind({});
 XLightnessYSaturation.storyName = 'HSL xChannel="lightness", yChannel="saturation"';
-XLightnessYSaturation.args = {xChannel: 'lightness', yChannel: 'saturation', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange')};
+XLightnessYSaturation.args = {xChannel: 'lightness', yChannel: 'saturation', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 /* TODO: what does a disabled color area look like? */
 export let XSaturationYLightnessisDisabled = Template.bind({});
@@ -168,11 +169,11 @@ XSaturationYLightnessisDisabled.args = {...XSaturationYLightness.args, isDisable
 
 export let XHueYSaturationHSL = Template.bind({});
 XHueYSaturationHSL.storyName = 'HSL xChannel="hue", yChannel="saturation"';
-XHueYSaturationHSL.args = {xChannel: 'hue', yChannel: 'saturation', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange')};
+XHueYSaturationHSL.args = {xChannel: 'hue', yChannel: 'saturation', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XSaturationYHueHSL = Template.bind({});
 XSaturationYHueHSL.storyName = 'HSL xChannel="saturation", yChannel="hue"';
-XSaturationYHueHSL.args = {xChannel: 'saturation', yChannel: 'hue', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange')};
+XSaturationYHueHSL.args = {xChannel: 'saturation', yChannel: 'hue', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 /* TODO: what does a disabled color area look like? */
 export let XHueYSaturationHSLisDisabled = Template.bind({});
@@ -181,11 +182,11 @@ XHueYSaturationHSLisDisabled.args = {...XHueYSaturationHSL.args, isDisabled: tru
 
 export let XHueYLightnessHSL = Template.bind({});
 XHueYLightnessHSL.storyName = 'HSL xChannel="hue", yChannel="lightness"';
-XHueYLightnessHSL.args = {xChannel: 'hue', yChannel: 'lightness', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange')};
+XHueYLightnessHSL.args = {xChannel: 'hue', yChannel: 'lightness', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XLightnessYHueHSL = Template.bind({});
 XLightnessYHueHSL.storyName = 'HSL xChannel="lightness", yChannel="hue"';
-XLightnessYHueHSL.args = {xChannel: 'lightness', yChannel: 'hue', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange')};
+XLightnessYHueHSL.args = {xChannel: 'lightness', yChannel: 'hue', defaultValue: 'hsl(0, 100%, 50%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 /* TODO: what does a disabled color area look like? */
 export let XHueYLightnessHSLisDisabled = Template.bind({});
@@ -194,11 +195,11 @@ XHueYLightnessHSLisDisabled.args = {...XHueYLightnessHSL.args, isDisabled: true}
 
 export let XSaturationYBrightness = Template.bind({});
 XSaturationYBrightness.storyName = 'HSB xChannel="saturation", yChannel="brightness"';
-XSaturationYBrightness.args = {xChannel: 'saturation', yChannel: 'brightness', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange')};
+XSaturationYBrightness.args = {xChannel: 'saturation', yChannel: 'brightness', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XBrightnessYSaturation = Template.bind({});
 XBrightnessYSaturation.storyName = 'HSB xChannel="brightness", yChannel="saturation"';
-XBrightnessYSaturation.args = {xChannel: 'brightness', yChannel: 'saturation', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange')};
+XBrightnessYSaturation.args = {xChannel: 'brightness', yChannel: 'saturation', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 /* TODO: what does a disabled color area look like? */
 export let XSaturationYBrightnessisDisabled = Template.bind({});
@@ -207,11 +208,11 @@ XSaturationYBrightnessisDisabled.args = {...XSaturationYBrightness.args, isDisab
 
 export let XHueYSaturationHSB = Template.bind({});
 XHueYSaturationHSB.storyName = 'HSB xChannel="hue", yChannel="saturation"';
-XHueYSaturationHSB.args = {xChannel: 'hue', yChannel: 'saturation', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange')};
+XHueYSaturationHSB.args = {xChannel: 'hue', yChannel: 'saturation', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XSaturationYHueHSB = Template.bind({});
 XSaturationYHueHSB.storyName = 'HSB xChannel="saturation", yChannel="hue"';
-XSaturationYHueHSB.args = {xChannel: 'saturation', yChannel: 'hue', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange')};
+XSaturationYHueHSB.args = {xChannel: 'saturation', yChannel: 'hue', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 /* TODO: what does a disabled color area look like? */
 export let XHueYSaturationHSBisDisabled = Template.bind({});
@@ -220,11 +221,11 @@ XHueYSaturationHSBisDisabled.args = {...XHueYSaturationHSB.args, isDisabled: tru
 
 export let XHueYBrightnessHSB = Template.bind({});
 XHueYBrightnessHSB.storyName = 'HSB xChannel="hue", yChannel="brightness"';
-XHueYBrightnessHSB.args = {xChannel: 'hue', yChannel: 'brightness', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange')};
+XHueYBrightnessHSB.args = {xChannel: 'hue', yChannel: 'brightness', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XBrightnessYHueHSB = Template.bind({});
 XBrightnessYHueHSB.storyName = 'HSB xChannel="brightness", yChannel="hue"';
-XBrightnessYHueHSB.args = {xChannel: 'brightness', yChannel: 'hue', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange')};
+XBrightnessYHueHSB.args = {xChannel: 'brightness', yChannel: 'hue', defaultValue: 'hsb(0, 100%, 100%)', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 /* TODO: what does a disabled color area look like? */
 export let XBrightnessYHueHSBisDisabled = Template.bind({});
