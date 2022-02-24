@@ -25,7 +25,6 @@ export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
   lastCollection: TableCollection<T>;
   getColumnWidth_: (key: Key) => number;
-  columnWidthsRef: Map<Key, number>;
   stickyColumnIndices: number[];
   wasLoading = false;
   isLoading = false;
