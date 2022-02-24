@@ -132,10 +132,6 @@
         box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
         outline: none;
       }
-
-      &.react-spectrum-ListViewItem-draghandle-button-isHidden {
-        display: none;
-      }
     }
   }
 

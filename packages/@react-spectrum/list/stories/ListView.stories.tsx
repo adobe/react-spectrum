@@ -232,11 +232,11 @@ storiesOf('ListView', module)
   .add(
     'draggable rows',
     () => (
-      <>
+      <Flex direction="row" wrap alignItems="center">
         <input />
         <Droppable />
         <DragExample dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
-      </>
+      </Flex>
     )
   );
 

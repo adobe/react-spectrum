@@ -26,6 +26,7 @@ import {useButton} from '@react-aria/button';
 import {useGridCell, useGridRow, useGridSelectionCheckbox} from '@react-aria/grid';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export function ListViewItem(props) {
   let {
@@ -94,6 +95,7 @@ export function ListViewItem(props) {
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
   let showDragHandle = isDraggable && (isFocusVisibleWithin || isHovered || isPressed);
+  let {visuallyHiddenProps} = useVisuallyHidden();
   return (
     <div
       {...mergeProps(rowProps, pressProps, isDraggable && draggableItem?.dragProps)}
@@ -127,12 +129,10 @@ export function ListViewItem(props) {
                     className={
                       classNames(
                         listStyles,
-                        'react-spectrum-ListViewItem-draghandle-button',
-                        {
-                          'react-spectrum-ListViewItem-draghandle-button-isHidden': !showDragHandle
-                        }
+                        'react-spectrum-ListViewItem-draghandle-button'
                       )
                     }
+                    style={!showDragHandle ? {...visuallyHiddenProps.style} : {}}
                     ref={dragButtonRef}
                     draggable="true">
                     <DragHandle />
