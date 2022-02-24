@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-import {HTMLAttributes, MutableRefObject, useEffect, useState} from 'react';
+import {HTMLAttributes, MutableRefObject, useCallback, useEffect, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
@@ -30,8 +30,7 @@ type Landmark = {
   role: AriaLandmarkRole,
   label?: string,
   lastFocused?: HTMLElement,
-  onFocus: () => void,
-  onBlur: () => void
+  onFocus: () => void
 };
 
 class LandmarkManager {
@@ -55,7 +54,6 @@ class LandmarkManager {
   }
 
   private focusLandmark(landmark: HTMLElement) {
-    this.landmarks.find((l) => l.ref.current === document.activeElement)?.onBlur();
     this.landmarks.find(l => l.ref.current === landmark)?.onFocus();
   }
 
@@ -106,7 +104,7 @@ class LandmarkManager {
   /**
    * Warn if there are 2+ landmarks with the same role but no label.
    * Labels for landmarks with the same role must also be unique.
-   * 
+   *
    * See https://www.w3.org/TR/wai-aria-practices/examples/landmarks/navigation.html.
    */
   private checkLabels(role: AriaLandmarkRole) {
@@ -117,7 +115,7 @@ class LandmarkManager {
       } else {
         let labels = [...landmarksWithRole].map(landmark => landmark.label);
         let duplicateLabels = labels.filter((item, index) => labels.indexOf(item) !== index);
-  
+
         duplicateLabels.forEach((label) => {
           console.warn(`Page contains more than one landmark with the '${role}' role and '${label}' label. If two or more landmarks on a page share the same role, they must have unique labels.`);
         });
@@ -140,7 +138,7 @@ class LandmarkManager {
 
   /**
    * Gets the next landmark, in DOM focus order, or previous if backwards is specified.
-   * If nested, next should be the child landmark. 
+   * If nested, next should be the child landmark.
    * If last landmark, next should be the first landmark.
    * If not inside a landmark, will return first landmark.
    * Returns undefined if there are no landmarks.
@@ -149,7 +147,7 @@ class LandmarkManager {
     if (this.landmarks.length === 0) {
       return undefined;
     }
-    
+
     let currentLandmark = this.closestLandmark(element);
     let nextLandmarkIndex = backward ? -1 : 0;
     if (currentLandmark) {
@@ -186,7 +184,7 @@ class LandmarkManager {
       }
 
       // If alt key pressed, focus main landmark
-      if (e.altKey) { 
+      if (e.altKey) {
         let main = this.getLandmarksByRole('main');
         if (main.size > 0) {
           this.focusLandmark([...main][0].ref.current);
@@ -198,7 +196,7 @@ class LandmarkManager {
       if (nextLandmark.lastFocused) {
         let lastFocused = nextLandmark.lastFocused;
         if (document.body.contains(lastFocused)) {
-          this.focusLandmark(lastFocused);
+          lastFocused.focus();
           return;
         }
       }
@@ -215,7 +213,7 @@ class LandmarkManager {
    */
   public focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as HTMLElement);
-    if (currentLandmark) {
+    if (currentLandmark && currentLandmark.ref.current !== e.target) {
       this.updateLandmark({...currentLandmark, lastFocused: e.target as HTMLElement});
     }
   }
@@ -237,25 +235,30 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   let label = ariaLabel || ariaLabelledby;
   let [isLandmarkFocused, setIsLandmarkFocused] = useState(false);
 
-  let onFocus = () => {
+  let onFocus = useCallback(() => {
     setIsLandmarkFocused(true);
-  };
-  
-  let onBlur = () => {
-    setIsLandmarkFocused(false);
-  };
+  }, [setIsLandmarkFocused]);
+
+  let onBlur = useCallback((e: FocusEvent) => {
+    if (e.target === ref.current) {
+      setIsLandmarkFocused(false);
+    }
+  }, [setIsLandmarkFocused]);
 
   useLayoutEffect(() => {
-    manager.addLandmark({ref, role, label, onFocus, onBlur});
-    
+    manager.addLandmark({ref, role, label, onFocus});
+
+    let landmark = ref.current;
+    landmark.addEventListener('blur', onBlur);
     return () => {
       manager.removeLandmark(ref);
+      landmark.removeEventListener('blur', onBlur);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    manager.updateLandmark({ref, label, role, onFocus, onBlur});
+    manager.updateLandmark({ref, label, role, onFocus});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
 
