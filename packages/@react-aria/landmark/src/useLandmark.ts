@@ -17,8 +17,7 @@ import {useLayoutEffect} from '@react-aria/utils';
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
 
 export interface AriaLandmarkProps extends AriaLabelingProps {
-  role: AriaLandmarkRole,
-  tabIndex?: number
+  role: AriaLandmarkRole
 }
 
 interface LandmarkAria {
@@ -227,7 +226,6 @@ class LandmarkManager {
 export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTMLElement>): LandmarkAria {
   const {
     role,
-    tabIndex,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
@@ -271,7 +269,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   return {
     landmarkProps: {
       role,
-      tabIndex: isLandmarkFocused ? -1 : tabIndex
+      tabIndex: isLandmarkFocused ? -1 : undefined
     }
   };
 }
