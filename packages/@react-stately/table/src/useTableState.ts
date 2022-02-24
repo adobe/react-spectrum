@@ -48,10 +48,7 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface TableStateProps<T>
-  extends CollectionBase<T>,
-    MultipleSelectionStateProps,
-    Sortable {
+export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean,
   /** Function for determining the default width of columns. */
@@ -71,6 +68,7 @@ const OPPOSITE_SORT_DIRECTION = {
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
   let {selectionMode = 'none'} = props;
+
   let context = useMemo(() => ({
     showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
     selectionMode,
@@ -82,7 +80,6 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
-
   let {disabledKeys, selectionManager} = useGridState({...props, collection});
     
   // map of the columns and their width, key is the column key, value is the width
@@ -115,8 +112,8 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
       props.onSortChange({
         column: columnKey,
         direction: props.sortDescriptor?.column === columnKey
-        ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
-        : 'ascending'
+          ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
+          : 'ascending'
       });
     },
     columnWidths,
