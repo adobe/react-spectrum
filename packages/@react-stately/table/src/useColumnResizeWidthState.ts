@@ -137,7 +137,7 @@ export default function useColumnResizeWidthState<T>(
 
   function getRealColumnWidth(column) {
     let props = column.props as ColumnProps<T>;
-    return resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : props.width ?? props.defaultWidth ?? getDefaultWidth(column.props);
+    return resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : props.width ?? props.defaultWidth ?? getDefaultWidth?.(column.props) ?? 'flex-1';
   }
 
   function isStatic(width: number | string): boolean {

@@ -54,7 +54,7 @@ export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelection
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean,
   /** Function for determining the default width of columns. */
-  getDefaultWidth: (props) => string | number,
+  getDefaultWidth?: (props) => string | number,
   onColumnResize?: (affectedColumnWidths: { key: Key, width: number }[]) => void,
   onColumnResizeEnd?: (affectedColumnWidths: { key: Key, width: number }[]) => void
 }
