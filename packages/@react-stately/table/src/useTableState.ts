@@ -36,6 +36,8 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   getColumnWidth(key: Key): number,
   /** Trigger a resize and recalc. */
   onColumnResize: (column: GridNode<T>, width: number) => void,
+  /** Runs at the start of resizing. */
+  onColumnResizeStart: () => void,
   /** Triggers the onColumnResizeEnd prop. */
   onColumnResizeEnd: (column: GridNode<T>, width: number) => void,
   /** Need to be able to set the table width so that it can be used to calculate the column widths, this will trigger a recalc. */
@@ -84,7 +86,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     
   // map of the columns and their width, key is the column key, value is the width
   // TODO: switch to useControlledState
-  const [columnWidths, resizeColumn, setTableWidth] = useColumnResizeWidthState(collection.columns, props.getDefaultWidth);
+  const [columnWidths, resizeColumn, setTableWidth, onColumnResizeStart, _onColumnResizeEnd] = useColumnResizeWidthState(collection.columns, props.getDefaultWidth);
 
   function getColumnWidth(key: Key): number {
     return columnWidths.current.get(key) ?? 0;
@@ -100,6 +102,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
       let widthsObj = resizeColumn(column, width);
       props.onColumnResizeEnd(widthsObj);
     }
+    _onColumnResizeEnd();
   }
 
   return {
@@ -119,6 +122,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     columnWidths,
     getColumnWidth,
     onColumnResize,
+    onColumnResizeStart,
     onColumnResizeEnd,
     setTableWidth
   };

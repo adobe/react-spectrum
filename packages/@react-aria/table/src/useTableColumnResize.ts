@@ -20,6 +20,7 @@ export function useTableColumnResize(state, item): any {
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
     onMoveStart() {
+      stateRef.current.onColumnResizeStart();
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
     },
     onMove({deltaX}) {

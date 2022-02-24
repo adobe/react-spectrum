@@ -6,9 +6,11 @@ import {Key, MutableRefObject, useEffect, useRef, useState} from 'react';
 export default function useColumnResizeWidthState<T>(
     columns: GridNode<T>[],
     getDefaultWidth: (props) => string | number
-  ): [MutableRefObject<Map<Key, number>>, (column: GridNode<T>, newWidth: number) => { key: Key, width: number }[], (width: number) => void] {
+  ): [MutableRefObject<Map<Key, number>>, (column: GridNode<T>, newWidth: number, doneResizing?: boolean) => { key: Key, width: number }[], (width: number) => void, () => void, () => void] {
 
   const tableWidth = useRef<number>(null);
+  const startResizeContentWidth = useRef<number>();
+
   const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(initializeColumnWidths(columns));
   const columnWidthsRef = useRef<Map<Key, number>>(columnWidths);
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
@@ -41,10 +43,24 @@ export default function useColumnResizeWidthState<T>(
     }
   }
 
+  function onResizeColumnStart() {
+    startResizeContentWidth.current = getContentWidth(columnWidthsRef.current);
+  }
+
+  function onResizeColumnEnd() {
+    let widths = new Map<Key, number>(columnWidthsRef.current);
+    widths.set(columns[columns.length - 1].key, 0);
+    setColumnWidthsForRef(widths);
+  }
+
+  function getContentWidth(widths) {
+    return Array.from(widths).map(e => e[1]).reduce((acc, cur) => acc + cur, 0);
+  }
+
   function resizeColumn(column: GridNode<T>, newWidth: number) : { key: Key, width: number }[] {
     // copy the columnWidths map and set the new width for the column being resized
-    console.log(newWidth);
     let widths = new Map<Key, number>(columnWidthsRef.current);
+    widths.set(columns[columns.length - 1].key, 0);
     widths.set(column.key, Math.max(
       getMinWidth(column.props.minWidth),
       Math.min(roundWidth(newWidth), getMaxWidth(column.props.maxWidth))
@@ -72,6 +88,10 @@ export default function useColumnResizeWidthState<T>(
     // merge the unaffected column widths and the recalculated column widths
     let recalculatedColumnWidths = buildColumnWidths(dynamicColumns, availableSpace);
     widths = new Map<Key, number>([...widths, ...recalculatedColumnWidths]);
+
+    if (startResizeContentWidth.current > tableWidth.current){
+      widths.set(columns[columns.length - 1].key, Math.max(0, startResizeContentWidth.current - getContentWidth(widths)))
+    }
     setColumnWidthsForRef(widths);
 
     // when getting recalculated columns above, the column being resized is not considered "recalculated"
@@ -224,5 +244,5 @@ export default function useColumnResizeWidthState<T>(
   }
 
 
-  return [columnWidthsRef, resizeColumn, setTableWidth];
+  return [columnWidthsRef, resizeColumn, setTableWidth, onResizeColumnStart, onResizeColumnEnd];
 }
