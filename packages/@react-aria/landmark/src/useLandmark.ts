@@ -63,9 +63,23 @@ class LandmarkManager {
     return new Set(this.landmarks.filter(l => l.role === role));
   }
 
+  /**
+   * Return first landmark with a specific role.
+   */
+  public getLandmarkByRole(role: AriaLandmarkRole) {
+    let landmarks = this.landmarks.filter(l => l.role === role);
+    if (landmarks.length > 0) {
+      return landmarks[0];
+    }
+  }
+
   public addLandmark(newLandmark: Landmark) {
     if (this.landmarks.find(landmark => landmark.ref === newLandmark.ref)) {
       return;
+    }
+
+    if (this.landmarks.filter(landmark => landmark.role === 'main').length > 1) {
+      console.error('Page can contain no more than one landmark with the role "main".');
     }
 
     if (this.landmarks.length === 0) {
@@ -184,9 +198,9 @@ class LandmarkManager {
 
       // If alt key pressed, focus main landmark
       if (e.altKey) {
-        let main = this.getLandmarksByRole('main');
-        if (main.size > 0) {
-          this.focusLandmark([...main][0].ref.current);
+        let main = this.getLandmarkByRole('main');
+        if (document.contains(main.ref.current)) {
+          this.focusLandmark(main.ref.current);
         }
         return;
       }
