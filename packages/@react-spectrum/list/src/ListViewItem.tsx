@@ -120,13 +120,20 @@ export function ListViewItem(props) {
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           {isListDraggable &&
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
-              {showDragHandle &&
+              {isDraggable &&
                 <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
                   <div
                     {...buttonProps as React.HTMLAttributes<HTMLElement>}
-                    className={listStyles['react-spectrum-ListViewItem-draghandle-button']}
+                    className={
+                      classNames(
+                        listStyles,
+                        'react-spectrum-ListViewItem-draghandle-button',
+                        {
+                          'react-spectrum-ListViewItem-draghandle-button-isHidden': !showDragHandle
+                        }
+                      )
+                    }
                     ref={dragButtonRef}
-                    data-testid="draghandle"
                     draggable="true">
                     <DragHandle />
                   </div>

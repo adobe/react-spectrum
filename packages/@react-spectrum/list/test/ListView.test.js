@@ -661,12 +661,21 @@ describe('ListView', function () {
         jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
         let dataTransfer = new DataTransfer();
 
+        fireEvent.pointerDown(cell, {button: 0, pointerId: 1, clientX: 5, clientY: 5});
+        // TODO: fireEvent.dragStart(cell, {dataTransfer, clientX: 5, clientY: 5}) doesn't propagate the clientX and Y values,
+        // test if upgrading testing library/jsdom fixes issue
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
         expect(dataTransfer._dragImage.x).toBe(5);
         expect(dataTransfer._dragImage.y).toBe(5);
 
         cellText = getAllByText(cell.textContent);
         expect(cellText).toHaveLength(2);
+        fireEvent.pointerUp(cell, {button: 0, pointerId: 1, clientX: 5, clientY: 5});
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 5, clientY: 5}));
+
+        act(() => {jest.runAllTimers();});
+        cellText = getAllByText(cell.textContent);
+        expect(cellText).toHaveLength(1);
       });
 
       it('should allow drag and drop of a single row', async function () {
@@ -681,6 +690,7 @@ describe('ListView', function () {
         expect(cell).toHaveTextContent('Item a');
 
         let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'Item a')]);
 
@@ -694,6 +704,7 @@ describe('ListView', function () {
           y: 0
         });
 
+        fireEvent.pointerMove(cell, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDragMove).toHaveBeenCalledTimes(1);
         expect(onDragMove).toHaveBeenCalledWith({
@@ -723,6 +734,7 @@ describe('ListView', function () {
 
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
 
+        fireEvent.pointerUp(cell, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
@@ -766,6 +778,7 @@ describe('ListView', function () {
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cellA, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([
           new DataTransferItem('text/plain', 'Item a\nItem b\nItem d'),
@@ -785,6 +798,7 @@ describe('ListView', function () {
           y: 0
         });
 
+        fireEvent.pointerMove(cellA, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDragMove).toHaveBeenCalledTimes(1);
         expect(onDragMove).toHaveBeenCalledWith({
@@ -805,6 +819,7 @@ describe('ListView', function () {
         expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Item b');
         expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Item d');
 
+        fireEvent.pointerUp(cellA, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
@@ -827,6 +842,7 @@ describe('ListView', function () {
         expect(row).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([]);
         expect(onDragStart).toHaveBeenCalledTimes(0);
@@ -855,6 +871,7 @@ describe('ListView', function () {
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cellC, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cellC, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([]);
         expect(onDragStart).toHaveBeenCalledTimes(0);
@@ -879,8 +896,9 @@ describe('ListView', function () {
         expect(row).toHaveAttribute('draggable', 'true');
 
         act(() => cell.focus());
-        let draghandle = within(cell).queryByTestId('draghandle');
+        let draghandle = within(cell).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
+        expect(draghandle).toHaveAttribute('draggable', 'true');
 
         fireEvent.keyDown(draghandle, {key: 'Enter'});
         fireEvent.keyUp(draghandle, {key: 'Enter'});
@@ -936,7 +954,7 @@ describe('ListView', function () {
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
         act(() => cellA.focus());
-        let draghandle = within(cellA).queryByTestId('draghandle');
+        let draghandle = within(cellA).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
 
         fireEvent.keyDown(draghandle, {key: 'Enter'});
@@ -997,7 +1015,7 @@ describe('ListView', function () {
       expect(row).toHaveAttribute('aria-selected', 'false');
       expect(row).toHaveAttribute('draggable', 'true');
 
-      let menuButton = within(row).getAllByRole('button')[1];
+      let menuButton = within(row).getAllByRole('button')[2];
       expect(menuButton).toHaveAttribute('aria-expanded', 'false');
 
       triggerPress(menuButton);
@@ -1019,6 +1037,12 @@ describe('ListView', function () {
         return true;
       };
 
+      function hasDragHandle(el) {
+        let buttons = within(el).getAllByRole('button');
+        return buttons[0].getAttribute('draggable');
+      }
+
+      // This makes cell A disabled and cell B non-draggable. Cell C becomes draggable.
       let {getAllByRole} = render(
         <DraggableListView dragHookOptions={{itemAllowsDragging}} listViewProps={{disabledKeys: ['a']}} />
       );
@@ -1029,27 +1053,30 @@ describe('ListView', function () {
       let cellC = within(rows[2]).getByRole('gridcell');
 
       act(() => cellA.focus());
-      expect(within(cellA).queryByTestId('draghandle')).toBeFalsy();
+      expect(hasDragHandle(cellA)).toBeFalsy();
       moveFocus('ArrowDown');
-      expect(within(cellB).queryByTestId('draghandle')).toBeTruthy();
+      expect(hasDragHandle(cellB)).toBeFalsy();
       moveFocus('ArrowDown');
-      expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
+      expect(hasDragHandle(cellC)).toBeTruthy();
 
-      fireEvent.mouseDown(cellA, {detail: 1});
-      expect(within(cellA).queryByTestId('draghandle')).toBeFalsy();
-      fireEvent.mouseDown(cellB, {detail: 1});
-      expect(within(cellB).queryByTestId('draghandle')).toBeTruthy();
-      fireEvent.mouseDown(cellC, {detail: 1});
-      expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
-      fireEvent.mouseUp(cellC, {detail: 1});
-      expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
+      fireEvent.pointerDown(cellA, {button: 0, pointerId: 1});
+      expect(hasDragHandle(cellA)).toBeFalsy();
+      fireEvent.pointerUp(cellA, {button: 0, pointerId: 1});
 
-      fireEvent.mouseEnter(cellA);
-      expect(within(cellA).queryByTestId('draghandle')).toBeFalsy();
-      fireEvent.mouseEnter(cellB);
-      expect(within(cellB).queryByTestId('draghandle')).toBeFalsy();
-      fireEvent.mouseEnter(cellC);
-      expect(within(cellC).queryByTestId('draghandle')).toBeFalsy();
+      fireEvent.pointerDown(cellB, {button: 0, pointerId: 1});
+      expect(hasDragHandle(cellB)).toBeFalsy();
+      fireEvent.pointerUp(cellB, {button: 0, pointerId: 1});
+
+      fireEvent.pointerDown(cellC, {button: 0, pointerId: 1});
+      expect(hasDragHandle(cellC)).toBeTruthy();
+      fireEvent.pointerUp(cellC, {button: 0, pointerId: 1});
+
+      fireEvent.pointerEnter(cellA);
+      expect(hasDragHandle(cellA)).toBeFalsy();
+      fireEvent.pointerEnter(cellB);
+      expect(hasDragHandle(cellB)).toBeFalsy();
+      fireEvent.pointerEnter(cellC);
+      expect(hasDragHandle(cellC)).toBeTruthy();
     });
   });
 });

@@ -388,9 +388,9 @@ export function DragExample(props?) {
   };
 
   let dragHooks = useDragHooks({
-    ...dragHookOptions,
     itemAllowsDragging,
-    getItems
+    getItems,
+    ...dragHookOptions
   });
 
   return (
