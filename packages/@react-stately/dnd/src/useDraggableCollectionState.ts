@@ -34,14 +34,19 @@ export interface DraggableCollectionState {
 
 export function useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState {
   let {
-    getItems,
+    getItems = (keys) => [...keys].map(key => {
+      let item = [...collection].find(item => item.key === key);
+      return {
+        'text/plain': item.textValue
+      };
+    }),
     collection,
     selectionManager,
     onDragStart,
     onDragMove,
     onDragEnd,
     renderPreview,
-    itemAllowsDragging
+    itemAllowsDragging = () => true
   } = props;
   let [draggingKeys, setDraggingKeys] = useState(new Set<Key>());
   let getKeys = (key: Key) => {
@@ -66,11 +71,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     },
     getKeysForDrag: getKeys,
     getItems(key) {
-      if (typeof getItems === 'function') {
-        return getItems(getKeys(key));
-      }
-
-      return [];
+      return getItems(getKeys(key));
     },
     renderPreview(key) {
       if (typeof renderPreview === 'function') {
