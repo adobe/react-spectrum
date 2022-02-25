@@ -240,8 +240,6 @@ export class TableCollection<T> extends GridCollection<T> {
       columns.push(resizeBufferColumn);
     }
 
-    console.log(columns);
-
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
 
