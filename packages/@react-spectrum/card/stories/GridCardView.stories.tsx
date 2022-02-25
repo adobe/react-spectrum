@@ -54,6 +54,12 @@ let items = [
   {width: 1215, height: 121, src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Bob 8'}
 ];
 
+export let falsyItems = [
+  {id: 0, width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
+  {id: 1, width: 640, height: 640, src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1 really really really really really really really really really really really really long'},
+  {id: 2, width: 182, height: 1009, src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 1'}
+];
+
 function renderEmptyState() {
   return (
     <IllustratedMessage>
@@ -108,6 +114,15 @@ HorizontalGrid.storyName = ' Grid layout with horizontal cards, initialized layo
 export const HorizontalGridConstructor = DynamicTemplate().bind({});
 HorizontalGridConstructor.args = {...DynamicCards.args, cardOrientation: 'horizontal', layout: GridLayout};
 HorizontalGridConstructor.storyName = ' Grid layout with horizontal cards, layout constructor';
+
+const FalsyTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <CardViewIdKeys {...args} />;
+export const FalsyIds = FalsyTemplate().bind({});
+FalsyIds.args = {
+  items: falsyItems,
+  'aria-label': 'Test CardView',
+  selectionMode: 'multiple'
+};
+FalsyIds.storyName = 'falsy ids';
 
 export const DisabledKeys = DynamicTemplate().bind({});
 DisabledKeys.args = {...DynamicCards.args, disabledKeys: ['Joe 2', 'Bob 4']};
@@ -174,6 +189,39 @@ CustomLayoutOptions.args = {
   layoutOptions: {maxColumns: 2, margin: 150, minSpace: new Size(10, 10), itemPadding: 400}
 };
 CustomLayoutOptions.storyName = 'Custom layout options';
+
+function CardViewIdKeys(props: SpectrumCardViewProps<object>) {
+  let {scale} = useProvider();
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let cardOrientation = props.cardOrientation || 'vertical';
+  let gridLayout = useMemo(() =>
+    new GridLayout({
+      scale,
+      collator,
+      cardOrientation
+    })
+  , [collator, scale, cardOrientation]);
+  let {
+    layout = gridLayout,
+    items,
+    ...otherProps
+  } = props;
+
+  return (
+    <div style={{width: '800px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+      <CardView {...actions} {...otherProps} items={items} layout={layout} width="100%" height="100%">
+        {(item: any) => (
+          <Card textValue={item.title} width={item.width} height={item.height}>
+            <Image src={item.src} />
+            <Heading>{item.title}</Heading>
+            <Text slot="detail">PNG</Text>
+            <Content>Very very very very very very very very very very very very very long description</Content>
+          </Card>
+        )}
+      </CardView>
+    </div>
+  );
+}
 
 function DynamicCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
