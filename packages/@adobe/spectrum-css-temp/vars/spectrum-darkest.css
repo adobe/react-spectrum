@@ -118,4 +118,6 @@
   /* missing in spectrum-css */
   --spectrum-tray-background-color: var(--spectrum-global-color-gray-100);
   /* END RSP PATCH */
+  /* react spectrum additions */
+  --react-spectrum-datepicker-placeholder-color: var(--spectrum-global-color-gray-600); /* 4.8:1 contrast ratio */
 }

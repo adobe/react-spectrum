@@ -148,9 +148,8 @@ function DateSegment({segment, state}) {
   display: inline-flex;
   padding: 2px 4px;
   border-radius: 2px;
-  border: 1px solid gray;
-  background: Field;
-  color: FieldText;
+  border: 1px solid var(--gray);
+  background: var(--spectrum-global-color-gray-50);
 }
 
 .field:focus-within {
@@ -164,7 +163,7 @@ function DateSegment({segment, state}) {
 }
 
 .segment.placeholder {
-  color: gray;
+  color: var(--react-spectrum-datepicker-placeholder-color);
 }
 
 .segment:focus {

@@ -54,6 +54,7 @@
 .react-spectrum-Datepicker-input.react-spectrum-Datepicker-input {
   /* always reserve space for the validation icon */
   padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  cursor: text;
 }
 
 .react-spectrum-Datepicker-inputContents {
@@ -106,15 +107,8 @@
   }
 }
 
-.react-spectrum-DatePicker-cell:focus {
-  background-color: var(--spectrum-global-color-static-blue);
-  color: white;
-  caret-color: transparent;
-  outline: none;
-}
-
 .react-spectrum-DatePicker-cell.is-placeholder {
-  color: var(--spectrum-textfield-placeholder-text-color, var(--spectrum-global-color-gray-600));
+  color: var(--react-spectrum-datepicker-placeholder-color);
 
   &:before {
     content: attr(aria-placeholder);
@@ -125,15 +119,15 @@
   color: var(--spectrum-textfield-placeholder-text-color, var(--spectrum-global-color-gray-600));
 }
 
-.react-spectrum-DatePicker-cell.is-placeholder:focus {
-  color: var(--spectrum-global-color-static-gray-400);
-}
-
 .react-spectrum-DatePicker-cell.is-read-only {
   color: var(--spectrum-global-color-gray-700);
-  &:focus {
-    color: var(--spectrum-global-color-static-gray-300);
-  }
+}
+
+.react-spectrum-DatePicker-cell:focus {
+  background-color: var(--spectrum-global-color-static-blue);
+  color: white;
+  caret-color: transparent;
+  outline: none;
 }
 
 .react-spectrum-Datepicker-dialog.react-spectrum-Datepicker-dialog {
