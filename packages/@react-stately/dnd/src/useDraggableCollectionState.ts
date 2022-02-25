@@ -34,12 +34,7 @@ export interface DraggableCollectionState {
 
 export function useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState {
   let {
-    getItems = (keys) => [...keys].map(key => {
-      let item = [...collection].find(item => item.key === key);
-      return {
-        'text/plain': item.textValue
-      };
-    }),
+    getItems,
     collection,
     selectionManager,
     onDragStart,
