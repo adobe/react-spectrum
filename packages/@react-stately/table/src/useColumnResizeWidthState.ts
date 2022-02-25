@@ -89,8 +89,8 @@ export default function useColumnResizeWidthState<T>(
     let recalculatedColumnWidths = buildColumnWidths(dynamicColumns, availableSpace);
     widths = new Map<Key, number>([...widths, ...recalculatedColumnWidths]);
 
-    if (startResizeContentWidth.current > tableWidth.current){
-      widths.set(columns[columns.length - 1].key, Math.max(0, startResizeContentWidth.current - getContentWidth(widths)))
+    if (startResizeContentWidth.current > tableWidth.current) {
+      widths.set(columns[columns.length - 1].key, Math.max(0, startResizeContentWidth.current - getContentWidth(widths)));
     }
     setColumnWidthsForRef(widths);
 
@@ -232,7 +232,7 @@ export default function useColumnResizeWidthState<T>(
     // if width is the incorrect format, just deafult it to a 1fr
     if (!match) {
       console.warn(`width: ${width} is not a supported format, width should be a number (ex. 150), percentage (ex. '50%') or fr unit (ex. '2fr')`, 
-      `defaulting to '1fr'`);
+      'defaulting to \'1fr\'');
       return 1;
     }
     return parseInt(match[0], 10);
