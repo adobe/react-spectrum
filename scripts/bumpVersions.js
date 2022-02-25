@@ -103,38 +103,43 @@ class VersionManager {
 
   async getExistingPackages() {
     // Find what packages already exist on npm
-    let promises = [];
-    for (let name in this.workspacePackages) {
-      let filePath = this.workspacePackages[name].location + '/package.json';
-      let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-      if (pkg.private) {
-        continue;
+    let packages = Object.keys(this.workspacePackages);
+    for (let i = 0; i < packages.length; i += 20) {
+      let promises = [];
+      for (let name of packages.slice(i, i + 20)) {
+        let filePath = this.workspacePackages[name].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (pkg.private) {
+          continue;
+        }
+
+        console.log('Checking ' + name + ' on npm');
+
+        promises.push(
+          fetch(`https://registry.npmjs.com/${name}`)
+            .then(res => {
+              if (res.ok) {
+                return res.json();
+              }
+            })
+            .then(json => {
+              if (!json) {
+                return;
+              }
+
+              let tags = json['dist-tags'];
+              for (let tag in tags) {
+                if (!tags[tag].includes('nightly')) {
+                  this.existingPackages.add(name);
+                  break;
+                }
+              }
+            })
+        );
       }
 
-      promises.push(
-        fetch(`https://registry.npmjs.com/${name}`)
-          .then(res => {
-            if (res.ok) {
-              return res.json();
-            }
-          })
-          .then(json => {
-            if (!json) {
-              return;
-            }
-
-            let tags = json['dist-tags'];
-            for (let tag in tags) {
-              if (!tags[tag].includes('nightly')) {
-                this.existingPackages.add(name);
-                break;
-              }
-            }
-          })
-      );
+      await Promise.all(promises);
     }
-
-    await Promise.all(promises);
   }
 
   getChangedPackages() {

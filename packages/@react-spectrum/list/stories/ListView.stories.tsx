@@ -107,8 +107,12 @@ storiesOf('ListView', module)
           </Content>
         </Item>
         )}
-    </ListView>
-    ))
+      </ListView>
+    )
+  )
+  .add('falsy ids as keys', () => (
+    <FalsyIds />
+  ))
   .add('empty list', () => (
     <ListView width="300px" height="300px" renderEmptyState={renderEmptyState}>
       {[]}
@@ -463,6 +467,19 @@ function AsyncList() {
       {(item) => (
         <Item key={item.name} textValue={item.name}>{item.name}</Item>
       )}
+    </ListView>
+  );
+}
+
+function FalsyIds() {
+  let items = [
+    {id: 1, name: 'key=1'},
+    {id: 0, name: 'key=0'}
+  ];
+
+  return (
+    <ListView width="250px" height={400} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={items} onAction={action('onAction')}>
+      {item => <Item>{item.name}</Item>}
     </ListView>
   );
 }

@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/list",
-  "version": "3.0.0-alpha.7",
+  "version": "3.0.0-alpha.8",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -35,7 +35,7 @@
     "@react-aria/button": "^3.4.1",
     "@react-aria/dnd": "3.0.0-alpha.5",
     "@react-aria/focus": "^3.5.2",
-    "@react-aria/grid": "^3.2.2",
+    "@react-aria/grid": "^3.2.3",
     "@react-aria/i18n": "^3.3.6",
     "@react-aria/interactions": "^3.8.1",
     "@react-aria/listbox": "^3.4.2",
