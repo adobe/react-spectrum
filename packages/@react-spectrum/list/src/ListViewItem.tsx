@@ -14,7 +14,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import {DraggableItemResult, useDraggableItem} from '@react-aria/dnd';
+import {DraggableItemResult} from '@react-aria/dnd';
 import DragHandle from './DragHandle';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -31,7 +31,8 @@ import {useVisuallyHidden} from '@react-aria/visually-hidden';
 export function ListViewItem(props) {
   let {
     item,
-    isEmphasized
+    isEmphasized,
+    dragHooks
   } = props;
   let cellNode = [...item.childNodes][0];
   let {state, dragState, onAction, isListDraggable} = useContext(ListViewContext);
@@ -61,7 +62,7 @@ export function ListViewItem(props) {
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    draggableItem = useDraggableItem({key: item.key}, dragState);
+    draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
   }
   const mergedProps = mergeProps(
     gridCellProps,

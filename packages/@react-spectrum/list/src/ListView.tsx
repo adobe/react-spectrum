@@ -258,7 +258,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
               // Moved onAction, dragState, and isDraggable to ListViewContext since Virtualizer doesn't rerender on
               // selection change since GridCollection is memoized. This meant the ListViewItem onDrag were referencing
               // a stale SelectionManager and thus broke multi row drag and drop
-              <ListViewItem item={item} isEmphasized />
+              <ListViewItem item={item} isEmphasized dragHooks={dragHooks}  />
             );
           } else if (type === 'loader') {
             return (

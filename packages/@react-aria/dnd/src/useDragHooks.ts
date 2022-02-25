@@ -1,4 +1,5 @@
 import {DraggableCollectionOptions, DraggableCollectionState, useDraggableCollectionState} from '@react-stately/dnd';
+import {useDraggableItem} from '@react-aria/dnd';
 import {useMemo} from 'react';
 
 export interface DragHooks {
@@ -26,6 +27,7 @@ export function useDragHooks(options: DragHookOptions): DragHooks {
         renderPreview,
         ...options
       });
-    }
+    },
+    useDraggableItem
   }), [options]);
 }
