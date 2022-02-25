@@ -13,7 +13,7 @@ export function useDragHooks(options: DragHookOptions): DragHooks {
       let {
         collection,
         selectionManager,
-        itemAllowsDragging,
+        allowsDraggingItem,
         getItems,
         renderPreview
       } = props;
@@ -21,7 +21,7 @@ export function useDragHooks(options: DragHookOptions): DragHooks {
       return useDraggableCollectionState({
         collection,
         selectionManager,
-        itemAllowsDragging,
+        allowsDraggingItem,
         getItems,
         renderPreview,
         ...options

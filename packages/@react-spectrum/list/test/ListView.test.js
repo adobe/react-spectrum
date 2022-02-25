@@ -873,7 +873,7 @@ describe('ListView', function () {
       });
 
       it('should not allow drag operations on a non draggable row', function () {
-        let itemAllowsDragging = (key) => {
+        let allowsDraggingItem = (key) => {
           if (key === 'c') {
             return false;
           }
@@ -881,7 +881,7 @@ describe('ListView', function () {
         };
 
         let {getAllByRole} = render(
-          <DraggableListView dragHookOptions={{itemAllowsDragging}} />
+          <DraggableListView dragHookOptions={{allowsDraggingItem}} />
         );
 
         let rows = getAllByRole('row');
@@ -1054,7 +1054,7 @@ describe('ListView', function () {
     });
 
     it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
-      let itemAllowsDragging = (key) => {
+      let allowsDraggingItem = (key) => {
         if (key === 'b') {
           return false;
         }
@@ -1068,7 +1068,7 @@ describe('ListView', function () {
 
       // This makes cell A disabled and cell B non-draggable. Cell C becomes draggable.
       let {getAllByRole} = render(
-        <DraggableListView dragHookOptions={{itemAllowsDragging}} listViewProps={{disabledKeys: ['a']}} />
+        <DraggableListView dragHookOptions={{allowsDraggingItem}} listViewProps={{disabledKeys: ['a']}} />
       );
 
       let rows = getAllByRole('row');

@@ -107,7 +107,7 @@ storiesOf('ListView', module)
           </Content>
         </Item>
         )}
-      </ListView>
+    </ListView>
     )
   )
   .add('falsy ids as keys', () => (
@@ -386,13 +386,13 @@ export function DragExample(props?) {
     };
   });
 
-  let itemAllowsDragging = (key) => {
+  let allowsDraggingItem = (key) => {
     let item = items.find(item => item.key === key);
     return item.isDraggable;
   };
 
   let dragHooks = useDragHooks({
-    itemAllowsDragging,
+    allowsDraggingItem,
     getItems,
     ...dragHookOptions
   });
