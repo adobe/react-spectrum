@@ -120,6 +120,30 @@ describe('ListView', function () {
     expect(gridCells[0]).toHaveTextContent('Foo');
   });
 
+  it('renders a falsy ids', function () {
+    let items = [
+      {id: 0, label: 'Foo'},
+      {id: 1, label: 'Bar'}
+    ];
+    let {getByRole, getAllByRole} = render(
+      <ListView items={items} aria-label="List">
+        {item =>
+          <Item textValue={item.label}>{item.label}</Item>
+        }
+      </ListView>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toBeVisible();
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(2);
+
+    let gridCells = within(rows[0]).getAllByRole('gridcell');
+    expect(gridCells).toHaveLength(1);
+    expect(gridCells[0]).toHaveTextContent('Foo');
+  });
+
   describe('keyboard focus', function () {
     let items = [
       {key: 'foo', label: 'Foo'},
@@ -282,9 +306,30 @@ describe('ListView', function () {
     });
   });
 
-  it('should display loading affordance', function () {
-    let {getByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
-    expect(getByRole('progressbar')).toBeTruthy();
+  it('should display loading affordance with proper height (isLoading)', function () {
+    let {getAllByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
+    let row = getAllByRole('row')[0];
+    expect(row.parentNode.style.height).toBe('1000px');
+    let progressbar = within(row).getByRole('progressbar');
+    expect(progressbar).toBeTruthy();
+  });
+
+  it('should display loading affordance with proper height (isLoadingMore)', function () {
+    let items = [
+      {key: 'foo', label: 'Foo'},
+      {key: 'bar', label: 'Bar'},
+      {key: 'baz', label: 'Baz'}
+    ];
+    let {getByRole} = render(
+      <ListView items={items} aria-label="List" loadingState="loadingMore">
+        {item =>
+          <Item textValue={item.key}>{item.label}</Item>
+        }
+      </ListView>
+    );
+    let progressbar = getByRole('progressbar');
+    expect(progressbar).toBeTruthy();
+    expect(progressbar.parentNode.parentNode.parentNode.style.height).toBe('40px');
   });
 
   it('should render empty state', function () {

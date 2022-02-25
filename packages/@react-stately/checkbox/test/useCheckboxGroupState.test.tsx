@@ -228,7 +228,7 @@ describe('useCheckboxGroupState', () => {
       toggleValue('qwe');
     });
 
-    expect(container.textContent).toBe('foo, qwe');
+    expect(container.textContent).toBe('foo');
   });
 
   it('should not update state for readonly group', () => {

@@ -22,7 +22,7 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 let iconMap = {
@@ -77,6 +77,22 @@ let withSection = [
     {name: 'Ross', children: [
       {name: 'Tests', children: [
         {name: 'blah'}
+      ]}
+    ]}
+  ]}
+];
+
+let itemsWithFalsyId = [
+  {id: 1, name: 'Animals', children: [
+    {id: 0, name: 'id=0'},
+    {id: 2, name: 'Snake'}
+  ]},
+  {id: 3, name: 'People', children: [
+    {id: 4, name: 'Danni'},
+    {id: 5, name: 'Devon'},
+    {id: 6, name: 'Ross', children: [
+      {id: 7, name: 'Tests', children: [
+        {id: 8, name: 'blah'}
       ]}
     ]}
   ]}
@@ -146,6 +162,18 @@ storiesOf('MenuTrigger', module)
         {item => (
           <Section key={item.name} items={item.children} aria-label={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
+          </Section>
+        )}
+      </Menu>
+    )
+  )
+  .add(
+    'with falsy item keys',
+    () => render(
+      <Menu items={itemsWithFalsyId} onAction={action('onAction')}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -527,6 +555,13 @@ storiesOf('MenuTrigger', module)
         <Item key="3">Three</Item>
       </Menu>
     )
+  )
+  .add(
+    'MenuTrigger with trigger="longPress"',
+    () => render(defaultMenu, {trigger: 'longPress'})
+  )
+  .add('controlled isOpen',
+    () => <ControlledOpeningMenuTrigger />
   );
 
 let customMenuItem = (item) => {
@@ -567,3 +602,24 @@ let defaultMenu = (
     )}
   </Menu>
 );
+
+function ControlledOpeningMenuTrigger() {
+  let [isOpen, setIsOpen] = useState(false);
+  return (
+    <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+      <MenuTrigger onOpenChange={setIsOpen} isOpen={isOpen}>
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}>
+          Menu Button
+        </ActionButton>
+        <Menu onAction={action('onAction')}>
+          <Item key="1">One</Item>
+          <Item key="">Two</Item>
+          <Item key="3">Three</Item>
+        </Menu>
+      </MenuTrigger>
+    </div>
+  );
+}

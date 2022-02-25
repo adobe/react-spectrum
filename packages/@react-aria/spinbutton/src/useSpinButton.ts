@@ -16,6 +16,7 @@ import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {useGlobalListeners} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 
@@ -55,6 +56,8 @@ export function useSpinButton(
     onIncrementToMax
   } = props;
   const formatMessage = useMessageFormatter(intlMessages);
+  const propsRef = useRef(props);
+  propsRef.current = props;
 
   const clearAsync = () => clearTimeout(_async.current);
 
@@ -136,7 +139,7 @@ export function useSpinButton(
   const onIncrementPressStart = useCallback(
     (initialStepDelay: number) => {
       clearAsync();
-      onIncrement();
+      propsRef.current.onIncrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
@@ -153,7 +156,7 @@ export function useSpinButton(
   const onDecrementPressStart = useCallback(
     (initialStepDelay: number) => {
       clearAsync();
-      onDecrement();
+      propsRef.current.onDecrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
@@ -170,6 +173,8 @@ export function useSpinButton(
   let cancelContextMenu = (e) => {
     e.preventDefault();
   };
+
+  let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   return {
     spinButtonProps: {
@@ -188,11 +193,11 @@ export function useSpinButton(
     incrementButtonProps: {
       onPressStart: () => {
         onIncrementPressStart(400);
-        window.addEventListener('contextmenu', cancelContextMenu);
+        addGlobalListener(window, 'contextmenu', cancelContextMenu);
       },
       onPressEnd: () => {
         clearAsync();
-        window.removeEventListener('contextmenu', cancelContextMenu);
+        removeAllGlobalListeners();
       },
       onFocus,
       onBlur
@@ -200,11 +205,11 @@ export function useSpinButton(
     decrementButtonProps: {
       onPressStart: () => {
         onDecrementPressStart(400);
-        window.addEventListener('contextmenu', cancelContextMenu);
+        addGlobalListener(window, 'contextmenu', cancelContextMenu);
       },
       onPressEnd: () => {
         clearAsync();
-        window.removeEventListener('contextmenu', cancelContextMenu);
+        removeAllGlobalListeners();
       },
       onFocus,
       onBlur
