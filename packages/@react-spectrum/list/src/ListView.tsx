@@ -25,7 +25,7 @@ import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectru
 import {Content} from '@react-spectrum/view';
 import {DraggableCollectionState} from '@react-stately/dnd';
 import DragHandle from './DragHandle';
-import {DragHooks} from '@react-aria/dnd';
+import {DragHooks} from '@react-spectrum/dnd';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 // @ts-ignore
