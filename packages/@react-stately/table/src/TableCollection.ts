@@ -218,25 +218,29 @@ export class TableCollection<T> extends GridCollection<T> {
       visit(node);
     }
 
-    // add a hidden buffer column to the end of the table
-    // this will be used to allow for smooth scrolling when
-    // resizing columns while a horizontal scroll bar is present
-    let resizeBufferColumn: GridNode<T> = {
-      type: 'column',
-      key: RESIZE_BUFFER_COLUMN_KEY,
-      value: null,
-      textValue: '',
-      level: 0,
-      index: columns.length,
-      hasChildNodes: false,
-      rendered: null,
-      childNodes: [],
-      props: {
-        isResizeBuffer: true,
-        defaultWidth: 0
-      }
-    };
-    columns.push(resizeBufferColumn);
+    if (Array.from(nodes).some(node => node.props?.allowsResizing)) {
+      // add a hidden buffer column to the end of the table
+      // this will be used to allow for smooth scrolling when
+      // resizing columns while a horizontal scroll bar is present
+      let resizeBufferColumn: GridNode<T> = {
+        type: 'column',
+        key: RESIZE_BUFFER_COLUMN_KEY,
+        value: null,
+        textValue: '',
+        level: 0,
+        index: columns.length,
+        hasChildNodes: false,
+        rendered: null,
+        childNodes: [],
+        props: {
+          isResizeBuffer: true,
+          defaultWidth: 0
+        }
+      };
+      columns.push(resizeBufferColumn);
+    }
+
+    console.log(columns);
 
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));

@@ -43,11 +43,11 @@ export default function useColumnResizeWidthState<T>(
     }
   }
 
-  function onResizeColumnStart() {
+  function onColumnResizeStart() {
     startResizeContentWidth.current = getContentWidth(columnWidthsRef.current);
   }
 
-  function onResizeColumnEnd() {
+  function onColumnResizeEnd() {
     let widths = new Map<Key, number>(columnWidthsRef.current);
     widths.set(columns[columns.length - 1].key, 0);
     setColumnWidthsForRef(widths);
@@ -251,5 +251,5 @@ export default function useColumnResizeWidthState<T>(
   }
 
 
-  return [columnWidthsRef, resizeColumn, setTableWidth, onResizeColumnStart, onResizeColumnEnd];
+  return [columnWidthsRef, resizeColumn, setTableWidth, onColumnResizeStart, onColumnResizeEnd];
 }
