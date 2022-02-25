@@ -79,6 +79,14 @@ State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.ex
 
 Note that much of this anatomy is shared with [range calendars](useRangeCalendar.html). The only difference is that `useCalendarState` is used instead of `useRangeCalendarState`, and `useCalendar` is used instead of `useRangeCalendar`.
 
+## Date and time values
+
+Dates are represented in many different ways by cultures around the world. This includes differences in calendar systems, date formatting, numbering systems, weekday and weekend rules, and much more. When building applications that support users around the world, it is important to handle these aspects correctly for each locale.
+
+<TypeLink links={docs.links} type={docs.exports.useCalendar} /> uses the [@internationalized/date](../internationalized/date/) library to represent dates and times. This package provides a library of objects and functions to perform date and time related manipulation, queries, and conversions that work across locales and calendars. Date and time objects can be converted to and from native JavaScript `Date` objects or [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) strings. See the [documentation](../internationalized/date/), or the [examples below](#value) for more details.
+
+<TypeLink links={statelyDocs.links} type={statelyDocs.exports.useCalendarState} /> requires a `createCalendar` function to be provided, which is used to implement date manipulation across multiple calendar systems. The default implementation in `@internationalized/date` includes all supported calendar systems. While this library is quite small (8 kB minified + Brotli), you can reduce its bundle size further by providing your own implementation that includes only your supported calendars. See [below](#reducing-bundle-size) for an example.
+
 ## Example
 
 A `Calendar` consists of three components: the main calendar wrapper element with previous and next buttons for navigating, one or more `CalendarGrid` components to display each month, and `CalendarCell` components for each date cell. We'll go through them one by one.
@@ -397,3 +405,43 @@ An aria-label must be provided to the `Calendar` for accessibility. If it is lab
 ### Internationalization
 
 In order to internationalize a `Calendar`, a localized string should be passed to the `aria-label` prop. For languages that are read right-to-left (e.g. Hebrew and Arabic), keyboard navigation is automatically flipped. Ensure that your CSS accounts for this as well. Dates are automatically formatted using the current locale.
+
+## Advanced topics
+
+### Reducing bundle size
+
+In the example above, the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.createCalendar} /> function from the [@internationalized/date](../internationalized/date/) package is passed to the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useCalendarState} /> hook. This function receives a [calendar identifier](../internationalized/date/Calendar.html#calendar-identifiers) string, and provides <TypeLink links={i18nDocs.links} type={i18nDocs.exports.Calendar} /> instances to React Stately, which are used to implement date manipulation.
+
+By default, this includes [all calendar systems](../internationalized/date/Calendar.html#implementations) supported by `@internationalized/date`. However, if your application supports a more limited set of regions, or you know you will only be picking dates in a certain calendar system, you can reduce your bundle size by providing your own implementation of `createCalendar` that includes a subset of these `Calendar` implementations.
+
+For example, if your application only supports Gregorian dates, you could implement a `createCalendar` function like this:
+
+```jsx
+import {useCalendarState} from '@react-stately/datepicker';
+import {useLocale} from '@react-aria/i18n';
+import {GregorianCalendar} from '@internationalized/date';
+
+function createCalendar(identifier) {
+  switch (identifier) {
+    case 'gregory':
+      return new GregorianCalendar();
+    default:
+      throw new Error(`Unsupported calendar ${identifier}`);
+  }
+}
+
+function Calendar(props) {
+  let {locale} = useLocale();
+  let state = useCalendarState({
+    ...props,
+    locale,
+    createCalendar
+  });
+
+  // ...
+}
+```
+
+This way, only `GregorianCalendar` is imported, and the other calendar implementations can be tree-shaken.
+
+See the [Calendar](../internationalized/date/Calendar.html) documentation in `@internationalized/date` to learn more about the supported calendar systems, and a list of string identifiers.

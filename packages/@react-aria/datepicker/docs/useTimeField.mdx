@@ -78,6 +78,12 @@ State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.ex
 If the time field does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to
 identify it to assistive technology.
 
+## Time values
+
+Times are represented in many different ways by cultures around the world. This includes differences in hour cycles, time zones, daylight saving time rules, formatting, and much more. When building applications that support users around the world, it is important to handle these aspects correctly for each locale.
+
+<TypeLink links={docs.links} type={docs.exports.useTimeField} /> uses the [@internationalized/date](../internationalized/date/) library to represent times. This package provides a library of objects and functions to perform date and time related manipulation, queries, and conversions that work across locales and calendars. Date and time objects can be converted to and from native JavaScript `Date` objects or [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) strings. See the [documentation](../internationalized/date/), or the [examples below](#value) for more details.
+
 ## Example
 
 ```tsx example export=true

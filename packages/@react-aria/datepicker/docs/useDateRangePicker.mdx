@@ -71,6 +71,12 @@ State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.ex
 If the date range picker does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to
 identify it to assistive technology.
 
+## Date and time values
+
+Dates and times are represented in many different ways by cultures around the world. This includes differences in calendar systems, time zones, daylight saving time rules, date and time formatting, weekday and weekend rules, and much more. When building applications that support users around the world, it is important to handle these aspects correctly for each locale.
+
+<TypeLink links={docs.links} type={docs.exports.useDateRangePicker} /> uses the [@internationalized/date](../internationalized/date/) library to represent dates and times. This package provides a library of objects and functions to perform date and time related manipulation, queries, and conversions that work across locales and calendars. Date and time objects can be converted to and from native JavaScript `Date` objects or [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) strings. See the [documentation](../internationalized/date/), or the [examples below](#value) for more details.
+
 ## Example
 
 A `DateRangePicker` composes several other components to produce a composite element that can be used to enter date ranges with a keyboard, or select them on a calendar. The `DateField`, `Popover`, `Calendar`, and `Button` components used in this example are independent and can be used separately from the `DateRangePicker`. The code is available below, and documentation is available on the corresponding pages.
