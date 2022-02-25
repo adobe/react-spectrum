@@ -194,10 +194,10 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       return {x, y};
     },
     incrementX(stepSize) {
-      setXValue(snapValueToStep(xValue + stepSize, minValueX, maxValueX, stepSize));
+      setXValue(xValue + stepSize > maxValueX ? maxValueX : snapValueToStep(xValue + stepSize, minValueX, maxValueX, stepSize));
     },
     incrementY(stepSize) {
-      setYValue(snapValueToStep(yValue + stepSize, minValueY, maxValueY, stepSize));
+      setYValue(yValue + stepSize > maxValueY ? maxValueY : snapValueToStep(yValue + stepSize, minValueY, maxValueY, stepSize));
     },
     decrementX(stepSize) {
       setXValue(snapValueToStep(xValue - stepSize, minValueX, maxValueX, stepSize));

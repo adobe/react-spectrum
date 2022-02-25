@@ -95,9 +95,9 @@ export let XGreenYRed = Template.bind({});
 XGreenYRed.storyName = 'RGB xChannel="green", yChannel="red"';
 XGreenYRed.args = {...XBlueYGreen.args, xChannel: 'green', yChannel: 'red'};
 
-export let XBlueYGreenStep15 = Template.bind({});
-XBlueYGreenStep15.storyName = 'RGB xChannel="blue", yChannel="green", step="0xF"';
-XBlueYGreenStep15.args = {...XBlueYGreen.args, xChannelStep: 0xF, yChannelStep: 0xF};
+export let XBlueYGreenStep0xF = Template.bind({});
+XBlueYGreenStep0xF.storyName = 'RGB xChannel="blue", yChannel="green", step="0xF"';
+XBlueYGreenStep0xF.args = {...XBlueYGreen.args, xChannelStep: 0xF, yChannelStep: 0xF};
 
 export let XBlueYGreenPageStep30 = Template.bind({});
 XBlueYGreenPageStep30.storyName = 'RGB xChannel="blue", yChannel="green", pageStep="0x1F"';
