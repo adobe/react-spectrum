@@ -131,7 +131,6 @@ export let XGreenYRed = Template.bind({});
 XGreenYRed.storyName = 'RGB xChannel="green", yChannel="red"';
 XGreenYRed.args = {...XBlueYGreen.args, xChannel: 'green', yChannel: 'red'};
 
-/* TODO: what does a disabled color area look like? */
 export let XBlueYGreenisDisabled = Template.bind({});
 XBlueYGreenisDisabled.storyName = 'RGB xChannel="blue", yChannel="green", isDisabled';
 XBlueYGreenisDisabled.args = {...XBlueYGreen.args, isDisabled: true};
