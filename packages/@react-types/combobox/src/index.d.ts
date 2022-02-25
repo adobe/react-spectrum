@@ -38,7 +38,11 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelectio
   * The interaction required to display the ComboBox menu.
   * @default 'input'
   */
-  menuTrigger?: MenuTriggerAction
+  menuTrigger?: MenuTriggerAction,
+  /**
+   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  name?: string
 }
 
 export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps {
