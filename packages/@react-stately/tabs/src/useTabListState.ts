@@ -34,27 +34,18 @@ export function useTabListState<T extends object>(props: TabListProps<T>): TabLi
   } = state;
 
   let lastSelectedKey = useRef(currentSelectedKey);
-  useEffect(() => {
-    // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
-    let selectedKey = currentSelectedKey;
-    if (selectionManager.isEmpty || !collection.getItem(selectedKey)) {
-      selectedKey = collection.getFirstKey();
-      selectionManager.replaceSelection(selectedKey);
-    }
-
-    if (selectionManager.focusedKey == null) {
-      selectionManager.setFocusedKey(selectedKey);
-    }
-
-    lastSelectedKey.current = selectedKey;
-  }, [selectionManager, currentSelectedKey, collection]);
-
-  // If the tablist doesn't have focus and the selected key changes, change focused key to the selected key if it exists. This keeps
-  // the user's tablist positioning consistent with the tabpanel content when they re-enter the tablist.
-  if (!selectionManager.isFocused && currentSelectedKey != null && lastSelectedKey.current !== currentSelectedKey && collection.getItem(currentSelectedKey) != null) {
-    selectionManager.setFocusedKey(currentSelectedKey);
+  // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
+  let selectedKey = currentSelectedKey;
+  if (selectionManager.isEmpty || !collection.getItem(selectedKey)) {
+    selectedKey = collection.getFirstKey();
+    selectionManager.replaceSelection(selectedKey);
   }
-  lastSelectedKey.current = currentSelectedKey;
+
+  // If the tablist doesn't have focus and the selected key changes or if there isn't a focused key yet, change focused key to the selected key if it exists.
+  if (selectionManager.focusedKey == null || (!selectionManager.isFocused && selectedKey !== lastSelectedKey.current)) {
+    selectionManager.setFocusedKey(selectedKey);
+  }
+  lastSelectedKey.current = selectedKey;
 
   return state;
 }
