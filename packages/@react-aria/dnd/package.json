@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/dnd": "3.0.0-alpha.5",
     "@react-aria/i18n": "^3.3.6",
     "@react-aria/interactions": "^3.8.1",
     "@react-aria/live-announcer": "^3.0.3",
