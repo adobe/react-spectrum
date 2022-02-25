@@ -20,7 +20,7 @@ import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList} from '@react-stately/data';
-import {useDragHooks} from '@react-aria/dnd';
+import {useDragHooks} from '@react-spectrum/dnd';
 
 const items = [
   {key: 'a', textValue: 'Item a', isDraggable: true},
