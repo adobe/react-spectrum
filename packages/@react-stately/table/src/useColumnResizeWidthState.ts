@@ -112,7 +112,7 @@ export default function useColumnResizeWidthState<T>(
 
     staticColumns.forEach(column => {
       let width = getRealColumnWidth(column);
-      let w = parseWidth(width);
+      let w = parseStaticWidth(width);
       widths.set(column.key, w);
       remainingSpace -= w;
     });
@@ -144,11 +144,11 @@ export default function useColumnResizeWidthState<T>(
     return width !== null && width !== undefined && (typeof width === 'number' || width.match(/^(\d+)%$/) !== null);
   }
 
-  function parseWidth(width: number | string): number {
+  function parseStaticWidth(width: number | string): number {
     if (typeof width === 'string') {
       let match = width.match(/^(\d+)%$/);
       if (!match) {
-        throw new Error('Only percentages are supported as column widths');
+        throw new Error('Only percentages or numbers are supported for static column widths');
       }
       return tableWidth.current * (parseInt(match[1], 10) / 100);
     }
@@ -228,18 +228,25 @@ export default function useColumnResizeWidthState<T>(
     if (!width) {
       return 1;
     } 
-    return parseInt(width.match(/^(\d+)(?=fr$)/)[0], 10);
+    let match = width.match(/^(\d+)(?=fr$)/);
+    // if width is the incorrect format, just deafult it to a 1fr
+    if (!match) {
+      console.warn(`width: ${width} is not a supported format, width should be a number (ex. 150), percentage (ex. '50%') or fr unit (ex. '2fr')`, 
+      `defaulting to '1fr'`);
+      return 1;
+    }
+    return parseInt(match[0], 10);
   }
 
   function getMinWidth(minWidth: number | string): number {
     return minWidth !== undefined && minWidth !== null
-      ? parseWidth(minWidth)
+      ? parseStaticWidth(minWidth)
       : 75;
   }
   
   function getMaxWidth(maxWidth: number | string): number {
     return maxWidth !== undefined && maxWidth !== null
-      ? parseWidth(maxWidth)
+      ? parseStaticWidth(maxWidth)
       : Infinity;
   }
 
