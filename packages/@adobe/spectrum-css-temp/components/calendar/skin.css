@@ -58,7 +58,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-calendar-day-text-color-hover);
     --background: var(--spectrum-calendar-day-background-color-hover);
 
-    &.is-range-selection:not(.is-disabled) {
+    &.is-range-selection {
       color: var(--spectrum-calendar-day-text-color-selected-hover);
       --background: var(--spectrum-alias-highlight-selected);
     }
