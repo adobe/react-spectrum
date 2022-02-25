@@ -49,7 +49,10 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
-  let state = useDatePickerState(props);
+  let state = useDatePickerState({
+    ...props,
+    shouldCloseOnSelect: () => !state.hasTime
+  });
   let {groupProps, labelProps, fieldProps, descriptionProps, errorMessageProps, buttonProps, dialogProps, calendarProps} = useDatePicker(props, state, targetRef);
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();

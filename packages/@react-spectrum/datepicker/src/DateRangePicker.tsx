@@ -52,7 +52,10 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
-  let state = useDateRangePickerState(props);
+  let state = useDateRangePickerState({
+    ...props,
+    shouldCloseOnSelect: () => !state.hasTime
+  });
   let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descriptionProps, errorMessageProps, calendarProps} = useDateRangePicker(props, state, targetRef);
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();

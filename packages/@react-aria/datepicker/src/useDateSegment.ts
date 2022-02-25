@@ -185,7 +185,7 @@ export function useDateSegment(segment: DateSegment, state: DatePickerFieldState
         } else {
           break;
         }
-        focusManager.focusNext();
+        focusManager.focusNext({tabbable: true});
         break;
       case 'day':
       case 'hour':
@@ -234,7 +234,7 @@ export function useDateSegment(segment: DateSegment, state: DatePickerFieldState
         if (Number(numberValue + '0') > segment.maxValue || newValue.length >= String(segment.maxValue).length) {
           enteredKeys.current = '';
           if (shouldSetValue) {
-            focusManager.focusNext();
+            focusManager.focusNext({tabbable: true});
           }
         } else {
           enteredKeys.current = newValue;
