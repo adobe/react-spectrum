@@ -133,6 +133,7 @@ export interface MoveMoveEvent extends BaseMoveEvent {
   deltaX: number,
   /** The amount moved in the Y direction since the last event. */
   deltaY: number
+
 }
 
 export interface MoveEndEvent extends BaseMoveEvent {
