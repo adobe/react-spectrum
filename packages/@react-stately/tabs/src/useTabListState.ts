@@ -12,7 +12,7 @@
 
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {TabListProps} from '@react-types/tabs';
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 
 
 export interface TabListState<T> extends SingleSelectListState<T> {}
@@ -27,18 +27,34 @@ export function useTabListState<T extends object>(props: TabListProps<T>): TabLi
     suppressTextValueWarning: true
   });
 
+  let {
+    selectionManager,
+    collection,
+    selectedKey: currentSelectedKey
+  } = state;
+
+  let lastSelectedKey = useRef(currentSelectedKey);
   useEffect(() => {
     // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
-    let selectedKey = state.selectedKey;
-    if (state.selectionManager.isEmpty || !state.collection.getItem(selectedKey)) {
-      selectedKey = state.collection.getFirstKey();
-      state.selectionManager.replaceSelection(selectedKey);
+    let selectedKey = currentSelectedKey;
+    if (selectionManager.isEmpty || !collection.getItem(selectedKey)) {
+      selectedKey = collection.getFirstKey();
+      selectionManager.replaceSelection(selectedKey);
     }
 
-    if (state.selectionManager.focusedKey == null) {
-      state.selectionManager.setFocusedKey(selectedKey);
+    if (selectionManager.focusedKey == null) {
+      selectionManager.setFocusedKey(selectedKey);
     }
-  }, [state.selectionManager, state.selectedKey, state.collection]);
+
+    lastSelectedKey.current = selectedKey;
+  }, [selectionManager, currentSelectedKey, collection]);
+
+  // If the tablist doesn't have focus and the selected key changes, change focused key to the selected key if it exists. This keeps
+  // the user's tablist positioning consistent with the tabpanel content when they re-enter the tablist.
+  if (!selectionManager.isFocused && currentSelectedKey != null && lastSelectedKey.current !== currentSelectedKey && collection.getItem(currentSelectedKey) != null) {
+    selectionManager.setFocusedKey(currentSelectedKey);
+  }
+  lastSelectedKey.current = currentSelectedKey;
 
   return state;
 }

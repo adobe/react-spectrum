@@ -46,12 +46,13 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     props.onExpandedChange
   );
 
+  let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
   let tree = useCollection(props, nodes => new TreeCollection(nodes, {expandedKeys}), null, [expandedKeys]);
-  let selectionState = useMultipleSelectionState({...props, collection: tree});
+
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
     if (selectionState.focusedKey != null && !tree.getItem(selectionState.focusedKey)) {
