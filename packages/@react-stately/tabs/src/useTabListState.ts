@@ -12,7 +12,7 @@
 
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {TabListProps} from '@react-types/tabs';
-import {useEffect, useRef} from 'react';
+import {useRef} from 'react';
 
 
 export interface TabListState<T> extends SingleSelectListState<T> {}
