@@ -24,14 +24,20 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
         window.removeEventListener('resize', onResize, false);
       };
     } else {
-
       const resizeObserverInstance = new window.ResizeObserver((entries) => {
         if (!entries.length) {
           return;
         }
 
         onResize();
+
+        resizeObserverInstance.unobserve(element);
+
+        requestAnimationFrame(() => {
+          resizeObserverInstance.observe(element);
+        });
       });
+
       resizeObserverInstance.observe(element);
 
       return () => {
