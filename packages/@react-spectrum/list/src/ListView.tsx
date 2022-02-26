@@ -23,7 +23,7 @@ import {
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import {DraggableCollectionState} from '@react-stately/dnd';
+import type {DraggableCollectionState} from '@react-stately/dnd';
 import DragHandle from './DragHandle';
 import {DragHooks} from '@react-spectrum/dnd';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';

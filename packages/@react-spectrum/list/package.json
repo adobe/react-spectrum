@@ -33,7 +33,6 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/button": "^3.4.1",
-    "@react-aria/dnd": "3.0.0-alpha.5",
     "@react-aria/focus": "^3.5.2",
     "@react-aria/grid": "^3.2.3",
     "@react-aria/i18n": "^3.3.6",
@@ -54,7 +53,6 @@
     "@react-spectrum/utils": "^3.6.5",
     "@react-spectrum/view": "^3.1.5",
     "@react-stately/collections": "^3.3.6",
-    "@react-stately/dnd": "3.0.0-alpha.4",
     "@react-stately/grid": "^3.1.2",
     "@react-stately/layout": "^3.4.4",
     "@react-stately/list": "^3.4.3",
@@ -65,7 +63,9 @@
     "@spectrum-icons/ui": "^3.2.3"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@react-aria/dnd": "3.0.0-alpha.5",
+    "@react-stately/dnd": "3.0.0-alpha.4"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",

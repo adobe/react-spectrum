@@ -14,7 +14,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import {DraggableItemResult} from '@react-aria/dnd';
+import type {DraggableItemResult} from '@react-aria/dnd';
 import DragHandle from './DragHandle';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
