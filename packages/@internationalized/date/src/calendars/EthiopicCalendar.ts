@@ -62,7 +62,7 @@ function getDaysInMonth(year: number, month: number) {
 }
 
 /**
- * The Ethipic calendar system is the official calendar used in Ethiopia.
+ * The Ethiopic calendar system is the official calendar used in Ethiopia.
  * It includes 12 months of 30 days each, plus 5 or 6 intercalary days depending
  * on whether it is a leap year. Two eras are supported: 'AA' and 'AM'.
  */
