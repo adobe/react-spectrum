@@ -1,9 +1,10 @@
 import {DraggableCollectionOptions, DraggableCollectionState, useDraggableCollectionState} from '@react-stately/dnd';
-import {useDraggableItem} from '@react-aria/dnd';
+import {DraggableItemProps, DraggableItemResult, useDraggableItem} from '@react-aria/dnd';
 import {useMemo} from 'react';
 
 export interface DragHooks {
-    useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState
+    useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState,
+    useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult
 }
 
 export type DragHookOptions = Omit<DraggableCollectionOptions, 'collection' | 'selectionManager' | 'isDragging' | 'getKeysForDrag'>
