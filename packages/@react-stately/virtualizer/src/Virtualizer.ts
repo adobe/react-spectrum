@@ -555,7 +555,7 @@ export class Virtualizer<T extends object, V, W> {
     // Ask the delegate to provide a scroll anchor, if possible
     if (this.delegate.getScrollAnchor) {
       let key = this.delegate.getScrollAnchor(visibleRect);
-      if (key) {
+      if (key != null) {
         let layoutInfo = this.layout.getLayoutInfo(key);
         let corner = layoutInfo.rect.getCornerInRect(visibleRect);
         if (corner) {

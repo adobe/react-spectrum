@@ -11,7 +11,7 @@
  */
 
 import {Color, ColorWheelProps} from '@react-types/color';
-import {parseColor} from './Color';
+import {normalizeColor, parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
 import {useRef, useState} from 'react';
 
@@ -32,24 +32,18 @@ export interface ColorWheelState {
   getThumbPosition(radius: number): {x: number, y: number},
 
   /** Increments the hue by the given amount (defaults to 1). */
-  increment(minStepSize?: number): void,
+  increment(stepSize?: number): void,
   /** Decrements the hue by the given amount (defaults to 1). */
-  decrement(minStepSize?: number): void,
+  decrement(stepSize?: number): void,
 
   /** Whether the color wheel is currently being dragged. */
   readonly isDragging: boolean,
   /** Sets whether the color wheel is being dragged. */
   setDragging(value: boolean): void,
   /** Returns the color that should be displayed in the color wheel instead of `value`. */
-  getDisplayColor(): Color
-}
-
-function normalizeColor(v: string | Color) {
-  if (typeof v === 'string') {
-    return parseColor(v);
-  } else {
-    return v;
-  }
+  getDisplayColor(): Color,
+  step: number,
+  pageStep: number
 }
 
 const DEFAULT_COLOR = parseColor('hsl(0, 100%, 50%)');
@@ -91,6 +85,7 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
   let deg = radToDeg(Math.atan2(y / radius, x / radius));
   return (deg + 360) % 360;
 }
+const PAGE_MIN_STEP_SIZE = 6;
 
 /**
  * Provides state management for a color wheel component.
@@ -124,8 +119,11 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     }
   }
 
+  let pageStep = PAGE_MIN_STEP_SIZE;
   return {
     value,
+    step,
+    pageStep,
     setValue(v) {
       let color = normalizeColor(v);
       valueRef.current = color;
@@ -139,16 +137,16 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     getThumbPosition(radius) {
       return angleToCartesian(value.getChannelValue('hue'), radius);
     },
-    increment(minStepSize: number = 0) {
-      let newValue = hue + Math.max(minStepSize, step);
+    increment(stepSize) {
+      let newValue = hue + Math.max(stepSize, step);
       if (newValue > 360) {
         // Make sure you can always get back to 0.
         newValue = 0;
       }
       setHue(newValue);
     },
-    decrement(minStepSize: number = 0) {
-      let s = Math.max(minStepSize, step);
+    decrement(stepSize) {
+      let s = Math.max(stepSize, step);
       if (hue === 0) {
         // We can't just subtract step because this might be the case:
         // |(previous step) - 0| < step size

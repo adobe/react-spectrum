@@ -13,6 +13,7 @@
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {Content} from '@react-spectrum/view';
+import {FalsyIds, falsyItems} from '../stories/GridCardView.stories';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Provider} from '@react-spectrum/provider';
@@ -206,6 +207,34 @@ describe('CardView', function () {
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
       expect(within(cell).getByText('Title', {exact: false})).toBeTruthy();
+    }
+  });
+
+  it.each`
+    Name                  | layout
+    ${'Grid layout'}      | ${GridLayout}
+    ${'Gallery layout'}   | ${GalleryLayout}
+    ${'Waterfall layout'} | ${WaterfallLayout}
+  `('$Name CardView supports falsy ids', function ({layout}) {
+    let tree = render(
+      <Provider theme={theme} locale="en-US">
+        <FalsyIds items={falsyItems} aria-label="test falsy" layout={layout} />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
+    let grid = tree.getByRole('grid');
+    let rowgroups = within(grid).getAllByRole('row');
+    expect(rowgroups).toHaveLength(falsyItems.length);
+    for (let row of rowgroups) {
+      let cell = within(row).getByRole('gridcell');
+      expect(cell).toBeTruthy();
+
+      let image = within(cell).getByRole('img');
+      expect(image).toHaveAttribute('src');
+      expect(within(cell).getByText('long description', {exact: false})).toBeTruthy();
+      expect(within(cell).getByText('PNG')).toBeTruthy();
     }
   });
 
