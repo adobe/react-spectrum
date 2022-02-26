@@ -68,10 +68,9 @@ A <TypeLink links={docs.links} type={docs.exports.TimeDuration} /> is an object 
 
 ```tsx
 let time = new Time(9, 45);
-
 time.add({hours: 1}); // 10:45:00
 time.add({minutes: 1}); // 09:46:00
-time.add({seconds}); // 09:45:01
+time.add({seconds: 1}); // 09:45:01
 ```
 
 Adding or subtracting a duration that goes beyond the limits of a particular field will cause the time to be _balanced_. For example, adding one minute to `09:59` results in `10:00`.
@@ -82,7 +81,6 @@ Adding or subtracting a duration that goes beyond the limits of a particular fie
 
 ```tsx
 let time = new Time(9, 45);
-
 time.set({hour: 12}); // 12:45
 time.set({minute: 5}); // 9:05
 ```
@@ -91,7 +89,6 @@ Setting a field to a value that is outside the valid range will cause it to be _
 
 ```tsx
 let time = new Time(9, 45);
-
 time.set({hour: 36}); // 23:45
 time.set({minute: 75}); // 09:59
 ```
@@ -102,7 +99,6 @@ The `cycle` method allows incrementing or decrementing a single field. It is sim
 
 ```tsx
 let time = new Time(23, 59);
-
 date.cycle('hour', 1); // 00:59
 date.cycle('minute', 1); // 23:00
 
@@ -111,7 +107,7 @@ date.cycle('hour', -1); // 23:00
 date.cycle('minute', -1); // 00:59
 ```
 
-The `round` option may also be passed, which causes the value to be rounded to increments of the given amount. For example, you could round the minute to increments of 45.
+The `round` option may also be passed, which causes the value to be rounded to increments of the given amount. For example, you could round the minute to increments of 15.
 
 ```tsx
 let time = new Time(9, 22);

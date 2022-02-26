@@ -4,7 +4,7 @@ This package is part of [react-spectrum](https://github.com/adobe/react-spectrum
 
 ## NumberParser
 
-The `NumberParser` class can be used perform locale aware parsing of numbers from Unicode strings,
+The `NumberParser` class can be used perform locale-aware parsing of numbers from Unicode strings,
 as well as validation of partial user input. It automatically detects the numbering system
 used in the input, and supports parsing decimals, percentages, currency values, and units
 according to the locale.

@@ -43,7 +43,7 @@ export class CalendarDate {
   // i.e. a ZonedDateTime should not be be passable to a parameter that expects CalendarDate.
   // If that behavior is desired, use the AnyCalendarDate interface instead.
   #type;
-  /** The calendar system associated with this date, e.g. gregorian. */
+  /** The calendar system associated with this date, e.g. Gregorian. */
   public readonly calendar: Calendar;
   /** The calendar era for this date, e.g. "BC" or "AD". */
   public readonly era: string;
@@ -189,7 +189,7 @@ export class Time {
 export class CalendarDateTime {
   // This prevents TypeScript from allowing other types with the same fields to match.
   #type;
-  /** The calendar system associated with this date, e.g. gregorian. */
+  /** The calendar system associated with this date, e.g. Gregorian. */
   public readonly calendar: Calendar;
   /** The calendar era for this date, e.g. "BC" or "AD". */
   public readonly era: string;
@@ -295,7 +295,7 @@ export class CalendarDateTime {
 export class ZonedDateTime {
   // This prevents TypeScript from allowing other types with the same fields to match.
   #type;
-  /** The calendar system associated with this date, e.g. gregorian. */
+  /** The calendar system associated with this date, e.g. Gregorian. */
   public readonly calendar: Calendar;
   /** The calendar era for this date, e.g. "BC" or "AD". */
   public readonly era: string;

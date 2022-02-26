@@ -44,7 +44,7 @@ function persianToJulianDay(year: number, month: number, day: number): number {
 
 /**
  * The Persian calendar is the main calendar used in Iran and Afghanistan. It has 12 months
- * in each year, the first 6 of which have 31 days, and the next 5 have 3 days. The 12th month
+ * in each year, the first 6 of which have 31 days, and the next 5 have 30 days. The 12th month
  * has either 29 or 30 days depending on whether it is a leap year. The Persian year starts
  * around the March equinox.
  */

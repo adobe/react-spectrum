@@ -36,13 +36,13 @@ Numbers can be formatted in many different ways, including percentages, units, d
 
 `NumberParser` is designed to validate and parse numbers from user input according to a specific locale and format. It supports several different numbering systems including the Latin, Arabic, and Han positional numbering systems, as well as parsing decimals, percentages, currencies, and unit values. The numbering system is automatically detected from the input string. This means that users may input numbers in a different numbering system than the default for their locale, e.g. a Latin number in an Arabic locale.
 
-Parsing numbers while taking into account all locale specific detail is quite complex and error-prone. `NumberParser` uses information about the locale and expected format for a number in order to parse it correctly. This means it is somewhat strict about the accepted formats. It is not designed to handle use cases where the user can enter numbers in an unknown format (e.g. either a unit value _or_ a percentage), this must be known up front or selected via an external UI control.
+Parsing numbers while taking into account all locale-specific detail is quite complex and error-prone. `NumberParser` uses information about the locale and expected format for a number in order to parse it correctly. This means it is somewhat strict about the accepted formats. It is not designed to handle use cases where the user can enter numbers in an unknown format (e.g. either a unit value _or_ a percentage), this must be known up front or selected via an external UI control.
 
 Read our [blog post](../../blog/how-we-internationalized-our-numberfield.html) for more details on how the number parser is implemented.
 
 ### Example
 
-To create a `NumberParser`, call the constructor with a locale string and optional format options. The same options as supported by the [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat) object are supported. See the linked docs on MDN for full details.
+To create a `NumberParser`, call the constructor with a locale string and optional format options. The same options as supported by the [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat) object are supported. See the docs on MDN linked above for full details.
 
 This example creates a parser than accepts values in inches in the `en-US` locale.
 
@@ -50,7 +50,7 @@ This example creates a parser than accepts values in inches in the `en-US` local
 import {NumberParser} from '@internationalized/number';
 
 let parser = new NumberParser('en-US', {style: 'unit', unit: 'inch'});
-parser.parse('10 in'); // => 10
+parser.parse('10 in'); // 10
 ```
 
 ## Interface
@@ -67,11 +67,11 @@ By default, or with the `style: 'decimal'` option, `NumberParser` supports parsi
 
 ```tsx
 let parser = new NumberParser('en-US');
-parser.parse('10.5'); // => 10.5
-parser.parse('-25.6'); // => -25.6
-parser.parse('1,000,000'); // => 1000000
+parser.parse('10.5'); // 10.5
+parser.parse('-25.6'); // -25.6
+parser.parse('1,000,000'); // 1000000
 parser.parse('١٢'); // 12
-parser.parse('X'); // => NaN
+parser.parse('X'); // NaN
 ```
 
 ### Percentages
@@ -84,8 +84,8 @@ let parser = new NumberParser('en-US', {
   maximumFractionDigits: 2
 });
 
-parser.parse('45%'); // => 0.45
-parser.parse('62.3333%'); // => 0.6234
+parser.parse('45%'); // 0.45
+parser.parse('62.3333%'); // 0.6233
 ```
 
 ### Currency values
@@ -102,13 +102,13 @@ let parser = new NumberParser('en-US', {
   currencySign: 'accounting'
 });
 
-parser.parse('45'); // => 45
-parser.parse('EUR 45'); // => 45
-parser.parse('EUR 26.45'); // => 26.45
-parser.parse('EUR -25'); // => -25
-parser.parse('(EUR 25)'); // => -25
-parser.parse('EU 45'); // => NaN (partial currency symbol)
-parser.parse('$45'); // => NaN (different currency symbol)
+parser.parse('45'); // 45
+parser.parse('EUR 45'); // 45
+parser.parse('EUR 26.45'); // 26.45
+parser.parse('EUR -25'); // -25
+parser.parse('(EUR 25)'); // -25
+parser.parse('EU 45'); // NaN (partial currency symbol)
+parser.parse('$45'); // NaN (different currency symbol)
 ```
 
 ### Unit values
@@ -122,9 +122,9 @@ let parser = new NumberParser('en-US', {
   unitDisplay: 'long'
 });
 
-parser.parse('12'); // => 12
-parser.parse('12 inches'); // => 12
-parser.parse('1 inch'); // => 1
+parser.parse('12'); // 12
+parser.parse('12 inches'); // 12
+parser.parse('1 inch'); // 1
 parser.parse('12 in'); // NaN (partial unit)
 parser.parse('23 ft'); // NaN (different unit)
 ```
@@ -137,11 +137,11 @@ Note that partial units and currency symbols are _not_ accepted. Since the unit 
 
 ```tsx
 let parser = new NumberParser('en-US', {style: 'unit', unit: 'inch'});
-parser.isValidPartialNumber('.'); // -> true
-parser.isValidPartialNumber('.2'); // -> true
-parser.isValidPartialNumber('10 in'); // -> true
-parser.isValidPartialNumber('10 i'); // -> false
-parser.isValidPartialNumber('10 x'); // -> false
+parser.isValidPartialNumber('.'); // true
+parser.isValidPartialNumber('.2'); // true
+parser.isValidPartialNumber('10 in'); // true
+parser.isValidPartialNumber('10 i'); // false
+parser.isValidPartialNumber('10 x'); // false
 ```
 
 ## Detecting the numbering system

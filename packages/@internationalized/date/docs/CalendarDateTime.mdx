@@ -72,7 +72,7 @@ import {BuddhistCalendar} from '@internationalized/date';
 let date = new CalendarDateTime(new BuddhistCalendar(), 2563, 4, 30, 9, 15);
 ```
 
-See the [Calendar](Calendar.html) docs for details about the supported calendars.
+See the [Calendar](Calendar.html#implementations) docs for details about the supported calendars.
 
 ### Eras
 
@@ -89,7 +89,7 @@ let date = new CalendarDateTime(
 );
 ```
 
-A list of valid era identifiers can be retried using the `getEras` method of a `Calendar` instance. If an era is not provided, the date is assumed to be in the current era.
+A list of valid era identifiers can be retrieved using the `getEras` method of a `Calendar` instance. If an era is not provided, the date is assumed to be in the current era.
 
 ### Converting between calendars
 
@@ -114,7 +114,7 @@ A <TypeLink links={docs.links} type={docs.exports.DateTimeDuration} /> is an obj
 ```tsx
 let date = new CalendarDateTime(2022, 2, 3, 9, 45);
 
-date.add({weeks: 1}); // 2022-02-09T09:45
+date.add({weeks: 1}); // 2022-02-10T09:45
 date.add({months: 1}); // 2022-03-03T09:45
 date.add({years: 1, months: 1, days: 1}); // 2023-03-04T09:45
 date.add({hours: 1}); // 2022-02-03T10:45
@@ -135,7 +135,6 @@ Adding or subtracting a duration that goes beyond the limits of a particular fie
 
 ```tsx
 let date = new CalendarDateTime(2022, 2, 3, 9, 45);
-
 date.set({day: 10}); // 2022-02-10T09:45
 date.set({month: 5}); // 2022-05-03T09:45
 date.set({year: 2023, month: 10, day: 16}); // 2023-10-16T09:45
@@ -147,7 +146,6 @@ Setting a field to a value that is outside the valid range will cause it to be _
 
 ```tsx
 let date = new CalendarDateTime(2022, 2, 3, 9, 45);
-
 date.set({day: 100}); // 2022-02-28T09:45
 date.set({month: 20}); // 2022-12-03T09:45
 date.set({hour: 30}); // 2022-02-03T23:45
@@ -159,7 +157,6 @@ The `cycle` method allows incrementing or decrementing a single field. It is sim
 
 ```tsx
 let date = new CalendarDateTime(2022, 12, 31, 23, 59);
-
 date.cycle('day', 1); // 2022-12-01T23:59
 date.cycle('month', 1); // 2022-01-31T23:59
 date.cycle('hour', 1); // 2022-12-31T00:59
@@ -177,7 +174,7 @@ Note that if cycling a field causes another field to become invalid, the date is
 The `round` option may also be passed, which causes the value to be rounded to increments of the given amount. For example, you could round the minute to increments of 15.
 
 ```tsx
-let date = new CalendarDate(2022, 2, 3, 9, 22);
+let date = new CalendarDateTime(2022, 2, 3, 9, 22);
 
 date.cycle('minute', 15); // 2027-02-03T09:37
 date.cycle('minute', 15, {round: true}); // 2025-02-03T09:30
@@ -189,11 +186,11 @@ date.cycle('minute', -15, {round: true}); // 2020-02-03T09:15
 By default, the `hour` field is cycled within a 24 hour range. The `hourCycle` option can be set to `12` to use a 12 hour clock instead, which will preserve the AM/PM value when formatted.
 
 ```tsx
-let date = new CalendarDate(2022, 2, 3, 11);
+let date = new CalendarDateTime(2022, 2, 3, 11);
 date.cycle('hour', 1); // 2022-02-03T12:00
 date.cycle('hour', 1, {hourCycle: 12}); // 2022-02-03T00:00
 
-let date = new CalendarDate(2022, 2, 3, 23);
+let date = new CalendarDateTime(2022, 2, 3, 23);
 date.cycle('hour', 1); // 2022-02-03T00:00
 date.cycle('hour', 1, {hourCycle: 12}); // 2022-02-03T12:00
 ```
@@ -326,9 +323,9 @@ A similar set of functions is also available that does not convert between calen
 ```tsx
 import {isEqualMonth, IslamicUmalquraCalendar} from '@internationalized/date';
 
-isSameMonth(new CalendarDateTime(2021, 4, 16, 9, 45), new CalendarDateTime(2021, 4, 30, 5, 15)); // true
-isSameMonth(new CalendarDateTime(2021, 4, 16, 9, 45), new CalendarDateTime(2021, 8, 2, 5, 15)); // false
-isSameMonth(new CalendarDateTime(2021, 4, 16, 9, 45), new CalendarDateTime(new IslamicUmalquraCalendar(), 1442, 9, 4, 5, 15)); // false
+isEqualMonth(new CalendarDateTime(2021, 4, 16, 9, 45), new CalendarDateTime(2021, 4, 30, 5, 15)); // true
+isEqualMonth(new CalendarDateTime(2021, 4, 16, 9, 45), new CalendarDateTime(2021, 8, 2, 5, 15)); // false
+isEqualMonth(new CalendarDateTime(2021, 4, 16, 9, 45), new CalendarDateTime(new IslamicUmalquraCalendar(), 1442, 9, 4, 5, 15)); // false
 ```
 
 ### Start and end dates

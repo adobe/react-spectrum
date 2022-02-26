@@ -23,7 +23,7 @@ export function isSameDay(a: DateValue, b: DateValue): boolean {
   return a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
 }
 
-/** Returns whether the given dates occur in the same month, in the calendar system of the first date. */
+/** Returns whether the given dates occur in the same month, using the calendar system of the first date. */
 export function isSameMonth(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
   // In the Japanese calendar, months can span multiple eras/years, so only compare the first of the month.
@@ -32,7 +32,7 @@ export function isSameMonth(a: DateValue, b: DateValue): boolean {
   return a.era === b.era && a.year === b.year && a.month === b.month;
 }
 
-/** Returns whether the given dates occur in the same year, in the calendar system of the first date. */
+/** Returns whether the given dates occur in the same year, using the calendar system of the first date. */
 export function isSameYear(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
   a = startOfYear(a);
@@ -40,19 +40,19 @@ export function isSameYear(a: DateValue, b: DateValue): boolean {
   return a.era === b.era && a.year === b.year;
 }
 
-/** Returns whether the given dates occur on the same day in the same calendar system. */
+/** Returns whether the given dates occur on the same day, and are of the same calendar system. */
 export function isEqualDay(a: DateValue, b: DateValue): boolean {
   return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
 }
 
-/** Returns whether the given dates occur in the same month in the same calendar system. */
+/** Returns whether the given dates occur in the same month, and are of the same calendar system. */
 export function isEqualMonth(a: DateValue, b: DateValue): boolean {
   a = startOfMonth(a);
   b = startOfMonth(b);
   return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month;
 }
 
-/** Returns whether the given dates occur in the same year in the same calendar system. */
+/** Returns whether the given dates occur in the same year, and are of the same calendar system. */
 export function isEqualYear(a: DateValue, b: DateValue): boolean {
   a = startOfYear(a);
   b = startOfYear(b);

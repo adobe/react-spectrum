@@ -31,24 +31,24 @@ after_version: 3.0.0
 
 ## Introduction
 
-A `CalendarDateTime` object represents an exact date and time in a specific time zone, in a specific calendar system such as the Gregorian calendar. Use this type to represent an exact moment in time at a particular location on Earth.
+A `ZonedDateTime` object represents an exact date and time in a specific time zone, in a specific calendar system such as the Gregorian calendar. Use this type to represent an exact moment in time at a particular location on Earth.
 
-A `CalendarDateTime` can be created using the constructor. This example creates a date that represents February 3rd, 2022 at 9:15 AM in the Gregorian calendar system.
+A `ZonedDateTime` can be created using the constructor. This example creates a date that represents February 3rd, 2022 at 9:15 AM in the Gregorian calendar system, with a time zone of `"America/Los Angeles"`.
 
 ```tsx
-import {CalendarDateTime} from '@internationalized/date';
+import {ZonedDateTime} from '@internationalized/date';
 
 let date = new ZonedDateTime(
   // Date
   2022, 2, 3,
-  // Time zone and UTC offsset
+  // Time zone and UTC offset
   'America/Los_Angeles', -28800000,
   // Time
   12, 24, 45
 );
 ```
 
-You can also create a `CalendarDate` by parsing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string using the one of the following functions:
+You can also create a `ZonedDateTime` by parsing an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string using the one of the following functions:
 
 * <TypeLink links={docs.links} type={docs.exports.parseZonedDateTime} /> – This function parses a date with an explicit time zone and optional UTC offset attached (e.g. `"2021-11-07T00:45[America/Los_Angeles]"` or `"2021-11-07T00:45-07:00[America/Los_Angeles]"`). This format preserves the maximum amount of information. If the exact local time and time zone that a user selected is important, use this format. Storing the time zone and offset that was selected rather than converting to UTC ensures that the local time is correct regardless of daylight saving rule changes (e.g. if a locale abolishes DST). Examples where this applies include calendar events, reminders, and other times that occur in a particular location.
 * <TypeLink links={docs.links} type={docs.exports.parseAbsolute} /> – This function parses an absolute date and time that occurs at the same instant at all locations on Earth. It can be represented in UTC (e.g. `"2021-11-07T07:45:00Z"`), or stored with a particular offset (e.g. `"2021-11-07T07:45:00-07:00"`). A time zone identifier, e.g. `America/Los_Angeles`, must be passed, and the result will be converted into that time zone. Absolute times are the best way to represent events that occurred in the past, or future events where an exact time regardless of time zone is needed.
@@ -94,11 +94,11 @@ let date = new ZonedDateTime(
 );
 ```
 
-See the [Calendar](Calendar.html) docs for details about the supported calendars.
+See the [Calendar](Calendar.html#implementations) docs for details about the supported calendars.
 
 ### Eras
 
-Many calendar systems have only one era, or a modern era and a pre-modern era (e.g. AD and BC in the Gregorian calendar). However, other calendar systems may have many eras. For example, the Japanese calendar has eras for the reign of each Emperor. `CalendarDateTime` represents eras using string identifiers, which can be passed as an additional parameter to the constructor before the year. When eras are present, years are numbered starting from 1 within the era.
+Many calendar systems have only one era, or a modern era and a pre-modern era (e.g. AD and BC in the Gregorian calendar). However, other calendar systems may have many eras. For example, the Japanese calendar has eras for the reign of each Emperor. `ZonedDateTime` represents eras using string identifiers, which can be passed as an additional parameter to the constructor before the year. When eras are present, years are numbered starting from 1 within the era.
 
 This example creates a date in the Japanese calendar system, which is equivalent to April 4th, 2020 at 9:15 AM in the Gregorian calendar.
 
@@ -112,7 +112,7 @@ let date = new ZonedDateTime(
 );
 ```
 
-A list of valid era identifiers can be retried using the `getEras` method of a `Calendar` instance. If an era is not provided, the date is assumed to be in the current era.
+A list of valid era identifiers can be retrieved using the `getEras` method of a `Calendar` instance. If an era is not provided, the date is assumed to be in the current era.
 
 ### Converting between calendars
 
@@ -136,12 +136,12 @@ let hebrewDate = toCalendar(gregorianDate, new HebrewCalendar());
 
 ### Adding and subtracting durations
 
-A <TypeLink links={docs.links} type={docs.exports.DateTimeDuration} /> is an object that represents an amount of time, with fields such as `years`, `months`, `hours`, and `minutes`. The `add` and `subtract` methods of `CalendarDateTime` objects can be used to adjust the date by the given duration. These methods return a new date, and do not mutate the original.
+A <TypeLink links={docs.links} type={docs.exports.DateTimeDuration} /> is an object that represents an amount of time, with fields such as `years`, `months`, `hours`, and `minutes`. The `add` and `subtract` methods of `ZonedDateTime` objects can be used to adjust the date by the given duration. These methods return a new date, and do not mutate the original.
 
 ```tsx
 let date = parseZonedDateTime('2022-02-03T09:45[America/Los_Angeles]');
 
-date.add({weeks: 1}); // 2022-02-09T09:45[America/Los_Angeles]
+date.add({weeks: 1}); // 2022-02-10T09:45[America/Los_Angeles]
 date.add({months: 1}); // 2022-03-03T09:45[America/Los_Angeles]
 date.add({years: 1, months: 1, days: 1}); // 2023-03-04T09:45[America/Los_Angeles]
 date.add({hours: 1}); // 2022-02-03T10:45[America/Los_Angeles]
@@ -183,7 +183,6 @@ date.add({days: 1}); // 2020-03-08T03:00-07:00[America/Los_Angeles]
 
 ```tsx
 let date = parseZonedDateTime('2022-02-03T09:45[America/Los_Angeles]');
-
 date.set({day: 10}); // 2022-02-10T09:45[America/Los_Angeles]
 date.set({month: 5}); // // 2022-05-03T09:45[America/Los_Angeles]
 date.set({year: 2023, month: 10, day: 16}); // 2023-10-16T09:45[America/Los_Angeles]
@@ -195,13 +194,12 @@ Setting a field to a value that is outside the valid range will cause it to be _
 
 ```tsx
 let date = parseZonedDateTime('2022-02-03T09:45[America/Los_Angeles]');
-
 date.set({day: 100}); // 2022-02-28T09:45[America/Los_Angeles]
 date.set({month: 20}); // 2022-12-03T09:45[America/Los_Angeles]
 date.set({hour: 30}); // 2022-02-03T23:45[America/Los_Angeles]
 ```
 
-Setting fields is zome zone aware. When setting fields around a daylight saving time transition, the UTC offset will be adjusted accordingly. For example, when changing the `day` field from before a daylight saving transition to after, the time remains the same but the UTC offset changes.
+Setting fields is zone zone aware. When setting fields around a daylight saving time transition, the UTC offset will be adjusted accordingly. For example, when changing the `day` field from before a daylight saving transition to after, the time remains the same but the UTC offset changes.
 
 ```tsx
 let date = parseZonedDateTime('2020-03-01T10:00-08:00[America/Los_Angeles]');
@@ -223,7 +221,6 @@ date.set({day: 8}, 'earlier'); // 2020-03-08T01:00:00-08:00[America/Los_Angeles]
 date.set({day: 8}, 'later'); // 2020-03-08T03:00:00-07:00[America/Los_Angeles]
 
 // A "fall back" transition
-let date = new CalendarDateTime(2020, 11, 1, 1);
 let date = parseZonedDateTime('2020-10-01T01:00-07:00[America/Los_Angeles]');
 date.set({month: 11}); // 2020-11-01T01:00:00-07:00[America/Los_Angeles]
 date.set({month: 11}, 'earlier'); // 2020-11-01T01:00:00-07:00[America/Los_Angeles]
@@ -236,11 +233,10 @@ The `cycle` method allows incrementing or decrementing a single field. It is sim
 
 ```tsx
 let date = parseZonedDateTime('2022-12-31T23:59[America/Los_Angeles]');
-
-date.cycle('day', 1); // 2022-12-01T23:59
-date.cycle('month', 1); // 2022-01-31T23:59
-date.cycle('hour', 1); // 2022-12-31T00:59
-date.cycle('minute', 1); // 2022-12-31T23:00
+date.cycle('day', 1); // 2022-12-01T23:59[America/Los_Angeles]
+date.cycle('month', 1); // 2022-01-31T23:59[America/Los_Angeles]
+date.cycle('hour', 1); // 2022-12-31T00:59[America/Los_Angeles]
+date.cycle('minute', 1); // 2022-12-31T23:00[America/Los_Angeles]
 
 let date = parseZonedDateTime('2022-01-01T00:00[America/Los_Angeles]');
 date.cycle('day', -1); // 2022-01-31T00:00[America/Los_Angeles]
@@ -270,7 +266,7 @@ let date = parseZonedDateTime('2022-02-03T11:00[America/Los_Angeles]');
 date.cycle('hour', 1); // 2022-02-03T12:00[America/Los_Angeles]
 date.cycle('hour', 1, {hourCycle: 12}); // 2022-02-03T00:00[America/Los_Angeles]
 
-let date = new CalendarDate(2022, 2, 3, 23);
+let date = parseZonedDateTime('2022-02-03T23:00[America/Los_Angeles]');
 date.cycle('hour', 1); // 2022-02-03T00:00[America/Los_Angeles]
 date.cycle('hour', 1, {hourCycle: 12}); // 2022-02-03T12:00[America/Los_Angeles]
 ```
@@ -399,7 +395,7 @@ In addition, the following functions can be used to perform a partial comparison
 * <TypeLink links={docs.links} type={docs.exports.isToday} /> – <span>{docs.exports.isToday.description}</span>
 
 ```tsx
-import {isSameMonth, IslamicUmalquraCalendar} from '@internationalized/date';
+import {isSameMonth} from '@internationalized/date';
 
 isSameMonth(
   parseZonedDateTime('2022-04-16T09:45[America/Los_Angeles]'),

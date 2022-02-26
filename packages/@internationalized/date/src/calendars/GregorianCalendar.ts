@@ -48,7 +48,7 @@ const daysInMonth = {
 };
 
 /**
- * The gregorian calendar is the most commonly used calendar system in the world. It supports two eras: BC, and AD.
+ * The Gregorian calendar is the most commonly used calendar system in the world. It supports two eras: BC, and AD.
  * Years always contain 12 months, and 365 or 366 days depending on whether it is a leap year.
  */
 export class GregorianCalendar implements Calendar {

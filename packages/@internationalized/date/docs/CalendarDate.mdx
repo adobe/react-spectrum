@@ -72,7 +72,7 @@ import {BuddhistCalendar} from '@internationalized/date';
 let date = new CalendarDate(new BuddhistCalendar(), 2563, 4, 30);
 ```
 
-See the [Calendar](Calendar.html) docs for details about the supported calendars.
+See the [Calendar](Calendar.html#implementations) docs for details about the supported calendars.
 
 ### Eras
 
@@ -86,7 +86,7 @@ import {JapaneseCalendar} from '@internationalized/date';
 let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30)
 ```
 
-A list of valid era identifiers can be retried using the `getEras` method of a `Calendar` instance. If an era is not provided, the date is assumed to be in the current era.
+A list of valid era identifiers can be retrieved using the `getEras` method of a `Calendar` instance. If an era is not provided, the date is assumed to be in the current era.
 
 ### Converting between calendars
 
@@ -111,7 +111,7 @@ A <TypeLink links={docs.links} type={docs.exports.DateDuration} /> is an object 
 ```tsx
 let date = new CalendarDate(2022, 2, 3);
 
-date.add({weeks: 1}); // 2022-02-09
+date.add({weeks: 1}); // 2022-02-10
 date.add({months: 1}); // 2022-03-03
 date.add({years: 1, months: 1, days: 1}); // 2023-03-04
 
@@ -128,7 +128,6 @@ Adding or subtracting a duration that goes beyond the limits of a particular fie
 
 ```tsx
 let date = new CalendarDate(2022, 2, 3);
-
 date.set({day: 10}); // 2022-02-10
 date.set({month: 5}); // 2022-05-03
 date.set({year: 2023, month: 10, day: 16}); // 2023-10-16
@@ -138,7 +137,6 @@ Setting a field to a value that is outside the valid range will cause it to be _
 
 ```tsx
 let date = new CalendarDate(2022, 2, 3);
-
 date.set({day: 100}); // 2022-02-28
 date.set({month: 20}); // 2022-12-03
 ```
@@ -149,7 +147,6 @@ The `cycle` method allows incrementing or decrementing a single field. It is sim
 
 ```tsx
 let date = new CalendarDate(2022, 12, 31);
-
 date.cycle('day', 1); // 2022-12-01
 date.cycle('month', 1); // 2022-01-31
 
@@ -268,9 +265,9 @@ A similar set of functions is also available that does not convert between calen
 ```tsx
 import {isEqualMonth, IslamicUmalquraCalendar} from '@internationalized/date';
 
-isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(2021, 4, 30)); // true
-isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(2021, 8, 2)); // false
-isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)); // false
+isEqualMonth(new CalendarDate(2021, 4, 16), new CalendarDate(2021, 4, 30)); // true
+isEqualMonth(new CalendarDate(2021, 4, 16), new CalendarDate(2021, 8, 2)); // false
+isEqualMonth(new CalendarDate(2021, 4, 16), new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)); // false
 ```
 
 ### Start and end dates
