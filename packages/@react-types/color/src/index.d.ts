@@ -151,7 +151,11 @@ export interface ColorAreaProps extends ValueBase<string | Color> {
   /** The step value for the xChannel. */
   xChannelStep?: number,
   /** The step value for the yChannel. */
-  yChannelStep?: number
+  yChannelStep?: number,
+  /** The page step size for the xChannel. */
+  xChannelPageStep?: number,
+  /** The page step size for the yChannel. */
+  yChannelPageStep?: number
 }
 
 export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {}

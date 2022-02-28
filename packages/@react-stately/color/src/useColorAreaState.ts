@@ -72,8 +72,18 @@ let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x =>
  * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
  */
 export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
-  // TODO: docs say the step props should be one, but should it be two different values?
-  let {value, defaultValue, xChannel, yChannel, onChange, onChangeEnd, xChannelStep, yChannelStep} = props;
+  let {
+    value,
+    defaultValue,
+    xChannel,
+    yChannel,
+    onChange,
+    onChangeEnd,
+    xChannelStep,
+    yChannelStep,
+    xChannelPageStep,
+    yChannelPageStep
+  } = props;
 
   if (!value && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
@@ -129,8 +139,8 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     yChannelStep = stepY;
   }
 
-  let xChannelPageStep = Math.max(pageSizeX, xChannelStep);
-  let yChannelPageStep = Math.max(pageSizeY, yChannelStep);
+  let _xChannelPageStep = Math.max(!isNaN(xChannelPageStep) ? xChannelPageStep : pageSizeX, xChannelStep);
+  let _yChannelPageStep = Math.max(!isNaN(yChannelPageStep) ? yChannelPageStep : pageSizeY, yChannelStep);
 
   let [isDragging, setDragging] = useState(false);
   let isDraggingRef = useRef(false).current;
@@ -156,8 +166,8 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     channels,
     xChannelStep,
     yChannelStep,
-    xChannelPageStep,
-    yChannelPageStep,
+    xChannelPageStep: _xChannelPageStep,
+    yChannelPageStep: _yChannelPageStep,
     value: color,
     setValue(value) {
       let c = normalizeColor(value);
