@@ -3,7 +3,7 @@ import {DraggableItemProps, DraggableItemResult, useDraggableItem} from '@react-
 import {useMemo} from 'react';
 
 export interface DragHooks {
-    useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState,
+    useDraggableCollectionState(props: Omit<DraggableCollectionOptions, 'getItems'>): DraggableCollectionState,
     useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult
 }
 
