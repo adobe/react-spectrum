@@ -79,9 +79,10 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let valueRef = useRef(color);
   valueRef.current = color;
 
-  let channels = useMemo(() => {
-    return valueRef.current.getColorSpaceAxes({xChannel, yChannel});
-  }, [xChannel, yChannel]);
+  let channels = useMemo(() =>
+    valueRef.current.getColorSpaceAxes({xChannel, yChannel}),
+    [xChannel, yChannel]
+  );
 
   let xChannelRange = color.getChannelRange(channels.xChannel);
   let yChannelRange = color.getChannelRange(channels.yChannel);

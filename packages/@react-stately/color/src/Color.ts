@@ -11,7 +11,7 @@
  */
 
 import {clamp, toFixedNumber} from '@react-stately/utils';
-import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor, ColorAxes} from '@react-types/color';
+import {ColorAxes, ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MessageDictionary} from '@internationalized/message';
