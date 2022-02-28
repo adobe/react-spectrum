@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './TagGroup';
+export {TagGroup} from './TagGroup';
 export {Item} from '@react-stately/collections';
