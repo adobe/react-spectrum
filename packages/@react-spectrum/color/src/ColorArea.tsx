@@ -18,16 +18,17 @@ import {
   generateHSB_H,
   generateHSB_S,
   generateHSL_H,
+  generateHSL_L,
   generateHSL_S,
   generateRGB_B,
   generateRGB_G,
-  generateRGB_R
-} from './Gradients';
+  generateRGB_R,
+  useColorArea
+} from '@react-aria/color';
 import {mergeProps} from '@react-aria/utils';
 import React, {CSSProperties, ReactElement, useRef} from 'react';
 import {SpectrumColorAreaProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorarea/vars.css';
-import {useColorArea} from '@react-aria/color';
 import {useColorAreaState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';
 import {useLocale} from '@react-aria/i18n';
@@ -125,20 +126,17 @@ function useGradients({direction, state, zChannel, xChannel, isDisabled}): Gradi
     switch (zChannel) {
       case 'red': {
         dir = xChannel === 'green';
-        let {colorAreaStyles, gradientStyles} = generateRGB_R(orientation, dir, zValue);
-        background = {colorAreaStyles, gradientStyles};
+        background = generateRGB_R(orientation, dir, zValue);
         break;
       }
       case 'green': {
         dir = xChannel === 'red';
-        let {colorAreaStyles, gradientStyles} = generateRGB_G(orientation, dir, zValue);
-        background = {colorAreaStyles, gradientStyles};
+        background = generateRGB_G(orientation, dir, zValue);
         break;
       }
       case 'blue': {
         dir = xChannel === 'red';
-        let {colorAreaStyles, gradientStyles} = generateRGB_B(orientation, dir, zValue);
-        background = {colorAreaStyles, gradientStyles};
+        background = generateRGB_B(orientation, dir, zValue);
         break;
       }
       case 'hue': {
@@ -153,20 +151,20 @@ function useGradients({direction, state, zChannel, xChannel, isDisabled}): Gradi
       case 'saturation': {
         dir = xChannel === 'hue';
         if (isHSL) {
-          background = generateHSL_S(orientation, dir, zValue, alphaValue);
+          background = generateHSL_S(orientation, dir, alphaValue);
         } else {
-          background = generateHSB_S(orientation, dir, zValue, alphaValue);
+          background = generateHSB_S(orientation, dir, alphaValue);
         }
         break;
       }
       case 'brightness': {
         dir = xChannel === 'hue';
-        background = generateHSB_B(orientation, dir, zValue, alphaValue);
+        background = generateHSB_B(orientation, dir, alphaValue);
         break;
       }
       case 'lightness': {
         dir = xChannel === 'hue';
-        background = generateHSL_H(orientation, dir, zValue);
+        background = generateHSL_L(orientation, dir, zValue);
         break;
       }
     }

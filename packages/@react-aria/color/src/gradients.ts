@@ -1,5 +1,5 @@
 
-export const generateRGB_R = (orientation, dir, zValue) => {
+export const generateRGB_R = (orientation, dir: boolean, zValue: number) => {
   let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
   let result = {
     colorAreaStyles: {
@@ -14,7 +14,7 @@ export const generateRGB_R = (orientation, dir, zValue) => {
   return result;
 };
 
-export const generateRGB_G = (orientation, dir, zValue) => {
+export const generateRGB_G = (orientation, dir: boolean, zValue: number) => {
   let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
   let result = {
     colorAreaStyles: {
@@ -29,7 +29,7 @@ export const generateRGB_G = (orientation, dir, zValue) => {
   return result;
 };
 
-export const generateRGB_B = (orientation, dir, zValue) => {
+export const generateRGB_B = (orientation, dir: boolean, zValue: number) => {
   let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
   let result = {
     colorAreaStyles: {
@@ -45,7 +45,7 @@ export const generateRGB_B = (orientation, dir, zValue) => {
 };
 
 
-export const generateHSL_H = (orientation, dir, zValue) => {
+export const generateHSL_H = (orientation, dir: boolean, zValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -59,7 +59,7 @@ export const generateHSL_H = (orientation, dir, zValue) => {
   return result;
 };
 
-export const generateHSL_S = (orientation, dir, zValue, alphaValue) => {
+export const generateHSL_S = (orientation, dir: boolean, alphaValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -73,7 +73,7 @@ export const generateHSL_S = (orientation, dir, zValue, alphaValue) => {
   return result;
 };
 
-export const generateHSL_L = (orientation, dir, zValue) => {
+export const generateHSL_L = (orientation, dir: boolean, zValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -87,7 +87,7 @@ export const generateHSL_L = (orientation, dir, zValue) => {
 };
 
 
-export const generateHSB_H = (orientation, dir, zValue) => {
+export const generateHSB_H = (orientation, dir: boolean, zValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -101,7 +101,7 @@ export const generateHSB_H = (orientation, dir, zValue) => {
   return result;
 };
 
-export const generateHSB_S = (orientation, dir, zValue, alphaValue) => {
+export const generateHSB_S = (orientation, dir: boolean, alphaValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -115,7 +115,7 @@ export const generateHSB_S = (orientation, dir, zValue, alphaValue) => {
   return result;
 };
 
-export const generateHSB_B = (orientation, dir, zValue, alphaValue) => {
+export const generateHSB_B = (orientation, dir: boolean, alphaValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {

@@ -11,7 +11,7 @@
  */
 
 import {clamp, toFixedNumber} from '@react-stately/utils';
-import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
+import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor, ColorAxes} from '@react-types/color';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MessageDictionary} from '@internationalized/message';
@@ -36,6 +36,8 @@ export function normalizeColor(v: string | IColor) {
     return v;
   }
 }
+
+let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x => !b.has(x)));
 
 abstract class Color implements IColor {
   abstract toFormat(format: ColorFormat): IColor;
@@ -71,6 +73,7 @@ abstract class Color implements IColor {
   }
 
   abstract getColorSpace(): ColorFormat
+  abstract getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel, yChannel?: ColorChannel}): ColorAxes
   abstract getColorChannels(): Set<ColorChannel>
 }
 
@@ -272,6 +275,40 @@ class RGBColor extends Color {
   getColorChannels(): Set<ColorChannel> {
     return RGBColor.colorChannels;
   }
+  getColorSpaceAxes({xChannel, yChannel}): ColorAxes {
+    let xCh;
+    let yCh;
+    if (!xChannel) {
+      switch (yChannel) {
+        case 'red':
+        case 'green':
+          xCh = 'blue';
+          break;
+        case 'blue':
+          xCh = 'red';
+          break;
+        default:
+          xCh = 'blue';
+          yCh = 'green';
+      }
+    } else if (!yChannel) {
+      switch (xChannel) {
+        case 'red':
+          yCh = 'green';
+          break;
+        case 'blue':
+          yCh = 'red';
+          break;
+        default:
+          xCh = 'blue';
+          yCh = 'green';
+      }
+    }
+    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
+    let zChannel = difference(this.getColorChannels(), xyChannels).values().next().value as ColorChannel;
+
+    return {xChannel: xCh, yChannel: yCh, zChannel};
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -409,6 +446,42 @@ class HSBColor extends Color {
   private static colorChannels: Set<ColorChannel> = new Set(['hue', 'saturation', 'brightness']);
   getColorChannels(): Set<ColorChannel> {
     return HSBColor.colorChannels;
+  }
+
+  getColorSpaceAxes({xChannel, yChannel}): ColorAxes {
+    let xCh;
+    let yCh;
+    if (!xChannel) {
+      switch (yChannel) {
+        case 'hue':
+          xCh = 'brightness';
+          break;
+        case 'brightness':
+          xCh = 'saturation';
+          break;
+        default:
+          xCh = 'saturation';
+          yCh = 'brightness';
+          break;
+      }
+    } else if (!yChannel) {
+      switch (xChannel) {
+        case 'hue':
+          yCh = 'brightness';
+          break;
+        case 'brightness':
+          yCh = 'saturation';
+          break;
+        default:
+          xCh = 'saturation';
+          yCh = 'brightness';
+          break;
+      }
+    }
+    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
+    let zChannel = difference(this.getColorChannels(), xyChannels).values().next().value as ColorChannel;
+
+    return {xChannel: xCh, yChannel: yCh, zChannel};
   }
 }
 
@@ -549,5 +622,41 @@ class HSLColor extends Color {
   private static colorChannels: Set<ColorChannel> = new Set(['hue', 'saturation', 'lightness']);
   getColorChannels(): Set<ColorChannel> {
     return HSLColor.colorChannels;
+  }
+
+  getColorSpaceAxes({xChannel, yChannel}): ColorAxes {
+    let xCh;
+    let yCh;
+    if (!xChannel) {
+      switch (yChannel) {
+        case 'hue':
+          xCh = 'lightness';
+          break;
+        case 'lightness':
+          xCh = 'saturation';
+          break;
+        default:
+          xCh = 'saturation';
+          yCh = 'lightness';
+          break;
+      }
+    } else if (!yChannel) {
+      switch (xChannel) {
+        case 'hue':
+          yCh = 'lightness';
+          break;
+        case 'lightness':
+          yCh = 'saturation';
+          break;
+        default:
+          xCh = 'saturation';
+          yCh = 'lightness';
+          break;
+      }
+    }
+    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
+    let zChannel = difference(this.getColorChannels(), xyChannels).values().next().value as ColorChannel;
+
+    return {xChannel: xCh, yChannel: yCh, zChannel};
   }
 }

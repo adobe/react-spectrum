@@ -14,3 +14,4 @@ export * from './useColorArea';
 export * from './useColorSlider';
 export * from './useColorWheel';
 export * from './useColorField';
+export * from './gradients';

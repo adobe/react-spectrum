@@ -34,6 +34,8 @@ export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hs
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
 
+export type ColorAxes = {xChannel: ColorChannel, yChannel: ColorChannel, zChannel: ColorChannel};
+
 export interface ColorChannelRange {
   /** The minimum value of the color channel. */
   minValue: number,
@@ -80,6 +82,10 @@ export interface Color {
    * Returns the color space, 'rgb', 'hsb' or 'hsl', for the current color.
    */
   getColorSpace(): ColorFormat,
+  /**
+   * Returns the color space axes, xChannel, yChannel, zChannel.
+   */
+  getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel, yChannel?: ColorChannel}): ColorAxes,
   /**
    * Returns an array of the color channels within the current color space space.
    */

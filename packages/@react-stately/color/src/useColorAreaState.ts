@@ -64,8 +64,6 @@ export interface ColorAreaState {
 }
 
 const DEFAULT_COLOR = parseColor('#ffffff');
-let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x => !b.has(x)));
-
 /**
  * Provides state management for a color area component.
  * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
@@ -82,72 +80,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   valueRef.current = color;
 
   let channels = useMemo(() => {
-    let xCh = xChannel;
-    let yCh = yChannel;
-    // determine the color space from the color value
-    let colorSpace = valueRef.current.getColorSpace();
-
-    if (colorSpace === 'rgb') {
-      if (!xChannel) {
-        switch (yChannel) {
-          case 'red':
-          case 'green':
-            xCh = 'blue';
-            break;
-          case 'blue':
-            xCh = 'red';
-            break;
-          default:
-            xCh = 'blue';
-            yCh = 'green';
-        }
-      } else if (!yChannel) {
-        switch (xChannel) {
-          case 'red':
-            yCh = 'green';
-            break;
-          case 'blue':
-            yCh = 'red';
-            break;
-          default:
-            xCh = 'blue';
-            yCh = 'green';
-        }
-      }
-    } else if (!xChannel) {
-      switch (yChannel) {
-        case 'hue':
-          xCh = colorSpace === 'hsb' ? 'brightness' : 'lightness';
-          break;
-        case 'brightness':
-        case 'lightness':
-          xCh = 'saturation';
-          break;
-        default:
-          xCh = 'saturation';
-          yCh = colorSpace === 'hsb' ? 'brightness' : 'lightness';
-          break;
-      }
-    } else if (!yChannel) {
-      switch (xChannel) {
-        case 'hue':
-          yCh = colorSpace === 'hsb' ? 'brightness' : 'lightness';
-          break;
-        case 'brightness':
-        case 'lightness':
-          yCh = 'saturation';
-          break;
-        default:
-          xCh = 'saturation';
-          yCh = colorSpace === 'hsb' ? 'brightness' : 'lightness';
-          break;
-      }
-    }
-
-    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
-    let zChannel = difference(valueRef.current.getColorChannels(), xyChannels).values().next().value as ColorChannel;
-
-    return {xChannel: xCh, yChannel: yCh, zChannel};
+    return valueRef.current.getColorSpaceAxes({xChannel, yChannel});
   }, [xChannel, yChannel]);
 
   let xChannelRange = color.getChannelRange(channels.xChannel);

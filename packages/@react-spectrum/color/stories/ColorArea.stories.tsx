@@ -42,13 +42,6 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
   let isHue = zChannel === 'hue';
 
   function onChange(e) {
-    try {
-      e = normalizeColor(e);
-      // eslint-disable-next-line no-empty
-    } catch (error) {
-      e = undefined;
-      return;
-    }
     const newColor = (e || color).toFormat(colorSpace);
     if (props.onChange) {
       props.onChange(newColor);
