@@ -437,9 +437,6 @@ function TableColumnHeader({column}) {
     throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
   }
 
-  if (columnProps.width && columnProps.defaultWidth) {
-    throw new Error('Column props can only support either width or defaultWidth.');
-  }
 
   let {hoverProps, isHovered} = useHover({});
 
