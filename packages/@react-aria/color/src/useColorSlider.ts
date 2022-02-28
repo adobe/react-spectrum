@@ -13,7 +13,7 @@
 import {AriaColorSliderProps} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
 import {HTMLAttributes, RefObject} from 'react';
-import {mergeProps, snapValueToStep} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {useKeyboard} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
@@ -62,40 +62,32 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     inputRef
   }, state);
 
-  let {minValue, maxValue, step, pageSize} = state.value.getChannelRange(channel);
+  let {step, pageSize} = state.value.getChannelRange(channel);
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
       // these are the cases that useMove or useSlider don't handle
-      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
+      if (!/^(PageUp|PageDown)$/.test(e.key)) {
         e.continuePropagation();
         return;
       }
       // same handling as useMove, stopPropagation to prevent useSlider from handling the event as well.
       e.preventDefault();
-      let channelValue = state.value.getChannelValue(channel);
-      let pageStep = Math.max(pageSize, step);
-      let newValue = channelValue;
-      switch (e.key) {
-        case 'PageUp':
-          newValue = channelValue + pageStep > maxValue ? maxValue : snapValueToStep(channelValue + pageStep, minValue, maxValue, pageStep);
-          break;
-        case 'PageDown':
-          newValue = snapValueToStep(channelValue - pageStep, minValue, maxValue, pageStep);
-          break;
-        case 'Home':
-          newValue = minValue;
-          break;
-        case 'End':
-          newValue = maxValue;
-          break;
-      }
+      let pageStep = Math.max(
+        props.pageSize || pageSize,
+        props.step || step
+      );
       // remember to set this so that onChangeEnd is fired
       state.setThumbDragging(0, true);
-      if (newValue !== channelValue) {
-        state.setValue(state.value.withChannelValue(channel, newValue));
+      switch (e.key) {
+        case 'PageUp':
+          state.incrementThumb(0, pageStep);
+          break;
+        case 'PageDown':
+          state.decrementThumb(0, pageStep);
+          break;
       }
       // wait a frame to ensure value has changed then unset this so that onChangeEnd is fired
-      requestAnimationFrame(() => state.setThumbDragging(0, false));
+      state.setThumbDragging(0, false);
     }
   });
 

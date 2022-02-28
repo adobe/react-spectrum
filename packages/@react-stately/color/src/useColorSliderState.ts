@@ -13,7 +13,7 @@
 import {Color, ColorSliderProps} from '@react-types/color';
 import {normalizeColor, parseColor} from './Color';
 import {SliderState, useSliderState} from '@react-stately/slider';
-import {useControlledState} from '@react-stately/utils';
+import {snapValueToStep, useControlledState} from '@react-stately/utils';
 
 export interface ColorSliderState extends SliderState {
   /** The current color value represented by the color slider. */
@@ -51,12 +51,26 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
       setColor(color.withChannelValue(channel, v));
     },
     onChangeEnd([v]) {
-      // onChange will have already been called with the right value, this is just to trigger onChangEnd
+      // onChange will have already been called with the right value, this is just to trigger onChangeEnd
       if (props.onChangeEnd) {
         props.onChangeEnd(color.withChannelValue(channel, v));
       }
     }
   });
+
+  function incrementThumb(index: number, stepSize: number = 1) {
+    let {maxValue, minValue, step} = color.getChannelRange(channel);
+    let v = color.getChannelValue(channel);
+    let s = Math.max(stepSize, step);
+    sliderState.setThumbValue(index, v + s > maxValue ? maxValue : snapValueToStep(v + s, minValue, maxValue, s));
+  }
+
+  function decrementThumb(index: number, stepSize: number = 1) {
+    let {maxValue, minValue, step} = color.getChannelRange(channel);
+    let v = color.getChannelValue(channel);
+    let s = Math.max(stepSize, step);
+    sliderState.setThumbValue(index, v - s < minValue ? minValue : snapValueToStep(v - s, minValue, maxValue, s));
+  }
 
   return {
     ...sliderState,
@@ -64,6 +78,8 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     setValue(value) {
       setColor(normalizeColor(value));
     },
+    incrementThumb,
+    decrementThumb,
     getDisplayColor() {
       switch (channel) {
         case 'hue':
