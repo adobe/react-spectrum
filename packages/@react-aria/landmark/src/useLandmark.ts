@@ -29,8 +29,8 @@ type Landmark = {
   role: AriaLandmarkRole,
   label?: string,
   lastFocused?: HTMLElement,
-  onFocus: () => void,
-  onBlur: () => void
+  focus: () => void,
+  blur: () => void
 };
 
 class LandmarkManager {
@@ -54,7 +54,7 @@ class LandmarkManager {
   }
 
   private focusLandmark(landmark: HTMLElement) {
-    this.landmarks.find(l => l.ref.current === landmark)?.onFocus();
+    this.landmarks.find(l => l.ref.current === landmark)?.focus();
   }
 
   /**
@@ -256,16 +256,16 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   let label = ariaLabel || ariaLabelledby;
   let [isLandmarkFocused, setIsLandmarkFocused] = useState(false);
 
-  let onFocus = useCallback(() => {
+  let focus = useCallback(() => {
     setIsLandmarkFocused(true);
   }, [setIsLandmarkFocused]);
 
-  let onBlur = useCallback(() => {
+  let blur = useCallback(() => {
     setIsLandmarkFocused(false);
   }, [setIsLandmarkFocused]);
 
   useLayoutEffect(() => {
-    manager.addLandmark({ref, role, label, onFocus, onBlur});
+    manager.addLandmark({ref, role, label, focus, blur});
 
     return () => {
       manager.removeLandmark(ref);
@@ -274,7 +274,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   }, []);
 
   useEffect(() => {
-    manager.updateLandmark({ref, label, role, onFocus, onBlur});
+    manager.updateLandmark({ref, label, role, focus, blur});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
 
