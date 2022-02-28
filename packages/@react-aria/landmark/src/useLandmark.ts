@@ -93,10 +93,10 @@ class LandmarkManager {
       // or is contained by the newly added element (for nested landmarks).
       // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
     while (
-        insertPosition < this.landmarks.length &&
-        ((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) ||
+      insertPosition < this.landmarks.length &&
+      ((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) ||
         (comparedPosition & Node.DOCUMENT_POSITION_CONTAINS))
-        ) {
+    ) {
       comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
       insertPosition++;
     }
