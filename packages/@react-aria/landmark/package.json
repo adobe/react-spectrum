@@ -1,6 +1,7 @@
 {
-  "name": "@react-stately/numberfield",
-  "version": "3.0.4",
+  "name": "@react-aria/landmark",
+  "version": "3.0.0-alpha.1",
+  "private": true,
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,11 +19,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@internationalized/number": "^3.0.5",
-    "@react-aria/utils": "^3.11.2",
-    "@react-stately/utils": "^3.4.1",
-    "@react-types/numberfield": "^3.1.2",
-    "@react-types/shared": "^3.11.1"
+    "@react-aria/focus": "^3.5.0",
+    "@react-aria/utils": "^3.11.0",
+    "@react-types/shared": "^3.10.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1"

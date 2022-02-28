@@ -20,9 +20,14 @@ import {
   SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {GridCollection, useGridState} from '@react-stately/grid';
-import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
+import {Checkbox} from '@react-spectrum/checkbox';
+import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {Content} from '@react-spectrum/view';
+import type {DraggableCollectionState} from '@react-stately/dnd';
+import DragHandle from './DragHandle';
+import {DragHooks} from '@react-spectrum/dnd';
+import {GridCollection, GridState, useGridState} from '@react-stately/grid';
+import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from '@react-stately/layout';
@@ -30,13 +35,20 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useContext, useMemo} from 'react';
+import {Provider, useProvider} from '@react-spectrum/provider';
+import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
+interface ListViewContextValue {
+    state: GridState<object, GridCollection<any>>,
+    keyboardDelegate: GridKeyboardDelegate<unknown, GridCollection<any>>,
+    dragState: DraggableCollectionState,
+    onAction:(key: string) => void,
+    isListDraggable: boolean
+}
 
-export const ListViewContext = React.createContext(null);
+export const ListViewContext = React.createContext<ListViewContextValue>(null);
 
 const ROW_HEIGHTS = {
   compact: {
@@ -81,7 +93,8 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   loadingState?: LoadingState,
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number,
-  onAction?: (key: string) => void
+  onAction?: (key: string) => void,
+  dragHooks?: DragHooks
 }
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -91,8 +104,14 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     loadingState,
     isQuiet,
     transitionDuration = 0,
-    onAction
+    onAction,
+    dragHooks
   } = props;
+  let isListDraggable = !!dragHooks;
+  let dragHooksProvided = useRef(isListDraggable);
+  if (dragHooksProvided.current !== isListDraggable) {
+    console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+  }
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
   let formatMessage = useMessageFormatter(intlMessages);
@@ -136,6 +155,62 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     // focusable children in the cell.
     focusMode: 'cell'
   }), [state, domRef, direction, collator]);
+
+  let provider = useProvider();
+  let {checkboxProps} = useGridSelectionCheckbox({key: null}, state);
+  let dragState: DraggableCollectionState;
+  if (isListDraggable) {
+    dragState = dragHooks.useDraggableCollectionState({
+      collection: state.collection,
+      selectionManager: state.selectionManager,
+      renderPreview(selectedKeys, draggedKey) {
+        let item = state.collection.getItem(draggedKey);
+        let itemWidth = domRef.current.offsetWidth;
+        let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
+        let isSelected = state.selectionManager.isSelected(item.key);
+        return (
+          <Provider
+            {...provider}
+            UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')}
+            UNSAFE_style={{width: itemWidth, paddingInlineStart: 0}}>
+            <div className={listStyles['react-spectrum-ListViewItem-grid']}>
+              <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
+                <div className={listStyles['react-spectrum-ListViewItem-draghandle-button']}>
+                  <DragHandle />
+                </div>
+              </div>
+              {showCheckbox &&
+                <Checkbox
+                  isSelected={isSelected}
+                  UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
+                  isEmphasized
+                  aria-label={checkboxProps['aria-label']} />
+              }
+              <SlotProvider
+                slots={{
+                  content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+                  text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+                  description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
+                  icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
+                  image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
+                  link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
+                  actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
+                  actionGroup: {
+                    UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
+                    isQuiet: true,
+                    density: 'compact'
+                  },
+                  actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
+                }}>
+                {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
+              </SlotProvider>
+            </div>
+          </Provider>
+        );
+      }
+    });
+  }
+
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
@@ -152,7 +227,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -168,7 +243,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             `react-spectrum-ListView--${density}`,
             'react-spectrum-ListView--emphasized',
             {
-              'react-spectrum-ListView--quiet': isQuiet
+              'react-spectrum-ListView--quiet': isQuiet,
+              'react-spectrum-ListView--draggable': isListDraggable
             },
             styleProps.className
           )
@@ -179,7 +255,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} onAction={onAction} isEmphasized />
+              <ListViewItem item={item} isEmphasized dragHooks={dragHooks}  />
             );
           } else if (type === 'loader') {
             return (

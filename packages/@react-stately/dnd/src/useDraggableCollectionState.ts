@@ -14,7 +14,7 @@ import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEv
 import {Key, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
-interface DraggableCollectionOptions extends DraggableCollectionProps {
+export interface DraggableCollectionOptions extends DraggableCollectionProps {
   collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager
 }
@@ -28,18 +28,29 @@ export interface DraggableCollectionState {
   renderPreview(key: Key): JSX.Element,
   startDrag(key: Key, event: DragStartEvent): void,
   moveDrag(event: DragMoveEvent): void,
-  endDrag(event: DragEndEvent): void
+  endDrag(event: DragEndEvent): void,
+  isDraggable(key: Key): boolean
 }
 
 export function useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState {
+  let {
+    getItems,
+    collection,
+    selectionManager,
+    onDragStart,
+    onDragMove,
+    onDragEnd,
+    renderPreview,
+    allowsDraggingItem = () => true
+  } = props;
   let [draggingKeys, setDraggingKeys] = useState(new Set<Key>());
   let getKeys = (key: Key) => {
     // The clicked item is always added to the drag. If it is selected, then all of the
     // other selected items are also dragged. If it is not selected, the only the clicked
     // item is dragged. This matches native macOS behavior.
     let keys = new Set(
-      props.selectionManager.isSelected(key)
-        ? props.selectionManager.selectedKeys
+      selectionManager.isSelected(key)
+        ? new Set([...selectionManager.selectedKeys].filter(key => allowsDraggingItem ? allowsDraggingItem(key) : true))
         : []
     );
 
@@ -48,18 +59,18 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
   };
 
   return {
-    collection: props.collection,
-    selectionManager: props.selectionManager,
+    collection,
+    selectionManager,
     isDragging(key) {
       return draggingKeys.has(key);
     },
     getKeysForDrag: getKeys,
     getItems(key) {
-      return props.getItems(getKeys(key));
+      return getItems(getKeys(key));
     },
     renderPreview(key) {
-      if (typeof props.renderPreview === 'function') {
-        return props.renderPreview(getKeys(key), key);
+      if (typeof renderPreview === 'function') {
+        return renderPreview(getKeys(key), key);
       }
 
       return null;
@@ -67,31 +78,31 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     startDrag(key, event) {
       let keys = getKeys(key);
       setDraggingKeys(keys);
-
-      if (typeof props.onDragStart === 'function') {
-        props.onDragStart({
+      if (typeof onDragStart === 'function') {
+        onDragStart({
           ...event,
           keys
         });
       }
     },
     moveDrag(event) {
-      if (typeof props.onDragMove === 'function') {
-        props.onDragMove({
+      if (typeof onDragMove === 'function') {
+        onDragMove({
           ...event,
           keys: draggingKeys
         });
       }
     },
     endDrag(event) {
-      if (typeof props.onDragEnd === 'function') {
-        props.onDragEnd({
+      if (typeof onDragEnd === 'function') {
+        onDragEnd({
           ...event,
           keys: draggingKeys
         });
       }
 
       setDraggingKeys(new Set());
-    }
+    },
+    isDraggable: (key: Key) => allowsDraggingItem(key)
   };
 }
