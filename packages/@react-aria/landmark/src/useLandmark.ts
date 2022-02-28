@@ -38,7 +38,10 @@ class LandmarkManager {
   private static instance: LandmarkManager;
   private isListening = false;
 
-  private constructor() {}
+  private constructor() {
+    this.f6Handler = this.f6Handler.bind(this);
+    this.focusinHandler = this.focusinHandler.bind(this);
+  }
 
   public static getInstance(): LandmarkManager {
     if (!LandmarkManager.instance) {
@@ -49,14 +52,14 @@ class LandmarkManager {
   }
 
   private setup() {
-    document.addEventListener('keydown', LandmarkManager.getInstance().f6Handler.bind(LandmarkManager.getInstance()), {capture: true});
-    document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandler.bind(LandmarkManager.getInstance()), {capture: true});
+    document.addEventListener('keydown', this.f6Handler, {capture: true});
+    document.addEventListener('focusin', this.focusinHandler, {capture: true});
     this.isListening = true;
   }
 
   private teardown() {
-    document.removeEventListener('keydown', LandmarkManager.getInstance().f6Handler.bind(LandmarkManager.getInstance()), {capture: true});
-    document.removeEventListener('focusin', LandmarkManager.getInstance().focusinHandler.bind(LandmarkManager.getInstance()), {capture: true});
+    document.removeEventListener('keydown', this.f6Handler, {capture: true});
+    document.removeEventListener('focusin', this.focusinHandler, {capture: true});
     this.isListening = false;
   }
 
