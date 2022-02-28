@@ -998,6 +998,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(nav);
     expect(nav).toHaveAttribute('tabIndex', '-1');
   });
+
   it('loses the tabIndex=-1 if something else is focused', function () {
     let {getByRole, getAllByRole} = render(
       <div>
