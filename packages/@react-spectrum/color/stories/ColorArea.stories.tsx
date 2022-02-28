@@ -15,7 +15,7 @@ import {ColorArea, ColorField, ColorSlider, ColorWheel} from '../';
 import {ColorChannel, SpectrumColorAreaProps} from '@react-types/color';
 import {Flex} from '@adobe/react-spectrum';
 import {Meta, Story} from '@storybook/react';
-import {normalizeColor, parseColor} from '@react-stately/color';
+import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 
 
