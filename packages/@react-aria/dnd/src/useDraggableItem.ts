@@ -18,11 +18,11 @@ import intlMessages from '../intl/*.json';
 import {useDrag} from './useDrag';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-interface DraggableItemProps {
+export interface DraggableItemProps {
   key: Key
 }
 
-interface DraggableItemResult {
+export interface DraggableItemResult {
   dragProps: HTMLAttributes<HTMLElement>,
   dragButtonProps: AriaButtonProps
 }
