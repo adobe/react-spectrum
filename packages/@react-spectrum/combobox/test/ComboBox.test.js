@@ -288,6 +288,13 @@ describe('ComboBox', function () {
     expect(label).toBeVisible();
   });
 
+  it('propagates the name attribute', function () {
+    let {getByRole} = renderComboBox({name: 'test name'});
+
+    let combobox = getByRole('combobox');
+    expect(combobox).toHaveAttribute('name', 'test name');
+  });
+
   it('can be disabled', function () {
     let {getByRole, queryByRole} = renderComboBox({isDisabled: true});
 
