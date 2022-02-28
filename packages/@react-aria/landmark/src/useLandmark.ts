@@ -68,10 +68,7 @@ class LandmarkManager {
    * Return first landmark with a specific role.
    */
   public getLandmarkByRole(role: AriaLandmarkRole) {
-    let landmarks = this.landmarks.filter(l => l.role === role);
-    if (landmarks.length > 0) {
-      return landmarks[0];
-    }
+    return this.landmarks.find(l => l.role === role);
   }
 
   public addLandmark(newLandmark: Landmark) {
