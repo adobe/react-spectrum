@@ -199,7 +199,7 @@ date.set({month: 20}); // 2022-12-03T09:45[America/Los_Angeles]
 date.set({hour: 30}); // 2022-02-03T23:45[America/Los_Angeles]
 ```
 
-Setting fields is zone zone aware. When setting fields around a daylight saving time transition, the UTC offset will be adjusted accordingly. For example, when changing the `day` field from before a daylight saving transition to after, the time remains the same but the UTC offset changes.
+Setting fields is time zone aware. When setting fields around a daylight saving time transition, the UTC offset will be adjusted accordingly. For example, when changing the `day` field from before a daylight saving transition to after, the time remains the same but the UTC offset changes.
 
 ```tsx
 let date = parseZonedDateTime('2020-03-01T10:00-08:00[America/Los_Angeles]');
