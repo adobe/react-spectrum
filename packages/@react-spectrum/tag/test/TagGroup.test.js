@@ -65,32 +65,28 @@ describe('TagGroup', function () {
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
   });
 
-  it.each`
-   Name           | Component     | TagComponent | props
-   ${'TagGroup'}  | ${TagGroup}   | ${Item}       | ${{isDisabled: true, isRemovable: true, onRemove: onRemoveSpy}}
-  `('$Name can be disabled', ({Component, TagComponent, props}) => {
+  it('can be disabled', () => {
     let {getByText} = render(
-      <Component
-        {...props}
-        aria-label="tag group">
-        <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-      </Component>
+      <TagGroup
+        aria-label="Tag Group"
+        isDisabled
+        isRemovable
+        onRemove={onRemoveSpy}>
+        <Item aria-label="Tag 1">Tag 1</Item>
+      </TagGroup>
     );
+
     let tag = getByText('Tag 1');
     fireEvent.keyDown(tag, {key: 'Delete', keyCode: 46});
     expect(onRemoveSpy).not.toHaveBeenCalledWith('Tag 1', expect.anything());
   });
 
-  it.each`
-   Name           | Component         | TagComponent | props
-   ${'TagGroup'}  | ${TagGroup}       | ${Item}      |${{}}
-  `('$Name has correct accessibility roles', ({Component, TagComponent, props}) => {
+  it('has correct accessibility roles', () => {
     let {container} = render(
-      <Component
-        {...props}
+      <TagGroup
         aria-label="tag group">
-        <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-      </Component>
+        <Item aria-label="Tag 1">Tag 1</Item>
+      </TagGroup>
     );
 
     let tagGroup = container.children[0];
@@ -101,32 +97,25 @@ describe('TagGroup', function () {
     expect(tagContent).toHaveAttribute('role', 'gridcell');
   });
 
-  it.each`
-   Name           | Component         | TagComponent | props
-   ${'TagGroup'}  | ${TagGroup}       | ${Item}      |${{}}
-  `('$Name has correct tab index when not disabled', ({Component, TagComponent, props}) => {
+  it('has correct tab index when not disabled', () => {
     let {getAllByRole} = render(
-      <Component
-        {...props}
+      <TagGroup
         aria-label="tag group">
-        <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-      </Component>
+        <Item aria-label="Tag 1">Tag 1</Item>
+      </TagGroup>
     );
 
     let tags = getAllByRole('gridcell');
     expect(tags[0]).toHaveAttribute('tabIndex', '0');
   });
 
-  it.each`
-   Name           | Component         | TagComponent | props
-   ${'TagGroup'}  | ${TagGroup}       | ${Item}      |${{isDisabled: true}}
-  `('$Name has correct tab index when disabled', ({Component, TagComponent, props}) => {
+  it('$Name has correct tab index when disabled', () => {
     let {getAllByRole} = render(
-      <Component
-        {...props}
+      <TagGroup
+        isDisabled
         aria-label="tag group">
-        <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-      </Component>
+        <Item aria-label="Tag 1">Tag 1</Item>
+      </TagGroup>
     );
 
     let tags = getAllByRole('gridcell');
