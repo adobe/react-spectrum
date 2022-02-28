@@ -33,6 +33,6 @@ export interface TagProps<T> extends ItemProps<any> {
   tagRowRef: RefObject<HTMLElement>
 }
 
-export interface SpectrumTagProps<T> extends TagProps<T> {
+interface SpectrumTagProps<T> extends TagProps<T> {
   state: GridState<any, any>
 }
