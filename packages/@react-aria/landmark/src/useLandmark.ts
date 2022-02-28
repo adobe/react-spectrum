@@ -232,7 +232,7 @@ class LandmarkManager {
     if (previousFocusedElment) {
       let closestPreviousLandmark = this.closestLandmark(previousFocusedElment);
       if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElment) {
-        closestPreviousLandmark.onBlur();
+        closestPreviousLandmark.blur();
       }
     }
   }
