@@ -90,31 +90,31 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
             childNodes: [],
             textValue: null
           };
-          
+
           if (row.length > 0) {
             row[row.length - 1].nextKey = placeholder.key;
             placeholder.prevKey = row[row.length - 1].key;
           }
-          
+
           row.push(placeholder);
         }
-        
+
         if (row.length > 0) {
           row[row.length - 1].nextKey = item.key;
           item.prevKey = row[row.length - 1].key;
         }
-        
+
         item.level = i;
         item.index = colIndex;
         row.push(item);
       }
-      
+
       i--;
     }
-    
+
     colIndex++;
   }
-  
+
   // Add placeholders at the end of each row that is shorter than the maximum
   let i = 0;
   for (let row of headerRows) {

@@ -1,7 +1,8 @@
 
 import {ColumnProps} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
-import {Key, MutableRefObject, useEffect, useRef, useState} from 'react';
+import {Key, MutableRefObject, useRef, useState} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export default function useColumnResizeWidthState<T>(
     columns: GridNode<T>[],
@@ -11,23 +12,16 @@ export default function useColumnResizeWidthState<T>(
   const tableWidth = useRef<number>(null);
   const startResizeContentWidth = useRef<number>();
 
-  const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(initializeColumnWidths(columns));
+  const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(new Map(columns.map(col => [col.key, 0])));
   const columnWidthsRef = useRef<Map<Key, number>>(columnWidths);
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
   // if the columns change, need to rebuild widths.
-  useEffect(() => {
+  useLayoutEffect(() => {
     const widths = buildColumnWidths(columns, tableWidth.current);
     setColumnWidthsForRef(widths);
   }, [columns]);
-  
-
-  function initializeColumnWidths(columns: GridNode<T>[]): Map<Key, number> {
-    const widths = new Map();
-    columns.forEach(column => widths.set(column.key, 0));
-    return widths;
-  }
 
   function setColumnWidthsForRef(newWidths: Map<Key, number>) {
     columnWidthsRef.current = newWidths;
