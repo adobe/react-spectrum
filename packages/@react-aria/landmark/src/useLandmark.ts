@@ -103,8 +103,10 @@ class LandmarkManager {
     this.landmarks.splice(insertPosition, 0, newLandmark);
   }
 
-  public updateLandmark(landmark: Landmark) {
-    this.landmarks = this.landmarks.map((prevLandmark) => prevLandmark.ref.current === landmark.ref.current ? {...prevLandmark, ...landmark} : prevLandmark);
+  public updateLandmark(ref: MutableRefObject<HTMLElement>, newFields: Partial<Omit<Landmark, 'ref'>>) {
+    let landmark = this.landmarks.find(l => l.ref === ref);
+    landmark = {...landmark, ...newFields};
+    this.landmarks = this.landmarks.map((l) => l.ref === landmark.ref ? landmark : l);
     this.checkLabels(landmark.role);
   }
 
@@ -226,7 +228,7 @@ class LandmarkManager {
   public focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as HTMLElement);
     if (currentLandmark && currentLandmark.ref.current !== e.target) {
-      this.updateLandmark({...currentLandmark, lastFocused: e.target as HTMLElement});
+      this.updateLandmark(currentLandmark.ref, {lastFocused: e.target as HTMLElement});
     }
     let previousFocusedElment = e.relatedTarget as HTMLElement;
     if (previousFocusedElment) {
@@ -271,7 +273,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   }, []);
 
   useEffect(() => {
-    manager.updateLandmark({ref, label, role, focus, blur});
+    manager.updateLandmark(ref, {label, role, focus, blur});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
 
