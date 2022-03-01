@@ -12,6 +12,7 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '@react-spectrum/provider';
@@ -20,7 +21,6 @@ import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import {useLandmark} from '../';
 import userEvent from '@testing-library/user-event';
-import {Button} from '@react-spectrum/button';
 
 function Main(props) {
   let ref = useRef();
