@@ -276,8 +276,8 @@ class RGBColor extends Color {
     return RGBColor.colorChannels;
   }
   getColorSpaceAxes({xChannel, yChannel}): ColorAxes {
-    let xCh;
-    let yCh;
+    let xCh = xChannel;
+    let yCh = yChannel;
     if (!xChannel) {
       switch (yChannel) {
         case 'red':
@@ -449,8 +449,8 @@ class HSBColor extends Color {
   }
 
   getColorSpaceAxes({xChannel, yChannel}): ColorAxes {
-    let xCh;
-    let yCh;
+    let xCh = xChannel;
+    let yCh = yChannel;
     if (!xChannel) {
       switch (yChannel) {
         case 'hue':
@@ -625,8 +625,8 @@ class HSLColor extends Color {
   }
 
   getColorSpaceAxes({xChannel, yChannel}): ColorAxes {
-    let xCh;
-    let yCh;
+    let xCh = xChannel;
+    let yCh = yChannel;
     if (!xChannel) {
       switch (yChannel) {
         case 'hue':
