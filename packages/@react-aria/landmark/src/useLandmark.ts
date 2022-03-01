@@ -104,10 +104,11 @@ class LandmarkManager {
   }
 
   public updateLandmark(ref: MutableRefObject<HTMLElement>, newFields: Partial<Omit<Landmark, 'ref'>>) {
-    let landmark = this.landmarks.find(l => l.ref === ref);
-    landmark = {...landmark, ...newFields};
-    this.landmarks = this.landmarks.map((l) => l.ref === landmark.ref ? landmark : l);
-    this.checkLabels(landmark.role);
+    let index = this.landmarks.findIndex(l => l.ref === ref);
+    if (index >= 0) {
+      this.landmarks[index] = {...this.landmarks[index], ...newFields};
+      this.checkLabels(this.landmarks[index].role);
+    }
   }
 
   public removeLandmark(ref: MutableRefObject<HTMLElement>) {
