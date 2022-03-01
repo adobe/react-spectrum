@@ -272,7 +272,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     manager.updateLandmark(ref, {label, role, focus, blur});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
