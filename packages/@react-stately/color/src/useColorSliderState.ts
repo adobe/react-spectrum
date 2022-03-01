@@ -58,14 +58,14 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     }
   });
 
-  function incrementThumb(index: number, stepSize: number = 1) {
+  function incrementThumb(index: number, stepSize: number = 0) {
     let {maxValue, minValue, step} = color.getChannelRange(channel);
     let v = color.getChannelValue(channel);
     let s = Math.max(stepSize, step);
     sliderState.setThumbValue(index, v + s > maxValue ? maxValue : snapValueToStep(v + s, minValue, maxValue, s));
   }
 
-  function decrementThumb(index: number, stepSize: number = 1) {
+  function decrementThumb(index: number, stepSize: number = 0) {
     let {maxValue, minValue, step} = color.getChannelRange(channel);
     let v = color.getChannelValue(channel);
     let s = Math.max(stepSize, step);

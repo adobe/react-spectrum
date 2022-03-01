@@ -25,7 +25,7 @@ describe('ColorSlider', () => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
     jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 100);
     // @ts-ignore
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => setTimeout(cb, 0));
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
     // @ts-ignore
     jest.useFakeTimers('legacy');
   });
@@ -276,7 +276,7 @@ describe('ColorSlider', () => {
       expect(onChangeSpy.mock.calls[0][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
       expect(onChangeEndSpy.mock.calls[0][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
-      
+
       fireEvent.keyDown(slider, {key: 'Left'});
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
@@ -297,7 +297,7 @@ describe('ColorSlider', () => {
       expect(onChangeSpy.mock.calls[3][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 17).toString('hexa'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(4);
       expect(onChangeEndSpy.mock.calls[3][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 17).toString('hexa'));
-       
+
       fireEvent.keyDown(slider, {key: 'PageDown'});
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(5);
