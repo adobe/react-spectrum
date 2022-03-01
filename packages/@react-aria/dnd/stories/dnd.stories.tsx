@@ -415,7 +415,7 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
-    focusMode: 'cell',
+    focusMode: 'cell'
   }, state, cellRef);
 
   let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
