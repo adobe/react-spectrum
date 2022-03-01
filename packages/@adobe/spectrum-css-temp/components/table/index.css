@@ -267,14 +267,14 @@ svg.spectrum-Table-sortedIcon {
     }
   }
 
-  /* Alternative to border-left/right. Using box shadow for the row left/right since they don't take room unlike border which would cause wiggles
-   * in the hightlight case and displace the sticky indicator.
-   */
   &.spectrum-Table-row--highlightSelection {
+    /* Alternative to border-left/right. Using box shadow for the row left/right since they don't take room unlike border which would cause wiggles
+     * in the hightlight case and displace the sticky indicator.
+     */
     &.is-selected {
       /* this is the box shadow for left and right border outline */
       &:after {
-        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 var(--spectrum-global-color-blue-500);
+        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500);
         content: '';
         display: block;
         position: absolute;
@@ -286,6 +286,25 @@ svg.spectrum-Table-sortedIcon {
         pointer-events: none;
       }
     }
+    /* Add additional box shadow to top of the first row since border-top will push the bottom border out of view in Safari and Firefox. */
+    &.spectrum-Table-row--firstRow {
+      &.is-selected {
+        &:after {
+          border-start-start-radius: var(--spectrum-table-row-start-end-border-radius);
+          border-start-end-radius: var(--spectrum-table-row-start-end-border-radius);
+          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500),  inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
+          content: '';
+          display: block;
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          top: 0;
+          z-index: 3;
+          pointer-events: none;
+        }
+      }
+    }
   }
 
   &.is-drop-target {
@@ -293,11 +312,6 @@ svg.spectrum-Table-sortedIcon {
   }
 
   &.spectrum-Table-row--highlightSelection {
-    &.is-selected.spectrum-Table-row--firstRow {
-      border-start-start-radius: var(--spectrum-table-row-start-end-border-radius);
-      border-start-end-radius: var(--spectrum-table-row-start-end-border-radius);
-    }
-
     &.is-selected.spectrum-Table-row--lastRow {
       border-end-start-radius: var(--spectrum-table-row-start-end-border-radius);
       border-end-end-radius: var(--spectrum-table-row-start-end-border-radius);
