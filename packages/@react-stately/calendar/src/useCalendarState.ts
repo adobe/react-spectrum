@@ -25,7 +25,7 @@ import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useDateFormatter} from '@react-aria/i18n';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
   locale: string,
