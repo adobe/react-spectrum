@@ -101,6 +101,16 @@ function endDragging() {
   }
 }
 
+export function isValidDropTarget(element: Element): boolean {
+  for (let target of dropTargets.keys()) {
+    if (target.contains(element)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 const CANCELED_EVENTS = [
   'pointerdown',
   'pointermove',
