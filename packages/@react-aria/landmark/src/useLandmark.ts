@@ -230,10 +230,10 @@ class LandmarkManager {
     if (currentLandmark && currentLandmark.ref.current !== e.target) {
       this.updateLandmark(currentLandmark.ref, {lastFocused: e.target as HTMLElement});
     }
-    let previousFocusedElment = e.relatedTarget as HTMLElement;
-    if (previousFocusedElment) {
-      let closestPreviousLandmark = this.closestLandmark(previousFocusedElment);
-      if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElment) {
+    let previousFocusedElement = e.relatedTarget as HTMLElement;
+    if (previousFocusedElement) {
+      let closestPreviousLandmark = this.closestLandmark(previousFocusedElement);
+      if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElement) {
         closestPreviousLandmark.blur();
       }
     }
