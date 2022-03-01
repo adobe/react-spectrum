@@ -292,7 +292,7 @@ svg.spectrum-Table-sortedIcon {
         &:after {
           border-start-start-radius: var(--spectrum-table-row-start-end-border-radius);
           border-start-end-radius: var(--spectrum-table-row-start-end-border-radius);
-          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500),  inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
+          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
           content: '';
           display: block;
           position: absolute;
