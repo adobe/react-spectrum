@@ -18,6 +18,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item, TabList, TabPanels, Tabs} from '..';
+import {Picker} from '@react-spectrum/picker';
 import React, {ReactNode, useState} from 'react';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import {storiesOf} from '@storybook/react';
@@ -232,6 +233,12 @@ storiesOf('Tabs', module)
         </Tabs>
       );
     }
+  )
+  .add(
+    'changing selection programatically',
+    () => (
+      <ControlledSelection />
+    )
   );
 
 
@@ -543,6 +550,40 @@ let DynamicTabsWithDecoration = (props = {}) => {
             </ActionGroup>
           </Flex>
         </Flex>
+        <TabPanels>
+          {(item: DynamicTabItem) => (
+            <Item key={item.name}>
+              <Heading>{item.children}</Heading>
+              <Text>
+                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+                Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
+                Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
+              </Text>
+            </Item>
+          )}
+        </TabPanels>
+      </Tabs>
+    </div>
+  );
+};
+
+let ControlledSelection = () => {
+  let [selectedKey, setSelectedKey] = useState<React.Key>('Tab 1');
+
+  return (
+    <div style={{width: '80%'}}>
+      <Picker label="Set selected tab" selectedKey={selectedKey} onSelectionChange={setSelectedKey} items={items}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Picker>
+      <Tabs aria-label="Tab example" items={items} selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+        <TabList>
+          {(item: DynamicTabItem) => (
+            <Item key={item.name}>
+              {item.icon}
+              <Text>{item.name}</Text>
+            </Item>
+          )}
+        </TabList>
         <TabPanels>
           {(item: DynamicTabItem) => (
             <Item key={item.name}>

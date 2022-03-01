@@ -131,6 +131,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     key,
     ref,
     shouldSelectOnPressUp,
+    allowsDifferentPressOrigin: shouldSelectOnPressUp,
     isVirtualized,
     shouldUseVirtualFocus,
     isDisabled

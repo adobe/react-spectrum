@@ -233,7 +233,7 @@ function Draggable() {
   );
 }
 
-function Droppable({type, children, actionId = ''}: any) {
+export function Droppable({type, children, actionId = ''}: any) {
   let ref = React.useRef();
   let {dropProps, isDropTarget} = useDrop({
     ref,

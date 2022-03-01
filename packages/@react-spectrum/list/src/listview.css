@@ -42,7 +42,7 @@
   font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
   font-weight: var(--spectrum-table-cell-text-font-weight, var(--spectrum-global-font-weight-regular));
   line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
-  padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-150);
+  padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-250);
   transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
   position: relative;
   /*background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));*/
@@ -98,15 +98,42 @@
     padding-bottom: 0px;
   }
 
+  &.is-dragging {
+    border: 1px solid var(--spectrum-global-color-blue-500);
+    border-radius: var(--spectrum-global-dimension-size-50);
+  }
+
   .react-spectrum-ListViewItem-grid {
     display: grid;
-    grid-template-columns: auto auto auto 1fr auto auto;
+    grid-template-columns: auto auto auto auto 1fr auto auto;
     grid-template-rows: 1fr auto;
     grid-template-areas:
-      "checkbox icon image content actions actionmenu chevron"
-      "checkbox icon image description actions actionmenu chevron"
+      "draghandle checkbox icon image content actions actionmenu chevron"
+      "draghandle checkbox icon image description actions actionmenu chevron"
     ;
     align-items: center;
+  }
+
+  .react-spectrum-ListViewItem-draghandle-container {
+    grid-area: draghandle;
+    width: var(--spectrum-global-dimension-size-250);
+    display: flex;
+    align-items: center;
+    justify-items: center;
+
+
+    .react-spectrum-ListViewItem-draghandle-button {
+      margin: auto var(--spectrum-global-dimension-size-25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--spectrum-alias-border-radius-regular);
+
+      &:focus-ring {
+        box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+        outline: none;
+      }
+    }
   }
 
   .react-spectrum-ListViewItem-checkbox {
@@ -183,6 +210,16 @@
   padding-top: var(--spectrum-listview-item-spacious-padding-y);
   padding-bottom: var(--spectrum-listview-item-spacious-padding-y);
   min-height: var(--spectrum-global-dimension-size-600);
+}
+
+.react-spectrum-ListView--draggable .react-spectrum-ListViewItem {
+  padding-inline-start: 0;
+}
+
+.react-spectrum-ListViewItem--draggable {
+  .react-spectrum-ListViewItem-checkbox input {
+    inset-inline-start: 0;
+  }
 }
 
 .react-spectrum-ListView-centeredWrapper {
