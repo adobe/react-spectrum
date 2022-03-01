@@ -43,6 +43,8 @@
 }
 
 .react-spectrum-ListView-row {
+  cursor: default;
+
   &:focus-ring {
     &:before {
       content: '';

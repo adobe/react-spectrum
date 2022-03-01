@@ -263,6 +263,7 @@ svg.spectrum-Table-sortedIcon {
 
     .spectrum-Table-cellWrapper:first-of-type {
       display: inline-block;
+      vertical-align: top;
     }
   }
 
