@@ -204,16 +204,16 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       return {x, y};
     },
     incrementX(stepSize) {
-      setXValue(xValue + stepSize > maxValueX ? maxValueX : snapValueToStep(xValue + stepSize, minValueX, maxValueX, stepSize));
+      setXValue(xValue + stepSize > maxValueX ? maxValueX : snapValueToStep(xValue + stepSize, minValueX, maxValueX, xChannelStep));
     },
     incrementY(stepSize) {
-      setYValue(yValue + stepSize > maxValueY ? maxValueY : snapValueToStep(yValue + stepSize, minValueY, maxValueY, stepSize));
+      setYValue(yValue + stepSize > maxValueY ? maxValueY : snapValueToStep(yValue + stepSize, minValueY, maxValueY, yChannelStep));
     },
     decrementX(stepSize) {
-      setXValue(snapValueToStep(xValue - stepSize, minValueX, maxValueX, stepSize));
+      setXValue(snapValueToStep(xValue - stepSize, minValueX, maxValueX, xChannelStep));
     },
     decrementY(stepSize) {
-      setYValue(snapValueToStep(yValue - stepSize, minValueY, maxValueY, stepSize));
+      setYValue(snapValueToStep(yValue - stepSize, minValueY, maxValueY, yChannelStep));
     },
     setDragging(isDragging) {
       let wasDragging = isDraggingRef;
