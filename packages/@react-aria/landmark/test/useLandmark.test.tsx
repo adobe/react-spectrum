@@ -70,23 +70,20 @@ function toggleBrowserWindow() {
 
 
 describe('LandmarkManager', function () {
-  let offsetWidth, offsetHeight, spyWarn;
+  let offsetWidth, offsetHeight;
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-    spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     jest.useFakeTimers();
   });
 
   afterAll(function () {
     offsetWidth.mockRestore();
-    offsetHeight.mockRestore();
-    spyWarn.mockRestore();
+    offsetHeight.mockReset();
   });
 
   afterEach(() => {
-    spyWarn.mockClear();
     act(() => {jest.runAllTimers();});
   });
 
@@ -541,6 +538,8 @@ describe('LandmarkManager', function () {
   });
 
   it('Should allow 2+ landmarks with same role if they are labelled.', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
     render(
       <div>
         <Navigation aria-label="First nav">
@@ -567,6 +566,8 @@ describe('LandmarkManager', function () {
   });
 
   it('Should warn if 2+ landmarks with same role are used but not labelled.', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
     render(
       <div>
         <Navigation>
@@ -593,6 +594,8 @@ describe('LandmarkManager', function () {
   });
 
   it('Should warn if 2+ landmarks with same role and same label', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
     render(
       <div>
         <Navigation aria-label="First nav">
@@ -1023,6 +1026,7 @@ describe('LandmarkManager', function () {
   });
 
   it('updates the landmark if the label changes', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let tree = render(
       <div>
         <Navigation aria-label="nav label 1">
