@@ -304,11 +304,12 @@ function FunctionType({name, parameters, return: returnType, typeParameters, res
   );
 }
 
-function Parameter({name, value, default: defaultValue, rest}) {
+function Parameter({name, value, default: defaultValue, optional, rest}) {
   return (
     <>
       {rest && <span className="token punctuation">...</span>}
       <span className="token">{name}</span>
+      {optional && <span className="token punctuation">?</span>}
       {value &&
         <>
           <span className="token punctuation">: </span>

@@ -64,6 +64,11 @@ function toGregorian(date: AnyCalendarDate) {
   );
 }
 
+/**
+ * The Japanese calendar is based on the Gregorian calendar, but with eras for the reign of each Japanese emperor.
+ * Whenever a new emperor ascends to the throne, a new era begins and the year starts again from 1.
+ * Note that eras before 1868 (Gregorian) are not currently supported by this implementation.
+ */
 export class JapaneseCalendar extends GregorianCalendar {
   identifier = 'japanese';
 

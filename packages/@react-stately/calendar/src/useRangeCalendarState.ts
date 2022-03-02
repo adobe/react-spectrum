@@ -11,7 +11,7 @@
  */
 
 import {alignCenter} from './utils';
-import {Calendar, CalendarDate, Duration, GregorianCalendar, toCalendar, toCalendarDate} from '@internationalized/date';
+import {Calendar, CalendarDate, DateDuration, GregorianCalendar, toCalendar, toCalendarDate} from '@internationalized/date';
 import {DateRange, DateValue} from '@react-types/calendar';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from './types';
@@ -23,7 +23,7 @@ import {useState} from 'react';
 interface RangeCalendarStateOptions<T extends DateValue> extends RangeCalendarProps<T> {
   locale: string,
   createCalendar: (name: string) => Calendar,
-  visibleDuration?: Duration
+  visibleDuration?: DateDuration
 }
 
 export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState {
