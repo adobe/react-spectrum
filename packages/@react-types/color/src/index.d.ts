@@ -92,9 +92,9 @@ export interface Color {
   getColorChannels(): Set<ColorChannel>
 }
 
-export interface ColorFieldProps extends Omit<ValueBase<string | Color>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
+export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
   /** Handler that is called when the value changes. */
-  onChange?: (color: Color) => void,
+  onChange?: (color: Color | null) => void,
   /**
    * The step value to increment and decrement the color by when using the arrow keys.
    * @default 1
