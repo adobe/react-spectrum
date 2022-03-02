@@ -116,10 +116,10 @@ class LandmarkManager {
     this.landmarks.splice(insertPosition, 0, newLandmark);
   }
 
-  public updateLandmark(landmark: Landmark) {
+  public updateLandmark(landmark: Pick<Landmark, 'ref'> & Partial<Landmark>) {
     let index = this.landmarks.findIndex(l => l.ref === landmark.ref);
     if (index >= 0) {
-      this.landmarks[index] = {...landmark};
+      this.landmarks[index] = {...this.landmarks[index], ...landmark};
       this.checkLabels(this.landmarks[index].role);
     }
   }
@@ -243,7 +243,7 @@ class LandmarkManager {
   public focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as HTMLElement);
     if (currentLandmark && currentLandmark.ref.current !== e.target) {
-      this.updateLandmark({...currentLandmark, lastFocused: e.target as HTMLElement});
+      this.updateLandmark({ref: currentLandmark.ref, lastFocused: e.target as HTMLElement});
     }
     let previousFocusedElement = e.relatedTarget as HTMLElement;
     if (previousFocusedElement) {
