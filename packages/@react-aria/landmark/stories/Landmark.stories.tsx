@@ -17,13 +17,12 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
 import {Meta, Story} from '@storybook/react';
+import {Picker} from '@react-spectrum/picker';
 import React, {useRef, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import styles from './index.css';
 import {TextField} from '@react-spectrum/textfield';
 import {useLandmark} from '../';
-import {Button} from '@react-spectrum/button';
-import {Picker} from '@react-spectrum/picker';
 
 
 interface StoryProps {}
@@ -320,7 +319,7 @@ function ChangeLabelExample() {
     {name: 'First Label'},
     {name: 'Second Label'}
   ];
-  let [label, setLabel] = React.useState('First Label');
+  let [label, setLabel] = useState('First Label');
   return (
     <div>
       <Picker
