@@ -142,8 +142,12 @@ class LandmarkManager {
   private checkLabels(role: AriaLandmarkRole) {
     let landmarksWithRole = this.getLandmarksByRole(role);
     if (landmarksWithRole.size > 1) {
-      if ([...landmarksWithRole].some(landmark => !landmark.label)) {
-        console.warn(`Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.`);
+      let duplicatesWithoutLabel = [...landmarksWithRole].filter(landmark => !landmark.label);
+      if (duplicatesWithoutLabel.length > 0) {
+        console.warn(
+          `Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute: `,
+          duplicatesWithoutLabel.map(landmark => landmark.ref.current)
+        );
       } else {
         let labels = [...landmarksWithRole].map(landmark => landmark.label);
         let duplicateLabels = labels.filter((item, index) => labels.indexOf(item) !== index);
