@@ -1016,6 +1016,39 @@ describe('ListView', function () {
       });
     });
 
+    it('should make row selection happen on pressUp if list is draggable', function () {
+      let allowsDraggingItem = (key) => {
+        if (key === 'b') {
+          return false;
+        }
+        return true;
+      };
+
+      let {getAllByRole} = render(
+        <DraggableListView dragHookOptions={{allowsDraggingItem}} />
+      );
+
+      let rows = getAllByRole('row');
+      let draggableRow = rows[0];
+      let nonDraggableRow = rows[1];
+      expect(draggableRow).toHaveAttribute('aria-selected', 'false');
+      fireEvent.mouseDown(draggableRow);
+      expect(draggableRow).toHaveAttribute('aria-selected', 'false');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+      fireEvent.mouseUp(draggableRow);
+      expect(draggableRow).toHaveAttribute('aria-selected', 'true');
+      checkSelection(onSelectionChange, ['a']);
+
+      onSelectionChange.mockReset();
+      expect(nonDraggableRow).toHaveAttribute('aria-selected', 'false');
+      fireEvent.mouseDown(nonDraggableRow);
+      expect(nonDraggableRow).toHaveAttribute('aria-selected', 'false');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+      fireEvent.mouseUp(nonDraggableRow);
+      expect(nonDraggableRow).toHaveAttribute('aria-selected', 'true');
+      checkSelection(onSelectionChange, ['a', 'b']);
+    });
+
     it('should toggle selection upon clicking the row checkbox', function () {
       let {getAllByRole} = render(
         <DraggableListView />

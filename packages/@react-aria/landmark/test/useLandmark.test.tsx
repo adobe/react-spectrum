@@ -12,6 +12,7 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '@react-spectrum/provider';
@@ -998,6 +999,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(nav);
     expect(nav).toHaveAttribute('tabIndex', '-1');
   });
+
   it('loses the tabIndex=-1 if something else is focused', function () {
     let {getByRole, getAllByRole} = render(
       <div>
@@ -1024,5 +1026,50 @@ describe('LandmarkManager', function () {
 
     expect(document.activeElement).toBe(getAllByRole('link')[0]);
     expect(nav).not.toHaveAttribute('tabIndex');
+  });
+
+  it('cleans up event listeners if all landmarks are unmounted', function () {
+    // Because our listener stops propagation of the F6 key to prevent anything
+    // else from handling it, we can render with landmarks to make sure the propagation is stopped
+    // and then when everything is unmounted, we can check again.
+    let onKeyDown = jest.fn();
+    let {getByRole, rerender} = render(
+      <div>
+        <Button onKeyDown={onKeyDown} variant="cta">Focusable</Button>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+      </div>
+    );
+    let nav = getByRole('navigation');
+    let button = getByRole('button');
+
+    act(() => {
+      button.focus();
+    });
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(nav);
+
+    expect(onKeyDown).not.toHaveBeenCalled();
+
+    rerender(
+      <div>
+        <Button onKeyDown={onKeyDown} variant="cta">Focusable</Button>
+      </div>
+    );
+    button = getByRole('button');
+
+    act(() => {
+      button.focus();
+    });
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+
+    expect(onKeyDown).toHaveBeenCalled();
   });
 });
