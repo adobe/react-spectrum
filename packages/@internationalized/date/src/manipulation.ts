@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyCalendarDate, AnyTime, CycleOptions, CycleTimeOptions, DateField, DateFields, Disambiguation, Duration, TimeField, TimeFields} from './types';
+import {AnyCalendarDate, AnyTime, CycleOptions, CycleTimeOptions, DateDuration, DateField, DateFields, DateTimeDuration, Disambiguation, TimeDuration, TimeField, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {epochFromDate, fromAbsolute, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
@@ -18,10 +18,10 @@ import {Mutable} from './utils';
 
 const ONE_HOUR = 3600000;
 
-export function add(date: CalendarDateTime, duration: Duration): CalendarDateTime;
-export function add(date: CalendarDate, duration: Duration): CalendarDate;
-export function add(date: CalendarDate | CalendarDateTime, duration: Duration): CalendarDate | CalendarDateTime;
-export function add(date: CalendarDate | CalendarDateTime, duration: Duration) {
+export function add(date: CalendarDateTime, duration: DateTimeDuration): CalendarDateTime;
+export function add(date: CalendarDate, duration: DateDuration): CalendarDate;
+export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration): CalendarDate | CalendarDateTime;
+export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration) {
   let mutableDate: Mutable<AnyCalendarDate> = date.copy();
   let days = 'hour' in date ? addTimeFields(date, duration) : 0;
 
@@ -97,7 +97,7 @@ export function constrain(date: Mutable<AnyCalendarDate>) {
   constrainMonthDay(date);
 }
 
-export function invertDuration(duration: Duration): Duration {
+export function invertDuration(duration: DateTimeDuration): DateTimeDuration {
   let inverseDuration = {};
   for (let key in duration) {
     if (typeof duration[key] === 'number') {
@@ -108,9 +108,9 @@ export function invertDuration(duration: Duration): Duration {
   return inverseDuration;
 }
 
-export function subtract(date: CalendarDateTime, duration: Duration): CalendarDateTime;
-export function subtract(date: CalendarDate, duration: Duration): CalendarDate;
-export function subtract(date: CalendarDate | CalendarDateTime, duration: Duration): CalendarDate | CalendarDateTime {
+export function subtract(date: CalendarDateTime, duration: DateTimeDuration): CalendarDateTime;
+export function subtract(date: CalendarDate, duration: DateDuration): CalendarDate;
+export function subtract(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration): CalendarDate | CalendarDateTime {
   return add(date, invertDuration(duration));
 }
 
@@ -195,7 +195,7 @@ function nonNegativeMod(a: number, b: number) {
   return result;
 }
 
-function addTimeFields(time: Mutable<AnyTime>, duration: Duration): number {
+function addTimeFields(time: Mutable<AnyTime>, duration: TimeDuration): number {
   time.hour += duration.hours || 0;
   time.minute += duration.minutes || 0;
   time.second += duration.seconds || 0;
@@ -203,13 +203,13 @@ function addTimeFields(time: Mutable<AnyTime>, duration: Duration): number {
   return balanceTime(time);
 }
 
-export function addTime(time: Time, duration: Duration): Time {
+export function addTime(time: Time, duration: TimeDuration): Time {
   let res = time.copy();
   addTimeFields(res, duration);
   return res;
 }
 
-export function subtractTime(time: Time, duration: Duration): Time {
+export function subtractTime(time: Time, duration: TimeDuration): Time {
   return addTime(time, invertDuration(duration));
 }
 
@@ -332,7 +332,7 @@ function cycleValue(value: number, amount: number, min: number, max: number, rou
   return value;
 }
 
-export function addZoned(dateTime: ZonedDateTime, duration: Duration): ZonedDateTime {
+export function addZoned(dateTime: ZonedDateTime, duration: DateTimeDuration): ZonedDateTime {
   let ms: number;
   if ((duration.years != null && duration.years !== 0) || (duration.months != null && duration.months !== 0) || (duration.days != null && duration.days !== 0)) {
     let res = add(toCalendarDateTime(dateTime), {
@@ -361,7 +361,7 @@ export function addZoned(dateTime: ZonedDateTime, duration: Duration): ZonedDate
   return toCalendar(res, dateTime.calendar);
 }
 
-export function subtractZoned(dateTime: ZonedDateTime, duration: Duration): ZonedDateTime {
+export function subtractZoned(dateTime: ZonedDateTime, duration: DateTimeDuration): ZonedDateTime {
   return addZoned(dateTime, invertDuration(duration));
 }
 
