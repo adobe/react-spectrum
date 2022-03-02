@@ -74,7 +74,7 @@ export interface SpectrumDialogProps extends AriaDialogProps, StyleProps {
 }
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
-  /** The [visual style](https://spectrum.adobe.com/page/dialog/#Options) of the AlertDialog.  */
+  /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning',
   /** The title of the AlertDialog. */
   title: string,
