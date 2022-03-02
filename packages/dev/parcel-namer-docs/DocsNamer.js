@@ -29,6 +29,16 @@ module.exports = new Namer({
         return path.join(...parts.slice(4, -1), basename);
       }
 
+      // For @internationalized, group by package name.
+      if (parts[1] === '@internationalized') {
+        return path.join(
+          parts[1].replace(/^@/, ''),
+          parts[2],
+          ...parts.slice(4, -1),
+          basename
+        );
+      }
+
       // For @namespace package files, urls will be /${namespace}/PageName.html
       return path.join(
         parts[1].replace(/^@/, ''),

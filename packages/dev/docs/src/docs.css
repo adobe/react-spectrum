@@ -350,9 +350,11 @@ footer li:last-child:after {
   cursor: initial;
 }
 
-.propTable td {
+.propTable td,
+.propTable th {
   background: none !important;
   display: table-cell;
+  text-align: left;
 }
 
 .type-description {
@@ -705,7 +707,7 @@ h2.sectionHeader {
 @define-mixin small-propTable {
   /* Collapse the prop table into a list with key/value pairs */
   .propTable {
-    tr, td {
+    tr, td, th {
       display: block;
       text-align: left;
     }

@@ -483,6 +483,7 @@ module.exports = new Transformer({
         type: 'parameter',
         name: p.isRestElement() ? p.node.argument.name : p.node.name,
         value: p.node.typeAnnotation ? processExport(p.get('typeAnnotation.typeAnnotation')) : {type: 'any'},
+        optional: p.node.optional,
         rest: p.isRestElement()
       };
     }

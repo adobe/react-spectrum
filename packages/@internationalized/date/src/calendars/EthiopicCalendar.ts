@@ -61,6 +61,11 @@ function getDaysInMonth(year: number, month: number) {
   }
 }
 
+/**
+ * The Ethiopic calendar system is the official calendar used in Ethiopia.
+ * It includes 12 months of 30 days each, plus 5 or 6 intercalary days depending
+ * on whether it is a leap year. Two eras are supported: 'AA' and 'AM'.
+ */
 export class EthiopicCalendar implements Calendar {
   identifier = 'ethiopic';
 
@@ -111,6 +116,10 @@ export class EthiopicCalendar implements Calendar {
   }
 }
 
+/**
+ * The Ethiopic (Amete Alem) calendar is the same as the modern Ethiopic calendar,
+ * except years were measured from a different epoch. Only one era is supported: 'AA'.
+ */
 export class EthiopicAmeteAlemCalendar extends EthiopicCalendar {
   identifier = 'ethioaa'; // also known as 'ethiopic-amete-alem' in ICU
 
@@ -126,6 +135,11 @@ export class EthiopicAmeteAlemCalendar extends EthiopicCalendar {
   }
 }
 
+/**
+ * The Coptic calendar is similar to the Ethiopic calendar.
+ * It includes 12 months of 30 days each, plus 5 or 6 intercalary days depending
+ * on whether it is a leap year. Two eras are supported: 'BCE' and 'CE'.
+ */
 export class CopticCalendar extends EthiopicCalendar {
   identifier = 'coptic';
 

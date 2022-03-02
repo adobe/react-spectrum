@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './CalendarDate';
+export {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 export {GregorianCalendar} from './calendars/GregorianCalendar';
 export {JapaneseCalendar} from './calendars/JapaneseCalendar';
 export {BuddhistCalendar} from './calendars/BuddhistCalendar';
@@ -21,8 +21,41 @@ export {IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar} f
 export {HebrewCalendar} from './calendars/HebrewCalendar';
 export {EthiopicCalendar, EthiopicAmeteAlemCalendar, CopticCalendar} from './calendars/EthiopicCalendar';
 export {createCalendar} from './createCalendar';
-export * from './conversion';
-export * from './queries';
+export {toCalendarDate, toCalendarDateTime, toTime, toCalendar, toZoned, toTimeZone, toLocalTimeZone} from './conversion';
+export {
+  isSameDay,
+  isSameMonth,
+  isSameYear,
+  isEqualDay,
+  isEqualMonth,
+  isEqualYear,
+  isToday,
+  getDayOfWeek,
+  now,
+  today,
+  getHoursInDay,
+  getLocalTimeZone,
+  startOfMonth,
+  startOfWeek,
+  startOfYear,
+  endOfMonth,
+  endOfWeek,
+  endOfYear,
+  getMinimumMonthInYear,
+  getMinimumDayInMonth,
+  getWeeksInMonth,
+  minDate,
+  maxDate,
+  isWeekend,
+  isWeekday
+} from './queries';
 export * from './types';
-export * from './string';
-export * from './DateFormatter';
+export {
+  parseDate,
+  parseDateTime,
+  parseTime,
+  parseAbsolute,
+  parseAbsoluteToLocal,
+  parseZonedDateTime
+} from './string';
+export {DateFormatter} from './DateFormatter';
