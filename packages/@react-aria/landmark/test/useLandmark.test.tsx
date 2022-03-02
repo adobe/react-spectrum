@@ -80,12 +80,11 @@ describe('LandmarkManager', function () {
   });
 
   afterAll(function () {
-    offsetWidth.mockReset();
+    offsetWidth.mockRestore();
     offsetHeight.mockReset();
   });
 
   afterEach(() => {
-
     act(() => {jest.runAllTimers();});
   });
 
@@ -1071,5 +1070,52 @@ describe('LandmarkManager', function () {
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
 
     expect(onKeyDown).toHaveBeenCalled();
+  });
+
+  it('updates the landmark if the label changes', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let tree = render(
+      <div>
+        <Navigation aria-label="nav label 1">
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Navigation aria-label="nav label 2">
+          <ul>
+            <li><a href="/product">Product</a></li>
+            <li><a href="/support">Support</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+
+    expect(spyWarn).not.toHaveBeenCalled();
+    tree.rerender(
+      <div>
+        <Navigation aria-label="nav label 1">
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Navigation aria-label="nav label 1">
+          <ul>
+            <li><a href="/product">Product</a></li>
+            <li><a href="/support">Support</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'nav label 1\' label. If two or more landmarks on a page share the same role, they must have unique labels.');
   });
 });
