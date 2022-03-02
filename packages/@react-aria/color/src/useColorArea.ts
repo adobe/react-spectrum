@@ -59,7 +59,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   stateRef.current = state;
   let {xChannel, yChannel} = stateRef.current.channels;
   let xChannelStep = stateRef.current.xChannelStep;
-  let yChannelStep = stateRef.current.xChannelStep;
+  let yChannelStep = stateRef.current.yChannelStep;
 
   let currentPosition = useRef<{x: number, y: number}>(null);
 
