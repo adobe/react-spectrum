@@ -1066,5 +1066,5 @@ describe('LandmarkManager', function () {
       </div>
     );
     expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'nav label 1\' label. If two or more landmarks on a page share the same role, they must have unique labels.');
-  })
+  });
 });
