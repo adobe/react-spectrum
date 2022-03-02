@@ -120,7 +120,9 @@ class LandmarkManager {
     let index = this.landmarks.findIndex(l => l.ref === landmark.ref);
     if (index >= 0) {
       this.landmarks[index] = {...this.landmarks[index], ...landmark};
-      this.checkLabels(this.landmarks[index].role);
+      if (process.env.NODE_ENV !== 'production') {
+        this.checkLabels(this.landmarks[index].role);
+      }
     }
   }
 
