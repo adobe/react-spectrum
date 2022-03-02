@@ -12,6 +12,7 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '@react-spectrum/provider';
@@ -79,12 +80,11 @@ describe('LandmarkManager', function () {
   });
 
   afterAll(function () {
-    offsetWidth.mockReset();
+    offsetWidth.mockRestore();
     offsetHeight.mockReset();
   });
 
   afterEach(() => {
-
     act(() => {jest.runAllTimers();});
   });
 
@@ -998,6 +998,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(nav);
     expect(nav).toHaveAttribute('tabIndex', '-1');
   });
+
   it('loses the tabIndex=-1 if something else is focused', function () {
     let {getByRole, getAllByRole} = render(
       <div>
@@ -1024,5 +1025,97 @@ describe('LandmarkManager', function () {
 
     expect(document.activeElement).toBe(getAllByRole('link')[0]);
     expect(nav).not.toHaveAttribute('tabIndex');
+  });
+
+  it('cleans up event listeners if all landmarks are unmounted', function () {
+    // Because our listener stops propagation of the F6 key to prevent anything
+    // else from handling it, we can render with landmarks to make sure the propagation is stopped
+    // and then when everything is unmounted, we can check again.
+    let onKeyDown = jest.fn();
+    let {getByRole, rerender} = render(
+      <div>
+        <Button onKeyDown={onKeyDown} variant="cta">Focusable</Button>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+      </div>
+    );
+    let nav = getByRole('navigation');
+    let button = getByRole('button');
+
+    act(() => {
+      button.focus();
+    });
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(nav);
+
+    expect(onKeyDown).not.toHaveBeenCalled();
+
+    rerender(
+      <div>
+        <Button onKeyDown={onKeyDown} variant="cta">Focusable</Button>
+      </div>
+    );
+    button = getByRole('button');
+
+    act(() => {
+      button.focus();
+    });
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+
+    expect(onKeyDown).toHaveBeenCalled();
+  });
+
+  it('updates the landmark if the label changes', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let tree = render(
+      <div>
+        <Navigation aria-label="nav label 1">
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Navigation aria-label="nav label 2">
+          <ul>
+            <li><a href="/product">Product</a></li>
+            <li><a href="/support">Support</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+
+    expect(spyWarn).not.toHaveBeenCalled();
+    tree.rerender(
+      <div>
+        <Navigation aria-label="nav label 1">
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Navigation aria-label="nav label 1">
+          <ul>
+            <li><a href="/product">Product</a></li>
+            <li><a href="/support">Support</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'nav label 1\' label. If two or more landmarks on a page share the same role, they must have unique labels.');
   });
 });
