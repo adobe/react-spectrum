@@ -40,7 +40,9 @@ export interface ColorChannelRange {
   /** The maximum value of the color channel. */
   maxValue: number,
   /** The step value of the color channel, used when incrementing and decrementing. */
-  step: number
+  step: number,
+  /** The page step value of the color channel, used when incrementing and decrementing. */
+  pageSize: number
 }
 
 /** Represents a color value. */
@@ -76,9 +78,9 @@ export interface Color {
   formatChannelValue(channel: ColorChannel, locale: string): string
 }
 
-export interface ColorFieldProps extends Omit<ValueBase<string | Color>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
+export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
   /** Handler that is called when the value changes. */
-  onChange?: (color: Color) => void,
+  onChange?: (color: Color | null) => void,
   /**
    * The step value to increment and decrement the color by when using the arrow keys.
    * @default 1
@@ -133,4 +135,28 @@ export interface AriaColorSliderProps extends ColorSliderProps, DOMProps, AriaLa
 export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
   /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
   showValueLabel?: boolean
+}
+
+export interface ColorAreaProps extends ValueBase<string | Color> {
+  /** Color channel for the horizontal axis. */
+  xChannel?: ColorChannel,
+  /** Color channel for the vertical axis. */
+  yChannel?: ColorChannel,
+  /** Whether the ColorArea is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the value changes, as the user drags. */
+  onChange?: (value: Color) => void,
+  /** Handler that is called when the user stops dragging. */
+  onChangeEnd?: (value: Color) => void,
+  /** The step value for the xChannel. */
+  xChannelStep?: number,
+  /** The step value for the yChannel. */
+  yChannelStep?: number
+}
+
+export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumColorAreaProps extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {
+  /** Size of the Color Area. */
+  size?: DimensionValue
 }

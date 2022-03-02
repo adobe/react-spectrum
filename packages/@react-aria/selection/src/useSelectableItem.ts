@@ -37,6 +37,11 @@ interface SelectableItemOptions {
    */
   shouldSelectOnPressUp?: boolean,
   /**
+   * Whether selection requires the pointer/mouse down and up events to occur on the same target or triggers selection on
+   * the target of the pointer/mouse up event.
+   */
+  allowsDifferentPressOrigin?: boolean,
+  /**
    * Whether the option is contained in a virtual scroller.
    */
   isVirtualized?: boolean,
@@ -79,7 +84,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     shouldUseVirtualFocus,
     focus,
     isDisabled,
-    onAction
+    onAction,
+    allowsDifferentPressOrigin
   } = options;
 
   let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
@@ -155,13 +161,27 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
 
-    itemPressProps.onPressUp = (e) => {
-      if (e.pointerType !== 'keyboard') {
-        onSelect(e);
-      }
-    };
+    // If allowsDifferentPressOrigin, make selection happen on pressUp (e.g. open menu on press down, selection on menu item happens on press up.)
+    // Otherwise, have selection happen onPress (prevents listview row selection when clicking on interactable elements in the row)
+    if (!allowsDifferentPressOrigin) {
+      itemPressProps.onPress = (e) => {
+        if (e.pointerType !== 'keyboard') {
+          onSelect(e);
+        }
 
-    itemPressProps.onPress = hasPrimaryAction ? () => onAction() : null;
+        if (hasPrimaryAction) {
+          onAction();
+        }
+      };
+    } else {
+      itemPressProps.onPressUp = (e) => {
+        if (e.pointerType !== 'keyboard') {
+          onSelect(e);
+        }
+      };
+
+      itemPressProps.onPress = hasPrimaryAction ? () => onAction() : null;
+    }
   } else {
     // On touch, it feels strange to select on touch down, so we special case this.
     itemPressProps.onPressStart = (e) => {

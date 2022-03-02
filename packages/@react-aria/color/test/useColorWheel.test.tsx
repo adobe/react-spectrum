@@ -51,7 +51,7 @@ function ColorWheel(props: ColorWheelProps) {
 
 describe('useColorWheel', () => {
   let onChangeSpy = jest.fn();
-
+  
   beforeAll(() => {
     // @ts-ignore
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
