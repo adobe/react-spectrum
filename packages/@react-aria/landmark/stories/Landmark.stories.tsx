@@ -17,8 +17,7 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
 import {Meta, Story} from '@storybook/react';
-import {Picker} from '@react-spectrum/picker';
-import React, {useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import styles from './index.css';
 import {TextField} from '@react-spectrum/textfield';
@@ -42,7 +41,6 @@ const DuplicateRolesWithNoLabelsTemplate = (): Story<StoryProps> => (props) => <
 const DuplicateRolesWithSameLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesWithSameLabelsExample {...props} />;
 const OneWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <OneWithNoFocusableChildrenExample {...props} />;
 const AllWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <AllWithNoFocusableChildrenExample {...props} />;
-const ChangeLabelExampleTemplate = (): Story<StoryProps> => (props) => <ChangeLabelExample {...props} />;
 
 function Main(props) {
   let ref = useRef();
@@ -314,37 +312,6 @@ function ApplicationExample() {
   );
 }
 
-function ChangeLabelExample() {
-  let options = [
-    {name: 'First Label'},
-    {name: 'Second Label'}
-  ];
-  let [label, setLabel] = useState('First Label');
-  return (
-    <div>
-      <Picker
-        label="Change nav's aria-label"
-        items={options}
-        selectedKey={label}
-        onSelectionChange={selected => setLabel(selected.toString())}>
-        {item => <Item key={item.name}>{item.name}</Item>}
-      </Picker>
-      <Navigation aria-label={label}>
-        <div>Navigation Landmark</div>
-        <ul>
-          <li><a href="/home">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
-        </ul>
-      </Navigation>
-      <Main>
-        <div>Main Landmark</div>
-        <TextField label="First Name" />
-      </Main>
-    </div>
-  );
-}
-
 export const FlatLandmarks = Template().bind({});
 FlatLandmarks.args = {};
 
@@ -371,6 +338,3 @@ OneWithNoFocusableChildren.args = {};
 
 export const AllWithNoFocusableChildren = AllWithNoFocusableChildrenExampleTemplate().bind({});
 AllWithNoFocusableChildren.args = {};
-
-export const ChangeLabel = ChangeLabelExampleTemplate().bind({});
-ChangeLabel.args = {};

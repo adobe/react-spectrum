@@ -70,21 +70,23 @@ function toggleBrowserWindow() {
 
 
 describe('LandmarkManager', function () {
-  let offsetWidth, offsetHeight;
+  let offsetWidth, offsetHeight, spyWarn;
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     jest.useFakeTimers();
   });
 
   afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+    offsetWidth.mockRestore();
+    offsetHeight.mockRestore();
+    spyWarn.mockRestore();
   });
 
   afterEach(() => {
-
+    spyWarn.mockClear();
     act(() => {jest.runAllTimers();});
   });
 
@@ -539,8 +541,6 @@ describe('LandmarkManager', function () {
   });
 
   it('Should allow 2+ landmarks with same role if they are labelled.', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
     render(
       <div>
         <Navigation aria-label="First nav">
@@ -567,8 +567,6 @@ describe('LandmarkManager', function () {
   });
 
   it('Should warn if 2+ landmarks with same role are used but not labelled.', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
     render(
       <div>
         <Navigation>
@@ -595,8 +593,6 @@ describe('LandmarkManager', function () {
   });
 
   it('Should warn if 2+ landmarks with same role and same label', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
     render(
       <div>
         <Navigation aria-label="First nav">
@@ -1025,4 +1021,50 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(getAllByRole('link')[0]);
     expect(nav).not.toHaveAttribute('tabIndex');
   });
+
+  it('updates the landmark if the label changes', function () {
+    let tree = render(
+      <div>
+        <Navigation aria-label="nav label 1">
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Navigation aria-label="nav label 2">
+          <ul>
+            <li><a href="/product">Product</a></li>
+            <li><a href="/support">Support</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+
+    expect(spyWarn).not.toHaveBeenCalled();
+    tree.rerender(
+      <div>
+        <Navigation aria-label="nav label 1">
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Navigation aria-label="nav label 1">
+          <ul>
+            <li><a href="/product">Product</a></li>
+            <li><a href="/support">Support</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'nav label 1\' label. If two or more landmarks on a page share the same role, they must have unique labels.');
+  })
 });
