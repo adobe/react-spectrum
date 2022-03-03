@@ -159,9 +159,12 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     minValue = DEFAULT_MIN_VALUE,
     maxValue = DEFAULT_MAX_VALUE,
     numberFormatter: formatter,
-    step = DEFAULT_STEP_VALUE,
-    pageSize = Math.max((maxValue - minValue) / 10, step)
+    step = DEFAULT_STEP_VALUE
   } = props;
+
+  // Page step should be at least equal to step and always a multiple of the step.
+  let pageSize = Math.max((maxValue - minValue) / 10, step);
+  pageSize = pageSize - (pageSize % step);
 
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
