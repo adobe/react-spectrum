@@ -267,6 +267,23 @@ describe('Slider', function () {
 
     it.each`
       Name                          | props                 | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +10}, {left: press.ArrowLeft, result: -10}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -10}, {left: press.ArrowLeft, result: +10}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+    `('$Name sets page size to a multiple of step', function ({props, commands}) {
+      let tree = render(
+        <Provider theme={theme} {...props}>
+          <Slider label="Label" minValue={0} maxValue={230} defaultValue={50} step={10} />
+        </Provider>
+      );
+      // The slider page size should be initially calulated as 230/10 = 23 and then clamped to 20 so it is a multiple of the step
+      let slider = tree.getByRole('slider');
+      testKeypresses([slider, slider], commands);
+    });
+
+    it.each`
+      Name                          | props                 | commands
       ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowLeft, result: -1}, {left: press.ArrowLeft, result: 0}]}
       ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowRight, result: 0}]}
     `('$Name is clamped by min/max', function ({props, commands}) {
