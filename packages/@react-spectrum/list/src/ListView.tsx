@@ -70,12 +70,12 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
   let layout = useMemo(() =>
-      new ListLayout<T>({
-        estimatedRowHeight: ROW_HEIGHTS[density][scale],
-        padding: 0,
-        collator,
-        loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale]
-      })
+    new ListLayout<T>({
+      estimatedRowHeight: ROW_HEIGHTS[density][scale],
+      padding: 0,
+      collator,
+      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale]
+    })
     , [collator, scale, density, isEmpty]);
 
   layout.collection = state.collection;
