@@ -78,11 +78,7 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     xChannel,
     yChannel,
     onChange,
-    onChangeEnd,
-    xChannelStep,
-    yChannelStep,
-    xChannelPageStep,
-    yChannelPageStep
+    onChangeEnd
   } = props;
 
   if (!value && !defaultValue) {
@@ -131,17 +127,6 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let {minValue: minValueX, maxValue: maxValueX, step: stepX, pageSize: pageSizeX} = xChannelRange;
   let {minValue: minValueY, maxValue: maxValueY, step: stepY, pageSize: pageSizeY} = yChannelRange;
 
-  if (isNaN(xChannelStep)) {
-    xChannelStep = stepX;
-  }
-
-  if (isNaN(yChannelStep)) {
-    yChannelStep = stepY;
-  }
-
-  let _xChannelPageStep = Math.max(!isNaN(xChannelPageStep) ? xChannelPageStep : pageSizeX, xChannelStep);
-  let _yChannelPageStep = Math.max(!isNaN(yChannelPageStep) ? yChannelPageStep : pageSizeY, yChannelStep);
-
   let [isDragging, setDragging] = useState(false);
   let isDraggingRef = useRef(false).current;
 
@@ -164,10 +149,10 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
 
   return {
     channels,
-    xChannelStep,
-    yChannelStep,
-    xChannelPageStep: _xChannelPageStep,
-    yChannelPageStep: _yChannelPageStep,
+    xChannelStep: stepX,
+    yChannelStep: stepY,
+    xChannelPageStep: pageSizeX,
+    yChannelPageStep: pageSizeY,
     value: color,
     setValue(value) {
       let c = normalizeColor(value);
@@ -186,12 +171,12 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       let newColor:Color;
       if (newXValue !== xValue) {
         // Round new value to multiple of step, clamp value between min and max
-        newXValue = snapValueToStep(newXValue, minValueX, maxValueX, xChannelStep);
+        newXValue = snapValueToStep(newXValue, minValueX, maxValueX, stepX);
         newColor = color.withChannelValue(channels.xChannel, newXValue);
       }
       if (newYValue !== yValue) {
         // Round new value to multiple of step, clamp value between min and max
-        newYValue = snapValueToStep(newYValue, minValueY, maxValueY, yChannelStep);
+        newYValue = snapValueToStep(newYValue, minValueY, maxValueY, stepY);
         newColor = (newColor || color).withChannelValue(channels.yChannel, newYValue);
       }
       if (newColor) {
@@ -204,16 +189,16 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       return {x, y};
     },
     incrementX(stepSize) {
-      setXValue(xValue + stepSize > maxValueX ? maxValueX : snapValueToStep(xValue + stepSize, minValueX, maxValueX, xChannelStep));
+      setXValue(xValue + stepSize > maxValueX ? maxValueX : snapValueToStep(xValue + stepSize, minValueX, maxValueX, stepX));
     },
     incrementY(stepSize) {
-      setYValue(yValue + stepSize > maxValueY ? maxValueY : snapValueToStep(yValue + stepSize, minValueY, maxValueY, yChannelStep));
+      setYValue(yValue + stepSize > maxValueY ? maxValueY : snapValueToStep(yValue + stepSize, minValueY, maxValueY, stepY));
     },
     decrementX(stepSize) {
-      setXValue(snapValueToStep(xValue - stepSize, minValueX, maxValueX, xChannelStep));
+      setXValue(snapValueToStep(xValue - stepSize, minValueX, maxValueX, stepX));
     },
     decrementY(stepSize) {
-      setYValue(snapValueToStep(yValue - stepSize, minValueY, maxValueY, yChannelStep));
+      setYValue(snapValueToStep(yValue - stepSize, minValueY, maxValueY, stepY));
     },
     setDragging(isDragging) {
       let wasDragging = isDraggingRef;

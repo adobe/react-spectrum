@@ -95,15 +95,6 @@ export let XGreenYRed = Template.bind({});
 XGreenYRed.storyName = 'RGB xChannel="green", yChannel="red"';
 XGreenYRed.args = {...XBlueYGreen.args, xChannel: 'green', yChannel: 'red'};
 
-export let XBlueYGreenStep0xF = Template.bind({});
-XBlueYGreenStep0xF.storyName = 'RGB xChannel="blue", yChannel="green", step="0xF"';
-XBlueYGreenStep0xF.args = {...XBlueYGreen.args, xChannelStep: 0xF, yChannelStep: 0xF};
-
-export let XBlueYGreenPageStep30 = Template.bind({});
-XBlueYGreenPageStep30.storyName = 'RGB xChannel="blue", yChannel="green", pageStep="0x1F"';
-XBlueYGreenPageStep30.args = {...XBlueYGreen.args, xChannelPageStep: 0x1F, yChannelPageStep: 0x1F};
-
-/* TODO: what does a disabled color area look like? */
 export let XBlueYGreenisDisabled = Template.bind({});
 XBlueYGreenisDisabled.storyName = 'RGB xChannel="blue", yChannel="green", isDisabled';
 XBlueYGreenisDisabled.args = {...XBlueYGreen.args, isDisabled: true};
