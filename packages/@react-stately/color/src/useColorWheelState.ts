@@ -85,14 +85,13 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
   let deg = radToDeg(Math.atan2(y / radius, x / radius));
   return (deg + 360) % 360;
 }
-const PAGE_MIN_STEP_SIZE = 6;
 
 /**
  * Provides state management for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
-  let {defaultValue, onChange, onChangeEnd, step = 1} = props;
+  let {defaultValue, onChange, onChangeEnd} = props;
 
   if (!props.value && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
@@ -102,6 +101,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   let valueRef = useRef(value);
   valueRef.current = value;
 
+  let {pageSize: pageStep, step} = valueRef.current.getChannelRange('hue');
   let [isDragging, setDragging] = useState(false);
   let isDraggingRef = useRef(false).current;
 
@@ -119,7 +119,6 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     }
   }
 
-  let pageStep = PAGE_MIN_STEP_SIZE;
   return {
     value,
     step,
@@ -138,12 +137,13 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
       return angleToCartesian(value.getChannelValue('hue'), radius);
     },
     increment(stepSize) {
-      let newValue = hue + Math.max(stepSize, step);
-      if (newValue > 360) {
+      let s = Math.max(stepSize, step);
+      let newValue = hue + s;
+      if (newValue >= 360) {
         // Make sure you can always get back to 0.
         newValue = 0;
       }
-      setHue(newValue);
+      setHue(roundToStep(mod(newValue, 360), s));
     },
     decrement(stepSize) {
       let s = Math.max(stepSize, step);
@@ -152,7 +152,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
         // |(previous step) - 0| < step size
         setHue(roundDown(360 / s) * s);
       } else {
-        setHue(hue - s);
+        setHue(roundToStep(mod(hue - s, 360), s));
       }
     },
     setDragging(isDragging) {

@@ -63,7 +63,7 @@ export function useColorFieldState(
   props: ColorFieldProps
 ): ColorFieldState {
   let {
-    step = 1,
+    step = MIN_COLOR.getChannelRange('red').step,
     value,
     defaultValue,
     onChange
@@ -97,7 +97,7 @@ export function useColorFieldState(
       color = null;
     }
     return color;
-  }, [parseColor, inputValue]);
+  }, [inputValue]);
   let parsed = useRef(null);
   parsed.current = parsedValue;
 

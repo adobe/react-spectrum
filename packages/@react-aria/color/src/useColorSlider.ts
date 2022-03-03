@@ -72,10 +72,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
       }
       // same handling as useMove, stopPropagation to prevent useSlider from handling the event as well.
       e.preventDefault();
-      let pageStep = Math.max(
-        props.pageSize || pageSize,
-        props.step || step
-      );
+      let pageStep = Math.max(pageSize, step);
       // remember to set this so that onChangeEnd is fired
       state.setThumbDragging(0, true);
       switch (e.key) {
