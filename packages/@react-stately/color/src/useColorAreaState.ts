@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, snapValueToStep} from '@react-aria/utils';
+import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {Color, ColorAreaProps, ColorChannel} from '@react-types/color';
 import {normalizeColor, parseColor} from './Color';
-import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
 
 export interface ColorAreaState {

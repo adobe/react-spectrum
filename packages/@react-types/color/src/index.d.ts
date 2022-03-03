@@ -27,6 +27,7 @@ import {
   ValueBase
 } from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
+import {RefObject} from 'react';
 
 /** A list of supported color formats. */
 export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
@@ -154,7 +155,14 @@ export interface ColorAreaProps extends ValueBase<string | Color> {
   yChannelStep?: number
 }
 
-export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {}
+export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {
+  /** A ref to the input that represents the x axis of the color area. */
+  inputXRef: RefObject<HTMLElement>,
+  /** A ref to the input that represents the y axis of the color area. */
+  inputYRef: RefObject<HTMLElement>,
+  /** A ref to the color area containing element. */
+  containerRef: RefObject<HTMLElement>
+}
 
 export interface SpectrumColorAreaProps extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {
   /** Size of the Color Area. */
