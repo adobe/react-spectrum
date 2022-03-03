@@ -569,7 +569,7 @@ describe('LandmarkManager', function () {
   it('Should warn if 2+ landmarks with same role are used but not labelled.', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-    render(
+    let tree = render(
       <div>
         <Navigation>
           <ul>
@@ -591,13 +591,15 @@ describe('LandmarkManager', function () {
       </div>
     );
 
-    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.');
+    let navs = tree.getAllByRole('navigation');
+
+    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute: ', navs);
   });
 
   it('Should warn if 2+ landmarks with same role and same label', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-    render(
+    let tree = render(
       <div>
         <Navigation aria-label="First nav">
           <ul>
@@ -618,8 +620,9 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
+    let navs = tree.getAllByRole('navigation');
 
-    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'First nav\' label. If two or more landmarks on a page share the same role, they must have unique labels.');
+    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'First nav\' label. If two or more landmarks on a page share the same role, they must have unique labels: ', navs);
   });
 
   it('Should not navigate to a landmark that has been removed from the DOM', function () {
@@ -1094,6 +1097,7 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
+    let navs = tree.getAllByRole('navigation');
 
     expect(spyWarn).not.toHaveBeenCalled();
     tree.rerender(
@@ -1116,6 +1120,6 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
-    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'nav label 1\' label. If two or more landmarks on a page share the same role, they must have unique labels.');
+    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'nav label 1\' label. If two or more landmarks on a page share the same role, they must have unique labels: ', navs);
   });
 });
