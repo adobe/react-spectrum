@@ -41,11 +41,11 @@ import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue {
-    state: GridState<object, GridCollection<any>>,
-    keyboardDelegate: GridKeyboardDelegate<unknown, GridCollection<any>>,
-    dragState: DraggableCollectionState,
-    onAction:(key: string) => void,
-    isListDraggable: boolean
+  state: GridState<object, GridCollection<any>>,
+  keyboardDelegate: GridKeyboardDelegate<unknown, GridCollection<any>>,
+  dragState: DraggableCollectionState,
+  onAction:(key: string) => void,
+  isListDraggable: boolean
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue>(null);
