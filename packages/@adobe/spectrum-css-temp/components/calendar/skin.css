@@ -102,7 +102,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.is-disabled {
+  &.is-disabled:not(.is-unavailable) {
     &,
     &.is-today {
       --background: var(--spectrum-calendar-day-background-color-disabled);

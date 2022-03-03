@@ -76,6 +76,7 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
           'is-selected': isSelected,
           'is-focused': state.isCellFocused(props.date) && isFocusVisible,
           'is-disabled': isDisabled,
+          'is-unavailable': state.isCellUnavailable(props.date),
           'is-outsideMonth': !isSameMonth(props.date, currentMonth),
           'is-range-start': isRangeStart,
           'is-range-end': isRangeEnd,
@@ -85,7 +86,9 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
           'is-hovered': isHovered,
           'is-pressed': isPressed
         })}>
-        <span className={classNames(styles, 'spectrum-Calendar-dateText')}>{formatted}</span>
+        <span className={classNames(styles, 'spectrum-Calendar-dateText')}>
+          <span>{formatted}</span>
+        </span>
       </span>
     </td>
   );

@@ -832,7 +832,7 @@ describe('RangeCalendar', () => {
       expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
-      cell = getByText('17').parentElement;
+      cell = getByText('17').closest('[role="button"]');
       act(() => userEvent.click(cell));
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell.parentElement).not.toHaveAttribute('aria-selected');

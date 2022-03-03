@@ -77,7 +77,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
   // When a cell is focused and this is a range calendar, add a prompt to help
   // screenreader users know that they are in a range selection mode.
-  if ('anchorDate' in state && isFocused && !state.isReadOnly) {
+  if ('anchorDate' in state && isFocused && !state.isReadOnly && !isDisabled) {
     let rangeSelectionPrompt = '';
 
     // If selection has started add "click to finish selecting range"
@@ -193,7 +193,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   });
 
   let tabIndex = null;
-  if (!isDisabled) {
+  if (!isDisabled || state.isCellUnavailable(date)) {
     tabIndex = isSameDay(date, state.focusedDate) ? 0 : -1;
   }
 

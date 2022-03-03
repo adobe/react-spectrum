@@ -198,6 +198,9 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     isCellDisabled(date) {
       return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || isInvalid(date, minValue, maxValue) || (props.isDateDisabled && props.isDateDisabled(date));
     },
+    isCellUnavailable(date) {
+      return props.isDateDisabled && props.isDateDisabled(date);
+    },
     isPreviousVisibleRangeInvalid() {
       return isInvalid(startDate.subtract({days: 1}), minValue, maxValue);
     },

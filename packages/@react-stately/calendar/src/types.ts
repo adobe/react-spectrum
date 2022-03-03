@@ -41,6 +41,7 @@ export interface CalendarStateBase {
   isSelected(date: CalendarDate): boolean,
   isCellFocused(date: CalendarDate): boolean,
   isCellDisabled(date: CalendarDate): boolean,
+  isCellUnavailable(date: CalendarDate): boolean,
   isPreviousVisibleRangeInvalid(): boolean,
   isNextVisibleRangeInvalid(): boolean
 }
