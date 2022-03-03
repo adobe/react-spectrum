@@ -14,7 +14,6 @@ import {AriaColorSliderProps} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
 import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
-import {useKeyboard} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
@@ -61,32 +60,6 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     trackRef,
     inputRef
   }, state);
-
-  let {step, pageSize} = state.value.getChannelRange(channel);
-  let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      // these are the cases that useMove or useSlider don't handle
-      if (!/^(PageUp|PageDown)$/.test(e.key)) {
-        e.continuePropagation();
-        return;
-      }
-      // same handling as useMove, stopPropagation to prevent useSlider from handling the event as well.
-      e.preventDefault();
-      let pageStep = Math.max(pageSize, step);
-      // remember to set this so that onChangeEnd is fired
-      state.setThumbDragging(0, true);
-      switch (e.key) {
-        case 'PageUp':
-          state.incrementThumb(0, pageStep);
-          break;
-        case 'PageDown':
-          state.decrementThumb(0, pageStep);
-          break;
-      }
-      // wait a frame to ensure value has changed then unset this so that onChangeEnd is fired
-      state.setThumbDragging(0, false);
-    }
-  });
 
   let generateBackground = () => {
     let value = state.getDisplayColor();
@@ -140,7 +113,7 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
         background: generateBackground()
       }
     },
-    inputProps: mergeProps(inputProps, keyboardProps),
+    inputProps,
     thumbProps: {
       ...thumbProps,
       style: {

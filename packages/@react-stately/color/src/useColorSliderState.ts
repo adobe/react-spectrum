@@ -58,20 +58,18 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     }
   });
 
-  function incrementThumb(index: number, stepSize: number = 0) {
+  function incrementThumb(index: number, stepSize: number = 1) {
     let {maxValue, minValue, step} = color.getChannelRange(channel);
     let channelValue = color.getChannelValue(channel);
-    stepSize = Math.max(stepSize, step);
-    let snapToStep = stepSize > step && stepSize % step === 0 ? stepSize : step;
-    sliderState.setThumbValue(index, channelValue + stepSize > maxValue ? maxValue : snapValueToStep(channelValue + stepSize, minValue, maxValue, snapToStep));
+    let s = Math.max(stepSize, step);
+    sliderState.setThumbValue(index, channelValue + s > maxValue ? maxValue : snapValueToStep(channelValue + s, minValue, maxValue, s));
   }
 
-  function decrementThumb(index: number, stepSize: number = 0) {
+  function decrementThumb(index: number, stepSize: number = 1) {
     let {maxValue, minValue, step} = color.getChannelRange(channel);
     let channelValue = color.getChannelValue(channel);
-    stepSize = Math.max(stepSize, step);
-    let snapToStep = stepSize > step && stepSize % step === 0 ? stepSize : step;
-    sliderState.setThumbValue(index, channelValue - stepSize < minValue ? minValue : snapValueToStep(channelValue - stepSize, minValue, maxValue, snapToStep));
+    let s = Math.max(stepSize, step);
+    sliderState.setThumbValue(index, channelValue - s < minValue ? minValue : snapValueToStep(channelValue - s, minValue, maxValue, s));
   }
 
   return {
