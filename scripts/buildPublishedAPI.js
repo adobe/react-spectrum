@@ -124,13 +124,18 @@ async function build() {
   let babelPatch = patches.find(name => name.startsWith('@babel'));
   fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
 
-  // Copy package.json for each package into docs dir so we can find the correct version numbers
+  // Copy from node_modules and pretend it is src
   console.log('moving over from node_modules');
   for (let p of packages) {
     if (!p.includes('spectrum-css') && fs.existsSync(path.join(dir, 'node_modules', p))) {
+      let json = JSON.parse(fs.readFileSync(path.join(dir, 'node_modules', p)), 'utf8');
+      if (json.version.includes('nightly')) {
+        continue;
+      }
+
       fs.moveSync(path.join(dir, 'node_modules', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)));
       fs.removeSync(path.join(dir, 'packages', path.dirname(p), 'dist'));
-      let json = JSON.parse(fs.readFileSync(path.join(dir, 'packages', p)), 'utf8');
+      // Prevent false positives by modifying package.json
       if (!p.includes('@react-types')) {
         delete json.types;
       }
