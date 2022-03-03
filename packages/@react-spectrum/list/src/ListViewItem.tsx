@@ -133,7 +133,7 @@ export function ListViewItem(props) {
                         'react-spectrum-ListViewItem-draghandle-button'
                       )
                     }
-                    style={{}}
+                    style={!showDragHandle ? {...visuallyHiddenProps.style} : {}}
                     ref={dragButtonRef}
                     draggable="true">
                     <ListGripper />
