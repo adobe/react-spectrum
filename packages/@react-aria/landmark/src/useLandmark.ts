@@ -116,9 +116,12 @@ class LandmarkManager {
     this.landmarks.splice(insertPosition, 0, newLandmark);
   }
 
-  public updateLandmark(landmark: Landmark) {
-    this.landmarks = this.landmarks.map((prevLandmark) => prevLandmark.ref.current === landmark.ref.current ? {...prevLandmark, ...landmark} : prevLandmark);
-    this.checkLabels(landmark.role);
+  public updateLandmark(landmark: Pick<Landmark, 'ref'> & Partial<Landmark>) {
+    let index = this.landmarks.findIndex(l => l.ref === landmark.ref);
+    if (index >= 0) {
+      this.landmarks[index] = {...this.landmarks[index], ...landmark};
+      this.checkLabels(this.landmarks[index].role);
+    }
   }
 
   public removeLandmark(ref: MutableRefObject<HTMLElement>) {
@@ -240,12 +243,12 @@ class LandmarkManager {
   public focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as HTMLElement);
     if (currentLandmark && currentLandmark.ref.current !== e.target) {
-      this.updateLandmark({...currentLandmark, lastFocused: e.target as HTMLElement});
+      this.updateLandmark({ref: currentLandmark.ref, lastFocused: e.target as HTMLElement});
     }
-    let previousFocusedElment = e.relatedTarget as HTMLElement;
-    if (previousFocusedElment) {
-      let closestPreviousLandmark = this.closestLandmark(previousFocusedElment);
-      if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElment) {
+    let previousFocusedElement = e.relatedTarget as HTMLElement;
+    if (previousFocusedElement) {
+      let closestPreviousLandmark = this.closestLandmark(previousFocusedElement);
+      if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElement) {
         closestPreviousLandmark.blur();
       }
     }
@@ -284,7 +287,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     manager.updateLandmark({ref, label, role, focus, blur});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);

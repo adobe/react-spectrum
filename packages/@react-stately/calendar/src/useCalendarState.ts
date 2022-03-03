@@ -190,13 +190,13 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
       return isInvalid(date, minValue, maxValue);
     },
     isSelected(date) {
-      return calendarDateValue != null && isSameDay(date, calendarDateValue);
+      return calendarDateValue != null && isSameDay(date, calendarDateValue) && !this.isCellDisabled(date);
     },
     isCellFocused(date) {
       return isFocused && focusedDate && isSameDay(date, focusedDate);
     },
     isCellDisabled(date) {
-      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || isInvalid(date, minValue, maxValue);
+      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || isInvalid(date, minValue, maxValue) || (props.isDateDisabled && props.isDateDisabled(date));
     },
     isPreviousVisibleRangeInvalid() {
       return isInvalid(startDate.subtract({days: 1}), minValue, maxValue);

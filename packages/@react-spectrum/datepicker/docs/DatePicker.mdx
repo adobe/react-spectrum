@@ -249,6 +249,65 @@ This example only accepts dates after today.
   defaultValue={parseDate('2022-02-03')} />
 ```
 
+## Props
+
+<PropTable component={docs.exports.DatePicker} links={docs.links} />
+
+## Visual options
+
+### Quiet
+
+```tsx example
+<DatePicker label="Birth date" isQuiet />
+```
+
+### Disabled
+
+```tsx example
+<DatePicker label="Birth date" isDisabled />
+```
+
+The `isDateDisabled` callback prop acts like a filter function. It is called for each visible date and if it returns `true`, the date cell is disabled.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+const isDateDisabled = (date) => {
+  const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({ weeks: 1 })], [today(getLocalTimeZone()).add({ weeks: 2 }), today(getLocalTimeZone()).add({ weeks: 3 })]];
+  return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+}
+
+<DatePicker label="Birth date" isDateDisabled={isDateDisabled} />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the DatePicker's value immutable. Unlike `isDisabled`, the DatePicker remains focusable.
+
+```tsx example
+<DatePicker label="Birth date" value={today(getLocalTimeZone())} isReadOnly />
+```
+
+### Label alignment and position
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
+
+By default, the label is positioned above the `DatePicker`. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the `DatePicker` and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<DatePicker label="Birth date" labelPosition="side" labelAlign="end" />
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
+
+Both a description and an error message can be supplied to a DatePicker. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized. See the [Validation](#validation) section above for an example.
+
+`DatePicker` also supports displaying the expected date format for the user's locale automatically using the `showFormatHelpText` prop.
+
+```tsx example
+<DatePicker label="Birth date" showFormatHelpText />
+```
+
 ### Placeholder value
 
 When no value is set, a placeholder value is shown. By default, this is today's date at midnight. However, this can be overridden by setting the `placeholderValue` prop to a more appropriate placeholder for your specific usecase.

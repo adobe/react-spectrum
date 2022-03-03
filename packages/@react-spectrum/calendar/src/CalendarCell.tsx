@@ -41,13 +41,15 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
     isDisabled: !isSameMonth(props.date, currentMonth)
   }, state, ref);
   let {hoverProps, isHovered} = useHover({});
+  let isLastSelectedBeforeDisabled = !isDisabled && state.isCellDisabled(props.date.add({days: 1}));
+  let isFirstSelectedAfterDisabled = !isDisabled && state.isCellDisabled(props.date.subtract({days: 1}));
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
   let isSelectionStart = highlightedRange && isSameDay(props.date, highlightedRange.start);
   let isSelectionEnd = highlightedRange && isSameDay(props.date, highlightedRange.end);
   let {locale} = useLocale();
   let dayOfWeek = getDayOfWeek(props.date, locale);
-  let isRangeStart = isSelected && (dayOfWeek === 0 || props.date.day === 1);
-  let isRangeEnd = isSelected && (dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
+  let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
+  let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
