@@ -118,12 +118,14 @@
     grid-area: draghandle;
     width: var(--spectrum-global-dimension-size-250);
     display: flex;
-    align-items: center;
-    justify-items: center;
+    align-self: stretch;
+    justify-self: stretch;
+    justify-content: center;
+    padding: var(--spectrum-global-dimension-size-25);
 
 
     .react-spectrum-ListViewItem-draghandle-button {
-      margin: auto var(--spectrum-global-dimension-size-25);
+      width: var(--spectrum-global-dimension-size-200);
       display: flex;
       align-items: center;
       justify-content: center;
