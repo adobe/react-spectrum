@@ -277,7 +277,7 @@ describe('Slider', function () {
           <Slider label="Label" minValue={0} maxValue={230} defaultValue={50} step={10} />
         </Provider>
       );
-      // The slider page size should be initially calulated as 230/10 = 23 and then clamped to 20 so it is a multiple of the step
+      // The slider page size should be initially calulated as 230/10 = 23 and then snapped to 20 so it is a multiple of the step
       let slider = tree.getByRole('slider');
       testKeypresses([slider, slider], commands);
     });
