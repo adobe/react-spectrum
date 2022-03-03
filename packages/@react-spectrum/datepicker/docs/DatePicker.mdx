@@ -318,6 +318,14 @@ import {CalendarDate} from '@internationalized/date';
 <DatePicker label="Birth date" placeholderValue={new CalendarDate(1980, 1, 1)} />
 ```
 
+### Maximum visible months
+
+ By default, the calendar popover displays a single month. The `maxVisibleMonths` prop allows displaying up to 3 months at a time, if screen space permits.
+
+ ```tsx example
+ <DatePicker label="Appointment date" maxVisibleMonths={3} />
+ ```
+
 ### Hide time zone
 
 When a `ZonedDateTime` object is provided as the value of a `DatePicker`, the time zone abbreviation is displayed by default. However, if this is displayed elsewhere or implicit based on the usecase, it can be hidden using the `hideTimeZone` option.
