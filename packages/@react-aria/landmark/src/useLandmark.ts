@@ -155,7 +155,7 @@ class LandmarkManager {
         duplicateLabels.forEach((label) => {
           console.warn(
             `Page contains more than one landmark with the '${role}' role and '${label}' label. If two or more landmarks on a page share the same role, they must have unique labels: `,
-            [...landmarksWithRole].filter(landmark => landmark.label === label)
+            [...landmarksWithRole].filter(landmark => landmark.label === label).map(landmark => landmark.ref.current)
           );
         });
       }
