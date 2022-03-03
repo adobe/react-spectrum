@@ -69,7 +69,7 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     let {maxValue, minValue, step} = color.getChannelRange(channel);
     let channelValue = color.getChannelValue(channel);
     let s = Math.max(stepSize, step);
-    sliderState.setThumbValue(index, channelValue - s < minValue ? minValue : snapValueToStep(channelValue - s, minValue, maxValue, s));
+    sliderState.setThumbValue(index, snapValueToStep(channelValue - s, minValue, maxValue, s));
   }
 
   return {
