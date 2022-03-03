@@ -101,7 +101,8 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   let valueRef = useRef(value);
   valueRef.current = value;
 
-  let {pageSize: pageStep, step} = valueRef.current.getChannelRange('hue');
+  let channelRange = value.getChannelRange('hue');
+  let {minValue: minValueX, maxValue: maxValueX, step: step, pageSize: pageStep} = channelRange;
   let [isDragging, setDragging] = useState(false);
   let isDraggingRef = useRef(false).current;
 
@@ -139,9 +140,9 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     increment(stepSize) {
       let s = Math.max(stepSize, step);
       let newValue = hue + s;
-      if (newValue >= 360) {
+      if (newValue >= maxValueX) {
         // Make sure you can always get back to 0.
-        newValue = 0;
+        newValue = minValueX;
       }
       setHue(roundToStep(mod(newValue, 360), s));
     },

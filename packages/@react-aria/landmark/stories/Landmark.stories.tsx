@@ -46,21 +46,21 @@ function Main(props) {
   let ref = useRef();
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
-  return <main aria-label="Main landmark" ref={ref} {...landmarkProps} {...styleProps}>{props.children}</main>;
+  return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</main>;
 }
 
 function Navigation(props) {
   let ref = useRef();
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
-  return <nav aria-label="Navigation landmark"  ref={ref} {...landmarkProps} {...styleProps}>{props.children}</nav>;
+  return <nav aria-label="Rainbow lookout"  ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</nav>;
 }
 
 function Region(props) {
   let ref = useRef();
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'region'}, ref);
-  return <article aria-label="Region landmark" ref={ref} {...landmarkProps} {...styleProps}>{props.children}</article>;
+  return <article aria-label="The greens" ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</article>;
 }
 
 function Search(props) {
@@ -68,7 +68,7 @@ function Search(props) {
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'search'}, ref);
   return (
-    <form aria-label="Search landmark" ref={ref} {...landmarkProps} {...styleProps}>
+    <form aria-label="Magic seeing eye" ref={ref} {...props} {...landmarkProps} {...styleProps}>
       <SearchField label="Search" />
     </form>
   );
@@ -150,7 +150,7 @@ function DuplicateRolesWithSameLabelsExample() {
 function DuplicateRolesNoLabelExample() {
   return (
     <div>
-      <Navigation>
+      <Navigation aria-label={undefined}>
         <div>Navigation Landmark with no label</div>
         <ul>
           <li><a href="/home">Home</a></li>
@@ -158,7 +158,7 @@ function DuplicateRolesNoLabelExample() {
           <li><a href="/contact">Contact</a></li>
         </ul>
       </Navigation>
-      <Navigation>
+      <Navigation aria-label={undefined}>
         <div>Navigation Landmark with no label</div>
         <ul>
           <li><a href="/home">Home</a></li>
@@ -166,7 +166,7 @@ function DuplicateRolesNoLabelExample() {
           <li><a href="/contact">Contact</a></li>
         </ul>
       </Navigation>
-      <Main>
+      <Main aria-label={undefined}>
         <div>Main Landmark</div>
         <TextField label="First Name" />
       </Main>

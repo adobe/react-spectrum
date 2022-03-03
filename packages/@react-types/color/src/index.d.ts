@@ -142,11 +142,7 @@ export interface ColorAreaProps extends ValueBase<string | Color> {
   /** Handler that is called when the value changes, as the user drags. */
   onChange?: (value: Color) => void,
   /** Handler that is called when the user stops dragging. */
-  onChangeEnd?: (value: Color) => void,
-  /** The step value for the xChannel. */
-  xChannelStep?: number,
-  /** The step value for the yChannel. */
-  yChannelStep?: number
+  onChangeEnd?: (value: Color) => void
 }
 
 export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {}

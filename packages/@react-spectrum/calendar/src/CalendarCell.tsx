@@ -39,13 +39,16 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
     calendar: currentMonth.calendar.identifier
   });
   let isSelected = state.isSelected(props.date);
+  let isDisabled = state.isCellDisabled(props.date);
+  let isLastSelectedBeforeDisabled = !isDisabled && state.isCellDisabled(props.date.add({days: 1}));
+  let isFirstSelectedAfterDisabled = !isDisabled && state.isCellDisabled(props.date.subtract({days: 1}));
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
   let isSelectionStart = highlightedRange && isSameDay(props.date, highlightedRange.start);
   let isSelectionEnd = highlightedRange && isSameDay(props.date, highlightedRange.end);
   let {locale} = useLocale();
   let dayOfWeek = getDayOfWeek(props.date, locale);
-  let isRangeStart = isSelected && (dayOfWeek === 0 || props.date.day === 1);
-  let isRangeEnd = isSelected && (dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
+  let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
+  let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
 
   // For performance, reuse the same date object as before if the new date prop is the same.
@@ -72,7 +75,7 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
           'is-today': isToday(props.date, state.timeZone),
           'is-selected': isSelected,
           'is-focused': state.isCellFocused(props.date) && isFocusVisible,
-          'is-disabled': state.isCellDisabled(props.date),
+          'is-disabled': isDisabled,
           'is-outsideMonth': !isSameMonth(props.date, currentMonth),
           'is-range-start': isRangeStart,
           'is-range-end': isRangeEnd,

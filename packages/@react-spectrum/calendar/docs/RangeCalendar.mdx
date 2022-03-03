@@ -160,6 +160,19 @@ import {today} from '@internationalized/date';
 <RangeCalendar aria-label="Trip dates" isDisabled />
 ```
 
+The `isDateDisabled` callback prop acts like a filter function. It is called for each visible date and if it returns `true`, the date cell is disabled.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+const isDateDisabled = (date) => {
+  const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({ weeks: 1 })], [today(getLocalTimeZone()).add({ weeks: 2 }), today(getLocalTimeZone()).add({ weeks: 3 })]];
+  return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+}
+
+<RangeCalendar aria-label="Trip dates" visibleMonths={2} isDateDisabled={isDateDisabled} />
+```
+
 ### Read only
 
 The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDisabled`, the RangeCalendar remains focusable.
