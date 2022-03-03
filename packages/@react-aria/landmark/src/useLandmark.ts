@@ -36,21 +36,31 @@ type Landmark = {
 class LandmarkManager {
   private landmarks: Array<Landmark> = [];
   private static instance: LandmarkManager;
+  private isListening = false;
 
-  private constructor() {}
+  private constructor() {
+    this.f6Handler = this.f6Handler.bind(this);
+    this.focusinHandler = this.focusinHandler.bind(this);
+  }
 
   public static getInstance(): LandmarkManager {
     if (!LandmarkManager.instance) {
       LandmarkManager.instance = new LandmarkManager();
-      LandmarkManager.instance.setup();
     }
 
     return LandmarkManager.instance;
   }
 
   private setup() {
-    document.addEventListener('keydown', LandmarkManager.getInstance().f6Handler.bind(LandmarkManager.getInstance()), {capture: true});
-    document.addEventListener('focusin', LandmarkManager.getInstance().focusinHandler.bind(LandmarkManager.getInstance()), {capture: true});
+    document.addEventListener('keydown', this.f6Handler, {capture: true});
+    document.addEventListener('focusin', this.focusinHandler, {capture: true});
+    this.isListening = true;
+  }
+
+  private teardown() {
+    document.removeEventListener('keydown', this.f6Handler, {capture: true});
+    document.removeEventListener('focusin', this.focusinHandler, {capture: true});
+    this.isListening = false;
   }
 
   private focusLandmark(landmark: HTMLElement) {
@@ -72,6 +82,9 @@ class LandmarkManager {
   }
 
   public addLandmark(newLandmark: Landmark) {
+    if (!this.isListening) {
+      this.setup();
+    }
     if (this.landmarks.find(landmark => landmark.ref === newLandmark.ref)) {
       return;
     }
@@ -103,13 +116,19 @@ class LandmarkManager {
     this.landmarks.splice(insertPosition, 0, newLandmark);
   }
 
-  public updateLandmark(landmark: Landmark) {
-    this.landmarks = this.landmarks.map((prevLandmark) => prevLandmark.ref.current === landmark.ref.current ? {...prevLandmark, ...landmark} : prevLandmark);
-    this.checkLabels(landmark.role);
+  public updateLandmark(landmark: Pick<Landmark, 'ref'> & Partial<Landmark>) {
+    let index = this.landmarks.findIndex(l => l.ref === landmark.ref);
+    if (index >= 0) {
+      this.landmarks[index] = {...this.landmarks[index], ...landmark};
+      this.checkLabels(this.landmarks[index].role);
+    }
   }
 
   public removeLandmark(ref: MutableRefObject<HTMLElement>) {
     this.landmarks = this.landmarks.filter(landmark => landmark.ref !== ref);
+    if (this.landmarks.length === 0) {
+      this.teardown();
+    }
   }
 
   /**
@@ -149,7 +168,6 @@ class LandmarkManager {
 
   /**
    * Gets the next landmark, in DOM focus order, or previous if backwards is specified.
-   * If nested, next should be the child landmark.
    * If last landmark, next should be the first landmark.
    * If not inside a landmark, will return first landmark.
    * Returns undefined if there are no landmarks.
@@ -177,8 +195,7 @@ class LandmarkManager {
 
   /**
    * Look at next landmark. If an element was previously focused inside, restore focus there.
-   * If not, focus the first focusable element inside the lanemark.
-   * If no focusable elements inside, go to the next landmark.
+   * If not, focus the landmark itself.
    * If no landmarks at all, or none with focusable elements, don't move focus.
    */
   public f6Handler(e: KeyboardEvent) {
@@ -226,12 +243,12 @@ class LandmarkManager {
   public focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as HTMLElement);
     if (currentLandmark && currentLandmark.ref.current !== e.target) {
-      this.updateLandmark({...currentLandmark, lastFocused: e.target as HTMLElement});
+      this.updateLandmark({ref: currentLandmark.ref, lastFocused: e.target as HTMLElement});
     }
-    let previousFocusedElment = e.relatedTarget as HTMLElement;
-    if (previousFocusedElment) {
-      let closestPreviousLandmark = this.closestLandmark(previousFocusedElment);
-      if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElment) {
+    let previousFocusedElement = e.relatedTarget as HTMLElement;
+    if (previousFocusedElement) {
+      let closestPreviousLandmark = this.closestLandmark(previousFocusedElement);
+      if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElement) {
         closestPreviousLandmark.blur();
       }
     }
@@ -270,7 +287,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTML
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     manager.updateLandmark({ref, label, role, focus, blur});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);

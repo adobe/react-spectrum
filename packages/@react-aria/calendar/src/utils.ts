@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, endOfMonth, isSameDay, startOfMonth, toDate} from '@internationalized/date';
+import {CalendarDate, endOfMonth, isSameDay, startOfMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -36,9 +36,9 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
       // Use a single date message if the start and end dates are the same day,
       // otherwise include both dates.
       if (isSameDay(start, end)) {
-        return formatMessage('selectedDateDescription', {date: toDate(start, state.timeZone)});
+        return formatMessage('selectedDateDescription', {date: start.toDate(state.timeZone)});
       } else {
-        return formatMessage('selectedRangeDescription', {start: toDate(start, state.timeZone), end: toDate(end, state.timeZone)});
+        return formatMessage('selectedRangeDescription', {start: start.toDate(state.timeZone), end: end.toDate(state.timeZone)});
       }
     }
     return '';
