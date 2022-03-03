@@ -39,7 +39,8 @@ interface ColorAreaAria {
  */
 export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, inputXRef: RefObject<HTMLElement>, inputYRef: RefObject<HTMLElement>, containerRef: RefObject<HTMLElement>): ColorAreaAria {
   let {
-    isDisabled
+    isDisabled,
+    'aria-label': ariaLabel
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -313,6 +314,16 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     pointerEvents: 'none'
   }});
 
+  // Provide a default aria-label if none is given
+  if (ariaLabel == null && props['aria-labelledby'] == null) {
+    ariaLabel = state.value.getChannelName('hue', locale);
+  }
+
+  let inputLabellingProps = useLabels({
+    ...props,
+    'aria-label': ariaLabel
+  });
+
   return {
     colorAreaProps: {
       ...colorAriaLabellingProps,
@@ -329,6 +340,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
     xInputProps: {
       ...xInputLabellingProps,
       ...visuallyHiddenProps,
+      
       type: 'range',
       min: state.value.getChannelRange(xChannel).minValue,
       max: state.value.getChannelRange(xChannel).maxValue,
