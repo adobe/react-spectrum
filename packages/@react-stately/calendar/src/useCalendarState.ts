@@ -190,7 +190,7 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
       return isInvalid(date, minValue, maxValue);
     },
     isSelected(date) {
-      return calendarDateValue != null && isSameDay(date, calendarDateValue);
+      return calendarDateValue != null && isSameDay(date, calendarDateValue) && !this.isCellDisabled(date);
     },
     isCellFocused(date) {
       return isFocused && focusedDate && isSameDay(date, focusedDate);

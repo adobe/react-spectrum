@@ -40,15 +40,15 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
   });
   let isSelected = state.isSelected(props.date);
   let isDisabled = state.isCellDisabled(props.date);
-  let isLastSelectedBeforeDisabled = isSelected && !isDisabled && state.isCellDisabled(props.date.add({days: 1}));
-  let isFirstSelectedAfterDisabled = isSelected && !isDisabled && state.isCellDisabled(props.date.subtract({days: 1}));
+  let isLastSelectedBeforeDisabled = !isDisabled && state.isCellDisabled(props.date.add({days: 1}));
+  let isFirstSelectedAfterDisabled = !isDisabled && state.isCellDisabled(props.date.subtract({days: 1}));
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
   let isSelectionStart = highlightedRange && isSameDay(props.date, highlightedRange.start);
   let isSelectionEnd = highlightedRange && isSameDay(props.date, highlightedRange.end);
   let {locale} = useLocale();
   let dayOfWeek = getDayOfWeek(props.date, locale);
-  let isRangeStart = isSelected && (dayOfWeek === 0 || props.date.day === 1);
-  let isRangeEnd = isSelected && (dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
+  let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
+  let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
 
   // For performance, reuse the same date object as before if the new date prop is the same.
@@ -74,8 +74,6 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
         className={classNames(styles, 'spectrum-Calendar-date', {
           'is-today': isToday(props.date, state.timeZone),
           'is-selected': isSelected,
-          'is-last-selected-before-disabled': isLastSelectedBeforeDisabled,
-          'is-first-selected-after-disabled': isFirstSelectedAfterDisabled,
           'is-focused': state.isCellFocused(props.date) && isFocusVisible,
           'is-disabled': isDisabled,
           'is-outsideMonth': !isSameMonth(props.date, currentMonth),
