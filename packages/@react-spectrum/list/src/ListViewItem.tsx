@@ -15,9 +15,9 @@ import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import type {DraggableItemResult} from '@react-aria/dnd';
-import DragHandle from './DragHandle';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+import ListGripper from '@spectrum-icons/ui/src/ListGripper';
 import listStyles from './listview.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
@@ -136,7 +136,7 @@ export function ListViewItem(props) {
                     style={!showDragHandle ? {...visuallyHiddenProps.style} : {}}
                     ref={dragButtonRef}
                     draggable="true">
-                    <DragHandle />
+                    <ListGripper />
                   </div>
                 </FocusRing>
               }
