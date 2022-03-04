@@ -24,12 +24,12 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import type {DraggableCollectionState} from '@react-stately/dnd';
-import DragHandle from './DragHandle';
 import {DragHooks} from '@react-spectrum/dnd';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import ListGripper from '@spectrum-icons/ui/src/ListGripper';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './listview.css';
@@ -176,7 +176,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             <div className={listStyles['react-spectrum-ListViewItem-grid']}>
               <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
                 <div className={listStyles['react-spectrum-ListViewItem-draghandle-button']}>
-                  <DragHandle />
+                  <ListGripper />
                 </div>
               </div>
               {showCheckbox &&
