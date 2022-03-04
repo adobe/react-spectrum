@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
+import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, getPlaceholderTime, useDefaultProps} from './utils';
 import {isInvalid} from './utils';
@@ -57,7 +57,7 @@ export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T
   }
 
   let commitValue = (date: DateValue, time: TimeValue) => {
-    setValue('timeZone' in time ? time.set(toDateFields(date)) : toCalendarDateTime(date, time));
+    setValue('timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time));
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar

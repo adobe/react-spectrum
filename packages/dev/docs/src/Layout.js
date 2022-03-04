@@ -35,6 +35,7 @@ import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
 
+const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
 const TLD = 'react-spectrum.adobe.com';
 const HERO = {
   'react-spectrum': heroImageSpectrum,
@@ -99,7 +100,7 @@ function isBlogSection(section) {
 function Page({children, currentPage, publicUrl, styles, scripts}) {
   let parts = currentPage.name.split('/');
   let isBlog = isBlogSection(parts[0]);
-  let isSubpage = parts.length > 1 && !/index\.html$/.test(currentPage.name);
+  let isSubpage = parts.length > 1 && !INDEX_RE.test(currentPage.name);
   let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
   if (isBlog && isSubpage) {
     pageSection = sectionTitles[parts[0]];
@@ -107,7 +108,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
 
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
-  let title = currentPage.title + (!/index\.html$/.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
+  let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
   let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
 
@@ -234,7 +235,6 @@ const CATEGORY_ORDER = [
 ];
 
 function Nav({currentPageName, pages}) {
-  let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
   let isBlog = isBlogSection(currentParts[0]);
   let blogIndex = currentParts[0] + '/index.html';
@@ -258,16 +258,16 @@ function Nav({currentPageName, pages}) {
 
     // Pages within same directory (react-spectrum/Alert.html)
     if (currentParts.length > 1) {
-      return currentDir === pageDir && !isIndex.test(p.name);
+      return currentDir === pageDir && !INDEX_RE.test(p.name);
     }
 
     // Top-level index pages (react-spectrum/index.html)
-    if (currentParts.length === 1 && pageParts.length > 1 && isIndex.test(p.name)) {
+    if (currentParts.length === 1 && pageParts.length > 1 && INDEX_RE.test(p.name)) {
       return true;
     }
 
     // Other top-level pages
-    return !isIndex.test(p.name) && pageParts.length === 1;
+    return !INDEX_RE.test(p.name) && pageParts.length === 1;
   });
 
   if (currentParts.length === 1) {
@@ -316,7 +316,13 @@ function Nav({currentPageName, pages}) {
   }
 
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
-  let currentPageIsIndex = isIndex.test(currentPageName);
+  let currentPageIsIndex = INDEX_RE.test(currentPageName);
+  let sectionIndex = './index.html';
+  if (isBlog) {
+    sectionIndex = '/index.html';
+  } else if (currentPageName.startsWith('internationalized/')) {
+    sectionIndex = '../index.html';
+  }
 
   function SideNavItem({name, url, title, preRelease}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
@@ -341,7 +347,7 @@ function Nav({currentPageName, pages}) {
             <ChevronLeft aria-label="Back" />
           </a>
         }
-        <a href={isBlog ? '/index.html' : './index.html'} className={docStyles.homeBtn} id="nav-title-id">
+        <a href={sectionIndex} className={docStyles.homeBtn} id="nav-title-id">
           <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -416,7 +422,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
 export function Layout(props) {
   return (
     <BaseLayout {...props}>
-      <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !props.currentPage.name.endsWith('index.html')})}>
+      <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(props.currentPage.name)})}>
         <VersionBadge version={props.currentPage.preRelease} size="large" />
         {props.children}
       </article>

@@ -11,7 +11,7 @@
  */
 
 import {createPlaceholderDate, FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
-import {DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
+import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
@@ -77,8 +77,8 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
 
   let commitValue = (dateRange: DateRange, timeRange: TimeRange) => {
     setValue({
-      start: 'timeZone' in timeRange.start ? timeRange.start.set(toDateFields(dateRange.start)) : toCalendarDateTime(dateRange.start, timeRange.start),
-      end: 'timeZone' in timeRange.end ? timeRange.end.set(toDateFields(dateRange.end)) : toCalendarDateTime(dateRange.end, timeRange.end)
+      start: 'timeZone' in timeRange.start ? timeRange.start.set(toCalendarDate(dateRange.start)) : toCalendarDateTime(dateRange.start, timeRange.start),
+      end: 'timeZone' in timeRange.end ? timeRange.end.set(toCalendarDate(dateRange.end)) : toCalendarDateTime(dateRange.end, timeRange.end)
     });
   };
 

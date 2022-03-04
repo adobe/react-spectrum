@@ -69,7 +69,14 @@ const DEFAULT_COLOR = parseColor('#ffffff');
  * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
  */
 export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
-  let {value, defaultValue, xChannel, yChannel, onChange, onChangeEnd, xChannelStep, yChannelStep} = props;
+  let {
+    value,
+    defaultValue,
+    xChannel,
+    yChannel,
+    onChange,
+    onChangeEnd
+  } = props;
 
   if (!value && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
@@ -88,17 +95,6 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let yChannelRange = color.getChannelRange(channels.yChannel);
   let {minValue: minValueX, maxValue: maxValueX, step: stepX, pageSize: pageSizeX} = xChannelRange;
   let {minValue: minValueY, maxValue: maxValueY, step: stepY, pageSize: pageSizeY} = yChannelRange;
-
-  if (isNaN(xChannelStep)) {
-    xChannelStep = stepX;
-  }
-
-  if (isNaN(yChannelStep)) {
-    yChannelStep = stepY;
-  }
-
-  let xChannelPageStep = Math.max(pageSizeX, xChannelStep);
-  let yChannelPageStep = Math.max(pageSizeY, yChannelStep);
 
   let [isDragging, setDragging] = useState(false);
   let isDraggingRef = useRef(false).current;
@@ -122,10 +118,10 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
 
   return {
     channels,
-    xChannelStep,
-    yChannelStep,
-    xChannelPageStep,
-    yChannelPageStep,
+    xChannelStep: stepX,
+    yChannelStep: stepY,
+    xChannelPageStep: pageSizeX,
+    yChannelPageStep: pageSizeY,
     value: color,
     setValue(value) {
       let c = normalizeColor(value);
@@ -142,12 +138,12 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       let newColor:Color;
       if (newXValue !== xValue) {
         // Round new value to multiple of step, clamp value between min and max
-        newXValue = snapValueToStep(newXValue, minValueX, maxValueX, xChannelStep);
+        newXValue = snapValueToStep(newXValue, minValueX, maxValueX, stepX);
         newColor = color.withChannelValue(channels.xChannel, newXValue);
       }
       if (newYValue !== yValue) {
         // Round new value to multiple of step, clamp value between min and max
-        newYValue = snapValueToStep(newYValue, minValueY, maxValueY, yChannelStep);
+        newYValue = snapValueToStep(newYValue, minValueY, maxValueY, stepY);
         newColor = (newColor || color).withChannelValue(channels.yChannel, newYValue);
       }
       if (newColor) {
@@ -160,16 +156,16 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
       return {x, y};
     },
     incrementX(stepSize) {
-      setXValue(snapValueToStep(xValue + stepSize, minValueX, maxValueX, stepSize));
+      setXValue(xValue + stepSize > maxValueX ? maxValueX : snapValueToStep(xValue + stepSize, minValueX, maxValueX, stepX));
     },
     incrementY(stepSize) {
-      setYValue(snapValueToStep(yValue + stepSize, minValueY, maxValueY, stepSize));
+      setYValue(yValue + stepSize > maxValueY ? maxValueY : snapValueToStep(yValue + stepSize, minValueY, maxValueY, stepY));
     },
     decrementX(stepSize) {
-      setXValue(snapValueToStep(xValue - stepSize, minValueX, maxValueX, stepSize));
+      setXValue(snapValueToStep(xValue - stepSize, minValueX, maxValueX, stepX));
     },
     decrementY(stepSize) {
-      setYValue(snapValueToStep(yValue - stepSize, minValueY, maxValueY, stepSize));
+      setYValue(snapValueToStep(yValue - stepSize, minValueY, maxValueY, stepY));
     },
     setDragging(isDragging) {
       let wasDragging = isDraggingRef;

@@ -14,7 +14,7 @@ import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInv
 import {
   Calendar,
   CalendarDate,
-  Duration,
+  DateDuration,
   GregorianCalendar,
   isSameDay,
   toCalendar,
@@ -30,7 +30,7 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
   locale: string,
   createCalendar: (name: string) => Calendar,
-  visibleDuration?: Duration,
+  visibleDuration?: DateDuration,
   selectionAlignment?: 'start' | 'center' | 'end'
 }
 
@@ -190,13 +190,13 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
       return isInvalid(date, minValue, maxValue);
     },
     isSelected(date) {
-      return calendarDateValue != null && isSameDay(date, calendarDateValue);
+      return calendarDateValue != null && isSameDay(date, calendarDateValue) && !this.isCellDisabled(date);
     },
     isCellFocused(date) {
       return isFocused && focusedDate && isSameDay(date, focusedDate);
     },
     isCellDisabled(date) {
-      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || isInvalid(date, minValue, maxValue);
+      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || isInvalid(date, minValue, maxValue) || (props.isDateDisabled && props.isDateDisabled(date));
     },
     isPreviousVisibleRangeInvalid() {
       return isInvalid(startDate.subtract({days: 1}), minValue, maxValue);

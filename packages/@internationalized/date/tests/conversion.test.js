@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {BuddhistCalendar, CalendarDate, CalendarDateTime, fromAbsolute, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, possibleAbsolutes, TaiwanCalendar, Time, toAbsolute, toCalendar, toCalendarDate, toCalendarDateTime, toDate, toTime, ZonedDateTime} from '..';
+import {BuddhistCalendar, CalendarDate, CalendarDateTime, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
+import {fromAbsolute, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
 
 describe('CalendarDate conversion', function () {
   describe('toAbsolute', function () {

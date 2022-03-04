@@ -85,14 +85,13 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
   let deg = radToDeg(Math.atan2(y / radius, x / radius));
   return (deg + 360) % 360;
 }
-const PAGE_MIN_STEP_SIZE = 6;
 
 /**
  * Provides state management for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
-  let {defaultValue, onChange, onChangeEnd, step = 1} = props;
+  let {defaultValue, onChange, onChangeEnd} = props;
 
   if (!props.value && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
@@ -119,7 +118,9 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     }
   }
 
-  let pageStep = PAGE_MIN_STEP_SIZE;
+  let channelRange = value.getChannelRange('hue');
+  let {minValue: minValueX, maxValue: maxValueX, step: step, pageSize: pageStep} = channelRange;
+
   return {
     value,
     step,
@@ -139,9 +140,9 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     },
     increment(stepSize) {
       let newValue = hue + Math.max(stepSize, step);
-      if (newValue > 360) {
+      if (newValue > maxValueX) {
         // Make sure you can always get back to 0.
-        newValue = 0;
+        newValue = minValueX;
       }
       setHue(newValue);
     },
