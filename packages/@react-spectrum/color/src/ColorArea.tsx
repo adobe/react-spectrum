@@ -41,9 +41,9 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
   let size = props.size && dimensionValue(props.size);
   let {styleProps} = useStyleProps(props);
 
-  let xInputRef = useRef(null);
-  let yInputRef = useRef(null);
-  let containerRef = useFocusableRef(ref, xInputRef);
+  let inputXRef = useRef();
+  let inputYRef = useRef();
+  let containerRef = useFocusableRef(ref, inputXRef);
 
   let state = useColorAreaState(props);
 
@@ -54,7 +54,7 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
     xInputProps,
     yInputProps,
     thumbProps
-  } = useColorArea(props, state, xInputRef, yInputRef, containerRef);
+  } = useColorArea({...props, inputXRef, inputYRef, containerRef}, state);
   let {direction} = useLocale();
   let {colorAreaStyleProps, gradientStyleProps, thumbStyleProps} = useGradients({direction, state, xChannel, zChannel, isDisabled: props.isDisabled});
 
@@ -91,8 +91,8 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
         {...thumbProps}
         {...thumbStyleProps}>
         <div role="presentation">
-          <input className={classNames(styles, 'spectrum-ColorArea-slider')} {...mergeProps(xInputProps, focusProps)} ref={xInputRef} />
-          <input className={classNames(styles, 'spectrum-ColorArea-slider')} {...mergeProps(yInputProps, focusProps)} ref={yInputRef} />
+          <input className={classNames(styles, 'spectrum-ColorArea-slider')} {...mergeProps(xInputProps, focusProps)} ref={inputXRef} />
+          <input className={classNames(styles, 'spectrum-ColorArea-slider')} {...mergeProps(yInputProps, focusProps)} ref={inputYRef} />
         </div>
       </ColorThumb>
     </div>

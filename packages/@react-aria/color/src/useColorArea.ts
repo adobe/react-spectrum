@@ -33,13 +33,25 @@ interface ColorAreaAria {
   yInputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
+interface ColorAreaAriaProps extends AriaColorAreaProps {
+  /** A ref to the input that represents the x axis of the color area. */
+  inputXRef: RefObject<HTMLElement>,
+  /** A ref to the input that represents the y axis of the color area. */
+  inputYRef: RefObject<HTMLElement>,
+  /** A ref to the color area containing element. */
+  containerRef: RefObject<HTMLElement>
+}
+
 /**
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, inputXRef: RefObject<HTMLElement>, inputYRef: RefObject<HTMLElement>, containerRef: RefObject<HTMLElement>): ColorAreaAria {
+export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): ColorAreaAria {
   let {
-    isDisabled
+    isDisabled,
+    inputXRef,
+    inputYRef,
+    containerRef
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
 
