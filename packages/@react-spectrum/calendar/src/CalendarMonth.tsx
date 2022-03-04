@@ -19,7 +19,7 @@ import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {useEffect, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useCalendarGrid} from '@react-aria/calendar';
-import {useDateFormatter, useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -35,14 +35,12 @@ export function CalendarMonth(props: CalendarMonthProps) {
     startDate
   } = props;
   let {
-    gridProps
+    gridProps,
+    weekDays
   } = useCalendarGrid({
     ...props,
     endDate: endOfMonth(startDate)
   }, state);
-
-  let dayFormatter = useDateFormatter({weekday: 'narrow'});
-  let dayFormatterLong = useDateFormatter({weekday: 'long'});
 
   let {locale} = useLocale();
   let monthStart = startOfWeek(startDate, locale);
@@ -73,23 +71,17 @@ export function CalendarMonth(props: CalendarMonthProps) {
       className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table', {'is-range-selecting': isRangeSelecting})}>
       <thead>
         <tr>
-          {[...new Array(7).keys()].map((index) => {
-            let date = monthStart.add({days: index});
-            let dateDay = date.toDate(state.timeZone);
-            let day = dayFormatter.format(dateDay);
-            let dayLong = dayFormatterLong.format(dateDay);
-            return (
-              <th
-                key={index}
-                className={classNames(styles, 'spectrum-Calendar-tableCell')}>
-                {/* Make sure screen readers read the full day name, but we show an abbreviation visually. */}
-                <VisuallyHidden>{dayLong}</VisuallyHidden>
-                <span aria-hidden="true" className={classNames(styles, 'spectrum-Calendar-dayOfWeek')}>
-                  {day}
-                </span>
-              </th>
-            );
-          })}
+          {weekDays.map((day, index) => (
+            <th
+              key={index}
+              className={classNames(styles, 'spectrum-Calendar-tableCell')}>
+              {/* Make sure screen readers read the full day name, but we show an abbreviation visually. */}
+              <VisuallyHidden>{day.long}</VisuallyHidden>
+              <span aria-hidden="true" className={classNames(styles, 'spectrum-Calendar-dayOfWeek')}>
+                {day.narrow}
+              </span>
+            </th>
+          ))}
         </tr>
       </thead>
       <tbody>

@@ -10,24 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, startOfWeek} from '@internationalized/date';
 import {CalendarGridAria} from './types';
 import {calendarIds, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
-import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {KeyboardEvent} from 'react';
 import {mergeProps, useDescription, useLabels} from '@react-aria/utils';
-import {useLocale} from '@react-aria/i18n';
+import {useDateFormatter, useLocale} from '@react-aria/i18n';
 
-interface CalendarGridProps extends CalendarPropsBase {
+interface CalendarGridProps {
+  /**
+   * The first date displayed in the calendar grid.
+   * Defaults to the first visible date in the calendar.
+   * Override this to display multiple date grids in a calendar.
+   */
   startDate?: CalendarDate,
+  /**
+   * The last date displayed in the calendar grid.
+   * Defaults to the last visible date in the calendar.
+   * Override this to display multiple date grids in a calendar.
+   */
   endDate?: CalendarDate
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a calendar grid component.
+ * A calendar grid displays a single grid of days within a calendar or range calendar which
+ * can be keyboard navigated and selected by the user.
+ */
 export function useCalendarGrid(props: CalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
   let {
-    isReadOnly = false,
-    isDisabled = false,
     startDate = state.visibleRange.start,
     endDate = state.visibleRange.end
   } = props;
@@ -108,15 +120,31 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
     'aria-labelledby': calendarIds.get(state)
   });
 
+  let dayFormatter = useDateFormatter({weekday: 'narrow'});
+  let dayFormatterLong = useDateFormatter({weekday: 'long'});
+  let {locale} = useLocale();
+  let weekStart = startOfWeek(state.visibleRange.start, locale);
+  let weekDays = [...new Array(7).keys()].map((index) => {
+    let date = weekStart.add({days: index});
+    let dateDay = date.toDate(state.timeZone);
+    let narrow = dayFormatter.format(dateDay);
+    let long = dayFormatterLong.format(dateDay);
+    return {
+      narrow,
+      long
+    };
+  });
+
   return {
     gridProps: mergeProps(descriptionProps, labelProps, {
       role: 'grid',
-      'aria-readonly': isReadOnly || null,
-      'aria-disabled': isDisabled || null,
+      'aria-readonly': state.isReadOnly || null,
+      'aria-disabled': state.isDisabled || null,
       'aria-multiselectable': ('highlightedRange' in state) || undefined,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
-    })
+    }),
+    weekDays
   };
 }

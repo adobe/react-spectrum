@@ -137,7 +137,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     getThumbPosition(radius) {
       return angleToCartesian(value.getChannelValue('hue'), radius);
     },
-    increment(stepSize) {
+    increment(stepSize = 1) {
       let s = Math.max(stepSize, step);
       let newValue = hue + s;
       if (newValue >= maxValueX) {
@@ -146,7 +146,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
       }
       setHue(roundToStep(mod(newValue, 360), s));
     },
-    decrement(stepSize) {
+    decrement(stepSize = 1) {
       let s = Math.max(stepSize, step);
       if (hue === 0) {
         // We can't just subtract step because this might be the case:
