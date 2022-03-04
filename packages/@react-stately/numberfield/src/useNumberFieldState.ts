@@ -104,16 +104,16 @@ export function useNumberFieldState(
   // Update the input value when the number value or format options change. This is done
   // in a useEffect so that the controlled behavior is correct and we only update the
   // textfield after prop changes.
-  let [prevValue, setPrevValue] = useState(numberValue);
-  let [prevLocale, setPrevLocale] = useState(locale);
-  let [prevFormatOptions, setPrevFormatOptions] = useState(formatOptions);
+  let prevValue = useRef(numberValue);
+  let prevLocale = useRef(locale);
+  let prevFormatOptions = useRef(formatOptions);
   // because NaN === NaN => false
-  let notEquivalent = isNaN(prevValue) || isNaN(numberValue) ? Boolean(isNaN(prevValue)) !== Boolean(isNaN(numberValue)) : numberValue !== prevValue;
-  if (notEquivalent || locale !== prevLocale || formatOptions !== prevFormatOptions) {
+  let notEquivalent = isNaN(prevValue.current) || isNaN(numberValue) ? Boolean(isNaN(prevValue.current)) !== Boolean(isNaN(numberValue)) : numberValue !== prevValue.current;
+  if (notEquivalent || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
     setInputValue(format(numberValue));
-    setPrevLocale(locale);
-    setPrevValue(numberValue);
-    setPrevFormatOptions(formatOptions);
+    prevValue.current = numberValue;
+    prevLocale.current = locale;
+    prevFormatOptions.current = formatOptions;
   }
 
   // Store last parsed value in a ref so it can be used by increment/decrement below
