@@ -301,9 +301,9 @@ describe('ColorSlider', () => {
       fireEvent.keyDown(slider, {key: 'PageDown'});
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(5);
-      expect(onChangeSpy.mock.calls[4][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 0).toString('hexa'));
+      expect(onChangeSpy.mock.calls[4][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(5);
-      expect(onChangeEndSpy.mock.calls[4][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 0).toString('hexa'));
+      expect(onChangeEndSpy.mock.calls[4][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
 
       fireEvent.keyDown(slider, {key: 'End'});
       act(() => {jest.runAllTimers();});
