@@ -80,12 +80,7 @@ export interface Color {
 
 export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
   /** Handler that is called when the value changes. */
-  onChange?: (color: Color | null) => void,
-  /**
-   * The step value to increment and decrement the color by when using the arrow keys.
-   * @default 1
-   */
-  step?: number
+  onChange?: (color: Color | null) => void
 }
 
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
@@ -103,11 +98,6 @@ export interface ColorWheelProps extends ValueBase<string | Color> {
   /** Handler that is called when the user stops dragging. */
   onChangeEnd?: (value: Color) => void,
   /**
-   * The ColorWheel's step value.
-   * @default 1
-   */
-  step?: number,
-  /**
    * The default value (uncontrolled).
    * @default 'hsl(0, 100%, 50%)'
    */
@@ -121,7 +111,7 @@ export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<Style
   size?: DimensionValue
 }
 
-export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue'> {
+export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue' | 'step' | 'pageSize'> {
   /** The color channel that the slider manipulates. */
   channel: ColorChannel,
   /** Handler that is called when the value changes, as the user drags. */
@@ -147,11 +137,7 @@ export interface ColorAreaProps extends ValueBase<string | Color> {
   /** Handler that is called when the value changes, as the user drags. */
   onChange?: (value: Color) => void,
   /** Handler that is called when the user stops dragging. */
-  onChangeEnd?: (value: Color) => void,
-  /** The step value for the xChannel. */
-  xChannelStep?: number,
-  /** The step value for the yChannel. */
-  yChannelStep?: number
+  onChangeEnd?: (value: Color) => void
 }
 
 export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {}
