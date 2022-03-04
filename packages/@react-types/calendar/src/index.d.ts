@@ -25,6 +25,8 @@ export interface CalendarPropsBase {
   minValue?: DateValue,
   /** The maximum allowed date that a user may select. */
   maxValue?: DateValue,
+  /** Callback that is called for each date of the calendar. If it returns true, then the date is disabled. */
+  isDateDisabled?: (date: DateValue) => boolean,
   /**
    * Whether the calendar is disabled.
    * @default false

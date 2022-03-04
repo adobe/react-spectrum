@@ -42,7 +42,7 @@
   font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
   font-weight: var(--spectrum-table-cell-text-font-weight, var(--spectrum-global-font-weight-regular));
   line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
-  padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-250);
+  padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-150);
   transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
   position: relative;
   /*background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));*/

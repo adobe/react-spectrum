@@ -93,7 +93,7 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
       }
     },
     isSelected(date) {
-      return highlightedRange && date.compare(highlightedRange.start) >= 0 && date.compare(highlightedRange.end) <= 0;
+      return highlightedRange && date.compare(highlightedRange.start) >= 0 && date.compare(highlightedRange.end) <= 0 && !calendar.isCellDisabled(date);
     },
     isDragging,
     setDragging

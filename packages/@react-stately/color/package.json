@@ -20,7 +20,6 @@
     "@babel/runtime": "^7.6.2",
     "@internationalized/message": "^3.0.2",
     "@internationalized/number": "^3.0.3",
-    "@react-aria/utils": "^3.9.0",
     "@react-stately/slider": "^3.0.3",
     "@react-stately/utils": "^3.3.0",
     "@react-types/color": "3.0.0-beta.5",
