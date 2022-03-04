@@ -11,7 +11,7 @@
  */
 
 import {ColorArea} from '../';
-import {XBlueYGreen as DefaultColorArea} from '../stories/ColorArea.stories';
+import {XBlueYGreen as DefaultColorArea, XSaturationYBrightness, XSaturationYLightness} from '../stories/ColorArea.stories';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {fireEvent, render} from '@testing-library/react';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
@@ -426,7 +426,7 @@ describe('ColorArea', () => {
     });
   });
   describe('full implementation controlled', () => {
-    it('sets input props', () => {
+    it('sets input props rgb', () => {
       let {getAllByRole, getByLabelText} = render(<DefaultColorArea {...DefaultColorArea.args} />);
       let sliders = getAllByRole('slider');
 
@@ -455,6 +455,66 @@ describe('ColorArea', () => {
       expect(zSlider).toHaveAttribute('max', '255');
       expect(zSlider).toHaveAttribute('step', '1');
       expect(zSlider).toHaveAttribute('aria-valuetext', '255');
+    });
+    it('sets input props hsb', () => {
+      let {getAllByRole, getByLabelText} = render(<XSaturationYBrightness {...XSaturationYBrightness.args} />);
+      let sliders = getAllByRole('slider');
+
+      expect(sliders.length).toBe(3);
+      let [xSlider, ySlider, zSlider] = sliders;
+
+      expect(xSlider).toHaveAttribute('type', 'range');
+      expect(xSlider).toHaveAttribute('aria-label', 'Saturation / Brightness');
+      expect(xSlider).toHaveAttribute('min', '0');
+      expect(xSlider).toHaveAttribute('max', '100');
+      expect(xSlider).toHaveAttribute('step', '1');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Brightness: 100%');
+
+      expect(ySlider).toHaveAttribute('type', 'range');
+      expect(ySlider).toHaveAttribute('aria-label', 'Saturation / Brightness');
+      expect(ySlider).toHaveAttribute('min', '0');
+      expect(ySlider).toHaveAttribute('max', '100');
+      expect(ySlider).toHaveAttribute('step', '1');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Brightness: 100%, Saturation: 100%');
+
+      let hueSlider = getByLabelText('Hue', {selector: 'input'});
+      expect(zSlider).toHaveAttribute('type', 'range');
+      expect(zSlider).toHaveAttribute('aria-label', 'Hue');
+      expect(zSlider).toBe(hueSlider);
+      expect(zSlider).toHaveAttribute('min', '0');
+      expect(zSlider).toHaveAttribute('max', '360');
+      expect(zSlider).toHaveAttribute('step', '1');
+      expect(zSlider).toHaveAttribute('aria-valuetext', '0°');
+    });
+    it('sets input props hsl', () => {
+      let {getAllByRole, getByLabelText} = render(<XSaturationYLightness {...XSaturationYLightness.args} />);
+      let sliders = getAllByRole('slider');
+
+      expect(sliders.length).toBe(3);
+      let [xSlider, ySlider, zSlider] = sliders;
+
+      expect(xSlider).toHaveAttribute('type', 'range');
+      expect(xSlider).toHaveAttribute('aria-label', 'Saturation / Lightness');
+      expect(xSlider).toHaveAttribute('min', '0');
+      expect(xSlider).toHaveAttribute('max', '100');
+      expect(xSlider).toHaveAttribute('step', '1');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Lightness: 50%');
+
+      expect(ySlider).toHaveAttribute('type', 'range');
+      expect(ySlider).toHaveAttribute('aria-label', 'Saturation / Lightness');
+      expect(ySlider).toHaveAttribute('min', '0');
+      expect(ySlider).toHaveAttribute('max', '100');
+      expect(ySlider).toHaveAttribute('step', '1');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Lightness: 50%, Saturation: 100%');
+
+      let hueSlider = getByLabelText('Hue', {selector: 'input'});
+      expect(zSlider).toHaveAttribute('type', 'range');
+      expect(zSlider).toHaveAttribute('aria-label', 'Hue');
+      expect(zSlider).toBe(hueSlider);
+      expect(zSlider).toHaveAttribute('min', '0');
+      expect(zSlider).toHaveAttribute('max', '360');
+      expect(zSlider).toHaveAttribute('step', '1');
+      expect(zSlider).toHaveAttribute('aria-valuetext', '0°');
     });
 
     it('the slider is focusable', () => {
