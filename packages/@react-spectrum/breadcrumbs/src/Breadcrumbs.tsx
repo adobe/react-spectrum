@@ -27,7 +27,7 @@ const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
 
 function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
-  props = useProviderProps(props);  
+  props = useProviderProps(props);
   let {
     size = 'L',
     isMultiline,
