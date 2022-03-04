@@ -76,7 +76,7 @@ const StoryFn = ({storyFn}) => storyFn();
 
 export default {
   title: 'CardView/Grid layout',
-  excludeStories: ['NoCards', 'CustomLayout'],
+  excludeStories: ['NoCards', 'CustomLayout', 'falsyItems'],
   decorators: [storyFn => <StoryFn storyFn={storyFn} />]
 };
 

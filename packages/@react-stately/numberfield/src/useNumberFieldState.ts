@@ -13,7 +13,8 @@
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export interface NumberFieldState {
   /**
@@ -104,7 +105,7 @@ export function useNumberFieldState(
   // Update the input value when the number value or format options change. This is done
   // in a useEffect so that the controlled behavior is correct and we only update the
   // textfield after prop changes.
-  useEffect(() => {
+  useLayoutEffect(() => {
     setInputValue(format(numberValue));
   }, [numberValue, locale, formatOptions]);
 

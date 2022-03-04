@@ -17,20 +17,45 @@ import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
-import {PressProps, usePress} from '@react-aria/interactions';
 import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
+import {usePress} from '@react-aria/interactions';
 
 export interface AriaCalendarCellProps {
+  /** The date that this cell represents. */
   date: CalendarDate,
+  /**
+   * Whether the cell is disabled. By default, this is determined by the
+   * Calendar's `minValue`, `maxValue`, and `isDisabled` props.
+   */
   isDisabled?: boolean
 }
 
 interface CalendarCellAria {
-  cellProps: PressProps & HTMLAttributes<HTMLElement>,
+  /** Props for the grid cell element (e.g. `<td>`). */
+  cellProps: HTMLAttributes<HTMLElement>,
+  /** Props for the button element within the cell. */
   buttonProps: HTMLAttributes<HTMLElement>,
-  isPressed: boolean
+  /** Whether the cell is currently being pressed. */
+  isPressed: boolean,
+  /** Whether the cell is selected. */
+  isSelected: boolean,
+  /** Whether the cell is focused. */
+  isFocused: boolean,
+  /** Whether the cell is disabled. */
+  isDisabled: boolean,
+  /**
+   * Whether the cell is outside the visible range of the calendar.
+   * For example, dates before the first day of a month in the same week.
+   */
+  isOutsideVisibleRange: boolean,
+  /** The day number formatted according to the current locale. */
+  formattedDate: string
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a calendar cell component.
+ * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
+ */
 export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
   let {date, isDisabled} = props;
   let formatMessage = useMessageFormatter(intlMessages);
@@ -204,6 +229,14 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     }
   }, [isFocused, ref]);
 
+  let cellDateFormatter = useDateFormatter({
+    day: 'numeric',
+    timeZone: state.timeZone,
+    calendar: date.calendar.identifier
+  });
+
+  let formattedDate = useMemo(() => cellDateFormatter.format(nativeDate), [cellDateFormatter, nativeDate]);
+
   return {
     cellProps: {
       role: 'gridcell',
@@ -239,6 +272,11 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
         e.preventDefault();
       }
     }),
-    isPressed
+    isPressed,
+    isFocused,
+    isSelected,
+    isDisabled,
+    isOutsideVisibleRange: date.compare(state.visibleRange.start) < 0 || date.compare(state.visibleRange.end) > 0,
+    formattedDate
   };
 }

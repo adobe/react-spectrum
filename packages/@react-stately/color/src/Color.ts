@@ -237,7 +237,7 @@ class RGBColor extends Color {
       case 'red':
       case 'green':
       case 'blue':
-        return {minValue: 0, maxValue: 255, step: 1, pageSize: 0x10};
+        return {minValue: 0x0, maxValue: 0xFF, step: 0x1, pageSize: 0x11};
       case 'alpha':
         return {minValue: 0, maxValue: 1, step: 0.01, pageSize: 0.1};
       default:

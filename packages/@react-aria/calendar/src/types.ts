@@ -14,12 +14,27 @@ import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes} from 'react';
 
 export interface CalendarAria {
+  /** Props for the calendar grouping element. */
   calendarProps: HTMLAttributes<HTMLElement>,
+  /** Props for the next button. */
   nextButtonProps: AriaButtonProps,
-  prevButtonProps: AriaButtonProps
+  /** Props for the previous button. */
+  prevButtonProps: AriaButtonProps,
+  /** A description of the visible date range, for use in the calendar title. */
+  title: string
 }
 
 
 export interface CalendarGridAria {
-  gridProps: HTMLAttributes<HTMLElement>
+  /** Props for the date grid element (e.g. `<table>`). */
+  gridProps: HTMLAttributes<HTMLElement>,
+  /** A list of week days formatted for the current locale, typically used in column headers. */
+  weekDays: WeekDay[]
+}
+
+interface WeekDay {
+  /** A short name (e.g. single letter) for the day. */
+  narrow: string,
+  /** The full day name. If not displayed visually, it should be used as the accessiblity name. */
+  long: string
 }
