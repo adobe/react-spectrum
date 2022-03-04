@@ -10,16 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '../';
 import {Meta, Story} from '@storybook/react';
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, RefObject, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 const dialogsRoot = 'dialogsRoot';
 
 interface StoryProps {
   usePortal: boolean,
-  contain: boolean
+  contain: boolean,
+  useRestoreFocusRef: boolean
 }
 
 const meta: Meta<StoryProps> = {
@@ -34,7 +36,7 @@ const meta: Meta<StoryProps> = {
 
 export default meta;
 
-const Template = (): Story<StoryProps> => ({usePortal, contain = true}) => <Example usePortal={usePortal} contain={contain} />;
+const Template = (): Story<StoryProps> => ({usePortal, contain = true, useRestoreFocusRef}) => <Example usePortal={usePortal} contain={contain} useRestoreFocusRef={useRestoreFocusRef} />;
 
 function MaybePortal({children, usePortal}: { children: ReactNode, usePortal: boolean}) {
   if (!usePortal) {
@@ -47,7 +49,7 @@ function MaybePortal({children, usePortal}: { children: ReactNode, usePortal: bo
   );
 }
 
-function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, usePortal: boolean, contain: boolean}) {
+function NestedDialog({onClose, usePortal, contain, restoreFocus = true}: {onClose: VoidFunction, usePortal: boolean, contain: boolean, restoreFocus?: boolean | RefObject<DOMRefValue<HTMLElement>> | RefObject<HTMLElement>}) {
   let [open, setOpen] = useState(false);
   let [showNew, setShowNew] = useState(false);
   let onKeyDown = (e) => {
@@ -59,8 +61,9 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
 
   return (
     <MaybePortal usePortal={usePortal}>
-      <FocusScope contain={contain} restoreFocus autoFocus>
+      <FocusScope contain={contain} restoreFocus={restoreFocus} autoFocus>
         {!showNew && (
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
           <div role="dialog" onKeyDown={onKeyDown}>
             <input />
             <input />
@@ -72,10 +75,11 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
             <button type="button" onClick={onClose}>
               close
             </button>
-            {open && <NestedDialog contain={contain} onClose={() => setOpen(false)} usePortal={usePortal} />}
+            {open && <NestedDialog contain={contain} restoreFocus={restoreFocus} onClose={() => setOpen(false)} usePortal={usePortal} />}
           </div>
         )}
         {showNew && (
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
           <div role="dialog" onKeyDown={onKeyDown}>
             <input />
             <input autoFocus />
@@ -87,8 +91,9 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
   );
 }
 
-function Example({usePortal, contain}: StoryProps) {
+function Example({usePortal, contain, useRestoreFocusRef = false}: StoryProps) {
   let [open, setOpen] = useState(false);
+  let restoreFocusRef = useRef(null);
 
   return (
     <div>
@@ -97,8 +102,10 @@ function Example({usePortal, contain}: StoryProps) {
       <button type="button" onClick={() => setOpen(true)}>
         Open dialog
       </button>
-      <input />
-      {open && <NestedDialog onClose={() => setOpen(false)} usePortal={usePortal} contain={contain} />}
+
+      {useRestoreFocusRef ? <input ref={restoreFocusRef} placeholder="Restore focus here!" /> : <input />}
+
+      {open && <NestedDialog onClose={() => setOpen(false)} usePortal={usePortal} contain={contain} restoreFocus={useRestoreFocusRef ? restoreFocusRef : true} />}
 
       <div id={dialogsRoot} />
     </div>
@@ -116,3 +123,9 @@ KeyboardNavigationNoContain.args = {usePortal: false, contain: false};
 
 export const KeyboardNavigationInsidePortalNoContain = Template().bind({});
 KeyboardNavigationInsidePortalNoContain.args = {usePortal: true, contain: false};
+
+export const RestoreFocusRef = Template().bind({});
+RestoreFocusRef.args = {usePortal: false, useRestoreFocusRef: true};
+
+export const RestoreFocusRefInsidePortal = Template().bind({});
+RestoreFocusRefInsidePortal.args = {usePortal: true, useRestoreFocusRef: true};

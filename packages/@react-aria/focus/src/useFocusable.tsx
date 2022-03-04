@@ -76,7 +76,7 @@ export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElem
       domRef.current.focus();
     }
     autoFocusRef.current = false;
-  }, []);
+  }, [domRef]);
 
   return {
     focusableProps: mergeProps(

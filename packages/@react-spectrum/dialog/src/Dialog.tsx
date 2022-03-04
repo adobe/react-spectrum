@@ -45,6 +45,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     isDismissable = contextProps.isDismissable,
     onDismiss = contextProps.onClose,
     size,
+    restoreFocus = true,
     ...otherProps
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
@@ -79,7 +80,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   }
 
   return (
-    <FocusScope contain restoreFocus>
+    <FocusScope contain restoreFocus={restoreFocus}>
       <section
         {...styleProps}
         {...dialogProps}

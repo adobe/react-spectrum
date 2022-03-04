@@ -5,7 +5,7 @@ import {Dialog, DialogContainer, useDialogContainer} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import React from 'react';
+import React, {useRef} from 'react';
 
 export function DialogContainerExample(props) {
   let [isOpen, setOpen] = React.useState(false);
@@ -58,5 +58,108 @@ function ExampleDialog(props) {
         </ButtonGroup>
       }
     </Dialog>
+  );
+}
+
+
+export function NestedDialogContainerExample(props) {
+  let {useRestoreFocusRef = false} = props;
+  let [dialog, setDialog] = React.useState(null);
+  let [shouldUseRestoreFocusRef, setShouldUseRestoreFocusRef] = React.useState(useRestoreFocusRef);
+  let triggerRef = useRef();
+  let afterThisRef = useRef();
+  let afterThatRef = useRef();
+  let dismiss = () => {
+    if (!useRestoreFocusRef) {
+      setDialog(null);
+      return;
+    }
+    setShouldUseRestoreFocusRef(false);
+    requestAnimationFrame(() => {
+      setDialog(null);
+      setShouldUseRestoreFocusRef(true);
+    });
+  };
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton aria-label="Actions" ref={triggerRef}>Open menu</ActionButton>
+        <Menu onAction={setDialog}>
+          <Item key="doThis">Do this…</Item>
+          <Item key="doThat">Do that…</Item>
+        </Menu>
+      </MenuTrigger>
+      {useRestoreFocusRef &&
+        <>
+          <input ref={afterThisRef} placeholder="Focus after this" />
+          <input ref={afterThatRef} placeholder="Focus after that" />
+        </>
+      }
+      <DialogContainer onDismiss={dismiss}>
+        {dialog === 'doThis' &&
+          <Dialog
+            onDismiss={dismiss}
+            {
+              ...(
+                useRestoreFocusRef ?
+                {
+                  restoreFocus: (shouldUseRestoreFocusRef ? afterThisRef : triggerRef)
+                } : {
+                  isDismissable: true
+                }
+              )
+            }>
+            <Heading>This</Heading>
+            <Divider />
+            {useRestoreFocusRef ? (
+              <>
+                <Content><Text>Press “Do that” button to open a secondary dialog, or “This” button to “Do this.”</Text></Content>
+                <ButtonGroup>
+                  <Button variant="secondary" onPress={() => setDialog('doThat')} autoFocus>Do that</Button>
+                  <Button variant="secondary" onPress={dismiss}>Cancel</Button>
+                  <Button variant="cta" onPress={() => setDialog(null)}>This</Button>
+                </ButtonGroup>
+              </>
+            ) : (
+              <Content>
+                <ActionButton onPress={() => setDialog('doThat')} autoFocus>Do that</ActionButton>
+              </Content>
+            )}
+          </Dialog>
+        }
+        {dialog === 'doThat' &&
+          <Dialog
+            onDismiss={dismiss}
+            {
+              ...(
+                useRestoreFocusRef ?
+                {
+                  restoreFocus: (shouldUseRestoreFocusRef ? afterThatRef : triggerRef)
+                } : {
+                  isDismissable: true
+                }
+              )
+            }>
+            <Heading>That</Heading>
+            <Divider />
+            {useRestoreFocusRef ? (
+              <>
+                <Content><Text>Press “Do this” button to open a secondary dialog, or “That” button to “Do that.”</Text></Content>
+                <ButtonGroup>
+                  <Button variant="secondary" onPress={() => setDialog('doThis')} autoFocus>Do this</Button>
+                  <Button variant="secondary" onPress={dismiss}>Cancel</Button>
+                  <Button variant="cta" onPress={() => setDialog(null)}>That</Button>
+                </ButtonGroup>
+              </>
+            ) : (
+              <Content>
+                <ActionButton onPress={() => setDialog('doThis')} autoFocus>Do this</ActionButton>
+              </Content>
+            )}
+          </Dialog>
+        }
+      </DialogContainer>
+    </>
   );
 }

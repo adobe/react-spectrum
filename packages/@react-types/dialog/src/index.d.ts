@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRefValue, StyleProps} from '@react-types/shared';
 import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode, RefObject} from 'react';
 
@@ -70,11 +70,17 @@ export interface SpectrumDialogProps extends AriaDialogProps, StyleProps {
   /** Whether the Dialog is dismissable. See the [examples](#examples) for more details. */
   isDismissable?: boolean,
   /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
-  onDismiss?: () => void
+  onDismiss?: () => void,
+  /**
+   * Whether to restore focus back to the element that was focused
+   * when the focus scope mounted, after the focus scope unmounts.
+   * Optionally accepts a RefObject for the element that should receive focus.
+   */
+  restoreFocus?: boolean | RefObject<DOMRefValue<HTMLElement>> | RefObject<HTMLElement>
 }
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
-  /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
+  /** The [visual style](https://spectrum.adobe.com/page/dialog/#Options) of the AlertDialog.  */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning',
   /** The title of the AlertDialog. */
   title: string,
