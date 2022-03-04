@@ -51,7 +51,7 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
       setColor(color.withChannelValue(channel, v));
     },
     onChangeEnd([v]) {
-      // onChange will have already been called with the right value, this is just to trigger onChangEnd
+      // onChange will have already been called with the right value, this is just to trigger onChangeEnd
       if (props.onChangeEnd) {
         props.onChangeEnd(color.withChannelValue(channel, v));
       }
