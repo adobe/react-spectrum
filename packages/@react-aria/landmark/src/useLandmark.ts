@@ -103,17 +103,15 @@ class LandmarkManager {
     // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
     let start = 0;
     let end = this.landmarks.length - 1;
-    let insertPosition: number;
-    let comparedPosition: number;
     while (start <= end) { 
-      insertPosition = Math.floor((start + end) / 2);
-      comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
+      let mid = Math.floor((start + end) / 2);
+      let comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[mid].ref.current as Node);
       let isNewAfterExisting = Boolean((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) || (comparedPosition & Node.DOCUMENT_POSITION_CONTAINS));
 
       if (isNewAfterExisting) {
-        start = insertPosition + 1;
+        start = mid + 1;
       } else {
-        end = insertPosition - 1;
+        end = mid - 1;
       }
     }
 
