@@ -45,7 +45,7 @@ after_version: 3.0.0
 
 A `Calendar` has no selection by default. An initial, uncontrolled value can be provided to the `Calendar` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
 
-Date values are provided using objects in the `@internationalized/date` package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
+Date values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
 
 `Calendar` supports values with both date and time components, but only allows users to modify the date. By default, `Calendar` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the date and preserving the time components.
 
@@ -142,6 +142,19 @@ import {today} from '@internationalized/date';
 
 ```tsx example
 <Calendar aria-label="Event date" isDisabled />
+```
+
+The `isDateDisabled` callback prop acts like a filter function. It is called for each visible date and if it returns `true`, the date cell is disabled.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+const isDateDisabled = (date) => {
+  const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({ weeks: 1 })], [today(getLocalTimeZone()).add({ weeks: 2 }), today(getLocalTimeZone()).add({ weeks: 3 })]];
+  return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+}
+
+<Calendar aria-label="Event date" visibleMonths={2} isDateDisabled={isDateDisabled} />
 ```
 
 ### Read only

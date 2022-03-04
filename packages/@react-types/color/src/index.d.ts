@@ -78,9 +78,9 @@ export interface Color {
   formatChannelValue(channel: ColorChannel, locale: string): string
 }
 
-export interface ColorFieldProps extends Omit<ValueBase<string | Color>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
+export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
   /** Handler that is called when the value changes. */
-  onChange?: (color: Color) => void,
+  onChange?: (color: Color | null) => void,
   /**
    * The step value to increment and decrement the color by when using the arrow keys.
    * @default 1
@@ -102,11 +102,6 @@ export interface ColorWheelProps extends ValueBase<string | Color> {
   onChange?: (value: Color) => void,
   /** Handler that is called when the user stops dragging. */
   onChangeEnd?: (value: Color) => void,
-  /**
-   * The ColorWheel's step value.
-   * @default 1
-   */
-  step?: number,
   /**
    * The default value (uncontrolled).
    * @default 'hsl(0, 100%, 50%)'
@@ -147,11 +142,7 @@ export interface ColorAreaProps extends ValueBase<string | Color> {
   /** Handler that is called when the value changes, as the user drags. */
   onChange?: (value: Color) => void,
   /** Handler that is called when the user stops dragging. */
-  onChangeEnd?: (value: Color) => void,
-  /** The step value for the xChannel. */
-  xChannelStep?: number,
-  /** The step value for the yChannel. */
-  yChannelStep?: number
+  onChangeEnd?: (value: Color) => void
 }
 
 export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {}

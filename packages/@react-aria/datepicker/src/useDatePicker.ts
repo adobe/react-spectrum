@@ -13,9 +13,10 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-types/dialog';
+import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useDescription, useId} from '@react-aria/utils';
@@ -23,19 +24,30 @@ import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
-interface DatePickerAria<T extends DateValue> {
+interface DatePickerAria {
+  /** Props for the date picker's visible label element, if any. */
+  labelProps: HTMLAttributes<HTMLElement>,
+  /** Props for the grouping element containing the date field and button. */
   groupProps: HTMLAttributes<HTMLElement>,
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  fieldProps: AriaDatePickerProps<T>,
+  /** Props for the date field. */
+  fieldProps: AriaDatePickerProps<DateValue>,
+  /** Props for the popover trigger button. */
+  buttonProps: AriaButtonProps,
   /** Props for the description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
   /** Props for the error message element, if any. */
   errorMessageProps: HTMLAttributes<HTMLElement>,
-  buttonProps: AriaButtonProps,
-  dialogProps: AriaDialogProps
+  /** Props for the popover dialog. */
+  dialogProps: AriaDialogProps,
+  /** Props for the calendar within the popover dialog. */
+  calendarProps: CalendarProps<DateValue>
 }
 
-export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<HTMLElement>): DatePickerAria<T> {
+/**
+ * Provides the behavior and accessibility implementation for a date picker component.
+ * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ */
+export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<HTMLElement>): DatePickerAria {
   let buttonId = useId();
   let dialogId = useId();
   let formatMessage = useMessageFormatter(intlMessages);
@@ -67,7 +79,22 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
         focusManager.focusFirst();
       }
     },
-    fieldProps,
+    fieldProps: {
+      ...fieldProps,
+      value: state.value,
+      onChange: state.setValue,
+      minValue: props.minValue,
+      maxValue: props.maxValue,
+      placeholderValue: props.placeholderValue,
+      hideTimeZone: props.hideTimeZone,
+      hourCycle: props.hourCycle,
+      granularity: props.granularity,
+      isDisabled: props.isDisabled,
+      isReadOnly: props.isReadOnly,
+      isRequired: props.isRequired,
+      validationState: state.validationState,
+      autoFocus: props.autoFocus
+    },
     descriptionProps,
     errorMessageProps,
     buttonProps: {
@@ -77,11 +104,22 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,
-      'aria-describedby': ariaDescribedBy
+      'aria-describedby': ariaDescribedBy,
+      onPress: () => state.setOpen(true)
     },
     dialogProps: {
       id: dialogId,
       'aria-labelledby': `${labelledBy} ${buttonId}`
+    },
+    calendarProps: {
+      autoFocus: true,
+      value: state.dateValue,
+      onChange: state.setDateValue,
+      minValue: props.minValue,
+      maxValue: props.maxValue,
+      isDisabled: props.isDisabled,
+      isReadOnly: props.isReadOnly,
+      isDateDisabled: props.isDateDisabled
     }
   };
 }
