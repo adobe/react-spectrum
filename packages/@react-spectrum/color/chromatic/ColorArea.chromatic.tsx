@@ -143,7 +143,6 @@ export let XBlueYGreenSize600 = Template.bind({});
 XBlueYGreenSize600.storyName = 'RGB xChannel="blue", yChannel="green", size="size-600"';
 XBlueYGreenSize600.args = {...XBlueYGreen.args, size: 'size-600'};
 
-
 export let XSaturationYLightness = Template.bind({});
 XSaturationYLightness.storyName = 'HSL xChannel="saturation", yChannel="lightness"';
 XSaturationYLightness.args = {...XBlueYGreen.args, xChannel: 'saturation', yChannel: 'lightness', defaultValue: 'hsl(0, 100%, 50%)'};
@@ -176,7 +175,6 @@ export let XBrightnessYSaturation = Template.bind({});
 XBrightnessYSaturation.storyName = 'HSB xChannel="brightness", yChannel="saturation"';
 XBrightnessYSaturation.args = {...XHueYSaturationHSL.args, xChannel: 'brightness', yChannel: 'saturation', defaultValue: 'hsb(0, 100%, 100%)'};
 
-/* TODO: what does a disabled color area look like? */
 export let XSaturationYBrightnessisDisabled = Template.bind({});
 XSaturationYBrightnessisDisabled.storyName = 'HSB xChannel="saturation", yChannel="brightness", isDisabled';
 XSaturationYBrightnessisDisabled.args = {...XSaturationYBrightness.args, isDisabled: true};
