@@ -158,24 +158,6 @@ describe('ColorWheel', () => {
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 359).toString('hsla'));
     });
 
-    it('respects step', () => {
-      let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} step={45} />);
-      let slider = getByRole('slider');
-      act(() => {slider.focus();});
-
-      fireEvent.keyDown(slider, {key: 'Right'});
-      expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 45).toString('hsla'));
-      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 45).toString('hsla'));
-      fireEvent.keyDown(slider, {key: 'Left'});
-      expect(onChangeSpy).toHaveBeenCalledTimes(2);
-      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
-      expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
-      expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
-    });
-
     it('respects page steps', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
@@ -185,9 +167,9 @@ describe('ColorWheel', () => {
       fireEvent.keyDown(slider, {key: 'PageUp'});
       fireEvent.keyUp(slider, {key: 'PageUp'});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 6).toString('hsla'));
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 6).toString('hsla'));
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
       fireEvent.keyDown(slider, {key: 'PageDown'});
       fireEvent.keyUp(slider, {key: 'PageDown'});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
@@ -205,9 +187,9 @@ describe('ColorWheel', () => {
       fireEvent.keyDown(slider, {key: 'Right', shiftKey: true});
       fireEvent.keyUp(slider, {key: 'Right', shiftKey: true});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 6).toString('hsla'));
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 6).toString('hsla'));
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
       fireEvent.keyDown(slider, {key: 'Left', shiftKey: true});
       fireEvent.keyUp(slider, {key: 'Left', shiftKey: true});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
@@ -286,23 +268,6 @@ describe('ColorWheel', () => {
       expect(document.activeElement).not.toBe(slider);
     });
 
-    it('dragging the thumb respects the step', () => {
-      let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
-      let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
-      let thumb = slider.parentElement;
-      container.getBoundingClientRect = getBoundingClientRect;
-
-      start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-      expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 120).toString('hsla'));
-      end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    });
-
     it('clicking and dragging on the track works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
@@ -346,24 +311,6 @@ describe('ColorWheel', () => {
       end(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
       expect(document.activeElement).not.toBe(slider);
-    });
-
-    it('clicking and dragging on the track respects the step', () => {
-      let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
-      let slider = getByRole('slider');
-      let thumb = slider.parentElement;
-      let container = _container.firstChild.firstChild as HTMLElement;
-      container.getBoundingClientRect = getBoundingClientRect;
-
-      start(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 120).toString('hsla'));
-      move(thumb, {pageX: CENTER, pageY: CENTER - THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(2);
-      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 240).toString('hsla'));
-      end(thumb, {pageX: CENTER, pageY: CENTER - THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(2);
     });
 
     it('clicking on the track works', () => {
