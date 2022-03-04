@@ -59,7 +59,7 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
    * The behavior of the button when used in an HTML form.
    * @default 'button'
    */
-  type?: 'button' | 'submit' | 'reset'
+  type?: string
 }
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
