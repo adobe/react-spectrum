@@ -13,7 +13,7 @@
 import {clamp, snapValueToStep} from '@react-aria/utils';
 import {SliderProps} from '@react-types/slider';
 import {useControlledState} from '@react-stately/utils';
-import {useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 export interface SliderState {
   /**
@@ -163,9 +163,12 @@ export function useSliderState(props: SliderStateOptions): SliderState {
   } = props;
 
   // Page step should be at least equal to step and always a multiple of the step.
-  let pageSize = (maxValue - minValue) / 10;
-  pageSize = snapValueToStep(pageSize, 0, pageSize + step, step);
-  pageSize = Math.max(pageSize, step);
+  let pageSize = useMemo(() => {
+    let calcPageSize = (maxValue - minValue) / 10;
+    calcPageSize = snapValueToStep(calcPageSize, 0, calcPageSize + step, step);
+    return Math.max(calcPageSize, step);
+  }, [step, maxValue, minValue]);
+
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
     props.defaultValue ?? [minValue] as any,
