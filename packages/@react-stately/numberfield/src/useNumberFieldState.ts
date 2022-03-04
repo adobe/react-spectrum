@@ -107,9 +107,7 @@ export function useNumberFieldState(
   let prevValue = useRef(numberValue);
   let prevLocale = useRef(locale);
   let prevFormatOptions = useRef(formatOptions);
-  // because NaN === NaN => false
-  let notEquivalent = isNaN(prevValue.current) || isNaN(numberValue) ? Boolean(isNaN(prevValue.current)) !== Boolean(isNaN(numberValue)) : numberValue !== prevValue.current;
-  if (notEquivalent || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
+  if (!Object.is(numberValue, prevValue.current) || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
     setInputValue(format(numberValue));
     prevValue.current = numberValue;
     prevLocale.current = locale;
