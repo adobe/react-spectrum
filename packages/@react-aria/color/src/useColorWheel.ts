@@ -40,7 +40,6 @@ interface ColorWheelAria {
 export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState, inputRef: RefObject<HTMLElement>): ColorWheelAria {
   let {
     isDisabled,
-    step = 1,
     innerRadius,
     outerRadius,
     'aria-label': ariaLabel
@@ -256,6 +255,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     ...props,
     'aria-label': ariaLabel
   });
+  let step = stateRef.current.step;
 
   return {
     trackProps: {
