@@ -101,6 +101,16 @@ function endDragging() {
   }
 }
 
+export function isValidDropTarget(element: Element): boolean {
+  for (let target of dropTargets.keys()) {
+    if (target.contains(element)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 const CANCELED_EVENTS = [
   'pointerdown',
   'pointermove',
@@ -285,6 +295,11 @@ class DragSession {
   }
 
   cancelEvent(e: Event) {
+    // Allow focusin and focusout on the drag target so focus ring works properly.
+    if ((e.type === 'focusin' || e.type === 'focusout') && e.target === this.dragTarget?.element) {
+      return;
+    }
+
     // Allow default for events that might cancel a click event
     if (!CLICK_EVENTS.includes(e.type)) {
       e.preventDefault();
@@ -438,6 +453,12 @@ class DragSession {
         y: rect.y + (rect.height / 2),
         dropOperation: this.dropOperation
       });
+    }
+
+    // Blur and re-focus the drop target so that the focus ring appears.
+    if (this.currentDropTarget) {
+      this.currentDropTarget.element.blur();
+      this.currentDropTarget.element.focus();
     }
 
     this.setCurrentDropTarget(null);
