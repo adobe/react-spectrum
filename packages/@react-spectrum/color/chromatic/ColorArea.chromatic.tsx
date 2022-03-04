@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import {ColorArea, ColorField, ColorSlider, ColorWheel} from '../';
 import {ColorChannel, SpectrumColorAreaProps} from '@react-types/color';
 import {Flex} from '@adobe/react-spectrum';
