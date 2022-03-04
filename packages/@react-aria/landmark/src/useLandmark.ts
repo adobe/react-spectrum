@@ -98,22 +98,26 @@ class LandmarkManager {
       return;
     }
 
-    let insertPosition = 0;
-    let comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
-      // Compare position of landmark being added with existing landmarks.
-      // Iterate through landmarks (which are sorted in document order),
-      // and insert when a landmark is found that is positioned before the newly added element,
-      // or is contained by the newly added element (for nested landmarks).
-      // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
-    while (
-      insertPosition < this.landmarks.length &&
-      ((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) ||
-        (comparedPosition & Node.DOCUMENT_POSITION_CONTAINS))
-    ) {
+
+    // Binary search to insert new landmark based on position in document relative to existing landmarks.
+    // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
+    let start = 0;
+    let end = this.landmarks.length - 1;
+    let insertPosition: number;
+    let comparedPosition: number;
+    while (start <= end) { 
+      insertPosition = Math.floor((start + end) / 2);
       comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
-      insertPosition++;
+      let isNewAfterExisting = Boolean((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) || (comparedPosition & Node.DOCUMENT_POSITION_CONTAINS));
+
+      if (isNewAfterExisting) {
+        start = insertPosition + 1;
+      } else {
+        end = insertPosition - 1;
+      }
     }
-    this.landmarks.splice(insertPosition, 0, newLandmark);
+
+    this.landmarks.splice(start, 0, newLandmark);
   }
 
   public updateLandmark(landmark: Pick<Landmark, 'ref'> & Partial<Landmark>) {
