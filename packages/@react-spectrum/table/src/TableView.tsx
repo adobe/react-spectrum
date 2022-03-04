@@ -88,18 +88,21 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
   let {scale} = useProvider();
+
+  const getDefaultWidth = useCallback(({hideHeader, isSelectionCell, showDivider}) => {
+    if (hideHeader) {
+      let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
+      return showDivider ? width + 1 : width;
+    } else if (isSelectionCell) {
+      return SELECTION_CELL_DEFAULT_WIDTH[scale];
+    }
+  }, [scale]);
+
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle',
-    getDefaultWidth: ({hideHeader, isSelectionCell, showDivider}) => {
-      if (hideHeader) {
-        let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
-        return showDivider ? width + 1 : width;
-      } else if (isSelectionCell) {
-        return SELECTION_CELL_DEFAULT_WIDTH[scale];
-      }
-    }
+    getDefaultWidth
   });
 
   let columnWidths = state.columnWidths;
