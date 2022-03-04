@@ -19,7 +19,7 @@ import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
 
-import useColumnResizeWidthState from './useColumnResizeWidthState';
+import useTableColumnResizeState from './useTableColumnResizeState';
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** A collection of rows and columns in the table. */
@@ -86,7 +86,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     
   // map of the columns and their width, key is the column key, value is the width
   // TODO: switch to useControlledState
-  const [columnWidths, resizeColumn, setTableWidth, onColumnResizeStart, _onColumnResizeEnd] = useColumnResizeWidthState(collection.columns, props.getDefaultWidth);
+  const [columnWidths, resizeColumn, setTableWidth, onColumnResizeStart, _onColumnResizeEnd] = useTableColumnResizeState(collection.columns, props.getDefaultWidth);
 
   function getColumnWidth(key: Key): number {
     return columnWidths.current.get(key) ?? 0;
