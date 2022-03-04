@@ -14,22 +14,24 @@ import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {FocusRing, useFocusRing} from '@react-aria/focus';
+import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import Resizer from './Resizer';
+import {Resizer} from './Resizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
@@ -247,11 +249,13 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
             </TooltipTrigger>
           );
         }
+
+        if (item.props.allowsResizing) {
+          return <ResizableTableColumnHeader item={item} state={state} />;
+        }
+
         return (
-          <>
-            <TableColumnHeader column={item} />
-            {item.props.allowsResizing && <Resizer state={state} item={item} />}
-          </>
+          <TableColumnHeader column={item} />
         );
       case 'loader':
         return (
@@ -422,13 +426,16 @@ function TableHeader({children, ...otherProps}) {
   );
 }
 
-function TableColumnHeader({column}) {
+function TableColumnHeader(props) {
+  let {column} = props;
   let ref = useRef();
   let state = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true
   }, state, ref);
+
+  let {buttonProps} = useButton(props, ref);
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
@@ -437,13 +444,14 @@ function TableColumnHeader({column}) {
     throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
   }
 
-
   let {hoverProps, isHovered} = useHover({});
+
+  // console.log(columnHeaderProps, hoverProps, buttonProps);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...mergeProps(columnHeaderProps, hoverProps)}
+        {...mergeProps(columnHeaderProps, hoverProps, buttonProps)}
         ref={ref}
         className={
           classNames(
@@ -475,6 +483,31 @@ function TableColumnHeader({column}) {
         }
       </div>
     </FocusRing>
+  );
+}
+
+function ResizableTableColumnHeader({item, state}) {
+  let ref = useRef();
+
+  const onMenuSelect = () => {
+    setTimeout(() => {
+      console.log(ref.current);
+      focusSafely(ref.current);
+    }, 500);
+  };
+
+  return (
+    <>
+      <MenuTrigger>
+        <TableColumnHeader column={item} />
+        <Menu onAction={onMenuSelect}>
+          <Item>
+            Resize column
+          </Item>
+        </Menu>
+      </MenuTrigger>
+      <Resizer ref={ref} state={state} item={item} />
+    </>
   );
 }
 

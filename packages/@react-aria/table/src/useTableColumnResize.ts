@@ -10,12 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {mergeProps} from '@react-aria/utils';
+import {useFocusable} from '@react-aria/focus';
 import {useMove} from '@react-aria/interactions';
 import {useRef} from 'react';
 
-export function useTableColumnResize(state, item): any {
+export function useTableColumnResize(state, item, ref): any {
   const stateRef = useRef(null);
   stateRef.current = state;
+
+  let {focusableProps} = useFocusable({
+    onFocus(e) {
+      console.log('resizer focussed', e);
+    }
+  }, ref);
 
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
@@ -34,6 +42,8 @@ export function useTableColumnResize(state, item): any {
   });
 
   return {
-    resizerProps: moveProps
+    resizerProps: {
+      ...mergeProps(moveProps, focusableProps)
+    }
   };
 }

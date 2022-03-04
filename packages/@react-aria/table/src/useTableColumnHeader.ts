@@ -42,14 +42,20 @@ interface ColumnHeaderAria {
  */
 export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>): ColumnHeaderAria {
   let {node} = props;
+  let allowsResizing = node.props.allowsResizing;
   let allowsSorting = node.props.allowsSorting;
   let {gridCellProps} = useGridCell(props, state, ref);
-
+  
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
   let {pressProps} = usePress({
-    isDisabled: !allowsSorting || isSelectionCellDisabled,
-    onPress() {
-      state.sort(node.key);
+    isDisabled: isSelectionCellDisabled || (!allowsSorting && !allowsResizing),
+    // TODO move to menu
+    onPress(pressDetails) {
+      if (pressDetails.pointerType === 'keyboard' || pressDetails.pointerType === 'virtual') {
+        console.log(pressDetails);
+      } else if (allowsSorting) {
+        state.sort(node.key);
+      }
     }
   });
 

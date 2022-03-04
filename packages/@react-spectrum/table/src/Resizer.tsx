@@ -1,13 +1,19 @@
 import {classNames} from '@react-spectrum/utils';
+import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useTableColumnResize} from '@react-aria/table/src/useTableColumnResize';
 
 
-export default function Resizer(props) {
+function Resizer(props, ref) {
   const {state, item} = props;
-  let {resizerProps} = useTableColumnResize(state, item);
+  let {resizerProps} = useTableColumnResize(state, item, ref);
   return (
-    <div {...resizerProps} className={classNames(styles, 'spectrum-Table-columnResizer')} />
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div ref={ref} {...resizerProps} className={classNames(styles, 'spectrum-Table-columnResizer')} />
+    </FocusRing>
   );
 }
+
+const _Resizer = React.forwardRef(Resizer);
+export {_Resizer as Resizer};
