@@ -80,12 +80,7 @@ export interface Color {
 
 export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
   /** Handler that is called when the value changes. */
-  onChange?: (color: Color | null) => void,
-  /**
-   * The step value to increment and decrement the color by when using the arrow keys.
-   * @default 1
-   */
-  step?: number
+  onChange?: (color: Color | null) => void
 }
 
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
