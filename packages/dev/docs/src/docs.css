@@ -541,7 +541,7 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-details[open] summary svg {
+details[open] > summary svg {
   transform: rotate(90deg);
 }
 
