@@ -26,7 +26,7 @@ export interface CalendarPropsBase {
   /** The maximum allowed date that a user may select. */
   maxValue?: DateValue,
   /** Callback that is called for each date of the calendar. If it returns true, then the date is disabled. */
-  isDateDisabled?: (date: DateValue) => boolean,
+  isDateUnavailable?: (date: DateValue) => boolean,
   /**
    * Whether the calendar is disabled.
    * @default false
@@ -46,7 +46,13 @@ export interface CalendarPropsBase {
 
 export type DateRange = RangeValue<DateValue>;
 export interface CalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<T, MappedDateValue<T>> {}
-export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<RangeValue<T>, RangeValue<MappedDateValue<T>>> {}
+export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<RangeValue<T>, RangeValue<MappedDateValue<T>>> {
+  /**
+   * When combined with `isDateUnavailable`, determines whether non-contiguous ranges,
+   * i.e. ranges containing unavailable dates, may be selected.
+   */
+  allowsNonContiguousRanges?: boolean
+}
 
 export interface SpectrumCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, StyleProps {
   /**

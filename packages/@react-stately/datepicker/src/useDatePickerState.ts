@@ -86,7 +86,8 @@ export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T
   };
 
   let validationState: ValidationState = props.validationState ||
-    (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : null);
+    (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : null) ||
+    (value && props.isDateUnavailable?.(value) ? 'invalid' : null);
 
   return {
     value,

@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {CalendarDate, getLocalTimeZone, parseDate, today, toZoned} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {DateRangePicker} from '../';
 import {DateValue} from '@react-types/calendar';
@@ -88,11 +88,18 @@ storiesOf('Date and Time/DateRangePicker', module)
     () => render({minValue: new CalendarDate(2010, 1, 1), maxValue: new CalendarDate(2020, 1, 1)})
   )
   .add(
-    'multiple disabled intervals',
-    () => render({isDateDisabled: (date: DateValue) => {
+    'isDateUnavailable',
+    () => render({isDateUnavailable: (date: DateValue) => {
       const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
       return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
     }})
+  )
+  .add(
+    'isDateAvailable, allowsNonContiguousRanges',
+    () => {
+      let {locale} = useLocale();
+      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true});
+    }
   )
   .add(
     'placeholderValue: 1980/1/1',

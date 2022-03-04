@@ -13,9 +13,10 @@
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, isWeekend} from '@internationalized/date';
 import {RangeCalendar} from '../';
 import React from 'react';
+import {useLocale} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
@@ -934,6 +935,102 @@ describe('RangeCalendar', () => {
       expect(selectedDates[0].textContent).toBe('5');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
       expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('disables dates not reachable from start date if isDateUnavailable is provided', () => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}
+          isDateUnavailable={isDateUnavailable} />
+      );
+
+      let cellBefore = getByRole('button', {name: 'Sunday, December 5, 2021'});
+      let cellAfter = getByRole('button', {name: 'Monday, December 27, 2021'});
+      expect(cellBefore).toHaveAttribute('tabIndex', '-1');
+      expect(cellBefore).not.toHaveAttribute('aria-disabled');
+      expect(cellAfter).toHaveAttribute('tabIndex', '-1');
+      expect(cellAfter).not.toHaveAttribute('aria-disabled');
+
+      let cell = getByRole('button', {name: 'Sunday, December 12, 2021'});
+      act(() => userEvent.click(cell));
+
+      expect(cellBefore).not.toHaveAttribute('tabIndex');
+      expect(cellBefore).toHaveAttribute('aria-disabled', 'true');
+      expect(cellAfter).not.toHaveAttribute('tabIndex');
+      expect(cellAfter).toHaveAttribute('aria-disabled', 'true');
+
+      cell = getByRole('button', {name: 'Tuesday, December 14, 2021'});
+      act(() => userEvent.click(cell));
+
+      expect(cellBefore).toHaveAttribute('tabIndex', '-1');
+      expect(cellBefore).not.toHaveAttribute('aria-disabled');
+      expect(cellAfter).toHaveAttribute('tabIndex', '-1');
+      expect(cellAfter).not.toHaveAttribute('aria-disabled');
+
+      // Clicking on one of the selected dates should also disable the dates outside the available range.
+      cell = getByRole('button', {name: 'Sunday, December 12, 2021 selected'});
+      act(() => userEvent.click(cell));
+
+      expect(cellBefore).not.toHaveAttribute('tabIndex');
+      expect(cellBefore).toHaveAttribute('aria-disabled', 'true');
+      expect(cellAfter).not.toHaveAttribute('tabIndex');
+      expect(cellAfter).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    it('advances selection backwards when starting a selection at the end of an available range', () => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}
+          isDateUnavailable={isDateUnavailable} />
+      );
+
+      let cell = getByRole('button', {name: 'Tuesday, December 21, 2021'});
+      act(() => cell.focus());
+      act(() => type('Enter'));
+
+      let cell2 = getByRole('button', {name: /Monday, December 20, 2021/});
+      expect(document.activeElement).toBe(cell2);
+      expect(cell2.parentElement).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('does not disabled dates not reachable from start date if allowsNonContiguousRanges is provider', () => {
+      function Example() {
+        let {locale} = useLocale();
+        return (
+          <RangeCalendar
+            defaultValue={{start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}
+            isDateUnavailable={date => isWeekend(date, locale)}
+            allowsNonContiguousRanges />
+        );
+      }
+
+      let {getByRole} = render(<Example />);
+
+      expect(getByRole('button', {name: 'Sunday, December 5, 2021'})).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('button', {name: 'Monday, December 6, 2021'})).not.toHaveAttribute('aria-disabled');
+
+      let cell = getByRole('button', {name: 'Tuesday, December 7, 2021'});
+      act(() => userEvent.click(cell));
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+
+      expect(getByRole('button', {name: 'Monday, December 13, 2021'})).not.toHaveAttribute('aria-disabled');
+
+      cell = getByRole('button', {name: 'Tuesday, December 14, 2021'});
+      expect(cell).not.toHaveAttribute('aria-disabled');
+      act(() => userEvent.click(cell));
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+
+      expect(getByRole('button', {name: 'Sunday, December 5, 2021'}).parentElement).not.toHaveAttribute('aria-selected', 'true');
     });
   });
 

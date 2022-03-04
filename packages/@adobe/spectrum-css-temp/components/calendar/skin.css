@@ -102,7 +102,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.is-disabled:not(.is-unavailable) {
+  &.is-disabled {
     &,
     &.is-today {
       --background: var(--spectrum-calendar-day-background-color-disabled);
@@ -112,6 +112,14 @@ governing permissions and limitations under the License.
     &.is-today,
     &.is-selected {
       color: var(--spectrum-calendar-day-text-color-disabled);
+    }
+  }
+
+  &.is-unavailable {
+    &,
+    &.is-today {
+      color: var(--spectrum-global-color-gray-700);
+      --background: transparent;
     }
   }
 }

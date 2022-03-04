@@ -160,7 +160,7 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
                 visibleMonths={visibleMonths}
                 minValue={props.minValue}
                 maxValue={props.maxValue}
-                isDateDisabled={props.isDateDisabled} />
+                isDateUnavailable={props.isDateUnavailable} />
               {showTimeField &&
                 <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
                   <TimeField

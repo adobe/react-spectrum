@@ -195,8 +195,6 @@ governing permissions and limitations under the License.
   }
 
   &.is-unavailable {
-    color: var(--spectrum-global-color-gray-700);
-
     .spectrum-Calendar-dateText span {
       position: relative;
 
@@ -207,7 +205,7 @@ governing permissions and limitations under the License.
         left: -5px;
         right: -5px;
         height: 1px;
-        transform: rotate(163deg);
+        transform: rotate(-17deg);
         background: currentColor;
       }
     }

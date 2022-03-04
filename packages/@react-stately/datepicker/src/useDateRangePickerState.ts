@@ -113,7 +113,9 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     || (value != null && (
       isInvalid(value.start, props.minValue, props.maxValue) ||
       isInvalid(value.end, props.minValue, props.maxValue) ||
-      (value.end != null && value.start != null && value.end.compare(value.start) < 0)
+      (value.end != null && value.start != null && value.end.compare(value.start) < 0) ||
+      (value?.start && props.isDateUnavailable?.(value.start)) ||
+      (value?.end && props.isDateUnavailable?.(value.end))
     ) ? 'invalid' : null);
 
   return {
