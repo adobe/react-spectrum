@@ -85,10 +85,10 @@ export function useColorFieldState(
     }
   };
 
-  let [prevValue, setPrevValue] = useState(colorValue);
-  if (prevValue !== colorValue) {
+  let prevValue = useRef(colorValue);
+  if (prevValue.current !== colorValue) {
     setInputValue(colorValue ? colorValue.toString('hex') : '');
-    setPrevValue(colorValue);
+    prevValue.current = colorValue;
   }
 
 
