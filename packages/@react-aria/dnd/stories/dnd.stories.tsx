@@ -409,11 +409,13 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
   let cellNode = [...item.childNodes][0];
   let isSelected = state.selectionManager.isSelected(item.key);
 
-  let {rowProps} = useGridRow({node: item}, state, rowRef);
+  let {rowProps} = useGridRow({
+    node: item,
+    shouldSelectOnPressUp: true
+  }, state, rowRef);
   let {gridCellProps} = useGridCell({
     node: cellNode,
-    focusMode: 'cell',
-    shouldSelectOnPressUp: true
+    focusMode: 'cell'
   }, state, cellRef);
 
   let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
@@ -431,10 +433,10 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
   let id = useId();
 
   return (
-    <div {...rowProps} ref={rowRef} aria-labelledby={id}>
+    <div {...mergeProps(rowProps, dragProps)} ref={rowRef} aria-labelledby={id}>
       <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
         <div
-          {...mergeProps(gridCellProps, dragProps, clipboardProps)}
+          {...mergeProps(gridCellProps, clipboardProps)}
           aria-labelledby={id}
           ref={cellRef}
           className={classNames(dndStyles, 'draggable', {
