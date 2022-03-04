@@ -311,7 +311,7 @@ describe('Slider', function () {
           <Slider label="Label" minValue={-50} maxValue={-15} defaultValue={-40} step={2} />
         </Provider>
       );
-      // The slider page size should be initially calulated as 25/10 = 3.5, snaps to 4
+      // The slider page size should be initially calulated as 35/10 = 3.5, snaps to 4
       let slider = tree.getByRole('slider');
       testKeypresses([slider, slider], commands);
     });
