@@ -89,7 +89,7 @@ export interface Color {
   /**
    * Returns an array of the color channels within the current color space space.
    */
-  getColorChannels(): Set<ColorChannel>
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
 
 export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {

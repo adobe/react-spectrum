@@ -37,8 +37,6 @@ export function normalizeColor(v: string | IColor) {
   }
 }
 
-let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x => !b.has(x)));
-
 abstract class Color implements IColor {
   abstract toFormat(format: ColorFormat): IColor;
   abstract toString(format: ColorFormat | 'css'): string;
@@ -73,8 +71,15 @@ abstract class Color implements IColor {
   }
 
   abstract getColorSpace(): ColorFormat
-  abstract getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel, yChannel?: ColorChannel}): ColorAxes
-  abstract getColorChannels(): Set<ColorChannel>
+  getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel, yChannel?: ColorChannel}): ColorAxes {
+    let {xChannel, yChannel} = xyChannels;
+    let xCh = xChannel || this.getColorChannels().find(c => c !== yChannel);
+    let yCh = yChannel || this.getColorChannels().find(c => c !== xCh);
+    let zCh = this.getColorChannels().find(c => c !== xCh && c !== yCh);
+
+    return {xChannel: xCh, yChannel: yCh, zChannel: zCh};
+  }
+  abstract getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
@@ -271,43 +276,9 @@ class RGBColor extends Color {
     return 'rgb';
   }
 
-  private static colorChannels: Set<ColorChannel> = new Set(['red', 'green', 'blue']);
-  getColorChannels(): Set<ColorChannel> {
+  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['red', 'green', 'blue'];
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return RGBColor.colorChannels;
-  }
-  getColorSpaceAxes({xChannel, yChannel}): ColorAxes {
-    let xCh = xChannel;
-    let yCh = yChannel;
-    if (!xChannel) {
-      switch (yChannel) {
-        case 'red':
-        case 'green':
-          xCh = 'blue';
-          break;
-        case 'blue':
-          xCh = 'red';
-          break;
-        default:
-          xCh = 'blue';
-          yCh = 'green';
-      }
-    } else if (!yChannel) {
-      switch (xChannel) {
-        case 'red':
-          yCh = 'green';
-          break;
-        case 'blue':
-          yCh = 'red';
-          break;
-        default:
-          xCh = 'blue';
-          yCh = 'green';
-      }
-    }
-    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
-    let zChannel = difference(this.getColorChannels(), xyChannels).values().next().value as ColorChannel;
-
-    return {xChannel: xCh, yChannel: yCh, zChannel};
   }
 }
 
@@ -443,45 +414,9 @@ class HSBColor extends Color {
     return 'hsb';
   }
 
-  private static colorChannels: Set<ColorChannel> = new Set(['hue', 'saturation', 'brightness']);
-  getColorChannels(): Set<ColorChannel> {
+  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'brightness'];
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return HSBColor.colorChannels;
-  }
-
-  getColorSpaceAxes({xChannel, yChannel}): ColorAxes {
-    let xCh = xChannel;
-    let yCh = yChannel;
-    if (!xChannel) {
-      switch (yChannel) {
-        case 'hue':
-          xCh = 'brightness';
-          break;
-        case 'brightness':
-          xCh = 'saturation';
-          break;
-        default:
-          xCh = 'saturation';
-          yCh = 'brightness';
-          break;
-      }
-    } else if (!yChannel) {
-      switch (xChannel) {
-        case 'hue':
-          yCh = 'brightness';
-          break;
-        case 'brightness':
-          yCh = 'saturation';
-          break;
-        default:
-          xCh = 'saturation';
-          yCh = 'brightness';
-          break;
-      }
-    }
-    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
-    let zChannel = difference(this.getColorChannels(), xyChannels).values().next().value as ColorChannel;
-
-    return {xChannel: xCh, yChannel: yCh, zChannel};
   }
 }
 
@@ -619,44 +554,8 @@ class HSLColor extends Color {
     return 'hsl';
   }
 
-  private static colorChannels: Set<ColorChannel> = new Set(['hue', 'saturation', 'lightness']);
-  getColorChannels(): Set<ColorChannel> {
+  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'lightness'];
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return HSLColor.colorChannels;
-  }
-
-  getColorSpaceAxes({xChannel, yChannel}): ColorAxes {
-    let xCh = xChannel;
-    let yCh = yChannel;
-    if (!xChannel) {
-      switch (yChannel) {
-        case 'hue':
-          xCh = 'lightness';
-          break;
-        case 'lightness':
-          xCh = 'saturation';
-          break;
-        default:
-          xCh = 'saturation';
-          yCh = 'lightness';
-          break;
-      }
-    } else if (!yChannel) {
-      switch (xChannel) {
-        case 'hue':
-          yCh = 'lightness';
-          break;
-        case 'lightness':
-          yCh = 'saturation';
-          break;
-        default:
-          xCh = 'saturation';
-          yCh = 'lightness';
-          break;
-      }
-    }
-    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
-    let zChannel = difference(this.getColorChannels(), xyChannels).values().next().value as ColorChannel;
-
-    return {xChannel: xCh, yChannel: yCh, zChannel};
   }
 }

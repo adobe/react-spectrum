@@ -12,11 +12,11 @@
 
 import {action} from '@storybook/addon-actions';
 import {ColorArea, ColorField, ColorSlider, ColorWheel} from '../';
-import {ColorChannel, SpectrumColorAreaProps} from '@react-types/color';
 import {Flex} from '@adobe/react-spectrum';
 import {Meta, Story} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
+import {SpectrumColorAreaProps} from '@react-types/color';
 
 
 const meta: Meta<SpectrumColorAreaProps> = {
@@ -30,15 +30,13 @@ const Template: Story<SpectrumColorAreaProps> = (args) => (
   <ColorAreaExample {...args} />
 );
 
-let difference = (a, b): Set<ColorChannel> => new Set([...a].filter(x => !b.has(x)));
-
 function ColorAreaExample(props: SpectrumColorAreaProps) {
   let {xChannel, yChannel, isDisabled} = props;
   let defaultValue = typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
   let [color, setColor] = useState(defaultValue || parseColor('#ff00ff'));
-  let xyChannels = new Set([xChannel, yChannel]);
+  let xyChannels = {xChannel, yChannel};
   let colorSpace = color.getColorSpace();
-  let zChannel: ColorChannel = difference(color.getColorChannels(), xyChannels).keys().next().value;
+  let {zChannel} = color.getColorSpaceAxes(xyChannels);
   let isHue = zChannel === 'hue';
 
   function onChange(e) {

@@ -299,7 +299,7 @@ export function useColorArea(props: AriaColorAreaProps, state: ColorAreaState, i
   let colorAriaLabellingProps = useLabels(props);
 
   let getValueTitle = () => {
-    const channels: Set<ColorChannel> = state.value.getColorChannels();
+    const channels: [ColorChannel, ColorChannel, ColorChannel] = state.value.getColorChannels();
     const colorNamesAndValues = [];
     channels.forEach(channel =>
       colorNamesAndValues.push(

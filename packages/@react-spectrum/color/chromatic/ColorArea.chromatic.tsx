@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2022 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -109,7 +109,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
 
 export let XBlueYGreen = Template.bind({});
 XBlueYGreen.storyName = 'RGB xChannel="blue", yChannel="green"';
-XBlueYGreen.args = {xChannel: 'blue', yChannel: 'green', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
+XBlueYGreen.args = {xChannel: 'blue', yChannel: 'green'};
 
 export let XGreenYBlue = Template.bind({});
 XGreenYBlue.storyName = 'RGB xChannel="green", yChannel="blue"';
