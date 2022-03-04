@@ -47,7 +47,7 @@ interface FocusManagerOptions {
   wrap?: boolean
 }
 
-interface FocusManager {
+export interface FocusManager {
   /** Moves focus to the next focusable or tabbable element in the focus scope. */
   focusNext(opts?: FocusManagerOptions): HTMLElement,
   /** Moves focus to the previous focusable or tabbable element in the focus scope. */

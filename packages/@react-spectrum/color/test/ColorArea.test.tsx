@@ -131,10 +131,10 @@ describe('ColorArea', () => {
           Name                      | props                                          | actions                                                                                                                                                            | result
           ${'left/right'}           | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft'}), backward: (elem) => pressKey(elem, {key: 'ArrowRight'})}}                                 | ${parseColor('#ff00fe')}
           ${'up/down'}              | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp'}), backward: (elem) => pressKey(elem, {key: 'ArrowDown'})}}                                    | ${parseColor('#ff01ff')}
-          ${'shiftleft/shiftright'} | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowRight', shiftKey: true})}} | ${parseColor('#f000e0')}
-          ${'shiftup/shiftdown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowDown', shiftKey: true})}}    | ${parseColor('#f010f0')}
-          ${'pageup/pagedown'}      | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'PageUp'}), backward: (elem) => pressKey(elem, {key: 'PageDown'})}}                                      | ${parseColor('#f010f0')}
-          ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'Home'}), backward: (elem) => pressKey(elem, {key: 'End'})}}                                             | ${parseColor('#f000e0')}
+          ${'shiftleft/shiftright'} | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowRight', shiftKey: true})}} | ${parseColor('#f000df')}
+          ${'shiftup/shiftdown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowDown', shiftKey: true})}}    | ${parseColor('#f011f0')}
+          ${'pageup/pagedown'}      | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'PageUp'}), backward: (elem) => pressKey(elem, {key: 'PageDown'})}}                                      | ${parseColor('#f011f0')}
+          ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'Home'}), backward: (elem) => pressKey(elem, {key: 'End'})}}                                             | ${parseColor('#f000df')}
         `('$Name', ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
             <Component
@@ -162,10 +162,10 @@ describe('ColorArea', () => {
           Name                      | props                                          | actions                                                                                                                                                            | result
           ${'left/right'}           | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowRight'}), backward: (elem) => pressKey(elem, {key: 'ArrowLeft'})}}                                 | ${parseColor('#ff00fe')}
           ${'up/down'}              | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp'}), backward: (elem) => pressKey(elem, {key: 'ArrowDown'})}}                                    | ${parseColor('#ff01ff')}
-          ${'shiftleft/shiftright'} | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowRight', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowLeft', shiftKey: true})}} | ${parseColor('#f000e0')}
-          ${'shiftup/shiftdown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowDown', shiftKey: true})}}    | ${parseColor('#f010f0')}
-          ${'pageup/pagedown'}      | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'PageUp'}), backward: (elem) => pressKey(elem, {key: 'PageDown'})}}                                      | ${parseColor('#f010f0')}
-          ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'End'}), backward: (elem) => pressKey(elem, {key: 'Home'})}}                                             | ${parseColor('#f000e0')}
+          ${'shiftleft/shiftright'} | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowRight', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowLeft', shiftKey: true})}} | ${parseColor('#f000df')}
+          ${'shiftup/shiftdown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowDown', shiftKey: true})}}    | ${parseColor('#f011f0')}
+          ${'pageup/pagedown'}      | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'PageUp'}), backward: (elem) => pressKey(elem, {key: 'PageDown'})}}                                      | ${parseColor('#f011f0')}
+          ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'End'}), backward: (elem) => pressKey(elem, {key: 'Home'})}}                                             | ${parseColor('#f000df')}
         `('$Name RTL', ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
             <Provider locale="ar-AE" theme={defaultTheme}>
@@ -212,35 +212,6 @@ describe('ColorArea', () => {
           pressKey(sliders[0], {key: 'RightArrow'});
           expect(onChangeSpy).not.toHaveBeenCalled();
           expect(onChangeEndSpy).not.toHaveBeenCalled();
-        });
-
-        it.each`
-          Name            | props                                          | actions                                                                                                                   | result
-          ${'left/right'} | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft'}), backward: (elem) => pressKey(elem, {key: 'ArrowRight'})}} | ${parseColor('#ff00f0')}
-          ${'up/down'}    | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp'}), backward: (elem) => pressKey(elem, {key: 'ArrowDown'})}}    | ${parseColor('#ff0fff')}
-        `('$Name with step', ({props, actions: {forward, backward}, result}) => {
-          let {getAllByRole} = render(
-            <Component
-              {...props}
-              xChannelStep={0xf}
-              yChannelStep={0xf}
-              onChange={onChangeSpy}
-              onChangeEnd={onChangeEndSpy} />
-          );
-          let sliders = getAllByRole('slider');
-          userEvent.tab();
-
-          forward(sliders[0]);
-          expect(onChangeSpy).toHaveBeenCalledTimes(1);
-          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
-          expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
-
-          backward(sliders[0]);
-          expect(onChangeSpy).toHaveBeenCalledTimes(2);
-          expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
-          expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
-          expect(onChangeEndSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
         });
       });
 
@@ -351,34 +322,6 @@ describe('ColorArea', () => {
           expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
         });
 
-        // TODO: Should it?
-        it('dragging the thumb respects the step', () => {
-          let defaultColor = parseColor('#ff00ff');
-          let {getAllByRole} = render(
-            <Component
-              xChannelStep={16}
-              yChannelStep={16}
-              defaultValue={defaultColor}
-              onChange={onChangeSpy}
-              onChangeEnd={onChangeEndSpy} />
-          );
-          let sliders = getAllByRole('slider');
-          let groups = getAllByRole('group');
-          let thumb = sliders[0].parentElement;
-          let container = groups[groupIndex];
-          container.getBoundingClientRect = getBoundingClientRect;
-
-          start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-          expect(onChangeSpy).toHaveBeenCalledTimes(0);
-
-          move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-          expect(onChangeSpy).toHaveBeenCalledTimes(1);
-          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff0090').toString('rgba'));
-
-          end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-          expect(onChangeSpy).toHaveBeenCalledTimes(1);
-        });
-
         it('clicking and dragging on the track works', () => {
           let defaultColor = parseColor('#ff00ff');
           let {getAllByRole} = render(
@@ -437,31 +380,6 @@ describe('ColorArea', () => {
           end(container, {pageX: CENTER - THUMB_RADIUS, pageY: CENTER});
           expect(onChangeSpy).toHaveBeenCalledTimes(0);
           expect(document.activeElement).not.toBe(sliders[0]);
-        });
-
-        it('clicking and dragging on the track respects the step', () => {
-          let defaultColor = parseColor('#ff00ff');
-          let {getAllByRole} = render(
-            <Component
-              xChannelStep={16}
-              yChannelStep={16}
-              defaultValue={defaultColor}
-              onChange={onChangeSpy}
-              onChangeEnd={onChangeEndSpy} />
-          );
-          let groups = getAllByRole('group');
-          let container = groups[groupIndex];
-          container.getBoundingClientRect = getBoundingClientRect;
-
-          start(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-          expect(onChangeSpy).toHaveBeenCalledTimes(1);
-
-          move(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-          expect(onChangeSpy).toHaveBeenCalledTimes(2);
-          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80f0').toString('rgba'));
-
-          end(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-          expect(onChangeSpy).toHaveBeenCalledTimes(2);
         });
       });
     });
