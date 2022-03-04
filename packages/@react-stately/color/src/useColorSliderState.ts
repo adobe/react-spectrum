@@ -58,6 +58,7 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     }
   });
 
+  let {step, pageSize} = color.getChannelRange(channel);
   return {
     ...sliderState,
     value: color,
@@ -84,6 +85,8 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     },
     getThumbValueLabel() {
       return color.formatChannelValue(channel, locale);
-    }
+    },
+    step,
+    pageSize
   };
 }
