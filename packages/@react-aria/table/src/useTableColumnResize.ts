@@ -20,6 +20,7 @@ export function useTableColumnResize(state, item, ref): any {
   stateRef.current = state;
 
   let {focusableProps} = useFocusable({
+    excludeFromTabOrder: true,
     onFocus(e) {
       console.log('resizer focussed', e);
     }
@@ -40,7 +41,7 @@ export function useTableColumnResize(state, item, ref): any {
       columnResizeWidthRef.current = 0;
     }
   });
-
+  
   return {
     resizerProps: {
       ...mergeProps(moveProps, focusableProps)
