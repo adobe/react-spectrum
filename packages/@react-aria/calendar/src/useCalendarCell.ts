@@ -129,6 +129,11 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     preventFocusOnPress: true,
     isDisabled,
     onPressStart(e) {
+      if (state.isReadOnly) {
+        state.setFocusedDate(date);
+        return;
+      }
+
       if ('highlightedRange' in state && !state.anchorDate && (e.pointerType === 'mouse' || e.pointerType === 'touch')) {
         // Allow dragging the start or end date of a range to modify it
         // rather than starting a new selection.
@@ -174,12 +179,16 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     },
     onPress() {
       // For non-range selection, always select on press up.
-      if (!('anchorDate' in state)) {
+      if (!('anchorDate' in state) && !state.isReadOnly) {
         state.selectDate(date);
         state.setFocusedDate(date);
       }
     },
     onPressUp(e) {
+      if (state.isReadOnly) {
+        return;
+      }
+
       // If the user tapped quickly, the date won't be selected yet and the
       // timer will still be in progress. In this case, select the date on touch up.
       // Timer is cleared in onPressEnd.
