@@ -28,8 +28,22 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
         if (!entries.length) {
           return;
         }
+        let initialSize = element.getBoundingClientRect();
 
         onResize();
+
+        let newSize = element.getBoundingClientRect();
+
+        if (
+          initialSize.width !== newSize.width ||
+          initialSize.height !== newSize.height
+        ) {
+          resizeObserverInstance.unobserve(element);
+
+          requestAnimationFrame(() => {
+            resizeObserverInstance.observe(element);
+          });
+        }
       });
 
       resizeObserverInstance.observe(element);
