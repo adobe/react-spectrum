@@ -30,12 +30,6 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
         }
 
         onResize();
-
-        resizeObserverInstance.unobserve(element);
-
-        requestAnimationFrame(() => {
-          resizeObserverInstance.observe(element);
-        });
       });
 
       resizeObserverInstance.observe(element);
