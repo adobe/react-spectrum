@@ -49,7 +49,7 @@ interface ColorAreaAriaProps extends AriaColorAreaProps {
 export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): ColorAreaAria {
   let {
     isDisabled,
-    'aria-label': ariaLabel
+    'aria-label': ariaLabel,
     inputXRef,
     inputYRef,
     containerRef
