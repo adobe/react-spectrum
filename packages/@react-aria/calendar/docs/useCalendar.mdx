@@ -382,6 +382,28 @@ import {today} from '@internationalized/date';
 <Calendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} />
 ```
 
+### Controlling the focused date
+
+By default, the selected date is focused when a `Calendar` first mounts. If no `value` or `defaultValue` prop is provided, then the current date is focused.  However, `useCalendar` supports controlling which date is focused using the `focusedValue` and `onFocusChange` props. This also determines which month is visible. The `defaultFocusedValue` prop allows setting the initial focused date when the `Calendar` first mounts, without controlling it.
+
+This example focuses July 1, 2021 by default. The user may change the focused date, and the `onFocusChange` event updates the state. Clicking the button resets the focused date back to the initial value.
+
+```tsx example
+import {CalendarDate} from '@internationalized/date';
+
+function Example() {
+  let defaultDate = new CalendarDate(2021, 7, 1);
+  let [focusedDate, setFocusedDate] = React.useState(defaultDate);
+
+  return (
+    <div style={{flexDirection: 'column', alignItems: 'start', gap: 20}}>
+      <button onClick={() => setFocusedDate(defaultDate)}>Reset focused date</button>
+      <Calendar focusedValue={focusedDate} onFocusChange={setFocusedDate} />
+    </div>
+  );
+}
+```
+
 ### Disabled
 
 The `isDisabled` boolean prop makes the Calendar disabled. Cells cannot be focused or selected.
