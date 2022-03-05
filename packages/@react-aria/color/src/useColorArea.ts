@@ -49,7 +49,6 @@ interface ColorAreaAriaProps extends AriaColorAreaProps {
 export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): ColorAreaAria {
   let {
     isDisabled,
-    'aria-label': ariaLabel,
     inputXRef,
     inputYRef,
     containerRef
@@ -326,16 +325,6 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     pointerEvents: 'none'
   }});
 
-  // Provide a default aria-label if none is given
-  if (ariaLabel == null && props['aria-labelledby'] == null) {
-    ariaLabel = state.value.getChannelName('hue', locale);
-  }
-
-  let inputLabellingProps = useLabels({
-    ...props,
-    'aria-label': ariaLabel
-  });
-
   return {
     colorAreaProps: {
       ...colorAriaLabellingProps,
@@ -350,8 +339,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
       role: 'presentation'
     },
     xInputProps: {
-      ...xInputLabellingProps,
-      ...visuallyHiddenProps,
+      ...mergeProps(xInputLabellingProps, visuallyHiddenProps),
       type: 'range',
       min: state.value.getChannelRange(xChannel).minValue,
       max: state.value.getChannelRange(xChannel).maxValue,
@@ -375,8 +363,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
       }
     },
     yInputProps: {
-      ...yInputLabellingProps,
-      ...visuallyHiddenProps,
+      ...mergeProps(yInputLabellingProps, visuallyHiddenProps),
       type: 'range',
       min: state.value.getChannelRange(yChannel).minValue,
       max: state.value.getChannelRange(yChannel).maxValue,
