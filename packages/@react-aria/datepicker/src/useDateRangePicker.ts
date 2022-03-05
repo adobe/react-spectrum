@@ -156,7 +156,8 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       isDisabled: props.isDisabled,
       isReadOnly: props.isReadOnly,
       isDateUnavailable: props.isDateUnavailable,
-      allowsNonContiguousRanges: props.allowsNonContiguousRanges
+      allowsNonContiguousRanges: props.allowsNonContiguousRanges,
+      defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue
     }
   };
 }

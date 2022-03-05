@@ -25,7 +25,7 @@ import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useDateFormatter} from '@react-aria/i18n';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
   locale: string,
@@ -51,46 +51,54 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
   let [value, setControlledValue] = useControlledState<DateValue>(props.value, props.defaultValue, props.onChange);
   let calendarDateValue = useMemo(() => value ? toCalendar(toCalendarDate(value), calendar) : null, [value, calendar]);
   let timeZone = useMemo(() => value && 'timeZone' in value ? value.timeZone : resolvedOptions.timeZone, [value, resolvedOptions.timeZone]);
-  let defaultDate = useMemo(() => calendarDateValue || constrainValue(toCalendar(today(timeZone), calendar), minValue, maxValue), [calendarDateValue, timeZone, calendar, minValue, maxValue]);
+  let focusedCalendarDate = useMemo(() => (
+    props.focusedValue
+      ? constrainValue(toCalendar(toCalendarDate(props.focusedValue), calendar), minValue, maxValue)
+      : undefined
+  ), [props.focusedValue, calendar, minValue, maxValue]);
+  let defaultFocusedCalendarDate = useMemo(() => (
+    constrainValue(
+      props.defaultFocusedValue
+        ? toCalendar(toCalendarDate(props.defaultFocusedValue), calendar)
+        : calendarDateValue || toCalendar(today(timeZone), calendar),
+      minValue,
+      maxValue
+    )
+  ), [props.defaultFocusedValue, calendarDateValue, timeZone, calendar, minValue, maxValue]);
+  let [focusedDate, setFocusedDate] = useControlledState(focusedCalendarDate, defaultFocusedCalendarDate, props.onFocusChange);
   let [startDate, setStartDate] = useState(() => {
     switch (selectionAlignment) {
       case 'start':
-        return alignStart(defaultDate, visibleDuration, locale, minValue, maxValue);
+        return alignStart(focusedDate, visibleDuration, locale, minValue, maxValue);
       case 'end':
-        return alignEnd(defaultDate, visibleDuration, locale, minValue, maxValue);
+        return alignEnd(focusedDate, visibleDuration, locale, minValue, maxValue);
       case 'center':
       default:
-        return alignCenter(defaultDate, visibleDuration, locale, minValue, maxValue);
+        return alignCenter(focusedDate, visibleDuration, locale, minValue, maxValue);
     }
   });
-  let [focusedDate, setFocusedDate] = useState(defaultDate);
   let [isFocused, setFocused] = useState(props.autoFocus || false);
 
   let endDate = useMemo(() => startDate.add(visibleDuration).subtract({days: 1}), [startDate, visibleDuration]);
 
   // Reset focused date and visible range when calendar changes.
   let lastCalendarIdentifier = useRef(calendar.identifier);
-  useEffect(() => {
-    if (calendar.identifier !== lastCalendarIdentifier.current) {
-      let newFocusedDate = toCalendar(focusedDate, calendar);
-      setStartDate(alignCenter(newFocusedDate, visibleDuration, locale, minValue, maxValue));
-      setFocusedDate(newFocusedDate);
-      lastCalendarIdentifier.current = calendar.identifier;
-    }
-  }, [calendar, focusedDate, visibleDuration, locale, minValue, maxValue]);
+  if (calendar.identifier !== lastCalendarIdentifier.current) {
+    let newFocusedDate = toCalendar(focusedDate, calendar);
+    setStartDate(alignCenter(newFocusedDate, visibleDuration, locale, minValue, maxValue));
+    setFocusedDate(newFocusedDate);
+    lastCalendarIdentifier.current = calendar.identifier;
+  }
+
+  if (focusedDate.compare(startDate) < 0) {
+    setStartDate(alignEnd(focusedDate, visibleDuration, locale, minValue, maxValue));
+  } else if (focusedDate.compare(startDate.add(visibleDuration)) >= 0) {
+    setStartDate(alignStart(focusedDate, visibleDuration, locale, minValue, maxValue));
+  }
 
   // Sets focus to a specific cell date
   function focusCell(date: CalendarDate) {
-    // date = constrain(focusedDate, date, visibleDuration, locale, minValue, maxValue);
     date = constrainValue(date, minValue, maxValue);
-
-    let next = startDate.add(visibleDuration);
-    if (date.compare(startDate) < 0) {
-      setStartDate(alignEnd(date, visibleDuration, locale, minValue, maxValue));
-    } else if (date.compare(next) >= 0) {
-      setStartDate(alignStart(date, visibleDuration, locale, minValue, maxValue));
-    }
-
     setFocusedDate(date);
   }
 
@@ -121,7 +129,7 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     focusedDate,
     timeZone,
     setFocusedDate(date) {
-      setFocusedDate(date);
+      focusCell(date);
       setFocused(true);
     },
     focusNextDay() {
