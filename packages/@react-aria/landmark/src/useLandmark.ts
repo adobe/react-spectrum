@@ -41,6 +41,7 @@ class LandmarkManager {
   private constructor() {
     this.f6Handler = this.f6Handler.bind(this);
     this.focusinHandler = this.focusinHandler.bind(this);
+    this.blurHandler = this.blurHandler.bind(this);
   }
 
   public static getInstance(): LandmarkManager {
@@ -54,12 +55,14 @@ class LandmarkManager {
   private setup() {
     document.addEventListener('keydown', this.f6Handler, {capture: true});
     document.addEventListener('focusin', this.focusinHandler, {capture: true});
+    document.addEventListener('blur', this.blurHandler, {capture: true});
     this.isListening = true;
   }
 
   private teardown() {
     document.removeEventListener('keydown', this.f6Handler, {capture: true});
     document.removeEventListener('focusin', this.focusinHandler, {capture: true});
+    document.removeEventListener('blur', this.blurHandler, {capture: true});
     this.isListening = false;
   }
 
@@ -263,6 +266,11 @@ class LandmarkManager {
         closestPreviousLandmark.blur();
       }
     }
+  }
+
+  public blurHandler(e: FocusEvent) {
+    let currentLandmark = this.closestLandmark(e.target as HTMLElement);
+    currentLandmark?.blur();
   }
 }
 
