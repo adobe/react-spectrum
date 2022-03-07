@@ -32,10 +32,10 @@
   dependencies:
     tunnel "0.0.6"
 
-"@adobe/react-spectrum-ui@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-ui/-/react-spectrum-ui-1.0.1.tgz#5fe405d55534e06d3bf060f86a79935cda5f6615"
-  integrity sha512-3RSX2hVWo4n7eUAkYBJmEySc5yfyWXLpQLiSKcOSGIXseD/1aUlPQxcYTdgj8gpRmJH7QghmoHeCjRviRfPXyg==
+"@adobe/react-spectrum-ui@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-ui/-/react-spectrum-ui-1.1.0.tgz#6ab31697e29be80a5f04088be1eb8f2a65d9ce54"
+  integrity sha512-r8+Kl0OJQJOI0tuuQh+/m66OSbDTbfDcuc0e+wtxCLiyi3iEXHWxWkc1TPFBHq9WPX+ALAykJxmlqLtYypP78g==
 
 "@adobe/react-spectrum-workflow-color@^1.0.0":
   version "1.0.1"

@@ -40,7 +40,6 @@ interface ColorWheelAria {
 export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState, inputRef: RefObject<HTMLElement>): ColorWheelAria {
   let {
     isDisabled,
-    step = 1,
     innerRadius,
     outerRadius,
     'aria-label': ariaLabel
@@ -257,6 +256,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     'aria-label': ariaLabel
   });
 
+  let {minValue, maxValue, step} = state.value.getChannelRange('hue');
   return {
     trackProps: {
       ...trackInteractions,
@@ -300,8 +300,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       inputLabellingProps,
       {
         type: 'range',
-        min: '0',
-        max: '360',
+        min: String(minValue),
+        max: String(maxValue),
         step: String(step),
         'aria-valuetext': state.value.formatChannelValue('hue', locale),
         disabled: isDisabled,

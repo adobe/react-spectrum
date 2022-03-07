@@ -25,6 +25,8 @@ export interface CalendarPropsBase {
   minValue?: DateValue,
   /** The maximum allowed date that a user may select. */
   maxValue?: DateValue,
+  /** Callback that is called for each date of the calendar. If it returns true, then the date is disabled. */
+  isDateDisabled?: (date: DateValue) => boolean,
   /**
    * Whether the calendar is disabled.
    * @default false
@@ -39,7 +41,13 @@ export interface CalendarPropsBase {
    * Whether to automatically focus the calendar when it mounts.
    * @default false
    */
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  /** Controls the currently focused date within the calendar. */
+  focusedValue?: DateValue,
+  /** The date that is focused when the calendar first mounts (uncountrolled). */
+  defaultFocusedValue?: DateValue,
+  /** Handler that is called when the focused date changes. */
+  onFocusChange?: (date: CalendarDate) => void
 }
 
 export type DateRange = RangeValue<DateValue>;
