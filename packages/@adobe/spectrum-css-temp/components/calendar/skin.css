@@ -113,13 +113,5 @@ governing permissions and limitations under the License.
     &.is-selected {
       color: var(--spectrum-calendar-day-text-color-disabled);
     }
-
-    &.is-range-selection {
-      background: var(--spectrum-global-color-gray-200);
-    }
-
-    &.is-selected {
-      --background: var(--spectrum-global-color-gray-200);
-    }
   }
 }

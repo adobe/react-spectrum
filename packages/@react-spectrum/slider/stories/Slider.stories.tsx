@@ -97,10 +97,6 @@ storiesOf('Slider', module)
     () => render({label: 'Label', minValue: 0, maxValue: 100, step: 5})
   )
   .add(
-    'pageSize',
-    () => render({label: 'Label', minValue: 0, maxValue: 360, pageSize: 15, formatOptions: {style: 'unit', unit: 'degree', unitDisplay: 'narrow'}})
-  )
-  .add(
     'isFilled: true',
     () => render({label: 'Label', isFilled: true})
   )

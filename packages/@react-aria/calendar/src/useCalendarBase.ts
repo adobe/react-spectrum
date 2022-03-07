@@ -65,6 +65,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
       onPress: () => state.focusPreviousPage(),
       'aria-label': formatMessage('previous'),
       isDisabled: props.isDisabled || state.isPreviousVisibleRangeInvalid()
-    }
+    },
+    title: visibleRangeDescription
   };
 }
