@@ -95,7 +95,7 @@ export function ListViewItem(props) {
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
-  let showDragHandle = isDraggable && (isFocusVisibleWithin || isHovered || isPressed);
+  let showDragHandle = isDraggable && isFocusVisibleWithin;
   let {visuallyHiddenProps} = useVisuallyHidden();
   return (
     <div
