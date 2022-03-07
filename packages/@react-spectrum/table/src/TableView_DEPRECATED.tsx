@@ -14,25 +14,21 @@ import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
+import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import {Resizer} from './Resizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableLayout} from '@react-stately/layout';
+import {TableLayout_DEPRECATED} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
-import {TableView_DEPRECATED} from './TableView_DEPRECATED';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
@@ -84,31 +80,17 @@ function useTableContext() {
   return useContext(TableContext);
 }
 
-function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
+function TableView_DEPRECATED<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {isQuiet, onAction} = props;
   let {styleProps} = useStyleProps(props);
 
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
-  let {scale} = useProvider();
-
-  const getDefaultWidth = useCallback(({hideHeader, isSelectionCell, showDivider}) => {
-    if (hideHeader) {
-      let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
-      return showDivider ? width + 1 : width;
-    } else if (isSelectionCell) {
-      return SELECTION_CELL_DEFAULT_WIDTH[scale];
-    }
-  }, [scale]);
-
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
-    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle',
-    getDefaultWidth
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
-
-  let columnWidths = state.columnWidths;
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -119,8 +101,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let domRef = useDOMRef(ref);
   let formatMessage = useMessageFormatter(intlMessages);
 
+  let {scale} = useProvider();
   let density = props.density || 'regular';
-  let layout = useMemo(() => new TableLayout({
+  let layout = useMemo(() => new TableLayout_DEPRECATED({
     // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
     rowHeight: props.overflowMode === 'wrap'
       ? null
@@ -134,10 +117,15 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
       : null,
-    getColumnWidth: state.getColumnWidth
-  }),
-    [props.overflowMode, scale, density, columnWidths.current]
-  );
+    getDefaultWidth: ({hideHeader, isSelectionCell, showDivider}) => {
+      if (hideHeader) {
+        let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
+        return showDivider ? width + 1 : width;
+      } else if (isSelectionCell) {
+        return SELECTION_CELL_DEFAULT_WIDTH[scale];
+      }
+    }
+  }), [props.overflowMode, scale, density]);
   let {direction} = useLocale();
   layout.collection = state.collection;
 
@@ -158,7 +146,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 
     if (reusableView.viewType === 'rowgroup') {
       return (
-        <TableRowGroup key={reusableView.key} style={style}>
+        <TableRowGroup
+          key={reusableView.key}
+          style={style}>
           {renderChildren(children)}
         </TableRowGroup>
       );
@@ -254,13 +244,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           );
         }
 
-        if (item.props.allowsResizing) {
-          return <ResizableTableColumnHeader item={item} state={state} />;
-        }
-
-        return (
-          <TableColumnHeader column={item} />
-        );
+        return <TableColumnHeader column={item} />;
       case 'loader':
         return (
           <CenteredWrapper>
@@ -309,14 +293,13 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         focusedKey={state.selectionManager.focusedKey}
         renderView={renderView}
         renderWrapper={renderWrapper}
-        setTableWidth={state.setTableWidth}
         domRef={domRef} />
     </TableContext.Provider>
   );
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, setTableWidth, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, ...otherProps}) {
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
   let bodyRef = useRef<HTMLDivElement>();
@@ -347,7 +330,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         // Offset scroll position by width of selection cell
         // (which is sticky and will overlap the cell we're scrolling to).
         offsetX: column.props.isSelectionCell
-          ? layout.getColumnWidth_(column.key)
+          ? layout.columnWidths.get(column.key)
           : 0
       });
     }
@@ -362,11 +345,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   }, [bodyRef]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
-    // setting the table width will recalculate column widths which we only want to do once the virtualizer is done initializing
-    if (state.virtualizer.contentSize.height > 0) {
-      setTableWidth(rect.width);
-    }
-      
     state.setVisibleRect(rect);
 
     if (!isLoading && onLoadMore) {
@@ -430,8 +408,7 @@ function TableHeader({children, ...otherProps}) {
   );
 }
 
-function TableColumnHeader(props) {
-  let {column} = props;
+function TableColumnHeader({column}) {
   let ref = useRef();
   let state = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
@@ -439,21 +416,13 @@ function TableColumnHeader(props) {
     isVirtualized: true
   }, state, ref);
 
-  let {buttonProps} = useButton(props, ref);
-
   let columnProps = column.props as SpectrumColumnProps<unknown>;
-
-  // Can these be enforced with prop type validation?
-  if (columnProps.width && columnProps.allowsResizing) {
-    throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
-  }
-
   let {hoverProps, isHovered} = useHover({});
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...mergeProps(columnHeaderProps, hoverProps, buttonProps)}
+        {...mergeProps(columnHeaderProps, hoverProps)}
         ref={ref}
         className={
           classNames(
@@ -483,33 +452,9 @@ function TableColumnHeader(props) {
         {columnProps.allowsSorting &&
           <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
         }
+
       </div>
     </FocusRing>
-  );
-}
-
-function ResizableTableColumnHeader({item, state}) {
-  let ref = useRef();
-
-  const onMenuSelect = () => {
-    // focusResizer
-    setTimeout(() => {
-      focusSafely(ref.current);
-    }, 360);
-  };
-
-  return (
-    <>
-      <MenuTrigger>
-        <TableColumnHeader column={item} />
-        <Menu onAction={onMenuSelect}>
-          <Item>
-            Resize column
-          </Item>
-        </Menu>
-      </MenuTrigger>
-      <Resizer ref={ref} state={state} item={item} />
-    </>
   );
 }
 
@@ -744,22 +689,5 @@ function CenteredWrapper({children}) {
 /**
  * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
-const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-
-/* 
-  When ready to remove this feature flag, you can remove this whole section of code, delete the _DEPRECATED files, and just replace the export with the _TableView above.
-*/
-function FeatureFlaggedTableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let state = useTableState({
-    ...props
-  });
-
-  const someColumnsAllowResizing = state.collection.columns.some(c => c.props?.allowsResizing);
-
-  return someColumnsAllowResizing ? <_TableView {...props} ref={ref} /> : <TableView_DEPRECATED {...props} ref={ref} />;
-}
-
-const _FeatureFlaggedTableView = React.forwardRef(FeatureFlaggedTableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-
-
-export {_FeatureFlaggedTableView as TableView};
+const _TableView_DEPRECATED = React.forwardRef(TableView_DEPRECATED) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+export {_TableView_DEPRECATED as TableView_DEPRECATED};
