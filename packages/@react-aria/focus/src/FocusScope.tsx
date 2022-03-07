@@ -414,10 +414,11 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       return;
     }
 
+    let defaultNodeToRestore: HTMLElement = nodeToRestoreRef.current as HTMLElement;
     let nodeToRestore: HTMLElement;
 
     if (typeof restoreFocus === 'boolean') {
-      nodeToRestore = nodeToRestoreRef.current as HTMLElement;
+      nodeToRestore = defaultNodeToRestore;
     } else if (restoreFocus.current) {
       nodeToRestore = restoreFocus.current instanceof HTMLElement ? restoreFocus.current : restoreFocus.current.UNSAFE_getDOMNode();
     }
@@ -484,6 +485,13 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
     return () => {
       if (!contain) {
         document.removeEventListener('keydown', onKeyDown, true);
+      }
+
+      if (!nodeToRestore || !document.body.contains(nodeToRestore) || !isElementVisible(nodeToRestore)) {
+        // If the expected nodeToRestore was an explicit ref no longer in the document,
+        // we should try to restore focus to what would have been the node to restore when the scope opened.
+        addToNodeToRestoreArray(defaultNodeToRestore);
+        nodeToRestore = defaultNodeToRestore;
       }
 
       if (nodeToRestore) {

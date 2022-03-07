@@ -97,7 +97,7 @@ function Example({usePortal, contain, useRestoreFocusRef = false}: StoryProps) {
 
   return (
     <div>
-      <input />
+      <input  />
 
       <button type="button" onClick={() => setOpen(true)}>
         Open dialog
@@ -129,3 +129,49 @@ RestoreFocusRef.args = {usePortal: false, useRestoreFocusRef: true};
 
 export const RestoreFocusRefInsidePortal = Template().bind({});
 RestoreFocusRefInsidePortal.args = {usePortal: true, useRestoreFocusRef: true};
+
+function AdditionalRestoreFocusRefExample() {
+  let [open, setOpen] = useState(false);
+  let [showRestoreFocusElement, setShowRestoreFocusElement] = useState(true);
+  let restoreFocusRef = useRef(null);
+  let onKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div>
+      <div>
+        <button type="button" onClick={() => setOpen(true)}>
+          Open dialog
+        </button>
+        {showRestoreFocusElement && <input ref={restoreFocusRef} placeholder="Restore focus here!" />}
+      </div>
+      {open &&
+        (
+          <FocusScope contain restoreFocus={showRestoreFocusElement ? restoreFocusRef : true} autoFocus>
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+            <div role="dialog" onKeyDown={onKeyDown}>
+              <label>
+                <input
+                  type="checkbox"
+                  autoFocus
+                  checked={showRestoreFocusElement}
+                  onChange={e => setShowRestoreFocusElement(e.target.checked)} />
+                Show restore focus element
+              </label>
+              <button type="button" onClick={() => setOpen(false)}>
+                Close dialog
+              </button>
+            </div>
+          </FocusScope>
+        )
+      }
+    </div>
+  );
+}
+
+const AdditionalRestoreFocusRefExampleTemplate = (): Story<StoryProps> => () => <AdditionalRestoreFocusRefExample />;
+export const AdditionalRestoreFocusRef = AdditionalRestoreFocusRefExampleTemplate().bind({});
