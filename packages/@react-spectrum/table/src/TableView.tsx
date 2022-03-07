@@ -449,8 +449,6 @@ function TableColumnHeader(props) {
 
   let {hoverProps, isHovered} = useHover({});
 
-  // console.log(columnHeaderProps, hoverProps, buttonProps);
-
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -493,10 +491,10 @@ function ResizableTableColumnHeader({item, state}) {
   let ref = useRef();
 
   const onMenuSelect = () => {
+    // focusResizer
     setTimeout(() => {
-      console.log(ref.current);
       focusSafely(ref.current);
-    }, 500);
+    }, 360);
   };
 
   return (

@@ -108,7 +108,8 @@ svg.spectrum-Table-sortedIcon {
     background-color: var(--spectrum-table-divider-border-color);;
   }
   
-  &:active {
+  &:active,
+  &:focus {
     &::after {
       width: 2px;
       background-color: var(--spectrum-global-color-blue-400);
