@@ -946,8 +946,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(document.body);
   });
 
-  // TODO: Fix case
-  it.skip('focuses the landmark again after toggling browser tabs', function () {
+  it('focuses the landmark again after toggling browser tabs', function () {
     let {getByRole} = render(
       <div>
         <Navigation>
