@@ -1123,4 +1123,35 @@ describe('LandmarkManager', function () {
     );
     expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'nav label 1\' label. If two or more landmarks on a page share the same role, they must have unique labels: ', navs);
   });
+
+  it('focus restores to previously focused landmark after blur and F6.', function () {
+    let {getByRole} = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+    let nav = getByRole('navigation');
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(nav).toHaveAttribute('tabIndex', '-1');
+    expect(document.activeElement).toBe(nav);
+
+    fireEvent.mouseDown(document.body);
+    fireEvent.mouseUp(document.body);
+      
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(nav).toHaveAttribute('tabIndex', '-1');
+    expect(document.activeElement).toBe(nav);
+  });
 });
