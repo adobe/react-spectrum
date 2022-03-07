@@ -222,6 +222,7 @@ export class TableCollection<T> extends GridCollection<T> {
       // add a hidden buffer column to the end of the table
       // this will be used to allow for smooth scrolling when
       // resizing columns while a horizontal scroll bar is present
+      // (also lovingly known as the "spooky column")
       let resizeBufferColumn: GridNode<T> = {
         type: 'column',
         key: RESIZE_BUFFER_COLUMN_KEY,
