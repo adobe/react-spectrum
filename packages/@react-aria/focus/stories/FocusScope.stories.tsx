@@ -173,5 +173,5 @@ function AdditionalRestoreFocusRefExample() {
   );
 }
 
-const AdditionalRestoreFocusRefExampleTemplate = (): Story<StoryProps> => () => <AdditionalRestoreFocusRefExample />;
+const AdditionalRestoreFocusRefExampleTemplate = () => () => <AdditionalRestoreFocusRefExample />;
 export const AdditionalRestoreFocusRef = AdditionalRestoreFocusRefExampleTemplate().bind({});

@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render} from '@testing-library/react';
 import {FocusScope, useFocusManager} from '../';
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import userEvent from '@testing-library/user-event';
 
@@ -594,6 +594,80 @@ describe('FocusScope', function () {
 
       userEvent.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
+    });
+
+    it('should support restore focus to ref', function () {
+      function Test() {
+        let [open, setOpen] = useState(false);
+        let [showRestoreFocusElement, setShowRestoreFocusElement] = useState(true);
+        let restoreFocusRef = useRef(null);
+        let onKeyDown = (e) => {
+          if (e.key === 'Escape') {
+            e.stopPropagation();
+            setOpen(false);
+          }
+        };
+        return (
+          <div>
+            <div>
+              <button type="button" data-testid="trigger" onClick={() => setOpen(true)}>
+                Open dialog
+              </button>
+              {showRestoreFocusElement && <input ref={restoreFocusRef} data-testid="restoreFocusInput" placeholder="Restore focus here!" />}
+            </div>
+            {open &&
+              (
+                <FocusScope contain restoreFocus={showRestoreFocusElement ? restoreFocusRef : true} autoFocus>
+                  {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+                  <div role="dialog" onKeyDown={onKeyDown} data-testid="dialog">
+                    <label>
+                      <input
+                        type="checkbox"
+                        autoFocus
+                        checked={showRestoreFocusElement}
+                        onChange={e => setShowRestoreFocusElement(e.target.checked)}
+                        data-testid="checkbox" />
+                      Show restore focus element
+                    </label>
+                    <button type="button" onClick={() => setOpen(false)} data-testid="closeButton">
+                      Close dialog
+                    </button>
+                  </div>
+                </FocusScope>
+              )
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+
+      let trigger = getByTestId('trigger');
+      act(() => {trigger.focus();});
+      fireEvent.click(trigger);
+
+      let checkbox = getByTestId('checkbox');
+      expect(document.activeElement).toBe(checkbox);
+
+      let closeButton = getByTestId('closeButton');
+      act(() => {closeButton.focus();});
+      fireEvent.click(closeButton);
+
+      let restoreFocusInput = getByTestId('restoreFocusInput');
+      expect(document.activeElement).toBe(restoreFocusInput);
+
+      act(() => {trigger.focus();});
+      fireEvent.click(trigger);
+
+      checkbox = getByTestId('checkbox');
+      expect(document.activeElement).toBe(checkbox);
+
+      fireEvent.click(checkbox);
+
+      let dialog = getByTestId('dialog');
+      fireEvent.keyDown(dialog, {key: 'Escape'});
+
+      expect(document.activeElement).toBe(trigger);
     });
   });
 
