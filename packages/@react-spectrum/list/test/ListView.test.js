@@ -711,12 +711,12 @@ describe('ListView', function () {
         let row = getAllByRole('row')[0];
         expect(row).toHaveAttribute('draggable', 'true');
         let cell = within(row).getByRole('gridcell');
-        expect(cell).toHaveTextContent('Item a');
+        expect(cell).toHaveTextContent('File a');
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cell, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'Item a')]);
+        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'File a')]);
 
         act(() => jest.runAllTimers());
 
@@ -756,7 +756,7 @@ describe('ListView', function () {
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
 
         fireEvent.pointerUp(cell, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
@@ -786,29 +786,29 @@ describe('ListView', function () {
         expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['a', 'b', 'c', 'd']));
 
         let cellA = within(rows[0]).getByRole('gridcell');
-        expect(cellA).toHaveTextContent('Item a');
+        expect(cellA).toHaveTextContent('File a');
         expect(rows[0]).toHaveAttribute('draggable', 'true');
 
         let cellB = within(rows[1]).getByRole('gridcell');
-        expect(cellB).toHaveTextContent('Item b');
+        expect(cellB).toHaveTextContent('File b');
         expect(rows[1]).toHaveAttribute('draggable', 'true');
 
         let cellC = within(rows[2]).getByRole('gridcell');
-        expect(cellC).toHaveTextContent('Item c');
+        expect(cellC).toHaveTextContent('Folder c');
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let cellD = within(rows[3]).getByRole('gridcell');
-        expect(cellD).toHaveTextContent('Item d');
+        expect(cellD).toHaveTextContent('File d');
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cellA, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([
-          new DataTransferItem('text/plain', 'Item a\nItem b\nItem d'),
+          new DataTransferItem('text/plain', 'File a\nFile b\nFile d'),
           new DataTransferItem(
             CUSTOM_DRAG_TYPE,
-            JSON.stringify([{'text/plain': 'Item a'}, {'text/plain': 'Item b'}, {'text/plain': 'Item d'}]
+            JSON.stringify([{'text/plain': 'File a'}, {'text/plain': 'File b'}, {'text/plain': 'File d'}]
           ))
         ]);
 
@@ -837,11 +837,11 @@ describe('ListView', function () {
         act(() => jest.runAllTimers());
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // onDrop should only have 3 items, item c shouldn't be included
+        // onDrop should only have 3 items, Folder c shouldn't be included
         expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
-        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Item b');
-        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Item d');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('File b');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('File d');
 
         fireEvent.pointerUp(cellA, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
@@ -862,7 +862,7 @@ describe('ListView', function () {
 
         let row = getAllByRole('row')[0];
         let cell = within(row).getByRole('gridcell');
-        expect(cell).toHaveTextContent('Item a');
+        expect(cell).toHaveTextContent('File a');
         expect(row).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
@@ -891,7 +891,7 @@ describe('ListView', function () {
         expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['c', 'd']));
 
         let cellC = within(rows[2]).getByRole('gridcell');
-        expect(cellC).toHaveTextContent('Item c');
+        expect(cellC).toHaveTextContent('Folder c');
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
@@ -916,7 +916,7 @@ describe('ListView', function () {
         let droppable = getByText('Drop here');
         let row = getAllByRole('row')[0];
         let cell = within(row).getByRole('gridcell');
-        expect(cell).toHaveTextContent('Item a');
+        expect(cell).toHaveTextContent('File a');
         expect(row).toHaveAttribute('draggable', 'true');
 
         act(() => cell.focus());
@@ -941,7 +941,7 @@ describe('ListView', function () {
         fireEvent.keyUp(droppable, {key: 'Enter'});
 
         expect(onDrop).toHaveBeenCalledTimes(1);
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
 
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
@@ -962,19 +962,19 @@ describe('ListView', function () {
         let rows = getAllByRole('row');
 
         let cellA = within(rows[0]).getByRole('gridcell');
-        expect(cellA).toHaveTextContent('Item a');
+        expect(cellA).toHaveTextContent('File a');
         expect(rows[0]).toHaveAttribute('draggable', 'true');
 
         let cellB = within(rows[1]).getByRole('gridcell');
-        expect(cellB).toHaveTextContent('Item b');
+        expect(cellB).toHaveTextContent('File b');
         expect(rows[1]).toHaveAttribute('draggable', 'true');
 
         let cellC = within(rows[2]).getByRole('gridcell');
-        expect(cellC).toHaveTextContent('Item c');
+        expect(cellC).toHaveTextContent('Folder c');
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let cellD = within(rows[3]).getByRole('gridcell');
-        expect(cellD).toHaveTextContent('Item d');
+        expect(cellD).toHaveTextContent('File d');
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
         act(() => cellA.focus());
@@ -999,11 +999,11 @@ describe('ListView', function () {
 
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // onDrop should only have 3 items, item c shouldn't be included
+        // onDrop should only have 3 items, Folder c shouldn't be included
         expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
-        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Item b');
-        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Item d');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('File b');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('File d');
 
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
