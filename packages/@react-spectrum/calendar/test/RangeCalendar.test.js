@@ -987,6 +987,12 @@ describe('RangeCalendar', () => {
       expect(cellAfter).not.toHaveAttribute('tabIndex');
       expect(cellAfter).toHaveAttribute('aria-disabled', 'true');
 
+      let prevButton = getByRole('button', {name: 'Previous'});
+      expect(prevButton).toHaveAttribute('disabled');
+
+      let nextButton = getByRole('button', {name: 'Next'});
+      expect(nextButton).toHaveAttribute('disabled');
+
       cell = getByRole('button', {name: 'Tuesday, December 14, 2021'});
       act(() => userEvent.click(cell));
 
@@ -994,6 +1000,9 @@ describe('RangeCalendar', () => {
       expect(cellBefore).not.toHaveAttribute('aria-disabled');
       expect(cellAfter).toHaveAttribute('tabIndex', '-1');
       expect(cellAfter).not.toHaveAttribute('aria-disabled');
+
+      expect(prevButton).not.toHaveAttribute('disabled');
+      expect(nextButton).not.toHaveAttribute('disabled');
 
       // Clicking on one of the selected dates should also disable the dates outside the available range.
       cell = getByRole('button', {name: 'Sunday, December 12, 2021 selected'});
@@ -1003,6 +1012,83 @@ describe('RangeCalendar', () => {
       expect(cellBefore).toHaveAttribute('aria-disabled', 'true');
       expect(cellAfter).not.toHaveAttribute('tabIndex');
       expect(cellAfter).toHaveAttribute('aria-disabled', 'true');
+      expect(prevButton).toHaveAttribute('disabled');
+      expect(nextButton).toHaveAttribute('disabled');
+    });
+
+    it('disables the previous button if the last day of the previous month is unavailable', () => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2022, 4, 25), new CalendarDate(2022, 4, 30)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2022, 5, 10), end: new CalendarDate(2022, 5, 12)}}
+          isDateUnavailable={isDateUnavailable} />
+      );
+
+      let cell = getByRole('button', {name: 'Wednesday, May 4, 2022'});
+      act(() => userEvent.click(cell));
+
+      let prevButton = getByRole('button', {name: 'Previous'});
+      expect(prevButton).toHaveAttribute('disabled');
+
+      let nextButton = getByRole('button', {name: 'Next'});
+      expect(nextButton).not.toHaveAttribute('disabled');
+    });
+
+    it('disables the next button if the first day of the next month is unavailable', () => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2022, 5, 1), new CalendarDate(2022, 5, 4)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2022, 4, 10), end: new CalendarDate(2022, 4, 12)}}
+          isDateUnavailable={isDateUnavailable} />
+      );
+
+      let cell = getByRole('button', {name: 'Thursday, April 28, 2022'});
+      act(() => userEvent.click(cell));
+
+      let prevButton = getByRole('button', {name: 'Previous'});
+      expect(prevButton).not.toHaveAttribute('disabled');
+
+      let nextButton = getByRole('button', {name: 'Next'});
+      expect(nextButton).toHaveAttribute('disabled');
+    });
+
+    it('updates the unavailable dates when navigating', () => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2022, 5, 2), new CalendarDate(2022, 5, 4)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2022, 4, 10), end: new CalendarDate(2022, 4, 12)}}
+          isDateUnavailable={isDateUnavailable} />
+      );
+
+      let cell = getByRole('button', {name: 'Thursday, April 28, 2022'});
+      act(() => userEvent.click(cell));
+
+      let prevButton = getByRole('button', {name: 'Previous'});
+      expect(prevButton).not.toHaveAttribute('disabled');
+
+      let nextButton = getByRole('button', {name: 'Next'});
+      expect(nextButton).not.toHaveAttribute('disabled');
+
+      act(() => userEvent.click(nextButton));
+
+      cell = getByRole('button', {name: 'Sunday, May 1, 2022 selected'});
+      expect(cell).not.toHaveAttribute('aria-disabled');
+      expect(cell).toHaveAttribute('tabindex', '0');
+
+      cell = getByRole('button', {name: 'Monday, May 2, 2022'});
+      expect(cell).toHaveAttribute('aria-disabled', 'true');
     });
 
     it('advances selection backwards when starting a selection at the end of an available range', () => {

@@ -45,8 +45,9 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
     }
   }
 
+  // Available range must be stored in a ref so we have access to the updated version immediately in `isInvalid`.
   let availableRangeRef = useRef<RangeValue<DateValue>>(null);
-  let availableRange = availableRangeRef.current;
+  let [availableRange, setAvailableRange] = useState<RangeValue<DateValue>>(null);
   let min = useMemo(() => maxDate(minValue, availableRange?.start), [minValue, availableRange]);
   let max = useMemo(() => minDate(maxValue, availableRange?.end), [maxValue, availableRange]);
 
@@ -61,18 +62,33 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
     selectionAlignment: alignment
   });
 
+  let updateAvailableRange = (date) => {
+    if (date && props.isDateUnavailable && !props.allowsNonContiguousRanges) {
+      availableRangeRef.current = {
+        start: nextUnavailableDate(date, calendar, -1),
+        end: nextUnavailableDate(date, calendar, 1)
+      };
+      setAvailableRange(availableRangeRef.current);
+    } else {
+      availableRangeRef.current = null;
+      setAvailableRange(null);
+    }
+  };
+
+  // If the visible range changes, we need to update the available range.
+  let lastVisibleRange = useRef(calendar.visibleRange);
+  if (calendar.visibleRange.start !== lastVisibleRange.current.start || calendar.visibleRange.end !== lastVisibleRange.current.end) {
+    updateAvailableRange(anchorDate);
+    lastVisibleRange.current = calendar.visibleRange;
+  }
+
   let setAnchorDate = (date: CalendarDate) => {
     if (date) {
       setAnchorDateState(date);
-      if (props.isDateUnavailable && !props.allowsNonContiguousRanges) {
-        availableRangeRef.current = {
-          start: nextUnavailableDate(date, calendar, -1),
-          end: nextUnavailableDate(date, calendar, 1)
-        };
-      }
+      updateAvailableRange(date);
     } else {
       setAnchorDateState(null);
-      availableRangeRef.current = null;
+      updateAvailableRange(null);
     }
   };
 

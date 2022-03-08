@@ -90,7 +90,10 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     lastCalendarIdentifier.current = calendar.identifier;
   }
 
-  if (focusedDate.compare(startDate) < 0) {
+  if (isInvalid(focusedDate, minValue, maxValue)) {
+    // If the focused date was moved to an invalid value, it can't be focused, so constrain it.
+    setFocusedDate(constrainValue(focusedDate, minValue, maxValue));
+  } else if (focusedDate.compare(startDate) < 0) {
     setStartDate(alignEnd(focusedDate, visibleDuration, locale, minValue, maxValue));
   } else if (focusedDate.compare(startDate.add(visibleDuration)) >= 0) {
     setStartDate(alignStart(focusedDate, visibleDuration, locale, minValue, maxValue));
