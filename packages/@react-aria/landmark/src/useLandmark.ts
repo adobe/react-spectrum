@@ -41,7 +41,7 @@ class LandmarkManager {
   private constructor() {
     this.f6Handler = this.f6Handler.bind(this);
     this.focusinHandler = this.focusinHandler.bind(this);
-    this.blurHandler = this.blurHandler.bind(this);
+    this.focusoutHandler = this.focusoutHandler.bind(this);
   }
 
   public static getInstance(): LandmarkManager {
@@ -55,14 +55,14 @@ class LandmarkManager {
   private setup() {
     document.addEventListener('keydown', this.f6Handler, {capture: true});
     document.addEventListener('focusin', this.focusinHandler, {capture: true});
-    document.addEventListener('blur', this.blurHandler, {capture: true});
+    document.addEventListener('focusout', this.focusoutHandler, {capture: true});
     this.isListening = true;
   }
 
   private teardown() {
     document.removeEventListener('keydown', this.f6Handler, {capture: true});
     document.removeEventListener('focusin', this.focusinHandler, {capture: true});
-    document.removeEventListener('blur', this.blurHandler, {capture: true});
+    document.removeEventListener('focusout', this.focusoutHandler, {capture: true});
     this.isListening = false;
   }
 
@@ -106,7 +106,7 @@ class LandmarkManager {
     // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
     let start = 0;
     let end = this.landmarks.length - 1;
-    while (start <= end) { 
+    while (start <= end) {
       let mid = Math.floor((start + end) / 2);
       let comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[mid].ref.current as Node);
       let isNewAfterExisting = Boolean((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) || (comparedPosition & Node.DOCUMENT_POSITION_CONTAINS));
@@ -268,9 +268,20 @@ class LandmarkManager {
     }
   }
 
-  public blurHandler(e: FocusEvent) {
-    let currentLandmark = this.closestLandmark(e.target as HTMLElement);
-    currentLandmark?.blur();
+  /**
+   * Track if the focus is lost to the body. If it is, do cleanup on the landmark that last had focus.
+   */
+  public focusoutHandler(e: FocusEvent) {
+    let previousFocusedElement = e.target as HTMLElement;
+    let nextFocusedElement = e.relatedTarget;
+    // the === document seems to be a jest thing for focus to go there on generic blur event such as landmark.blur();
+    // browsers appear to send focus instead to document.body and the relatedTarget is null when that happens
+    if (!nextFocusedElement || nextFocusedElement === document) {
+      let closestPreviousLandmark = this.closestLandmark(previousFocusedElement);
+      if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElement) {
+        closestPreviousLandmark.blur();
+      }
+    }
   }
 }
 

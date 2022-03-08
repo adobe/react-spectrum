@@ -1145,9 +1145,12 @@ describe('LandmarkManager', function () {
     expect(nav).toHaveAttribute('tabIndex', '-1');
     expect(document.activeElement).toBe(nav);
 
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
-      
+    act(() => {
+      (document.activeElement as HTMLElement).blur();
+    });
+    expect(nav).not.toHaveAttribute('tabIndex', '-1');
+    expect(document.activeElement).toBe(document.body);
+
     fireEvent.keyDown(document.activeElement, {key: 'F6'});
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
     expect(nav).toHaveAttribute('tabIndex', '-1');
