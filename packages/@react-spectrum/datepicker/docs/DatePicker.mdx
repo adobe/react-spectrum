@@ -251,7 +251,7 @@ This example only accepts dates after today.
 
 ### Unavailable dates
 
-`DatePicker` supports marking certain dates as _unavailable_. These dates cannot be selected by the user and are displayed with a crossed out appearance in the calendar. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
+`DatePicker` supports marking certain dates as _unavailable_. These dates cannot be selected by the user and are displayed with a crossed out appearance in the calendar. In the date field, an invalid state is displayed if a user enters an unavailable date. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether a date is unavailable.
 
 This example includes multiple unavailable date ranges, e.g. dates when no appointments are available. In addition, all weekends are unavailable. The `minValue` prop is also used to prevent selecting dates before today.
 

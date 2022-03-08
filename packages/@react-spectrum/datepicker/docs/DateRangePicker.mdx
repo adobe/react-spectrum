@@ -277,9 +277,9 @@ This example only accepts dates after today.
 
 ### Unavailable dates
 
-`DateRangePicker` supports marking certain dates as _unavailable_. These dates cannot be selected by the user and are displayed with a crossed out appearance in the calendar. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
+`DateRangePicker` supports marking certain dates as _unavailable_. These dates cannot be selected by the user and are displayed with a crossed out appearance in the calendar. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether a date is unavailable.
 
-Note that by default, users may not select non-contiguous ranges, i.e. ranges that contain unavailable dates within them. Once a start date is selected in the calendar, enabled dates will be restricted to subsequent dates until an unavailable date is hit. While this is handled automatically in the calendar, additional validation logic must be provided to ensure similar behavior in the date field. This can be achieved using the `validationState` prop. See [below](#non-contiguous-ranges) for an example of how to allow non-contiguous ranges.
+Note that by default, users may not select non-contiguous ranges, i.e. ranges that contain unavailable dates within them. Once a start date is selected in the calendar, enabled dates will be restricted to subsequent dates until an unavailable date is hit. While this is handled automatically in the calendar, additional validation logic must be provided to ensure an invalid state is displayed in the date field. This can be achieved using the `validationState` prop. See [below](#non-contiguous-ranges) for an example of how to allow non-contiguous ranges.
 
 This example includes multiple unavailable date ranges, e.g. dates when a rental house is not available. The `minValue` prop is also used to prevent selecting dates before today. The `validationState` prop is used to mark selected date ranges with unavailable dates in the middle as invalid.
 
