@@ -1062,27 +1062,30 @@ describe('ListView', function () {
       checkSelection(onSelectionChange, ['a']);
     });
 
-    it('should open a menu upon click', function () {
-      let {getAllByRole, getByRole} = render(
+    it('should only display the drag handle on keyboard focus for dragggable items', function () {
+      let {getAllByRole} = render(
         <DraggableListView />
       );
 
-      let row = getAllByRole('row')[0];
-      expect(row).toHaveAttribute('aria-selected', 'false');
-      expect(row).toHaveAttribute('draggable', 'true');
+      let rows = getAllByRole('row');
+      let cellA = within(rows[0]).getByRole('gridcell');
+      let dragHandle = within(cellA).getAllByRole('button')[0];
+      // If the dragHandle has a style applied, it is visually hidden
+      expect(dragHandle.style).toBeTruthy();
 
-      let menuButton = within(row).getAllByRole('button')[2];
-      expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+      fireEvent.pointerDown(cellA, {button: 0, pointerId: 1});
+      dragHandle = within(cellA).getAllByRole('button')[0];
+      expect(dragHandle.style).toBeTruthy();
+      fireEvent.pointerUp(cellA, {button: 0, pointerId: 1});
 
-      triggerPress(menuButton);
-      act(() => {jest.runAllTimers();});
+      fireEvent.pointerEnter(cellA);
+      dragHandle = within(cellA).getAllByRole('button')[0];
+      expect(dragHandle.style).toBeTruthy();
 
-      let menu = getByRole('menu');
-      expect(menu).toBeTruthy();
-      expect(menuButton).toHaveAttribute('aria-expanded', 'true');
-      expect(row).toHaveAttribute('aria-selected', 'false');
-      expect(onDragStart).toHaveBeenCalledTimes(0);
-      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+      // If dragHandle doesn't have a position applied, it isn't visually hidden
+      act(() => cellA.focus());
+      dragHandle = within(cellA).getAllByRole('button')[0];
+      expect(dragHandle.style.position).toBe('');
     });
 
     it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
@@ -1106,14 +1109,11 @@ describe('ListView', function () {
       let rows = getAllByRole('row');
       let cellA = within(rows[0]).getByRole('gridcell');
       let cellB = within(rows[1]).getByRole('gridcell');
-      let cellC = within(rows[2]).getByRole('gridcell');
 
       act(() => cellA.focus());
       expect(hasDragHandle(cellA)).toBeFalsy();
       moveFocus('ArrowDown');
       expect(hasDragHandle(cellB)).toBeFalsy();
-      moveFocus('ArrowDown');
-      expect(hasDragHandle(cellC)).toBeTruthy();
 
       fireEvent.pointerDown(cellA, {button: 0, pointerId: 1});
       expect(hasDragHandle(cellA)).toBeFalsy();
@@ -1123,16 +1123,33 @@ describe('ListView', function () {
       expect(hasDragHandle(cellB)).toBeFalsy();
       fireEvent.pointerUp(cellB, {button: 0, pointerId: 1});
 
-      fireEvent.pointerDown(cellC, {button: 0, pointerId: 1});
-      expect(hasDragHandle(cellC)).toBeTruthy();
-      fireEvent.pointerUp(cellC, {button: 0, pointerId: 1});
-
       fireEvent.pointerEnter(cellA);
       expect(hasDragHandle(cellA)).toBeFalsy();
       fireEvent.pointerEnter(cellB);
       expect(hasDragHandle(cellB)).toBeFalsy();
-      fireEvent.pointerEnter(cellC);
-      expect(hasDragHandle(cellC)).toBeTruthy();
+    });
+
+    it('should open a menu upon click', function () {
+      let {getAllByRole, getByRole} = render(
+        <DraggableListView />
+      );
+
+      let row = getAllByRole('row')[0];
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      expect(row).toHaveAttribute('draggable', 'true');
+
+      let menuButton = within(row).getAllByRole('button')[2];
+      expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+
+      triggerPress(menuButton);
+      act(() => {jest.runAllTimers();});
+
+      let menu = getByRole('menu');
+      expect(menu).toBeTruthy();
+      expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      expect(onDragStart).toHaveBeenCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
     describe('accessibility', function () {
