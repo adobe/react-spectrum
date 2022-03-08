@@ -65,7 +65,7 @@ storiesOf('Date and Time/RangeCalendar', module)
     }})
   )
   .add(
-    'isDateAvailable, allowsNonContiguousRanges',
+    'isDateUnavailable, allowsNonContiguousRanges',
     () => {
       let {locale} = useLocale();
       return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true});
