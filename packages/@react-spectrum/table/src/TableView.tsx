@@ -725,7 +725,11 @@ function FeatureFlaggedTableView<T extends object>(props: SpectrumTableProps<T>,
 
   const someColumnsAllowResizing = state.collection.columns.some(c => c.props?.allowsResizing);
 
-  return someColumnsAllowResizing ? <_TableView {...props} ref={ref} /> : <TableView_DEPRECATED {...props} ref={ref} />;
+  if (someColumnsAllowResizing) {
+    return <_TableView {...props} ref={ref} />;
+  } else {
+    return <TableView_DEPRECATED {...props} ref={ref} />;
+  }
 }
 
 /**
