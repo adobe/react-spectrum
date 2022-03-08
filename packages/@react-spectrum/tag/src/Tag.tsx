@@ -68,12 +68,11 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
         )}>
         <SlotProvider
           slots={{
-            tagLabel: {UNSAFE_className: classNames(styles, 'spectrum-Tag-label')},
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable})}
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable}), ...labelProps}
           }}>
-          {typeof children !== 'string' ?? children[0]}
-          <Text {...labelProps}>{item.childNodes[0].textValue}</Text>
+
+          {typeof children === 'string' ? <Text>{children}</Text> : children}
           {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
         </SlotProvider>
       </div>
