@@ -39,11 +39,6 @@ describe('useNumberField hook', () => {
       expect(consoleWarnSpy).toHaveBeenLastCalledWith('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
     });
 
-    it('with appropriate props if name is defined', () => {
-      let {inputProps} = renderNumberFieldHook({name: 'mock-number-input', 'aria-label': 'mandatory label'});
-      expect(inputProps['name']).toBe('mock-number-input');
-    });
-
     it('with appropriate props if placeholder is defined', () => {
       let {inputProps} = renderNumberFieldHook({placeholder: 'Enter value', 'aria-label': 'mandatory label'});
       expect(inputProps['placeholder']).toBe('Enter value');

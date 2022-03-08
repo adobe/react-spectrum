@@ -230,15 +230,7 @@ storiesOf('NumberField', module)
     () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp')})
   )
   .add(
-    'placeholder',
-    () => render({placeholder: 'Enter value'})
-  )
-  .add(
-    'with form name',
-    () => render({name: 'numberfield-input-form-name'})
-  )
-  .add(
-    'input events',
+    'input dom events',
     () => render({
       onCopy: action('onCopy'), onCut: action('onCut'), onPaste: action('onPaste'), onCompositionStart: action('onCompositionStart'), onCompositionEnd: action('onCompositionEnd'),
       onCompositionUpdate: action('onCompositionUpdate'), onSelect: action('onSelect'), onBeforeInput: action('onBeforeInput'), onInput: action('onInput')
