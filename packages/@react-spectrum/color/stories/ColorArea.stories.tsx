@@ -84,7 +84,7 @@ XBlueYRed.storyName = 'RGB xChannel="blue", yChannel="red"';
 XBlueYRed.args = {...XBlueYGreen.args, xChannel: 'blue', yChannel: 'red'};
 
 export let XRedYBlue = Template.bind({});
-XRedYBlue.storyName = 'GB xChannel="red", yChannel="blue"';
+XRedYBlue.storyName = 'RGB xChannel="red", yChannel="blue"';
 XRedYBlue.args = {...XBlueYGreen.args, xChannel: 'red', yChannel: 'blue'};
 
 export let XRedYGreen = Template.bind({});

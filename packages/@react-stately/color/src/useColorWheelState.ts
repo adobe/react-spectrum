@@ -101,6 +101,8 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
   let valueRef = useRef(value);
   valueRef.current = value;
 
+  let channelRange = value.getChannelRange('hue');
+  let {minValue: minValueX, maxValue: maxValueX, step: step, pageSize: pageStep} = channelRange;
   let [isDragging, setDragging] = useState(false);
   let isDraggingRef = useRef(false).current;
 
@@ -117,9 +119,6 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
       setValue(color);
     }
   }
-
-  let channelRange = value.getChannelRange('hue');
-  let {minValue: minValueX, maxValue: maxValueX, step: step, pageSize: pageStep} = channelRange;
 
   return {
     value,
@@ -139,12 +138,13 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
       return angleToCartesian(value.getChannelValue('hue'), radius);
     },
     increment(stepSize = 1) {
-      let newValue = hue + Math.max(stepSize, step);
-      if (newValue > maxValueX) {
+      let s = Math.max(stepSize, step);
+      let newValue = hue + s;
+      if (newValue >= maxValueX) {
         // Make sure you can always get back to 0.
         newValue = minValueX;
       }
-      setHue(newValue);
+      setHue(roundToStep(mod(newValue, 360), s));
     },
     decrement(stepSize = 1) {
       let s = Math.max(stepSize, step);
@@ -153,7 +153,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
         // |(previous step) - 0| < step size
         setHue(roundDown(360 / s) * s);
       } else {
-        setHue(hue - s);
+        setHue(roundToStep(mod(hue - s, 360), s));
       }
     },
     setDragging(isDragging) {

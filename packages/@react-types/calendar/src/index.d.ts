@@ -41,7 +41,13 @@ export interface CalendarPropsBase {
    * Whether to automatically focus the calendar when it mounts.
    * @default false
    */
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  /** Controls the currently focused date within the calendar. */
+  focusedValue?: DateValue,
+  /** The date that is focused when the calendar first mounts (uncountrolled). */
+  defaultFocusedValue?: DateValue,
+  /** Handler that is called when the focused date changes. */
+  onFocusChange?: (date: CalendarDate) => void
 }
 
 export type DateRange = RangeValue<DateValue>;
