@@ -63,7 +63,9 @@ export interface FocusableDOMProps extends DOMProps {
    * be avoided except in rare scenarios where an alternative means of accessing
    * the element or its functionality via the keyboard is available.
    */
-  excludeFromTabOrder?: boolean
+  excludeFromTabOrder?: boolean,
+  /** A tabIndex to return. */
+  tabIndex?: number
 }
 
 // DOM props that apply to all text inputs
