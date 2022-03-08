@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionMenu} from '..';
 import {Alignment} from '@react-types/shared';
+import {Checkbox} from '@react-spectrum/checkbox';
 import {Flex} from '../../layout';
 import {Item} from '../';
 import {Meta, Story} from '@storybook/react';
@@ -84,6 +85,7 @@ function isOfAlignment(key: string): key is Alignment {
 function DirectionAlignment() {
   const [align, setAlignment] = useState<Alignment>('start');
   const [direction, setDirection] = useState<Direction>('bottom');
+  const [shouldFlip, setShouldFlip] = useState(true);
 
   const handleAlignChange = (key) => {
     if (isOfAlignment(key)) {
@@ -104,10 +106,12 @@ function DirectionAlignment() {
     <Picker label="Direction" items={directionItems} selectedKey={direction} onSelectionChange={handleDirectionChange}>
       {(item) => <Item key={item.key}>{item.label}</Item>}
     </Picker>
+    <Checkbox isSelected={shouldFlip} onChange={setShouldFlip}>Should Flip</Checkbox>
     <ActionMenu
       onAction={action('action')}
       align={align}
-      direction={direction}>
+      direction={direction}
+      shouldFlip={shouldFlip}>
       <Item key="one">One</Item>
       <Item key="two">Two</Item>
       <Item key="three">Three</Item>
@@ -130,6 +134,9 @@ Quiet.args = {isQuiet: true};
 export const Disabled = Template().bind({});
 Disabled.args = {isDisabled: true};
 
+export const DisabledKeys = Template().bind({});
+DisabledKeys.args = {disabledKeys: ['two']};
+
 export const AutoFocus = Template().bind({});
 AutoFocus.args = {autoFocus: true};
 
@@ -151,7 +158,7 @@ export const ControlledOpen = () => {
   );
 };
 
-export const DirectionAlign = () => <DirectionAlignment />;
+export const DirectionAlignFlip = () => <DirectionAlignment />;
 
 export const WithTooltip = () => (
   <TooltipTrigger delay={0}>

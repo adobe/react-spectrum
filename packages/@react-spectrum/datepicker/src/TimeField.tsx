@@ -11,16 +11,15 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
 import {Field} from '@react-spectrum/label';
 import {Input} from './Input';
 import React, {useRef} from 'react';
 import {SpectrumTimePickerProps, TimeValue} from '@react-types/datepicker';
-import {useDateField} from '@react-aria/datepicker';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useTimeField} from '@react-aria/datepicker';
 import {useTimeFieldState} from '@react-stately/datepicker';
 
 /**
@@ -41,15 +40,15 @@ export function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>
   let {locale} = useLocale();
   let state = useTimeFieldState({
     ...props,
-    locale,
-    createCalendar
+    locale
   });
 
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useDateField(props, state, ref);
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField(props, state, ref);
 
   return (
     <Field
       {...props}
+      elementType="span"
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}

@@ -129,10 +129,9 @@ user-provided
       calc(50% - calc(var(--spectrum-checkbox-box-size) / 2));
   }
 
-  &.is-focused,
   &.is-selected,
   &.focus-ring, /* only for visible focus */
-  &:hover {
+  &.is-hovered {
     .spectrum-Card-checkboxWrapper {
       /* Ideally, this would simply apply is-open to the QuickActions component */
       visibility: visible;
@@ -224,9 +223,10 @@ user-provided
   }
 
   .spectrum-Card-grid {
+    block-size: 100%;
     display: grid;
     grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
-    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-actionbutton-height), auto) 1fr var(--spectrum-card-body-padding-bottom);
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), 1fr) var(--spectrum-global-dimension-size-300) minmax(var(--spectrum-actionbutton-height), auto) auto var(--spectrum-card-body-padding-bottom);
     /* absolutely position avatar relative to the preview */
     grid-template-areas:
       "preview preview preview preview    preview"
@@ -566,7 +566,7 @@ user-provided
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
-    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), auto) var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) 1fr;
+    grid-template-rows: minmax(var(--spectrum-card-coverphoto-height), 1fr) var(--spectrum-card-quiet-body-header-margin-top) minmax(var(--spectrum-actionbutton-height), auto) auto;
     grid-template-areas:
       "preview preview preview"
       ".       .       .      "
@@ -950,8 +950,7 @@ For now working around it with a useLayoutEffect in CardBase.
   }
   &.is-focused,
   &.is-selected,
-  &:focus,
-  &:hover {
+  &.is-hovered {
     .spectrum-Card-checkboxWrapper {
       display: none;
     }
@@ -1038,8 +1037,7 @@ For now working around it with a useLayoutEffect in CardBase.
   }
   &.is-focused,
   &.is-selected,
-  &:focus,
-  &:hover {
+  &.is-hovered {
     .spectrum-Card-checkboxWrapper {
       display: none;
     }

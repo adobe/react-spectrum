@@ -35,6 +35,9 @@ export interface DatePickerFieldState {
   dateFormatter: DateFormatter,
   validationState: ValidationState,
   granularity: Granularity,
+  isDisabled: boolean,
+  isReadOnly: boolean,
+  isRequired: boolean,
   increment: (type: Intl.DateTimeFormatPartTypes) => void,
   decrement: (type: Intl.DateTimeFormatPartTypes) => void,
   incrementPage: (type: Intl.DateTimeFormatPartTypes) => void,
@@ -80,7 +83,10 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
   let {
     locale,
     createCalendar,
-    hideTimeZone
+    hideTimeZone,
+    isDisabled,
+    isReadOnly,
+    isRequired
   } = props;
 
   let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
@@ -221,6 +227,9 @@ export function useDatePickerFieldState<T extends DateValue>(props: DatePickerFi
     dateFormatter,
     validationState,
     granularity,
+    isDisabled,
+    isReadOnly,
+    isRequired,
     increment(part) {
       adjustSegment(part, 1);
     },

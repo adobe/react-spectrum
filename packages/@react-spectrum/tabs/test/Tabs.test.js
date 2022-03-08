@@ -670,4 +670,37 @@ describe('Tabs', function () {
     expect(onSelectionChange).toBeCalledTimes(1);
     expect(onSelectionChange).toHaveBeenCalledWith(items[0].name);
   });
+
+  it('updates the tab index of the selected tab if programatically changed', function () {
+    let Example = (props) => (
+      <Provider theme={theme}>
+        <Tabs aria-label="Test Tabs" items={items} selectedKey={props.selectedKey}>
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+    let {getAllByRole, rerender} = render(<Example selectedKey="Tab 3" />);
+
+    let tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('tabindex', '-1');
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1');
+    expect(tabs[2]).toHaveAttribute('tabindex', '0');
+
+    rerender(<Example selectedKey="Tab 1" />);
+    tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('tabindex', '0');
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1');
+    expect(tabs[2]).toHaveAttribute('tabindex', '-1');
+  });
 });

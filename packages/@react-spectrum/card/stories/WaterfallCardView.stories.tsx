@@ -17,6 +17,7 @@ import {
   DisabledKeys,
   DynamicCards,
   EmptyWithHeightGrid,
+  FalsyIds,
   FilteringGrid,
   IsLoadingHeightGrid,
   IsLoadingNoHeightGrid,
@@ -68,6 +69,9 @@ export default {
 
 export const DefaultWaterfallStatic = () => <StaticCards {...StaticCards.args} layout={WaterfallLayout} />;
 DefaultWaterfallStatic.storyName = StaticCards.storyName;
+
+export const FalsyIdWaterfall = () => <FalsyIds {...FalsyIds.args} layout={WaterfallLayout} />;
+FalsyIdWaterfall.storyName = FalsyIds.storyName;
 
 export const DefaultWaterfall = () => <DynamicCards {...DynamicCards.args} layout={WaterfallLayout} />;
 DefaultWaterfall.storyName = 'size provided with items';

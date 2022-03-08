@@ -99,10 +99,19 @@ async function build() {
   fs.removeSync(path.join(dir, 'packages', 'dev', 'v2-test-deps'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
-  fs.copySync(path.join(__dirname, '..', 'cssnano.config.js'), path.join(dir, 'cssnano.config.js'));
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
+
+  // Delete mdx files from dev/docs that shouldn't go out yet.
+  let devPkg = JSON.parse(fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8'));
+  for (let file of glob.sync('packages/dev/docs/pages/**/*.mdx', {cwd: dir})) {
+    let contents = fs.readFileSync(path.join(dir, file), 'utf8');
+    let m = contents.match(/after_version:\s*(.*)/);
+    if (m && !semver.gt(devPkg.version, m[1])) {
+      fs.removeSync(path.join(dir, file));
+    }
+  }
 
   // Only copy babel and parcel patches over
   let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel'));

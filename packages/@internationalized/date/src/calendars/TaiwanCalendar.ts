@@ -37,6 +37,11 @@ function gregorianToTaiwan(year: number, date: Mutable<AnyCalendarDate>) {
   }
 }
 
+/**
+ * The Taiwanese calendar is the same as the Gregorian calendar, but years
+ * are numbered starting from 1912 (Gregorian). Two eras are supported:
+ * 'before_minguo' and 'minguo'.
+ */
 export class TaiwanCalendar extends GregorianCalendar {
   identifier = 'roc'; // Republic of China
 

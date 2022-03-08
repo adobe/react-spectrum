@@ -60,7 +60,7 @@
       }
 
       /* avoid double border for adjacent selected items */
-      &.is-previous-selected {        
+      &.is-previous-selected {
         &:not(.is-focused) {
           border-top-color: transparent;
         }
@@ -98,17 +98,46 @@
     padding-bottom: 0px;
   }
 
+  &.is-dragging {
+    border: 1px solid var(--spectrum-global-color-blue-500);
+    border-radius: var(--spectrum-global-dimension-size-50);
+  }
+
   .react-spectrum-ListViewItem-grid {
     display: grid;
-    grid-template-columns: auto auto auto 1fr auto auto;
+    grid-template-columns: auto auto auto auto 1fr auto auto;
     grid-template-rows: 1fr auto;
     grid-template-areas:
-      "checkbox icon image content actions actionmenu chevron"
-      "checkbox icon image description actions actionmenu chevron"
+      "draghandle checkbox icon image content actions actionmenu chevron"
+      "draghandle checkbox icon image description actions actionmenu chevron"
     ;
     align-items: center;
   }
-  
+
+  .react-spectrum-ListViewItem-draghandle-container {
+    grid-area: draghandle;
+    width: var(--spectrum-global-dimension-size-250);
+    display: flex;
+    align-self: stretch;
+    justify-self: stretch;
+    justify-content: center;
+    padding: var(--spectrum-global-dimension-size-25);
+
+
+    .react-spectrum-ListViewItem-draghandle-button {
+      width: var(--spectrum-global-dimension-size-200);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--spectrum-alias-border-radius-regular);
+
+      &:focus-ring {
+        box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+        outline: none;
+      }
+    }
+  }
+
   .react-spectrum-ListViewItem-checkbox {
     grid-area: checkbox;
     align-items: center;
@@ -161,7 +190,7 @@
     grid-area: chevron;
     padding-inline-start: var(--spectrum-global-dimension-size-75);
   }
-  
+
   /* give first and last items border-radius to match listview container */
   div:first-child > div[role="row"] > & {
     border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
@@ -185,11 +214,23 @@
   min-height: var(--spectrum-global-dimension-size-600);
 }
 
+.react-spectrum-ListView--draggable .react-spectrum-ListViewItem {
+  padding-inline-start: 0;
+}
+
+.react-spectrum-ListViewItem--draggable {
+  .react-spectrum-ListViewItem-checkbox input {
+    inset-inline-start: 0;
+  }
+}
+
 .react-spectrum-ListView-centeredWrapper {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
+  &.react-spectrum-ListView-centeredWrapper--loadingMore {
+    padding-top: var(--spectrum-global-dimension-size-50);
+  }
 }
-
