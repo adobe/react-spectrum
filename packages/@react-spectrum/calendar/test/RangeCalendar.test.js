@@ -843,7 +843,7 @@ describe('RangeCalendar', () => {
     it('does not enter selection mode with the mouse on range end if isReadOnly', () => {
       let {getAllByLabelText, getByText} = render(<RangeCalendar isReadOnly autoFocus defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
 
-      let cell = getByText('10').parentElement;
+      let cell = getByText('10').closest('[role="button"]');
       expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
@@ -854,7 +854,7 @@ describe('RangeCalendar', () => {
       expect(selectedDates[0].textContent).toBe('10');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');
 
-      cell = getByText('15').parentElement;
+      cell = getByText('15').closest('[role="button"]');
       act(() => userEvent.click(cell));
       expect(document.activeElement).toBe(cell);
 
