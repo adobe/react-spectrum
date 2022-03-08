@@ -373,4 +373,93 @@ describe('calculatePosition', function () {
       document.body.removeChild(target);
     });
   });
+
+  describe('moves popover arrow', () => {
+    it('checks if popover positioned within padding and has popover arrow', () => {
+      const target = createElementWithDimensions('div', {top: 50, left: 50, width: 50, height: 25});
+      const overlayNode = createElementWithDimensions('div', overlaySize);
+      const container = createElementWithDimensions('div', containerDimensions);
+
+      document.documentElement.appendChild(target);
+      document.documentElement.appendChild(container);
+      document.documentElement.appendChild(overlayNode);
+
+      let {position: {top: positionTop}, arrowOffsetLeft, arrowOffsetTop} = calculatePosition({
+        placement: 'right',
+        targetNode: target,
+        overlayNode,
+        scrollNode: overlayNode,
+        padding: 12,
+        shouldFlip: false,
+        boundaryElement: container,
+        offset: 0,
+        crossOffset: 0
+      });
+      expect(positionTop).toBe(12);
+      expect(arrowOffsetTop).toBe(50.5);
+      expect(arrowOffsetLeft).toBe(undefined);
+
+      document.documentElement.removeChild(target);
+      document.documentElement.removeChild(container);
+      document.documentElement.removeChild(overlayNode);
+    });
+
+    it('checks if popover moves to padding 6 and arrow at popover edge', () => {
+      const target = createElementWithDimensions('div', {top: 0, left: 50, width: 50, height: 25});
+      const overlayNode = createElementWithDimensions('div', overlaySize);
+      const container = createElementWithDimensions('div', containerDimensions);
+
+      document.documentElement.appendChild(target);
+      document.documentElement.appendChild(overlayNode);
+      document.documentElement.appendChild(container);
+
+      let {position: {top: positionTop}, arrowOffsetLeft, arrowOffsetTop} = calculatePosition({
+        placement: 'right',
+        targetNode: target,
+        overlayNode,
+        scrollNode: overlayNode,
+        padding: 12,
+        shouldFlip: false,
+        boundaryElement: container,
+        offset: 0,
+        crossOffset: 0
+      });
+      expect(positionTop).toBe(6);
+      expect(arrowOffsetTop).toBe(12);
+      expect(arrowOffsetLeft).toBe(undefined);
+
+      document.documentElement.removeChild(target);
+      document.documentElement.removeChild(container);
+      document.documentElement.removeChild(overlayNode);
+    });
+
+    it('checks if popover moves to padding 6 and popover arrow is removed', () => {
+      const target = createElementWithDimensions('div', {top: -10, left: 50, width: 50, height: 25});
+      const overlayNode = createElementWithDimensions('div', overlaySize);
+      const container = createElementWithDimensions('div', containerDimensions);
+
+      document.documentElement.appendChild(target);
+      document.documentElement.appendChild(overlayNode);
+      document.documentElement.appendChild(container);
+
+      let {position: {top: positionTop}, arrowOffsetLeft, arrowOffsetTop} = calculatePosition({
+        placement: 'left',
+        targetNode: target,
+        overlayNode,
+        scrollNode: overlayNode,
+        padding: 12,
+        shouldFlip: false,
+        boundaryElement: container,
+        offset: 0,
+        crossOffset: 0
+      });
+      expect(positionTop).toBe(6);
+      expect(arrowOffsetTop).toBe(undefined);
+      expect(arrowOffsetLeft).toBe(undefined);
+
+      document.documentElement.removeChild(target);
+      document.documentElement.removeChild(container);
+      document.documentElement.removeChild(overlayNode);
+    });
+  });
 });
