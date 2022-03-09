@@ -512,7 +512,7 @@ function ResizableTableColumnHeader({item, state}) {
     <>
       <MenuTrigger>
         <TableColumnHeader column={item} />
-        <Menu onAction={onMenuSelect}>
+        <Menu onAction={onMenuSelect} minWidth="size-2000">
           {item.props?.allowsSorting &&
             <Item key={`${item.key}-sort-asc`}>
               Sort Ascending
