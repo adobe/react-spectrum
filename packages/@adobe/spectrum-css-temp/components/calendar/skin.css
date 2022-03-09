@@ -118,8 +118,11 @@ governing permissions and limitations under the License.
   &.is-unavailable {
     &,
     &.is-today {
-      color: var(--spectrum-global-color-gray-700);
       --background: transparent;
+    }
+
+    & .spectrum-Calendar-dateText span:after {
+      background: var(--spectrum-global-color-gray-600);
     }
   }
 }

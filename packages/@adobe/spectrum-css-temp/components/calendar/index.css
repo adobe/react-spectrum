@@ -202,11 +202,11 @@ governing permissions and limitations under the License.
         content: '';
         position: absolute;
         top: 50%;
-        left: -5px;
-        right: -5px;
-        height: 1px;
-        transform: rotate(-17deg);
-        background: currentColor;
+        left: -4px;
+        right: -4px;
+        height: 2px;
+        transform: rotate(-16deg);
+        border-radius: 1px;
       }
     }
   }
