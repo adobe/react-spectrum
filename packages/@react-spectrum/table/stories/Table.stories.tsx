@@ -1146,6 +1146,11 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'allowsResizing, uncontrolled, sortable columns',
+    () => <AsyncLoadingExample isResizable />,
+    {chromatic: {disable: true}}
+  )
+  .add(
     'allowsResizing, many columns and rows',
     () => (
       <>
@@ -1228,7 +1233,8 @@ storiesOf('TableView', module)
     )
   );
 
-function AsyncLoadingExample() {
+function AsyncLoadingExample(props) {
+  const {isResizable} = props;
   interface Item {
     data: {
       id: string,
@@ -1267,10 +1273,10 @@ function AsyncLoadingExample() {
       <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
       <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
-          <Column key="score" width={100} allowsSorting>Score</Column>
-          <Column key="title" isRowHeader allowsSorting>Title</Column>
-          <Column key="author" width={200} allowsSorting>Author</Column>
-          <Column key="num_comments" width={100} allowsSorting>Comments</Column>
+          <Column key="score" defaultWidth={100} allowsResizing={isResizable} allowsSorting>Score</Column>
+          <Column key="title" isRowHeader allowsResizing={isResizable} allowsSorting>Title</Column>
+          <Column key="author" defaultWidth={200} allowsResizing={isResizable} allowsSorting>Author</Column>
+          <Column key="num_comments" defaultWidth={100} allowsResizing={isResizable} allowsSorting>Comments</Column>
         </TableHeader>
         <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
           {item =>

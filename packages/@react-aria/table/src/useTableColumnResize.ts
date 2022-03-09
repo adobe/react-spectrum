@@ -10,12 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {useMove} from '@react-aria/interactions';
+import {focusSafely, useFocusable} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
+import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useRef} from 'react';
 
-export function useTableColumnResize(state, item): any {
+export function useTableColumnResize(state, item, ref): any {
   const stateRef = useRef(null);
   stateRef.current = state;
+
+  let {focusableProps} = useFocusable({excludeFromTabOrder: true}, ref);
+  let {keyboardProps} = useKeyboard({
+    onKeyDown: (e) => {
+      if (e.key === 'Tab') {
+        // useKeyboard stops propagation by default. We want to continue propagation for tab
+        e.continuePropagation();
+      }
+      if (e.key === 'Escape') {
+        // switch focus back to the column header on escape
+        const columnHeader = ref.current.previousSibling;
+        if (columnHeader) {
+          focusSafely(columnHeader);
+        }
+      }
+    }
+  });
 
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
@@ -23,7 +42,10 @@ export function useTableColumnResize(state, item): any {
       stateRef.current.onColumnResizeStart();
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
     },
-    onMove({deltaX}) {
+    onMove({deltaX, pointerType}) {
+      if (pointerType === 'keyboard') {
+        deltaX *= 10;
+      }
       columnResizeWidthRef.current += deltaX;
       stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
     },
@@ -34,6 +56,8 @@ export function useTableColumnResize(state, item): any {
   });
 
   return {
-    resizerProps: moveProps
+    resizerProps: {
+      ...mergeProps(moveProps, focusableProps, keyboardProps)
+    }
   };
 }
