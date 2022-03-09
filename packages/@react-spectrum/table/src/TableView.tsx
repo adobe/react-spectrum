@@ -347,7 +347,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         // Offset scroll position by width of selection cell
         // (which is sticky and will overlap the cell we're scrolling to).
         offsetX: column.props.isSelectionCell
-          ? layout.getColumnWidth_(column.key)
+          ? layout.getColumnWidth(column.key)
           : 0
       });
     }
@@ -443,7 +443,6 @@ function TableColumnHeader(props) {
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
-  // Can these be enforced with prop type validation?
   if (columnProps.width && columnProps.allowsResizing) {
     throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
   }

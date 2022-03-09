@@ -24,6 +24,7 @@ import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
+import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import {LoadingState, SelectionMode} from '@react-types/shared';
@@ -1096,7 +1097,7 @@ storiesOf('TableView', module)
     )
   )
   .add(
-    'allowsresizing, uncontrolled, min/max widths', () => (
+    'allowsResizing, uncontrolled, min/max widths', () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
           <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>File Name</Column>
@@ -1119,7 +1120,7 @@ storiesOf('TableView', module)
     )
   )
   .add(
-    'allowsresizing, uncontrolled, some columns not allowed resizing', () => (
+    'allowsResizing, uncontrolled, some columns not allowed resizing', () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
           <Column allowsResizing >File Name</Column>
@@ -1224,7 +1225,13 @@ storiesOf('TableView', module)
           </Row>
         </TableBody>
       </TableView>
-  ));
+  ))
+  .add(
+    'allowsResizing, hiding columns',
+    () => (
+      <HidingColumnsAllowsResizing />
+    )
+  );
 
 function AsyncLoadingExample(props) {
   const {isResizable} = props;
