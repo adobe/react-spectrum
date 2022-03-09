@@ -29,7 +29,7 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** The current sorted column and direction. */
   sortDescriptor: SortDescriptor,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
-  sort(columnKey: Key): void,
+  sort(columnKey: Key, direction?: 'ascending' | 'descending'): void,
   /** A map of all the column widths by key. */
   columnWidths: MutableRefObject<Map<Key, number>>,
   /** Getter for column widths. */
@@ -111,12 +111,12 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     selectionManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
     sortDescriptor: props.sortDescriptor,
-    sort(columnKey: Key) {
+    sort(columnKey: Key, direction?: 'ascending' | 'descending') {
       props.onSortChange({
         column: columnKey,
-        direction: props.sortDescriptor?.column === columnKey
+        direction: direction ?? (props.sortDescriptor?.column === columnKey
           ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
-          : 'ascending'
+          : 'ascending')
       });
     },
     columnWidths,
