@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/color",
-  "version": "3.0.0-beta.8",
+  "version": "3.0.0-beta.9",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -19,17 +19,17 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@internationalized/message": "^3.0.2",
-    "@react-aria/i18n": "^3.3.3",
-    "@react-aria/interactions": "^3.7.0",
-    "@react-aria/slider": "^3.0.3",
-    "@react-aria/spinbutton": "^3.0.1",
-    "@react-aria/textfield": "^3.5.0",
-    "@react-aria/utils": "^3.11.0",
-    "@react-aria/visually-hidden": "^3.2.3",
-    "@react-stately/color": "3.0.0-beta.7",
-    "@react-types/color": "3.0.0-beta.5",
-    "@react-types/shared": "^3.10.1",
-    "@react-types/slider": "^3.0.2"
+    "@react-aria/i18n": "^3.3.7",
+    "@react-aria/interactions": "^3.8.2",
+    "@react-aria/slider": "^3.0.6",
+    "@react-aria/spinbutton": "^3.0.4",
+    "@react-aria/textfield": "^3.5.3",
+    "@react-aria/utils": "^3.11.3",
+    "@react-aria/visually-hidden": "^3.2.6",
+    "@react-stately/color": "3.0.0-beta.8",
+    "@react-types/color": "3.0.0-beta.6",
+    "@react-types/shared": "^3.11.2",
+    "@react-types/slider": "^3.0.5"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",
