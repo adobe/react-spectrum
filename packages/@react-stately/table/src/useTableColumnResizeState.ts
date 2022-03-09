@@ -5,19 +5,29 @@ import {GridNode} from '@react-types/grid';
 import {Key, MutableRefObject, useCallback, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
-type useTableColumnResizeType<T> = [
+export interface ColumnResizeState<T> {
+  /** A ref whose current value is the state of all the column widths. */
   columnWidths: MutableRefObject<Map<Key, number>>,
-  resizeColumns: (column: GridNode<T>, newWidth: number, doneResizing?: boolean) => { key: Key, width: number }[],
+  /** Resizes the affected dynamic columns given the new column width that is being resized. */
+  resizeColumn: (column: GridNode<T>, newWidth: number, doneResizing?: boolean) => { key: Key, width: number }[],
+  /** Setter for the table width. */
   setTableWidth: (width: number) => void,
+  /** Callback for when onColumnResize has started. */
   onColumnResizeStart: () => void,
+    /** Callback for when onColumnResize has ended. */
   onColumnResizeEnd: () => void
-]
+}
 
-export default function useTableColumnResizeState<T>(
-    columns: GridNode<T>[],
-    getDefaultWidth: (props) => string | number
-  ): useTableColumnResizeType<T> {
+export interface ColumnResizeStateProps<T> {
+  /** Collection of existing columns. */
+  columns: GridNode<T>[],
+  /** Callback to determine what the default width of a column should be. */
+  getDefaultWidth: (props) => string | number
+}
 
+export default function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): ColumnResizeState<T> {
+
+  const {columns, getDefaultWidth} = props;
   const tableWidth = useRef<number>(null);
   const startResizeContentWidth = useRef<number>();
 
@@ -133,5 +143,11 @@ export default function useTableColumnResizeState<T>(
     return mapToArray(allAffectedColumns);
   }
 
-  return [columnWidthsRef, resizeColumn, setTableWidth, onColumnResizeStart, onColumnResizeEnd];
+  return {
+    columnWidths: columnWidthsRef,
+    resizeColumn,
+    setTableWidth,
+    onColumnResizeStart,
+    onColumnResizeEnd
+  };
 }

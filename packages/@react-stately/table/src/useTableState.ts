@@ -88,7 +88,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     
   // map of the columns and their width, key is the column key, value is the width
   // TODO: switch to useControlledState
-  const [columnWidths, resizeColumn, setTableWidth, onColumnResizeStart, _onColumnResizeEnd] = useTableColumnResizeState(collection.columns, props.getDefaultWidth);
+  const  {columnWidths, resizeColumn, setTableWidth, onColumnResizeStart, onColumnResizeEnd: _onColumnResizeEnd} = useTableColumnResizeState({columns: collection.columns, getDefaultWidth: props.getDefaultWidth});
 
   function getColumnWidth(key: Key): number {
     return columnWidths.current.get(key) ?? 0;
