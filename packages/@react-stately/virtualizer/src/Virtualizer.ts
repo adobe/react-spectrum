@@ -321,9 +321,6 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   private _renderView(reusableView: ReusableView<T, V>) {
-    if (!reusableView.layoutInfo) {
-      return;
-    }
     let {type, key} = reusableView.layoutInfo;
     reusableView.content = this.getItem(key);
     reusableView.rendered = this._renderContent(type, reusableView.content);
@@ -746,6 +743,11 @@ export class Virtualizer<T extends object, V, W> {
 
     for (let key of toUpdate) {
       let view = currentlyVisible.get(key) as ReusableView<T, V>;
+      if (!view.layoutInfo) {
+        let layoutInfo = visibleLayoutInfos.get(key);
+        view.layoutInfo = layoutInfo;
+      }
+
       this._renderedContent.delete(key);
       this._renderView(view);
     }
