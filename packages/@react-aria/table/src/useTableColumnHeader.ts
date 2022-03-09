@@ -40,7 +40,7 @@ interface ColumnHeaderAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>): ColumnHeaderAria {
+export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>, sort?: any): ColumnHeaderAria {
   let {node} = props;
   let allowsResizing = node.props.allowsResizing;
   let allowsSorting = node.props.allowsSorting;
@@ -48,17 +48,13 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
   
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
   let {pressProps} = usePress({
-    isDisabled: isSelectionCellDisabled || (!allowsSorting && !allowsResizing),
-    // TODO move to menu
-    onPress(pressDetails) {
-      if (pressDetails.pointerType === 'keyboard' || pressDetails.pointerType === 'virtual') {
-        console.log(pressDetails);
-      } else if (allowsSorting) {
-        state.sort(node.key);
-      }
+    // Disabled for allowsResizing because if resizing is allowed, a menu trigger is added to the column header.
+    isDisabled: !allowsSorting || isSelectionCellDisabled || allowsResizing,
+    onPress() {
+      state.sort(node.key);
     }
   });
-
+  
   // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);
 
