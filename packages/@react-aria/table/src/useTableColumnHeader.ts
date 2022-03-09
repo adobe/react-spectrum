@@ -45,7 +45,7 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
   let allowsResizing = node.props.allowsResizing;
   let allowsSorting = node.props.allowsSorting;
   let {gridCellProps} = useGridCell(props, state, ref);
-  
+
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
   let {pressProps} = usePress({
     // Disabled for allowsResizing because if resizing is allowed, a menu trigger is added to the column header.
@@ -54,7 +54,7 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
       state.sort(node.key);
     }
   });
-  
+
   // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);
 

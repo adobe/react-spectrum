@@ -54,7 +54,7 @@ export function useTableColumnResize(state, item, ref): any {
       columnResizeWidthRef.current = 0;
     }
   });
-  
+
   return {
     resizerProps: {
       ...mergeProps(moveProps, focusableProps, keyboardProps)
