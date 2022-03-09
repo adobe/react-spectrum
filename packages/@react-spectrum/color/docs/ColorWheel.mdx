@@ -82,16 +82,6 @@ function Example() {
 By default, a localized string for the "hue" channel name is used as the `aria-label` for the ColorWheel. When a custom `aria-label` or `aria-labelledby`
 is provided, it should be localized accordingly.
 
-## Step values
-
-The `step` prop can be used to snap the ColorWheel's value to specific increments. The value provided should the number of degrees that each step should span,
-ranging from 0 to 360. Note that the steps are calculated starting from 0˚ and that the final step will always snap back to 0˚, regardless of how much
-remaining track distance there is from the step prior.
-
-```tsx example
-<ColorWheel step={60} />
-```
-
 ## Events
 
 ColorWheel supports two events: `onChange` and `onChangeEnd`. `onChange` is triggered whenever the ColorWheel's handle is dragged, and `onChangeEnd`
