@@ -24,14 +24,14 @@ type TableLayoutOptions<T> = ListLayoutOptions<T> & {
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
   lastCollection: TableCollection<T>;
-  getColumnWidth_: (key: Key) => number;
+  getColumnWidth: (key: Key) => number;
   stickyColumnIndices: number[];
   wasLoading = false;
   isLoading = false;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
-    this.getColumnWidth_ = options.getColumnWidth;
+    this.getColumnWidth = options.getColumnWidth;
     this.stickyColumnIndices = [];
   }
 
@@ -128,12 +128,12 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   // used to get the column widths when rendering to the DOM
-  getColumnWidth(node: GridNode<T>) {
+  getColumnWidth_(node: GridNode<T>) {
     let colspan = node.colspan ?? 1;
     let width = 0;
     for (let i = 0; i < colspan; i++) {
       let column = this.collection.columns[node.index + i];
-      width += this.getColumnWidth_(column.key);
+      width += this.getColumnWidth(column.key);
     }
 
     return width;
@@ -163,7 +163,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
-    let width = this.getColumnWidth(node);
+    let width = this.getColumnWidth_(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
@@ -263,7 +263,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
-    let width = this.getColumnWidth(node);
+    let width = this.getColumnWidth_(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
