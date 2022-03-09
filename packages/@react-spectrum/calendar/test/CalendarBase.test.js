@@ -18,6 +18,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
 let headingFormatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'});
@@ -222,6 +223,36 @@ describe('CalendarBase', () => {
       expect(grids[0]).toHaveAttribute('aria-label', 'May 2019');
       expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
       expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
+    });
+
+    it.each`
+      Name                    | Calendar              | props
+      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new CalendarDate(2019, 3, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
+      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new CalendarDate(2019, 3, 10), end: new CalendarDate(2019, 3, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
+    `('$Name should move focus when the previous or next buttons become disabled', ({Calendar, props}) => {
+      let {getByLabelText} = render(<Calendar {...props} />);
+
+      let prevButton = getByLabelText('Previous');
+      let nextButton = getByLabelText('Next');
+
+      expect(prevButton).not.toHaveAttribute('disabled');
+      expect(nextButton).not.toHaveAttribute('disabled');
+
+      act(() => userEvent.click(prevButton));
+      expect(prevButton).toHaveAttribute('disabled');
+      expect(nextButton).not.toHaveAttribute('disabled');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Sunday, February 10, 2019')).toBe(true);
+
+      act(() => userEvent.click(nextButton));
+
+      expect(prevButton).not.toHaveAttribute('disabled');
+      expect(nextButton).not.toHaveAttribute('disabled');
+      expect(document.activeElement).toBe(nextButton);
+
+      act(() => userEvent.click(nextButton));
+      expect(prevButton).not.toHaveAttribute('disabled');
+      expect(nextButton).toHaveAttribute('disabled');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, April 10, 2019')).toBe(true);
     });
 
     it.each`
