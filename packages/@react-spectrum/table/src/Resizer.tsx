@@ -10,7 +10,7 @@ function Resizer(props, ref) {
   let {resizerProps} = useTableColumnResize(state, item, ref);
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div ref={ref} {...resizerProps} className={classNames(styles, 'spectrum-Table-columnResizer')} />
+      <div ref={ref} {...resizerProps} className={classNames(styles, 'spectrum-Table-columnResizer')} role="separator" aria-orientation="vertical" />
     </FocusRing>
   );
 }
