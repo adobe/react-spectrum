@@ -10,9 +10,7 @@ describe('useNumberField hook', () => {
 
   beforeEach(() => {
     ref = React.createRef();
-    ref.current = {};
-    ref.current.addEventListener = () => {};
-    ref.current.removeEventListener = () => {};
+    ref.current = document.createElement('input');
   });
 
   let renderNumberFieldHook = (props: AriaNumberFieldProps) => {
@@ -42,6 +40,56 @@ describe('useNumberField hook', () => {
     it('with appropriate props if placeholder is defined', () => {
       let {inputProps} = renderNumberFieldHook({placeholder: 'Enter value', 'aria-label': 'mandatory label'});
       expect(inputProps['placeholder']).toBe('Enter value');
+    });
+
+    it('all events are merged into the input element', () => {
+      let onCopy = jest.fn();
+      let onCut = jest.fn();
+      let onPaste = jest.fn();
+      let onCompositionStart = jest.fn();
+      let onCompositionEnd = jest.fn();
+      let onCompositionUpdate = jest.fn();
+      let onSelect = jest.fn();
+      let onBeforeInput = jest.fn();
+      let onInput = jest.fn();
+      let {inputProps} = renderNumberFieldHook({
+        'aria-label': 'mandatory label',
+        onCopy,
+        onCut,
+        onPaste,
+        onCompositionStart,
+        onCompositionEnd,
+        onCompositionUpdate,
+        onSelect,
+        onBeforeInput,
+        onInput
+      });
+      inputProps.onCopy({} as any);
+      expect(onCopy).toHaveBeenCalled();
+      inputProps.onCut({} as any);
+      expect(onCut).toHaveBeenCalled();
+      inputProps.onPaste({} as any);
+      expect(onPaste).toHaveBeenCalled();
+      inputProps.onCompositionStart({} as any);
+      expect(onCompositionStart).toHaveBeenCalled();
+      inputProps.onCompositionEnd({} as any);
+      expect(onCompositionEnd).toHaveBeenCalled();
+      inputProps.onCompositionUpdate({} as any);
+      expect(onCompositionUpdate).toHaveBeenCalled();
+      inputProps.onSelect({} as any);
+      expect(onSelect).toHaveBeenCalled();
+      inputProps.onBeforeInput({
+        preventDefault: jest.fn(),
+        target: {
+          value: '',
+          selectionStart: 0,
+          selectionEnd: 0,
+          data: ''
+        }
+      } as any);
+      expect(onBeforeInput).toHaveBeenCalled();
+      inputProps.onInput({} as any);
+      expect(onInput).toHaveBeenCalled();
     });
   });
 });
