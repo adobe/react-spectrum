@@ -86,26 +86,8 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
   );
   let {disabledKeys, selectionManager} = useGridState({...props, collection});
     
-  // map of the columns and their width, key is the column key, value is the width
-  // TODO: switch to useControlledState
-  const  {columnWidths, resizeColumn, setTableWidth, onColumnResizeStart, onColumnResizeEnd: _onColumnResizeEnd} = useTableColumnResizeState({columns: collection.columns, getDefaultWidth: props.getDefaultWidth});
+  const tableColumnResizeState = useTableColumnResizeState({columns: collection.columns, getDefaultWidth: props.getDefaultWidth, onColumnResize: props.onColumnResize, onColumnResizeEnd: props.onColumnResizeEnd});
 
-  function getColumnWidth(key: Key): number {
-    return columnWidths.current.get(key) ?? 0;
-  }
-
-  function onColumnResize(column: GridNode<T>, width: number) {
-    let widthsObj = resizeColumn(column, width);
-    props.onColumnResize && props.onColumnResize(widthsObj);
-  }
-
-  function onColumnResizeEnd(column: GridNode<T>, width: number) {
-    if (props.onColumnResizeEnd) {
-      let widthsObj = resizeColumn(column, width);
-      props.onColumnResizeEnd(widthsObj);
-    }
-    _onColumnResizeEnd();
-  }
 
   return {
     collection,
@@ -121,11 +103,6 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
           : 'ascending')
       });
     },
-    columnWidths,
-    getColumnWidth,
-    onColumnResize,
-    onColumnResizeStart,
-    onColumnResizeEnd,
-    setTableWidth
+    ...tableColumnResizeState
   };
 }
