@@ -43,11 +43,14 @@ export function useTableColumnResize(state, item, ref): any {
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
     },
     onMove({deltaX, pointerType}) {
-      if (pointerType === 'keyboard') {
-        deltaX *= 10;
+      // if moving up/down only, no need to resize
+      if (deltaX !== 0) {
+        if (pointerType === 'keyboard') {
+          deltaX *= 10;
+        }
+        columnResizeWidthRef.current += deltaX;
+        stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
       }
-      columnResizeWidthRef.current += deltaX;
-      stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
     },
     onMoveEnd() {
       stateRef.current.onColumnResizeEnd(item, columnResizeWidthRef.current);
