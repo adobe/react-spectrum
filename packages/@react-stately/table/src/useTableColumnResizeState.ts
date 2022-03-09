@@ -112,7 +112,6 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
   }
 
   function onColumnResizeEnd(column: GridNode<T>, width: number) {
-    console.log(tableWidth.current);
     isResizing.current = false;
     if (props.onColumnResizeEnd) {
       let widthsObj = resizeColumn(column, width);
