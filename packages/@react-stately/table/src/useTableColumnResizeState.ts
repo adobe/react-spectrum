@@ -36,6 +36,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
   const {columns, getDefaultWidth} = props;
   const columnsRef = useRef<GridNode<T>[]>();
   const tableWidth = useRef<number>(null);
+  const isResizing = useRef<boolean>(null);
   const startResizeContentWidth = useRef<number>();
 
   const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(new Map(columns.map(col => [col.key, 0])));
@@ -93,12 +94,15 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
   function setTableWidth(width: number) {
     if (width && width !== tableWidth.current) {
       tableWidth.current = width;
-      const widths = buildColumnWidths(columns, width);
-      setColumnWidthsForRef(widths);
+      if (!isResizing.current) {
+        const widths = buildColumnWidths(columns, width);
+        setColumnWidthsForRef(widths);
+      }
     }
   }
 
   function onColumnResizeStart() {
+    isResizing.current = true;
     startResizeContentWidth.current = getContentWidth(columnWidthsRef.current);
   }
 
@@ -108,6 +112,8 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
   }
 
   function onColumnResizeEnd(column: GridNode<T>, width: number) {
+    console.log(tableWidth.current);
+    isResizing.current = false;
     if (props.onColumnResizeEnd) {
       let widthsObj = resizeColumn(column, width);
       props.onColumnResizeEnd(widthsObj);
