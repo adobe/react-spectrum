@@ -281,6 +281,66 @@ describe('CalendarBase', () => {
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(gridCells.length).toBe(21);
     });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should support defaultFocusedValue', ({Calendar}) => {
+      let onFocusChange = jest.fn();
+      let {getByRole} = render(<Calendar defaultFocusedValue={new CalendarDate(2019, 6, 5)} autoFocus onFocusChange={onFocusChange} />);
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-label', 'June 2019');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')).toBe(true);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Thursday, June 6, 2019')).toBe(true);
+      expect(onFocusChange).toHaveBeenCalledWith(new CalendarDate(2019, 6, 6));
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should support controlled focusedValue', ({Calendar}) => {
+      let onFocusChange = jest.fn();
+      let {getByRole} = render(<Calendar focusedValue={new CalendarDate(2019, 6, 5)} autoFocus onFocusChange={onFocusChange} />);
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-label', 'June 2019');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')).toBe(true);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')).toBe(true);
+      expect(onFocusChange).toHaveBeenCalledWith(new CalendarDate(2019, 6, 6));
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should constrain defaultFocusedValue', ({Calendar}) => {
+      let {getByRole} = render(<Calendar defaultFocusedValue={new CalendarDate(2019, 6, 5)} minValue={new CalendarDate(2019, 7, 5)} autoFocus />);
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-label', 'July 2019');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should constrain focusedValue', ({Calendar}) => {
+      let {getByRole} = render(<Calendar focusedValue={new CalendarDate(2019, 6, 5)} minValue={new CalendarDate(2019, 7, 5)} autoFocus />);
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-label', 'July 2019');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
+    });
   });
 
   describe('labeling', () => {

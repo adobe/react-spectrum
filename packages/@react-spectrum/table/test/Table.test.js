@@ -4433,7 +4433,7 @@ describe('TableView', function () {
           let tree = render(
             <TableView aria-label="Table">
               <TableHeader>
-                <Column key="foo">Foo</Column>
+                <Column allowsResizing key="foo">Foo</Column>
                 <Column key="bar" maxWidth={200}>Bar</Column>
                 <Column key="baz" maxWidth={200}>Baz</Column>
               </TableHeader>
@@ -4462,7 +4462,7 @@ describe('TableView', function () {
           let tree = render(
             <TableView aria-label="Table">
               <TableHeader>
-                <Column key="foo" minWidth={100}>Foo</Column>
+                <Column allowsResizing key="foo" minWidth={100}>Foo</Column>
                 <Column key="bar" minWidth={500}>Bar</Column>
                 <Column key="baz" maxWidth={200}>Baz</Column>
               </TableHeader>

@@ -96,7 +96,7 @@ export class TableLayout_DEPRECATED<T> extends ListLayout<T> {
         let props = column.props as ColumnProps<T>;
         let minWidth = props.minWidth != null ? this.parseWidth(props.minWidth) : 75;
         let maxWidth = props.maxWidth != null ? this.parseWidth(props.maxWidth) : Infinity;
-        let width = Math.max(minWidth, Math.min(maxWidth, columnWidth));
+        let width = Math.floor(Math.max(minWidth, Math.min(maxWidth, columnWidth)));
 
         this.columnWidths.set(column.key, width);
         remainingSpace -= width;

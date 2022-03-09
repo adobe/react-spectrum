@@ -93,16 +93,6 @@ the `id` of the labeling element instead.
 In order to internationalize a ColorField, a localized string should be passed to the `label` or `aria-label` prop.
 When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
 
-## Step values
-
-The `step` prop can be used to increment or decrement the current `value` using up or down arrow keys. These increments
-are calculated from the current `value` or zero if the `value` is empty. A `step` can be set to any positive decimal,
-defaulting to `1` if unspecified.
-
-```tsx example
-<ColorField label="Primary Color" step={16} />
-```
-
 ## Validation
 
 ColorField can display a validation state to communicate to the user whether the current value is valid or invalid.

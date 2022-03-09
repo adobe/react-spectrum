@@ -777,9 +777,16 @@ function FeatureFlaggedTableView<T extends object>(props: SpectrumTableProps<T>,
 
   const someColumnsAllowResizing = state.collection.columns.some(c => c.props?.allowsResizing);
 
-  return someColumnsAllowResizing ? <_TableView {...props} ref={ref} /> : <TableView_DEPRECATED {...props} ref={ref} />;
+  if (someColumnsAllowResizing) {
+    return <_TableView {...props} ref={ref} />;
+  } else {
+    return <TableView_DEPRECATED {...props} ref={ref} />;
+  }
 }
 
+/**
+ * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
 const _FeatureFlaggedTableView = React.forwardRef(FeatureFlaggedTableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 

@@ -14,7 +14,6 @@ import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useRef, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
 
 export interface NumberFieldState {
   /**
@@ -105,9 +104,15 @@ export function useNumberFieldState(
   // Update the input value when the number value or format options change. This is done
   // in a useEffect so that the controlled behavior is correct and we only update the
   // textfield after prop changes.
-  useLayoutEffect(() => {
+  let prevValue = useRef(numberValue);
+  let prevLocale = useRef(locale);
+  let prevFormatOptions = useRef(formatOptions);
+  if (!Object.is(numberValue, prevValue.current) || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
     setInputValue(format(numberValue));
-  }, [numberValue, locale, formatOptions]);
+    prevValue.current = numberValue;
+    prevLocale.current = locale;
+    prevFormatOptions.current = formatOptions;
+  }
 
   // Store last parsed value in a ref so it can be used by increment/decrement below
   let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
