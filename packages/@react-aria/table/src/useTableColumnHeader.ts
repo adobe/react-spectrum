@@ -40,7 +40,7 @@ interface ColumnHeaderAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>, sort?: any): ColumnHeaderAria {
+export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>): ColumnHeaderAria {
   let {node} = props;
   let allowsResizing = node.props.allowsResizing;
   let allowsSorting = node.props.allowsSorting;

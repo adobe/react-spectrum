@@ -460,6 +460,7 @@ function TableColumnHeader(props) {
             styles,
             'spectrum-Table-headCell',
             {
+              'is-resizable': columnProps.allowsResizing,
               'is-sortable': columnProps.allowsSorting,
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
               'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending',
@@ -491,11 +492,21 @@ function TableColumnHeader(props) {
 function ResizableTableColumnHeader({item, state}) {
   let ref = useRef();
 
-  const onMenuSelect = () => {
-    // focusResizer
-    setTimeout(() => {
-      focusSafely(ref.current);
-    }, 360);
+  const onMenuSelect = (key) => {
+    switch (key) {
+      case `${item.key}-sort-asc`:
+        state.sort(item.key, 'ascending');
+        break;
+      case `${item.key}-sort-desc`:
+        state.sort(item.key, 'descending');
+        break;
+      case `${item.key}-resize`:
+        // focusResizer, needs timeout so that it happens after the animation timeout for menu close
+        setTimeout(() => {
+          focusSafely(ref.current);
+        }, 360);
+        break;
+    }
   };
 
   return (
@@ -503,7 +514,17 @@ function ResizableTableColumnHeader({item, state}) {
       <MenuTrigger>
         <TableColumnHeader column={item} />
         <Menu onAction={onMenuSelect}>
-          <Item>
+          {item.props?.allowsSorting &&
+            <Item key={`${item.key}-sort-asc`}>
+              Sort Ascending
+            </Item>
+          }
+          {item.props?.allowsSorting &&
+            <Item key={`${item.key}-sort-desc`}>
+              Sort Descending
+            </Item>
+          }
+          <Item key={`${item.key}-resize`}>
             Resize column
           </Item>
         </Menu>
