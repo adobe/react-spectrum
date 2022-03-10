@@ -24,6 +24,7 @@ import {Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import { Flex } from '@react-spectrum/layout';
 
 let iconMap = {
   AlignCenter,
@@ -562,6 +563,52 @@ storiesOf('MenuTrigger', module)
   )
   .add('controlled isOpen',
     () => <ControlledOpeningMenuTrigger />
+  )
+  .add('menu overlapping buttons',
+    () => (
+     <Flex direction="column" marginTop="60vh">
+        <MenuTrigger>
+          <ActionButton>Menu</ActionButton>
+          <Menu onAction={(key) => console.log(key)}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+            <Item key="five">Five</Item>
+          </Menu>
+        </MenuTrigger>
+        <button
+          style={{ display: "block", padding: "6px 24px" }}
+          onClick={() => alert("Oh no!")}
+        >
+          Click
+        </button>
+        <button
+          style={{ display: "block", padding: "6px 24px" }}
+          onClick={() => alert("Oh no!")}
+        >
+          Click
+        </button>
+        <button
+          style={{ display: "block", padding: "60px 60px" }}
+          onClick={() => alert("Oh no!")}
+        >
+          Click
+        </button>
+        <button
+          style={{ display: "block", padding: "6px 24px" }}
+          onClick={() => alert("Oh no!")}
+        >
+          Click
+        </button>
+        <button
+          style={{ display: "block", padding: "6px 24px" }}
+          onClick={() => alert("Oh no!")}
+        >
+          Click
+        </button>
+      </Flex>
+    )
   );
 
 let customMenuItem = (item) => {
