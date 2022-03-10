@@ -41,6 +41,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
     isFocusWithin: false
   }).current;
 
+  let onBlurWithin = useRef<FocusWithinProps['onBlurWithin']>(null);
   if (props.isDisabled) {
     return {focusWithinProps: {}};
   }
@@ -72,13 +73,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
           let event: ReactFocusEvent = new SyntheticEvent('onBlur', 'blur', null, e, e.target);
           event.currentTarget = e.currentTarget as Element;
 
-          if (props.onBlurWithin) {
-            props.onBlurWithin(event);
-          }
-
-          if (props.onFocusWithinChange) {
-            props.onFocusWithinChange(false);
-          }
+          onBlurWithin.current?.(event);
 
           if (event.isPropagationStopped()) {
             e.stopPropagation();
@@ -112,6 +107,20 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
       }
     }
   };
+
+  if (props.onBlurWithin || props.onFocusWithinChange) {
+    onBlurWithin.current = (e: ReactFocusEvent) => {
+      if (props.onBlurWithin) {
+        props.onBlurWithin(e);
+      }
+
+      if (props.onFocusWithinChange) {
+        props.onFocusWithinChange(false);
+      }
+    };
+  } else {
+    onBlurWithin.current = null;
+  }
 
   return {
     focusWithinProps: {
