@@ -29,7 +29,7 @@ import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import ListGripper from '@spectrum-icons/ui/src/ListGripper';
+import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './listview.css';
