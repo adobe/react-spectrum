@@ -11,6 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {ClickThroughExample} from './ClickthroughExample';
 import {OverlayContainer, OverlayProvider, useModal} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -22,7 +23,23 @@ storiesOf('useModal', module)
   ))
   .add('different container', () => (
     <App useAlternateContainer />
-  ));
+  ))
+  .add(
+    'issues/Click through modals',
+    () => <ClickThroughExample />,
+  {
+    description: {
+      data: `
+      Test this story in responsive mode Chrome.
+      In Firefox make sure to turn on simulate touch.
+      Make sure to test by touching/pressing both over the enormous button as well as off of it.
+      Closing the Dialog with the React Aria Button should behave no differently than the regular button.
+      You should also be able to close the dialog by clicking on the backdrop.
+      This should also be tested on actual mobile devices so we can verify that scrolling also works.
+      If you are unable to close the Dialog, or it reopens very quickly, that means it is broken.
+      `
+    }
+  });
 
 function App(props) {
   let [showModal, setShowModal] = useState(false);

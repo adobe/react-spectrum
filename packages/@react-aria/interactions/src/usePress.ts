@@ -406,8 +406,20 @@ export function usePress(props: PressHookProps): PressResult {
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0) {
           if (isOverTarget(e, state.target)) {
+
+            // prevent browsers from firing a delayed click event after touch end
+            e.target.addEventListener('touchend', (e) => {
+              e.preventDefault();
+            }, {passive: false, once: true});
+
             triggerPressEnd(createEvent(state.target, e), state.pointerType);
           } else if (state.isOverTarget) {
+
+            // prevent browsers from firing a delayed click event after touch end
+            e.target.addEventListener('touchend', (e) => {
+              e.preventDefault();
+            }, {passive: false, once: true});
+
             triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
           }
 

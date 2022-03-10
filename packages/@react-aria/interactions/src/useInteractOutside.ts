@@ -58,11 +58,12 @@ export function useInteractOutside(props: InteractOutsideProps) {
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
-        e.target.addEventListener('touchend', (e) => {
-          e.preventDefault();
-        }, {passive: false, once: true});
-
         if (state.isPointerDown && state.onInteractOutside && isValidEvent(e, ref)) {
+          // prevent browsers from firing a delayed click event after touch end
+          e.target.addEventListener('touchend', (e) => {
+            e.preventDefault();
+          }, {passive: false, once: true});
+
           state.isPointerDown = false;
           state.onInteractOutside(e);
         }

@@ -569,42 +569,55 @@ storiesOf('MenuTrigger', module)
       <Flex direction="column" marginTop="60vh" width={100}>
         <MenuTrigger shouldFlip={false}>
           <ActionButton>Menu</ActionButton>
-          <Menu onAction={(key) => console.log(key)}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="four">Four</Item>
-            <Item key="five">Five</Item>
+          <Menu onAction={(key) => console.log(key)} items={manyMenuItems}>
+            {(item) => <Item key={item.key}>{item.text}</Item>}
           </Menu>
         </MenuTrigger>
-        <button
-          style={{height: '40px'}}
-          onClick={() => alert('Oh no!')}>
-          Click
-        </button>
-        <button
-          style={{height: '40px'}}
-          onClick={() => alert('Oh no!')}>
-          Click
-        </button>
-        <button
-          style={{height: '40px'}}
-          onClick={() => alert('Oh no!')}>
-          Click
-        </button>
-        <button
-          style={{height: '40px'}}
-          onClick={() => alert('Oh no!')}>
-          Click
-        </button>
-        <button
-          style={{height: '40px'}}
-          onClick={() => alert('Oh no!')}>
-          Click
-        </button>
+        <Flex direction="column" width={200}>
+          <button
+            style={{height: '40px'}}
+            onClick={() => alert('Oh no!')}>
+            Click
+          </button>
+          <button
+            style={{height: '40px'}}
+            onClick={() => alert('Oh no!')}>
+            Click
+          </button>
+          <button
+            style={{height: '40px'}}
+            onClick={() => alert('Oh no!')}>
+            Click
+          </button>
+          <button
+            style={{height: '40px'}}
+            onClick={() => alert('Oh no!')}>
+            Click
+          </button>
+          <button
+            style={{height: '40px'}}
+            onClick={() => alert('Oh no!')}>
+            Click
+          </button>
+        </Flex>
       </Flex>
-    )
-  );
+    ),
+  {
+    description: {
+      data: `
+        Test this story in responsive mode Chrome.
+        In Firefox make sure to turn on simulate touch.
+        Selecting a menu item over a button should not trigger an alert.
+        This should also be tested on actual mobile devices so we can verify that scrolling also works.
+        `
+    }
+  });
+
+let manyMenuItems = new Array(50).fill('')
+  .map((_, index) => ({
+    key: index.toString(),
+    text: `Item ${index.toString()}`
+  }));
 
 let customMenuItem = (item) => {
   let Icon = iconMap[item.icon];
