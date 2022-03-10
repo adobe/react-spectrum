@@ -59,8 +59,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
         e.target.addEventListener('touchend', (e) => {
-          e.preventDefault()
+          e.preventDefault();
         }, {passive: false, once: true});
+
         if (state.isPointerDown && state.onInteractOutside && isValidEvent(e, ref)) {
           state.isPointerDown = false;
           state.onInteractOutside(e);

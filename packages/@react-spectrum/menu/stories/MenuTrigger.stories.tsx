@@ -19,12 +19,12 @@ import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
+import {Flex} from '@react-spectrum/layout';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import { Flex } from '@react-spectrum/layout';
 
 let iconMap = {
   AlignCenter,
@@ -566,8 +566,8 @@ storiesOf('MenuTrigger', module)
   )
   .add('menu overlapping buttons',
     () => (
-     <Flex direction="column" marginTop="60vh">
-        <MenuTrigger>
+      <Flex direction="column" marginTop="60vh" width={100}>
+        <MenuTrigger shouldFlip={false}>
           <ActionButton>Menu</ActionButton>
           <Menu onAction={(key) => console.log(key)}>
             <Item key="one">One</Item>
@@ -578,33 +578,28 @@ storiesOf('MenuTrigger', module)
           </Menu>
         </MenuTrigger>
         <button
-          style={{ display: "block", padding: "6px 24px" }}
-          onClick={() => alert("Oh no!")}
-        >
+          style={{height: '40px'}}
+          onClick={() => alert('Oh no!')}>
           Click
         </button>
         <button
-          style={{ display: "block", padding: "6px 24px" }}
-          onClick={() => alert("Oh no!")}
-        >
+          style={{height: '40px'}}
+          onClick={() => alert('Oh no!')}>
           Click
         </button>
         <button
-          style={{ display: "block", padding: "60px 60px" }}
-          onClick={() => alert("Oh no!")}
-        >
+          style={{height: '40px'}}
+          onClick={() => alert('Oh no!')}>
           Click
         </button>
         <button
-          style={{ display: "block", padding: "6px 24px" }}
-          onClick={() => alert("Oh no!")}
-        >
+          style={{height: '40px'}}
+          onClick={() => alert('Oh no!')}>
           Click
         </button>
         <button
-          style={{ display: "block", padding: "6px 24px" }}
-          onClick={() => alert("Oh no!")}
-        >
+          style={{height: '40px'}}
+          onClick={() => alert('Oh no!')}>
           Click
         </button>
       </Flex>
