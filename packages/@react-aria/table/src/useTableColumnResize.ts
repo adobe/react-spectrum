@@ -53,7 +53,7 @@ export function useTableColumnResize(state, item, ref): any {
       }
     },
     onMoveEnd() {
-      stateRef.current.onColumnResizeEnd(item, columnResizeWidthRef.current);
+      stateRef.current.onColumnResizeEnd();
       columnResizeWidthRef.current = 0;
     }
   });

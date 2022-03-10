@@ -5,6 +5,13 @@ import {GridNode} from '@react-types/grid';
 import {Key, MutableRefObject, useCallback, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
+export interface AffectedColumnWidths {
+  /** The column key. */
+  key: Key,
+  /** The column width. */
+  width: number
+}
+
 export interface ColumnResizeState<T> {
   /** A ref whose current value is the state of all the column widths. */
   columnWidths: MutableRefObject<Map<Key, number>>,
@@ -15,7 +22,7 @@ export interface ColumnResizeState<T> {
   /** Callback for when onColumnResize has started. */
   onColumnResizeStart: () => void,
     /** Callback for when onColumnResize has ended. */
-  onColumnResizeEnd: (column: GridNode<T>, width: number) => void,
+  onColumnResizeEnd: () => void,
     /** Getter for column widths. */
   getColumnWidth(key: Key): number
 }
@@ -26,9 +33,9 @@ export interface ColumnResizeStateProps<T> {
   /** Callback to determine what the default width of a column should be. */
   getDefaultWidth: (props) => string | number,
   /** Callback that is invoked during the entirety of the resize event. */
-  onColumnResize?: (affectedColumnWidths: { key: Key, width: number }[]) => void,
+  onColumnResize?: (affectedColumnWidths: AffectedColumnWidths[]) => void,
   /** Callback that is invoked when the resize event is ended. */
-  onColumnResizeEnd?: (affectedColumnWidths: { key: Key, width: number }[]) => void
+  onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths[]) => void
 }
 
 export default function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): ColumnResizeState<T> {
@@ -41,6 +48,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
 
   const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(new Map(columns.map(col => [col.key, 0])));
   const columnWidthsRef = useRef<Map<Key, number>>(columnWidths);
+  const affectedColumnWidthsRef = useRef<AffectedColumnWidths[]>([]);
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
@@ -108,29 +116,29 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
 
   function onColumnResize(column: GridNode<T>, width: number) {
     let widthsObj = resizeColumn(column, width);
-    props.onColumnResize && props.onColumnResize(widthsObj);
+    affectedColumnWidthsRef.current = widthsObj;
+    props.onColumnResize && props.onColumnResize(affectedColumnWidthsRef.current);
   }
 
-  function onColumnResizeEnd(column: GridNode<T>, width: number) {
+  function onColumnResizeEnd() {
     isResizing.current = false;
-    if (props.onColumnResizeEnd) {
-      let widthsObj = resizeColumn(column, width);
-      props.onColumnResizeEnd(widthsObj);
-    }
+    props.onColumnResizeEnd && props.onColumnResizeEnd(affectedColumnWidthsRef.current);
+    affectedColumnWidthsRef.current = [];
 
     let widths = new Map<Key, number>(columnWidthsRef.current);
     widths.set(columnsRef.current[columnsRef.current.length - 1].key, 0);
     setColumnWidthsForRef(widths);
   }
 
-  function resizeColumn(column: GridNode<T>, newWidth: number) : { key: Key, width: number }[] {
+  function resizeColumn(column: GridNode<T>, newWidth: number) : AffectedColumnWidths[] {
+    let boundedWidth =  Math.max(
+      getMinWidth(column.props.minWidth, tableWidth.current),
+      Math.min(Math.floor(newWidth), getMaxWidth(column.props.maxWidth, tableWidth.current)));
+
     // copy the columnWidths map and set the new width for the column being resized
     let widths = new Map<Key, number>(columnWidthsRef.current);
     widths.set(columnsRef.current[columnsRef.current.length - 1].key, 0);
-    widths.set(column.key, Math.max(
-      getMinWidth(column.props.minWidth, tableWidth.current),
-      Math.min(Math.floor(newWidth), getMaxWidth(column.props.maxWidth, tableWidth.current))
-    ));
+    widths.set(column.key, boundedWidth);
 
     // keep track of all columns that have been seized
     resizedColumnsRef.current.add(column.key);
@@ -162,7 +170,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
 
     // when getting recalculated columns above, the column being resized is not considered "recalculated"
     // so we need to add it to the list of affected columns
-    let allAffectedColumns = new Map<Key, number>([[column.key, newWidth], ...recalculatedColumnWidths]);
+    let allAffectedColumns = new Map<Key, number>([[column.key, boundedWidth], ...recalculatedColumnWidths]);
     return mapToArray(allAffectedColumns);
   }
 
