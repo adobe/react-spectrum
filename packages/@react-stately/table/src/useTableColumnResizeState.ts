@@ -166,9 +166,8 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     return mapToArray(allAffectedColumns);
   }
 
-  function getColumnWidth(key: Key): number {
-    return columnWidthsRef.current.get(key) ?? 0;
-  }
+  // This function is regenerated whenever columnWidthsRef.current changes in order to get the new correct ref value.
+  let getColumnWidth = useCallback((key: Key): number => columnWidthsRef.current.get(key) ?? 0, [columnWidthsRef.current]);
 
   return {
     columnWidths: columnWidthsRef,
