@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';
