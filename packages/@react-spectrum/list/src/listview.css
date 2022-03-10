@@ -36,7 +36,7 @@
     border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
-  &:not(.react-spectrum-ListView--quiet) .react-spectrum-ListViewItem--lastItem {
+  &:not(.react-spectrum-ListView--quiet):not(.react-spectrum-ListView--loadingMore) .react-spectrum-ListViewItem--lastItem {
     border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }

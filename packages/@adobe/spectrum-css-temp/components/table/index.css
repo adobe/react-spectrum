@@ -310,9 +310,11 @@ svg.spectrum-Table-sortedIcon {
   &.is-drop-target {
     @inherit: %drop-target;
   }
+}
 
-  &.spectrum-Table-row--highlightSelection {
-    &.is-selected.spectrum-Table-row--lastRow {
+.spectrum-Table:not(.spectrum-Table--loadingMore) {
+  .spectrum-Table-row--highlightSelection {
+    &.spectrum-Table-row--lastRow {
       border-end-start-radius: var(--spectrum-table-row-start-end-border-radius);
       border-end-end-radius: var(--spectrum-table-row-start-end-border-radius);
     }
