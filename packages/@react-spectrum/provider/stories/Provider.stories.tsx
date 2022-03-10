@@ -10,17 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {Breakpoints} from '@react-types/provider';
 import {Button} from '@react-spectrum/button';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
+import {Heading, Text} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Provider} from '../';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React from 'react';
+import React, {useState} from 'react';
+import {Responsive} from '@react-types/shared';
 import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
 import {SearchField} from '@react-spectrum/searchfield';
@@ -29,6 +32,7 @@ import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
+import {View} from '@react-spectrum/view';
 
 const THEME = {
   light: customTheme,
@@ -164,7 +168,103 @@ storiesOf('Provider', module)
             <Breakpoint />
           </Provider>
         );
-      });
+      })
+      .add(
+        'breakpoints updated',
+        () => (
+          <ProviderWithBreakpointsEditor />
+          ));
+
+function ProviderWithBreakpointsEditor() {
+  const DEFAULT_BREAKPOINTS: Breakpoints = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
+  const DEFAULT_STEP_SIZE = 148; // 148px is the least distance between breakpoints
+  const RESET_BUTTON_HIDE: Responsive<boolean> = {S: true, M: true, L: true, XL: true, XXL: true};
+  const RESET_BUTTON_SHOW: Responsive<boolean> = {S: false, M: false, L: false, XL: false, XXL: false};
+
+  const [breakpoints, setBreakpoints] = useState(DEFAULT_BREAKPOINTS);
+  const [resetButtonIsHiddenSettings, setResetButtonIsHiddenSettings] = useState(RESET_BUTTON_HIDE);
+
+  let onPress = (stepSize: number) => {
+    let updatedBreakpoints: Breakpoints = {};
+    if (stepSize === 0) {
+      updatedBreakpoints = DEFAULT_BREAKPOINTS;
+    } else {
+      for (const [key, value] of Object.entries(breakpoints)) {
+        updatedBreakpoints[key] = value + stepSize;
+      }
+    }
+    if (updatedBreakpoints.M === DEFAULT_BREAKPOINTS.M) {
+      setResetButtonIsHiddenSettings(RESET_BUTTON_HIDE);
+    } else {
+      setResetButtonIsHiddenSettings(RESET_BUTTON_SHOW);
+    }
+    setBreakpoints(updatedBreakpoints);
+  };
+  let onDecrement = () => {
+    onPress(-DEFAULT_STEP_SIZE);
+  };
+  let onIncrement = () => {
+    onPress(DEFAULT_STEP_SIZE);
+  };
+  let onReset = () => {
+    onPress(0);
+  };
+
+
+  return (
+    <Provider breakpoints={breakpoints}>
+      <Flex alignItems="center" direction="column" gap="size-100" minWidth="single-line-width">
+        <Text>Buttons to increment or decrement breakpoints will hide to prevent values beyond current XXL or base</Text>
+        <Text>A reset button will show when the current breakpoints are different than the default breakpoints</Text>
+        <AppliedBreakpointsTracker />
+        <Flex gap="size-100">
+          <Button
+            isHidden={{base: false, S: false, M: false, L: false, XL: false, XXL: true}}
+            onPress={onDecrement}
+            variant="primary">
+            <Text>Decrement breakpoints by {DEFAULT_STEP_SIZE}px</Text>
+          </Button>
+          <Button
+            isHidden={resetButtonIsHiddenSettings}
+            onPress={onReset}
+            variant="secondary">
+            <Text>Reset breakpoints</Text>
+          </Button>
+          <Button
+            isHidden={{base: true, S: false, M: false, L: false, XL: false, XXL: false}}
+            onPress={onIncrement}
+            variant="primary">
+            <Text>Increment breakpoints by {DEFAULT_STEP_SIZE}px</Text>
+          </Button>
+        </Flex>
+        <Text>Breakpoints are currently set to: {JSON.stringify(breakpoints)}</Text>
+      </Flex>
+    </Provider>
+  );
+
+  function AppliedBreakpointsTracker() {
+    return (
+      <Flex gap="size-100" marginY="single-line-height">
+        <AppliedBreakpointsTrackerCube isHidden={{base: false, S: false, M: false, L: false, XL: false, XXL: false}} heading="BASE" />
+        <AppliedBreakpointsTrackerCube isHidden={{base: true, S: false, M: false, L: false, XL: false, XXL: false}} heading="S" />
+        <AppliedBreakpointsTrackerCube isHidden={{base: true, S: true, M: false, L: false, XL: false, XXL: false}} heading="M" />
+        <AppliedBreakpointsTrackerCube isHidden={{base: true, S: true, M: true, L: false, XL: false, XXL: false}} heading="L" />
+        <AppliedBreakpointsTrackerCube isHidden={{base: true, S: true, M: true, L: true, XL: false, XXL: false}} heading="XL" />
+        <AppliedBreakpointsTrackerCube isHidden={{base: true, S: true, M: true, L: true, XL: true, XXL: false}} heading="XXL" />
+      </Flex>
+    );
+
+    function AppliedBreakpointsTrackerCube({heading, isHidden}: {heading: string, isHidden: Responsive<boolean>}): JSX.Element {
+      return (
+        <View backgroundColor="gray-50" borderColor={{base: 'gray-900'}} borderRadius={{base: 'regular'}} borderWidth={{base: 'thick'}} isHidden={isHidden} width="size-800">
+          <Flex alignItems="center" justifyContent="center">
+            <Heading level={2}>{heading}</Heading>
+          </Flex>
+        </View>
+      );
+    }
+  }
+}
 
 function render(props = {}) {
   return (

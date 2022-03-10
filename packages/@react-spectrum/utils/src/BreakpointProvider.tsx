@@ -1,4 +1,4 @@
-import React, {ReactNode, useContext, useEffect, useState} from 'react';
+import React, {ReactNode, useCallback, useContext, useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
 interface Breakpoints {
@@ -34,21 +34,26 @@ export function BreakpointProvider(props: BreakpointProviderProps) {
 }
 
 export function useMatchedBreakpoints(breakpoints: Breakpoints): string[] {
-  let entries = Object.entries(breakpoints).sort(([, valueA], [, valueB]) => valueB - valueA);
-  let breakpointQueries = entries.map(([, value]) => `(min-width: ${value}px)`);
-
   let supportsMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
-  let getBreakpointHandler = () => {
-    let matched = [];
-    for (let i in breakpointQueries) {
-      let query = breakpointQueries[i];
-      if (window.matchMedia(query).matches) {
-        matched.push(entries[i][0]);
+
+  let getBreakpointHandler = useCallback(
+    () => {
+      let entries = Object.entries(breakpoints).sort(([, valueA], [, valueB]) => valueB - valueA);
+      let breakpointQueries = entries.map(([, value]) => `(min-width: ${value}px)`);
+
+      let matched = [];
+      for (let i in breakpointQueries) {
+        let query = breakpointQueries[i];
+        if (window.matchMedia(query).matches) {
+          matched.push(entries[i][0]);
+        }
       }
-    }
-    matched.push('base');
-    return matched;
-  };
+      matched.push('base');
+
+      return matched;
+    },
+    [breakpoints]
+  );
 
   let [breakpoint, setBreakpoint] = useState(() =>
     supportsMatchMedia
@@ -74,11 +79,12 @@ export function useMatchedBreakpoints(breakpoints: Breakpoints): string[] {
       });
     };
 
+    onResize(); // if breakpoint handler recalculates, check/set current breakpoints prior to setting method to handle resize events (below)
     window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('resize', onResize);
     };
-  }, [supportsMatchMedia]);
+  }, [getBreakpointHandler, supportsMatchMedia]);
 
   // If in SSR, the media query should never match. Once the page hydrates,
   // this will update and the real value will be returned.

@@ -283,4 +283,47 @@ describe('Provider', () => {
       expect(onRender).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe('responsive breakpoints', function () {
+    const testWidths = {base: '100px', S: '200px', M: '300px', L: '400px'};
+    const testBreakpoints = {
+      [testWidths.L]: {S: 480, M: 640, L: 1024},
+      [testWidths.M]: {S: 640, M: 1024, L: 1168},
+      [testWidths.S]: {S: 1024, M: 1168, L: 1440},
+      [testWidths.base]: {S: 1168, M: 1440, L: 1680}
+    };
+
+    // render once to get a reference to the rerender method
+    let {container, rerender} = render(
+      <Provider breakpoints={testBreakpoints[testWidths.L]} theme={theme}>
+        <TextField
+          label="foo"
+          width={testWidths} />
+      </Provider>
+    );
+    let provider, textField;
+
+    // only rerender, updating the breakpoints prop (all others constant)
+    it.each`
+      name                                 | breakpoints                         | expected
+      ${'(L) ' + testWidths.L + ':'}       | ${testBreakpoints[testWidths.L]}    | ${testWidths.L}
+      ${'(M) ' + testWidths.M + ':'}       | ${testBreakpoints[testWidths.M]}    | ${testWidths.M}
+      ${'(S) ' + testWidths.S + ':'}       | ${testBreakpoints[testWidths.S]}    | ${testWidths.S}
+      ${'(base) ' + testWidths.base + ':'} | ${testBreakpoints[testWidths.base]} | ${testWidths.base}
+    `('$name $breakpoints', function ({breakpoints, expected}) {
+      matchMedia.useMediaQuery('(min-width: 1024px)');
+
+      rerender(
+        <Provider breakpoints={breakpoints} theme={theme}>
+          <TextField
+            label="foo"
+            width={testWidths} />
+        </Provider>
+      );
+
+      provider = container.firstChild;
+      textField = provider.firstChild;
+      expect(textField).toHaveStyle({width: expected});
+    });
+  });
 });
