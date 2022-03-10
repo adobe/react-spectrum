@@ -11,12 +11,13 @@ export function mapToArray(columnWidthsMap: Map<Key, number>): { key: Key, width
   return Array.from(columnWidthsMap, ([key, width]) => ({key, width}));
 }
     
-export function getContentWidth(widths) {
+export function getContentWidth(widths: Map<Key, number>): number {
   return Array.from(widths).map(e => e[1]).reduce((acc, cur) => acc + cur, 0);
 }
-    
+
+// numbers and percents are considered static. *fr units or a lack of units are considered dynamic.
 export function isStatic(width: number | string): boolean {
-  return width !== null && width !== undefined && (typeof width === 'number' || width.match(/^(\d+)%$/) !== null);
+  return width !== undefined && (!isNaN(width as number) || (String(width)).match(/^(\d+)%$/) !== null);
 } 
 
 function parseFractionalUnit(width: string): number {
