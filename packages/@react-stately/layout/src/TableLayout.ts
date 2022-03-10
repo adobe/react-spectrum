@@ -131,8 +131,8 @@ export class TableLayout<T> extends ListLayout<T> {
   getColumnWidth_(node: GridNode<T>) {
     let colspan = node.colspan ?? 1;
     let width = 0;
-    for (let i = 0; i < colspan; i++) {
-      let column = this.collection.columns[node.index + i];
+    for (let i = node.index; i < node.index + colspan; i++) {
+      let column = this.collection.columns[i];
       width += this.getColumnWidth(column.key);
     }
 
