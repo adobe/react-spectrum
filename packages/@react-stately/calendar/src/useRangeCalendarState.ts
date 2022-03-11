@@ -11,7 +11,7 @@
  */
 
 import {alignCenter, isInvalid} from './utils';
-import {Calendar, CalendarDate, DateDuration, GregorianCalendar, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
+import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from './types';
 import {DateRange, DateValue} from '@react-types/calendar';
 import {RangeCalendarProps} from '@react-types/calendar';
@@ -77,7 +77,7 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
 
   // If the visible range changes, we need to update the available range.
   let lastVisibleRange = useRef(calendar.visibleRange);
-  if (calendar.visibleRange.start !== lastVisibleRange.current.start || calendar.visibleRange.end !== lastVisibleRange.current.end) {
+  if (!isEqualDay(calendar.visibleRange.start, lastVisibleRange.current.start) || !isEqualDay(calendar.visibleRange.end, lastVisibleRange.current.end)) {
     updateAvailableRange(anchorDate);
     lastVisibleRange.current = calendar.visibleRange;
   }
