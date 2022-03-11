@@ -72,7 +72,7 @@ export function focusSafely(element: HTMLElement) {
     if (intersectionObserver &&
       (
         // Don't test for intersectionObserver to scroll the element into view
-        // within the document body on pointer events, unless the element being focused
+        // within the document body on pointer events, unless the element 
         // focusing safely is not the element that received interaction to focus it.
         modality !== 'pointer' || 
         !(
