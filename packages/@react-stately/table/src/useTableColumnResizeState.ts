@@ -52,15 +52,19 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
-  let getRealColumnWidth = useCallback((column: GridNode<T>): (number | string) => {
+  /*
+    returns the resolved column width in this order: 
+    previously calculated width -> controlled width prop -> uncontrolled defaultWidth prop -> dev assigned width -> default dynamic width
+  */
+  let getResolvedColumnWidth = useCallback((column: GridNode<T>): (number | string) => {
     let props = column.props as ColumnProps<T>;
     return resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : props.width ?? props.defaultWidth ?? getDefaultWidth?.(column.props) ?? '1fr';
   }, [getDefaultWidth, resizedColumns]);
 
   let getStaticAndDynamicColumns = useCallback((columns: GridNode<T>[]) : { staticColumns: GridNode<T>[], dynamicColumns: GridNode<T>[] } => columns.reduce((acc, column) => {
-    let width = getRealColumnWidth(column);
+    let width = getResolvedColumnWidth(column);
     return isStatic(width) ? {...acc, staticColumns: [...acc.staticColumns, column]} : {...acc, dynamicColumns: [...acc.dynamicColumns, column]}; 
-  }, {staticColumns: [], dynamicColumns: []}), [getRealColumnWidth]);
+  }, {staticColumns: [], dynamicColumns: []}), [getResolvedColumnWidth]);
 
   let buildColumnWidths = useCallback((affectedColumns: GridNode<T>[], availableSpace: number): Map<Key, number> => {
     const widths = new Map<Key, number>();
@@ -69,7 +73,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     const {staticColumns, dynamicColumns} = getStaticAndDynamicColumns(affectedColumns);
 
     staticColumns.forEach(column => {
-      let width = getRealColumnWidth(column);
+      let width = getResolvedColumnWidth(column);
       let w = parseStaticWidth(width, tableWidth.current);
       widths.set(column.key, w);
       remainingSpace -= w;
@@ -84,7 +88,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     }
 
     return widths;
-  }, [getStaticAndDynamicColumns, getRealColumnWidth]);
+  }, [getStaticAndDynamicColumns, getResolvedColumnWidth]);
 
   // if the columns change, need to rebuild widths.
   useLayoutEffect(() => {
@@ -153,7 +157,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
 
     // available space for affected columns
     let availableSpace = columnsRef.current.reduce((acc, column, index) => {
-      if (index <= resizeIndex || isStatic(getRealColumnWidth(column))) {
+      if (index <= resizeIndex || isStatic(getResolvedColumnWidth(column))) {
         return acc - widths.get(column.key);
       }
       return acc;
