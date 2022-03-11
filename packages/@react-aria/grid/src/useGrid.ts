@@ -113,7 +113,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let gridProps: HTMLAttributes<HTMLElement> = mergeProps(
     domProps,
     {
-      role: 'grid',
+      role: state.collection.size ? 'grid' : null,
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
