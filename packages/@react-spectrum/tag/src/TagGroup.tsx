@@ -72,7 +72,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
   // Don't want the grid to be focusable or accessible via keyboard
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {tabIndex, ...otherGridProps} = gridProps;
+  let {tabIndex, role, ...otherGridProps} = gridProps;
   return (
     <div
       {...mergeProps(styleProps, tagGroupProps, otherGridProps)}
@@ -86,6 +86,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           styleProps.className
         )
       }
+      role={state.collection.size ? 'grid' : null}
       ref={domRef}>
       {[...gridCollection].map(item => (
         <Tag
