@@ -11,8 +11,8 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {DatePickerBase, DateValue} from '@react-types/datepicker';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
+import {DatePickerBase, DateValue} from '@react-types/datepicker';
 import {NumberParser} from '@internationalized/number';
 import React, {useMemo, useRef} from 'react';
 import styles from './index.css';
