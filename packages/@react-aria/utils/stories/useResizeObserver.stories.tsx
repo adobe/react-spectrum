@@ -17,7 +17,7 @@ UseResizeObserverLoopLimit.args = {};
 
 const animalSet = ['🐰', '🦊', '🐻', '🐭', '🐼', '🐸'];
 function App() {
-  let ref = useRef();
+  let ref = useRef<HTMLDivElement>();
   let index = useRef(0);
   let [animals, setAnimals] = useState([animalSet[0]]);
 
