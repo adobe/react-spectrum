@@ -41,6 +41,7 @@ class LandmarkManager {
   private constructor() {
     this.f6Handler = this.f6Handler.bind(this);
     this.focusinHandler = this.focusinHandler.bind(this);
+    this.focusoutHandler = this.focusoutHandler.bind(this);
   }
 
   public static getInstance(): LandmarkManager {
@@ -54,12 +55,14 @@ class LandmarkManager {
   private setup() {
     document.addEventListener('keydown', this.f6Handler, {capture: true});
     document.addEventListener('focusin', this.focusinHandler, {capture: true});
+    document.addEventListener('focusout', this.focusoutHandler, {capture: true});
     this.isListening = true;
   }
 
   private teardown() {
     document.removeEventListener('keydown', this.f6Handler, {capture: true});
     document.removeEventListener('focusin', this.focusinHandler, {capture: true});
+    document.removeEventListener('focusout', this.focusoutHandler, {capture: true});
     this.isListening = false;
   }
 
@@ -98,22 +101,24 @@ class LandmarkManager {
       return;
     }
 
-    let insertPosition = 0;
-    let comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
-      // Compare position of landmark being added with existing landmarks.
-      // Iterate through landmarks (which are sorted in document order),
-      // and insert when a landmark is found that is positioned before the newly added element,
-      // or is contained by the newly added element (for nested landmarks).
-      // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
-    while (
-      insertPosition < this.landmarks.length &&
-      ((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) ||
-        (comparedPosition & Node.DOCUMENT_POSITION_CONTAINS))
-    ) {
-      comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[insertPosition].ref.current as Node);
-      insertPosition++;
+
+    // Binary search to insert new landmark based on position in document relative to existing landmarks.
+    // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
+    let start = 0;
+    let end = this.landmarks.length - 1;
+    while (start <= end) {
+      let mid = Math.floor((start + end) / 2);
+      let comparedPosition = newLandmark.ref.current.compareDocumentPosition(this.landmarks[mid].ref.current as Node);
+      let isNewAfterExisting = Boolean((comparedPosition & Node.DOCUMENT_POSITION_PRECEDING) || (comparedPosition & Node.DOCUMENT_POSITION_CONTAINS));
+
+      if (isNewAfterExisting) {
+        start = mid + 1;
+      } else {
+        end = mid - 1;
+      }
     }
-    this.landmarks.splice(insertPosition, 0, newLandmark);
+
+    this.landmarks.splice(start, 0, newLandmark);
   }
 
   public updateLandmark(landmark: Pick<Landmark, 'ref'> & Partial<Landmark>) {
@@ -140,14 +145,21 @@ class LandmarkManager {
   private checkLabels(role: AriaLandmarkRole) {
     let landmarksWithRole = this.getLandmarksByRole(role);
     if (landmarksWithRole.size > 1) {
-      if ([...landmarksWithRole].some(landmark => !landmark.label)) {
-        console.warn(`Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute.`);
+      let duplicatesWithoutLabel = [...landmarksWithRole].filter(landmark => !landmark.label);
+      if (duplicatesWithoutLabel.length > 0) {
+        console.warn(
+          `Page contains more than one landmark with the '${role}' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute: `,
+          duplicatesWithoutLabel.map(landmark => landmark.ref.current)
+        );
       } else {
         let labels = [...landmarksWithRole].map(landmark => landmark.label);
         let duplicateLabels = labels.filter((item, index) => labels.indexOf(item) !== index);
 
         duplicateLabels.forEach((label) => {
-          console.warn(`Page contains more than one landmark with the '${role}' role and '${label}' label. If two or more landmarks on a page share the same role, they must have unique labels.`);
+          console.warn(
+            `Page contains more than one landmark with the '${role}' role and '${label}' label. If two or more landmarks on a page share the same role, they must have unique labels: `,
+            [...landmarksWithRole].filter(landmark => landmark.label === label).map(landmark => landmark.ref.current)
+          );
         });
       }
     }
@@ -247,6 +259,22 @@ class LandmarkManager {
     }
     let previousFocusedElement = e.relatedTarget as HTMLElement;
     if (previousFocusedElement) {
+      let closestPreviousLandmark = this.closestLandmark(previousFocusedElement);
+      if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElement) {
+        closestPreviousLandmark.blur();
+      }
+    }
+  }
+
+  /**
+   * Track if the focus is lost to the body. If it is, do cleanup on the landmark that last had focus.
+   */
+  public focusoutHandler(e: FocusEvent) {
+    let previousFocusedElement = e.target as HTMLElement;
+    let nextFocusedElement = e.relatedTarget;
+    // the === document seems to be a jest thing for focus to go there on generic blur event such as landmark.blur();
+    // browsers appear to send focus instead to document.body and the relatedTarget is null when that happens
+    if (!nextFocusedElement || nextFocusedElement === document) {
       let closestPreviousLandmark = this.closestLandmark(previousFocusedElement);
       if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElement) {
         closestPreviousLandmark.blur();
