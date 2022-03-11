@@ -52,6 +52,11 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
+  function setColumnWidthsForRef(newWidths: Map<Key, number>) {
+    columnWidthsRef.current = newWidths;
+    // new map so that change detection is triggered
+    setColumnWidths(newWidths);
+  }
   /*
     returns the resolved column width in this order: 
     previously calculated width -> controlled width prop -> uncontrolled defaultWidth prop -> dev assigned width -> default dynamic width
@@ -96,12 +101,6 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     const widths = buildColumnWidths(columns, tableWidth.current);
     setColumnWidthsForRef(widths);
   }, [columns, buildColumnWidths]);
-
-  function setColumnWidthsForRef(newWidths: Map<Key, number>) {
-    columnWidthsRef.current = newWidths;
-    // new map so that change detection is triggered
-    setColumnWidths(newWidths);
-  }
 
   function setTableWidth(width: number) {
     if (width && width !== tableWidth.current) {
