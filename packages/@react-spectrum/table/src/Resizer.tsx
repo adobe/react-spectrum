@@ -18,6 +18,7 @@ function Resizer(props, ref) {
         role="separator"
         aria-orientation="vertical"
         aria-label="Resize column"
+        aria-labelledby={item.key}
         aria-valuenow={state.getColumnWidth(item.key)}
         aria-valuemin={state.getColumnMinWidth(item.key)}
         aria-valuemax={state.getColumnMaxWidth(item.key)} />
