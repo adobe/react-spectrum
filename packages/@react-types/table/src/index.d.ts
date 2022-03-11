@@ -51,6 +51,13 @@ export interface TableHeaderProps<T> {
   children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
 }
 
+export interface TableColumnHeaderProps<T> {
+  /** A list of table columns. */
+  column: T,
+  /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
+  children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
+}
+
 type ColumnElement<T> = ReactElement<ColumnProps<T>>;
 type ColumnRenderer<T> = (item: T) => ColumnElement<T>;
 export interface ColumnProps<T> {

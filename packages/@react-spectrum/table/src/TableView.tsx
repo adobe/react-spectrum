@@ -437,7 +437,7 @@ function TableColumnHeader(props) {
     isVirtualized: true
   }, state, ref);
 
-  let {buttonProps} = useButton(props, ref);
+  let {buttonProps} = useButton({...props, elementType: 'div'}, ref);
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
@@ -447,10 +447,15 @@ function TableColumnHeader(props) {
 
   let {hoverProps, isHovered} = useHover({});
 
+  const allProps = [columnHeaderProps, hoverProps];
+  if (columnProps.allowsResizing) {
+    allProps.push(buttonProps);
+  }
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...mergeProps(columnHeaderProps, hoverProps, buttonProps)}
+        {...mergeProps(...allProps)}
         ref={ref}
         className={
           classNames(
