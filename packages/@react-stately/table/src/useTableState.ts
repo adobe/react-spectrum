@@ -60,9 +60,9 @@ export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelection
   /** Function for determining the default width of columns. */
   getDefaultWidth?: (props) => string | number,
   /** Callback that is invoked during the entirety of the resize event. */
-  onColumnResize?: (affectedColumnWidths: AffectedColumnWidths[]) => void,
+  onColumnResize?: (affectedColumnWidths: AffectedColumnWidths) => void,
   /** Callback that is invoked when the resize event is ended. */
-  onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths[]) => void
+  onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths) => void
 }
 
 const OPPOSITE_SORT_DIRECTION = {

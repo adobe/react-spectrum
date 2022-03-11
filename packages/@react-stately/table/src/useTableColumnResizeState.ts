@@ -5,12 +5,13 @@ import {GridNode} from '@react-types/grid';
 import {Key, MutableRefObject, useCallback, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
-export interface AffectedColumnWidths {
+export interface AffectedColumnWidth {
   /** The column key. */
   key: Key,
   /** The column width. */
   width: number
 }
+export interface AffectedColumnWidths extends Array<AffectedColumnWidth> {}
 
 export interface ColumnResizeState<T> {
   /** A ref whose current value is the state of all the column widths. */
@@ -37,9 +38,9 @@ export interface ColumnResizeStateProps<T> {
   /** Callback to determine what the default width of a column should be. */
   getDefaultWidth: (props) => string | number,
   /** Callback that is invoked during the entirety of the resize event. */
-  onColumnResize?: (affectedColumnWidths: AffectedColumnWidths[]) => void,
+  onColumnResize?: (affectedColumnWidths: AffectedColumnWidths) => void,
   /** Callback that is invoked when the resize event is ended. */
-  onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths[]) => void
+  onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths) => void
 }
 
 export default function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): ColumnResizeState<T> {
@@ -52,7 +53,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
 
   const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(new Map(columns.map(col => [col.key, 0])));
   const columnWidthsRef = useRef<Map<Key, number>>(columnWidths);
-  const affectedColumnWidthsRef = useRef<AffectedColumnWidths[]>([]);
+  const affectedColumnWidthsRef = useRef<AffectedColumnWidths>([]);
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
@@ -139,7 +140,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     setColumnWidthsForRef(widths);
   }
 
-  function resizeColumn(column: GridNode<T>, newWidth: number) : AffectedColumnWidths[] {
+  function resizeColumn(column: GridNode<T>, newWidth: number) : AffectedColumnWidths {
     let boundedWidth =  Math.max(
       getMinWidth(column.props.minWidth, tableWidth.current),
       Math.min(Math.floor(newWidth), getMaxWidth(column.props.maxWidth, tableWidth.current)));
