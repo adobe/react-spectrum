@@ -54,7 +54,7 @@ export function getMinWidth(minWidth: number | string, tableWidth: number): numb
       : 75;
 }
 
-function mapColumns<T>(remainingColumns: GridNode<T>[], remainingSpace: number, tableWidth: number): mappedColumn<T>[] {
+function mapDynamicColumns<T>(remainingColumns: GridNode<T>[], remainingSpace: number, tableWidth: number): mappedColumn<T>[] {
   let remainingFractions = remainingColumns.reduce(
         (sum, column) => sum + parseFractionalUnit(column.props.defaultWidth),
         0
@@ -78,7 +78,7 @@ function mapColumns<T>(remainingColumns: GridNode<T>[], remainingSpace: number, 
   return columns;
 }
 
-function solveWidths<T>(remainingColumns: mappedColumn<T>[], remainingSpace: number, tableWidth: number): mappedColumn<T>[] {
+function findDynamicColumnWidths<T>(remainingColumns: mappedColumn<T>[], remainingSpace: number, tableWidth: number): mappedColumn<T>[] {
   let remainingFractions = remainingColumns.reduce(
         (sum, col) => sum + parseFractionalUnit(col.props.defaultWidth),
         0
@@ -103,10 +103,10 @@ function solveWidths<T>(remainingColumns: mappedColumn<T>[], remainingSpace: num
 }  
     
 export function getDynamicColumnWidths<T>(remainingColumns: GridNode<T>[], remainingSpace: number, tableWidth: number) {
-  let columns = mapColumns(remainingColumns, remainingSpace, tableWidth);
+  let columns = mapDynamicColumns(remainingColumns, remainingSpace, tableWidth);
     
   columns.sort((a, b) => b.delta - a.delta);
-  columns = solveWidths(columns, remainingSpace, tableWidth);
+  columns = findDynamicColumnWidths(columns, remainingSpace, tableWidth);
   columns.sort((a, b) => a.index - b.index);
     
   return columns;
