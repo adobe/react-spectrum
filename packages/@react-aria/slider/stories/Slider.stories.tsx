@@ -29,10 +29,6 @@ storiesOf('Slider (hooks)', module)
     () => <StorySlider aria-label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} showTip />
   )
   .add(
-    'single with pageSize',
-    () => <StorySlider label="Degrees" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} minValue={0} maxValue={360} pageSize={15} formatOptions={{style: 'unit', unit: 'degree', unitDisplay: 'narrow'}} showTip />
-  )
-  .add(
     'range',
     () => (<StoryRangeSlider
       label="Temperature"
@@ -57,23 +53,6 @@ storiesOf('Slider (hooks)', module)
       formatOptions={{
         style: 'unit',
         unit: 'celsius',
-        unitDisplay: 'narrow'
-      } as any} />)
-  )
-  .add(
-    'range with pageSize',
-    () => (<StoryRangeSlider
-      label="Arc"
-      defaultValue={[45, 135]}
-      minValue={0}
-      maxValue={360}
-      pageSize={15}
-      onChange={action('onChange')}
-      onChangeEnd={action('onChangeEnd')}
-      showTip
-      formatOptions={{
-        style: 'unit',
-        unit: 'degree',
         unitDisplay: 'narrow'
       } as any} />)
   )

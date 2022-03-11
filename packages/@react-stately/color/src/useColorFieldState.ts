@@ -14,7 +14,7 @@ import {Color, ColorFieldProps} from '@react-types/color';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 export interface ColorFieldState {
   /**
@@ -63,11 +63,11 @@ export function useColorFieldState(
   props: ColorFieldProps
 ): ColorFieldState {
   let {
-    step = 1,
     value,
     defaultValue,
     onChange
   } = props;
+  let {step} = MIN_COLOR.getChannelRange('red');
 
   let initialValue = useColor(value);
   let initialDefaultValue = useColor(defaultValue);
@@ -85,9 +85,12 @@ export function useColorFieldState(
     }
   };
 
-  useEffect(() => {
+  let prevValue = useRef(colorValue);
+  if (prevValue.current !== colorValue) {
     setInputValue(colorValue ? colorValue.toString('hex') : '');
-  }, [colorValue, setInputValue]);
+    prevValue.current = colorValue;
+  }
+
 
   let parsedValue = useMemo(() => {
     let color;
