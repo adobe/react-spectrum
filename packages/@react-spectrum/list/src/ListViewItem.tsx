@@ -56,8 +56,7 @@ export function ListViewItem(props) {
     shouldSelectOnPressUp: isListDraggable
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
-    node: cellNode,
-    focusMode: 'cell'
+    node: cellNode
   }, state, cellRef);
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
@@ -65,7 +64,9 @@ export function ListViewItem(props) {
     draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
   }
   const mergedProps = mergeProps(
-    gridCellProps,
+    rowProps,
+    pressProps,
+    isDraggable && draggableItem?.dragProps,
     hoverProps,
     focusWithinProps,
     focusProps
@@ -99,9 +100,11 @@ export function ListViewItem(props) {
   let {visuallyHiddenProps} = useVisuallyHidden();
   return (
     <div
-      {...mergeProps(rowProps, pressProps, isDraggable && draggableItem?.dragProps)}
-      ref={rowRef}>
+      {...mergedProps}
+      ref={rowRef}
+      aria-label={item.textValue}>
       <div
+        // TODO: refactor the css here now that we are focusing the row?
         className={
           classNames(
             listStyles,
@@ -119,7 +122,7 @@ export function ListViewItem(props) {
           )
         }
         ref={cellRef}
-        {...mergedProps}>
+        {...gridCellProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           {isListDraggable &&
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>

@@ -169,10 +169,12 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowRight': {
+        console.log('arrow right')
         if (delegate.getKeyRightOf) {
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
           navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
+          console.log('next key arrow right', nextKey)
         }
         break;
       }
@@ -201,10 +203,12 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'PageDown':
+        console.log('page down')
         if (delegate.getKeyPageBelow) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
           navigateToKey(nextKey);
+          console.log('nextkey', nextKey)
         }
         break;
       case 'PageUp':

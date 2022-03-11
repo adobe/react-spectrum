@@ -22,7 +22,10 @@ export interface GridKeyboardDelegateOptions<T, C> {
   direction: Direction,
   collator?: Intl.Collator,
   layout?: Layout<Node<T>>,
-  focusMode?: 'row' | 'cell'
+  focusMode?: 'row' | 'cell',
+  // TODO: whether to prioritize focusing the row over the cell? Really this mode is for ListView where we
+  // either want to focus the row or the child elements of the cell, but never the cell itself
+  skipCell?: boolean
 }
 
 export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements KeyboardDelegate {
@@ -42,8 +45,13 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     this.collator = options.collator;
     this.layout = options.layout;
     this.focusMode = options.focusMode || 'row';
+    // TODO: temp hack to make up/down arrow focus the row instead of trying to focus
+    // the same cell contents of the above/below row
+    this.skipCell = true;
   }
 
+  // TODO: Fix Home, End, Page Down, and Page Up for ListView. It should work if you are focused on the row
+  // or within the cell
   protected isCell(node: Node<T>) {
     return node.type === 'cell';
   }
@@ -97,7 +105,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     key = this.findNextKey(key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
-      if (this.isCell(startItem)) {
+      if (!this.skipCell && this.isCell(startItem)) {
         let item = this.collection.getItem(key);
         return [...item.childNodes][startItem.index].key;
       }
@@ -124,7 +132,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     key = this.findPreviousKey(key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
-      if (this.isCell(startItem)) {
+      if (!this.skipCell && this.isCell(startItem)) {
         let item = this.collection.getItem(key);
         return [...item.childNodes][startItem.index].key;
       }
@@ -247,7 +255,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
       // If global flag is not set, and a cell is currently focused,
       // move focus to the last cell in the parent row.
-      if (this.isCell(item) && !global) {
+      if (this.isCell(item) && !global && !this.skipCell) {
         let parent = this.collection.getItem(item.parentKey);
         let children = [...parent.childNodes];
         return children[children.length - 1].key;
@@ -299,7 +307,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return this.ref?.current?.scrollHeight;
   }
 
+  // TODO: check if the key is a cell key or a row key. Should always use the
+  // row key? Need to debug
   getKeyPageAbove(key: Key) {
+    console.log('key in getPageAbovec', key)
     let itemRect = this.getItemRect(key);
     if (!itemRect) {
       return null;
@@ -315,7 +326,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
+  // TODO: check if the key is a cell key or a row key. Should always use the
+  // row key? Need to debug
   getKeyPageBelow(key: Key) {
+    console.log('key in getPageBelow', key)
     let itemRect = this.getItemRect(key);
 
     if (!itemRect) {
@@ -381,4 +395,3 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 }
-

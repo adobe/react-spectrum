@@ -64,13 +64,15 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
+  // TODO: this focus logic will coerce focus to the first focusable child when clicking on a listview's row child element
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
     if (focusMode === 'child') {
       let focusable = state.selectionManager.childFocusStrategy === 'last'
         ? last(treeWalker)
         : treeWalker.firstChild() as HTMLElement;
-      if (focusable) {
+      // TODO: only move focus to the child within the cell if focus isn't already within the cell (e.g. clicking on a buton within a listview row)
+      if (focusable && !ref.current.contains(document.activeElement) && ref.current !== document.activeElement) {
         focusSafely(focusable);
         return;
       }
@@ -98,7 +100,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
-
+    console.log('gwaegaweg')
     switch (e.key) {
       case 'ArrowLeft': {
         // Find the next focusable element within the cell.
@@ -213,6 +215,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
       if (focusMode === 'child' && document.activeElement === ref.current) {
+        console.log('blah')
         focus();
       }
     });

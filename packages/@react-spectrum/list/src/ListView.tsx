@@ -141,7 +141,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let state = useGridState({
     ...props,
     collection: gridCollection,
-    focusMode: 'cell',
+    focusMode: 'row',
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let layout = useListLayout(state, props.density || 'regular');
@@ -151,9 +151,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     ref: domRef,
     direction,
     collator,
-    // Focus the ListView cell instead of the row so that focus doesn't change with left/right arrow keys when there aren't any
-    // focusable children in the cell.
-    focusMode: 'cell'
+    focusMode: 'row'
   }), [state, domRef, direction, collator]);
 
   let provider = useProvider();
