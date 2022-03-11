@@ -7,17 +7,13 @@ type mappedColumn<T> = GridNode<T> & {
     calculatedWidth?: number
 };
 
-export function mapToArray(columnWidthsMap: Map<Key, number>): { key: Key, width: number }[] {
-  return Array.from(columnWidthsMap, ([key, width]) => ({key, width}));
-}
-    
 export function getContentWidth(widths: Map<Key, number>): number {
   return Array.from(widths).map(e => e[1]).reduce((acc, cur) => acc + cur, 0);
 }
 
 // numbers and percents are considered static. *fr units or a lack of units are considered dynamic.
 export function isStatic(width: number | string): boolean {
-  return width !== undefined && (!isNaN(width as number) || (String(width)).match(/^(\d+)%$/) !== null);
+  return width != null && (!isNaN(width as number) || (String(width)).match(/^(\d+)%$/) !== null);
 } 
 
 function parseFractionalUnit(width: string): number {
@@ -36,24 +32,24 @@ function parseFractionalUnit(width: string): number {
 
 export function parseStaticWidth(width: number | string, tableWidth: number): number {
   if (typeof width === 'string') {
-    let match = width.match(/^(\d+)%$/);
+    let match = width.match(/^(\d+)(?=%)$/);
     if (!match) {
       throw new Error('Only percentages or numbers are supported for static column widths');
     }
-    return tableWidth * (parseInt(match[1], 10) / 100);
+    return tableWidth * (parseInt(match[0], 10) / 100);
   }
   return width;
 }
     
     
 export function getMaxWidth(maxWidth: number | string, tableWidth: number): number {
-  return maxWidth !== undefined && maxWidth !== null
+  return maxWidth != null
         ? parseStaticWidth(maxWidth, tableWidth)
         : Infinity;
 }
 
 export function getMinWidth(minWidth: number | string, tableWidth: number): number {
-  return minWidth !== undefined && minWidth !== null
+  return minWidth != null
       ? parseStaticWidth(minWidth, tableWidth)
       : 75;
 }

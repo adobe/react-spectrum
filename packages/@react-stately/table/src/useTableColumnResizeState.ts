@@ -52,7 +52,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
-  let getRealColumnWidth = useCallback((column: GridNode<T>) => {
+  let getRealColumnWidth = useCallback((column: GridNode<T>): (number | string) => {
     let props = column.props as ColumnProps<T>;
     return resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : props.width ?? props.defaultWidth ?? getDefaultWidth?.(column.props) ?? '1fr';
   }, [getDefaultWidth, resizedColumns]);
@@ -140,7 +140,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     widths.set(columnsRef.current[columnsRef.current.length - 1].key, 0);
     widths.set(column.key, boundedWidth);
 
-    // keep track of all columns that have been seized
+    // keep track of all columns that have been sized
     resizedColumnsRef.current.add(column.key);
     setResizedColumns(resizedColumnsRef.current);
 
@@ -168,10 +168,12 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     }
     setColumnWidthsForRef(widths);
 
-    // when getting recalculated columns above, the column being resized is not considered "recalculated"
-    // so we need to add it to the list of affected columns
-    let allAffectedColumns = new Map<Key, number>([[column.key, boundedWidth], ...recalculatedColumnWidths]);
-    return mapToArray(allAffectedColumns);
+    /*
+     when getting recalculated columns above, the column being resized is not considered "recalculated"
+     so we need to add it to the list of affected columns
+    */
+    let allAffectedColumns = ([[column.key, boundedWidth], ...recalculatedColumnWidths] as [Key, number][]).map(([key, width]) => ({key, width}));
+    return allAffectedColumns;
   }
 
   // This function is regenerated whenever columnWidthsRef.current changes in order to get the new correct ref value.
