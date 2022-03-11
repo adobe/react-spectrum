@@ -44,8 +44,8 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
   let isLastSelectedBeforeDisabled = !isDisabled && state.isCellUnavailable(props.date.add({days: 1}));
   let isFirstSelectedAfterDisabled = !isDisabled && state.isCellUnavailable(props.date.subtract({days: 1}));
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
-  let isSelectionStart = highlightedRange && isSameDay(props.date, highlightedRange.start);
-  let isSelectionEnd = highlightedRange && isSameDay(props.date, highlightedRange.end);
+  let isSelectionStart = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.start);
+  let isSelectionEnd = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.end);
   let {locale} = useLocale();
   let dayOfWeek = getDayOfWeek(props.date, locale);
   let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);

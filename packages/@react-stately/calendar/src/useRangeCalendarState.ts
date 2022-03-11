@@ -30,7 +30,7 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
   let {value: valueProp, defaultValue, onChange, createCalendar, locale, visibleDuration = {months: 1}, minValue, maxValue, ...calendarProps} = props;
   let [value, setValue] = useControlledState<DateRange>(
     valueProp,
-    defaultValue,
+    defaultValue || null,
     onChange
   );
 

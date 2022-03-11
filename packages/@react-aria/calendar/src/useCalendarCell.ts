@@ -42,7 +42,7 @@ interface CalendarCellAria {
   /** Whether the cell is focused. */
   isFocused: boolean,
   /**
-   * Whether the cell is disabled, according to the calendar's `minValue, `maxValue`, and `isDisabled` props.
+   * Whether the cell is disabled, according to the calendar's `minValue`, `maxValue`, and `isDisabled` props.
    * Disabled dates are not focusable, and cannot be selected by the user. They are typically
    * displayed with a dimmed appearance.
    */

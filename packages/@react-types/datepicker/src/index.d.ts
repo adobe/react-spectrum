@@ -38,7 +38,7 @@ interface DatePickerBase<T extends DateValue> extends InputBase, Validation, Foc
   minValue?: DateValue,
   /** The maximum allowed date that a user may select. */
   maxValue?: DateValue,
-  /** Callback that is called for each date of the calendar. If it returns true, then the date is disabled. */
+  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
   isDateUnavailable?: (date: DateValue) => boolean,
   /** A placeholder date to display when no value is selected. Defaults to today's date at midnight. */
   placeholderValue?: T,
