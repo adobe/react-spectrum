@@ -11,27 +11,30 @@
  */
 
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
-import {DatePickerProps, DateValue} from '@react-types/datepicker';
-import {DOMProps} from '@react-types/shared';
 import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId} from '@react-aria/utils';
-import {labelIds} from './useDateField';
+import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
 import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from './useDisplayNames';
-import {useFocusManager} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 interface DateSegmentAria {
+  /** Props for the segment element. */
   segmentProps: HTMLAttributes<HTMLDivElement>
 }
 
-export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & DOMProps, segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
+/**
+ * Provides the behavior and accessibility implementation for a segment in a date field.
+ * A date segment displays an individual unit of a date and time, and allows users to edit
+ * the value by typing or using the arrow keys to increment and decrement.
+ */
+export function useDateSegment(segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
   let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
   let displayNames = useDisplayNames();
-  let focusManager = useFocusManager();
+  let {ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state);
 
   let textValue = segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
@@ -54,9 +57,9 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     textValue,
     minValue: segment.minValue,
     maxValue: segment.maxValue,
-    isDisabled: props.isDisabled,
-    isReadOnly: props.isReadOnly || !segment.isEditable,
-    isRequired: props.isRequired,
+    isDisabled: state.isDisabled,
+    isReadOnly: state.isReadOnly || !segment.isEditable,
+    isRequired: state.isRequired,
     onIncrement: () => {
       enteredKeys.current = '';
       state.increment(segment.type);
@@ -86,7 +89,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
   let parser = useMemo(() => new NumberParser(locale, {maximumFractionDigits: 0}), [locale]);
 
   let backspace = () => {
-    if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly && !segment.isPlaceholder) {
+    if (parser.isValidPartialNumber(segment.text) && !state.isReadOnly && !segment.isPlaceholder) {
       let newValue = segment.text.slice(0, -1);
       let parsed = parser.parse(newValue);
       if (newValue.length === 0 || parsed === 0) {
@@ -116,27 +119,27 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          focusManager.focusNext();
+          focusManager.focusNext({tabbable: true});
         } else {
-          focusManager.focusPrevious();
+          focusManager.focusPrevious({tabbable: true});
         }
         break;
       case 'ArrowRight':
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          focusManager.focusPrevious();
+          focusManager.focusPrevious({tabbable: true});
         } else {
-          focusManager.focusNext();
+          focusManager.focusNext({tabbable: true});
         }
         break;
       case 'Enter':
         e.preventDefault();
         e.stopPropagation();
-        if (segment.isPlaceholder && !props.isReadOnly) {
+        if (segment.isPlaceholder && !state.isReadOnly) {
           state.confirmPlaceholder(segment.type);
         }
-        focusManager.focusNext();
+        focusManager.focusNext({tabbable: true});
         break;
       case 'Tab':
         break;
@@ -167,7 +170,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
   }, [amPmFormatter]);
 
   let onInput = (key: string) => {
-    if (props.isDisabled || props.isReadOnly) {
+    if (state.isDisabled || state.isReadOnly) {
       return;
     }
 
@@ -182,7 +185,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
         } else {
           break;
         }
-        focusManager.focusNext();
+        focusManager.focusNext({tabbable: true});
         break;
       case 'day':
       case 'hour':
@@ -231,7 +234,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
         if (Number(numberValue + '0') > segment.maxValue || newValue.length >= String(segment.maxValue).length) {
           enteredKeys.current = '';
           if (shouldSetValue) {
-            focusManager.focusNext();
+            focusManager.focusNext({tabbable: true});
           }
         } else {
           enteredKeys.current = newValue;
@@ -261,7 +264,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     switch (e.inputType) {
       case 'deleteContentBackward':
       case 'deleteContentForward':
-        if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly) {
+        if (parser.isValidPartialNumber(segment.text) && !state.isReadOnly) {
           backspace();
         }
         break;
@@ -328,8 +331,6 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     'aria-valuenow': null
   } : {};
 
-  let {ariaLabelledBy, ariaDescribedBy} = labelIds.get(state);
-
   // Only apply aria-describedby to the first segment, unless the field is invalid. This avoids it being
   // read every time the user navigates to a new segment.
   let firstSegment = useMemo(() => state.segments.find(s => s.isEditable), [state.segments]);
@@ -337,20 +338,29 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     ariaDescribedBy = undefined;
   }
 
-  let id = useId(props.id);
-  let isEditable = !props.isDisabled && !props.isReadOnly && segment.isEditable;
+  let id = useId();
+  let isEditable = !state.isDisabled && !state.isReadOnly && segment.isEditable;
+
+  // Literal segments should not be visible to screen readers. We don't really need any of the above,
+  // but the rules of hooks mean hooks cannot be conditional so we have to put this condition here.
+  if (segment.type === 'literal') {
+    return {
+      segmentProps: {
+        'aria-hidden': true
+      }
+    };
+  }
+
   return {
     segmentProps: mergeProps(spinButtonProps, pressProps, {
       id,
       ...touchPropOverrides,
-      'aria-controls': props['aria-controls'],
-      // 'aria-haspopup': props['aria-haspopup'], // deprecated in ARIA 1.2
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
-      'aria-label': segment.type !== 'literal' ? displayNames.of(segment.type) : undefined,
+      'aria-label': displayNames.of(segment.type),
       'aria-labelledby': `${ariaLabelledBy} ${id}`,
       'aria-describedby': ariaDescribedBy,
       'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
-      'aria-readonly': props.isReadOnly || !segment.isEditable ? 'true' : undefined,
+      'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,
       spellCheck: isEditable ? 'false' : undefined,
@@ -358,10 +368,13 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
       [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,
-      inputMode: props.isDisabled || segment.type === 'dayPeriod' || !isEditable ? undefined : 'numeric',
-      tabIndex: props.isDisabled ? undefined : 0,
+      inputMode: state.isDisabled || segment.type === 'dayPeriod' || !isEditable ? undefined : 'numeric',
+      tabIndex: state.isDisabled ? undefined : 0,
       onKeyDown,
-      onFocus
+      onFocus,
+      style: {
+        caretColor: 'transparent'
+      }
     })
   };
 }

@@ -24,14 +24,14 @@ const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
 const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
 
 /**
- * A NumberParser can be used perform locale aware parsing of numbers from Unicode strings,
- * as well as validation of partial user input. Automatically detects the numbering system
+ * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
+ * as well as validation of partial user input. It automatically detects the numbering system
  * used in the input, and supports parsing decimals, percentages, currency values, and units
  * according to the locale.
  */
 export class NumberParser {
-  locale: string;
-  options: Intl.NumberFormatOptions;
+  private locale: string;
+  private options: Intl.NumberFormatOptions;
 
   constructor(locale: string, options: Intl.NumberFormatOptions = {}) {
     this.locale = locale;

@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
+import {DateValue} from '@react-types/calendar';
 import {Flex, Grid, repeat} from '@react-spectrum/layout';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {RangeCalendar} from '../';
@@ -20,6 +21,7 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {TimeField} from '@react-spectrum/datepicker';
+import {View} from '@react-spectrum/view';
 
 storiesOf('Date and Time/RangeCalendar', module)
   .add(
@@ -53,6 +55,13 @@ storiesOf('Date and Time/RangeCalendar', module)
   .add(
     'isDisabled',
     () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, isDisabled: true})
+  )
+  .add(
+    'multiple disabled intervals',
+    () => render({isDateDisabled: (date: DateValue) => {
+      const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+    }})
   )
   .add(
     'isReadOnly',
@@ -131,7 +140,11 @@ storiesOf('Date and Time/RangeCalendar/cell', module)
 );
 
 function render(props = {}) {
-  return <RangeCalendar onChange={action('change')} {...props} />;
+  return (
+    <View maxWidth="100vw" overflow="auto">
+      <RangeCalendar onChange={action('change')} {...props} />
+    </View>
+  );
 }
 
 function RangeCalendarWithTime() {

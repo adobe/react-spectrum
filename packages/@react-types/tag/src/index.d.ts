@@ -10,23 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, MultipleSelection, Removable, StyleProps} from '@react-types/shared';
-import {ReactChild, ReactElement, ReactNode} from 'react';
+import {CollectionBase, DOMProps, ItemProps, MultipleSelection, Node, StyleProps} from '@react-types/shared';
+import {GridState} from '@react-stately/grid';
+import {Key, RefObject} from 'react';
 
-export interface TagProps extends Removable<ReactChild, void> {
-  children?: ReactNode,
-  icon?: ReactElement,
+export interface TagGroupProps<T> extends CollectionBase<T>, MultipleSelection {
+  disabledKeys?: Iterable<Key>,
   isDisabled?: boolean,
-  validationState?: 'invalid' | 'valid'
+  isRemovable?: boolean,
+  onRemove?: (items: any[]) => void
 }
 
-export interface TagGroupProps extends MultipleSelection {
-  children: ReactElement<TagProps> | ReactElement<TagProps>[],
+export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, StyleProps {}
+
+export interface TagProps<T> extends ItemProps<any> {
   isDisabled?: boolean,
-  isReadOnly?: boolean,
-  onRemove?: (items: any[]) => void,
-  validationState?: 'invalid' | 'valid'
+  isFocused: boolean,
+  isRemovable?: boolean,
+  item: Node<T>,
+  onRemove?: (item, e) => void,
+  tagRef: RefObject<HTMLElement>,
+  tagRowRef: RefObject<HTMLElement>
 }
 
-export interface SpectrumTagProps extends TagProps, DOMProps, StyleProps {}
-export interface SpectrumTagGroupProps extends TagGroupProps, DOMProps, StyleProps {}
+export interface SpectrumTagProps<T> extends TagProps<T> {
+  state: GridState<any, any>
+}

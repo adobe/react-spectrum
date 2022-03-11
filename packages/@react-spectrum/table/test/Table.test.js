@@ -60,6 +60,11 @@ let items = [
   {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
+let itemsWithFalsyId = [
+  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 0},
+  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2', id: 1}
+];
+
 let manyItems = [];
 for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
@@ -463,6 +468,45 @@ describe('TableView', function () {
     expect(cells[3]).toHaveAttribute('aria-colindex', '1');
     expect(cells[4]).toHaveAttribute('aria-colindex', '3');
     expect(cells[5]).toHaveAttribute('aria-colindex', '4');
+  });
+
+  it('renders contents even with falsy row ids', function () {
+    // TODO: doesn't support empty string ids, fix for that to come
+    let {getByRole} = render(
+      <TableView aria-label="Table">
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={itemsWithFalsyId}>
+          {item =>
+            (<Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    );
+
+    let grid = getByRole('grid');
+    let rows = within(grid).getAllByRole('row');
+    expect(rows).toHaveLength(3);
+
+    for (let [i, row] of rows.entries()) {
+      if (i === 0) {
+        let columnheaders = within(row).getAllByRole('columnheader');
+        expect(columnheaders).toHaveLength(3);
+        for (let [j, columnheader] of columnheaders.entries()) {
+          expect(within(columnheader).getByText(columns[j].name)).toBeTruthy();
+        }
+      } else {
+        let rowheader = within(row).getByRole('rowheader');
+        expect(within(rowheader).getByText(itemsWithFalsyId[i - 1][columns[0].key])).toBeTruthy();
+        let cells = within(row).getAllByRole('gridcell');
+        expect(cells).toHaveLength(2);
+        expect(within(cells[0]).getByText(itemsWithFalsyId[i - 1][columns[1].key])).toBeTruthy();
+        expect(within(cells[1]).getByText(itemsWithFalsyId[i - 1][columns[2].key])).toBeTruthy();
+      }
+    }
   });
 
   it('renders a static table with nested columns', function () {

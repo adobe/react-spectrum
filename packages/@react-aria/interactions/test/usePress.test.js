@@ -21,9 +21,9 @@ import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
 function Example(props) {
-  let {elementType: ElementType = 'div', style, ...otherProps} = props;
+  let {elementType: ElementType = 'div', style, draggable, ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...pressProps} style={style} tabIndex="0">test</ElementType>;
+  return <ElementType {...pressProps} style={style} tabIndex="0" draggable={draggable}>test</ElementType>;
 }
 
 function pointerEvent(type, opts) {
@@ -507,11 +507,24 @@ describe('usePress', function () {
       expect(allowDefault).toBe(false);
     });
 
-    it('should not prevent default when in a draggable container', function () {
+    it('should still prevent default when pressing on a non draggable + pressable item in a draggable container', function () {
       let res = render(
         <div draggable="true">
           <Example />
         </div>
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(allowDefault).toBe(false);
+
+      allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+    it('should not prevent default when pressing on a draggable item', function () {
+      let res = render(
+        <Example draggable="true" />
       );
 
       let el = res.getByText('test');
@@ -1036,11 +1049,22 @@ describe('usePress', function () {
       expect(allowDefault).toBe(false);
     });
 
-    it('should not prevent default when in a draggable container', function () {
+    it('should still prevent default when pressing on a non draggable + pressable item in a draggable container', function () {
       let res = render(
         <div draggable="true">
           <Example />
         </div>
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+
+    it('should not prevent default when pressing on a draggable item', function () {
+      let res = render(
+        <Example draggable="true" />
       );
 
       let el = res.getByText('test');

@@ -16,6 +16,7 @@ export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/b
 export {ButtonGroup} from '@react-spectrum/buttongroup';
 export {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 export {ComboBox} from '@react-spectrum/combobox';
+export {ContextualHelp} from '@react-spectrum/contextualhelp';
 export {AlertDialog, Dialog, DialogTrigger, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
 export {Divider} from '@react-spectrum/divider';
 export {Form} from '@react-spectrum/form';

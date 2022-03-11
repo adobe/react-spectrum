@@ -17,6 +17,7 @@ import {
   DisabledKeys,
   DynamicCards,
   EmptyWithHeightGrid,
+  FalsyIds,
   FilteringGrid,
   IsLoadingHeightGrid,
   IsLoadingNoHeightGrid,
@@ -84,6 +85,9 @@ export default {
 
 export const DefaultGalleryStatic = () => <StaticCards {...StaticCards.args} layout={GalleryLayout} />;
 DefaultGalleryStatic.storyName = StaticCards.storyName;
+
+export const FalsyIdGallery = () => <FalsyIds {...FalsyIds.args} layout={GalleryLayout} />;
+FalsyIdGallery.storyName = FalsyIds.storyName;
 
 export const DefaultGalleryNoThinImages = () => <DynamicCards {...DynamicCards.args} layout={GalleryLayout} items={itemsNoThinImages} />;
 DefaultGalleryNoThinImages.storyName = 'dynamic cards, no thin images';
