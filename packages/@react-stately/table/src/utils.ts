@@ -13,7 +13,7 @@ export function getContentWidth(widths: Map<Key, number>): number {
 
 // numbers and percents are considered static. *fr units or a lack of units are considered dynamic.
 export function isStatic(width: number | string): boolean {
-  return width != null && (!isNaN(width as number) || (String(width)).match(/^(\d+)%$/) !== null);
+  return width != null && (!isNaN(width as number) || (String(width)).match(/^(\d+)(?=%$)/) !== null);
 } 
 
 function parseFractionalUnit(width: string): number {
@@ -32,7 +32,7 @@ function parseFractionalUnit(width: string): number {
 
 export function parseStaticWidth(width: number | string, tableWidth: number): number {
   if (typeof width === 'string') {
-    let match = width.match(/^(\d+)(?=%)$/);
+    let match = width.match(/^(\d+)(?=%$)/);
     if (!match) {
       throw new Error('Only percentages or numbers are supported for static column widths');
     }
