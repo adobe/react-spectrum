@@ -259,12 +259,12 @@ describe('CalendarBase', () => {
       Name                   | Calendar         | props
       ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2021, 12, 15)}}
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}}
-    `('$Name should set aria-disabled on cells for which isDateDisabled returns true', ({Calendar, props}) => {
-      const isDateDisabled = (date) => {
+    `('$Name should set aria-disabled on cells for which isDateUnavailable returns true', ({Calendar, props}) => {
+      const isDateUnavailable = (date) => {
         const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
         return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
       };
-      let {getByRole, getAllByRole} = render(<Calendar {...props} isDateDisabled={isDateDisabled} />);
+      let {getByRole, getAllByRole} = render(<Calendar {...props} isDateUnavailable={isDateUnavailable} />);
 
       expect(getByRole('button', {name: 'Monday, December 6, 2021'})).toHaveAttribute('aria-disabled', 'true');
       expect(getByRole('button', {name: 'Tuesday, December 7, 2021'})).toHaveAttribute('aria-disabled', 'true');
@@ -280,6 +280,14 @@ describe('CalendarBase', () => {
 
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(gridCells.length).toBe(21);
+
+      let cell = getByRole('button', {name: 'Wednesday, December 22, 2021'});
+      triggerPress(cell);
+      expect(cell.parentElement).not.toHaveAttribute('aria-selected');
+
+      cell = getByRole('button', {name: 'Sunday, December 12, 2021'});
+      triggerPress(cell);
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
     });
 
     it.each`

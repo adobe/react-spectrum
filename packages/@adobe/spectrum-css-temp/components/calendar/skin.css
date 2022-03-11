@@ -114,4 +114,15 @@ governing permissions and limitations under the License.
       color: var(--spectrum-calendar-day-text-color-disabled);
     }
   }
+
+  &.is-unavailable {
+    &,
+    &.is-today {
+      --background: transparent;
+    }
+
+    & .spectrum-Calendar-dateText span:after {
+      background: var(--spectrum-global-color-gray-600);
+    }
+  }
 }

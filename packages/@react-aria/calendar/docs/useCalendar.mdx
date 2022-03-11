@@ -46,7 +46,7 @@ after_version: 3.0.0
 
 There is no standalone calendar element in HTML. `<input type="date">` is close, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `useCalendar` helps achieve accessible and international calendar components that can be styled as needed.
 
-* **Flexible** – Display one or more months at once, or a custom time range for use cases like a week view.
+* **Flexible** – Display one or more months at once, or a custom time range for use cases like a week view. Minimum and maximum values, unavailable dates, and non-contiguous selections are supported as well.
 * **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, and right-to-left support are available as well.
 * **Accessible** – Calendar cells can be navigated and selected using the keyboard, and localized screen reader messages are included to announce when the selection and visible date range change.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
@@ -57,17 +57,23 @@ There is no standalone calendar element in HTML. `<input type="date">` is close,
 
 A calendar consists of a grouping element containing one or more date grids (e.g. months), and a previous and next button for navigating between date ranges. Each calendar grid consists of cells containing button elements that can be pressed and navigated to using the arrow keys to select a date.
 
+### useCalendar
+
 `useCalendar` returns props that you should spread onto the appropriate elements:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useCalendar.return.id].properties} />
 </TypeContext.Provider>
 
+### useCalendarGrid
+
 `useCalendarGrid` returns props for an individual grid of dates, such as one month, along with a list of formatted weekday names in the current locale for use during rendering:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useCalendarGrid.return.id].properties} />
 </TypeContext.Provider>
+
+### useCalendarCell
 
 `useCalendarCell` returns props for an individual cell, along with states and information useful during rendering:
 
@@ -184,7 +190,7 @@ function CalendarGrid({state, ...props}) {
 
 ### CalendarCell
 
-Finally, the `CalendarCell` component renders an individual cell in a calendar. It consists of two elements: a `<td>` to represent the grid cell, and a `<div>` to represent a button that can be clicked to select the date. The `useCalendarCell` hook also returns some information about the cell's state that can be useful for styling, as well as the formatted date string in the current locale.
+Finally, the `CalendarCell` component renders an individual cell in a calendar. It consists of two elements: a `<td>` to represent the grid cell, and a `<div>` to represent a button that can be clicked to select the date. The `useCalendarCell` hook also returns the formatted date string in the current locale, as well as some information about the cell's state that can be useful for styling. See [above](#usecalendarcell) for details.
 
 **Note**: this component is the same as the `CalendarCell` component shown in the [useRangeCalendar](useRangeCalendar.html) docs, and you can reuse it between both `Calendar` and `RangeCalendar`.
 
@@ -199,6 +205,7 @@ function CalendarCell({state, date}) {
     isSelected,
     isOutsideVisibleRange,
     isDisabled,
+    isUnavailable,
     formattedDate
   } = useCalendarCell({date}, state, ref);
 
@@ -208,7 +215,7 @@ function CalendarCell({state, date}) {
         {...buttonProps}
         ref={ref}
         hidden={isOutsideVisibleRange}
-        className={`cell ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}>
+        className={`cell ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''} ${isUnavailable ? 'unavailable' : ''}`}>
         {formattedDate}
       </div>
     </td>
@@ -253,6 +260,10 @@ That's it! Now we can render an example of our `Calendar` component in action.
 .selected {
   background: var(--blue);
   color: white;
+}
+
+.unavailable {
+  color: var(--spectrum-global-color-red-600);
 }
 
 .disabled {
@@ -380,6 +391,32 @@ This example only accepts dates after today.
 import {today} from '@internationalized/date';
 
 <Calendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} />
+```
+
+### Unavailable dates
+
+`useCalendar` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard so that navigation is consistent, but cannot be selected by the user. In this example, they are displayed in red. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
+
+This example includes multiple unavailable date ranges, e.g. dates when no appointments are available. In addition, all weekends are unavailable. The `minValue` prop is also used to prevent selecting dates before today.
+
+
+```tsx example
+import {today, isWeekend} from '@internationalized/date';
+import {useLocale} from '@adobe/react-spectrum';
+
+function Example() {
+  let now = today(getLocalTimeZone());
+  let disabledRanges = [
+    [now, now.add({days: 5})],
+    [now.add({days: 14}), now.add({days: 16})],
+    [now.add({days: 23}), now.add({days: 24})],
+  ];
+
+  let {locale} = useLocale();
+  let isDateUnavailable = (date) => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+
+  return <Calendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
+}
 ```
 
 ### Controlling the focused date

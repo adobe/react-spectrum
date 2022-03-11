@@ -71,6 +71,8 @@ export interface CalendarStateBase {
   isCellFocused(date: CalendarDate): boolean,
   /** Returns whether the given date is disabled according to the `minValue, `maxValue`, and `isDisabled` props. */
   isCellDisabled(date: CalendarDate): boolean,
+  /** Returns whether the given date is unavailable according to the `isDateUnavailable` prop. */
+  isCellUnavailable(date: CalendarDate): boolean,
   /** Returns whether the previous visible date range is allowed to be selected according to the `minValue` prop. */
   isPreviousVisibleRangeInvalid(): boolean,
   /** Returns whether the next visible date range is allowed to be selected according to the `maxValue` prop. */
