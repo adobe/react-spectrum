@@ -1,6 +1,6 @@
 
 import {ColumnProps} from '@react-types/table';
-import {getContentWidth, getDynamicColumnWidths, getMaxWidth, getMinWidth, isStatic, mapToArray, parseStaticWidth} from './utils';
+import {getContentWidth, getDynamicColumnWidths, getMaxWidth, getMinWidth, isStatic, parseStaticWidth} from './utils';
 import {GridNode} from '@react-types/grid';
 import {Key, MutableRefObject, useCallback, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
