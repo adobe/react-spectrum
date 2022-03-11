@@ -183,30 +183,24 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     return allAffectedColumns;
   }
 
-<<<<<<< HEAD
-  function getColumnWidth(key: Key): number {
-    return columnWidthsRef.current.get(key) ?? 0;
-  }
-  
-  function getColumnMinWidth(key: Key): number {
-    const columnIndex = columnsRef.current.findIndex(col => col.key === key);
+  // This function is regenerated whenever columnWidthsRef.current changes in order to get the new correct ref value.
+  let getColumnWidth = useCallback((key: Key): number => columnWidthsRef.current.get(key) ?? 0, [columnWidthsRef.current]);
+
+  let getColumnMinWidth = useCallback((key: Key) => {
+    const columnIndex = columns.findIndex(col => col.key === key);
     if (columnIndex === -1) {
       return;
     }
     return getMinWidth(columns[columnIndex].props.minWidth, tableWidth.current);
-  }
-  
-  function getColumnMaxWidth(key: Key): number {
-    const columnIndex = columnsRef.current.findIndex(col => col.key === key);
+  }, [columns]);
+
+  let getColumnMaxWidth = useCallback((key: Key) => {
+    const columnIndex = columns.findIndex(col => col.key === key);
     if (columnIndex === -1) {
       return;
     }
     return getMaxWidth(columns[columnIndex].props.maxWidth, tableWidth.current);
-  }
-=======
-  // This function is regenerated whenever columnWidthsRef.current changes in order to get the new correct ref value.
-  let getColumnWidth = useCallback((key: Key): number => columnWidthsRef.current.get(key) ?? 0, [columnWidthsRef.current]);
->>>>>>> 7ad117ffcede60a5b3bddf639930a653beb0e38a
+  }, [columns]);
 
   return {
     columnWidths: columnWidthsRef,
