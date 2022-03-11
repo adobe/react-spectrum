@@ -1,9 +1,16 @@
 
 import {ColumnProps} from '@react-types/table';
-import {getContentWidth, getDynamicColumnWidths, getMaxWidth, getMinWidth, isStatic, mapToArray, parseStaticWidth} from './utils';
+import {getContentWidth, getDynamicColumnWidths, getMaxWidth, getMinWidth, isStatic, parseStaticWidth} from './utils';
 import {GridNode} from '@react-types/grid';
 import {Key, MutableRefObject, useCallback, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
+
+export interface AffectedColumnWidths {
+  /** The column key. */
+  key: Key,
+  /** The column width. */
+  width: number
+}
 
 export interface ColumnResizeState<T> {
   /** A ref whose current value is the state of all the column widths. */
@@ -15,8 +22,8 @@ export interface ColumnResizeState<T> {
   /** Callback for when onColumnResize has started. */
   onColumnResizeStart: () => void,
     /** Callback for when onColumnResize has ended. */
-  onColumnResizeEnd: (column: GridNode<T>, width: number) => void,
-    /** Getter for column width. */
+  onColumnResizeEnd: () => void,
+  /** Getter for column width. */
   getColumnWidth(key: Key): number,
     /** Getter for column min width. */
   getColumnMinWidth(key: Key): number,
@@ -30,9 +37,9 @@ export interface ColumnResizeStateProps<T> {
   /** Callback to determine what the default width of a column should be. */
   getDefaultWidth: (props) => string | number,
   /** Callback that is invoked during the entirety of the resize event. */
-  onColumnResize?: (affectedColumnWidths: { key: Key, width: number }[]) => void,
+  onColumnResize?: (affectedColumnWidths: AffectedColumnWidths[]) => void,
   /** Callback that is invoked when the resize event is ended. */
-  onColumnResizeEnd?: (affectedColumnWidths: { key: Key, width: number }[]) => void
+  onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths[]) => void
 }
 
 export default function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): ColumnResizeState<T> {
@@ -45,18 +52,28 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
 
   const [columnWidths, setColumnWidths] = useState<Map<Key, number>>(new Map(columns.map(col => [col.key, 0])));
   const columnWidthsRef = useRef<Map<Key, number>>(columnWidths);
+  const affectedColumnWidthsRef = useRef<AffectedColumnWidths[]>([]);
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
-  let getRealColumnWidth = useCallback((column: GridNode<T>) => {
-    let props = column.props as ColumnProps<T>;
-    return resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : props.width ?? props.defaultWidth ?? getDefaultWidth?.(column.props) ?? '1fr';
+  function setColumnWidthsForRef(newWidths: Map<Key, number>) {
+    columnWidthsRef.current = newWidths;
+    // new map so that change detection is triggered
+    setColumnWidths(newWidths);
+  }
+  /*
+    returns the resolved column width in this order: 
+    previously calculated width -> controlled width prop -> uncontrolled defaultWidth prop -> dev assigned width -> default dynamic width
+  */
+  let getResolvedColumnWidth = useCallback((column: GridNode<T>): (number | string) => {
+    let columnProps = column.props as ColumnProps<T>;
+    return resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : columnProps.width ?? columnProps.defaultWidth ?? getDefaultWidth?.(column.props) ?? '1fr';
   }, [getDefaultWidth, resizedColumns]);
 
   let getStaticAndDynamicColumns = useCallback((columns: GridNode<T>[]) : { staticColumns: GridNode<T>[], dynamicColumns: GridNode<T>[] } => columns.reduce((acc, column) => {
-    let width = getRealColumnWidth(column);
+    let width = getResolvedColumnWidth(column);
     return isStatic(width) ? {...acc, staticColumns: [...acc.staticColumns, column]} : {...acc, dynamicColumns: [...acc.dynamicColumns, column]}; 
-  }, {staticColumns: [], dynamicColumns: []}), [getRealColumnWidth]);
+  }, {staticColumns: [], dynamicColumns: []}), [getResolvedColumnWidth]);
 
   let buildColumnWidths = useCallback((affectedColumns: GridNode<T>[], availableSpace: number): Map<Key, number> => {
     const widths = new Map<Key, number>();
@@ -65,7 +82,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     const {staticColumns, dynamicColumns} = getStaticAndDynamicColumns(affectedColumns);
 
     staticColumns.forEach(column => {
-      let width = getRealColumnWidth(column);
+      let width = getResolvedColumnWidth(column);
       let w = parseStaticWidth(width, tableWidth.current);
       widths.set(column.key, w);
       remainingSpace -= w;
@@ -80,7 +97,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     }
 
     return widths;
-  }, [getStaticAndDynamicColumns, getRealColumnWidth]);
+  }, [getStaticAndDynamicColumns, getResolvedColumnWidth]);
 
   // if the columns change, need to rebuild widths.
   useLayoutEffect(() => {
@@ -88,12 +105,6 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     const widths = buildColumnWidths(columns, tableWidth.current);
     setColumnWidthsForRef(widths);
   }, [columns, buildColumnWidths]);
-
-  function setColumnWidthsForRef(newWidths: Map<Key, number>) {
-    columnWidthsRef.current = newWidths;
-    // new map so that change detection is triggered
-    setColumnWidths(newWidths);
-  }
 
   function setTableWidth(width: number) {
     if (width && width !== tableWidth.current) {
@@ -112,31 +123,31 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
 
   function onColumnResize(column: GridNode<T>, width: number) {
     let widthsObj = resizeColumn(column, width);
-    props.onColumnResize && props.onColumnResize(widthsObj);
+    affectedColumnWidthsRef.current = widthsObj;
+    props.onColumnResize && props.onColumnResize(affectedColumnWidthsRef.current);
   }
 
-  function onColumnResizeEnd(column: GridNode<T>, width: number) {
+  function onColumnResizeEnd() {
     isResizing.current = false;
-    if (props.onColumnResizeEnd) {
-      let widthsObj = resizeColumn(column, width);
-      props.onColumnResizeEnd(widthsObj);
-    }
+    props.onColumnResizeEnd && props.onColumnResizeEnd(affectedColumnWidthsRef.current);
+    affectedColumnWidthsRef.current = [];
 
     let widths = new Map<Key, number>(columnWidthsRef.current);
     widths.set(columnsRef.current[columnsRef.current.length - 1].key, 0);
     setColumnWidthsForRef(widths);
   }
 
-  function resizeColumn(column: GridNode<T>, newWidth: number) : { key: Key, width: number }[] {
+  function resizeColumn(column: GridNode<T>, newWidth: number) : AffectedColumnWidths[] {
+    let boundedWidth =  Math.max(
+      getMinWidth(column.props.minWidth, tableWidth.current),
+      Math.min(Math.floor(newWidth), getMaxWidth(column.props.maxWidth, tableWidth.current)));
+
     // copy the columnWidths map and set the new width for the column being resized
     let widths = new Map<Key, number>(columnWidthsRef.current);
     widths.set(columnsRef.current[columnsRef.current.length - 1].key, 0);
-    widths.set(column.key, Math.max(
-      getMinWidth(column.props.minWidth, tableWidth.current),
-      Math.min(Math.floor(newWidth), getMaxWidth(column.props.maxWidth, tableWidth.current))
-    ));
+    widths.set(column.key, boundedWidth);
 
-    // keep track of all columns that have been seized
+    // keep track of all columns that have been sized
     resizedColumnsRef.current.add(column.key);
     setResizedColumns(resizedColumnsRef.current);
 
@@ -149,7 +160,7 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
 
     // available space for affected columns
     let availableSpace = columnsRef.current.reduce((acc, column, index) => {
-      if (index <= resizeIndex || isStatic(getRealColumnWidth(column))) {
+      if (index <= resizeIndex || isStatic(getResolvedColumnWidth(column))) {
         return acc - widths.get(column.key);
       }
       return acc;
@@ -164,12 +175,15 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     }
     setColumnWidthsForRef(widths);
 
-    // when getting recalculated columns above, the column being resized is not considered "recalculated"
-    // so we need to add it to the list of affected columns
-    let allAffectedColumns = new Map<Key, number>([[column.key, newWidth], ...recalculatedColumnWidths]);
-    return mapToArray(allAffectedColumns);
+    /*
+     when getting recalculated columns above, the column being resized is not considered "recalculated"
+     so we need to add it to the list of affected columns
+    */
+    let allAffectedColumns = ([[column.key, boundedWidth], ...recalculatedColumnWidths] as [Key, number][]).map(([key, width]) => ({key, width}));
+    return allAffectedColumns;
   }
 
+<<<<<<< HEAD
   function getColumnWidth(key: Key): number {
     return columnWidthsRef.current.get(key) ?? 0;
   }
@@ -189,6 +203,10 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     }
     return getMaxWidth(columns[columnIndex].props.maxWidth, tableWidth.current);
   }
+=======
+  // This function is regenerated whenever columnWidthsRef.current changes in order to get the new correct ref value.
+  let getColumnWidth = useCallback((key: Key): number => columnWidthsRef.current.get(key) ?? 0, [columnWidthsRef.current]);
+>>>>>>> 7ad117ffcede60a5b3bddf639930a653beb0e38a
 
   return {
     columnWidths: columnWidthsRef,

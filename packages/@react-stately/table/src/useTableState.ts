@@ -19,7 +19,7 @@ import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
 
-import useTableColumnResizeState from './useTableColumnResizeState';
+import useTableColumnResizeState, {AffectedColumnWidths} from './useTableColumnResizeState';
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** A collection of rows and columns in the table. */
@@ -43,7 +43,7 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** Runs at the start of resizing. */
   onColumnResizeStart: () => void,
   /** Triggers the onColumnResizeEnd prop. */
-  onColumnResizeEnd: (column: GridNode<T>, width: number) => void,
+  onColumnResizeEnd: () => void,
   /** Need to be able to set the table width so that it can be used to calculate the column widths, this will trigger a recalc. */
   setTableWidth: (width: number) => void
 }
@@ -60,9 +60,9 @@ export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelection
   /** Function for determining the default width of columns. */
   getDefaultWidth?: (props) => string | number,
   /** Callback that is invoked during the entirety of the resize event. */
-  onColumnResize?: (affectedColumnWidths: { key: Key, width: number }[]) => void,
+  onColumnResize?: (affectedColumnWidths: AffectedColumnWidths[]) => void,
   /** Callback that is invoked when the resize event is ended. */
-  onColumnResizeEnd?: (affectedColumnWidths: { key: Key, width: number }[]) => void
+  onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths[]) => void
 }
 
 const OPPOSITE_SORT_DIRECTION = {

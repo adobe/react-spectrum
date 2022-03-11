@@ -7,16 +7,13 @@ type mappedColumn<T> = GridNode<T> & {
     calculatedWidth?: number
 };
 
-export function mapToArray(columnWidthsMap: Map<Key, number>): { key: Key, width: number }[] {
-  return Array.from(columnWidthsMap, ([key, width]) => ({key, width}));
-}
-    
-export function getContentWidth(widths) {
+export function getContentWidth(widths: Map<Key, number>): number {
   return Array.from(widths).map(e => e[1]).reduce((acc, cur) => acc + cur, 0);
 }
-    
+
+// numbers and percents are considered static. *fr units or a lack of units are considered dynamic.
 export function isStatic(width: number | string): boolean {
-  return width !== null && width !== undefined && (typeof width === 'number' || width.match(/^(\d+)%$/) !== null);
+  return width != null && (!isNaN(width as number) || (String(width)).match(/^(\d+)(?=%$)/) !== null);
 } 
 
 function parseFractionalUnit(width: string): number {
@@ -35,29 +32,29 @@ function parseFractionalUnit(width: string): number {
 
 export function parseStaticWidth(width: number | string, tableWidth: number): number {
   if (typeof width === 'string') {
-    let match = width.match(/^(\d+)%$/);
+    let match = width.match(/^(\d+)(?=%$)/);
     if (!match) {
       throw new Error('Only percentages or numbers are supported for static column widths');
     }
-    return tableWidth * (parseInt(match[1], 10) / 100);
+    return tableWidth * (parseInt(match[0], 10) / 100);
   }
   return width;
 }
     
     
 export function getMaxWidth(maxWidth: number | string, tableWidth: number): number {
-  return maxWidth !== undefined && maxWidth !== null
+  return maxWidth != null
         ? parseStaticWidth(maxWidth, tableWidth)
         : Infinity;
 }
 
 export function getMinWidth(minWidth: number | string, tableWidth: number): number {
-  return minWidth !== undefined && minWidth !== null
+  return minWidth != null
       ? parseStaticWidth(minWidth, tableWidth)
       : 75;
 }
 
-function mapColumns<T>(remainingColumns: GridNode<T>[], remainingSpace: number, tableWidth: number): mappedColumn<T>[] {
+function mapDynamicColumns<T>(remainingColumns: GridNode<T>[], remainingSpace: number, tableWidth: number): mappedColumn<T>[] {
   let remainingFractions = remainingColumns.reduce(
         (sum, column) => sum + parseFractionalUnit(column.props.defaultWidth),
         0
@@ -81,7 +78,7 @@ function mapColumns<T>(remainingColumns: GridNode<T>[], remainingSpace: number, 
   return columns;
 }
 
-function solveWidths<T>(remainingColumns: mappedColumn<T>[], remainingSpace: number, tableWidth: number): mappedColumn<T>[] {
+function findDynamicColumnWidths<T>(remainingColumns: mappedColumn<T>[], remainingSpace: number, tableWidth: number): mappedColumn<T>[] {
   let remainingFractions = remainingColumns.reduce(
         (sum, col) => sum + parseFractionalUnit(col.props.defaultWidth),
         0
@@ -106,10 +103,10 @@ function solveWidths<T>(remainingColumns: mappedColumn<T>[], remainingSpace: num
 }  
     
 export function getDynamicColumnWidths<T>(remainingColumns: GridNode<T>[], remainingSpace: number, tableWidth: number) {
-  let columns = mapColumns(remainingColumns, remainingSpace, tableWidth);
+  let columns = mapDynamicColumns(remainingColumns, remainingSpace, tableWidth);
     
   columns.sort((a, b) => b.delta - a.delta);
-  columns = solveWidths(columns, remainingSpace, tableWidth);
+  columns = findDynamicColumnWidths(columns, remainingSpace, tableWidth);
   columns.sort((a, b) => a.index - b.index);
     
   return columns;

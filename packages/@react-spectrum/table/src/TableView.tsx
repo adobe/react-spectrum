@@ -108,8 +108,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     getDefaultWidth
   });
 
-  let columnWidths = state.columnWidths;
-
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
   if (shouldShowCheckboxes !== showSelectionCheckboxes) {
@@ -136,7 +134,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       : null,
     getColumnWidth: state.getColumnWidth
   }),
-    [props.overflowMode, scale, density, columnWidths.current]
+    [props.overflowMode, scale, density, state.getColumnWidth]
   );
   let {direction} = useLocale();
   layout.collection = state.collection;
