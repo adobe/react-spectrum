@@ -219,10 +219,18 @@ export class TableCollection<T> extends GridCollection<T> {
     }
 
     if (Array.from(nodes).some(node => node.props?.allowsResizing)) {
-      // add a hidden buffer column to the end of the table
-      // this will be used to allow for smooth scrolling when
-      // resizing columns while a horizontal scroll bar is present
-      // (also lovingly known as the "spooky column")
+      /* 
+      If the table content width > table width, a horizontal scroll bar is present.
+      If a user tries to resize a column, making it smaller while they are scrolled to the
+      end of the content horizontally, it shrinks the total table content width, causing
+      things to snap around and breaks the resize behavior.
+      
+      To fix this, we add a resize buffer column (aka "spooky column") to the end of the table.
+      The width of this column defaults to 0. If you try and shrink a column and the width of the
+      table contents > table width, then the "spooky column" will grow to take up the difference
+      so that the total table content width remains constant while you are resizing. Once you
+      finish resizing, the "spooky column" snaps back to 0.
+      */
       let resizeBufferColumn: GridNode<T> = {
         type: 'column',
         key: RESIZE_BUFFER_COLUMN_KEY,

@@ -133,7 +133,9 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     affectedColumnWidthsRef.current = [];
 
     let widths = new Map<Key, number>(columnWidthsRef.current);
-    widths.set(columnsRef.current[columnsRef.current.length - 1].key, 0);
+    // Need to set the buffer column back to 0 since done resizing;
+    const bufferColumnKey = columnsRef.current[columnsRef.current.length - 1].key;
+    widths.set(bufferColumnKey, 0);
     setColumnWidthsForRef(widths);
   }
 
