@@ -200,6 +200,21 @@ storiesOf('Date and Time/DatePicker/styling', module)
     () => render({errorMessage: 'Enter a date after today', validationState: 'invalid'})
   );
 
+storiesOf('Date and Time/DatePicker/issues', module)
+  .add(
+    'Click through calendar',
+    () => <ExampleOverElementWithOnClick />,
+  {
+    description: {
+      data: `
+      Test this story in responsive mode Chrome.
+      In Firefox make sure to turn on simulate touch.
+      Make sure selecting a date does not trigger the onClick console log on the big button behind.
+      This should also be tested on actual mobile devices so we can verify that scrolling also works.
+      `
+    }
+  });
+
 function render(props = {}) {
   return (
     <Example
@@ -291,6 +306,15 @@ function ControlledExample(props) {
       <Example label="Controlled" {...props} value={value} onChange={chain(setValue, action('onChange'))} />
       <ActionButton onPress={() => setValue(new CalendarDate(2020, 2, 3))}>Change value</ActionButton>
       <ActionButton onPress={() => setValue(null)}>Clear</ActionButton>
+    </Flex>
+  );
+}
+
+function ExampleOverElementWithOnClick() {
+  return (
+    <Flex direction="column">
+      <Example label="Pick date" />
+      <button onClick={() => console.log('I should not be called!')} style={{width: '22rem', height: '22rem'}}>Listening to onClick</button>
     </Flex>
   );
 }

@@ -1,4 +1,17 @@
-import React, {useState, useRef} from "react";
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {FocusScope} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import {
   OverlayContainer,
   OverlayProvider,
@@ -6,43 +19,41 @@ import {
   useOverlay,
   usePreventScroll
 } from '../';
-import { useDialog } from "@react-aria/dialog";
-import { FocusScope } from "@react-aria/focus";
-import { useButton } from "@react-aria/button";
-import {mergeProps} from '@react-aria/utils';
+import React, {useRef, useState} from 'react';
+import {useButton} from '@react-aria/button';
+import {useDialog} from '@react-aria/dialog';
 
 function ModalDialog(props) {
-  let { title, children } = props;
+  let {title, children} = props;
 
   // Handle interacting outside the dialog and pressing
   // the Escape key to close the modal.
   let ref = React.useRef();
-  let { overlayProps, underlayProps } = useOverlay(props, ref);
+  let {overlayProps, underlayProps} = useOverlay(props, ref);
 
   // Prevent scrolling while the modal is open, and hide content
   // outside the modal from screen readers.
   usePreventScroll();
-  let { modalProps } = useModal();
+  let {modalProps} = useModal();
 
   // Get props for the dialog and its title
-  let { dialogProps, titleProps } = useDialog(props, ref);
+  let {dialogProps, titleProps} = useDialog(props, ref);
 
   return (
     <div
       style={{
-        position: "fixed",
+        position: 'fixed',
         zIndex: 100,
         top: 0,
         left: 0,
         bottom: 0,
         right: 0,
-        background: "rgba(0, 0, 0, 0.5)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
+        background: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}
-      {...underlayProps}
-    >
+      {...underlayProps}>
       <FocusScope contain restoreFocus autoFocus>
         <div
           {...overlayProps}
@@ -50,12 +61,11 @@ function ModalDialog(props) {
           {...modalProps}
           ref={ref}
           style={{
-            background: "white",
-            color: "black",
+            background: 'white',
+            color: 'black',
             padding: 30
-          }}
-        >
-          <h3 {...titleProps} style={{ marginTop: 0 }}>
+          }}>
+          <h3 {...titleProps} style={{marginTop: 0}}>
             {title}
           </h3>
           {children}
@@ -65,13 +75,13 @@ function ModalDialog(props) {
   );
 }
 
-function Modal({ onClose }) {
+function Modal({onClose}) {
   let closeButtonRef = React.useRef();
 
   // useButton ensures that focus management is handled correctly,
   // across all browsers. Focus is restored to the button once the
   // dialog closes.
-  let { buttonProps: closeButtonProps } = useButton(
+  let {buttonProps: closeButtonProps} = useButton(
     {
       onPress: () => onClose()
     },
@@ -85,8 +95,7 @@ function Modal({ onClose }) {
           <button
             {...closeButtonProps}
             ref={closeButtonRef}
-            style={{ marginTop: 10 }}
-          >
+            style={{marginTop: 10}}>
             Close with React aria button
           </button>
           <button
@@ -101,16 +110,15 @@ function Modal({ onClose }) {
 const Button = (props) => {
   const ref = useRef();
 
-  const { buttonProps } = useButton(props, ref);
+  const {buttonProps} = useButton(props, ref);
 
-  const { children } = props;
+  const {children} = props;
 
   return (
     <button
       ref={ref}
       {...mergeProps(buttonProps)}
-      style={{height: '22rem', width: '22rem'}}
-    >
+      style={{height: '22rem', width: '22rem'}}>
       {children}
     </button>
   );
@@ -130,13 +138,12 @@ export function ClickThroughExample() {
       <button
         onClick={() => {
           showAriaButton ? setShowAriaButton(false) : setShowAriaButton(true);
-        }}
-      >
+        }}>
         Toggle aria button
       </button>
       <p>
         Currently showing
-        {showAriaButton ? " React aria button" : " Regular button"}
+        {showAriaButton ? ' React aria button' : ' Regular button'}
       </p>
       <OverlayProvider>
         {!showAriaButton && (
