@@ -326,9 +326,11 @@ export class Virtualizer<T extends object, V, W> {
     reusableView.rendered = this._renderContent(type, reusableView.content);
   }
 
-  private _renderContent(type: string, content: T) {
+  private _renderContent(type: string, content: any) {
     let cached = this._renderedContent.get(content);
-    if (cached != null) {
+    // always need to rerender columns so that the resizer stuff gets rerendered correctly
+    const isResizableColumn = type === 'column' && content.props?.allowsResizing;
+    if (cached != null && !isResizableColumn) {
       return cached;
     }
 
@@ -661,7 +663,9 @@ export class Virtualizer<T extends object, V, W> {
         }
 
         let item = this.getItem(visibleLayoutInfos.get(key).key);
-        if (view.content === item) {
+        // always need to rerender columns so that the resizer stuff gets rerendered correctly
+        const isResizableColumn = view.viewType === 'column' && view.content.props?.allowsResizing;
+        if (view.content === item && !isResizableColumn) {
           toUpdate.delete(key);
         } else {
           // If the view type changes, delete and recreate the view instead of updating

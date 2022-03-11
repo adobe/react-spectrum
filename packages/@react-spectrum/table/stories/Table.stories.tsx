@@ -1049,28 +1049,32 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, uncontrolled, dynamic widths',
     () => (
-      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
-        <TableHeader>
-          <Column allowsResizing defaultWidth="1fr">File Name</Column>
-          <Column allowsResizing defaultWidth="2fr">Type</Column>
-          <Column allowsResizing defaultWidth="2fr">Size</Column>
-          <Column allowsResizing defaultWidth="1fr">Weight</Column>
-        </TableHeader>
-        <TableBody>
-          <Row>
-            <Cell>2018 Proposal</Cell>
-            <Cell>PDF</Cell>
-            <Cell>214 KB</Cell>
-            <Cell>1 LB</Cell>
-          </Row>
-          <Row>
-            <Cell>Budget</Cell>
-            <Cell>XLS</Cell>
-            <Cell>120 KB</Cell>
-            <Cell>20 LB</Cell>
-          </Row>
-        </TableBody>
-      </TableView>
+      <>
+        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+          <TableHeader>
+            <Column allowsResizing defaultWidth="1fr">File Name</Column>
+            <Column allowsResizing defaultWidth="2fr">Type</Column>
+            <Column allowsResizing defaultWidth="2fr">Size</Column>
+            <Column allowsResizing defaultWidth="1fr">Weight</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>2018 Proposal</Cell>
+              <Cell>PDF</Cell>
+              <Cell>214 KB</Cell>
+              <Cell>1 LB</Cell>
+            </Row>
+            <Row>
+              <Cell>Budget</Cell>
+              <Cell>XLS</Cell>
+              <Cell>120 KB</Cell>
+              <Cell>20 LB</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+        <input aria-label="Focusable after" placeholder="Focusable after" />
+      </>
     )
   )
   .add(

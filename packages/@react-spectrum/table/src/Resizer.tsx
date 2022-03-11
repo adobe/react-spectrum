@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/role-supports-aria-props */
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
@@ -10,7 +11,16 @@ function Resizer(props, ref) {
   let {resizerProps} = useTableColumnResize(state, item, ref);
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div ref={ref} {...resizerProps} className={classNames(styles, 'spectrum-Table-columnResizer')} role="separator" aria-orientation="vertical" aria-label="Resize column" />
+      <div
+        ref={ref}
+        {...resizerProps}
+        className={classNames(styles, 'spectrum-Table-columnResizer')}
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize column"
+        aria-valuenow={state.getColumnWidth(item.key)}
+        aria-valuemin={state.getColumnMinWidth(item.key)}
+        aria-valuemax={state.getColumnMaxWidth(item.key)} />
     </FocusRing>
   );
 }

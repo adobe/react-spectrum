@@ -16,8 +16,12 @@ export interface ColumnResizeState<T> {
   onColumnResizeStart: () => void,
     /** Callback for when onColumnResize has ended. */
   onColumnResizeEnd: (column: GridNode<T>, width: number) => void,
-    /** Getter for column widths. */
-  getColumnWidth(key: Key): number
+    /** Getter for column width. */
+  getColumnWidth(key: Key): number,
+    /** Getter for column min width. */
+  getColumnMinWidth(key: Key): number,
+    /** Getter for column max widths. */
+  getColumnMaxWidth(key: Key): number
 }
 
 export interface ColumnResizeStateProps<T> {
@@ -169,6 +173,22 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
   function getColumnWidth(key: Key): number {
     return columnWidthsRef.current.get(key) ?? 0;
   }
+  
+  function getColumnMinWidth(key: Key): number {
+    const columnIndex = columnsRef.current.findIndex(col => col.key === key);
+    if (columnIndex === -1) {
+      return;
+    }
+    return getMinWidth(columns[columnIndex].props.minWidth, tableWidth.current);
+  }
+  
+  function getColumnMaxWidth(key: Key): number {
+    const columnIndex = columnsRef.current.findIndex(col => col.key === key);
+    if (columnIndex === -1) {
+      return;
+    }
+    return getMaxWidth(columns[columnIndex].props.maxWidth, tableWidth.current);
+  }
 
   return {
     columnWidths: columnWidthsRef,
@@ -176,6 +196,8 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     onColumnResize,
     onColumnResizeStart,
     onColumnResizeEnd,
-    getColumnWidth
+    getColumnWidth,
+    getColumnMinWidth,
+    getColumnMaxWidth
   };
 }

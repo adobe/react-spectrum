@@ -32,8 +32,12 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   sort(columnKey: Key, direction?: 'ascending' | 'descending'): void,
   /** A map of all the column widths by key. */
   columnWidths: MutableRefObject<Map<Key, number>>,
-  /** Getter for column widths. */
+  /** Getter for column width. */
   getColumnWidth(key: Key): number,
+    /** Getter for column min width. */
+  getColumnMinWidth(key: Key): number,
+    /** Getter for column max widths. */
+  getColumnMaxWidth(key: Key): number,
   /** Trigger a resize and recalc. */
   onColumnResize: (column: GridNode<T>, width: number) => void,
   /** Runs at the start of resizing. */
