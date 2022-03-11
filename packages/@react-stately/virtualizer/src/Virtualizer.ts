@@ -663,7 +663,7 @@ export class Virtualizer<T extends object, V, W> {
         }
 
         let item = this.getItem(visibleLayoutInfos.get(key).key);
-        // always need to rerender columns so that the resizer stuff gets rerendered correctly
+        // always need to rerender columns so that the resizer aria-values get updated
         const isResizableColumn = view.viewType === 'column' && view.content.props?.allowsResizing;
         if (view.content === item && !isResizableColumn) {
           toUpdate.delete(key);
