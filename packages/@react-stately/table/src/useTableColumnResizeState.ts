@@ -57,8 +57,8 @@ export default function useTableColumnResizeState<T>(props: ColumnResizeStatePro
     previously calculated width -> controlled width prop -> uncontrolled defaultWidth prop -> dev assigned width -> default dynamic width
   */
   let getResolvedColumnWidth = useCallback((column: GridNode<T>): (number | string) => {
-    let props = column.props as ColumnProps<T>;
-    return resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : props.width ?? props.defaultWidth ?? getDefaultWidth?.(column.props) ?? '1fr';
+    let columnProps = column.props as ColumnProps<T>;
+    return resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : columnProps.width ?? columnProps.defaultWidth ?? getDefaultWidth?.(column.props) ?? '1fr';
   }, [getDefaultWidth, resizedColumns]);
 
   let getStaticAndDynamicColumns = useCallback((columns: GridNode<T>[]) : { staticColumns: GridNode<T>[], dynamicColumns: GridNode<T>[] } => columns.reduce((acc, column) => {
