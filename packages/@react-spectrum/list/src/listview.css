@@ -49,9 +49,9 @@
     &:before {
       content: '';
       position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0px;
+      inset-block-start: 0;
+      inset-block-end: 0;
+      inset-inline-start: 0;
       width: var(--spectrum-selectlist-border-size-key-focus);
       z-index: 3;
       background: var(--spectrum-selectlist-option-focus-indicator-color);

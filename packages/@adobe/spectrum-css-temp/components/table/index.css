@@ -254,7 +254,7 @@ svg.spectrum-Table-sortedIcon {
       display: inline-block;
       content: '';
       position: sticky;
-      left: 0;
+      inset-inline-start: 0;
       height: 100%;
       width: var(--spectrum-selectlist-border-size-key-focus);
       z-index: 4;
@@ -278,10 +278,10 @@ svg.spectrum-Table-sortedIcon {
         content: '';
         display: block;
         position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        top: 0;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
+        inset-block-end: 0;
+        inset-block-start: 0;
         z-index: 3;
         pointer-events: none;
       }
@@ -296,10 +296,10 @@ svg.spectrum-Table-sortedIcon {
           content: '';
           display: block;
           position: absolute;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          top: 0;
+          inset-inline-start: 0;
+          inset-inline-end: 0;
+          inset-block-end: 0;
+          inset-block-start: 0;
           z-index: 3;
           pointer-events: none;
         }
