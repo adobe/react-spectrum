@@ -291,15 +291,6 @@ svg.spectrum-Table-sortedIcon {
   &.is-next-selected {
     &:after {
       box-shadow: inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
-      content: '';
-      display: block;
-      position: absolute;
-      inset-inline-start: 0;
-      inset-inline-end: 0;
-      inset-block-end: 0;
-      inset-block-start: 0;
-      z-index: 3;
-      pointer-events: none;
     }
   }
 
@@ -307,15 +298,6 @@ svg.spectrum-Table-sortedIcon {
   &.is-selected {
     &:after {
       box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
-      content: '';
-      display: block;
-      position: absolute;
-      inset-inline-start: 0;
-      inset-inline-end: 0;
-      inset-block-end: 0;
-      inset-block-start: 0;
-      z-index: 3;
-      pointer-events: none;
     }
   }
 
@@ -328,43 +310,23 @@ svg.spectrum-Table-sortedIcon {
         border-start-start-radius: var(--spectrum-table-row-start-end-border-radius);
         border-start-end-radius: var(--spectrum-table-row-start-end-border-radius);
         box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
-        content: '';
-        display: block;
-        position: absolute;
-        inset-inline-start: 0;
-        inset-inline-end: 0;
-        inset-block-end: 0;
-        inset-block-start: 0;
-        z-index: 3;
-        pointer-events: none;
-      }
-    }
-  }
-
-  /* Box shadow for bottom, left, and right for last row when selected. Adds curved bottom corner radius to match container.
-   * Note this will unfortunately cause a curved bottom radius for the last row of a table even if it doesn't fill the container...
-   */
-  &.spectrum-Table-row--lastRow {
-    &.is-selected {
-      &:after {
-        border-end-start-radius: var(--spectrum-table-row-start-end-border-radius);
-        border-end-end-radius: var(--spectrum-table-row-start-end-border-radius);
-        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
-        content: '';
-        display: block;
-        position: absolute;
-        inset-inline-start: 0;
-        inset-inline-end: 0;
-        inset-block-end: 0;
-        inset-block-start: 0;
-        z-index: 3;
-        pointer-events: none;
       }
     }
   }
 
   &.is-drop-target {
     @inherit: %drop-target;
+  }
+}
+
+.spectrum-Table:not(.spectrum-Table--loadingMore) {
+  .spectrum-Table-row {
+    &.spectrum-Table-row--lastRow.is-selected {
+      &:after {
+        border-end-start-radius: var(--spectrum-table-row-start-end-border-radius);
+        border-end-end-radius: var(--spectrum-table-row-start-end-border-radius);
+      }
+    }
   }
 }
 

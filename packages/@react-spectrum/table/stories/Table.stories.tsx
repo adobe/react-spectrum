@@ -823,7 +823,7 @@ storiesOf('TableView', module)
   .add(
     'isLoading more',
     () => (
-      <TableView aria-label="TableView loading more" width={700} height={200}>
+      <TableView aria-label="TableView loading more" width={700} height={200} selectionMode="multiple">
         <TableHeader columns={columns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
