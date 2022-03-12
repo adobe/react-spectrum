@@ -113,7 +113,6 @@ tbody.spectrum-Table-body {
 }
 
 .spectrum-Table-row {
-  border-bottom: 1px solid var(--spectrum-table-cell-border-color);
   box-sizing: border-box;
 
   .spectrum-Table-cellWrapper {
@@ -156,13 +155,6 @@ tbody.spectrum-Table-body {
     &:focus-ring .spectrum-Table-cell,
     &.is-focused .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected-key-focus);
-    }
-  }
-
-  &.spectrum-Table-row--highlightSelection {
-    &.is-next-selected,
-    &.is-selected {
-      border-block-end-color: var(--spectrum-global-color-blue-500);
     }
   }
 

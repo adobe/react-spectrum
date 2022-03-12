@@ -267,14 +267,67 @@ svg.spectrum-Table-sortedIcon {
     }
   }
 
-  &.spectrum-Table-row--highlightSelection {
-    /* Alternative to border-left/right. Using box shadow for the row left/right since they don't take room unlike border which would cause wiggles
-     * in the hightlight case and displace the sticky indicator.
-     */
+
+  /* Alternative to border on rows. Using box shadow since they don't take room unlike border which would cause wiggles
+   * in the hightlight case and displace the sticky indicator. Also allows for a nicer bottom curved border to match the container,
+   * the bottom border curved corners were cut off when using borders.
+   */
+
+  /* Box shadow for bottom border for non-selected rows that aren't immediatly above a selected row. */
+  &:after {
+    box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color);
+    content: '';
+    display: block;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    inset-block-end: 0;
+    inset-block-start: 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* Box shadow for bottom border for non-selected row that is immediatly above a selected row. */
+  &.is-next-selected {
+    &:after {
+      box-shadow: inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+      content: '';
+      display: block;
+      position: absolute;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      inset-block-end: 0;
+      inset-block-start: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+  }
+
+  /* Box shadow for bottom, left, and right border for selected rows. */
+  &.is-selected {
+    &:after {
+      box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+      content: '';
+      display: block;
+      position: absolute;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      inset-block-end: 0;
+      inset-block-start: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+  }
+
+  /* Box shadow for bottom, left, right, and top border for first row when selected. When the row isn't selected, it doesn't need
+   * a top border.
+   */
+  &.spectrum-Table-row--firstRow {
     &.is-selected {
-      /* this is the box shadow for left and right border outline */
       &:after {
-        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500);
+        border-start-start-radius: var(--spectrum-table-row-start-end-border-radius);
+        border-start-end-radius: var(--spectrum-table-row-start-end-border-radius);
+        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
         content: '';
         display: block;
         position: absolute;
@@ -286,38 +339,32 @@ svg.spectrum-Table-sortedIcon {
         pointer-events: none;
       }
     }
-    /* Add additional box shadow to top of the first row since border-top will push the bottom border out of view in Safari and Firefox. */
-    &.spectrum-Table-row--firstRow {
-      &.is-selected {
-        &:after {
-          border-start-start-radius: var(--spectrum-table-row-start-end-border-radius);
-          border-start-end-radius: var(--spectrum-table-row-start-end-border-radius);
-          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
-          content: '';
-          display: block;
-          position: absolute;
-          inset-inline-start: 0;
-          inset-inline-end: 0;
-          inset-block-end: 0;
-          inset-block-start: 0;
-          z-index: 3;
-          pointer-events: none;
-        }
+  }
+
+  /* Box shadow for bottom, left, and right for last row when selected. Adds curved bottom corner radius to match container.
+   * Note this will unfortunately cause a curved bottom radius for the last row of a table even if it doesn't fill the container...
+   */
+  &.spectrum-Table-row--lastRow {
+    &.is-selected {
+      &:after {
+        border-end-start-radius: var(--spectrum-table-row-start-end-border-radius);
+        border-end-end-radius: var(--spectrum-table-row-start-end-border-radius);
+        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+        content: '';
+        display: block;
+        position: absolute;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
+        inset-block-end: 0;
+        inset-block-start: 0;
+        z-index: 3;
+        pointer-events: none;
       }
     }
   }
 
   &.is-drop-target {
     @inherit: %drop-target;
-  }
-}
-
-.spectrum-Table:not(.spectrum-Table--loadingMore) {
-  .spectrum-Table-row--highlightSelection {
-    &.spectrum-Table-row--lastRow {
-      border-end-start-radius: var(--spectrum-table-row-start-end-border-radius);
-      border-end-end-radius: var(--spectrum-table-row-start-end-border-radius);
-    }
   }
 }
 
