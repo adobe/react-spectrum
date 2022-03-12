@@ -352,8 +352,8 @@ governing permissions and limitations under the License.
       grid-area: heading;
     }
 
-    /* there will never be a typeIcon here */
-    &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+    /* match specificity from above where it had noHeader, but here header won't prevent heading from expanding */
+    &.spectrum-Dialog-heading--noTypeIcon.spectrum-Dialog-heading--noTypeIcon {
       grid-area: heading-start / heading-start / typeIcon-end / typeIcon-end;
     }
   }
@@ -457,7 +457,8 @@ governing permissions and limitations under the License.
       padding-inline-end: 0;
     }
 
-    &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+    /* match specificity from above where it had noHeader, but here header won't prevent heading from expanding */
+    &.spectrum-Dialog-heading--noTypeIcon.spectrum-Dialog-heading--noTypeIcon {
       grid-area: heading-start / heading-start / typeIcon-end / typeIcon-end;
       padding-inline-end: 0;
     }
