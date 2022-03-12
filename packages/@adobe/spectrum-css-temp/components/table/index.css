@@ -273,6 +273,7 @@ svg.spectrum-Table-sortedIcon {
    * the bottom border curved corners were cut off when using borders.
    */
 
+   /* TODO: update to match listview .5 px so the focus indicator fits properly */
   /* Box shadow for bottom border for non-selected rows that aren't immediatly above a selected row. */
   &:after {
     box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color);
@@ -307,8 +308,6 @@ svg.spectrum-Table-sortedIcon {
   &.spectrum-Table-row--firstRow {
     &.is-selected {
       &:after {
-        border-start-start-radius: var(--spectrum-table-row-start-end-border-radius);
-        border-start-end-radius: var(--spectrum-table-row-start-end-border-radius);
         box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
       }
     }
@@ -319,12 +318,23 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
-.spectrum-Table:not(.spectrum-Table--loadingMore) {
+.spectrum-Table:not(.spectrum-Table--loadingMore):not(.spectrum-Table--quiet) {
   .spectrum-Table-row {
     &.spectrum-Table-row--lastRow.is-selected {
       &:after {
         border-end-start-radius: var(--spectrum-table-row-start-end-border-radius);
         border-end-end-radius: var(--spectrum-table-row-start-end-border-radius);
+      }
+    }
+  }
+}
+
+.spectrum-Table:not(.spectrum-Table--quiet) {
+  .spectrum-Table-row {
+    &.spectrum-Table-row--firstRow.is-selected {
+      &:after {
+        border-start-start-radius: var(--spectrum-table-row-start-end-border-radius);
+        border-start-end-radius: var(--spectrum-table-row-start-end-border-radius);
       }
     }
   }
