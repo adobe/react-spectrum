@@ -1,7 +1,7 @@
 
 :root {
   --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
-  --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-75);
+  --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-85);
   --spectrum-listview-item-spacious-padding-y: var(--spectrum-global-dimension-size-100);
   --spectrum-listview-border-width: var(--spectrum-table-border-size, var(--spectrum-alias-border-size-thin));
   --spectrum-listview-border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
@@ -231,6 +231,7 @@
     justify-self: stretch;
     justify-content: center;
     padding: var(--spectrum-global-dimension-size-25);
+    padding-inline-start: var(--spectrum-global-dimension-size-40);
 
 
     .react-spectrum-ListViewItem-draghandle-button {
