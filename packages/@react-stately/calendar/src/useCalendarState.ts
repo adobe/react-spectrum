@@ -90,7 +90,10 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     lastCalendarIdentifier.current = calendar.identifier;
   }
 
-  if (focusedDate.compare(startDate) < 0) {
+  if (isInvalid(focusedDate, minValue, maxValue)) {
+    // If the focused date was moved to an invalid value, it can't be focused, so constrain it.
+    setFocusedDate(constrainValue(focusedDate, minValue, maxValue));
+  } else if (focusedDate.compare(startDate) < 0) {
     setStartDate(alignEnd(focusedDate, visibleDuration, locale, minValue, maxValue));
   } else if (focusedDate.compare(startDate.add(visibleDuration)) >= 0) {
     setStartDate(alignStart(focusedDate, visibleDuration, locale, minValue, maxValue));
@@ -198,19 +201,22 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
       return isInvalid(date, minValue, maxValue);
     },
     isSelected(date) {
-      return calendarDateValue != null && isSameDay(date, calendarDateValue) && !this.isCellDisabled(date);
+      return calendarDateValue != null && isSameDay(date, calendarDateValue) && !this.isCellDisabled(date) && !this.isCellUnavailable(date);
     },
     isCellFocused(date) {
       return isFocused && focusedDate && isSameDay(date, focusedDate);
     },
     isCellDisabled(date) {
-      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || isInvalid(date, minValue, maxValue) || (props.isDateDisabled && props.isDateDisabled(date));
+      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || this.isInvalid(date, minValue, maxValue);
+    },
+    isCellUnavailable(date) {
+      return props.isDateUnavailable && props.isDateUnavailable(date);
     },
     isPreviousVisibleRangeInvalid() {
-      return isInvalid(startDate.subtract({days: 1}), minValue, maxValue);
+      return this.isInvalid(startDate.subtract({days: 1}), minValue, maxValue);
     },
     isNextVisibleRangeInvalid() {
-      return isInvalid(endDate.add({days: 1}), minValue, maxValue);
+      return this.isInvalid(endDate.add({days: 1}), minValue, maxValue);
     }
   };
 }

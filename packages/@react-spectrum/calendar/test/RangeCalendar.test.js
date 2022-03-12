@@ -13,9 +13,10 @@
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, isWeekend} from '@internationalized/date';
 import {RangeCalendar} from '../';
 import React from 'react';
+import {useLocale} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
@@ -832,7 +833,7 @@ describe('RangeCalendar', () => {
       expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
-      cell = getByText('17').parentElement;
+      cell = getByText('17').closest('[role="button"]');
       act(() => userEvent.click(cell));
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell.parentElement).not.toHaveAttribute('aria-selected');
@@ -842,7 +843,7 @@ describe('RangeCalendar', () => {
     it('does not enter selection mode with the mouse on range end if isReadOnly', () => {
       let {getAllByLabelText, getByText} = render(<RangeCalendar isReadOnly autoFocus defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
 
-      let cell = getByText('10').parentElement;
+      let cell = getByText('10').closest('[role="button"]');
       expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
@@ -853,7 +854,7 @@ describe('RangeCalendar', () => {
       expect(selectedDates[0].textContent).toBe('10');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');
 
-      cell = getByText('15').parentElement;
+      cell = getByText('15').closest('[role="button"]');
       act(() => userEvent.click(cell));
       expect(document.activeElement).toBe(cell);
 
@@ -957,6 +958,188 @@ describe('RangeCalendar', () => {
       expect(selectedDates[0].textContent).toBe('5');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
       expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('disables dates not reachable from start date if isDateUnavailable is provided', () => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}
+          isDateUnavailable={isDateUnavailable} />
+      );
+
+      let cellBefore = getByRole('button', {name: 'Sunday, December 5, 2021'});
+      let cellAfter = getByRole('button', {name: 'Monday, December 27, 2021'});
+      expect(cellBefore).toHaveAttribute('tabIndex', '-1');
+      expect(cellBefore).not.toHaveAttribute('aria-disabled');
+      expect(cellAfter).toHaveAttribute('tabIndex', '-1');
+      expect(cellAfter).not.toHaveAttribute('aria-disabled');
+
+      let cell = getByRole('button', {name: 'Sunday, December 12, 2021'});
+      act(() => userEvent.click(cell));
+
+      expect(cellBefore).not.toHaveAttribute('tabIndex');
+      expect(cellBefore).toHaveAttribute('aria-disabled', 'true');
+      expect(cellAfter).not.toHaveAttribute('tabIndex');
+      expect(cellAfter).toHaveAttribute('aria-disabled', 'true');
+
+      let prevButton = getByRole('button', {name: 'Previous'});
+      expect(prevButton).toHaveAttribute('disabled');
+
+      let nextButton = getByRole('button', {name: 'Next'});
+      expect(nextButton).toHaveAttribute('disabled');
+
+      cell = getByRole('button', {name: 'Tuesday, December 14, 2021'});
+      act(() => userEvent.click(cell));
+
+      expect(cellBefore).toHaveAttribute('tabIndex', '-1');
+      expect(cellBefore).not.toHaveAttribute('aria-disabled');
+      expect(cellAfter).toHaveAttribute('tabIndex', '-1');
+      expect(cellAfter).not.toHaveAttribute('aria-disabled');
+
+      expect(prevButton).not.toHaveAttribute('disabled');
+      expect(nextButton).not.toHaveAttribute('disabled');
+
+      // Clicking on one of the selected dates should also disable the dates outside the available range.
+      cell = getByRole('button', {name: 'Sunday, December 12, 2021 selected'});
+      act(() => userEvent.click(cell));
+
+      expect(cellBefore).not.toHaveAttribute('tabIndex');
+      expect(cellBefore).toHaveAttribute('aria-disabled', 'true');
+      expect(cellAfter).not.toHaveAttribute('tabIndex');
+      expect(cellAfter).toHaveAttribute('aria-disabled', 'true');
+      expect(prevButton).toHaveAttribute('disabled');
+      expect(nextButton).toHaveAttribute('disabled');
+    });
+
+    it('disables the previous button if the last day of the previous month is unavailable', () => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2022, 4, 25), new CalendarDate(2022, 4, 30)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2022, 5, 10), end: new CalendarDate(2022, 5, 12)}}
+          isDateUnavailable={isDateUnavailable} />
+      );
+
+      let cell = getByRole('button', {name: 'Wednesday, May 4, 2022'});
+      act(() => userEvent.click(cell));
+
+      let prevButton = getByRole('button', {name: 'Previous'});
+      expect(prevButton).toHaveAttribute('disabled');
+
+      let nextButton = getByRole('button', {name: 'Next'});
+      expect(nextButton).not.toHaveAttribute('disabled');
+    });
+
+    it('disables the next button if the first day of the next month is unavailable', () => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2022, 5, 1), new CalendarDate(2022, 5, 4)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2022, 4, 10), end: new CalendarDate(2022, 4, 12)}}
+          isDateUnavailable={isDateUnavailable} />
+      );
+
+      let cell = getByRole('button', {name: 'Thursday, April 28, 2022'});
+      act(() => userEvent.click(cell));
+
+      let prevButton = getByRole('button', {name: 'Previous'});
+      expect(prevButton).not.toHaveAttribute('disabled');
+
+      let nextButton = getByRole('button', {name: 'Next'});
+      expect(nextButton).toHaveAttribute('disabled');
+    });
+
+    it('updates the unavailable dates when navigating', () => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2022, 5, 2), new CalendarDate(2022, 5, 4)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2022, 4, 10), end: new CalendarDate(2022, 4, 12)}}
+          isDateUnavailable={isDateUnavailable} />
+      );
+
+      let cell = getByRole('button', {name: 'Thursday, April 28, 2022'});
+      act(() => userEvent.click(cell));
+
+      let prevButton = getByRole('button', {name: 'Previous'});
+      expect(prevButton).not.toHaveAttribute('disabled');
+
+      let nextButton = getByRole('button', {name: 'Next'});
+      expect(nextButton).not.toHaveAttribute('disabled');
+
+      act(() => userEvent.click(nextButton));
+
+      cell = getByRole('button', {name: 'Sunday, May 1, 2022 selected'});
+      expect(cell).not.toHaveAttribute('aria-disabled');
+      expect(cell).toHaveAttribute('tabindex', '0');
+
+      cell = getByRole('button', {name: 'Monday, May 2, 2022'});
+      expect(cell).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    it('advances selection backwards when starting a selection at the end of an available range', () => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}
+          isDateUnavailable={isDateUnavailable} />
+      );
+
+      let cell = getByRole('button', {name: 'Tuesday, December 21, 2021'});
+      act(() => cell.focus());
+      act(() => type('Enter'));
+
+      let cell2 = getByRole('button', {name: /Monday, December 20, 2021/});
+      expect(document.activeElement).toBe(cell2);
+      expect(cell2.parentElement).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('does not disabled dates not reachable from start date if allowsNonContiguousRanges is provider', () => {
+      function Example() {
+        let {locale} = useLocale();
+        return (
+          <RangeCalendar
+            defaultValue={{start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}
+            isDateUnavailable={date => isWeekend(date, locale)}
+            allowsNonContiguousRanges />
+        );
+      }
+
+      let {getByRole} = render(<Example />);
+
+      expect(getByRole('button', {name: 'Sunday, December 5, 2021'})).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('button', {name: 'Monday, December 6, 2021'})).not.toHaveAttribute('aria-disabled');
+
+      let cell = getByRole('button', {name: 'Tuesday, December 7, 2021'});
+      act(() => userEvent.click(cell));
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+
+      expect(getByRole('button', {name: 'Monday, December 13, 2021'})).not.toHaveAttribute('aria-disabled');
+
+      cell = getByRole('button', {name: 'Tuesday, December 14, 2021'});
+      expect(cell).not.toHaveAttribute('aria-disabled');
+      act(() => userEvent.click(cell));
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+
+      expect(getByRole('button', {name: 'Sunday, December 5, 2021'}).parentElement).not.toHaveAttribute('aria-selected', 'true');
     });
   });
 

@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter} from './utils';
-import {Calendar, CalendarDate, DateDuration, GregorianCalendar, toCalendar, toCalendarDate} from '@internationalized/date';
+import {alignCenter, isInvalid} from './utils';
+import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
+import {CalendarState, RangeCalendarState} from './types';
 import {DateRange, DateValue} from '@react-types/calendar';
 import {RangeCalendarProps} from '@react-types/calendar';
-import {RangeCalendarState} from './types';
 import {RangeValue} from '@react-types/shared';
 import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 interface RangeCalendarStateOptions<T extends DateValue> extends RangeCalendarProps<T> {
   locale: string,
@@ -30,11 +30,11 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
   let {value: valueProp, defaultValue, onChange, createCalendar, locale, visibleDuration = {months: 1}, minValue, maxValue, ...calendarProps} = props;
   let [value, setValue] = useControlledState<DateRange>(
     valueProp,
-    defaultValue,
+    defaultValue || null,
     onChange
   );
 
-  let [anchorDate, setAnchorDate] = useState(null);
+  let [anchorDate, setAnchorDateState] = useState(null);
   let alignment: 'center' | 'start' = 'center';
   if (value && value.start && value.end) {
     let start = alignCenter(toCalendarDate(value.start), visibleDuration, locale, minValue, maxValue);
@@ -45,16 +45,52 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
     }
   }
 
+  // Available range must be stored in a ref so we have access to the updated version immediately in `isInvalid`.
+  let availableRangeRef = useRef<RangeValue<DateValue>>(null);
+  let [availableRange, setAvailableRange] = useState<RangeValue<DateValue>>(null);
+  let min = useMemo(() => maxDate(minValue, availableRange?.start), [minValue, availableRange]);
+  let max = useMemo(() => minDate(maxValue, availableRange?.end), [maxValue, availableRange]);
+
   let calendar = useCalendarState({
     ...calendarProps,
     value: value && value.start,
     createCalendar,
     locale,
     visibleDuration,
-    minValue,
-    maxValue,
+    minValue: min,
+    maxValue: max,
     selectionAlignment: alignment
   });
+
+  let updateAvailableRange = (date) => {
+    if (date && props.isDateUnavailable && !props.allowsNonContiguousRanges) {
+      availableRangeRef.current = {
+        start: nextUnavailableDate(date, calendar, -1),
+        end: nextUnavailableDate(date, calendar, 1)
+      };
+      setAvailableRange(availableRangeRef.current);
+    } else {
+      availableRangeRef.current = null;
+      setAvailableRange(null);
+    }
+  };
+
+  // If the visible range changes, we need to update the available range.
+  let lastVisibleRange = useRef(calendar.visibleRange);
+  if (!isEqualDay(calendar.visibleRange.start, lastVisibleRange.current.start) || !isEqualDay(calendar.visibleRange.end, lastVisibleRange.current.end)) {
+    updateAvailableRange(anchorDate);
+    lastVisibleRange.current = calendar.visibleRange;
+  }
+
+  let setAnchorDate = (date: CalendarDate) => {
+    if (date) {
+      setAnchorDateState(date);
+      updateAvailableRange(date);
+    } else {
+      setAnchorDateState(null);
+      updateAvailableRange(null);
+    }
+  };
 
   let highlightedRange = anchorDate ? makeRange(anchorDate, calendar.focusedDate) : value && makeRange(value.start, value.end);
   let selectDate = (date: CalendarDate) => {
@@ -93,7 +129,10 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
       }
     },
     isSelected(date) {
-      return highlightedRange && date.compare(highlightedRange.start) >= 0 && date.compare(highlightedRange.end) <= 0 && !calendar.isCellDisabled(date);
+      return highlightedRange && date.compare(highlightedRange.start) >= 0 && date.compare(highlightedRange.end) <= 0 && !calendar.isCellDisabled(date) && !calendar.isCellUnavailable(date);
+    },
+    isInvalid(date) {
+      return calendar.isInvalid(date) || isInvalid(date, availableRangeRef.current?.start, availableRangeRef.current?.end);
     },
     isDragging,
     setDragging
@@ -123,4 +162,20 @@ function convertValue(newValue: CalendarDate, oldValue: DateValue) {
   }
 
   return newValue;
+}
+
+function nextUnavailableDate(anchorDate: CalendarDate, state: CalendarState, dir: number) {
+  let nextDate = anchorDate.add({days: dir});
+  while (
+    (dir < 0 ? nextDate.compare(state.visibleRange.start) >= 0 : nextDate.compare(state.visibleRange.end) <= 0) &&
+    !state.isCellUnavailable(nextDate)
+  ) {
+    nextDate = nextDate.add({days: dir});
+  }
+
+  if (state.isCellUnavailable(nextDate)) {
+    return nextDate.add({days: -dir});
+  }
+
+  return null;
 }

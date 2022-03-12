@@ -13,11 +13,22 @@
 import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
 import {FocusableRef} from '@react-types/shared';
+import {
+  generateHSB_B,
+  generateHSB_H,
+  generateHSB_S,
+  generateHSL_H,
+  generateHSL_L,
+  generateHSL_S,
+  generateRGB_B,
+  generateRGB_G,
+  generateRGB_R,
+  useColorArea
+} from '@react-aria/color';
 import {mergeProps} from '@react-aria/utils';
 import React, {CSSProperties, ReactElement, useRef} from 'react';
 import {SpectrumColorAreaProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorarea/vars.css';
-import {useColorArea} from '@react-aria/color';
 import {useColorAreaState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';
 import {useLocale} from '@react-aria/i18n';
@@ -103,67 +114,57 @@ interface Gradients {
   }
 }
 
-// this function looks scary, but it's actually pretty quick, just generates some strings
 function useGradients({direction, state, zChannel, xChannel, isDisabled}): Gradients {
   let orientation = ['top', direction === 'rtl' ? 'left' : 'right'];
   let dir = false;
   let background = {colorAreaStyles: {}, gradientStyles: {}};
   let zValue = state.value.getChannelValue(zChannel);
-  let maskImage;
+  let {minValue: zMin, maxValue: zMax} = state.value.getChannelRange(zChannel);
+  let alphaValue = (zValue - zMin) / (zMax - zMin);
+  let isHSL = state.value.getColorSpace() === 'hsl';
   if (!isDisabled) {
     switch (zChannel) {
       case 'red': {
         dir = xChannel === 'green';
-        maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
-        background.colorAreaStyles = {
-          /* the background represents the green channel as a linear gradient from min to max,
-          with the blue channel minimized, adjusted by the red channel value. */
-          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(${zValue},0,0),rgb(${zValue},255,0))`
-        };
-        background.gradientStyles = {
-          /* the foreground represents the green channel as a linear gradient from min to max,
-          with the blue channel maximized, adjusted by the red channel value. */
-          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(${zValue},0,255),rgb(${zValue},255,255))`,
-          /* the foreground gradient is masked by a perpendicular linear gradient from black to white */
-          'WebkitMaskImage': maskImage,
-          maskImage
-        };
+        background = generateRGB_R(orientation, dir, zValue);
         break;
       }
       case 'green': {
         dir = xChannel === 'red';
-        maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
-        background.colorAreaStyles = {
-          /* the background represents the red channel as a linear gradient from min to max,
-          with the blue channel minimized, adjusted by the green channel value. */
-          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,${zValue},0),rgb(255,${zValue},0))`
-        };
-        background.gradientStyles = {
-          /* the foreground represents the red channel as a linear gradient from min to max,
-          with the blue channel maximized, adjusted by the green channel value. */
-          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,${zValue},255),rgb(255,${zValue},255))`,
-          /* the foreground gradient is masked by a perpendicular linear gradient from black to white */
-          'WebkitMaskImage': maskImage,
-          maskImage
-        };
+        background = generateRGB_G(orientation, dir, zValue);
         break;
       }
       case 'blue': {
         dir = xChannel === 'red';
-        maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
-        background.colorAreaStyles = {
-          /* the background represents the red channel as a linear gradient from min to max,
-          with the green channel minimized, adjusted by the blue channel value. */
-          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,0,${zValue}),rgb(255,0,${zValue}))`
-        };
-        background.gradientStyles = {
-          /* the foreground represents the red channel as a linear gradient from min to max,
-          with the green channel maximized, adjusted by the blue channel value. */
-          backgroundImage: `linear-gradient(to ${orientation[Number(dir)]},rgb(0,255,${zValue}),rgb(255,255,${zValue}))`,
-          /* the foreground gradient is masked by a perpendicular linear gradient from black to white */
-          'WebkitMaskImage': maskImage,
-          maskImage
-        };
+        background = generateRGB_B(orientation, dir, zValue);
+        break;
+      }
+      case 'hue': {
+        dir = xChannel !== 'saturation';
+        if (isHSL) {
+          background = generateHSL_H(orientation, dir, zValue);
+        } else {
+          background = generateHSB_H(orientation, dir, zValue);
+        }
+        break;
+      }
+      case 'saturation': {
+        dir = xChannel === 'hue';
+        if (isHSL) {
+          background = generateHSL_S(orientation, dir, alphaValue);
+        } else {
+          background = generateHSB_S(orientation, dir, alphaValue);
+        }
+        break;
+      }
+      case 'brightness': {
+        dir = xChannel === 'hue';
+        background = generateHSB_B(orientation, dir, alphaValue);
+        break;
+      }
+      case 'lightness': {
+        dir = xChannel === 'hue';
+        background = generateHSL_L(orientation, dir, zValue);
         break;
       }
     }

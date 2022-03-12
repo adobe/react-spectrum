@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, today} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
 import {DateValue} from '@react-types/calendar';
 import {Flex, Grid, repeat} from '@react-spectrum/layout';
@@ -21,6 +21,7 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {TimeField} from '@react-spectrum/datepicker';
+import {useLocale} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
 
 storiesOf('Date and Time/RangeCalendar', module)
@@ -57,11 +58,18 @@ storiesOf('Date and Time/RangeCalendar', module)
     () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, isDisabled: true})
   )
   .add(
-    'multiple disabled intervals',
-    () => render({isDateDisabled: (date: DateValue) => {
+    'isDateUnavailable',
+    () => render({isDateUnavailable: (date: DateValue) => {
       const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
       return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
     }})
+  )
+  .add(
+    'isDateUnavailable, allowsNonContiguousRanges',
+    () => {
+      let {locale} = useLocale();
+      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true});
+    }
   )
   .add(
     'isReadOnly',
