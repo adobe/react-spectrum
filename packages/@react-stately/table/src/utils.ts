@@ -60,7 +60,7 @@ function mapDynamicColumns<T>(remainingColumns: GridNode<T>[], remainingSpace: n
         0
       );
     
-  let columns = [...remainingColumns].map((column, index) => {
+  let columns = remainingColumns.map((column, index) => {
     const targetWidth =
           (parseFractionalUnit(column.props.defaultWidth) * remainingSpace) / remainingFractions;
     
