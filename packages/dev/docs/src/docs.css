@@ -350,9 +350,19 @@ footer li:last-child:after {
   cursor: initial;
 }
 
-.propTable td {
+.propTable td,
+.propTable th {
   background: none !important;
   display: table-cell;
+  text-align: left;
+}
+
+.propTable td p:first-child {
+  margin-top: 0;
+}
+
+.propTable td p:last-child {
+  margin-bottom: 0;
 }
 
 .type-description {
@@ -539,7 +549,7 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-details[open] summary svg {
+details[open] > summary svg {
   transform: rotate(90deg);
 }
 
@@ -705,7 +715,7 @@ h2.sectionHeader {
 @define-mixin small-propTable {
   /* Collapse the prop table into a list with key/value pairs */
   .propTable {
-    tr, td {
+    tr, td, th {
       display: block;
       text-align: left;
     }

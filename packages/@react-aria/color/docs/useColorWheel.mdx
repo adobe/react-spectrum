@@ -48,7 +48,6 @@ touch-friendly color wheels that can be styled as needed.
 * Multi-touch support
 * Pressing on the track moves the thumb to that position
 * Supports using the arrow keys, as well as page up/down, home, and end keys
-* Support for custom step values with handling for rounding errors
 * Support for disabling the color wheel
 * Prevents text selection while dragging
 * Exposed to assistive technology as a `slider` element via ARIA
@@ -177,14 +176,6 @@ function Example() {
     </>
   );
 }
-```
-
-### Step
-
-The `step` prop can be used to make a `ColorWheel` snap its value to specific increments.
-
-```tsx example
-<ColorWheel step={30} />
 ```
 
 ### Disabled

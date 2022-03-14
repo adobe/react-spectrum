@@ -10,13 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
+import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, getPlaceholderTime, useDefaultProps} from './utils';
 import {isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 import {ValidationState} from '@react-types/shared';
+
+export interface DatePickerOptions extends DatePickerProps<DateValue> {
+  /**
+   * Determines whether the date picker popover should close automatically when a date is selected.
+   * @default true
+   */
+  shouldCloseOnSelect?: boolean | (() => boolean)
+}
 
 export interface DatePickerState {
   value: DateValue,
@@ -25,6 +33,7 @@ export interface DatePickerState {
   setDateValue: (value: CalendarDate) => void,
   timeValue: TimeValue,
   setTimeValue: (value: TimeValue) => void,
+  hasTime: boolean,
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
   validationState: ValidationState,
@@ -32,7 +41,7 @@ export interface DatePickerState {
   granularity: Granularity
 }
 
-export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T>): DatePickerState {
+export function useDatePickerState(props: DatePickerOptions): DatePickerState {
   let [isOpen, setOpen] = useState(false);
   let [value, setValue] = useControlledState<DateValue>(props.value, props.defaultValue || null, props.onChange);
 
@@ -40,6 +49,7 @@ export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let dateValue = value != null ? value.toDate(defaultTimeZone ?? 'UTC') : null;
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+  let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
   let [selectedDate, setSelectedDate] = useState<DateValue>(null);
   let [selectedTime, setSelectedTime] = useState<TimeValue>(null);
@@ -57,14 +67,15 @@ export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T
   }
 
   let commitValue = (date: DateValue, time: TimeValue) => {
-    setValue('timeZone' in time ? time.set(toDateFields(date)) : toCalendarDateTime(date, time));
+    setValue('timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time));
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
   let selectDate = (newValue: CalendarDate) => {
+    let shouldClose = typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
     if (hasTime) {
-      if (selectedTime) {
-        commitValue(newValue, selectedTime);
+      if (selectedTime || shouldClose) {
+        commitValue(newValue, selectedTime || getPlaceholderTime(props.placeholderValue));
       } else {
         setSelectedDate(newValue);
       }
@@ -72,7 +83,7 @@ export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T
       setValue(newValue);
     }
 
-    if (!hasTime) {
+    if (shouldClose) {
       setOpen(false);
     }
   };
@@ -86,7 +97,8 @@ export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T
   };
 
   let validationState: ValidationState = props.validationState ||
-    (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : null);
+    (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : null) ||
+    (value && props.isDateUnavailable?.(value) ? 'invalid' : null);
 
   return {
     value,
@@ -96,6 +108,7 @@ export function useDatePickerState<T extends DateValue>(props: DatePickerProps<T
     setDateValue: selectDate,
     setTimeValue: selectTime,
     granularity,
+    hasTime,
     isOpen,
     setOpen(isOpen) {
       // Commit the selected date when the calendar is closed. Use a placeholder time if one wasn't set.

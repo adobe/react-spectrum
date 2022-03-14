@@ -11,11 +11,19 @@
  */
 
 import {createPlaceholderDate, FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
-import {DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
+import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useRef, useState} from 'react';
+
+export interface DateRangePickerOptions extends DateRangePickerProps<DateValue> {
+  /**
+   * Determines whether the date picker popover should close automatically when a date is selected.
+   * @default true
+   */
+  shouldCloseOnSelect?: boolean | (() => boolean)
+}
 
 type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState {
@@ -28,6 +36,7 @@ export interface DateRangePickerState {
   setDateRange: (value: DateRange) => void,
   timeRange: TimeRange,
   setTimeRange: (value: TimeRange) => void,
+  hasTime: boolean,
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
   validationState: ValidationState,
@@ -36,7 +45,7 @@ export interface DateRangePickerState {
   granularity: Granularity
 }
 
-export function useDateRangePickerState<T extends DateValue>(props: DateRangePickerProps<T>): DateRangePickerState {
+export function useDateRangePickerState(props: DateRangePickerOptions): DateRangePickerState {
   let [isOpen, setOpen] = useState(false);
   let [controlledValue, setControlledValue] = useControlledState<DateRange>(props.value, props.defaultValue || null, props.onChange);
   let [placeholderValue, setPlaceholderValue] = useState(() => controlledValue || {start: null, end: null});
@@ -64,6 +73,7 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
   let v = (value?.start || value?.end || props.placeholderValue);
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+  let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
   let [dateRange, setSelectedDateRange] = useState<DateRange>(null);
   let [timeRange, setSelectedTimeRange] = useState<TimeRange>(null);
@@ -77,16 +87,20 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
 
   let commitValue = (dateRange: DateRange, timeRange: TimeRange) => {
     setValue({
-      start: 'timeZone' in timeRange.start ? timeRange.start.set(toDateFields(dateRange.start)) : toCalendarDateTime(dateRange.start, timeRange.start),
-      end: 'timeZone' in timeRange.end ? timeRange.end.set(toDateFields(dateRange.end)) : toCalendarDateTime(dateRange.end, timeRange.end)
+      start: 'timeZone' in timeRange.start ? timeRange.start.set(toCalendarDate(dateRange.start)) : toCalendarDateTime(dateRange.start, timeRange.start),
+      end: 'timeZone' in timeRange.end ? timeRange.end.set(toCalendarDate(dateRange.end)) : toCalendarDateTime(dateRange.end, timeRange.end)
     });
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
   let setDateRange = (range: DateRange) => {
+    let shouldClose = typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
     if (hasTime) {
-      if (range.start && range.end && timeRange?.start && timeRange?.end) {
-        commitValue(range, timeRange);
+      if (shouldClose || (range.start && range.end && timeRange?.start && timeRange?.end)) {
+        commitValue(range, {
+          start: timeRange?.start || getPlaceholderTime(props.placeholderValue),
+          end: timeRange?.end || getPlaceholderTime(props.placeholderValue)
+        });
       } else {
         setSelectedDateRange(range);
       }
@@ -96,7 +110,7 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
       setSelectedDateRange(range);
     }
 
-    if (!hasTime) {
+    if (shouldClose) {
       setOpen(false);
     }
   };
@@ -113,7 +127,9 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     || (value != null && (
       isInvalid(value.start, props.minValue, props.maxValue) ||
       isInvalid(value.end, props.minValue, props.maxValue) ||
-      (value.end != null && value.start != null && value.end.compare(value.start) < 0)
+      (value.end != null && value.start != null && value.end.compare(value.start) < 0) ||
+      (value?.start && props.isDateUnavailable?.(value.start)) ||
+      (value?.end && props.isDateUnavailable?.(value.end))
     ) ? 'invalid' : null);
 
   return {
@@ -122,6 +138,7 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     dateRange,
     timeRange,
     granularity,
+    hasTime,
     setDate(part, date) {
       setDateRange({...dateRange, [part]: date});
     },
