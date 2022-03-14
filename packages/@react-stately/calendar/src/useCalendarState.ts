@@ -157,13 +157,13 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     },
     focusNextPage() {
       let start = startDate.add(visibleDuration);
-      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
       setFocusedDate(constrainValue(focusedDate.add(visibleDuration), minValue, maxValue));
+      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
     },
     focusPreviousPage() {
       let start = startDate.subtract(visibleDuration);
-      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
       setFocusedDate(constrainValue(focusedDate.subtract(visibleDuration), minValue, maxValue));
+      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
     },
     focusPageStart() {
       focusCell(startDate);

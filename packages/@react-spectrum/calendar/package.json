@@ -42,6 +42,7 @@
     "@react-spectrum/button": "^3.7.1",
     "@react-spectrum/utils": "^3.6.5",
     "@react-stately/calendar": "3.0.0-alpha.3",
+    "@react-types/button": "^3.4.3",
     "@react-types/calendar": "3.0.0-alpha.3",
     "@react-types/shared": "^3.11.1",
     "@spectrum-icons/ui": "^3.2.3",
