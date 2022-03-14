@@ -31,7 +31,7 @@ export class ReusableView<T extends object, V> {
   layoutInfo: LayoutInfo | null;
 
   /** The content currently being displayed by this view, set by the collection view. */
-  content: T;
+  content: any;
 
   rendered: V;
 
