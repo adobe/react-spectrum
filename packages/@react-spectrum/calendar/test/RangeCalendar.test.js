@@ -1083,7 +1083,7 @@ describe('RangeCalendar', () => {
 
       act(() => userEvent.click(nextButton));
 
-      cell = getByRole('button', {name: 'Sunday, May 1, 2022 selected'});
+      cell = getByRole('button', {name: 'Sunday, May 1, 2022 selected (Click to finish selecting date range)'});
       expect(cell).not.toHaveAttribute('aria-disabled');
       expect(cell).toHaveAttribute('tabindex', '0');
 
