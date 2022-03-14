@@ -12,4 +12,3 @@
 
 export * from './useControlledState';
 export * from './number';
-export * from './useLayoutEffect';
