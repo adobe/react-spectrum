@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
 */
 
-export const generateRGB_R = (orientation, dir: boolean, zValue: number) => {
+import {CSSProperties, useMemo} from 'react';
+
+const generateRGB_R = (orientation, dir: boolean, zValue: number) => {
   let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
   let result = {
     colorAreaStyles: {
@@ -25,7 +27,7 @@ export const generateRGB_R = (orientation, dir: boolean, zValue: number) => {
   return result;
 };
 
-export const generateRGB_G = (orientation, dir: boolean, zValue: number) => {
+const generateRGB_G = (orientation, dir: boolean, zValue: number) => {
   let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
   let result = {
     colorAreaStyles: {
@@ -40,7 +42,7 @@ export const generateRGB_G = (orientation, dir: boolean, zValue: number) => {
   return result;
 };
 
-export const generateRGB_B = (orientation, dir: boolean, zValue: number) => {
+const generateRGB_B = (orientation, dir: boolean, zValue: number) => {
   let maskImage = `linear-gradient(to ${orientation[Number(!dir)]}, transparent, #000)`;
   let result = {
     colorAreaStyles: {
@@ -56,7 +58,7 @@ export const generateRGB_B = (orientation, dir: boolean, zValue: number) => {
 };
 
 
-export const generateHSL_H = (orientation, dir: boolean, zValue: number) => {
+const generateHSL_H = (orientation, dir: boolean, zValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -70,7 +72,7 @@ export const generateHSL_H = (orientation, dir: boolean, zValue: number) => {
   return result;
 };
 
-export const generateHSL_S = (orientation, dir: boolean, alphaValue: number) => {
+const generateHSL_S = (orientation, dir: boolean, alphaValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -84,7 +86,7 @@ export const generateHSL_S = (orientation, dir: boolean, alphaValue: number) => 
   return result;
 };
 
-export const generateHSL_L = (orientation, dir: boolean, zValue: number) => {
+const generateHSL_L = (orientation, dir: boolean, zValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -98,7 +100,7 @@ export const generateHSL_L = (orientation, dir: boolean, zValue: number) => {
 };
 
 
-export const generateHSB_H = (orientation, dir: boolean, zValue: number) => {
+const generateHSB_H = (orientation, dir: boolean, zValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -112,7 +114,7 @@ export const generateHSB_H = (orientation, dir: boolean, zValue: number) => {
   return result;
 };
 
-export const generateHSB_S = (orientation, dir: boolean, alphaValue: number) => {
+const generateHSB_S = (orientation, dir: boolean, alphaValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -126,7 +128,7 @@ export const generateHSB_S = (orientation, dir: boolean, alphaValue: number) => 
   return result;
 };
 
-export const generateHSB_B = (orientation, dir: boolean, alphaValue: number) => {
+const generateHSB_B = (orientation, dir: boolean, alphaValue: number) => {
   let result = {
     colorAreaStyles: {},
     gradientStyles: {
@@ -139,3 +141,109 @@ export const generateHSB_B = (orientation, dir: boolean, alphaValue: number) => 
   };
   return result;
 };
+
+
+interface Gradients {
+  colorAreaStyleProps: {
+    style: CSSProperties
+  },
+  gradientStyleProps: {
+    style: CSSProperties
+  },
+  thumbStyleProps: {
+    style: CSSProperties
+  }
+}
+
+export function useColorAreaGradient({direction, state, zChannel, xChannel, isDisabled}): Gradients {
+  let returnVal = useMemo<Gradients>(() => {
+    let orientation = ['top', direction === 'rtl' ? 'left' : 'right'];
+    let dir = false;
+    let background = {colorAreaStyles: {}, gradientStyles: {}};
+    let zValue = state.value.getChannelValue(zChannel);
+    let {minValue: zMin, maxValue: zMax} = state.value.getChannelRange(zChannel);
+    let alphaValue = (zValue - zMin) / (zMax - zMin);
+    let isHSL = state.value.getColorSpace() === 'hsl';
+    if (!isDisabled) {
+      switch (zChannel) {
+        case 'red': {
+          dir = xChannel === 'green';
+          background = generateRGB_R(orientation, dir, zValue);
+          break;
+        }
+        case 'green': {
+          dir = xChannel === 'red';
+          background = generateRGB_G(orientation, dir, zValue);
+          break;
+        }
+        case 'blue': {
+          dir = xChannel === 'red';
+          background = generateRGB_B(orientation, dir, zValue);
+          break;
+        }
+        case 'hue': {
+          dir = xChannel !== 'saturation';
+          if (isHSL) {
+            background = generateHSL_H(orientation, dir, zValue);
+          } else {
+            background = generateHSB_H(orientation, dir, zValue);
+          }
+          break;
+        }
+        case 'saturation': {
+          dir = xChannel === 'hue';
+          if (isHSL) {
+            background = generateHSL_S(orientation, dir, alphaValue);
+          } else {
+            background = generateHSB_S(orientation, dir, alphaValue);
+          }
+          break;
+        }
+        case 'brightness': {
+          dir = xChannel === 'hue';
+          background = generateHSB_B(orientation, dir, alphaValue);
+          break;
+        }
+        case 'lightness': {
+          dir = xChannel === 'hue';
+          background = generateHSL_L(orientation, dir, zValue);
+          break;
+        }
+      }
+    }
+
+    let {x, y} = state.getThumbPosition();
+
+    if (direction === 'rtl') {
+      x = 1 - x;
+    }
+
+    return {
+      colorAreaStyleProps: {
+        style: {
+          position: 'relative',
+          touchAction: 'none',
+          ...background.colorAreaStyles
+        }
+      },
+      gradientStyleProps: {
+        style: {
+          touchAction: 'none',
+          ...background.gradientStyles
+        }
+      },
+      thumbStyleProps: {
+        style: {
+          position: 'absolute',
+          left: `${x * 100}%`,
+          top: `${y * 100}%`,
+          transform: 'translate(0%, 0%)',
+          touchAction: 'none'
+        }
+      }
+    };
+  }, [direction, state, zChannel, xChannel, isDisabled]);
+
+  return returnVal;
+}
+
