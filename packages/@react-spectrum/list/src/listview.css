@@ -64,7 +64,7 @@
           }
         }
 
-        /* Box shadow for left, right, bottom, and top border for last row when selected (needs .5px bottom blue border). */
+        /* Box shadow for left, right, bottom, and top border for last row when selected (needs 1px bottom blue border). */
         &.react-spectrum-ListViewItem--lastItem {
           &:after {
             box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 .5px 0 0 var(--spectrum-global-color-blue-500);
@@ -73,21 +73,21 @@
       }
 
       &:not(.is-selected) {
-        /* Box shadow for bottom and top border for non-selected row that is immediatly above a selected row (bottom blue). */
+        /* Box shadow for bottom border for non-selected row that is immediatly above a selected row (bottom blue). */
         &.is-next-selected {
           &:after {
             box-shadow: inset 0 -.5px 0 0 var(--spectrum-global-color-blue-500);
           }
         }
 
-        /* Box shadow for top and bottom border for non-selected row that is immediatly below a selected row (top blue) */
+        /* Box shadow for top border for non-selected row that is immediatly below a selected row (top blue) */
         &.is-prev-selected {
           &:after {
             box-shadow: inset 0 .5px 0 0 var(--spectrum-global-color-blue-500);
           }
         }
 
-        /* Box shadow for bottom and top border for non-selected row that is between two selected row (bottom blue and top blue). */
+        /* Box shadow for top and bottom border for non-selected row that is between two selected row (bottom blue and top blue). */
         &.is-prev-selected.is-next-selected {
           &:after {
             box-shadow: inset 0 .5px 0 0 var(--spectrum-global-color-blue-500), inset 0 -.5px 0 0 var(--spectrum-global-color-blue-500);
