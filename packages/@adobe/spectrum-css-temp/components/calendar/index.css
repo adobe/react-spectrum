@@ -194,6 +194,23 @@ governing permissions and limitations under the License.
     pointer-events: none;
   }
 
+  &.is-unavailable {
+    .spectrum-Calendar-dateText span {
+      position: relative;
+
+      &:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: -4px;
+        right: -4px;
+        height: 2px;
+        transform: rotate(-16deg);
+        border-radius: 1px;
+      }
+    }
+  }
+
   &.is-outsideMonth {
     visibility: hidden;
   }
