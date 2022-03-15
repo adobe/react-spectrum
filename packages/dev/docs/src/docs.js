@@ -17,13 +17,13 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
 import {FocusScope} from '@react-aria/focus';
-import {focusWithoutScrolling, useLayoutEffect} from '@react-aria/utils';
 import highlightCss from './syntax-highlight.css';
 import {Modal} from '@react-spectrum/overlays';
 import {Pressable} from '@react-aria/interactions';
 import React, {useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {ThemeProvider} from './ThemeSwitcher';
+import {useLayoutEffect} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 
 let links = document.querySelectorAll('a[data-link]');
@@ -98,15 +98,6 @@ function LinkPopover({id}) {
   let [breadcrumbs, setBreadcrumbs] = useState([document.getElementById(id)]);
 
   useLayoutEffect(() => {
-    // Set focus to the current breadcrumb.
-    if (breadcrumbsRef.current) {
-      let currentBreadcrumb = breadcrumbsRef.current.UNSAFE_getDOMNode().querySelector('[aria-current]');
-      if (currentBreadcrumb) {
-        currentBreadcrumb.tabIndex = -1;
-        focusWithoutScrolling(currentBreadcrumb);
-      }
-    }
-
     // Update links within the rendered popover content, so that when clicked
     // they will open as the new current breadcrumb and popover content.
     let links = ref.current.querySelectorAll('[data-link]');
@@ -124,7 +115,10 @@ function LinkPopover({id}) {
   return (
     <Dialog aria-label={breadcrumbs[breadcrumbs.length - 1].dataset.title} UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`} size="L">
       <View slot="heading">
-        <Breadcrumbs ref={breadcrumbsRef} onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
+        <Breadcrumbs
+          ref={breadcrumbsRef}
+          onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}
+          autoFocusCurrent>
           {breadcrumbs.map((b, i) => (
             <Item key={i + 1}>
               {b.dataset.title}

@@ -35,6 +35,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     showRoot,
     isDisabled,
     onAction,
+    autoFocusCurrent,
     ...otherProps
   } = props;
 
@@ -124,7 +125,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         yield computeVisibleItems(newVisibleItems);
       }
     });
-  }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
+  }, [childArray.length, setVisibleItems, showRoot, isMultiline]);
 
   useResizeObserver({ref: domRef, onResize: updateOverflow});
 
@@ -179,7 +180,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
     return (
       <li
-        key={key}
+        key={index}
         className={
           classNames(
             styles,
@@ -187,9 +188,11 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
           )
         }>
         <BreadcrumbItem
+          key={key}
           isCurrent={isCurrent}
           isDisabled={isDisabled}
-          onPress={onPress}>
+          onPress={onPress}
+          autoFocus={isCurrent && autoFocusCurrent}>
           {child.props.children}
         </BreadcrumbItem>
       </li>
