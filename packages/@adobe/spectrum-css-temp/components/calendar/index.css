@@ -207,6 +207,7 @@ governing permissions and limitations under the License.
         height: 2px;
         transform: rotate(-16deg);
         border-radius: 1px;
+        background: currentColor;
       }
     }
   }
