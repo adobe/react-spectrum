@@ -97,8 +97,8 @@ export function ListViewItem(props) {
   let isSelected = state.selectionManager.isSelected(item.key);
   let showDragHandle = isDraggable && (isFocusVisibleWithin || isHovered || isPressed);
   let {visuallyHiddenProps} = useVisuallyHidden();
-  let isFirstItem = item.prevKey == null;
-  let isLastItem = item.nextKey == null;
+  let isFirstRow = item.prevKey == null;
+  let isLastRow = item.nextKey == null;
   return (
     <div
       {...mergeProps(rowProps, pressProps, isDraggable && draggableItem?.dragProps)}
@@ -127,8 +127,8 @@ export function ListViewItem(props) {
               'is-prev-selected': state.selectionManager.isSelected(item.prevKey),
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
               'react-spectrum-ListViewItem--draggable': isDraggable,
-              'react-spectrum-ListViewItem--firstItem': isFirstItem,
-              'react-spectrum-ListViewItem--lastItem': isLastItem
+              'react-spectrum-ListViewItem--firstRow': isFirstRow,
+              'react-spectrum-ListViewItem--lastRow': isLastRow
             }
           )
         }

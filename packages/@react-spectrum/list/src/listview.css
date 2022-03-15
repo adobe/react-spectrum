@@ -58,14 +58,14 @@
         }
 
         /* Box shadow for left, right, bottom, and top border for first row when selected (needs 1px top blue border). */
-        &.react-spectrum-ListViewItem--firstItem {
+        &.react-spectrum-ListViewItem--firstRow {
           &:after {
             box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -.5px 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
           }
         }
 
         /* Box shadow for left, right, bottom, and top border for last row when selected (needs 1px bottom blue border). */
-        &.react-spectrum-ListViewItem--lastItem {
+        &.react-spectrum-ListViewItem--lastRow {
           &:after {
             box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 .5px 0 0 var(--spectrum-global-color-blue-500);
           }
@@ -117,9 +117,35 @@
               box-shadow: inset 0 .5px 0 0 var(--spectrum-global-color-blue-500), inset 0 -.5px 0 0 var(--spectrum-table-cell-border-color);
             }
           }
+
+          /* First row shouldn't have a top border if it isn't selected. */
+          &.react-spectrum-ListViewItem--firstRow  {
+            &:after {
+              box-shadow: inset 0 -.5px 0 0 var(--spectrum-table-cell-border-color);
+            }
+
+            &.is-next-selected {
+              &:after {
+                box-shadow: inset 0 -.5px 0 0 var(--spectrum-global-color-blue-500);
+              }
+            }
+          }
+
+          /* Last row needs a 1px bottom border instead of a .5px border if it isn't selected since it won't have a following item. */
+          &.react-spectrum-ListViewItem--lastRow  {
+            &:after {
+              box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color), inset 0 .5px 0 0 var(--spectrum-table-cell-border-color);
+            }
+
+            &.is-prev-selected {
+              &:after {
+                box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color), inset 0 .5px 0 0 var(--spectrum-global-color-blue-500);
+              }
+            }
+          }
         }
 
-        &.react-spectrum-ListViewItem--firstItem.is-selected {
+        &.react-spectrum-ListViewItem--firstRow.is-selected {
           &:after {
             border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
             border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
@@ -128,7 +154,7 @@
       }
 
       &:not(.react-spectrum-ListView--loadingMore) {
-        .react-spectrum-ListViewItem--lastItem.is-selected {
+        .react-spectrum-ListViewItem--lastRow.is-selected {
           &:after {
             border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
             border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
