@@ -49,7 +49,8 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     month: 'long',
     year: 'numeric',
     era: currentMonth.calendar.identifier !== 'gregory' ? 'long' : undefined,
-    calendar: currentMonth.calendar.identifier
+    calendar: currentMonth.calendar.identifier,
+    timeZone: state.timeZone
   });
 
   let titles = [];
