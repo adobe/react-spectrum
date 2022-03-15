@@ -15,6 +15,7 @@ import {
   Calendar,
   CalendarDate,
   DateDuration,
+  DateFormatter,
   GregorianCalendar,
   isSameDay,
   toCalendar,
@@ -24,7 +25,6 @@ import {
 import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
-import {useDateFormatter} from '@react-aria/i18n';
 import {useMemo, useRef, useState} from 'react';
 
 interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
@@ -35,7 +35,7 @@ interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
 }
 
 export function useCalendarState<T extends DateValue>(props: CalendarStateOptions<T>): CalendarState {
-  let defaultFormatter = useDateFormatter();
+  let defaultFormatter = useMemo(() => new DateFormatter(props.locale), [props.locale]);
   let resolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
     locale,
