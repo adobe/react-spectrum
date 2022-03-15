@@ -119,7 +119,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       maxValue: props.maxValue,
       isDisabled: props.isDisabled,
       isReadOnly: props.isReadOnly,
-      isDateDisabled: props.isDateDisabled,
+      isDateUnavailable: props.isDateUnavailable,
       defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue
     }
   };
