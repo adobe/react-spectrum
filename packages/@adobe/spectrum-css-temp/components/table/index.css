@@ -273,7 +273,6 @@ svg.spectrum-Table-sortedIcon {
    * the bottom border curved corners were cut off when using borders.
    */
 
-   /* TODO: update to match listview .5 px so the focus indicator fits properly */
   /* Box shadow for bottom border for non-selected rows that aren't immediatly above a selected row. */
   &:after {
     box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color);
