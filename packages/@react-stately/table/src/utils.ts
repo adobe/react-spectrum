@@ -63,15 +63,15 @@ function mapDynamicColumns<T>(dynamicColumns: GridNode<T>[], availableSpace: num
   let columns = dynamicColumns.map((column, index) => {
     const targetWidth =
           (parseFractionalUnit(column.props.defaultWidth) * availableSpace) / fractions;
-    
+    const delta = Math.max(
+      getMinWidth(column.props.minWidth, tableWidth) - targetWidth,
+      targetWidth - getMaxWidth(column.props.maxWidth, tableWidth)
+    );
+
     return {
       ...column,
       index,
-      delta: Math.max(
-            0,
-            getMinWidth(column.props.minWidth, tableWidth) - targetWidth,
-            targetWidth - getMaxWidth(column.props.maxWidth, tableWidth)
-          )
+      delta 
     };
   });
     

@@ -36,18 +36,19 @@ export interface ColumnResizeStateProps<T> {
   /** Collection of existing columns. */
   columns: GridNode<T>[],
   /** Callback to determine what the default width of a column should be. */
-  getDefaultWidth: (props) => string | number,
+  getDefaultWidth?: (props) => string | number,
   /** Callback that is invoked during the entirety of the resize event. */
   onColumnResize?: (affectedColumnWidths: AffectedColumnWidths) => void,
   /** Callback that is invoked when the resize event is ended. */
-  onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths) => void
+  onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths) => void,
+  /** The default table width. */
+  tableWidth?: number
 }
 
-export default function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): ColumnResizeState<T> {
-
-  const {columns, getDefaultWidth} = props;
+export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): ColumnResizeState<T> {
+  const {columns, getDefaultWidth, tableWidth: defaultTableWidth = null} = props;
   const columnsRef = useRef<GridNode<T>[]>();
-  const tableWidth = useRef<number>(null);
+  const tableWidth = useRef<number>(defaultTableWidth);
   const isResizing = useRef<boolean>(null);
   const startResizeContentWidth = useRef<number>();
 
