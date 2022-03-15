@@ -373,9 +373,9 @@ function SpectrumLink({href, children, title}) {
   return <a className={clsx(linkStyle['spectrum-Link--secondary'], styles.link)} href={href} title={title} {...getAnchorProps(href)}>{children}</a>;
 }
 
-export function renderHTMLfromMarkdown(description) {
+export function renderHTMLfromMarkdown(description, opts) {
   if (description) {
-    const options = {forceInline: true, overrides: {a: {component: SpectrumLink}}};
+    const options = {forceInline: true, overrides: {a: {component: SpectrumLink}}, ...opts};
     return <Markdown options={options}>{description}</Markdown>;
   }
   return '';
@@ -446,7 +446,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     }
                   </td>
                 }
-                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
+                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</td>
               </tr>
             ))}
           </tbody>
@@ -477,7 +477,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     <Type type={prop.value.return} />
                   </code>
                 </td>
-                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
+                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</td>
               </tr>
             ))}
           </tbody>

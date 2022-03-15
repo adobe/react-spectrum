@@ -45,7 +45,7 @@ after_version: 3.0.0
 
 There is no standalone range calendar element in HTML. Two separate `<input type="date">` elements could be used, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `useRangeCalendar` helps achieve accessible and international range calendar components that can be styled as needed.
 
-* **Flexible** – Display one or more months at once, or a custom time range for use cases like a week view.
+* **Flexible** – Display one or more months at once, or a custom time range for use cases like a week view. Minimum and maximum values, unavailable dates, and non-contiguous selections are supported as well.
 * **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, and right-to-left support are available as well.
 * **Accessible** – Calendar cells can be navigated and selected using the keyboard, and localized screen reader messages are included to announce when the selection and visible date range change.
 * **Touch friendly** – Date ranges can be selected by dragging over dates in the calendar using a touch screen, and all interactions are accessible using touch-based screen readers.
@@ -57,17 +57,23 @@ There is no standalone range calendar element in HTML. Two separate `<input type
 
 A range calendar consists of a grouping element containing one or more date grids (e.g. months), and a previous and next button for navigating through time. Each calendar grid consists of cells containing button elements that can be pressed and navigated to using the arrow keys to select a date range. Once a start date is selected, the user can navigate to another date using the keyboard or by hovering over it, and clicking it or pressing the <Keyboard>Enter</Keyboard> key commits the selected date range.
 
+### useRangeCalendar
+
 `useRangeCalendar` returns props that you should spread onto the appropriate elements:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useRangeCalendar.return.id].properties} />
 </TypeContext.Provider>
 
+### useCalendarGrid
+
 `useCalendarGrid` returns props for an individual grid of dates, such as one month, along with a list of formatted weekday names in the current locale for use during rendering:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useCalendarGrid.return.id].properties} />
 </TypeContext.Provider>
+
+### useCalendarCell
 
 `useCalendarCell` returns props for an individual cell, along with states and information useful during rendering:
 
@@ -184,7 +190,7 @@ function CalendarGrid({state, ...props}) {
 
 ### CalendarCell
 
-Finally, the `CalendarCell` component renders an individual cell in a calendar. It consists of two elements: a `<td>` to represent the grid cell, and a `<div>` to represent a button that can be clicked to select the date. The `useCalendarCell` hook also returns some information about the cell's state that can be useful for styling, as well as the formatted date string in the current locale.
+Finally, the `CalendarCell` component renders an individual cell in a calendar. It consists of two elements: a `<td>` to represent the grid cell, and a `<div>` to represent a button that can be clicked to select the date. The `useCalendarCell` hook also returns the formatted date string in the current locale, as well as some information about the cell's state that can be useful for styling. See [above](#usecalendarcell) for details.
 
 **Note**: this component is the same as the `CalendarCell` component shown in the [useCalendar](useCalendar.html) docs, and you can reuse it between both `Calendar` and `RangeCalendar`.
 
@@ -199,6 +205,7 @@ function CalendarCell({state, date}) {
     isSelected,
     isOutsideVisibleRange,
     isDisabled,
+    isUnavailable,
     formattedDate
   } = useCalendarCell({date}, state, ref);
 
@@ -208,7 +215,7 @@ function CalendarCell({state, date}) {
         {...buttonProps}
         ref={ref}
         hidden={isOutsideVisibleRange}
-        className={`cell ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}>
+        className={`cell ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''} ${isUnavailable ? 'unavailable' : ''}`}>
         {formattedDate}
       </div>
     </td>
@@ -253,6 +260,10 @@ That's it! Now we can render an example of our `RangeCalendar` component in acti
 .selected {
   background: var(--blue);
   color: white;
+}
+
+.unavailable {
+  color: var(--spectrum-global-color-red-600);
 }
 
 .disabled {
@@ -390,6 +401,49 @@ This example only accepts dates after today.
 import {today} from '@internationalized/date';
 
 <RangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} />
+```
+
+### Unavailable dates
+
+`useRangeCalendar` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard so that navigation is consistent, but cannot be selected by the user. In this example, they are displayed in red. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
+
+Note that by default, users may not select non-contiguous ranges, i.e. ranges that contain unavailable dates within them. Once a start date is selected, enabled dates will be restricted to subsequent dates until an unavailable date is hit. See [below](#non-contiguous-ranges) for an example of how to allow non-contiguous ranges.
+
+This example includes multiple unavailable date ranges, e.g. dates when a rental house is not available. The `minValue` prop is also used to prevent selecting dates before today.
+
+```tsx example
+import {today} from '@internationalized/date';
+import {useLocale} from '@react-aria/i18n';
+
+function Example() {
+  let now = today(getLocalTimeZone());
+  let disabledRanges = [
+    [now, now.add({days: 5})],
+    [now.add({days: 14}), now.add({days: 16})],
+    [now.add({days: 23}), now.add({days: 24})],
+  ];
+
+  let {locale} = useLocale();
+  let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+
+  return <RangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
+}
+```
+
+### Non-contiguous ranges
+
+The `allowsNonContiguousRanges` prop enables a range to be selected even if there are unavailable dates in the middle. The value emitted in the `onChange` event will still be a single range with a `start` and `end` property, but unavailable dates will not be displayed as selected. It is up to applications to split the full selected range into multiple as needed for business logic.
+
+This example prevents selecting weekends, but allows selecting ranges that span multiple weeks.
+
+```tsx example
+import {isWeekend} from '@internationalized/date';
+
+function Example() {
+  let {locale} = useLocale();
+
+  return <RangeCalendar aria-label="Time off request" isDateUnavailable={date => isWeekend(date, locale)} allowsNonContiguousRanges />
+}
 ```
 
 ### Controlling the focused date

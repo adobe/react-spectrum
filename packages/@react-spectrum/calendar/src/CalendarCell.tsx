@@ -40,17 +40,18 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
     ...props,
     isDisabled: !isSameMonth(props.date, currentMonth)
   }, state, ref);
-  let {hoverProps, isHovered} = useHover({});
-  let isLastSelectedBeforeDisabled = !isDisabled && state.isCellDisabled(props.date.add({days: 1}));
-  let isFirstSelectedAfterDisabled = !isDisabled && state.isCellDisabled(props.date.subtract({days: 1}));
+  let isUnavailable = state.isCellUnavailable(props.date) && !isDisabled;
+  let isLastSelectedBeforeDisabled = !isDisabled && state.isCellUnavailable(props.date.add({days: 1}));
+  let isFirstSelectedAfterDisabled = !isDisabled && state.isCellUnavailable(props.date.subtract({days: 1}));
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
-  let isSelectionStart = highlightedRange && isSameDay(props.date, highlightedRange.start);
-  let isSelectionEnd = highlightedRange && isSameDay(props.date, highlightedRange.end);
+  let isSelectionStart = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.start);
+  let isSelectionEnd = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.end);
   let {locale} = useLocale();
   let dayOfWeek = getDayOfWeek(props.date, locale);
   let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
   let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isUnavailable});
 
   return (
     <td
@@ -64,6 +65,7 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
           'is-selected': isSelected,
           'is-focused': isFocused && isFocusVisible,
           'is-disabled': isDisabled,
+          'is-unavailable': isUnavailable,
           'is-outsideMonth': !isSameMonth(props.date, currentMonth),
           'is-range-start': isRangeStart,
           'is-range-end': isRangeEnd,
@@ -73,7 +75,9 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
           'is-hovered': isHovered,
           'is-pressed': isPressed
         })}>
-        <span className={classNames(styles, 'spectrum-Calendar-dateText')}>{formattedDate}</span>
+        <span className={classNames(styles, 'spectrum-Calendar-dateText')}>
+          <span>{formattedDate}</span>
+        </span>
       </span>
     </td>
   );

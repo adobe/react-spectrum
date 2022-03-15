@@ -168,7 +168,7 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     },
     isDragging,
     getDisplayColor() {
-      return value.withChannelValue('saturation', 100).withChannelValue('lightness', 50);
+      return value.toFormat('hsl').withChannelValue('saturation', 100).withChannelValue('lightness', 50);
     }
   };
 }

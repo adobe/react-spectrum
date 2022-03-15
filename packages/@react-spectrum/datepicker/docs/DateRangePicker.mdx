@@ -275,6 +275,59 @@ This example only accepts dates after today.
   }}  />
 ```
 
+### Unavailable dates
+
+`DateRangePicker` supports marking certain dates as _unavailable_. These dates cannot be selected by the user and are displayed with a crossed out appearance in the calendar. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether a date is unavailable.
+
+Note that by default, users may not select non-contiguous ranges, i.e. ranges that contain unavailable dates within them. Once a start date is selected in the calendar, enabled dates will be restricted to subsequent dates until an unavailable date is hit. While this is handled automatically in the calendar, additional validation logic must be provided to ensure an invalid state is displayed in the date field. This can be achieved using the `validationState` prop. See [below](#non-contiguous-ranges) for an example of how to allow non-contiguous ranges.
+
+This example includes multiple unavailable date ranges, e.g. dates when a rental house is not available. The `minValue` prop is also used to prevent selecting dates before today. The `validationState` prop is used to mark selected date ranges with unavailable dates in the middle as invalid.
+
+```tsx example
+import {today} from '@internationalized/date';
+import {useLocale} from '@adobe/react-spectrum';
+
+function Example() {
+  let now = today(getLocalTimeZone());
+  let disabledRanges = [
+    [now, now.add({days: 5})],
+    [now.add({days: 14}), now.add({days: 16})],
+    [now.add({days: 23}), now.add({days: 24})],
+  ];
+
+  let {locale} = useLocale();
+  let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+  let [value, setValue] = React.useState(null);
+  let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
+
+  return (
+    <DateRangePicker
+      label="Trip dates"
+      minValue={today(getLocalTimeZone())}
+      isDateUnavailable={isDateUnavailable}
+      value={value}
+      onChange={setValue}
+      validationState={isInvalid ? 'invalid' : null} />
+  );
+}
+```
+
+### Non-contiguous ranges
+
+The `allowsNonContiguousRanges` prop enables a range to be selected even if there are unavailable dates in the middle. The value emitted in the `onChange` event will still be a single range with a `start` and `end` property, but unavailable dates will not be displayed as selected. It is up to applications to split the full selected range into multiple as needed for business logic.
+
+This example prevents selecting weekends, but allows selecting ranges that span multiple weeks.
+
+```tsx example
+import {isWeekend} from '@internationalized/date';
+
+function Example() {
+  let {locale} = useLocale();
+
+  return <DateRangePicker label="Time off request" isDateUnavailable={date => isWeekend(date, locale)} allowsNonContiguousRanges />
+}
+```
+
 ## Props
 
 <PropTable component={docs.exports.DateRangePicker} links={docs.links} />
@@ -291,19 +344,6 @@ This example only accepts dates after today.
 
 ```tsx example
 <DateRangePicker label="Date range" isDisabled />
-```
-
-The `isDateDisabled` callback prop acts like a filter function. It is called for each visible date and if it returns `true`, the date cell is disabled.
-
-```tsx example
-import {today} from '@internationalized/date';
-
-const isDateDisabled = (date) => {
-  const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({ weeks: 1 })], [today(getLocalTimeZone()).add({ weeks: 2 }), today(getLocalTimeZone()).add({ weeks: 3 })]];
-  return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
-}
-
-<DateRangePicker label="Date range" isDateDisabled={isDateDisabled} />
 ```
 
 ### Read only
