@@ -273,9 +273,10 @@ svg.spectrum-Table-sortedIcon {
    * the bottom border curved corners were cut off when using borders.
    */
 
-  /* Box shadow for bottom border for non-selected rows that aren't immediatly above or below a selected row. */
+   /* TODO: update to match listview .5 px so the focus indicator fits properly */
+  /* Box shadow for bottom border for non-selected rows that aren't immediatly above a selected row. */
   &:after {
-    box-shadow: inset 0 -.5px 0 0 var(--spectrum-table-cell-border-color), inset 0 .5px 0 0 var(--spectrum-table-cell-border-color);
+    box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color);
     content: '';
     display: block;
     position: absolute;
@@ -287,76 +288,30 @@ svg.spectrum-Table-sortedIcon {
     pointer-events: none;
   }
 
-  &.is-selected {
-    /* Box shadow for left, right, bottom, and top border for selected rows (blue all around). */
+  /* Box shadow for bottom border for non-selected row that is immediatly above a selected row. */
+  &.is-next-selected {
     &:after {
-      box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -.5px 0 0 var(--spectrum-global-color-blue-500), inset 0 .5px 0 0 var(--spectrum-global-color-blue-500);
-    }
-
-    /* Box shadow for left, right, bottom, and top border for first row when selected (needs 1px top blue border). */
-    &.spectrum-Table-row--firstRow{
-      &:after {
-        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -.5px 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
-      }
-    }
-
-    /* Box shadow for left, right, bottom, and top border for last row when selected (needs 1px bottom blue border). */
-    &.spectrum-Table-row--lastRow {
-      &:after {
-        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 .5px 0 0 var(--spectrum-global-color-blue-500);
-      }
+      box-shadow: inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
     }
   }
 
-  &:not(.is-selected) {
-    /* Box shadow for bottom and top border for non-selected row that is immediatly above a selected row (bottom blue, top grey). */
-    &.is-next-selected {
-      &:after {
-        box-shadow: inset 0 -.5px 0 0 var(--spectrum-global-color-blue-500), inset 0 .5px 0 0 var(--spectrum-table-cell-border-color);
-      }
-    }
-
-    /* Box shadow for bottom and top border for non-selected row that is immediatly below a selected row (top blue, bottom grey) */
-    &.is-prev-selected {
-      &:after {
-        box-shadow: inset 0 -.5px 0 0 var(--spectrum-table-cell-border-color), inset 0 .5px 0 0 var(--spectrum-global-color-blue-500);
-      }
-    }
-
-    /* Box shadow for bottom and top border for non-selected row that is between two selected row (bottom blue and top blue). */
-    &.is-prev-selected.is-next-selected {
-      &:after {
-        box-shadow: inset 0 -.5px 0 0 var(--spectrum-global-color-blue-500), inset 0 .5px 0 0 var(--spectrum-global-color-blue-500);
-      }
-    }
-
-    /* First row shouldn't have a top border if it isn't selected. */
-    &.spectrum-Table-row--firstRow {
-      &:after {
-        box-shadow: inset 0 -.5px 0 0 var(--spectrum-table-cell-border-color);
-      }
-
-      &.is-next-selected {
-        &:after {
-          box-shadow: inset 0 -.5px 0 0 var(--spectrum-global-color-blue-500);
-        }
-      }
-    }
-
-    /* Last row needs a 1px bottom border instead of a .5px border if it isn't selected since it won't have a following item. */
-    &.spectrum-Table-row--lastRow {
-      &:after {
-        box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color), inset 0 .5px 0 0 var(--spectrum-table-cell-border-color);
-      }
-
-      &.is-prev-selected {
-        &:after {
-          box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color), inset 0 .5px 0 0 var(--spectrum-global-color-blue-500);
-        }
-      }
+  /* Box shadow for bottom, left, and right border for selected rows. */
+  &.is-selected {
+    &:after {
+      box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
     }
   }
 
+  /* Box shadow for bottom, left, right, and top border for first row when selected. When the row isn't selected, it doesn't need
+   * a top border.
+   */
+  &.spectrum-Table-row--firstRow {
+    &.is-selected {
+      &:after {
+        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+      }
+    }
+  }
 
   &.is-drop-target {
     @inherit: %drop-target;
