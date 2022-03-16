@@ -58,8 +58,8 @@ storiesOf('Date and Time/Calendar', module)
     () => render({defaultValue: new CalendarDate(2019, 6, 5), isDisabled: true})
   )
   .add(
-    'multiple disabled intervals',
-    () => render({isDateDisabled: (date: DateValue) => {
+    'isDateUnavailable',
+    () => render({isDateUnavailable: (date: DateValue) => {
       const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
       return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
     }})
