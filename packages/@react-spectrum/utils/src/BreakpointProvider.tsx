@@ -1,5 +1,6 @@
-import React, {ReactNode, useCallback, useContext, useEffect, useState} from 'react';
+import React, {ReactNode, useCallback, useContext, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
+import {useLayoutEffect} from '@react-aria/utils';
 
 interface Breakpoints {
   S?: number,
@@ -61,7 +62,7 @@ export function useMatchedBreakpoints(breakpoints: Breakpoints): string[] {
       : ['base']
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!supportsMatchMedia) {
       return;
     }
