@@ -97,11 +97,11 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
           focusedInputRef.current = inputYRef.current;
           break;
         case 'Home':
-          direction === 'rtl' ? stateRef.current.incrementX(stateRef.current.xChannelPageStep) : stateRef.current.decrementX(stateRef.current.xChannelPageStep);
+          stateRef.current.decrementX(stateRef.current.xChannelPageStep);
           focusedInputRef.current = inputXRef.current;
           break;
         case 'End':
-          direction === 'rtl' ? stateRef.current.decrementX(stateRef.current.xChannelPageStep) : stateRef.current.incrementX(stateRef.current.xChannelPageStep);
+          stateRef.current.incrementX(stateRef.current.xChannelPageStep);
           focusedInputRef.current = inputXRef.current;
           break;
       }
@@ -377,6 +377,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
             formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
           ].join(', ')
       ),
+      'aria-orientation': 'horizontal',
       title: getValueTitle(),
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),

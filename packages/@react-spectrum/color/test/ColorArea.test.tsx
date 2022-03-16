@@ -165,7 +165,7 @@ describe('ColorArea', () => {
           ${'shiftleft/shiftright'} | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowRight', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowLeft', shiftKey: true})}} | ${parseColor('#df00f0')}
           ${'shiftup/shiftdown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowDown', shiftKey: true})}}    | ${parseColor('#f011f0')}
           ${'pageup/pagedown'}      | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'PageUp'}), backward: (elem) => pressKey(elem, {key: 'PageDown'})}}                                      | ${parseColor('#f011f0')}
-          ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'End'}), backward: (elem) => pressKey(elem, {key: 'Home'})}}                                             | ${parseColor('#df00f0')}
+          ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'Home'}), backward: (elem) => pressKey(elem, {key: 'End'})}}                                             | ${parseColor('#df00f0')}
         `('$Name RTL', ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
             <Provider locale="ar-AE" theme={defaultTheme}>
