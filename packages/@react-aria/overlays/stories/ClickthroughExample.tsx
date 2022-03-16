@@ -63,12 +63,17 @@ function ModalDialog(props) {
           style={{
             background: 'white',
             color: 'black',
-            padding: 30
+            padding: 30,
+            height: '200px',
+            overflow: 'auto'
           }}>
           <h3 {...titleProps} style={{marginTop: 0}}>
             {title}
           </h3>
           {children}
+          <div style={{height: '500px'}}>
+            Try scrolling the dialog when starting your press on the buttons
+          </div>
         </div>
       </FocusScope>
     </div>
@@ -129,12 +134,7 @@ export function ClickThroughExample() {
   const [showAriaButton, setShowAriaButton] = useState(false);
 
   return (
-    <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <p>
-        When closing a modal using a button using react aria useButton with a
-        regular button behind, the button behind will immediately be clicked.
-      </p>
+    <div>
       <button
         onClick={() => {
           showAriaButton ? setShowAriaButton(false) : setShowAriaButton(true);
