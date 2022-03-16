@@ -10,20 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breakpoints} from '@react-types/provider';
 import {Button} from '@react-spectrum/button';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Heading, Text} from '@react-spectrum/text';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Provider} from '../';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {useState} from 'react';
-import {Responsive} from '@react-types/shared';
+import React, {useCallback, useRef, useState} from 'react';
 import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
 import {SearchField} from '@react-spectrum/searchfield';
@@ -32,6 +30,7 @@ import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
+import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {View} from '@react-spectrum/view';
 
 const THEME = {
@@ -142,129 +141,115 @@ storiesOf('Provider', module)
           <Breakpoint />
         </Provider>
       );
-    })
-    .add(
-      'breakpoint omitted',
-      () => {
-        let Breakpoint = () => {
-          let {matchedBreakpoints} = useBreakpoint();
-          let breakpoint = matchedBreakpoints[0];
-          let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
-          return (
-            <>
-              <p>
-                button's width will be S: 'size-2400' at M viewport.
-              </p>
-              <Button
-                variant="primary"
-                width={width} >
-                Button with {breakpoint} breakpoint.
-              </Button>
-            </>
-          );
-        };
+    }
+  )
+  .add(
+    'breakpoint omitted',
+    () => {
+      let Breakpoint = () => {
+        let {matchedBreakpoints} = useBreakpoint();
+        let breakpoint = matchedBreakpoints[0];
+        let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
         return (
-          <Provider UNSAFE_style={{padding: 50}}>
-            <Breakpoint />
-          </Provider>
+          <>
+            <p>
+              button's width will be S: 'size-2400' at M viewport.
+            </p>
+            <Button
+              variant="primary"
+              width={width} >
+              Button with {breakpoint} breakpoint.
+            </Button>
+          </>
         );
-      })
-      .add(
-        'breakpoints updated',
-        () => (
-          <ProviderWithBreakpointsEditor />
-          ));
-
-function ProviderWithBreakpointsEditor() {
-  const DEFAULT_BREAKPOINTS: Breakpoints = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
-  const DEFAULT_STEP_SIZE = 148; // 148px is the least distance between breakpoints
-  const RESET_BUTTON_HIDE: Responsive<boolean> = {S: true, M: true, L: true, XL: true, XXL: true};
-  const RESET_BUTTON_SHOW: Responsive<boolean> = {S: false, M: false, L: false, XL: false, XXL: false};
-
-  const [breakpoints, setBreakpoints] = useState(DEFAULT_BREAKPOINTS);
-  const [resetButtonIsHiddenSettings, setResetButtonIsHiddenSettings] = useState(RESET_BUTTON_HIDE);
-
-  let onPress = (stepSize: number) => {
-    let updatedBreakpoints: Breakpoints = {};
-    if (stepSize === 0) {
-      updatedBreakpoints = DEFAULT_BREAKPOINTS;
-    } else {
-      for (const [key, value] of Object.entries(breakpoints)) {
-        updatedBreakpoints[key] = value + stepSize;
-      }
-    }
-    if (updatedBreakpoints.M === DEFAULT_BREAKPOINTS.M) {
-      setResetButtonIsHiddenSettings(RESET_BUTTON_HIDE);
-    } else {
-      setResetButtonIsHiddenSettings(RESET_BUTTON_SHOW);
-    }
-    setBreakpoints(updatedBreakpoints);
-  };
-  let onDecrement = () => {
-    onPress(-DEFAULT_STEP_SIZE);
-  };
-  let onIncrement = () => {
-    onPress(DEFAULT_STEP_SIZE);
-  };
-  let onReset = () => {
-    onPress(0);
-  };
-
-
-  return (
-    <Provider breakpoints={breakpoints}>
-      <Flex alignItems="center" direction="column" gap="size-100" minWidth="single-line-width">
-        <Text>Buttons to increment or decrement breakpoints will hide to prevent values beyond current XXL or base</Text>
-        <Text>A reset button will show when the current breakpoints are different than the default breakpoints</Text>
-        <AppliedBreakpointsTracker />
-        <Flex gap="size-100">
-          <Button
-            isHidden={{base: false, S: false, M: false, L: false, XL: false, XXL: true}}
-            onPress={onDecrement}
-            variant="primary">
-            <Text>Decrement breakpoints by {DEFAULT_STEP_SIZE}px</Text>
-          </Button>
-          <Button
-            isHidden={resetButtonIsHiddenSettings}
-            onPress={onReset}
-            variant="secondary">
-            <Text>Reset breakpoints</Text>
-          </Button>
-          <Button
-            isHidden={{base: true, S: false, M: false, L: false, XL: false, XXL: false}}
-            onPress={onIncrement}
-            variant="primary">
-            <Text>Increment breakpoints by {DEFAULT_STEP_SIZE}px</Text>
-          </Button>
-        </Flex>
-        <Text>Breakpoints are currently set to: {JSON.stringify(breakpoints)}</Text>
-      </Flex>
-    </Provider>
-  );
-
-  function AppliedBreakpointsTracker() {
-    return (
-      <Flex gap="size-100" marginY="single-line-height">
-        <AppliedBreakpointsTrackerCube isHidden={{base: false, S: false, M: false, L: false, XL: false, XXL: false}} heading="BASE" />
-        <AppliedBreakpointsTrackerCube isHidden={{base: true, S: false, M: false, L: false, XL: false, XXL: false}} heading="S" />
-        <AppliedBreakpointsTrackerCube isHidden={{base: true, S: true, M: false, L: false, XL: false, XXL: false}} heading="M" />
-        <AppliedBreakpointsTrackerCube isHidden={{base: true, S: true, M: true, L: false, XL: false, XXL: false}} heading="L" />
-        <AppliedBreakpointsTrackerCube isHidden={{base: true, S: true, M: true, L: true, XL: false, XXL: false}} heading="XL" />
-        <AppliedBreakpointsTrackerCube isHidden={{base: true, S: true, M: true, L: true, XL: true, XXL: false}} heading="XXL" />
-      </Flex>
-    );
-
-    function AppliedBreakpointsTrackerCube({heading, isHidden}: {heading: string, isHidden: Responsive<boolean>}): JSX.Element {
+      };
       return (
-        <View backgroundColor="gray-50" borderColor={{base: 'gray-900'}} borderRadius={{base: 'regular'}} borderWidth={{base: 'thick'}} isHidden={isHidden} width="size-800">
-          <Flex alignItems="center" justifyContent="center">
-            <Heading level={2}>{heading}</Heading>
-          </Flex>
-        </View>
+        <Provider UNSAFE_style={{padding: 50}}>
+          <Breakpoint />
+        </Provider>
       );
     }
-  }
-}
+  )
+  .add(
+    'breakpoints updated',
+    () => {
+      const RESPONSIVE_DIMENSIONS = {base: 'size-500', S: 'size-700', M: 'size-900', L: 'size-1200', XL: 'size-1600', XXL: 'size-2000'};
+
+      return (
+        <div>
+          <p>The breakpoints set on the provider are tied to the width of the rectangle (red) below. Try adjusting the width of the rectangle to see how the responsive content adapts to the updated breakpoints.</p>
+          <p>You can also adjust the window (browser) width without affecting the nested styles (container query behavior).</p>
+          <div style={{border: 'var(--spectrum-global-dimension-size-65, var(--spectrum-alias-size-65)) solid red', height: 'var(--spectrum-global-dimension-size-2400, var(--spectrum-alias-size-2400))', overflow: 'auto', resize: 'horizontal', width: 'var(--spectrum-global-dimension-size-2400, var(--spectrum-alias-size-2400))'}}>
+            <TestContainerQuery>
+              <View
+                backgroundColor={{base: 'gray-50'}}
+                borderColor={{base: 'gray-900', S: 'gray-800', M: 'gray-700', L: 'gray-600', XL: 'gray-500', XXL: 'gray-400'}}
+                borderRadius={{base: 'xsmall', S: 'small', M: 'regular', L: 'medium', XL: 'large'}}
+                borderWidth={{base: 'thin', M: 'thick', L: 'thicker', XL: 'thickest'}}
+                marginTop={{base: 'size-1000', S: 'size-900', M: 'size-700', L: 'size-550', XL: 'size-300', XXL: 'size-100'}}
+                marginX="auto"
+                width={RESPONSIVE_DIMENSIONS}>
+                <Flex
+                  alignItems="center"
+                  height={RESPONSIVE_DIMENSIONS}
+                  justifyContent="center">
+                  <Heading isHidden={{base: false, S: true, M: true, L: true, XL: true, XXL: true}} level={6}>BASE</Heading>
+                  <Heading isHidden={{base: true, S: false, M: true, L: true, XL: true, XXL: true}} level={5}>S</Heading>
+                  <Heading isHidden={{base: true, S: true, M: false, L: true, XL: true, XXL: true}} level={4}>M</Heading>
+                  <Heading isHidden={{base: true, S: true, M: true, L: false, XL: true, XXL: true}} level={3}>L</Heading>
+                  <Heading isHidden={{base: true, S: true, M: true, L: true, XL: false, XXL: true}} level={2}>XL</Heading>
+                  <Heading isHidden={{base: true, S: true, M: true, L: true, XL: true, XXL: false}} level={1}>XXL</Heading>
+                </Flex>
+              </View>
+            </TestContainerQuery>
+          </div>
+        </div>
+      );
+
+      function TestContainerQuery({children}) {
+        const ref = useRef(undefined as HTMLDivElement);
+
+        return (
+          <div ref={ref}>
+            <TestContainerQueryContent containerRef={ref}>
+              {children}
+            </TestContainerQueryContent>
+          </div>
+        );
+
+        function TestContainerQueryContent({children, containerRef}) {
+          const DEFAULT_BREAKPOINTS = {S: 480, M: 640, L: 768, XL: 1024, XXL: 1280};
+
+          const [containerOffset, setContainerProviderOffset] = useState(0);
+
+          const onResize = useCallback(() => {
+            const container = containerRef.current;
+            let containerWidth = container?.getBoundingClientRect()?.width;
+            if (containerWidth > 0) {
+              setContainerProviderOffset(window.innerWidth - containerWidth);
+            }
+          }, [containerRef]);
+
+          // when container size changes, update the local container width
+          useLayoutEffect(() => {
+            onResize();
+          }, [onResize]);
+
+          useResizeObserver({onResize, ref: containerRef});
+
+          const childBreakpoints = {
+            S: DEFAULT_BREAKPOINTS.S + containerOffset,
+            M: DEFAULT_BREAKPOINTS.M + containerOffset,
+            L: DEFAULT_BREAKPOINTS.L + containerOffset,
+            XL: DEFAULT_BREAKPOINTS.XL + containerOffset,
+            XXL: DEFAULT_BREAKPOINTS.XXL + containerOffset
+          };
+
+          return <Provider breakpoints={childBreakpoints}>{children}</Provider>;
+        }
+      }
+    }
+  );
 
 function render(props = {}) {
   return (

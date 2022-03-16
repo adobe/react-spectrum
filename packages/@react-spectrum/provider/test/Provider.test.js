@@ -292,18 +292,8 @@ describe('Provider', () => {
       [testWidths.S]: {S: 1024, M: 1168, L: 1440},
       [testWidths.base]: {S: 1168, M: 1440, L: 1680}
     };
+    const testId = 'responsive-breakpoints-test-container';
 
-    // render once to get a reference to the rerender method
-    let {container, rerender} = render(
-      <Provider breakpoints={testBreakpoints[testWidths.L]} theme={theme}>
-        <TextField
-          label="foo"
-          width={testWidths} />
-      </Provider>
-    );
-    let provider, textField;
-
-    // only rerender, updating the breakpoints prop (all others constant)
     it.each`
       name                                 | breakpoints                         | expected
       ${'(L) ' + testWidths.L + ':'}       | ${testBreakpoints[testWidths.L]}    | ${testWidths.L}
@@ -313,16 +303,27 @@ describe('Provider', () => {
     `('$name $breakpoints', function ({breakpoints, expected}) {
       matchMedia.useMediaQuery('(min-width: 1024px)');
 
-      rerender(
-        <Provider breakpoints={breakpoints} theme={theme}>
+      let {getByTestId, rerender} = render(
+        <Provider breakpoints={testBreakpoints[testWidths.L]} data-testid={testId} theme={theme}>
           <TextField
             label="foo"
             width={testWidths} />
         </Provider>
       );
 
-      provider = container.firstChild;
-      textField = provider.firstChild;
+      rerender(
+        <Provider breakpoints={breakpoints} data-testid={testId} theme={theme}>
+          <TextField
+            label="foo"
+            width={testWidths} />
+        </Provider>
+      );
+
+      // text field ends up being wrapped in a div that gets the width styles
+      // applied to it, so you must access via the provider's first child to
+      // compare the width in a headless environment (jsdom)
+      let provider = getByTestId(testId);
+      let textField = provider.firstChild;
       expect(textField).toHaveStyle({width: expected});
     });
   });
