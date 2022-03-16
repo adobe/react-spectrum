@@ -20,6 +20,7 @@ import {DOMProps} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useRef} from 'react';
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarState | RangeCalendarState): CalendarAria {
   let formatMessage = useMessageFormatter(intlMessages);
@@ -49,6 +50,21 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   // Label the child grid elements by the group element if it is labelled.
   calendarIds.set(state, props['aria-label'] || props['aria-labelledby'] ? calendarId : null);
 
+  // If the next or previous buttons become disabled while they are focused, move focus to the calendar body.
+  let nextFocused = useRef(false);
+  let nextDisabled = props.isDisabled || state.isNextVisibleRangeInvalid();
+  if (nextDisabled && nextFocused.current) {
+    nextFocused.current = false;
+    state.setFocused(true);
+  }
+
+  let previousFocused = useRef(false);
+  let previousDisabled = props.isDisabled || state.isPreviousVisibleRangeInvalid();
+  if (previousDisabled && previousFocused.current) {
+    previousFocused.current = false;
+    state.setFocused(true);
+  }
+
   return {
     calendarProps: mergeProps(descriptionProps, {
       role: 'group',
@@ -59,12 +75,16 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     nextButtonProps: {
       onPress: () => state.focusNextPage(),
       'aria-label': formatMessage('next'),
-      isDisabled: props.isDisabled || state.isNextVisibleRangeInvalid()
+      isDisabled: nextDisabled,
+      onFocus: () => nextFocused.current = true,
+      onBlur: () => nextFocused.current = false
     },
     prevButtonProps: {
       onPress: () => state.focusPreviousPage(),
       'aria-label': formatMessage('previous'),
-      isDisabled: props.isDisabled || state.isPreviousVisibleRangeInvalid()
+      isDisabled: previousDisabled,
+      onFocus: () => previousFocused.current = true,
+      onBlur: () => previousFocused.current = false
     },
     title: visibleRangeDescription
   };

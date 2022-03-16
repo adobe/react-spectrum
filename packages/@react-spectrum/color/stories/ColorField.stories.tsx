@@ -71,10 +71,6 @@ storiesOf('ColorField', module)
     () => render({placeholder: 'Enter a hex color'})
   )
   .add(
-    'step = 16',
-    () => render({step: 16})
-  )
-  .add(
     'controlled value',
     () => (
       <ControlledColorField

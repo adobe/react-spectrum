@@ -34,6 +34,8 @@ export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hs
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
 
+export type ColorAxes = {xChannel: ColorChannel, yChannel: ColorChannel, zChannel: ColorChannel};
+
 export interface ColorChannelRange {
   /** The minimum value of the color channel. */
   minValue: number,
@@ -75,17 +77,24 @@ export interface Color {
   /**
    * Formats the numeric value for a given channel for display according to the provided locale.
    */
-  formatChannelValue(channel: ColorChannel, locale: string): string
+  formatChannelValue(channel: ColorChannel, locale: string): string,
+  /**
+   * Returns the color space, 'rgb', 'hsb' or 'hsl', for the current color.
+   */
+  getColorSpace(): ColorFormat,
+  /**
+   * Returns the color space axes, xChannel, yChannel, zChannel.
+   */
+  getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel, yChannel?: ColorChannel}): ColorAxes,
+  /**
+   * Returns an array of the color channels within the current color space space.
+   */
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
 
 export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
   /** Handler that is called when the value changes. */
-  onChange?: (color: Color | null) => void,
-  /**
-   * The step value to increment and decrement the color by when using the arrow keys.
-   * @default 1
-   */
-  step?: number
+  onChange?: (color: Color | null) => void
 }
 
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
@@ -116,7 +125,7 @@ export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<Style
   size?: DimensionValue
 }
 
-export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue'> {
+export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue' | 'step' | 'pageSize'> {
   /** The color channel that the slider manipulates. */
   channel: ColorChannel,
   /** Handler that is called when the value changes, as the user drags. */

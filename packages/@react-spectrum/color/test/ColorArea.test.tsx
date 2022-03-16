@@ -11,7 +11,7 @@
  */
 
 import {ColorArea} from '../';
-import {XBlueYGreen as DefaultColorArea} from '../stories/ColorArea.stories';
+import {XBlueYGreen as DefaultColorArea, XSaturationYBrightness, XSaturationYLightness} from '../stories/ColorArea.stories';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {fireEvent, render} from '@testing-library/react';
 import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
@@ -67,18 +67,18 @@ describe('ColorArea', () => {
         let [xSlider, ySlider] = sliders;
 
         expect(xSlider).toHaveAttribute('type', 'range');
-        expect(xSlider).toHaveAttribute('aria-label', 'Blue / Green');
+        expect(xSlider).toHaveAttribute('aria-label', 'Red / Green');
         expect(xSlider).toHaveAttribute('min', '0');
         expect(xSlider).toHaveAttribute('max', '255');
         expect(xSlider).toHaveAttribute('step', '1');
-        expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 0');
+        expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0');
 
         expect(ySlider).toHaveAttribute('type', 'range');
-        expect(ySlider).toHaveAttribute('aria-label', 'Blue / Green');
+        expect(ySlider).toHaveAttribute('aria-label', 'Red / Green');
         expect(ySlider).toHaveAttribute('min', '0');
         expect(ySlider).toHaveAttribute('max', '255');
         expect(ySlider).toHaveAttribute('step', '1');
-        expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Blue: 255');
+        expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255');
       });
 
       it('disabled', () => {
@@ -129,12 +129,12 @@ describe('ColorArea', () => {
       describe('keyboard events', () => {
         it.each`
           Name                      | props                                          | actions                                                                                                                                                            | result
-          ${'left/right'}           | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft'}), backward: (elem) => pressKey(elem, {key: 'ArrowRight'})}}                                 | ${parseColor('#ff00fe')}
+          ${'left/right'}           | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft'}), backward: (elem) => pressKey(elem, {key: 'ArrowRight'})}}                                 | ${parseColor('#fe00ff')}
           ${'up/down'}              | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp'}), backward: (elem) => pressKey(elem, {key: 'ArrowDown'})}}                                    | ${parseColor('#ff01ff')}
-          ${'shiftleft/shiftright'} | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowRight', shiftKey: true})}} | ${parseColor('#f000df')}
+          ${'shiftleft/shiftright'} | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowLeft', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowRight', shiftKey: true})}} | ${parseColor('#df00f0')}
           ${'shiftup/shiftdown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowDown', shiftKey: true})}}    | ${parseColor('#f011f0')}
           ${'pageup/pagedown'}      | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'PageUp'}), backward: (elem) => pressKey(elem, {key: 'PageDown'})}}                                      | ${parseColor('#f011f0')}
-          ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'Home'}), backward: (elem) => pressKey(elem, {key: 'End'})}}                                             | ${parseColor('#f000df')}
+          ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'Home'}), backward: (elem) => pressKey(elem, {key: 'End'})}}                                             | ${parseColor('#df00f0')}
         `('$Name', ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
             <Component
@@ -160,12 +160,12 @@ describe('ColorArea', () => {
 
         it.each`
           Name                      | props                                          | actions                                                                                                                                                            | result
-          ${'left/right'}           | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowRight'}), backward: (elem) => pressKey(elem, {key: 'ArrowLeft'})}}                                 | ${parseColor('#ff00fe')}
+          ${'left/right'}           | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowRight'}), backward: (elem) => pressKey(elem, {key: 'ArrowLeft'})}}                                 | ${parseColor('#fe00ff')}
           ${'up/down'}              | ${{defaultValue: parseColor('#ff00ff')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp'}), backward: (elem) => pressKey(elem, {key: 'ArrowDown'})}}                                    | ${parseColor('#ff01ff')}
-          ${'shiftleft/shiftright'} | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowRight', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowLeft', shiftKey: true})}} | ${parseColor('#f000df')}
+          ${'shiftleft/shiftright'} | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowRight', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowLeft', shiftKey: true})}} | ${parseColor('#df00f0')}
           ${'shiftup/shiftdown'}    | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'ArrowUp', shiftKey: true}), backward: (elem) => pressKey(elem, {key: 'ArrowDown', shiftKey: true})}}    | ${parseColor('#f011f0')}
           ${'pageup/pagedown'}      | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'PageUp'}), backward: (elem) => pressKey(elem, {key: 'PageDown'})}}                                      | ${parseColor('#f011f0')}
-          ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'End'}), backward: (elem) => pressKey(elem, {key: 'Home'})}}                                             | ${parseColor('#f000df')}
+          ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'End'}), backward: (elem) => pressKey(elem, {key: 'Home'})}}                                             | ${parseColor('#df00f0')}
         `('$Name RTL', ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
             <Provider locale="ar-AE" theme={defaultTheme}>
@@ -252,13 +252,13 @@ describe('ColorArea', () => {
           start(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
           expect(onChangeSpy).toHaveBeenCalledTimes(1);
           expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
-          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80EC').toString('rgba'));
+          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#EC80FF').toString('rgba'));
           expect(document.activeElement).toBe(sliders[0]);
 
           end(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
           expect(onChangeSpy).toHaveBeenCalledTimes(1);
           expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80EC').toString('rgba'));
+          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#EC80FF').toString('rgba'));
           expect(document.activeElement).toBe(sliders[0]);
         });
 
@@ -284,14 +284,14 @@ describe('ColorArea', () => {
 
           move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
           expect(onChangeSpy).toHaveBeenCalledTimes(1);
-          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff0093').toString('rgba'));
+          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#9300FF').toString('rgba'));
           expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
           expect(document.activeElement).toBe(sliders[0]);
 
           end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
           expect(onChangeSpy).toHaveBeenCalledTimes(1);
           expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff0093').toString('rgba'));
+          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#9300FF').toString('rgba'));
           expect(document.activeElement).toBe(sliders[0]);
         });
 
@@ -339,18 +339,18 @@ describe('ColorArea', () => {
           start(container, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
           expect(onChangeSpy).toHaveBeenCalledTimes(1);
           expect(onChangeEndSpy).toHaveBeenCalledTimes(0);
-          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff80EC').toString('rgba'));
+          expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#EC80FF').toString('rgba'));
           expect(document.activeElement).toBe(sliders[0]);
 
           move(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
           expect(onChangeSpy).toHaveBeenCalledTimes(2);
-          expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(parseColor('#ff1480').toString('rgba'));
+          expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(parseColor('#8014FF').toString('rgba'));
           expect(document.activeElement).toBe(sliders[0]);
 
           end(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
           expect(onChangeSpy).toHaveBeenCalledTimes(2);
           expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#ff1480').toString('rgba'));
+          expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(parseColor('#8014FF').toString('rgba'));
           expect(document.activeElement).toBe(sliders[0]);
         });
 
@@ -392,18 +392,18 @@ describe('ColorArea', () => {
       let [xSlider, ySlider] = sliders;
 
       expect(xSlider).toHaveAttribute('type', 'range');
-      expect(xSlider).toHaveAttribute('aria-label', 'Blue / Green');
+      expect(xSlider).toHaveAttribute('aria-label', 'Red / Green');
       expect(xSlider).toHaveAttribute('min', '0');
       expect(xSlider).toHaveAttribute('max', '255');
       expect(xSlider).toHaveAttribute('step', '1');
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 255');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 255');
 
       expect(ySlider).toHaveAttribute('type', 'range');
-      expect(ySlider).toHaveAttribute('aria-label', 'Blue / Green');
+      expect(ySlider).toHaveAttribute('aria-label', 'Red / Green');
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '255');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Blue: 255');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Red: 255');
     });
 
     it('the slider is focusable', () => {
@@ -426,8 +426,8 @@ describe('ColorArea', () => {
     });
   });
   describe('full implementation controlled', () => {
-    it('sets input props', () => {
-      let {getAllByRole, getByLabelText} = render(<DefaultColorArea />);
+    it('sets input props rgb', () => {
+      let {getAllByRole, getByLabelText} = render(<DefaultColorArea {...DefaultColorArea.args} />);
       let sliders = getAllByRole('slider');
 
       expect(sliders.length).toBe(3);
@@ -456,14 +456,75 @@ describe('ColorArea', () => {
       expect(zSlider).toHaveAttribute('step', '1');
       expect(zSlider).toHaveAttribute('aria-valuetext', '255');
     });
+    it('sets input props hsb', () => {
+      let {getAllByRole, getByLabelText} = render(<XSaturationYBrightness {...XSaturationYBrightness.args} />);
+      let sliders = getAllByRole('slider');
+
+      expect(sliders.length).toBe(3);
+      let [xSlider, ySlider, zSlider] = sliders;
+
+      expect(xSlider).toHaveAttribute('type', 'range');
+      expect(xSlider).toHaveAttribute('aria-label', 'Saturation / Brightness');
+      expect(xSlider).toHaveAttribute('min', '0');
+      expect(xSlider).toHaveAttribute('max', '100');
+      expect(xSlider).toHaveAttribute('step', '1');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Brightness: 100%');
+
+      expect(ySlider).toHaveAttribute('type', 'range');
+      expect(ySlider).toHaveAttribute('aria-label', 'Saturation / Brightness');
+      expect(ySlider).toHaveAttribute('min', '0');
+      expect(ySlider).toHaveAttribute('max', '100');
+      expect(ySlider).toHaveAttribute('step', '1');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Brightness: 100%, Saturation: 100%');
+
+      let hueSlider = getByLabelText('Hue', {selector: 'input'});
+      expect(zSlider).toHaveAttribute('type', 'range');
+      expect(zSlider).toHaveAttribute('aria-label', 'Hue');
+      expect(zSlider).toBe(hueSlider);
+      expect(zSlider).toHaveAttribute('min', '0');
+      expect(zSlider).toHaveAttribute('max', '360');
+      expect(zSlider).toHaveAttribute('step', '1');
+      expect(zSlider).toHaveAttribute('aria-valuetext', '0°');
+    });
+    it('sets input props hsl', () => {
+      let {getAllByRole, getByLabelText} = render(<XSaturationYLightness {...XSaturationYLightness.args} />);
+      let sliders = getAllByRole('slider');
+
+      expect(sliders.length).toBe(3);
+      let [xSlider, ySlider, zSlider] = sliders;
+
+      expect(xSlider).toHaveAttribute('type', 'range');
+      expect(xSlider).toHaveAttribute('aria-label', 'Saturation / Lightness');
+      expect(xSlider).toHaveAttribute('min', '0');
+      expect(xSlider).toHaveAttribute('max', '100');
+      expect(xSlider).toHaveAttribute('step', '1');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Lightness: 50%');
+
+      expect(ySlider).toHaveAttribute('type', 'range');
+      expect(ySlider).toHaveAttribute('aria-label', 'Saturation / Lightness');
+      expect(ySlider).toHaveAttribute('min', '0');
+      expect(ySlider).toHaveAttribute('max', '100');
+      expect(ySlider).toHaveAttribute('step', '1');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Lightness: 50%, Saturation: 100%');
+
+      let hueSlider = getByLabelText('Hue', {selector: 'input'});
+      expect(zSlider).toHaveAttribute('type', 'range');
+      expect(zSlider).toHaveAttribute('aria-label', 'Hue');
+      expect(zSlider).toBe(hueSlider);
+      expect(zSlider).toHaveAttribute('min', '0');
+      expect(zSlider).toHaveAttribute('max', '360');
+      expect(zSlider).toHaveAttribute('step', '1');
+      expect(zSlider).toHaveAttribute('aria-valuetext', '0°');
+    });
 
     it('the slider is focusable', () => {
-      let {getAllByRole} = render(<div>
+      let {getAllByRole, getByRole} = render(<div>
         <button>A</button>
         <DefaultColorArea defaultValue={'#ff00ff'} />
         <button>B</button>
       </div>);
       let sliders = getAllByRole('slider');
+      let colorField = getByRole('textbox');
       let [buttonA, buttonB] = getAllByRole('button');
 
       userEvent.tab();
@@ -473,7 +534,10 @@ describe('ColorArea', () => {
       userEvent.tab();
       expect(document.activeElement).toBe(sliders[2]);
       userEvent.tab();
+      expect(document.activeElement).toBe(colorField);
+      userEvent.tab();
       expect(document.activeElement).toBe(buttonB);
+      userEvent.tab({shift: true});
       userEvent.tab({shift: true});
       expect(document.activeElement).toBe(sliders[2]);
     });

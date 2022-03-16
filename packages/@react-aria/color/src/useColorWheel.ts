@@ -255,8 +255,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     ...props,
     'aria-label': ariaLabel
   });
-  let step = stateRef.current.step;
 
+  let {minValue, maxValue, step} = state.value.getChannelRange('hue');
   return {
     trackProps: {
       ...trackInteractions,
@@ -300,8 +300,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       inputLabellingProps,
       {
         type: 'range',
-        min: '0',
-        max: '360',
+        min: String(minValue),
+        max: String(maxValue),
         step: String(step),
         'aria-valuetext': state.value.formatChannelValue('hue', locale),
         disabled: isDisabled,
