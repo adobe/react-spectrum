@@ -431,6 +431,7 @@ footer li:last-child:after {
   display: inline !important;
   background: none !important;
   font-family: inherit !important;
+  isolation: initial !important;
 }
 
 .article pre {
