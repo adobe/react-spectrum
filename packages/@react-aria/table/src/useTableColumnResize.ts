@@ -13,12 +13,14 @@
 import {focusSafely, useFocusable} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {useKeyboard, useMove} from '@react-aria/interactions';
+import {useLocale} from '@react-aria/i18n';
 import {useRef} from 'react';
 
 export function useTableColumnResize(state, item, ref): any {
   const stateRef = useRef(null);
   stateRef.current = state;
 
+  let {direction} = useLocale();
   let {focusableProps} = useFocusable({excludeFromTabOrder: true}, ref);
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
@@ -43,6 +45,9 @@ export function useTableColumnResize(state, item, ref): any {
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
     },
     onMove({deltaX, pointerType}) {
+      if (direction === 'rtl') {
+        deltaX *= -1;
+      }
       // if moving up/down only, no need to resize
       if (deltaX !== 0) {
         if (pointerType === 'keyboard') {

@@ -97,6 +97,11 @@ svg.spectrum-Table-sortedIcon {
   height: 100%;
   cursor: col-resize;
   user-select: none;
+
+  &.rtl {
+    left: 0px;
+    right: auto;
+  }
   
   &::after {
     content: "";
