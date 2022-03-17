@@ -16,6 +16,7 @@ import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners,
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import {useColorAreaGradient} from './useColorAreaGradient';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
@@ -69,7 +70,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
 
   let stateRef = useRef<ColorAreaState>(null);
   stateRef.current = state;
-  let {xChannel, yChannel} = stateRef.current.channels;
+  let {xChannel, yChannel, zChannel} = stateRef.current.channels;
   let xChannelStep = stateRef.current.xChannelStep;
   let yChannelStep = stateRef.current.yChannelStep;
 
@@ -330,17 +331,33 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     pointerEvents: 'none'
   }});
 
+  let {
+    colorAreaStyleProps,
+    gradientStyleProps,
+    thumbStyleProps
+  } = useColorAreaGradient({
+    direction,
+    state,
+    xChannel,
+    zChannel,
+    isDisabled: props.isDisabled
+  });
+
+
   return {
     colorAreaProps: {
       ...colorAriaLabellingProps,
       ...colorAreaInteractions,
+      ...colorAreaStyleProps,
       role: 'group'
     },
     gradientProps: {
+      ...gradientStyleProps,
       role: 'presentation'
     },
     thumbProps: {
       ...thumbInteractions,
+      ...thumbStyleProps,
       role: 'presentation'
     },
     xInputProps: {

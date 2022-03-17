@@ -13,7 +13,7 @@
 import {CalendarBase} from './CalendarBase';
 import {createCalendar} from '@internationalized/date';
 import {DateValue, SpectrumRangeCalendarProps} from '@react-types/calendar';
-import React, {useMemo} from 'react';
+import React, {useMemo, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useRangeCalendar} from '@react-aria/calendar';
 import {useRangeCalendarState} from '@react-stately/calendar';
@@ -32,10 +32,16 @@ export function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarP
     createCalendar
   });
 
+  let ref = useRef();
+  let {calendarProps, prevButtonProps, nextButtonProps} = useRangeCalendar(props, state, ref);
+
   return (
     <CalendarBase
       {...props}
       state={state}
-      useCalendar={useRangeCalendar} />
+      calendarRef={ref}
+      calendarProps={calendarProps}
+      prevButtonProps={prevButtonProps}
+      nextButtonProps={nextButtonProps} />
   );
 }

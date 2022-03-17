@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {CalendarAria} from '@react-aria/calendar';
+import {AriaButtonProps} from '@react-types/button';
 import {CalendarMonth} from './CalendarMonth';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
@@ -19,22 +19,28 @@ import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
-import React, {RefObject, useRef} from 'react';
+import React, {HTMLAttributes, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
   state: T,
-  useCalendar: (props: CalendarPropsBase, state: T, ref?: RefObject<HTMLElement>) => CalendarAria,
-  visibleMonths?: number
+  visibleMonths?: number,
+  calendarProps: HTMLAttributes<HTMLElement>,
+  nextButtonProps: AriaButtonProps,
+  prevButtonProps: AriaButtonProps,
+  calendarRef: RefObject<HTMLDivElement>
 }
 
 export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>) {
   props = useProviderProps(props);
   let {
     state,
-    useCalendar,
+    calendarProps,
+    nextButtonProps,
+    prevButtonProps,
+    calendarRef: ref,
     visibleMonths = 1
   } = props;
   let {direction} = useLocale();
@@ -45,8 +51,6 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     era: currentMonth.calendar.identifier !== 'gregory' ? 'long' : undefined,
     calendar: currentMonth.calendar.identifier
   });
-  let ref = useRef(null);
-  let {calendarProps, prevButtonProps, nextButtonProps} = useCalendar(props, state, ref);
 
   let titles = [];
   let calendars = [];
