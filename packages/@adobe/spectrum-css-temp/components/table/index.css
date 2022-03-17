@@ -91,32 +91,27 @@ svg.spectrum-Table-sortedIcon {
   justify-content: end;
   box-sizing: border-box;
   position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 10px;
-  height: 100%;
+  inset-block-start: 0px;
+  inset-inline-end: 0px;
+  inline-size: 10px;
+  block-size: 100%;
   cursor: col-resize;
   user-select: none;
-
-  &.rtl {
-    left: 0px;
-    right: auto;
-  }
   
   &::after {
     content: "";
     position: absolute;
     display: block;
     box-sizing: border-box;
-    width: 1px;
-    height: 100%;
+    inline-size: 1px;
+    block-size: 100%;
     background-color: var(--spectrum-table-divider-border-color);
   }
   
   &:active,
   &:focus {
     &::after {
-      width: 2px;
+      inline-size: 2px;
       background-color: var(--spectrum-global-color-blue-400);
     }
   }
