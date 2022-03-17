@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AffectedColumnWidths, useTableColumnResizeState} from './useTableColumnResizeState';
 import {CollectionBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
 import {GridState, useGridState} from '@react-stately/grid';
@@ -18,8 +19,6 @@ import {Key, MutableRefObject, useMemo} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
-
-import useTableColumnResizeState, {AffectedColumnWidths} from './useTableColumnResizeState';
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** A collection of rows and columns in the table. */

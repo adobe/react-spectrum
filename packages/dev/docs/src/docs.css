@@ -357,6 +357,14 @@ footer li:last-child:after {
   text-align: left;
 }
 
+.propTable td p:first-child {
+  margin-top: 0;
+}
+
+.propTable td p:last-child {
+  margin-bottom: 0;
+}
+
 .type-description {
   margin-top: 0;
 }
