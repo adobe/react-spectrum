@@ -792,7 +792,9 @@ export class Virtualizer<T extends object, V, W> {
     let viewsByParentKey = new Map([[null, []]]);
     for (let view of this._children) {
       if (!view.layoutInfo) {
-        return;
+        let visibleLayoutInfos = this.getVisibleLayoutInfos();
+        let layoutInfo = visibleLayoutInfos.get(view.key);
+        view.layoutInfo = layoutInfo;
       }
       if (!viewsByParentKey.has(view.layoutInfo.parentKey)) {
         viewsByParentKey.set(view.layoutInfo.parentKey, []);
@@ -846,7 +848,8 @@ export class Virtualizer<T extends object, V, W> {
       for (let view of this._transaction.toRemove.values()) {
         let cur = view.layoutInfo;
         if (!cur) {
-          return;
+          let visibleLayoutInfos = this.getVisibleLayoutInfos();
+          cur = visibleLayoutInfos.get(view.key);
         }
         let layoutInfo = this.layout.getLayoutInfo(cur.key);
         if (this._applyLayoutInfo(view, layoutInfo)) {
@@ -857,7 +860,8 @@ export class Virtualizer<T extends object, V, W> {
       for (let view of this._transaction.removed.values()) {
         let cur = view.layoutInfo;
         if (!cur) {
-          return;
+          let visibleLayoutInfos = this.getVisibleLayoutInfos();
+          cur = visibleLayoutInfos.get(view.key);
         }
         let layoutInfo = this._transaction.finalLayoutInfo.get(cur.key) || cur;
         layoutInfo = this.layout.getFinalLayoutInfo(layoutInfo.copy());
