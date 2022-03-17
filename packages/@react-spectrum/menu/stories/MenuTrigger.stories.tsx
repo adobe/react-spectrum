@@ -525,7 +525,7 @@ storiesOf('MenuTrigger', module)
     () => (
       <>
         <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-          <input placeholder="Shift tab here" />
+          <input />
           <MenuTrigger onOpenChange={action('onOpenChange')}>
             <ActionButton
               onPress={action('press')}
@@ -541,7 +541,7 @@ storiesOf('MenuTrigger', module)
               )}
             </Menu>
           </MenuTrigger>
-          <input placeholder="Tab here" />
+          <input />
         </div>
       </>
     )
