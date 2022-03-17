@@ -161,5 +161,10 @@ governing permissions and limitations under the License.
         color: HighlightText;
       }
     }
+    &:hover {
+      &.is-today {
+        color: var(--spectrum-calendar-day-today-text-color);
+      }
+    }
   }
 }
