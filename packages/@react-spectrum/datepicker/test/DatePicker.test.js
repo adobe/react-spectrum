@@ -153,7 +153,7 @@ describe('DatePicker', function () {
 
       expect(segments[6].textContent).toBe('AM');
       expect(segments[6].getAttribute('aria-label')).toBe('AM/PM');
-      expect(segments[6].getAttribute('aria-valuetext')).toBe('12 AM');
+      expect(segments[6].getAttribute('aria-valuetext')).toBe('AM');
     });
   });
 
@@ -332,7 +332,7 @@ describe('DatePicker', function () {
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM');
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 AM');
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});

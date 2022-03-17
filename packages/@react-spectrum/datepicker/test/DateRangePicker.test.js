@@ -185,7 +185,7 @@ describe('DateRangePicker', function () {
 
       expect(segments[6].textContent).toBe('AM');
       expect(segments[6].getAttribute('aria-label')).toBe('Start Date AM/PM');
-      expect(segments[6].getAttribute('aria-valuetext')).toBe('12 AM');
+      expect(segments[6].getAttribute('aria-valuetext')).toBe('AM');
 
       expect(segments[7].textContent).toBe('5');
       expect(segments[7].getAttribute('aria-label')).toBe('End Date month');
@@ -231,7 +231,7 @@ describe('DateRangePicker', function () {
 
       expect(segments[13].textContent).toBe('AM');
       expect(segments[13].getAttribute('aria-label')).toBe('End Date AM/PM');
-      expect(segments[13].getAttribute('aria-valuetext')).toBe('12 AM');
+      expect(segments[13].getAttribute('aria-valuetext')).toBe('AM');
     });
   });
 
@@ -415,7 +415,7 @@ describe('DateRangePicker', function () {
         fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM');
-        expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 AM');
+        expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});

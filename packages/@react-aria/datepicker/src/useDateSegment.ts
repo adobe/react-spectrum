@@ -48,7 +48,7 @@ export function useDateSegment(segment: DateSegment, state: DatePickerFieldState
   if (segment.type === 'month') {
     let monthTextValue = monthDateFormatter.format(state.dateValue);
     textValue = monthTextValue !== textValue ? `${textValue} – ${monthTextValue}` : monthTextValue;
-  } else if (segment.type === 'hour' || segment.type === 'dayPeriod') {
+  } else if (segment.type === 'hour') {
     textValue = hourDateFormatter.format(state.dateValue);
   }
 
