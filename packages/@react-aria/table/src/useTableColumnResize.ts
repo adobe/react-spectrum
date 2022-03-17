@@ -28,7 +28,7 @@ export function useTableColumnResize(state, item, ref): any {
         // useKeyboard stops propagation by default. We want to continue propagation for tab
         e.continuePropagation();
       }
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
         // switch focus back to the column header on escape
         const columnHeader = ref.current.previousSibling;
         if (columnHeader) {
