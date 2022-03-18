@@ -173,14 +173,17 @@ governing permissions and limitations under the License.
     --spectrum-textfield-border-color-key-focus: Highlight;
     --spectrum-textfield-placeholder-text-color: GrayText;
     --spectrum-textfield-placeholder-text-color-hover: GrayText;
-    &.is-focused, &:focus {
-      outline: 2px solid Highlight;
-    }  
-    &.focus-ring, &:focus-ring {
+    &.is-focused, 
+    &:focus 
+    &.focus-ring, 
+    &:focus-ring {
       outline: 2px solid Highlight;
     }  
     .spectrum-Textfield--quiet & {
-      &.focus-ring, &:focus-ring {
+      &.is-focused, 
+      &:focus ,
+      &.focus-ring, 
+      &:focus-ring {
         forced-color-adjust: none;
         outline: 0;
         box-shadow: 0 1px 0 0 var(--spectrum-textfield-quiet-border-color-key-focus);
