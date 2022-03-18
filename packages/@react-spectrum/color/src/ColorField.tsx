@@ -27,6 +27,7 @@ function ColorField(props: SpectrumColorFieldProps, ref: RefObject<TextFieldRef>
     value,          // eslint-disable-line @typescript-eslint/no-unused-vars
     defaultValue,   // eslint-disable-line @typescript-eslint/no-unused-vars
     onChange,       // eslint-disable-line @typescript-eslint/no-unused-vars
+    placeholder,
     ...otherProps
   } = props;
   let state = useColorFieldState(props);
@@ -35,6 +36,10 @@ function ColorField(props: SpectrumColorFieldProps, ref: RefObject<TextFieldRef>
     labelProps,
     inputProps
   } = useColorField(otherProps, state, inputRef);
+
+  if (placeholder) {
+    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
+  }
 
   return (
     <TextFieldBase
