@@ -13,7 +13,6 @@
 import {AriaDatePickerProps, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState} from '@react-stately/datepicker';
-import {focusManagerSymbol} from './useDateRangePicker';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 import {mergeProps, useDescription} from '@react-aria/utils';
 import {useDatePickerGroup} from './useDatePickerGroup';
