@@ -80,7 +80,7 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
 };
 
 const TableContext = React.createContext<TableState<unknown>>(null);
-function useTableContext() {
+export function useTableContext() {
   return useContext(TableContext);
 }
 
@@ -131,13 +131,13 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       : DEFAULT_HEADER_HEIGHT[scale],
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
-      : null,
-    getColumnWidth: state.getColumnWidth
+      : null
   }),
-    [props.overflowMode, scale, density, state.getColumnWidth]
+    [props.overflowMode, scale, density]
   );
   let {direction} = useLocale();
   layout.collection = state.collection;
+  layout.getColumnWidth = state.getColumnWidth;
 
   let {gridProps} = useTable({
     ...props,
@@ -309,13 +309,14 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         renderView={renderView}
         renderWrapper={renderWrapper}
         setTableWidth={state.setTableWidth}
-        domRef={domRef} />
+        domRef={domRef}
+        getColumnWidth={state.getColumnWidth} />
     </TableContext.Provider>
   );
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, setTableWidth, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, setTableWidth, getColumnWidth, ...otherProps}) {
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
   let bodyRef = useRef<HTMLDivElement>();
@@ -351,6 +352,11 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       });
     }
   }, state, domRef);
+
+  // If columnwidths change, need to relayout.
+  useLayoutEffect(() => {
+    state.virtualizer.relayoutNow({sizeChanged: true});
+  }, [getColumnWidth, state.virtualizer]);
 
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
   let visibleRect = state.virtualizer.visibleRect;
@@ -532,7 +538,7 @@ function ResizableTableColumnHeader({item, state}) {
           </Item>
         </Menu>
       </MenuTrigger>
-      <Resizer ref={ref} state={state} item={item} />
+      <Resizer ref={ref} item={item} />
     </>
   );
 }

@@ -326,11 +326,9 @@ export class Virtualizer<T extends object, V, W> {
     reusableView.rendered = this._renderContent(type, reusableView.content);
   }
 
-  private _renderContent(type: string, content: any) {
+  private _renderContent(type: string, content: T) {
     let cached = this._renderedContent.get(content);
-    // always need to rerender columns so that the resizer aria-values gets updated correctly
-    const isResizableColumn = type === 'column' && content.props?.allowsResizing;
-    if (cached != null && !isResizableColumn) {
+    if (cached != null) {
       return cached;
     }
 
@@ -663,9 +661,7 @@ export class Virtualizer<T extends object, V, W> {
         }
 
         let item = this.getItem(visibleLayoutInfos.get(key).key);
-        // always need to rerender columns so that the resizer aria-values get updated
-        const isResizableColumn = view.viewType === 'column' && view.content.props?.allowsResizing;
-        if (view.content === item && !isResizableColumn) {
+        if (view.content === item) {
           toUpdate.delete(key);
         } else {
           // If the view type changes, delete and recreate the view instead of updating
@@ -747,11 +743,6 @@ export class Virtualizer<T extends object, V, W> {
 
     for (let key of toUpdate) {
       let view = currentlyVisible.get(key) as ReusableView<T, V>;
-      if (!view.layoutInfo) {
-        let layoutInfo = visibleLayoutInfos.get(key);
-        view.layoutInfo = layoutInfo;
-      }
-
       this._renderedContent.delete(key);
       this._renderView(view);
     }
@@ -791,9 +782,6 @@ export class Virtualizer<T extends object, V, W> {
     // method to build the final tree.
     let viewsByParentKey = new Map([[null, []]]);
     for (let view of this._children) {
-      if (!view.layoutInfo) {
-        return;
-      }
       if (!viewsByParentKey.has(view.layoutInfo.parentKey)) {
         viewsByParentKey.set(view.layoutInfo.parentKey, []);
       }
@@ -845,9 +833,6 @@ export class Virtualizer<T extends object, V, W> {
     if (this._transaction) {
       for (let view of this._transaction.toRemove.values()) {
         let cur = view.layoutInfo;
-        if (!cur) {
-          return;
-        }
         let layoutInfo = this.layout.getLayoutInfo(cur.key);
         if (this._applyLayoutInfo(view, layoutInfo)) {
           updated = true;
@@ -856,9 +841,6 @@ export class Virtualizer<T extends object, V, W> {
 
       for (let view of this._transaction.removed.values()) {
         let cur = view.layoutInfo;
-        if (!cur) {
-          return;
-        }
         let layoutInfo = this._transaction.finalLayoutInfo.get(cur.key) || cur;
         layoutInfo = this.layout.getFinalLayoutInfo(layoutInfo.copy());
         if (this._applyLayoutInfo(view, layoutInfo)) {

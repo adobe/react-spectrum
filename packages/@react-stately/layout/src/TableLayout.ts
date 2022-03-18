@@ -17,10 +17,6 @@ import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 import {TableCollection} from '@react-types/table';
 
 
-type TableLayoutOptions<T> = ListLayoutOptions<T> & {
-  getColumnWidth: (key: Key) => number
-}
-
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
   lastCollection: TableCollection<T>;
@@ -29,9 +25,8 @@ export class TableLayout<T> extends ListLayout<T> {
   wasLoading = false;
   isLoading = false;
 
-  constructor(options: TableLayoutOptions<T>) {
+  constructor(options: ListLayoutOptions<T>) {
     super(options);
-    this.getColumnWidth = options.getColumnWidth;
     this.stickyColumnIndices = [];
   }
 

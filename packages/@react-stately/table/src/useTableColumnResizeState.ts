@@ -3,7 +3,6 @@ import {ColumnProps} from '@react-types/table';
 import {getContentWidth, getDynamicColumnWidths, getMaxWidth, getMinWidth, isStatic, parseStaticWidth} from './utils';
 import {GridNode} from '@react-types/grid';
 import {Key, MutableRefObject, useCallback, useRef, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
 
 export interface AffectedColumnWidth {
   /** The column key. */
@@ -49,7 +48,7 @@ export interface ColumnResizeStateProps<T> {
 
 export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): ColumnResizeState<T> {
   const {columns, getDefaultWidth, tableWidth: defaultTableWidth = null} = props;
-  const columnsRef = useRef<GridNode<T>[]>();
+  const columnsRef = useRef<GridNode<T>[]>([]);
   const tableWidth = useRef<number>(defaultTableWidth);
   const isResizing = useRef<boolean>(null);
   const startResizeContentWidth = useRef<number>();
@@ -103,12 +102,15 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
     return widths;
   }, [getStaticAndDynamicColumns, getResolvedColumnWidth]);
 
+
+  const prevColKeys = columnsRef.current.map(col => col.key);
+  const colKeys = columns.map(col => col.key);
   // if the columns change, need to rebuild widths.
-  useLayoutEffect(() => {
+  if (!colKeys.every((col, i) => col === prevColKeys[i])) {
     columnsRef.current = columns;
     const widths = buildColumnWidths(columns, tableWidth.current);
     setColumnWidthsForRef(widths);
-  }, [columns, buildColumnWidths]);
+  }
 
   function setTableWidth(width: number) {
     if (width && width !== tableWidth.current) {
