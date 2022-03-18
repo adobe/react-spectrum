@@ -27,7 +27,7 @@ export function useTableColumnResize(state, item, ref): any {
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
       if (e.key === 'Tab') {
-        // useKeyboard stops propagation by default. We want to continue propagation for tab
+        // useKeyboard stops propagation by default. We want to continue propagation for tab so focus leaves the table
         e.continuePropagation();
       }
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
