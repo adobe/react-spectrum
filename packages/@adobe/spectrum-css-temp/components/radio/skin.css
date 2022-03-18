@@ -191,15 +191,6 @@ governing permissions and limitations under the License.
 }
 
 @media (forced-colors: active) {
-  /* .spectrum-Radio-input {
-    &:focus-ring + .spectrum-Radio-button {
-      forced-color-adjust: none;
-
-      &:before {
-        background-color: ButtonFace;
-      }
-    }
-  } */
   .spectrum-Radio {
     forced-color-adjust: none;
     --spectrum-radio-circle-border-color-error-key-focus: ButtonText;
