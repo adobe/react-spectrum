@@ -43,7 +43,6 @@ let onKeyDown = jest.fn();
 
 let defaultProps = {
   label: 'Test',
-  placeholder: 'Select a topic...',
   onSelectionChange,
   onOpenChange,
   onInputChange,
@@ -276,7 +275,6 @@ describe('ComboBox', function () {
     let {getAllByText, getByRole} = renderComboBox();
 
     let combobox = getByRole('combobox');
-    expect(combobox).toHaveAttribute('placeholder', 'Select a topic...');
     expect(combobox).toHaveAttribute('autoCorrect', 'off');
     expect(combobox).toHaveAttribute('spellCheck', 'false');
     expect(combobox).toHaveAttribute('autoComplete', 'off');
@@ -3567,7 +3565,7 @@ describe('ComboBox', function () {
 
       expect(button).toHaveAttribute('aria-haspopup', 'dialog');
       expect(button).toHaveAttribute('aria-expanded', 'false');
-      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText(defaultProps.placeholder).id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${button.getElementsByTagName('span')[0].id}`);
     });
 
     it('button should be labelled by external label', function () {

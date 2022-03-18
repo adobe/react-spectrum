@@ -85,11 +85,13 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name renders with placeholder text', ({Name, Component}) => {
+  `('$Name renders with placeholder text and shows warning', ({Name, Component}) => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let tree = renderComponent(Component, {placeholder: inputText, 'aria-label': 'mandatory label'});
     expect(tree.getByPlaceholderText(inputText)).toBeTruthy();
     let input = tree.getByTestId(testId);
     expect(input.placeholder).toBe(inputText);
+    expect(spyWarn).toHaveBeenCalledWith(`Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/${Name.replace('v3 ', '')}.html#help-text`);
   });
 
   it.each`
