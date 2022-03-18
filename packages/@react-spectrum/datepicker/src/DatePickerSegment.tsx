@@ -11,8 +11,8 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {DateFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerBase, DateValue} from '@react-types/datepicker';
-import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import {NumberParser} from '@internationalized/number';
 import React, {useMemo, useRef} from 'react';
 import styles from './index.css';
@@ -21,7 +21,7 @@ import {useLocale} from '@react-aria/i18n';
 
 interface DatePickerSegmentProps extends DatePickerBase<DateValue> {
   segment: DateSegment,
-  state: DatePickerFieldState
+  state: DateFieldState
 }
 
 interface LiteralSegmentProps {

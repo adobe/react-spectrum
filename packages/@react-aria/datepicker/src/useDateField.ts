@@ -12,10 +12,10 @@
 
 import {AriaDatePickerProps, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
-import {DatePickerFieldState} from '@react-stately/datepicker';
+import {DateFieldState} from '@react-stately/datepicker';
+import {focusManagerSymbol} from './useDateRangePicker';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 import {mergeProps, useDescription} from '@react-aria/utils';
-import {useDateFormatter} from '@react-aria/i18n';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -42,7 +42,7 @@ interface HookData {
   focusManager: FocusManager
 }
 
-export const hookData = new WeakMap<DatePickerFieldState, HookData>();
+export const hookData = new WeakMap<DateFieldState, HookData>();
 
 // Private props that we pass from useDatePicker/useDateRangePicker.
 // Ideally we'd use a Symbol for this, but React doesn't support them: https://github.com/facebook/react/issues/7552
@@ -54,7 +54,7 @@ export const focusManagerSymbol = '__focusManager_' + Date.now();
  * A date field allows users to enter and edit date and time values using a keyboard.
  * Each part of a date value is displayed in an individually editable segment.
  */
-export function useDateField<T extends DateValue>(props: DateFieldProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+export function useDateField<T extends DateValue>(props: DateFieldProps<T>, state: DateFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
@@ -68,8 +68,7 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
     }
   });
 
-  let formatter = useDateFormatter(state.getFormatOptions({month: 'long'}));
-  let descProps = useDescription(state.value ? formatter.format(state.dateValue) : null);
+  let descProps = useDescription(state.formatValue({month: 'long'}));
 
   // If within a date picker or date range picker, the date field will have role="presentation" and an aria-describedby
   // will be passed in that references the value (e.g. entire range). Otherwise, add the field's value description.
@@ -131,6 +130,6 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
  * A time field allows users to enter and edit time values using a keyboard.
  * Each part of a time value is displayed in an individually editable segment.
  */
-export function useTimeField<T extends TimeValue>(props: AriaTimeFieldProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+export function useTimeField<T extends TimeValue>(props: AriaTimeFieldProps<T>, state: DateFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
   return useDateField(props, state, ref);
 }
