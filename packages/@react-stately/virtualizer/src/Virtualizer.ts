@@ -328,7 +328,7 @@ export class Virtualizer<T extends object, V, W> {
 
   private _renderContent(type: string, content: any) {
     let cached = this._renderedContent.get(content);
-    // always need to rerender columns so that the resizer stuff gets rerendered correctly
+    // always need to rerender columns so that the resizer aria-values gets updated correctly
     const isResizableColumn = type === 'column' && content.props?.allowsResizing;
     if (cached != null && !isResizableColumn) {
       return cached;
