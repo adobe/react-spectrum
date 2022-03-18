@@ -1436,14 +1436,14 @@ describe('SearchAutocomplete', function () {
     });
 
     it('button should be labelled by external label', function () {
-      let {getByRole, getByText} = renderSearchAutocomplete({label: null, 'aria-labelledby': 'label-id'});
+      let {getByRole} = renderSearchAutocomplete({label: null, 'aria-labelledby': 'label-id'});
       let button = getByRole('button');
 
       expect(button).toHaveAttribute('aria-labelledby', `label-id ${button.getElementsByTagName('span')[0].id}`);
     });
 
     it('button should be labelled by aria-label', function () {
-      let {getByRole, getByText} = renderSearchAutocomplete({label: null, 'aria-label': 'Label'});
+      let {getByRole} = renderSearchAutocomplete({label: null, 'aria-label': 'Label'});
       let button = getByRole('button');
 
       expect(button).toHaveAttribute('aria-label', 'Label');
