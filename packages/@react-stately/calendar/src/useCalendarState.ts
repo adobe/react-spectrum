@@ -15,6 +15,7 @@ import {
   Calendar,
   CalendarDate,
   DateDuration,
+  DateFormatter,
   GregorianCalendar,
   isSameDay,
   toCalendar,
@@ -24,7 +25,6 @@ import {
 import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
-import {useDateFormatter} from '@react-aria/i18n';
 import {useMemo, useRef, useState} from 'react';
 
 interface CalendarStateOptions extends CalendarProps<DateValue> {
@@ -51,7 +51,7 @@ interface CalendarStateOptions extends CalendarProps<DateValue> {
  * A calendar displays one or more date grids and allows users to select a single date.
  */
 export function useCalendarState(props: CalendarStateOptions): CalendarState {
-  let defaultFormatter = useDateFormatter();
+  let defaultFormatter = useMemo(() => new DateFormatter(props.locale), [props.locale]);
   let resolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
     locale,

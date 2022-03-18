@@ -13,7 +13,6 @@
 import {AriaDatePickerProps, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState} from '@react-stately/datepicker';
-import {focusManagerSymbol} from './useDateRangePicker';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 import {mergeProps, useDescription} from '@react-aria/utils';
 import {useDatePickerGroup} from './useDatePickerGroup';
@@ -36,12 +35,18 @@ interface DateFieldAria {
 
 // Data that is passed between useDateField and useDateSegment.
 interface HookData {
+  ariaLabel: string,
   ariaLabelledBy: string,
   ariaDescribedBy: string,
   focusManager: FocusManager
 }
 
 export const hookData = new WeakMap<DateFieldState, HookData>();
+
+// Private props that we pass from useDatePicker/useDateRangePicker.
+// Ideally we'd use a Symbol for this, but React doesn't support them: https://github.com/facebook/react/issues/7552
+export const roleSymbol = '__role_' + Date.now();
+export const focusManagerSymbol = '__focusManager_' + Date.now();
 
 /**
  * Provides the behavior and accessibility implementation for a date field component.
@@ -64,18 +69,40 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
 
   let descProps = useDescription(state.formatValue({month: 'long'}));
 
-  let segmentLabelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
-  let describedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
+  // If within a date picker or date range picker, the date field will have role="presentation" and an aria-describedby
+  // will be passed in that references the value (e.g. entire range). Otherwise, add the field's value description.
+  let describedBy = props[roleSymbol] === 'presentation'
+    ? fieldProps['aria-describedby']
+    : [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
   let propsFocusManager = props[focusManagerSymbol];
   let focusManager = useMemo(() => propsFocusManager || createFocusManager(ref), [propsFocusManager, ref]);
 
+  // Pass labels and other information to segments.
   hookData.set(state, {
-    ariaLabelledBy: segmentLabelledBy,
+    ariaLabel: props['aria-label'],
+    ariaLabelledBy: [props['aria-labelledby'], labelProps.id].filter(Boolean).join(' ') || undefined,
     ariaDescribedBy: describedBy,
     focusManager
   });
 
   let autoFocusRef = useRef(props.autoFocus);
+
+  // When used within a date picker or date range picker, the field gets role="presentation"
+  // rather than role="group". Since the date picker/date range picker already has a role="group"
+  // with a label and description, and the segments are already labeled by this as well, this
+  // avoids very verbose duplicate announcements.
+  let fieldDOMProps: HTMLAttributes<HTMLElement>;
+  if (props[roleSymbol] === 'presentation') {
+    fieldDOMProps = {
+      role: 'presentation'
+    };
+  } else {
+    fieldDOMProps = mergeProps(fieldProps, {
+      role: 'group',
+      'aria-disabled': props.isDisabled || undefined,
+      'aria-describedby': describedBy
+    });
+  }
 
   useEffect(() => {
     if (autoFocusRef.current) {
@@ -91,11 +118,7 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(fieldProps, descProps, groupProps, focusWithinProps, {
-      role: 'group',
-      'aria-disabled': props.isDisabled || undefined,
-      'aria-describedby': describedBy
-    }),
+    fieldProps: mergeProps(fieldDOMProps, groupProps, focusWithinProps),
     descriptionProps,
     errorMessageProps
   };

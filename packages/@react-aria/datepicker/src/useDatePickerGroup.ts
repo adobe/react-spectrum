@@ -8,7 +8,7 @@ import {usePress} from '@react-aria/interactions';
 export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<HTMLElement>) {
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
-    if (e.altKey && e.key === 'ArrowDown' && 'setOpen' in state) {
+    if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp') && 'setOpen' in state) {
       e.preventDefault();
       e.stopPropagation();
       state.setOpen(true);

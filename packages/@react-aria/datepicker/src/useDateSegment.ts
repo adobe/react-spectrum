@@ -11,7 +11,7 @@
  */
 
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId} from '@react-aria/utils';
+import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId, useLabels} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
@@ -34,7 +34,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
   let displayNames = useDisplayNames();
-  let {ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state);
+  let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state);
 
   let textValue = segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
@@ -48,7 +48,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   if (segment.type === 'month') {
     let monthTextValue = monthDateFormatter.format(state.dateValue);
     textValue = monthTextValue !== textValue ? `${textValue} – ${monthTextValue}` : monthTextValue;
-  } else if (segment.type === 'hour' || segment.type === 'dayPeriod') {
+  } else if (segment.type === 'hour') {
     textValue = hourDateFormatter.format(state.dateValue);
   }
 
@@ -341,6 +341,14 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let id = useId();
   let isEditable = !state.isDisabled && !state.isReadOnly && segment.isEditable;
 
+  // Prepend the label passed from the field to each segment name.
+  // This is needed because VoiceOver on iOS does not announce groups.
+  let name = segment.type === 'literal' ? '' : displayNames.of(segment.type);
+  let labelProps = useLabels({
+    'aria-label': (ariaLabel ? ariaLabel + ' ' : '') + name,
+    'aria-labelledby': ariaLabelledBy
+  });
+
   // Literal segments should not be visible to screen readers. We don't really need any of the above,
   // but the rules of hooks mean hooks cannot be conditional so we have to put this condition here.
   if (segment.type === 'literal') {
@@ -352,12 +360,10 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   }
 
   return {
-    segmentProps: mergeProps(spinButtonProps, pressProps, {
+    segmentProps: mergeProps(spinButtonProps, pressProps, labelProps, {
       id,
       ...touchPropOverrides,
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
-      'aria-label': displayNames.of(segment.type),
-      'aria-labelledby': `${ariaLabelledBy} ${id}`,
       'aria-describedby': ariaDescribedBy,
       'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
       'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
