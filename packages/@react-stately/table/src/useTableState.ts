@@ -31,6 +31,8 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   sort(columnKey: Key, direction?: 'ascending' | 'descending'): void,
   /** A map of all the column widths by key. */
   columnWidths: MutableRefObject<Map<Key, number>>,
+  /** Boolean for if a column is being resized. */
+  isResizingColumn: boolean,
   /** Getter for column width. */
   getColumnWidth(key: Key): number,
     /** Getter for column min width. */

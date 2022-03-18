@@ -29,7 +29,9 @@ export interface ColumnResizeState<T> {
     /** Getter for column min width. */
   getColumnMinWidth(key: Key): number,
     /** Getter for column max widths. */
-  getColumnMaxWidth(key: Key): number
+  getColumnMaxWidth(key: Key): number,
+  /** Boolean for if a column is being resized. */
+  isResizingColumn: boolean
 }
 
 export interface ColumnResizeStateProps<T> {
@@ -214,6 +216,7 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
     onColumnResizeEnd,
     getColumnWidth,
     getColumnMinWidth,
-    getColumnMaxWidth
+    getColumnMaxWidth,
+    isResizingColumn: isResizing.current
   };
 }

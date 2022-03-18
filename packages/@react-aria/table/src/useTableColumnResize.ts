@@ -18,6 +18,8 @@ import {useRef} from 'react';
 
 export function useTableColumnResize(state, item, ref): any {
   const stateRef = useRef(null);
+  // keep track of what the cursor on the body is so it can be restored back to that when done resizing
+  const cursor = useRef(null);
   stateRef.current = state;
 
   let {direction} = useLocale();
@@ -43,6 +45,8 @@ export function useTableColumnResize(state, item, ref): any {
     onMoveStart() {
       stateRef.current.onColumnResizeStart();
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
+      cursor.current = document.body.style.cursor;
+      document.body.style.setProperty('cursor', 'col-resize');
     },
     onMove({deltaX, pointerType}) {
       if (direction === 'rtl') {
@@ -60,6 +64,7 @@ export function useTableColumnResize(state, item, ref): any {
     onMoveEnd() {
       stateRef.current.onColumnResizeEnd();
       columnResizeWidthRef.current = 0;
+      document.body.style.cursor = cursor.current;
     }
   });
 

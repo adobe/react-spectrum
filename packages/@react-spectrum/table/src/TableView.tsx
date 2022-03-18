@@ -294,7 +294,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
             `spectrum-Table--${density}`,
             {
               'spectrum-Table--quiet': isQuiet,
-              'spectrum-Table--wrap': props.overflowMode === 'wrap'
+              'spectrum-Table--wrap': props.overflowMode === 'wrap',
+              'spectrum-Table--resizingColumn': state.isResizingColumn
             },
             classNames(
               stylesOverrides,

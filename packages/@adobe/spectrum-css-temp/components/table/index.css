@@ -86,6 +86,13 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
+.spectrum-Table--resizingColumn {
+  .spectrum-Table-row,
+  .spectrum-Table-headCell {
+    cursor: col-resize;
+  }
+}
+
 .spectrum-Table-columnResizer {
   display: flex;
   justify-content: end;
