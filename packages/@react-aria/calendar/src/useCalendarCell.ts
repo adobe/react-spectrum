@@ -12,7 +12,7 @@
 
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {focusWithoutScrolling} from '@react-aria/utils';
+import {focusWithoutScrolling, useDescription} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -117,8 +117,8 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
   // When a cell is focused and this is a range calendar, add a prompt to help
   // screenreader users know that they are in a range selection mode.
+  let rangeSelectionPrompt = '';
   if ('anchorDate' in state && isFocused && !state.isReadOnly && isSelectable) {
-    let rangeSelectionPrompt = '';
 
     // If selection has started add "click to finish selecting range"
     if (state.anchorDate) {
@@ -127,12 +127,9 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     } else {
       rangeSelectionPrompt = formatMessage('startRangeSelectionPrompt');
     }
-
-    // Append to aria-label
-    if (rangeSelectionPrompt) {
-      label = `${label} (${rangeSelectionPrompt})`;
-    }
   }
+
+  let descriptionProps = useDescription(rangeSelectionPrompt);
 
   let isAnchorPressed = useRef(false);
   let isRangeBoundaryPressed = useRef(false);
@@ -270,7 +267,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       'aria-disabled': !isSelectable || null,
       'aria-selected': isSelectable ? isSelected : null
     },
-    buttonProps: mergeProps(pressProps, {
+    buttonProps: mergeProps(pressProps, descriptionProps, {
       onFocus() {
         if (!isDisabled) {
           state.setFocusedDate(date);

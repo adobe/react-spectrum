@@ -237,13 +237,17 @@ describe('RangeCalendar', () => {
       let grid = getByRole('grid');
       let cell = getByLabelText('today', {exact: false});
       expect(grid).not.toHaveAttribute('aria-activedescendant');
-      expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} (Click to start selecting date range)`);
+      expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
+      expect(cell).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(cell.getAttribute('aria-describedby'))).toHaveTextContent('Click to start selecting date range');
 
       // enter selection mode
       fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell.parentElement).toHaveAttribute('aria-selected');
-      expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} selected (Click to finish selecting date range)`);
+      expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} selected`);
+      expect(cell).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(cell.getAttribute('aria-describedby'))).toHaveTextContent('Click to finish selecting date range');
     });
 
     it.each`
@@ -1086,7 +1090,7 @@ describe('RangeCalendar', () => {
 
       act(() => userEvent.click(nextButton));
 
-      cell = getByRole('button', {name: 'Sunday, May 1, 2022 selected (Click to finish selecting date range)'});
+      cell = getByRole('button', {name: 'Sunday, May 1, 2022 selected'});
       expect(cell).not.toHaveAttribute('aria-disabled');
       expect(cell).toHaveAttribute('tabindex', '0');
 
