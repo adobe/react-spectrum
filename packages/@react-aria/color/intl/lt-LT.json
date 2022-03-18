@@ -1,5 +1,5 @@
 {
+  "colorPicker": "Spalvos parinkiklis",
   "twoDimensionalSlider": "2D slankiklis",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorNameAndValue": "{name}: {value}"
 }

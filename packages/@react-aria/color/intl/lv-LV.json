@@ -1,5 +1,5 @@
 {
+  "colorPicker": "Krāsu izvēle",
   "twoDimensionalSlider": "Plaknes slīdnis",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorNameAndValue": "{name}: {value}"
 }

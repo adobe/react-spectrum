@@ -1,5 +1,5 @@
 {
+  "colorPicker": "Farvevælger",
   "twoDimensionalSlider": "2D-skyder",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorNameAndValue": "{name}: {value}"
 }

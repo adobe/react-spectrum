@@ -1,5 +1,5 @@
 {
+  "colorPicker": "Selector culoare",
   "twoDimensionalSlider": "Cursor 2D",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorNameAndValue": "{name}: {value}"
 }

@@ -1,5 +1,5 @@
 {
+  "colorPicker": "Fargevelger",
   "twoDimensionalSlider": "2D-glidebryter",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorNameAndValue": "{name}: {value}"
 }

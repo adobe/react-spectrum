@@ -1,5 +1,5 @@
 {
+  "colorPicker": "Избор на цвят",
   "twoDimensionalSlider": "2D плъзгач",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorNameAndValue": "{name}: {value}"
 }

@@ -17,7 +17,7 @@ import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners,
 import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useColorAreaGradient} from './useColorAreaGradient';
-import {useKeyboard, useMove} from '@react-aria/interactions';
+import {useFocusWithin, useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -52,7 +52,8 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     isDisabled,
     inputXRef,
     inputYRef,
-    containerRef
+    containerRef,
+    'aria-label': ariaLabel
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -87,6 +88,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
       e.preventDefault();
       // remember to set this and unset it so that onChangeEnd is fired
       stateRef.current.setDragging(true);
+      valueChangedViaKeyboard.current = true;
       switch (e.key) {
         case 'PageUp':
           stateRef.current.incrementY(stateRef.current.yChannelPageStep);
@@ -135,6 +137,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
         currentPosition.current = getThumbPosition();
       }
       let {width, height} = containerRef.current.getBoundingClientRect();
+      let valueChanged = deltaX !== 0 || deltaY !== 0;
       if (pointerType === 'keyboard') {
         let deltaXValue = shiftKey && xChannelPageStep > xChannelStep ? xChannelPageStep : xChannelStep;
         let deltaYValue = shiftKey && yChannelPageStep > yChannelStep ? yChannelPageStep : yChannelStep;
@@ -147,8 +150,9 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
         } else if (deltaY < 0) {
           incrementY(deltaYValue);
         }
+        valueChangedViaKeyboard.current = valueChanged;
         // set the focused input based on which axis has the greater delta
-        focusedInputRef.current = (deltaX !== 0 || deltaY !== 0) && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
+        focusedInputRef.current = valueChanged && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
       } else {
         currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
         currentPosition.current.y += deltaY / height;
@@ -163,6 +167,15 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     }
   };
   let {moveProps: movePropsThumb} = useMove(moveHandler);
+
+  let valueChangedViaKeyboard = useRef<boolean>(false);
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithinChange: (value:boolean) => {
+      if (value === false) {
+        valueChangedViaKeyboard.current = false;
+      }
+    }
+  });
 
   let currentPointer = useRef<number | null | undefined>(undefined);
   let isOnColorArea = useRef<boolean>(false);
@@ -187,6 +200,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
   let onThumbDown = (id: number | null) => {
     if (!state.isDragging) {
       currentPointer.current = id;
+      valueChangedViaKeyboard.current = false;
       focusInput();
       state.setDragging(true);
       if (typeof PointerEvent !== 'undefined') {
@@ -201,6 +215,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
   let onThumbUp = (e) => {
     let id = e.pointerId ?? e.changedTouches?.[0].identifier;
     if (id === currentPointer.current) {
+      valueChangedViaKeyboard.current = false;
       focusInput();
       state.setDragging(false);
       currentPointer.current = undefined;
@@ -225,6 +240,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     }
     if (x >= 0 && x <= 1 && y >= 0 && y <= 1 && !state.isDragging && currentPointer.current === undefined) {
       isOnColorArea.current = true;
+      valueChangedViaKeyboard.current = false;
       currentPointer.current = id;
       state.setColorFromPoint(x, y);
 
@@ -244,6 +260,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     let id = e.pointerId ?? e.changedTouches?.[0].identifier;
     if (isOnColorArea.current && id === currentPointer.current) {
       isOnColorArea.current = false;
+      valueChangedViaKeyboard.current = false;
       currentPointer.current = undefined;
       state.setDragging(false);
       focusInput();
@@ -295,24 +312,38 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
           onThumbDown(e.changedTouches[0].identifier);
         }
       })
-  }, keyboardProps, movePropsThumb);
+  }, focusWithinProps, keyboardProps, movePropsThumb);
 
   let isMobile = isIOS() || isAndroid();
 
+  function getAriaLabelForChannel(channel: ColorChannel): string {
+    return isMobile ? state.value.getChannelName(channel, locale) : formatMessage('colorPicker');
+  }
+
+  let colorPickerLabel = formatMessage('colorPicker');
+  let xChannelLabel = getAriaLabelForChannel(xChannel);
+  let yChannelLabel = getAriaLabelForChannel(yChannel);
+
   let xInputLabellingProps = useLabels({
     ...props,
-    'aria-label': isMobile  ? state.value.getChannelName(xChannel, locale) : formatMessage('x/y', {x: state.value.getChannelName(xChannel, locale), y: state.value.getChannelName(yChannel, locale)})
+    'aria-label': ariaLabel ? `${ariaLabel} ${xChannelLabel}` : xChannelLabel
   });
 
   let yInputLabellingProps = useLabels({
     ...props,
-    'aria-label': isMobile ? state.value.getChannelName(yChannel, locale) : formatMessage('x/y', {x: state.value.getChannelName(xChannel, locale), y: state.value.getChannelName(yChannel, locale)})
+    'aria-label': ariaLabel ? `${ariaLabel} ${yChannelLabel}` : yChannelLabel
   });
 
-  let colorAriaLabellingProps = useLabels(props);
+  let colorAriaLabellingProps = useLabels(
+    {
+      ...props,
+      'aria-label': ariaLabel ? `${ariaLabel} ${colorPickerLabel}` : undefined
+    },
+    isMobile ? colorPickerLabel : undefined
+  );
 
   let getValueTitle = () => {
-    const channels: [ColorChannel, ColorChannel, ColorChannel] = state.value.getColorChannels();
+    const channels: Array<ColorChannel> = state.value.getColorChannels();
     const colorNamesAndValues = [];
     channels.forEach(channel =>
       colorNamesAndValues.push(
@@ -369,7 +400,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
       step: xChannelStep,
       'aria-roledescription': ariaRoleDescription,
       'aria-valuetext': (
-        isMobile ?
+        isMobile || valueChangedViaKeyboard.current ?
           formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)})
           :
           [
@@ -394,7 +425,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
       step: yChannelStep,
       'aria-roledescription': ariaRoleDescription,
       'aria-valuetext': (
-        isMobile ?
+        isMobile || valueChangedViaKeyboard.current ?
           formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
           :
           [

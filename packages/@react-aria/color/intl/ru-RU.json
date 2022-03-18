@@ -1,5 +1,5 @@
 {
+  "colorPicker": "Палитра цветов",
   "twoDimensionalSlider": "Двумерный ползунок",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorNameAndValue": "{name}: {value}"
 }

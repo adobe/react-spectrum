@@ -1,5 +1,5 @@
 {
+  "colorPicker": "Birač boje",
   "twoDimensionalSlider": "2D kliznik",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorNameAndValue": "{name}: {value}"
 }

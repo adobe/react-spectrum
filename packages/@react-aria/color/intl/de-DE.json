@@ -1,5 +1,5 @@
 {
+  "colorPicker": "Farbwähler",
   "twoDimensionalSlider": "2D-Schieberegler",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorNameAndValue": "{name}: {value}"
 }

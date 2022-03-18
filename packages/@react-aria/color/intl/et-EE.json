@@ -1,5 +1,5 @@
 {
+  "colorPicker": "Värvivalija",
   "twoDimensionalSlider": "2D-liugur",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorNameAndValue": "{name}: {value}"
 }
