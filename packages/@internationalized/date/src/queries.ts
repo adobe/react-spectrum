@@ -237,12 +237,20 @@ export function getWeeksInMonth(date: DateValue, locale: string): number {
 
 /** Returns the lesser of the two provider dates. */
 export function minDate<A extends DateValue, B extends DateValue>(a: A, b: B): A | B {
-  return a.compare(b) <= 0 ? a : b;
+  if (a && b) {
+    return a.compare(b) <= 0 ? a : b;
+  }
+
+  return a || b;
 }
 
 /** Returns the greater of the two provider dates. */
 export function maxDate<A extends DateValue, B extends DateValue>(a: A, b: B): A | B {
-  return a.compare(b) >= 0 ? a : b;
+  if (a && b) {
+    return a.compare(b) >= 0 ? a : b;
+  }
+
+  return a || b;
 }
 
 const WEEKEND_DATA = {

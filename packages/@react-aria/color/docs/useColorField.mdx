@@ -46,7 +46,6 @@ color fields that can be styled as needed.
 * Support for parsing and formatting a hex color value
 * Validates keyboard entry as the user types so that only valid hex characters are accepted
 * Supports using the arrow keys to increment and decrement the value
-* Support for customizing the step value for incrementing and decrementing
 * Exposed to assistive technology as a `textbox` via ARIA
 * Visual and ARIA labeling support
 * Follows the [spinbutton](https://www.w3.org/TR/wai-aria-practices-1.2/#spinbutton) ARIA pattern
@@ -128,14 +127,6 @@ function Example() {
     </>
   );
 }
-```
-
-### Step
-
-The `step` prop can be used to make a `ColorField` snap its value to specific increments.
-
-```tsx example
-<ColorField defaultValue="#7f007f" step={16} />
 ```
 
 ### Disabled and read only

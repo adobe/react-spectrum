@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
+import {DateFieldState, DateSegment} from '@react-stately/datepicker';
 import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
@@ -30,7 +30,7 @@ interface DateSegmentAria {
  * A date segment displays an individual unit of a date and time, and allows users to edit
  * the value by typing or using the arrow keys to increment and decrement.
  */
-export function useDateSegment(segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
+export function useDateSegment(segment: DateSegment, state: DateFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
   let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
   let displayNames = useDisplayNames();

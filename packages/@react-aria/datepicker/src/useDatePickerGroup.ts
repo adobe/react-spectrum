@@ -1,11 +1,11 @@
-import {DatePickerFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
+import {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {KeyboardEvent} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
 import {usePress} from '@react-aria/interactions';
 
-export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DatePickerFieldState, ref: RefObject<HTMLElement>) {
+export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<HTMLElement>) {
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
     if (e.altKey && e.key === 'ArrowDown' && 'setOpen' in state) {

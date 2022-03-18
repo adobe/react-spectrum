@@ -63,9 +63,6 @@ export interface ColorAreaState {
 }
 
 const DEFAULT_COLOR = parseColor('#ffffff');
-const RGBSet: Set<ColorChannel> = new Set(['red', 'green', 'blue']);
-let difference = <T>(a: Set<T>, b: Set<T>): Set<T> => new Set([...a].filter(x => !b.has(x)));
-
 /**
  * Provides state management for a color area component.
  * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
@@ -88,38 +85,10 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let valueRef = useRef(color);
   valueRef.current = color;
 
-  let channels = useMemo(() => {
-    if (!xChannel) {
-      switch (yChannel) {
-        case 'red':
-        case 'green':
-          xChannel = 'blue';
-          break;
-        case 'blue':
-          xChannel = 'red';
-          break;
-        default:
-          xChannel = 'blue';
-          yChannel = 'green';
-      }
-    } else if (!yChannel) {
-      switch (xChannel) {
-        case 'red':
-          yChannel = 'green';
-          break;
-        case 'blue':
-          yChannel = 'red';
-          break;
-        default:
-          xChannel = 'blue';
-          yChannel = 'green';
-      }
-    }
-    let xyChannels: Set<ColorChannel> = new Set([xChannel, yChannel]);
-    let zChannel = difference(RGBSet, xyChannels).values().next().value;
-
-    return {xChannel, yChannel, zChannel};
-  }, [xChannel, yChannel]);
+  let channels = useMemo(() =>
+    valueRef.current.getColorSpaceAxes({xChannel, yChannel}),
+    [xChannel, yChannel]
+  );
 
   let xChannelRange = color.getChannelRange(channels.xChannel);
   let yChannelRange = color.getChannelRange(channels.yChannel);
@@ -163,8 +132,6 @@ export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
     yValue,
     setYValue,
     setColorFromPoint(x: number, y: number) {
-      let {minValue: minValueX, maxValue: maxValueX} = color.getChannelRange(channels.xChannel);
-      let {minValue: minValueY, maxValue: maxValueY} = color.getChannelRange(channels.yChannel);
       let newXValue = minValueX + clamp(x, 0, 1) * (maxValueX - minValueX);
       let newYValue = minValueY + (1 - clamp(y, 0, 1)) * (maxValueY - minValueY);
       let newColor:Color;

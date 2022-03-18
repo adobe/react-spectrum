@@ -11,7 +11,7 @@
  */
 
 import {clamp, toFixedNumber} from '@react-stately/utils';
-import {ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
+import {ColorAxes, ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MessageDictionary} from '@internationalized/message';
@@ -71,6 +71,15 @@ abstract class Color implements IColor {
   }
 
   abstract getColorSpace(): ColorFormat
+  getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel, yChannel?: ColorChannel}): ColorAxes {
+    let {xChannel, yChannel} = xyChannels;
+    let xCh = xChannel || this.getColorChannels().find(c => c !== yChannel);
+    let yCh = yChannel || this.getColorChannels().find(c => c !== xCh);
+    let zCh = this.getColorChannels().find(c => c !== xCh && c !== yCh);
+
+    return {xChannel: xCh, yChannel: yCh, zChannel: zCh};
+  }
+  abstract getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
 
 const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
@@ -266,6 +275,11 @@ class RGBColor extends Color {
   getColorSpace(): ColorFormat {
     return 'rgb';
   }
+
+  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['red', 'green', 'blue'];
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
+    return RGBColor.colorChannels;
+  }
 }
 
 // X = <negative/positive number with/without decimal places>
@@ -398,6 +412,11 @@ class HSBColor extends Color {
 
   getColorSpace(): ColorFormat {
     return 'hsb';
+  }
+
+  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'brightness'];
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
+    return HSBColor.colorChannels;
   }
 }
 
@@ -533,5 +552,10 @@ class HSLColor extends Color {
 
   getColorSpace(): ColorFormat {
     return 'hsl';
+  }
+
+  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'lightness'];
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
+    return HSLColor.colorChannels;
   }
 }

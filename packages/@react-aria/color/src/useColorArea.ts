@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorAreaProps} from '@react-types/color';
+import {AriaColorAreaProps, ColorChannel} from '@react-types/color';
 import {ColorAreaState} from '@react-stately/color';
 import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import {useColorAreaGradient} from './useColorAreaGradient';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
@@ -69,9 +70,9 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
 
   let stateRef = useRef<ColorAreaState>(null);
   stateRef.current = state;
-  let {xChannel, yChannel} = stateRef.current.channels;
+  let {xChannel, yChannel, zChannel} = stateRef.current.channels;
   let xChannelStep = stateRef.current.xChannelStep;
-  let yChannelStep = stateRef.current.xChannelStep;
+  let yChannelStep = stateRef.current.yChannelStep;
 
   let currentPosition = useRef<{x: number, y: number}>(null);
 
@@ -310,11 +311,16 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
 
   let colorAriaLabellingProps = useLabels(props);
 
-  let getValueTitle = () =>  [
-    formatMessage('colorNameAndValue', {name: state.value.getChannelName('red', locale), value: state.value.formatChannelValue('red', locale)}),
-    formatMessage('colorNameAndValue', {name: state.value.getChannelName('green', locale), value: state.value.formatChannelValue('green', locale)}),
-    formatMessage('colorNameAndValue', {name: state.value.getChannelName('blue', locale), value: state.value.formatChannelValue('blue', locale)})
-  ].join(', ');
+  let getValueTitle = () => {
+    const channels: [ColorChannel, ColorChannel, ColorChannel] = state.value.getColorChannels();
+    const colorNamesAndValues = [];
+    channels.forEach(channel =>
+      colorNamesAndValues.push(
+        formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)})
+      )
+    );
+    return colorNamesAndValues.length ? colorNamesAndValues.join(', ') : null;
+  };
 
   let ariaRoleDescription = isMobile ? null : formatMessage('twoDimensionalSlider');
 
@@ -325,17 +331,33 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     pointerEvents: 'none'
   }});
 
+  let {
+    colorAreaStyleProps,
+    gradientStyleProps,
+    thumbStyleProps
+  } = useColorAreaGradient({
+    direction,
+    state,
+    xChannel,
+    zChannel,
+    isDisabled: props.isDisabled
+  });
+
+
   return {
     colorAreaProps: {
       ...colorAriaLabellingProps,
       ...colorAreaInteractions,
+      ...colorAreaStyleProps,
       role: 'group'
     },
     gradientProps: {
+      ...gradientStyleProps,
       role: 'presentation'
     },
     thumbProps: {
       ...thumbInteractions,
+      ...thumbStyleProps,
       role: 'presentation'
     },
     xInputProps: {
