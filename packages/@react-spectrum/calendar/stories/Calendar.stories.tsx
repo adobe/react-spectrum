@@ -166,7 +166,7 @@ function Example(props) {
         </Picker>
       </Flex>
       <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
-        <View maxWidth="100vw" overflow="auto">
+        <View maxWidth="100vw" padding="size-10" overflow="auto">
           <Calendar {...props} />
         </View>
       </Provider>
