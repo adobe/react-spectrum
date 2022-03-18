@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter, isInvalid} from './utils';
+import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from './types';
 import {DateRange, DateValue} from '@react-types/calendar';
@@ -110,6 +110,12 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
   let highlightedRange = anchorDate ? makeRange(anchorDate, calendar.focusedDate) : value && makeRange(value.start, value.end);
   let selectDate = (date: CalendarDate) => {
     if (props.isReadOnly) {
+      return;
+    }
+
+    date = constrainValue(date, min, max);
+    date = previousAvailableDate(date, calendar.visibleRange.start, props.isDateUnavailable);
+    if (!date) {
       return;
     }
 

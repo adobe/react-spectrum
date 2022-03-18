@@ -1115,7 +1115,7 @@ describe('RangeCalendar', () => {
       expect(cell2.parentElement).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('does not disabled dates not reachable from start date if allowsNonContiguousRanges is provider', () => {
+    it('does not disable dates not reachable from start date if allowsNonContiguousRanges is provider', () => {
       function Example() {
         let {locale} = useLocale();
         return (
@@ -1143,6 +1143,37 @@ describe('RangeCalendar', () => {
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
 
       expect(getByRole('button', {name: 'Sunday, December 5, 2021'}).parentElement).not.toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('selects the nearest available date when blurring the calendar', () => {
+      let onChange = jest.fn();
+      function Example() {
+        let {locale} = useLocale();
+        return (
+          <RangeCalendar
+            defaultValue={{start: new CalendarDate(2022, 3, 1), end: new CalendarDate(2022, 3, 5)}}
+            isDateUnavailable={date => isWeekend(date, locale)}
+            allowsNonContiguousRanges
+            onChange={onChange} />
+        );
+      }
+
+      let {getByRole} = render(<Example />);
+
+      let cell = getByRole('button', {name: 'Wednesday, March 9, 2022'});
+      act(() => userEvent.click(cell));
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+
+      act(() => type('PageDown'));
+
+      cell = getByRole('button', {name: 'Saturday, April 9, 2022'});
+      expect(document.activeElement).toBe(cell);
+      expect(cell).toHaveAttribute('aria-disabled', 'true');
+      expect(cell.parentElement).not.toHaveAttribute('aria-selected');
+
+      act(() => cell.blur());
+
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2022, 3, 9), end: new CalendarDate(2022, 4, 8)});
     });
   });
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid} from './utils';
+import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {
   Calendar,
   CalendarDate,
@@ -123,6 +123,12 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
   function setValue(newValue: CalendarDate) {
     if (!props.isDisabled && !props.isReadOnly) {
+      newValue = constrainValue(newValue, minValue, maxValue);
+      newValue = previousAvailableDate(newValue, startDate, props.isDateUnavailable);
+      if (!newValue) {
+        return;
+      }
+
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, value?.calendar || new GregorianCalendar());
