@@ -72,7 +72,6 @@ describe('ColorArea', () => {
         expect(xSlider).toHaveAttribute('max', '255');
         expect(xSlider).toHaveAttribute('step', '1');
         expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0');
-        expect(xSlider).toHaveAttribute('title', 'Red: 255, Green: 0, Blue: 255');
 
         expect(ySlider).toHaveAttribute('type', 'range');
         expect(ySlider).toHaveAttribute('aria-label', 'Color picker');
@@ -80,8 +79,6 @@ describe('ColorArea', () => {
         expect(ySlider).toHaveAttribute('max', '255');
         expect(ySlider).toHaveAttribute('step', '1');
         expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255');
-        expect(ySlider).toHaveAttribute('title', 'Red: 255, Green: 0, Blue: 255');
-
       });
 
       it('disabled', () => {
@@ -437,7 +434,6 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('max', '255');
       expect(xSlider).toHaveAttribute('step', '1');
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 255');
-      expect(xSlider).toHaveAttribute('title', 'Red: 255, Green: 255, Blue: 255');
 
       expect(ySlider).toHaveAttribute('type', 'range');
       expect(ySlider).toHaveAttribute('aria-label', 'Color picker');
@@ -445,7 +441,6 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('max', '255');
       expect(ySlider).toHaveAttribute('step', '1');
       expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Red: 255');
-      expect(ySlider).toHaveAttribute('title', 'Red: 255, Green: 255, Blue: 255');
     });
 
     it('the slider is focusable', () => {
@@ -495,7 +490,6 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('max', '255');
       expect(xSlider).toHaveAttribute('step', '1');
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 255');
-      expect(xSlider).toHaveAttribute('title', 'Red: 0, Green: 255, Blue: 255');
 
       expect(ySlider).toHaveAttribute('type', 'range');
       expect(ySlider).toHaveAttribute('aria-label', 'Color picker');
@@ -503,7 +497,6 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('max', '255');
       expect(ySlider).toHaveAttribute('step', '1');
       expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Blue: 255');
-      expect(ySlider).toHaveAttribute('title', 'Red: 0, Green: 255, Blue: 255');
 
       let redSlider = getByLabelText('Red', {selector: 'input'});
       expect(zSlider).toHaveAttribute('type', 'range');
@@ -527,7 +520,6 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('max', '100');
       expect(xSlider).toHaveAttribute('step', '1');
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Brightness: 100%');
-      expect(xSlider).toHaveAttribute('title', 'Hue: 0°, Saturation: 100%, Brightness: 100%');
 
       expect(ySlider).toHaveAttribute('type', 'range');
       expect(ySlider).toHaveAttribute('aria-label', 'Color picker');
@@ -535,7 +527,6 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('max', '100');
       expect(ySlider).toHaveAttribute('step', '1');
       expect(ySlider).toHaveAttribute('aria-valuetext', 'Brightness: 100%, Saturation: 100%');
-      expect(ySlider).toHaveAttribute('title', 'Hue: 0°, Saturation: 100%, Brightness: 100%');
 
       let hueSlider = getByLabelText('Hue', {selector: 'input'});
       expect(zSlider).toHaveAttribute('type', 'range');
@@ -559,7 +550,6 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('max', '100');
       expect(xSlider).toHaveAttribute('step', '1');
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Lightness: 50%');
-      expect(xSlider).toHaveAttribute('title', 'Hue: 0°, Saturation: 100%, Lightness: 50%');
 
       expect(ySlider).toHaveAttribute('type', 'range');
       expect(ySlider).toHaveAttribute('aria-label', 'Color picker');
@@ -567,7 +557,6 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('max', '100');
       expect(ySlider).toHaveAttribute('step', '1');
       expect(ySlider).toHaveAttribute('aria-valuetext', 'Lightness: 50%, Saturation: 100%');
-      expect(ySlider).toHaveAttribute('title', 'Hue: 0°, Saturation: 100%, Lightness: 50%');
 
       let hueSlider = getByLabelText('Hue', {selector: 'input'});
       expect(zSlider).toHaveAttribute('type', 'range');

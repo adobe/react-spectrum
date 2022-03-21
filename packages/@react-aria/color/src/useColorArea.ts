@@ -342,12 +342,6 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     isMobile ? colorPickerLabel : undefined
   );
 
-  let getValueTitle = () => {
-    const channels: Array<ColorChannel> = state.value.getColorChannels();
-    const colorNamesAndValues = channels.map(channel => formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)}));
-    return colorNamesAndValues.length ? colorNamesAndValues.join(', ') : undefined;
-  };
-
   let ariaRoleDescription = isMobile ? null : formatMessage('twoDimensionalSlider');
 
   let {visuallyHiddenProps} = useVisuallyHidden({style: {
@@ -403,7 +397,6 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
             formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
           ].join(', ')
       ),
-      title: getValueTitle(),
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),
       tabIndex: 0,
@@ -429,7 +422,6 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
           ].join(', ')
       ),
       'aria-orientation': 'vertical',
-      title: getValueTitle(),
       disabled: isDisabled,
       value: state.value.getChannelValue(yChannel),
       tabIndex: -1,
