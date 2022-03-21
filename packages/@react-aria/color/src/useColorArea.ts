@@ -344,13 +344,8 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
 
   let getValueTitle = () => {
     const channels: Array<ColorChannel> = state.value.getColorChannels();
-    const colorNamesAndValues = [];
-    channels.forEach(channel =>
-      colorNamesAndValues.push(
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)})
-      )
-    );
-    return colorNamesAndValues.length ? colorNamesAndValues.join(', ') : null;
+    const colorNamesAndValues = channels.map(channel => formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)}));
+    return colorNamesAndValues.length ? colorNamesAndValues.join(', ') : undefined;
   };
 
   let ariaRoleDescription = isMobile ? null : formatMessage('twoDimensionalSlider');

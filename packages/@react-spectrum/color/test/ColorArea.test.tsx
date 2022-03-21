@@ -494,16 +494,16 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('min', '0');
       expect(xSlider).toHaveAttribute('max', '255');
       expect(xSlider).toHaveAttribute('step', '1');
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 0');
-      expect(xSlider).toHaveAttribute('title', 'Red: 255, Green: 0, Blue: 255');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 255');
+      expect(xSlider).toHaveAttribute('title', 'Red: 0, Green: 255, Blue: 255');
 
       expect(ySlider).toHaveAttribute('type', 'range');
       expect(ySlider).toHaveAttribute('aria-label', 'Color picker');
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '255');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Blue: 255');
-      expect(ySlider).toHaveAttribute('title', 'Red: 255, Green: 0, Blue: 255');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Blue: 255');
+      expect(ySlider).toHaveAttribute('title', 'Red: 0, Green: 255, Blue: 255');
 
       let redSlider = getByLabelText('Red', {selector: 'input'});
       expect(zSlider).toHaveAttribute('type', 'range');
@@ -512,7 +512,7 @@ describe('ColorArea', () => {
       expect(zSlider).toHaveAttribute('min', '0');
       expect(zSlider).toHaveAttribute('max', '255');
       expect(zSlider).toHaveAttribute('step', '1');
-      expect(zSlider).toHaveAttribute('aria-valuetext', '255');
+      expect(zSlider).toHaveAttribute('aria-valuetext', '0');
     });
     it('sets input props hsb', () => {
       let {getAllByRole, getByLabelText} = render(<XSaturationYBrightness {...XSaturationYBrightness.args} />);
