@@ -136,6 +136,13 @@ storiesOf('Breadcrumbs', module)
         <Item>Root</Item>
       </Breadcrumbs>
     )
+  ).add(
+    'Only one item, showRoot',
+    () => (
+      <Breadcrumbs showRoot>
+        <Item key="Root-1">Root</Item>
+      </Breadcrumbs>
+    )
   );
 
 function render(props = {}) {

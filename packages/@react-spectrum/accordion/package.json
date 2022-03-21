@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/accordion",
-  "version": "3.0.0-alpha.6",
+  "version": "3.0.0-alpha.7",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -32,17 +32,17 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/accordion": "3.0.0-alpha.5",
-    "@react-aria/focus": "^3.5.3",
-    "@react-aria/i18n": "^3.3.7",
-    "@react-aria/interactions": "^3.8.2",
+    "@react-aria/accordion": "3.0.0-alpha.6",
+    "@react-aria/focus": "^3.5.4",
+    "@react-aria/i18n": "^3.3.8",
+    "@react-aria/interactions": "^3.8.3",
     "@react-aria/utils": "^3.11.3",
-    "@react-spectrum/utils": "^3.6.6",
+    "@react-spectrum/utils": "^3.6.7",
     "@react-stately/collections": "^3.3.7",
     "@react-stately/tree": "^3.2.3",
     "@react-types/accordion": "3.0.0-alpha.4",
     "@react-types/shared": "^3.11.2",
-    "@spectrum-icons/ui": "^3.2.4"
+    "@spectrum-icons/ui": "^3.2.5"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"

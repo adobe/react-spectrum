@@ -27,24 +27,51 @@ export interface DateRangePickerOptions extends DateRangePickerProps<DateValue> 
 
 type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState {
+  /** The currently selected date range. */
   value: DateRange,
-  setValue: (value: DateRange) => void,
-  setDate: (part: keyof DateRange, value: DateValue) => void,
-  setTime: (part: keyof TimeRange, value: TimeValue) => void,
-  setDateTime: (part: keyof DateRange, value: DateValue) => void,
+  /** Sets the selected date range. */
+  setValue(value: DateRange): void,
+  /**
+   * The date portion of the selected range. This may be set prior to `value` if the user has
+   * selected a date range but has not yet selected a time range.
+   */
   dateRange: DateRange,
-  setDateRange: (value: DateRange) => void,
+  /** Sets the date portion of the selected range. */
+  setDateRange(value: DateRange): void,
+  /**
+   * The time portion of the selected range. This may be set prior to `value` if the user has
+   * selected a time range but has not yet selected a date range.
+   */
   timeRange: TimeRange,
-  setTimeRange: (value: TimeRange) => void,
+  /** Sets the time portion of the selected range. */
+  setTimeRange(value: TimeRange): void,
+  /** Sets the date portion of either the start or end of the selected range. */
+  setDate(part: 'start' | 'end', value: DateValue): void,
+  /** Sets the time portion of either the start or end of the selected range. */
+  setTime(part: 'start' | 'end', value: TimeValue): void,
+  /** Sets the date and time of either the start or end of the selected range. */
+  setDateTime(part: 'start' | 'end', value: DateValue): void,
+  /** The granularity for the field, based on the `granularity` prop and current value. */
+  granularity: Granularity,
+  /** Whether the date range picker supports selecting times, according to the `granularity` prop and current value. */
   hasTime: boolean,
+  /** Whether the calendar popover is currently open. */
   isOpen: boolean,
-  setOpen: (isOpen: boolean) => void,
+  /** Sets whether the calendar popover is open. */
+  setOpen(isOpen: boolean): void,
+  /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
   validationState: ValidationState,
+  /** Formats the selected range using the given options. */
   formatValue(locale: string, fieldOptions: FieldOptions): string,
-  confirmPlaceholder(): void,
-  granularity: Granularity
+  /** Replaces the start and/or end value of the selected range with the placeholder value if unentered. */
+  confirmPlaceholder(): void
 }
 
+/**
+ * Provides state management for a date range picker component.
+ * A date range picker combines two DateFields and a RangeCalendar popover to allow
+ * users to enter or select a date and time range.
+ */
 export function useDateRangePickerState(props: DateRangePickerOptions): DateRangePickerState {
   let [isOpen, setOpen] = useState(false);
   let [controlledValue, setControlledValue] = useControlledState<DateRange>(props.value, props.defaultValue || null, props.onChange);

@@ -20,6 +20,7 @@ import {HTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useDescription, useId} from '@react-aria/utils';
+import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
@@ -66,7 +67,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
 
   return {
-    groupProps: mergeProps(groupProps, descProps, {
+    groupProps: mergeProps(groupProps, fieldProps, descProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-labelledby': labelledBy,
@@ -81,6 +82,8 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     },
     fieldProps: {
       ...fieldProps,
+      [roleSymbol]: 'presentation',
+      'aria-describedby': ariaDescribedBy,
       value: state.value,
       onChange: state.setValue,
       minValue: props.minValue,
