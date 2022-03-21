@@ -17,7 +17,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
+    "@swc/helpers": "^0.3.8",
     "@react-stately/virtualizer": "^3.1.8",
     "@react-types/grid": "^3.0.3",
     "@react-types/shared": "^3.11.2",

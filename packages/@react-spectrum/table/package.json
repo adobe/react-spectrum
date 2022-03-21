@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@react-aria/button": "^3.4.1",
-    "@babel/runtime": "^7.6.2",
+    "@swc/helpers": "^0.3.8",
     "@react-aria/focus": "^3.5.3",
     "@react-aria/grid": "^3.2.4",
     "@react-aria/i18n": "^3.3.7",

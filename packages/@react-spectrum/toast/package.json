@@ -32,7 +32,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
+    "@swc/helpers": "^0.3.8",
     "@react-aria/toast": "3.0.0-alpha.1",
     "@react-spectrum/button": "^3.1.0",
     "@react-spectrum/utils": "^3.1.0",

@@ -17,7 +17,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
+    "@swc/helpers": "^0.3.8",
     "@internationalized/message": "^3.0.2",
     "@internationalized/number": "^3.0.6",
     "@react-stately/slider": "^3.0.7",

@@ -1,8 +1,8 @@
 diff --git a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
-index 4792915..5149bd0 100644
+index 01d65cd..9ca036c 100644
 --- a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
 +++ b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
-@@ -139,10 +139,10 @@ var _default = new (_plugin().Transformer)({
+@@ -129,10 +129,10 @@ var _default = new (_plugin().Transformer)({
      const postcss = await loadPostcss(options, asset.filePath);
      return {
        type: 'postcss',
@@ -15,7 +15,7 @@ index 4792915..5149bd0 100644
      };
    },
  
-@@ -172,7 +172,7 @@ var _default = new (_plugin().Transformer)({
+@@ -165,7 +165,7 @@ var _default = new (_plugin().Transformer)({
  
      const postcss = await loadPostcss(options, asset.filePath);
      let ast = (0, _nullthrows().default)(await asset.getAST());
@@ -24,18 +24,25 @@ index 4792915..5149bd0 100644
      let plugins = [...config.hydrated.plugins];
      let cssModules = null;
  
-@@ -220,8 +220,8 @@ var _default = new (_plugin().Transformer)({
+@@ -238,7 +238,7 @@ var _default = new (_plugin().Transformer)({
+ 
+ 
+       let postcssModules = await options.packageManager.require('postcss-modules', asset.filePath, {
+-        range: '^4.3.0',
++        range: '^3.2.2',
+         saveDev: true,
+         shouldAutoInstall: options.shouldAutoInstall
+       });
+@@ -283,7 +283,7 @@ var _default = new (_plugin().Transformer)({
      } = await postcss(plugins).process(program, config.hydrated);
      asset.setAST({
        type: 'postcss',
 -      version: '8.2.1',
--      program: root.toJSON()
 +      version: '7.0.0',
-+      program: root
+       program: root.toJSON()
      });
  
-     for (let msg of messages) {
-@@ -262,13 +262,13 @@ var _default = new (_plugin().Transformer)({
+@@ -325,13 +325,13 @@ var _default = new (_plugin().Transformer)({
          ([className, classNameHashed]) => `module.exports[${JSON.stringify(className)}] = ${JSON.stringify(classNameHashed)};`).join('\n');
        }
  
@@ -54,7 +61,7 @@ index 4792915..5149bd0 100644
        assets.push({
          type: 'js',
          content: code
-@@ -285,7 +285,7 @@ var _default = new (_plugin().Transformer)({
+@@ -348,7 +348,7 @@ var _default = new (_plugin().Transformer)({
    }) {
      const postcss = await loadPostcss(options, asset.filePath);
      let code = '';
