@@ -120,9 +120,5 @@ governing permissions and limitations under the License.
     &.is-today {
       --background: transparent;
     }
-
-    & .spectrum-Calendar-dateText span:after {
-      background: var(--spectrum-global-color-gray-600);
-    }
   }
 }

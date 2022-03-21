@@ -35,16 +35,22 @@ export class BuddhistCalendar extends GregorianCalendar {
   }
 
   toJulianDay(date: AnyCalendarDate) {
-    return super.toJulianDay(
-      new CalendarDate(
-        date.year + BUDDHIST_ERA_START,
-        date.month,
-        date.day
-      )
-    );
+    return super.toJulianDay(toGregorian(date));
   }
 
   getEras() {
     return ['BE'];
   }
+
+  getDaysInMonth(date: AnyCalendarDate): number {
+    return super.getDaysInMonth(toGregorian(date));
+  }
+}
+
+function toGregorian(date: AnyCalendarDate) {
+  return new CalendarDate(
+    date.year + BUDDHIST_ERA_START,
+    date.month,
+    date.day
+  );
 }
