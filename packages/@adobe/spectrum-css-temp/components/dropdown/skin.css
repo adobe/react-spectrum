@@ -100,4 +100,13 @@ governing permissions and limitations under the License.
     --spectrum-dropdown-text-color-disabled: GrayText;
     --spectrum-dropdown-validation-icon-color-error: ButtonText;
   }
+  /*Override the label behaviour when NOT a placeholder*/
+  .spectrum-Dropdown-trigger {
+    &:hover .spectrum-Dropdown-label {
+      color: ButtonText;
+      &.is-placeholder {
+        color: GrayText;
+      }
+    }
+  }
 }
