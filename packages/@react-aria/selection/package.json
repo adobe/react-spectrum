@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/selection",
-  "version": "3.8.0",
+  "version": "3.8.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.5.3",
-    "@react-aria/i18n": "^3.3.7",
-    "@react-aria/interactions": "^3.8.2",
+    "@react-aria/focus": "^3.5.4",
+    "@react-aria/i18n": "^3.3.8",
+    "@react-aria/interactions": "^3.8.3",
     "@react-aria/utils": "^3.11.3",
     "@react-stately/collections": "^3.3.7",
     "@react-stately/selection": "^3.9.3",

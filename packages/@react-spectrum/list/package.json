@@ -44,7 +44,7 @@
     "@react-aria/visually-hidden": "^3.2.6",
     "@react-spectrum/button": "^3.7.2",
     "@react-spectrum/checkbox": "^3.3.2",
-    "@react-spectrum/dnd": "3.0.0-alpha.0",
+    "@react-spectrum/dnd": "3.0.0-alpha.1",
     "@react-spectrum/layout": "^3.2.4",
     "@react-spectrum/listbox": "^3.5.6",
     "@react-spectrum/progress": "^3.1.6",
