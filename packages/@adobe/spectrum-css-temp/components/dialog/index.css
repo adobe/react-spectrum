@@ -139,6 +139,7 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
 
   outline: none; /* Hide focus outline around header */
+  min-width: fit-content; /* prevents header with width 0px */
 
   &.spectrum-Dialog-header--noTypeIcon {
     grid-area: header-start / header-start / typeIcon-end / typeIcon-end;
