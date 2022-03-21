@@ -79,7 +79,7 @@ governing permissions and limitations under the License.
     display: none;
   }
 
-  .spectrum-Button {
+  & .spectrum-Button {
     margin-right: 0;
 
     /* Spacing between buttons */

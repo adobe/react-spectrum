@@ -23,7 +23,7 @@
   --spectrum-actionbutton-min-width: var(--spectrum-contextualhelp-button-size);
   --spectrum-actionbutton-icon-padding-x: var(--spectrum-global-dimension-size-40);
 
-  svg {
+  & svg {
     block-size: var(--spectrum-contextualhelp-icon-size);
     inline-size: var(--spectrum-contextualhelp-icon-size);
   }
@@ -35,11 +35,11 @@
   --spectrum-dialog-padding-x: var(--spectrum-contextualhelp-dialog-padding);
   --spectrum-dialog-padding-y: var(--spectrum-contextualhelp-dialog-padding);
 
-  .react-spectrum-ContextualHelp-content {
+  & .react-spectrum-ContextualHelp-content {
     margin-top: var(--spectrum-global-dimension-static-size-100);
   }
 
-  .react-spectrum-ContextualHelp-footer {
+  & .react-spectrum-ContextualHelp-footer {
     padding-top: var(--spectrum-global-dimension-static-size-100);
   }
 }

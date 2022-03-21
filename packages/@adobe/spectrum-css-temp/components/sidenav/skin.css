@@ -12,21 +12,21 @@ governing permissions and limitations under the License.
 
 .spectrum-SideNav-item {
   &.is-selected {
-    > .spectrum-SideNav-itemLink {
+    & > .spectrum-SideNav-itemLink {
       color: var(--spectrum-sidenav-item-text-color-selected);
       background-color: var(--spectrum-sidenav-item-background-color-selected);
     }
   }
 
-  .is-active {
-    > .spectrum-SideNav-itemLink {
+  & .is-active {
+    & > .spectrum-SideNav-itemLink {
       background-color: var(--spectrum-sidenav-item-background-color-down);
     }
   }
 
   &.is-disabled {
     /* Disable all children */
-    .spectrum-SideNav-itemLink {
+    & .spectrum-SideNav-itemLink {
       background-color: var(--spectrum-sidenav-item-background-color-disabled);
       color: var(--spectrum-sidenav-item-text-color-disabled);
 

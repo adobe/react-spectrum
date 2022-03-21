@@ -17,19 +17,19 @@ governing permissions and limitations under the License.
 
 /* Hide UI icons on older browsers with SVG 1.1 implementations */
 .spectrum--medium {
-  .spectrum-UIIcon--large {
+  & .spectrum-UIIcon--large {
     display: none;
   }
-  .spectrum-UIIcon--medium {
+  & .spectrum-UIIcon--medium {
     display: inline;
   }
 }
 
 .spectrum--large {
-  .spectrum-UIIcon--medium {
+  & .spectrum-UIIcon--medium {
     display: none;
   }
-  .spectrum-UIIcon--large {
+  & .spectrum-UIIcon--large {
     display: inline;
   }
 }

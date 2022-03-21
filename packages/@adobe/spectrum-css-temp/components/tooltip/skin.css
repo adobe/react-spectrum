@@ -24,7 +24,7 @@ governing permissions and limitations under the License.
 /** @deprecated */.spectrum-Tooltip--error {
   background-color: var(--spectrum-tooltip-negative-background-color);
 
-  .spectrum-Tooltip-tip {
+  & .spectrum-Tooltip-tip {
     border-top-color: var(--spectrum-tooltip-negative-background-color);
   }
 }
@@ -33,7 +33,7 @@ governing permissions and limitations under the License.
 /** @deprecated */.spectrum-Tooltip--help {
   background-color: var(--spectrum-tooltip-info-background-color);
 
-  .spectrum-Tooltip-tip {
+  & .spectrum-Tooltip-tip {
     border-top-color: var(--spectrum-tooltip-info-background-color);
   }
 }
@@ -42,7 +42,7 @@ governing permissions and limitations under the License.
 /** @deprecated */.spectrum-Tooltip--success {
   background-color: var(--spectrum-tooltip-positive-background-color);
 
-  .spectrum-Tooltip-tip {
+  & .spectrum-Tooltip-tip {
     border-top-color: var(--spectrum-tooltip-positive-background-color);
   }
 }

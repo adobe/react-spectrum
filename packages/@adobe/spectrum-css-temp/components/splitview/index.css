@@ -62,7 +62,7 @@ governing permissions and limitations under the License.
 
   &.is-collapsed-start,
   &.is-collapsed-end {
-    .spectrum-SplitView-gripper {
+    & .spectrum-SplitView-gripper {
       /* make the center line of the gripper */
       &:before {
         content: '';
@@ -77,13 +77,13 @@ governing permissions and limitations under the License.
   }
 
   &.is-collapsed-start {
-    .spectrum-SplitView-gripper {
+    & .spectrum-SplitView-gripper {
       left: 0;
     }
   }
 
   &.is-collapsed-end {
-    .spectrum-SplitView-gripper {
+    & .spectrum-SplitView-gripper {
       right: 0;
       left: auto;
     }
@@ -93,12 +93,12 @@ governing permissions and limitations under the License.
 .spectrum-SplitView--vertical {
   flex-direction: column;
 
-  .spectrum-SplitView-pane {
+  & .spectrum-SplitView-pane {
     height: auto;
     width: var(--spectrum-splitview-vertical-width);
   }
 
-  .spectrum-SplitView-gripper {
+  & .spectrum-SplitView-gripper {
     /* half of (height + vertical border - handle width) * -1 (for negative opposite) */
     top: calc(((var(--spectrum-rail-gripper-width) + (2 * var(--spectrum-rail-gripper-border-width-horizontal)) - var(--spectrum-rail-handle-width)) / 2) * -1);
 
@@ -111,13 +111,13 @@ governing permissions and limitations under the License.
     border-width: var(--spectrum-rail-gripper-border-width-horizontal) var(--spectrum-rail-gripper-border-width-vertical);
   }
 
-  .spectrum-SplitView-splitter {
+  & .spectrum-SplitView-splitter {
     width: var(--spectrum-splitview-vertical-width);
     height: var(--spectrum-rail-handle-width);
 
     &.is-collapsed-start,
     &.is-collapsed-end {
-      .spectrum-SplitView-gripper {
+      & .spectrum-SplitView-gripper {
         left: var(--spectrum-splitview-vertical-gripper-width);
 
         /* make the center line of the gripper */
@@ -131,13 +131,13 @@ governing permissions and limitations under the License.
     }
 
     &.is-collapsed-start {
-      .spectrum-SplitView-gripper {
+      & .spectrum-SplitView-gripper {
         top: var(--spectrum-splitview-vertical-gripper-reset);
       }
     }
 
     &.is-collapsed-end {
-      .spectrum-SplitView-gripper {
+      & .spectrum-SplitView-gripper {
         top: auto;
         bottom: var(--spectrum-splitview-vertical-gripper-reset);
       }

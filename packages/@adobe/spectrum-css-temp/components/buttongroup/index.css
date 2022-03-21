@@ -20,11 +20,11 @@ governing permissions and limitations under the License.
   /* necessary so that offsetLeft on button children is correct */
   position: relative;
 
-  .spectrum-ButtonGroup-Button {
+  & .spectrum-ButtonGroup-Button {
     flex-shrink: 0;
   }
 
-  .spectrum-ButtonGroup-Button + .spectrum-ButtonGroup-Button {
+  & .spectrum-ButtonGroup-Button + .spectrum-ButtonGroup-Button {
     margin-inline-start: var(--spectrum-buttongroup-button-gap-x);
   }
 
@@ -41,7 +41,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-direction: column;
 
-  .spectrum-ButtonGroup-Button + .spectrum-ButtonGroup-Button {
+  & .spectrum-ButtonGroup-Button + .spectrum-ButtonGroup-Button {
     margin-block-start: var(--spectrum-buttongroup-button-gap-y);
     margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
   }

@@ -61,19 +61,19 @@ governing permissions and limitations under the License.
   &:last-of-type {
     font-weight: var(--spectrum-breadcrumb-title-text-font-weight);
 
-    .spectrum-Breadcrumbs-itemSeparator {
+    & .spectrum-Breadcrumbs-itemSeparator {
       display: none;
     }
   }
 
-  > .spectrum-ActionButton {
+  & > .spectrum-ActionButton {
     margin-inline-end: var(--spectrum-breadcrumb-button-gap);
   }
 
   /* last breadcrumb should truncate with an ellipsis */
   &:last-child {
     overflow: hidden;
-    .spectrum-Breadcrumbs-itemLink {
+    & .spectrum-Breadcrumbs-itemLink {
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -134,13 +134,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Breadcrumbs--small {
-  .spectrum-Breadcrumbs-item {
+  & .spectrum-Breadcrumbs-item {
     font-size: var(--spectrum-breadcrumb-multiline-item-text-size);
   }
 }
 
 .spectrum-Breadcrumbs--medium {
-  .spectrum-Breadcrumbs-item {
+  & .spectrum-Breadcrumbs-item {
     font-size: var(--spectrum-breadcrumb-compact-item-text-size);
   }
 }
@@ -148,7 +148,7 @@ governing permissions and limitations under the License.
 .spectrum-Breadcrumbs--multiline {
   flex-wrap: wrap;
 
-  .spectrum-Breadcrumbs-item {
+  & .spectrum-Breadcrumbs-item {
     &:last-of-type {
       height: auto;
 
@@ -160,13 +160,13 @@ governing permissions and limitations under the License.
       font-weight: var(--spectrum-breadcrumb-multiline-title-text-font-weight);
       line-height: var(--spectrum-breadcrumb-multiline-title-text-line-height);
 
-      .spectrum-Breadcrumbs-itemLink {
+      & .spectrum-Breadcrumbs-itemLink {
         height: auto;
         text-decoration: none;
       }
     }
 
-    .spectrum-Heading--pageTitle {
+    & .spectrum-Heading--pageTitle {
       margin: 0;
 
       font-size: inherit;

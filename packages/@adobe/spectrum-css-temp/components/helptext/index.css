@@ -33,12 +33,12 @@
   display: flex;
   text-align: start;
   font-size: var(--spectrum-helptext-neutral-texticon-text-size);
-  .spectrum-HelpText-validationIcon {
+  & .spectrum-HelpText-validationIcon {
     margin-inline-end: var(--spectrum-helptext-neutral-texticon-icon-gap);
     padding-block: var(--spectrum-helptext-negative-texticon-icon-padding-top) var(--spectrum-helptext-negative-texticon-icon-padding-bottom);
     flex-shrink: 0;
   }
-  .spectrum-HelpText-text {
+  & .spectrum-HelpText-text {
     /* Not in DNA: make text fill up all horizontal space. */
     flex: 1;
 

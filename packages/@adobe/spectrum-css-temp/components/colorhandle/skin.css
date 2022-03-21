@@ -25,7 +25,7 @@
     background: var(--spectrum-colorhandle-fill-color-disabled);
     box-shadow: none;
 
-    .spectrum-ColorHandle-color {
+    & .spectrum-ColorHandle-color {
       display: none;
     }
   }

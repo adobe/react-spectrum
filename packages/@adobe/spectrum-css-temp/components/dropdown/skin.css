@@ -11,28 +11,28 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropdown {
-  .spectrum-Dropdown-trigger:hover {
-    .spectrum-Dropdown-chevron {
+  & .spectrum-Dropdown-trigger:hover {
+    & .spectrum-Dropdown-chevron {
       color: var(--spectrum-dropdown-icon-color-hover);
     }
   }
 
-  .spectrum-Dropdown-trigger {
+  & .spectrum-Dropdown-trigger {
     &.is-selected {
-      .is-placeholder {
+      & .is-placeholder {
         color: var(--spectrum-dropdown-placeholder-text-color-down);
       }
     }
   }
 
   &.is-invalid {
-    .spectrum-Dropdown-invalidIcon {
+    & .spectrum-Dropdown-invalidIcon {
       color: var(--spectrum-dropdown-validation-icon-color-error);
     }
 
     &.is-disabled {
-      .spectrum-Icon,
-      .spectrum-Dropdown-invalidIcon {
+      & .spectrum-Icon,
+      & .spectrum-Dropdown-invalidIcon {
         color: var(--spectrum-dropdown-icon-color-disabled);
       }
     }
@@ -40,15 +40,15 @@ governing permissions and limitations under the License.
 
   &.is-disabled {
     &,
-    .spectrum-Dropdown-trigger:hover {
-      .spectrum-Dropdown-chevron {
+    & .spectrum-Dropdown-trigger:hover {
+      & .spectrum-Dropdown-chevron {
         color: var(--spectrum-dropdown-icon-color-disabled);
       }
     }
     &:active .spectrum-Dropdown-label {
       color: var(--spectrum-dropdown-text-color-disabled);
     }
-    .spectrum-Dropdown-label {
+    & .spectrum-Dropdown-label {
       &.is-placeholder {
         color: var(--spectrum-dropdown-placeholder-text-color-disabled);
       }
@@ -78,10 +78,10 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dropdown-trigger.focus-ring {
-  .spectrum-Dropdown-label.is-placeholder {
+  & .spectrum-Dropdown-label.is-placeholder {
     color: var(--spectrum-dropdown-placeholder-text-color-key-focus);
   }
-  .spectrum-Dropdown-chevron {
+  & .spectrum-Dropdown-chevron {
     color: var(--spectrum-dropdown-icon-color-key-focus)
   }
 }

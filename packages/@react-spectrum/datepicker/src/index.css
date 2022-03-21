@@ -139,7 +139,7 @@
   .react-spectrum-Datepicker-dialog {
     --spectrum-dialog-padding-x: 8px;
 
-    .react-spectrum-Datepicker-dialogContent {
+    & .react-spectrum-Datepicker-dialogContent {
       display: flex;
       flex-direction: column;
       align-items: center;

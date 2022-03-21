@@ -58,8 +58,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Steplist--interactive {
-  .spectrum-Steplist-label,
-  .spectrum-Steplist-markerContainer {
+  & .spectrum-Steplist-label,
+  & .spectrum-Steplist-markerContainer {
     /* Show cursor on hit zone when clickable */
     cursor: pointer;
   }
@@ -69,12 +69,12 @@ governing permissions and limitations under the License.
 .spectrum-Steplist--small {
   padding: var(--spectrum-steplist-small-topPadding) 0;
 
-  .spectrum-Steplist-item {
+  & .spectrum-Steplist-item {
     padding: 0 40px 0 0;
     width: 80px;
 
     /* Disable Label */
-    .spectrum-Steplist-label {
+    & .spectrum-Steplist-label {
       display: none;
     }
 
@@ -84,13 +84,13 @@ governing permissions and limitations under the License.
 
     /* Disable first line */
     &:first-child {
-      .spectrum-Steplist-markerContainer {
+      & .spectrum-Steplist-markerContainer {
         margin-left: -10px;
       }
     }
 
     &:last-child {
-      .spectrum-Steplist-markerContainer {
+      & .spectrum-Steplist-markerContainer {
         margin-right: -10px;
       }
     }
@@ -112,7 +112,7 @@ governing permissions and limitations under the License.
 
   /* Completed State */
   &.is-complete {
-    .spectrum-Steplist-marker {
+    & .spectrum-Steplist-marker {
       border: none;
     }
 
@@ -128,10 +128,10 @@ governing permissions and limitations under the License.
     /* Focus */
     &:focus,
     &.is-focused,
-    *:focus {
+    & *:focus {
       outline: none;
     }
-    .spectrum-Steplist-marker {
+    & .spectrum-Steplist-marker {
       border: none;
     }
   }
@@ -204,15 +204,15 @@ governing permissions and limitations under the License.
 
 /* First step overrides */
 .spectrum-Steplist-item:first-child {
-  .spectrum-Steplist-markerContainer {
+  & .spectrum-Steplist-markerContainer {
     left: 0;
   }
 
-  .spectrum-Steplist-label {
+  & .spectrum-Steplist-label {
     left: 0;
   }
 
-  .spectrum-Steplist-segment {
+  & .spectrum-Steplist-segment {
     /* Not visible for first step */
     display: none;
   }
@@ -220,14 +220,14 @@ governing permissions and limitations under the License.
 
 /* Last step overrides */
 .spectrum-Steplist-item:last-child {
-  .spectrum-Steplist-label {
+  & .spectrum-Steplist-label {
     left: auto;
     right: 0;
 
     transform: translateX(50%);
   }
 
-  .spectrum-Steplist-markerContainer {
+  & .spectrum-Steplist-markerContainer {
     left: auto;
     right: 0;
 
@@ -235,7 +235,7 @@ governing permissions and limitations under the License.
     margin-right: calc(calc(var(--spectrum-steplist-marker-hitArea) / 2) * -1);
   }
 
-  .spectrum-Steplist-segment {
+  & .spectrum-Steplist-segment {
     right: var(--spectrum-steplist-marker-diameter);
     left: auto;
   }
@@ -248,7 +248,7 @@ governing permissions and limitations under the License.
 
 /* Single step */
 .spectrum-Steplist-item:only-child {
-  .spectrum-Steplist-label {
+  & .spectrum-Steplist-label {
     /* Be centered */
     left: 50%;
 
@@ -256,7 +256,7 @@ governing permissions and limitations under the License.
     transform: translate(-50%);
   }
 
-  .spectrum-Steplist-markerContainer {
+  & .spectrum-Steplist-markerContainer {
     /* Be centered */
     left: 50%;
 

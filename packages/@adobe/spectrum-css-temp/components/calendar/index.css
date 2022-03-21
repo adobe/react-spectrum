@@ -173,7 +173,7 @@ governing permissions and limitations under the License.
   /* compute the "auto" margin to center the date text manually rather than using the keyword to ensure consistent rounding. */
   --margin: calc((100% - var(--spectrum-calendar-day-width)) / 2);
 
-  .spectrum-Calendar-dateText {
+  & .spectrum-Calendar-dateText {
     display: block;
     width: var(--spectrum-calendar-day-width);
     margin: 0 auto;
@@ -195,7 +195,7 @@ governing permissions and limitations under the License.
   }
 
   &.is-unavailable {
-    .spectrum-Calendar-dateText span {
+    & .spectrum-Calendar-dateText span {
       position: relative;
 
       &:after {
@@ -274,12 +274,12 @@ governing permissions and limitations under the License.
 
       &:before,
       &:after,
-      .spectrum-Calendar-dateText {
+      & .spectrum-Calendar-dateText {
         inset-inline-start: 0;
       }
 
       &:after,
-      .spectrum-Calendar-dateText {
+      & .spectrum-Calendar-dateText {
         margin-inline-start: 0;
       }
     }
@@ -296,13 +296,13 @@ governing permissions and limitations under the License.
 
       &:before,
       &:after,
-      .spectrum-Calendar-dateText {
+      & .spectrum-Calendar-dateText {
         inset-inline-start: auto;
         inset-inline-end: 0;
       }
 
       &:after,
-      .spectrum-Calendar-dateText {
+      & .spectrum-Calendar-dateText {
         margin-inline-end: 0;
       }
     }
@@ -319,7 +319,7 @@ governing permissions and limitations under the License.
       border-radius: var(--spectrum-calendar-day-width);
 
       &:after,
-      .spectrum-Calendar-dateText {
+      & .spectrum-Calendar-dateText {
         margin-inline-start: auto;
         margin-inline-end: var(--margin);
       }

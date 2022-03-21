@@ -14,20 +14,20 @@ governing permissions and limitations under the License.
 
 /* A solid star */
 %spectrum-Rating-filledStar {
-  .spectrum-Rating-starActive {
+  & .spectrum-Rating-starActive {
     display: block;
   }
-  .spectrum-Rating-starInactive {
+  & .spectrum-Rating-starInactive {
     display: none;
   }
 }
 
 /* A star with an outline only */
 %spectrum-Rating-strokedStar {
-  .spectrum-Rating-starActive {
+  & .spectrum-Rating-starActive {
     display: none;
   }
-  .spectrum-Rating-starInactive {
+  & .spectrum-Rating-starInactive {
     display: block;
   }
 }
@@ -51,7 +51,7 @@ governing permissions and limitations under the License.
 
   /* When the entire component is hovered, show all solid icons */
   &:hover {
-    .spectrum-Rating-icon {
+    & .spectrum-Rating-icon {
       @extend %spectrum-Rating-filledStar;
     }
   }

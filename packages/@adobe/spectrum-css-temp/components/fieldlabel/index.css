@@ -70,12 +70,12 @@ governing permissions and limitations under the License.
     flex-direction: column;
     width: var(--spectrum-field-default-width);
 
-    .spectrum-Field-field {
+    & .spectrum-Field-field {
       /* If the user overrides the width of the field, propagate to the inner component */
       width: 100%;
     }
 
-    .spectrum-Field-field--multiline {
+    & .spectrum-Field-field--multiline {
       flex: 1 1 auto;
     }
   }
@@ -87,7 +87,7 @@ governing permissions and limitations under the License.
     align-items: flex-start;
 
     /* Wraps the field & help text, but not the label */
-    .spectrum-Field-wrapper {
+    & .spectrum-Field-wrapper {
       flex: 1;
       /* Setting `flex: 1;` is equivalent to `flex: 1 1 0;`, which means we expect to be able to shrink
        * To be able to shrink, we must have a min-width that isn't 'auto' */
@@ -97,18 +97,18 @@ governing permissions and limitations under the License.
        * Should default to form field's default width and and allow users to override with custom width. */
       width: var(--spectrum-field-default-width);
 
-      .spectrum-Field-field {
+      & .spectrum-Field-field {
         /* If the user overrides the width of the field, propagate to the inner component */
         width: 100%;
       }
     }
 
-    .spectrum-Field-field {
+    & .spectrum-Field-field {
       flex: 1;
       min-width: 0;
     }
 
-    .spectrum-Field-field--multiline {
+    & .spectrum-Field-field--multiline {
       height: 100%;
     }
   }
@@ -128,20 +128,20 @@ governing permissions and limitations under the License.
     margin: var(--spectrum-tableform-margin);
     text-align: start;
 
-    .spectrum-Field {
+    & .spectrum-Field {
       display: table-row;
       width: 100%;
     }
 
-    .spectrum-FieldLabel {
+    & .spectrum-FieldLabel {
       display: table-cell;
     }
 
-    .spectrum-Field-wrapper {
+    & .spectrum-Field-wrapper {
       width: 100%;
     }
 
-    .spectrum-Field-field {
+    & .spectrum-Field-field {
       display: table-cell;
       width: auto;
       min-width: var(--spectrum-component-single-line-width);
@@ -158,7 +158,7 @@ governing permissions and limitations under the License.
     /* Users may want to make multiple fields appear next to each other.
      * We want to ensure that all items inside the form get the proper
      * margin and widths applied, even if wrapped in extra divs for example. */
-    > * {
+    & > * {
       margin-top: var(--spectrum-fieldlabel-margin);
       width: 100%;
     }

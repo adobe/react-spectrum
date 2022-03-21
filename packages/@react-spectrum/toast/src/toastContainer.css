@@ -22,7 +22,7 @@
   align-items: center;
   pointer-events: none;
 
-  .spectrum-Toast {
+  & .spectrum-Toast {
     margin: 8px;
     pointer-events: all;
   }

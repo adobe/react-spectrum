@@ -66,7 +66,7 @@ governing permissions and limitations under the License.
     flex-direction: column;
     width: var(--spectrum-component-single-line-width);
 
-    .spectrum-Slider-controls {
+    & .spectrum-Slider-controls {
       /* If the user overrides the width of the field, propagate to the inner component */
       width: calc(100% - calc(var(--spectrum-slider-controls-margin)) * 2);
     }
@@ -80,20 +80,20 @@ governing permissions and limitations under the License.
     width: auto;
 
 
-    .spectrum-Slider-controls {
+    & .spectrum-Slider-controls {
       flex: 1;
       width: var(--spectrum-component-single-line-width);
     }
 
-    .spectrum-Slider-labelContainer {
+    & .spectrum-Slider-labelContainer {
       margin-inline-end: calc(var(--spectrum-slider-label-gap-x) / 2);
     }
 
-    .spectrum-Slider-valueLabelContainer {
+    & .spectrum-Slider-valueLabelContainer {
       margin-inline-start: calc(var(--spectrum-slider-label-gap-x) / 2);
     }
 
-    .spectrum-Slider-value {
+    & .spectrum-Slider-value {
       text-align: start;
     }
 
@@ -189,7 +189,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider--range {
-  .spectrum-Slider-track {
+  & .spectrum-Slider-track {
     &:first-of-type {
       padding-block: 0;
       padding-inline: 0 var(--spectrum-slider-track-handleoffset);
@@ -231,7 +231,7 @@ governing permissions and limitations under the License.
   inset-inline-end: var(--spectrum-slider-track-margin-offset);
   inset-block-start: calc(var(--spectrum-slider-ramp-track-height) / 2);
 
-  svg {
+  & svg {
     inline-size: 100%;
     block-size: 100%;
 
@@ -274,7 +274,7 @@ governing permissions and limitations under the License.
   }
 
   &:active,
-  $.is-dragged {
+  & $.is-dragged {
 
   }
 
@@ -393,7 +393,7 @@ governing permissions and limitations under the License.
     border-radius: var(--spectrum-slider-tick-mark-border-radius);
   }
 
-  .spectrum-Slider-tickLabel {
+  & .spectrum-Slider-tickLabel {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -407,7 +407,7 @@ governing permissions and limitations under the License.
 
   &:first-of-type,
   &:last-of-type {
-    .spectrum-Slider-tickLabel {
+    & .spectrum-Slider-tickLabel {
       display: block;
       position: absolute;
       margin-block: var(--spectrum-slider-label-gap-x) 0;
@@ -416,43 +416,43 @@ governing permissions and limitations under the License.
   }
 
   &:first-of-type {
-    .spectrum-Slider-tickLabel {
+    & .spectrum-Slider-tickLabel {
       inset-inline-start: 0;
     }
   }
 
   &:last-of-type {
-    .spectrum-Slider-tickLabel {
+    & .spectrum-Slider-tickLabel {
       inset-inline-end: 0;
     }
   }
 }
 
 .spectrum-Slider--color {
-  .spectrum-Slider-labelContainer {
+  & .spectrum-Slider-labelContainer {
     padding-block-end: var(--spectrum-fieldlabel-padding-bottom);
   }
-  .spectrum-Slider-controls,
-  .spectrum-Slider-controls::before,
-  .spectrum-Slider-track {
+  & .spectrum-Slider-controls,
+  & .spectrum-Slider-controls::before,
+  & .spectrum-Slider-track {
     min-block-size: var(--spectrum-slider-color-min-height);
     block-size: var(--spectrum-slider-color-track-height);
     margin-inline-start: var(--spectrum-slider-color-track-margin-left);
     inline-size: 100%;
   }
-  .spectrum-Slider-controls::before {
+  & .spectrum-Slider-controls::before {
     display: block;
     content: '';
   }
-  .spectrum-Slider-controls::before,
-  .spectrum-Slider-track {
+  & .spectrum-Slider-controls::before,
+  & .spectrum-Slider-track {
     inset-block-start: var(--spectrum-slider-color-track-top);
     padding: var(--spectrum-slider-color-track-padding);
     margin-block-start: var(--spectrum-slider-color-track-margin-top);
     margin-inline-end: var(--spectrum-slider-color-track-margin-right);
     border-radius: var(--spectrum-alias-border-radius-regular);
   }
-  .spectrum-Slider-handle {
+  & .spectrum-Slider-handle {
     inset-block-start: var(--spectrum-slider-color-handle-top);
   }
 }
@@ -562,7 +562,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial--small {
-  .spectrum-Dial-controls {
+  & .spectrum-Dial-controls {
     inline-size: var(--spectrum-dial-small-width);
     block-size: var(--spectrum-dial-small-height);
   }
@@ -573,13 +573,13 @@ governing permissions and limitations under the License.
   &.is-disabled {
     cursor: default;
 
-    .spectrum-Slider-handle {
+    & .spectrum-Slider-handle {
       cursor: default;
       pointer-events: none;
     }
 
     &.spectrum-Slider--color {
-      .spectrum-Slider-handle {
+      & .spectrum-Slider-handle {
         &:hover,
         &:active {
           border-width: var(--spectrum-slider-color-handle-outset-border-size);
@@ -599,16 +599,16 @@ governing permissions and limitations under the License.
   -ms-user-select: none;
   user-select: none;
 
-  .spectrum-Dial {
-    .spectrum-Dial-label,
-    .spectrum-Dial-value {
+  & .spectrum-Dial {
+    & .spectrum-Dial-label,
+    & .spectrum-Dial-value {
       cursor: inherit;
     }
   }
 
-  .spectrum-Slider {
-    .spectrum-Slider-label,
-    .spectrum-Slider-value {
+  & .spectrum-Slider {
+    & .spectrum-Slider-label,
+    & .spectrum-Slider-value {
       cursor: inherit;
     }
   }

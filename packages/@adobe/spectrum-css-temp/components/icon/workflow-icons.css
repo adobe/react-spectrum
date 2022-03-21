@@ -22,8 +22,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Icon--sizeXXS {
   &,
-  img,
-  svg {
+  & img,
+  & svg {
     block-size: var(--spectrum-icon-size-xxs);
     inline-size: var(--spectrum-icon-size-xxs);
   }
@@ -31,8 +31,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Icon--sizeXS {
   &,
-  img,
-  svg {
+  & img,
+  & svg {
     block-size: var(--spectrum-icon-size-xs);
     inline-size: var(--spectrum-icon-size-xs);
   }
@@ -40,8 +40,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Icon--sizeS {
   &,
-  img,
-  svg {
+  & img,
+  & svg {
     block-size: var(--spectrum-icon-size-s);
     inline-size: var(--spectrum-icon-size-s);
   }
@@ -49,8 +49,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Icon--sizeM {
   &,
-  img,
-  svg {
+  & img,
+  & svg {
     block-size: var(--spectrum-icon-size-m);
     inline-size: var(--spectrum-icon-size-m);
   }
@@ -58,8 +58,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Icon--sizeL {
   &,
-  img,
-  svg {
+  & img,
+  & svg {
     block-size: var(--spectrum-icon-size-l);
     inline-size: var(--spectrum-icon-size-l);
   }
@@ -67,8 +67,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Icon--sizeXL {
   &,
-  img,
-  svg {
+  & img,
+  & svg {
     block-size: var(--spectrum-icon-size-xl);
     inline-size: var(--spectrum-icon-size-xl);
   }
@@ -76,8 +76,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Icon--sizeXXL {
   &,
-  img,
-  svg {
+  & img,
+  & svg {
     block-size: var(--spectrum-icon-size-xxl);
     inline-size: var(--spectrum-icon-size-xxl);
   }

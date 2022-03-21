@@ -17,21 +17,21 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
 
-    .spectrum-IllustratedMessage-illustration {
+    & .spectrum-IllustratedMessage-illustration {
       color: var(--spectrum-global-color-blue-400);
     }
   }
 
   &:focus:not(.is-dragged) {
     border-color: var(--spectrum-dropzone-border-color);
-    .spectrum-IllustratedMessage-illustration {
+    & .spectrum-IllustratedMessage-illustration {
       color: var(--spectrum-global-color-static-gray-500);
     }
     &.focus-ring {
       border-color: var(--spectrum-dropzone-border-color-selected-hover);
     }
     &.is-dragged.focus-ring {
-      .spectrum-IllustratedMessage-illustration {
+      & .spectrum-IllustratedMessage-illustration {
         color: var(--spectrum-global-color-blue-400);
       }
     }

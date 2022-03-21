@@ -85,7 +85,7 @@ governing permissions and limitations under the License.
   }
 
   &:focus-ring {
-    + .spectrum-Radio-button {
+    & + .spectrum-Radio-button {
       &:after {
         margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
       }
@@ -155,13 +155,13 @@ governing permissions and limitations under the License.
   align-items: center;
   block-size: var(--spectrum-radio-labelbelow-height);
 
-  .spectrum-Radio-button {
+  & .spectrum-Radio-button {
     flex-shrink: 0;
 
     margin: 0;
   }
 
-  .spectrum-Radio-label {
+  & .spectrum-Radio-label {
     margin: var(--spectrum-radio-labelbelow-label-margin);
   }
 }

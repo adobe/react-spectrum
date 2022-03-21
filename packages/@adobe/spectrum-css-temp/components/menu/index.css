@@ -96,13 +96,13 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    .spectrum-Menu-checkmark {
+    & .spectrum-Menu-checkmark {
       display: block;
     }
   }
 
-  .spectrum-Icon + .spectrum-Menu-itemLabel,
-  .spectrum-Menu-itemIcon  + .spectrum-Menu-itemLabel {
+  & .spectrum-Icon + .spectrum-Menu-itemLabel,
+  & .spectrum-Menu-itemIcon  + .spectrum-Menu-itemLabel {
     margin-inline-start: var(--spectrum-selectlist-thumbnail-image-padding-x);
   }
 }
@@ -176,7 +176,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Menu-item.is-selectable {
-  .spectrum-Menu-itemGrid {
+  & .spectrum-Menu-itemGrid {
     grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-selectlist-option-icon-padding-x)) auto auto var(--spectrum-selectlist-option-padding);
   }
 }

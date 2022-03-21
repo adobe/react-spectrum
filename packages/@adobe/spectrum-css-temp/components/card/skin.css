@@ -18,11 +18,11 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-alias-highlight-selected);
   }
 
-   .spectrum-Card-checkboxWrapper {
+   & .spectrum-Card-checkboxWrapper {
      background-color: var(--spectrum-quickactions-background-color);
    }
 
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
     color: var(--spectrum-card-description-text-color);
   }
 }
@@ -116,33 +116,33 @@ governing permissions and limitations under the License.
                 opacity var(--spectrum-global-animation-duration-100);
     opacity: 0;
   }
-  .spectrum-Card-grid {
+  & .spectrum-Card-grid {
     &:before {
       transition: background-color var(--spectrum-global-animation-duration-100);
       background-color: var(--spectrum-card-quiet-preview-background-color);
     }
   }
 
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     border-block-end-color: var(--spectrum-card-coverphoto-border-color);
   }
-  .spectrum-Card-image {
+  & .spectrum-Card-image {
   }
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
   }
-  .spectrum-Card-actions {
+  & .spectrum-Card-actions {
   }
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
     color: var(--spectrum-card-description-text-color);
   }
-  .spectrum-Card-divider {
+  & .spectrum-Card-divider {
   }
-  .spectrum-Card-footer {
+  & .spectrum-Card-footer {
   }
 }
 
@@ -150,7 +150,7 @@ governing permissions and limitations under the License.
   border-color: transparent;
   background-color: transparent;
   &:hover {
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:before {
         background-color: var(--spectrum-card-quiet-preview-background-color-hover);
         /* TODO do we still want this border on the image itself? */
@@ -160,7 +160,7 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:after {
         /* Image needs to go right to the edge, so no border. Adding border on focus causes
         * a jump in the text and image. So focus ring is only box-shadow
@@ -171,7 +171,7 @@ governing permissions and limitations under the License.
   }
 
   &:hover.is-selected {
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:after {
         /* Image needs to go right to the edge, so no border. Adding border on focus causes
         * a jump in the text and image. So focus ring is only box-shadow
@@ -182,7 +182,7 @@ governing permissions and limitations under the License.
   }
 
   &:focus-ring {
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:after {
         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
       }
@@ -190,7 +190,7 @@ governing permissions and limitations under the License.
   }
 
   &:focus-ring:hover.is-selected {
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:after {
         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
       }
@@ -198,46 +198,46 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    .spectrum-Card-grid {
-      .spectrum-Card-decoration {
+    & .spectrum-Card-grid {
+      & .spectrum-Card-decoration {
         opacity: 0.15;
       }
     }
     &:hover {
-      .spectrum-Card-grid {
-        .spectrum-Card-decoration {
+      & .spectrum-Card-grid {
+        & .spectrum-Card-decoration {
           opacity: 0.25;
         }
       }
     }
   }
 
-  .spectrum-Card-grid {
+  & .spectrum-Card-grid {
     &:before {
       transition: background-color var(--spectrum-global-animation-duration-100);
       background-color: var(--spectrum-card-quiet-preview-background-color);
     }
   }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
   }
-  .spectrum-Card-image {
+  & .spectrum-Card-image {
   }
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
   }
-  .spectrum-Card-actions {
+  & .spectrum-Card-actions {
   }
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
   }
-  .spectrum-Card-divider {
+  & .spectrum-Card-divider {
   }
-  .spectrum-Card-footer {
+  & .spectrum-Card-footer {
   }
-  .spectrum-Card-decoration {
+  & .spectrum-Card-decoration {
     transition: background-color var(--spectrum-global-animation-duration-100),
                 opacity var(--spectrum-global-animation-duration-100);
     background-color: var(--spectrum-global-color-blue-400);
@@ -250,7 +250,7 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-card-background-color);
   &:hover {
     border-color: var(--spectrum-card-border-color-hover);
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:before {
         box-shadow: 0 0 0 1px var(--spectrum-card-border-color-hover);
       }
@@ -259,7 +259,7 @@ governing permissions and limitations under the License.
 
   &.is-selected {
     border-color: var(--spectrum-card-border-color-key-focus);
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:before {
         /* Image needs to go right to the edge, so no border. Adding border on focus causes
         * a jump in the text and image. So focus ring is only box-shadow
@@ -271,7 +271,7 @@ governing permissions and limitations under the License.
 
   &:hover.is-selected {
     border-color: var(--spectrum-card-border-color-key-focus);
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:before {
         /* Image needs to go right to the edge, so no border. Adding border on focus causes
         * a jump in the text and image. So focus ring is only box-shadow
@@ -283,7 +283,7 @@ governing permissions and limitations under the License.
 
   &:focus-ring {
     border-color: var(--spectrum-card-border-color-key-focus);
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:before {
         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
       }
@@ -292,7 +292,7 @@ governing permissions and limitations under the License.
 
   &:focus-ring:hover.is-selected {
     border-color: var(--spectrum-card-border-color-key-focus);
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:before {
         box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
       }
@@ -301,7 +301,7 @@ governing permissions and limitations under the License.
 
   &.is-selected {
     border-color: var(--spectrum-card-border-color-key-focus);
-    .spectrum-Card-grid {
+    & .spectrum-Card-grid {
       &:after {
         background-color: var(--spectrum-global-color-blue-400);
         opacity: 0.15;
@@ -309,7 +309,7 @@ governing permissions and limitations under the License.
     }
     &:hover {
       border-color: var(--spectrum-card-border-color-key-focus);
-      .spectrum-Card-grid {
+      & .spectrum-Card-grid {
         &:after {
           background-color: var(--spectrum-global-color-blue-400);
           opacity: 0.25;
@@ -318,33 +318,33 @@ governing permissions and limitations under the License.
     }
   }
 
-  .spectrum-Card-grid {
+  & .spectrum-Card-grid {
     &:after {
       transition: background-color var(--spectrum-global-animation-duration-100),
                   opacity var(--spectrum-global-animation-duration-100);
       opacity: 0;
     }
   }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     border-inline-end-color: var(--spectrum-card-coverphoto-border-color);
   }
-  .spectrum-Card-image {
+  & .spectrum-Card-image {
   }
-  .spectrum-Card-illustration {
+  & .spectrum-Card-illustration {
   }
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
   }
-  .spectrum-Card-actions {
+  & .spectrum-Card-actions {
   }
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
   }
-  .spectrum-Card-divider {
+  & .spectrum-Card-divider {
   }
-  .spectrum-Card-footer {
+  & .spectrum-Card-footer {
   }
 }

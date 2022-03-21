@@ -104,7 +104,7 @@ only screen and (max-device-height: 350px) {
     border-radius: 0;
   }
   .spectrum-Modal-wrapper {
-    .spectrum-Modal--responsive {
+    & .spectrum-Modal--responsive {
       margin-top: 0; /* Prevent the vertical offset bit */
     }
   }

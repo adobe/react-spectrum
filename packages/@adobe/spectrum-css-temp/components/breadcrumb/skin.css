@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
   color: var(--spectrum-breadcrumb-text-color);
 
   &.is-dragged {
-    .spectrum-Breadcrumbs-itemLink {
+    & .spectrum-Breadcrumbs-itemLink {
       color: var(--spectrum-breadcrumb-item-text-color-drop);
       background-color: var(--spectrum-breadcrumb-item-background-color-drop);
 
@@ -24,11 +24,11 @@ governing permissions and limitations under the License.
     }
   }
 
-  .spectrum-Breadcrumbs-itemSeparator {
+  & .spectrum-Breadcrumbs-itemSeparator {
     color: var(--spectrum-breadcrumb-ui-icon-color);
   }
 
-  .spectrum-Breadcrumbs-itemLink {
+  & .spectrum-Breadcrumbs-itemLink {
     color: inherit;
 
     &:hover {
@@ -59,12 +59,12 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    ~ .spectrum-Breadcrumb {
+    & ~ .spectrum-Breadcrumb {
       &:last-of-type {
         color: var(--spectrum-breadcrumb-text-color);
       }
     }
-    .spectrum-Breadcrumbs-itemLink {
+    & .spectrum-Breadcrumbs-itemLink {
       &:focus-ring {
         color: var(--spectrum-breadcrumb-text-color-down);
         border-bottom: 0;
@@ -87,14 +87,14 @@ governing permissions and limitations under the License.
     &.is-selected,
     &:last-of-type {
       color: var(--spectrum-breadcrumb-text-color-down);
-      .spectrum-Breadcrumbs-itemLink {
+      & .spectrum-Breadcrumbs-itemLink {
         &:hover {
           color: var(--spectrum-breadcrumb-text-color-down);
         }
       }
     }
     /* Make links stay link color when clicked and disabled links remain disabled color */
-    .spectrum-Breadcrumbs-itemLink {
+    & .spectrum-Breadcrumbs-itemLink {
       &:active {
         color: var(--spectrum-breadcrumb-text-color);
       }

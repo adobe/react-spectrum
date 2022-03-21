@@ -40,12 +40,12 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    .spectrum-Menu-checkmark {
+    & .spectrum-Menu-checkmark {
       color: var(--spectrum-selectlist-option-icon-color-selected);
     }
   }
 
-  .is-active,
+  & .is-active,
   &:active {
     background-color: var(--spectrum-selectlist-option-background-color-down);
   }

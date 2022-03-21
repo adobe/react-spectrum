@@ -37,16 +37,16 @@
     margin-bottom: 16px;
   }
 
-  .npmImage {
+  & .npmImage {
     background: rgba(203, 56, 55, 0.1);
   }
 
-  .gitImage, .spectrumImage, .w3cImage {
+  & .gitImage, & .spectrumImage, & .w3cImage {
     background-color: var(--spectrum-global-color-gray-200);
     fill: var(--spectrum-global-color-gray-900);
   }
 
-  .cardContent {
+  & .cardContent {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -55,11 +55,11 @@
     margin-bottom: 0 !important;
   }
 
-  .cardTitle {
+  & .cardTitle {
     font-weight: 700;
   }
 
-  .cardType {
+  & .cardType {
     color: var(--spectrum-global-color-gray-700);
     font-size: 12px;
 
@@ -67,7 +67,7 @@
 }
 
 .resourceCard {
-  img, svg {
+  & img, & svg {
     width: 64px;
     height: 64px;
   }

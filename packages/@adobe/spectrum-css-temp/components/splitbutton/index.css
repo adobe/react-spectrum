@@ -86,13 +86,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-SplitButton-action {
-  .spectrum-Button-label + .spectrum-Icon {
+  & .spectrum-Button-label + .spectrum-Icon {
     margin-left: var(--spectrum-splitbutton-icon-gap);
   }
 }
 
 .spectrum-SplitButton--left {
-  .spectrum-SplitButton-action {
+  & .spectrum-SplitButton-action {
     border-radius: 0 var(--spectrum-button-primary-border-radius) var(--spectrum-button-primary-border-radius) 0;
     margin-right: 0;
     margin-left: var(--spectrum-spltibutton-margin-left);
@@ -104,7 +104,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  .spectrum-SplitButton-trigger {
+  & .spectrum-SplitButton-trigger {
     margin-right: 0;
 
     border-radius: var(--spectrum-button-primary-border-radius) 0 0 var(--spectrum-button-primary-border-radius);

@@ -74,7 +74,7 @@ governing permissions and limitations under the License.
     border-radius: var(--spectrum-sidenav-item-border-radius);
   }
 
-  .spectrum-SideNav-itemIcon {
+  & .spectrum-SideNav-itemIcon {
     margin-inline-end: var(--spectrum-sidenav-icon-gap);
   }
 }
@@ -99,22 +99,22 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-SideNav--multiLevel {
-  .spectrum-SideNav-itemLink {
+  & .spectrum-SideNav-itemLink {
     font-weight: var(--spectrum-sidenav-multilevel-main-item-font-weight);
   }
 
-  .spectrum-SideNav {
+  & .spectrum-SideNav {
     margin: 0;
     padding: 0;
 
-    .spectrum-SideNav-itemLink {
+    & .spectrum-SideNav-itemLink {
       font-weight: var(--spectrum-sidenav-item-font-weight);
 
       padding-inline-start: calc(var(--spectrum-sidenav-multilevel-item-indentation-level1) + var(--spectrum-sidenav-item-padding-x));
     }
 
-    .spectrum-SideNav {
-      .spectrum-SideNav-itemLink {
+    & .spectrum-SideNav {
+      & .spectrum-SideNav-itemLink {
         padding-inline-start: calc(var(--spectrum-sidenav-multilevel-item-indentation-level2) + var(--spectrum-sidenav-item-padding-x));
       }
     }

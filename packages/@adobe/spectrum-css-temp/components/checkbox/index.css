@@ -74,7 +74,7 @@ governing permissions and limitations under the License.
   }
 
   &:focus-ring {
-    + .spectrum-Checkbox-box {
+    & + .spectrum-Checkbox-box {
       &:after {
         margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
       }
@@ -83,16 +83,16 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Checkbox.is-indeterminate {
-  .spectrum-Checkbox-box {
+  & .spectrum-Checkbox-box {
     &:before {
       border-width: calc(var(--spectrum-checkbox-box-size) / 2);
     }
 
-    .spectrum-Checkbox-checkmark {
+    & .spectrum-Checkbox-checkmark {
       display: none;
     }
 
-    .spectrum-Checkbox-partialCheckmark {
+    & .spectrum-Checkbox-partialCheckmark {
       display: block;
 
       transform: scale(1);
@@ -102,13 +102,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Checkbox.is-checked {
-  .spectrum-Checkbox-box {
+  & .spectrum-Checkbox-box {
     &:before {
       border-width: calc(var(--spectrum-checkbox-box-size) / 2);
     }
 
 
-    .spectrum-Checkbox-checkmark {
+    & .spectrum-Checkbox-checkmark {
       transform: scale(1);
       opacity: 1;
     }

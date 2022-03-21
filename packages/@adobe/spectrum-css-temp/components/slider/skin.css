@@ -35,7 +35,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider--filled {
-  .spectrum-Slider-track:first-child {
+  & .spectrum-Slider-track:first-child {
     &::before {
       background: var(--spectrum-slider-fill-track-color);
     }
@@ -56,7 +56,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider-ramp {
-  path {
+  & path {
     fill: var(--spectrum-slider-track-color);
   }
 }
@@ -84,7 +84,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider--ramp {
-  .spectrum-Slider-handle {
+  & .spectrum-Slider-handle {
     /* We can't draw this one correctly without this hack : ( */
     box-shadow: 0 0 0 4px var(--spectrum-alias-background-color-default);
   }
@@ -108,7 +108,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider--range {
-  .spectrum-Slider-track {
+  & .spectrum-Slider-track {
     &:not(:first-of-type):not(:last-of-type) {
       &:before {
         background: var(--spectrum-slider-fill-track-color);
@@ -118,7 +118,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider--color {
-  .spectrum-Slider-controls::before {
+  & .spectrum-Slider-controls::before {
     background-color: var(--spectrum-global-color-static-white);
     /* Add a half-percent to fix diagonal line issue in Chrome on non-retina displays */
     background-image:
@@ -136,7 +136,7 @@ governing permissions and limitations under the License.
       calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
     z-index: 0;
   }
-  .spectrum-Slider-track {
+  & .spectrum-Slider-track {
     background-color: transparent;
     background-image: linear-gradient(to right, var(--spectrum-slider-color-track-background-color-gradient-start), var(--spectrum-slider-color-track-background-color-gradient-end));
     box-shadow: inset 0 0 0 1px var(--spectrum-slider-color-track-border-color);
@@ -144,7 +144,7 @@ governing permissions and limitations under the License.
       display: none;
     }
   }
-  .spectrum-Slider-handle {
+  & .spectrum-Slider-handle {
     box-shadow: inset 0 0 0 1px var(--spectrum-slider-color-handle-inset-border-color), 0 0 0 1px var(--spectrum-slider-color-handle-outset-border-color);
     border-color: var(--spectrum-slider-color-handle-border-color);
     background: var(--spectrum-slider-color-handle-color);
@@ -207,16 +207,16 @@ governing permissions and limitations under the License.
 
 .spectrum-Dial {
   &.is-disabled {
-    .spectrum-Dial-labelContainer {
+    & .spectrum-Dial-labelContainer {
       color: var(--spectrum-label-text-color-disabled);
     }
-    .spectrum-Dial-controls {
+    & .spectrum-Dial-controls {
       &::after,
       &::before {
         background-color: var(--spectrum-slider-handle-border-color-disabled);
       }
     }
-    .spectrum-Dial-handle {
+    & .spectrum-Dial-handle {
       border-color: var(--spectrum-slider-handle-border-color-disabled);
       background: var(--spectrum-alias-background-color-default);
 
@@ -236,11 +236,11 @@ governing permissions and limitations under the License.
 
 .spectrum-Slider {
   &.is-disabled {
-    .spectrum-Slider-labelContainer {
+    & .spectrum-Slider-labelContainer {
       color: var(--spectrum-label-text-color-disabled);
     }
 
-    .spectrum-Slider-handle {
+    & .spectrum-Slider-handle {
       border-color: var(--spectrum-slider-handle-border-color-disabled);
       background: var(--spectrum-alias-background-color-default);
 
@@ -250,40 +250,40 @@ governing permissions and limitations under the License.
         background: var(--spectrum-slider-handle-background-color);
       }
     }
-    .spectrum-Slider-track {
+    & .spectrum-Slider-track {
       &::before {
         background: var(--spectrum-slider-track-color-disabled);
       }
     }
     &.spectrum-Slider--filled {
-      .spectrum-Slider-track:first-child {
+      & .spectrum-Slider-track:first-child {
         &::before {
           background: var(--spectrum-slider-fill-track-color-disabled);
         }
       }
     }
-    .spectrum-Slider-fill {
+    & .spectrum-Slider-fill {
       &::before {
         background: var(--spectrum-slider-fill-track-color-disabled);
       }
     }
-    .spectrum-Slider-buffer {
+    & .spectrum-Slider-buffer {
       &::before {
         background: var(--spectrum-slider-player-track-buffer-color-disabled);
       }
     }
-    .spectrum-Slider-ramp {
-      path {
+    & .spectrum-Slider-ramp {
+      & path {
         fill: var(--spectrum-slider-ramp-track-color-disabled);
       }
     }
 
     &.spectrum-Slider--color {
-      .spectrum-Slider-track {
+      & .spectrum-Slider-track {
         background: var(--spectrum-slider-color-track-color-disabled) !important;
         box-shadow: none;
       }
-      .spectrum-Slider-handle {
+      & .spectrum-Slider-handle {
         background: var(--spectrum-slider-color-handle-color-disabled);
         box-shadow: none;
         border-color: var(--spectrum-slider-color-handle-border-color-disabled);
@@ -298,7 +298,7 @@ governing permissions and limitations under the License.
     }
 
     &.spectrum-Slider--range {
-      .spectrum-Slider-track {
+      & .spectrum-Slider-track {
         &:not(:first-of-type):not(:last-of-type) {
           &:before {
             background: var(--spectrum-slider-fill-track-color-disabled);

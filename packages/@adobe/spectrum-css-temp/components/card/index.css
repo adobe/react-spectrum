@@ -106,10 +106,10 @@ user-provided
     outline: none;
   }
 
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
     margin: 0;
   }
-  .spectrum-Card-checkboxWrapper {
+  & .spectrum-Card-checkboxWrapper {
     position: absolute;
     inset-inline-start: var(--spectrum-card-checkbox-margin);
     inset-block-start: var(--spectrum-card-checkbox-margin);
@@ -119,7 +119,7 @@ user-provided
     border-radius: var(--spectrum-card-quiet-border-radius);
     visibility: hidden;
   }
-  .spectrum-Card-checkbox {
+  & .spectrum-Card-checkbox {
     /* make hitbox of checkbox same as the floating background it sits on, top and bottom are computing 0 right now though
      using calc(50% - var(--spectrum-checkbox-height) - calc(var(--spectrum-checkbox-box-size) / 2))
      */
@@ -132,7 +132,7 @@ user-provided
   &.is-selected,
   &.focus-ring, /* only for visible focus */
   &.is-hovered {
-    .spectrum-Card-checkboxWrapper {
+    & .spectrum-Card-checkboxWrapper {
       /* Ideally, this would simply apply is-open to the QuickActions component */
       visibility: visible;
       opacity: 1;
@@ -147,7 +147,7 @@ user-provided
 
   }
   &:after,
-  .spectrum-Card-decoration{
+  & .spectrum-Card-decoration{
     pointer-events: none;
   }
 }
@@ -190,7 +190,7 @@ user-provided
 /** Standard Vertical **/
 /** Waterfall **/
 .spectrum-Card--waterfall.spectrum-Card--default {
-  .spectrum-Card-checkboxWrapper {
+  & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
   &:after {
@@ -222,7 +222,7 @@ user-provided
     border-radius: var(--spectrum-card-border-radius);
   }
 
-  .spectrum-Card-grid {
+  & .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
     grid-template-columns: var(--spectrum-card-body-padding-left) minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto) var(--spectrum-card-body-padding-right);
@@ -256,13 +256,13 @@ user-provided
       ".       content content content    ."
       ".       .       .       .          .";
 
-    .spectrum-Card-avatar {
+    & .spectrum-Card-avatar {
       display: none;
     }
   }
 
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     inline-size: 100%;
     block-size: 100%;
 
@@ -274,40 +274,40 @@ user-provided
     border-start-start-radius: var(--spectrum-card-border-radius);
     border-start-end-radius: var(--spectrum-card-border-radius);
   }
-  .spectrum-Card-image {
+  & .spectrum-Card-image {
   }
-  .spectrum-Card-illustration {
+  & .spectrum-Card-illustration {
     display: grid; /* not sure why flex doesn't work here */
     align-items: center;
     justify-items: center;
   }
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
     grid-area: preview;
     position: absolute;
     inset-block-end: -10px;
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
     margin-block-end: 5px;
   }
 }
 
 /** Tile **/
 .spectrum-Card--grid.spectrum-Card--default {
-  .spectrum-Card-checkboxWrapper {
+  & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
   &:after {
@@ -374,12 +374,12 @@ user-provided
       ".       content content content    ."
       ".       .       .       .          .";
 
-    .spectrum-Card-avatar {
+    & .spectrum-Card-avatar {
       display: none;
     }
   }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     inline-size: 100%;
     block-size: 100%;
     /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
@@ -392,33 +392,33 @@ user-provided
     border-start-start-radius: var(--spectrum-card-border-radius);
     border-start-end-radius: var(--spectrum-card-border-radius);
   }
-  .spectrum-Card-image {
+  & .spectrum-Card-image {
   }
-  .spectrum-Card-illustration {
+  & .spectrum-Card-illustration {
     display: grid; /* not sure why flex doesn't work here */
     align-items: center;
     justify-items: center;
   }
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
     grid-area: preview;
     position: absolute;
     inset-block-end: -10px;
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
     margin-block-end: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -427,7 +427,7 @@ user-provided
 
 /** Standalone **/
 .spectrum-Card--noLayout.spectrum-Card--default {
-  .spectrum-Card-checkboxWrapper {
+  & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
   &:after {
@@ -495,12 +495,12 @@ user-provided
     /* TODO: is this accurate? if we don't want to enforce it, then we can
         give min-height to spectrum-Card-image/illustration
         and it would no longer be a card state, we could simplify */
-    .spectrum-Card-avatar {
+    & .spectrum-Card-avatar {
       display: none;
     }
   }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     inline-size: 100%;
     block-size: 100%;
     /*min-inline-size: var(--spectrum-card-min-width); causes to obscure border */
@@ -513,35 +513,35 @@ user-provided
     border-start-start-radius: var(--spectrum-card-border-radius);
     border-start-end-radius: var(--spectrum-card-border-radius);
   }
-  .spectrum-Card-image {
+  & .spectrum-Card-image {
   }
-  .spectrum-Card-illustration {
+  & .spectrum-Card-illustration {
     display: grid; /* not sure why flex doesn't work here */
     align-items: center;
     justify-items: center;
     inline-size: 100%;
     block-size: var(--spectrum-card-coverphoto-height); /* this may be an incorrect assumption */
   }
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
     grid-area: preview;
     position: absolute;
     inset-block-end: -10px;
     inset-inline-start: var(--spectrum-card-body-padding-left);
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
     margin-block-end: 5px;
   }
 }
@@ -551,18 +551,18 @@ user-provided
 /** Quiet Vertical **/
 /** Waterfall **/
 .spectrum-Card--waterfall.spectrum-Card--isQuiet {
-  .spectrum-Card-checkboxWrapper {
+  & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
-  .spectrum-Card-grid:before {
+  & .spectrum-Card-grid:before {
     z-index: -1;
   }
-  .spectrum-Card-grid:after {
+  & .spectrum-Card-grid:after {
     z-index: 2;
   }
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
-  .spectrum-Card-grid {
+  & .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
@@ -592,7 +592,7 @@ user-provided
 
       border-radius: calc(var(--spectrum-card-quiet-border-radius) + var(--spectrum-alias-focus-ring-gap));
     }
-    .spectrum-Card-decoration {
+    & .spectrum-Card-decoration {
       display: block;
       grid-area: preview;
       inline-size: 100%;
@@ -601,8 +601,8 @@ user-provided
       border-radius: var(--spectrum-card-quiet-border-radius);
     }
   }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     block-size: 100%;
     inline-size: 100%;
     min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
@@ -611,29 +611,29 @@ user-provided
     justify-self: center;
     border-radius: var(--spectrum-card-quiet-border-radius);
   }
-  .spectrum-Card-illustration {
+  & .spectrum-Card-illustration {
     display: grid; /* not sure why flex doesn't work here */
     align-items: center;
     justify-items: center;
   }
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
     display: none;
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
     margin-block-end: 5px;
   }
 }
@@ -641,18 +641,18 @@ user-provided
 /** Gallery **/
 /** Non-collection version doesn't work in FF, but should work in a collection which determines the size **/
 .spectrum-Card--gallery.spectrum-Card--isQuiet {
-  .spectrum-Card-checkboxWrapper {
+  & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
-  .spectrum-Card-grid:before {
+  & .spectrum-Card-grid:before {
     z-index: -1;
   }
-  .spectrum-Card-grid:after {
+  & .spectrum-Card-grid:after {
     z-index: 2;
   }
   min-inline-size: 0;
 
-  .spectrum-Card-grid {
+  & .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
@@ -682,7 +682,7 @@ user-provided
 
       border-radius: calc(var(--spectrum-card-quiet-border-radius) + var(--spectrum-alias-focus-ring-gap));
     }
-    .spectrum-Card-decoration {
+    & .spectrum-Card-decoration {
       display: block;
       grid-area: preview;
       inline-size: 100%;
@@ -691,8 +691,8 @@ user-provided
       border-radius: var(--spectrum-card-quiet-border-radius);
     }
   }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     block-size: 100%;
     inline-size: 100%;
     min-inline-size: 100%; /* I do not know why setting a min-width causes the image to shrink */
@@ -700,35 +700,35 @@ user-provided
     align-self: center;
     justify-self: center;
     border-radius: var(--spectrum-card-quiet-border-radius);
-    > img {
+    & > img {
       width: unset;
       margin: auto;
     }
   }
 
-  .spectrum-Card-illustration {
+  & .spectrum-Card-illustration {
     display: grid; /* not sure why flex doesn't work here */
     align-items: center;
     justify-items: center;
   }
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
     display: none;
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
     margin-block-end: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -737,18 +737,18 @@ user-provided
 
 /** Tile **/
 .spectrum-Card--grid.spectrum-Card--isQuiet {
-  .spectrum-Card-checkboxWrapper {
+  & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
-  .spectrum-Card-grid:before {
+  & .spectrum-Card-grid:before {
     z-index: -1;
   }
-  .spectrum-Card-grid:after {
+  & .spectrum-Card-grid:after {
     z-index: 2;
   }
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
-  .spectrum-Card-grid {
+  & .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
@@ -785,7 +785,7 @@ user-provided
 
       border-radius: calc(var(--spectrum-card-quiet-border-radius) + var(--spectrum-alias-focus-ring-gap));
     }
-    .spectrum-Card-decoration {
+    & .spectrum-Card-decoration {
       display: block;
       grid-area: preview;
       inline-size: 100%;
@@ -794,8 +794,8 @@ user-provided
       border-radius: var(--spectrum-card-quiet-border-radius);
     }
   }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     box-sizing: border-box; /* so that 100% counts padding as well */
     block-size: 100%;
     inline-size: 100%;
@@ -804,35 +804,35 @@ user-provided
     align-self: center;
     justify-self: center;
   }
-  .spectrum-Card-image {
+  & .spectrum-Card-image {
     clip-path: inset(0% 0% 0% 0% round var(--spectrum-card-quiet-border-radius));
     /* remove from flow so it doesn't affect grid area size, this way the aspect ratio is maintained
      todo: figure out why or how it's already in the correct centered spot */
     position: absolute;
   }
-  .spectrum-Card-illustration {
+  & .spectrum-Card-illustration {
     display: grid; /* not sure why flex doesn't work here */
     align-items: center;
     justify-items: center;
   }
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
     display: none;
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
     margin-block-end: 5px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -841,18 +841,18 @@ user-provided
 
 /** Standalone **/
 .spectrum-Card--noLayout.spectrum-Card--isQuiet {
-  .spectrum-Card-checkboxWrapper {
+  & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
-  .spectrum-Card-grid:before {
+  & .spectrum-Card-grid:before {
     z-index: -1;
   }
-  .spectrum-Card-grid:after {
+  & .spectrum-Card-grid:after {
     z-index: 2;
   }
   min-inline-size: var(--spectrum-card-quiet-min-size);
 
-  .spectrum-Card-grid {
+  & .spectrum-Card-grid {
     block-size: 100%;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(var(--spectrum-global-dimension-size-500), 1fr) minmax(0, auto);
@@ -885,7 +885,7 @@ user-provided
 
       border-radius: calc(var(--spectrum-card-quiet-border-radius) + var(--spectrum-alias-focus-ring-gap));
     }
-    .spectrum-Card-decoration {
+    & .spectrum-Card-decoration {
       display: block;
       grid-area: preview;
       inline-size: 100%;
@@ -894,8 +894,8 @@ user-provided
       border-radius: var(--spectrum-card-quiet-border-radius);
     }
   }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     display: flex;
 
     align-self: center;
@@ -903,30 +903,30 @@ user-provided
 
     border-radius: var(--spectrum-card-quiet-border-radius);
   }
-  .spectrum-Card-image {
+  & .spectrum-Card-image {
   }
-  .spectrum-Card-illustration {
+  & .spectrum-Card-illustration {
     display: grid; /* not sure why flex doesn't work here */
     align-items: center;
     justify-items: center;
     inline-size: 100%;
     block-size: var(--spectrum-card-coverphoto-height);
   }
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
     display: none;
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
     align-self: baseline;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
     align-self: baseline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
     margin-block-end: 5px;
   }
 }
@@ -939,24 +939,24 @@ For now working around it with a useLayoutEffect in CardBase.
 **/
 /** Tile **/
 .spectrum-Card--grid.spectrum-Card--horizontal {
-  .spectrum-Card-grid:after {
+  & .spectrum-Card-grid:after {
     z-index: 2;
   }
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
-  .spectrum-Card-checkboxWrapper {
+  & .spectrum-Card-checkboxWrapper {
     display: none;
   }
   &.is-focused,
   &.is-selected,
   &.is-hovered {
-    .spectrum-Card-checkboxWrapper {
+    & .spectrum-Card-checkboxWrapper {
       display: none;
     }
   }
 
-  .spectrum-Card-grid {
+  & .spectrum-Card-grid {
     display: grid;
     block-size: 100%;
     grid-template-columns: auto var(--spectrum-global-dimension-size-200) 1fr auto var(--spectrum-global-dimension-size-200);
@@ -975,8 +975,8 @@ For now working around it with a useLayoutEffect in CardBase.
       border-radius: var(--spectrum-card-border-radius);
     }
   }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     grid-area: preview;
     block-size: 100%;
     /*aspect-ratio: 1/1;*/ /* can't use in safari or FF :( */
@@ -990,30 +990,30 @@ For now working around it with a useLayoutEffect in CardBase.
     border-inline-end-style: solid;
   }
 
-  .spectrum-Card-image {
+  & .spectrum-Card-image {
   }
 
-  .spectrum-Card-illustration {
+  & .spectrum-Card-illustration {
     display: grid;
     align-items: center;
     justify-items: center;
   }
 
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
     display: none;
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
     align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
     display: none;
   }
   /* how to handle long description?? */
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
     width: 100%;
     overflow: hidden;
     display: -webkit-box;
@@ -1026,24 +1026,24 @@ For now working around it with a useLayoutEffect in CardBase.
 
 /** Standalone **/
 .spectrum-Card--noLayout.spectrum-Card--horizontal {
-  .spectrum-Card-grid:after {
+  & .spectrum-Card-grid:after {
     z-index: 2;
   }
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
-  .spectrum-Card-checkboxWrapper {
+  & .spectrum-Card-checkboxWrapper {
     display: none;
   }
   &.is-focused,
   &.is-selected,
   &.is-hovered {
-    .spectrum-Card-checkboxWrapper {
+    & .spectrum-Card-checkboxWrapper {
       display: none;
     }
   }
 
-  .spectrum-Card-grid {
+  & .spectrum-Card-grid {
     position: relative;
     display: grid;
     block-size: 100%;
@@ -1071,8 +1071,8 @@ For now working around it with a useLayoutEffect in CardBase.
       border-radius: var(--spectrum-card-border-radius);
     }
   }
-  .spectrum-Card-image,
-  .spectrum-Card-illustration {
+  & .spectrum-Card-image,
+  & .spectrum-Card-illustration {
     grid-area: preview;
     block-size: 100%;
     /*aspect-ratio: 1/1;*/ /* can't use in safari or FF :( */
@@ -1086,30 +1086,30 @@ For now working around it with a useLayoutEffect in CardBase.
     border-inline-end-style: solid;
   }
 
-  .spectrum-Card-image {
+  & .spectrum-Card-image {
   }
 
-  .spectrum-Card-illustration {
+  & .spectrum-Card-illustration {
     display: grid;
     align-items: center;
     justify-items: center;
   }
 
-  .spectrum-Card-avatar {
+  & .spectrum-Card-avatar {
     display: none;
   }
-  .spectrum-Card-heading {
+  & .spectrum-Card-heading {
     align-self: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-inline-end: var(--spectrum-card-title-padding-right);
   }
-  .spectrum-Card-detail {
+  & .spectrum-Card-detail {
     display: none;
   }
   /* how to handle long description?? */
-  .spectrum-Card-content {
+  & .spectrum-Card-content {
     width: 100%;
     overflow: hidden;
     display: -webkit-box;
@@ -1125,14 +1125,14 @@ For now working around it with a useLayoutEffect in CardBase.
 .spectrum-CardView {
   outline: none;
 
-  .spectrum-CardView-centeredWrapper {
+  & .spectrum-CardView-centeredWrapper {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
   }
-  .spectrum-CardView-row {
+  & .spectrum-CardView-row {
     outline: none;
     height: 100%
   }

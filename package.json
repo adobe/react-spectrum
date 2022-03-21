@@ -179,6 +179,9 @@
     "postcss-modules": "^3.2.2"
   },
   "@parcel/transformer-css": {
-    "cssModules": true
+    "cssModules": true,
+    "drafts": {
+      "nesting": true
+    }
   }
 }

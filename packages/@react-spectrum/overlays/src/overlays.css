@@ -17,7 +17,7 @@
     visibility: visible;
   }
 
-  .spectrum-Dialog-content {
+  & .spectrum-Dialog-content {
     max-height: initial;
   }
 }

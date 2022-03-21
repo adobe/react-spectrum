@@ -121,7 +121,7 @@ governing permissions and limitations under the License.
   min-width: calc(var(--spectrum-coachmark-quiet-indicator-ring-diameter) * 2.75);
   min-height: calc(var(--spectrum-coachmark-quiet-indicator-ring-diameter) * 2.75);
 
-  .spectrum-CoachMarkIndicator-ring {
+  & .spectrum-CoachMarkIndicator-ring {
     top: calc(var(--spectrum-coachmark-quiet-indicator-ring-diameter) * 0.75);
     left: calc(var(--spectrum-coachmark-quiet-indicator-ring-diameter) * 0.75);
 

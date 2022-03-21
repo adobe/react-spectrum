@@ -182,11 +182,11 @@
 
 /* regex */
 :global(.string.special) {
-  :global(.operator) {
+  & :global(.operator) {
     color: var(--hljs-keyword-color);
   }
 
-  :global(.punctuation.bracket) {
+  & :global(.punctuation.bracket) {
     color: var(--hljs-attribute-color);
   }
 }

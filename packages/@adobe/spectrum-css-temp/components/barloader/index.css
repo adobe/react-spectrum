@@ -28,7 +28,7 @@ governing permissions and limitations under the License.
   }
 
   &.spectrum-BarLoader--indeterminate.spectrum-BarLoader--sideLabel {
-    .spectrum-BarLoader-track {
+    & .spectrum-BarLoader-track {
       max-inline-size: var(--spectrum-barloader-large-width);
       inline-size: 100%;
     }
@@ -76,15 +76,15 @@ governing permissions and limitations under the License.
   justify-content: space-between;
   min-inline-size: fit-content;
 
-  .spectrum-BarLoader-track {
+  & .spectrum-BarLoader-track {
     inline-size: inherit;
   }
 
-  .spectrum-BarLoader-label {
+  & .spectrum-BarLoader-label {
     margin-inline-end: var(--spectrum-barloader-large-label-gap-x);
     margin-bottom: 0;
   }
-  .spectrum-BarLoader-percentage {
+  & .spectrum-BarLoader-percentage {
     order: 3;
     text-align: end;
     margin-inline-start: var(--spectrum-barloader-large-label-gap-x);
@@ -95,11 +95,11 @@ governing permissions and limitations under the License.
 .spectrum-BarLoader--small {
   min-inline-size: var(--spectrum-global-dimension-static-size-600);
 
-  .spectrum-BarLoader-fill {
+  & .spectrum-BarLoader-fill {
     height: var(--spectrum-barloader-small-height);
   }
 
-  .spectrum-BarLoader-track {
+  & .spectrum-BarLoader-track {
     height: var(--spectrum-barloader-small-height);
     border-radius: var(--spectrum-barloader-small-border-radius);
   }

@@ -5,7 +5,7 @@
 
 .spectrum-ColorWheel {
   &.is-disabled {
-    .spectrum-ColorWheel-gradient {
+    & .spectrum-ColorWheel-gradient {
       background: var(--spectrum-colorwheel-fill-color-disabled) !important;
 
       &:before,
@@ -15,7 +15,7 @@
     }
 
     /* hide all the little colored bits */
-    .spectrum-ColorWheel-segment {
+    & .spectrum-ColorWheel-segment {
       display: none;
     }
   }

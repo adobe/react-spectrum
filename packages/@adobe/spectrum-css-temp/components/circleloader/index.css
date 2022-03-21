@@ -68,14 +68,14 @@ governing permissions and limitations under the License.
   width: var(--spectrum-loader-circle-small-width);
   height: var(--spectrum-loader-circle-small-height);
 
-  .spectrum-CircleLoader-track {
+  & .spectrum-CircleLoader-track {
     width: calc(var(--spectrum-loader-circle-small-width));
     height: calc(var(--spectrum-loader-circle-small-height));
     border-style: solid;
     border-width: var(--spectrum-loader-circle-small-border-size);
     border-radius: var(--spectrum-loader-circle-small-width);
   }
-  .spectrum-CircleLoader-fill {
+  & .spectrum-CircleLoader-fill {
     width: calc(var(--spectrum-loader-circle-small-width));
     height: calc(var(--spectrum-loader-circle-small-height));
     border-style: solid;
@@ -88,7 +88,7 @@ governing permissions and limitations under the License.
   width: var(--spectrum-loader-circle-large-width);
   height: var(--spectrum-loader-circle-large-height);
 
-  .spectrum-CircleLoader-track {
+  & .spectrum-CircleLoader-track {
     width: calc(var(--spectrum-loader-circle-large-width));
     height: calc(var(--spectrum-loader-circle-large-height));
     border-style: solid;
@@ -96,7 +96,7 @@ governing permissions and limitations under the License.
     border-radius: var(--spectrum-loader-circle-large-width);
   }
 
-  .spectrum-CircleLoader-fill {
+  & .spectrum-CircleLoader-fill {
     width: calc(var(--spectrum-loader-circle-large-width));
     height: calc(var(--spectrum-loader-circle-large-height));
     border-style: solid;
@@ -106,19 +106,19 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-CircleLoader--indeterminate {
-  .spectrum-CircleLoader-fills {
+  & .spectrum-CircleLoader-fills {
     will-change: transform;
     transform: translateZ(0);
     animation: spectrum-fills-rotate 1s infinite cubic-bezier(.25,.78,.48,.89);
     transform-origin: center;
   }
-  .spectrum-CircleLoader-fillSubMask1 {
+  & .spectrum-CircleLoader-fillSubMask1 {
     will-change: transform;
     transform: translateZ(0);
     animation: spectrum-fill-mask-1 1s infinite linear;
   }
 
-  .spectrum-CircleLoader-fillSubMask2 {
+  & .spectrum-CircleLoader-fillSubMask2 {
     will-change: transform;
     transform: translateZ(0);
     animation: spectrum-fill-mask-2 1s infinite linear;

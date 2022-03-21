@@ -68,19 +68,19 @@ governing permissions and limitations under the License.
   &:hover,
   &:focus {
     /* checkbox on the left, shows up always */
-    .spectrum-Checkbox {
+    & .spectrum-Checkbox {
       display: inline-flex;
     }
   }
 
   &.is-branch {
     /* show chevron */
-    .spectrum-AssetList-itemChildIndicator {
+    & .spectrum-AssetList-itemChildIndicator {
       display: block;
     }
   }
 
-  .spectrum-AssetList-itemThumbnail {
+  & .spectrum-AssetList-itemThumbnail {
     /* Remove the border on images inside links in IE 10-. */
     border-style: none;
 

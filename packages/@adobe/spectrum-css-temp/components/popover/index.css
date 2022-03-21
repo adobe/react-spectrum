@@ -61,7 +61,7 @@ governing permissions and limitations under the License.
   /* https://stackoverflow.com/questions/44170229/how-to-prevent-half-pixel-svg-shift-on-high-pixel-ratio-devices-retina */
   -webkit-transform: translate(0, 0);
 
-  .spectrum-Popover-tip-triangle {
+  & .spectrum-Popover-tip-triangle {
     stroke-linecap: square;
     stroke-linejoin: miter;
     stroke-width: var(--spectrum-popover-border-size);
@@ -81,7 +81,7 @@ governing permissions and limitations under the License.
   &.is-open {
     @inherit: %spectrum-overlay--left--open;
   }
-  .spectrum-Popover-tip {
+  & .spectrum-Popover-tip {
     left: 100%;
   }
 }
@@ -94,7 +94,7 @@ governing permissions and limitations under the License.
   &.is-open {
     @inherit: %spectrum-overlay--right--open;
   }
-  .spectrum-Popover-tip {
+  & .spectrum-Popover-tip {
     right: 100%;
     transform: scaleX(-1);
   }
@@ -103,7 +103,7 @@ governing permissions and limitations under the License.
 /* Center the tip by default */
 .spectrum-Popover--left,
 .spectrum-Popover--right {
-  .spectrum-Popover-tip {
+  & .spectrum-Popover-tip {
     top: 50%;
     margin-top: calc(var(--spectrum-global-dimension-size-150) * -1);
   }
@@ -117,7 +117,7 @@ governing permissions and limitations under the License.
   &.is-open {
     @inherit: %spectrum-overlay--bottom--open;
   }
-  .spectrum-Popover-tip {
+  & .spectrum-Popover-tip {
     bottom: 100%;
     transform: scaleY(-1);
   }
@@ -131,7 +131,7 @@ governing permissions and limitations under the License.
   &.is-open {
     @inherit: %spectrum-overlay--top--open;
   }
-  .spectrum-Popover-tip {
+  & .spectrum-Popover-tip {
     top: 100%;
   }
 }
@@ -139,7 +139,7 @@ governing permissions and limitations under the License.
 /* Center the tip by default */
 .spectrum-Popover--bottom,
 .spectrum-Popover--top {
-  .spectrum-Popover-tip {
+  & .spectrum-Popover-tip {
     left: 50%;
     margin-left: calc(var(--spectrum-global-dimension-size-150) * -1);
   }

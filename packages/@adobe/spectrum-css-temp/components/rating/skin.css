@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
   }
 
   &:hover {
-    .spectrum-Rating-icon {
+    & .spectrum-Rating-icon {
       /* Make all stars colored when the component is hovered */
       color: var(--spectrum-rating-icon-color-selected);
 
@@ -57,7 +57,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Rating--quiet {
-  .spectrum-Rating-icon {
+  & .spectrum-Rating-icon {
     color: var(--spectrum-rating-quiet-icon-color);
 
     &.is-selected {
@@ -66,7 +66,7 @@ governing permissions and limitations under the License.
   }
 
   &:hover {
-    .spectrum-Rating-icon {
+    & .spectrum-Rating-icon {
       /* Make all stars selected when the component is hovered */
       color: var(--spectrum-rating-quiet-icon-color-selected);
 
@@ -85,7 +85,7 @@ governing permissions and limitations under the License.
 /* Disabled */
 .spectrum-Rating {
   &.is-disabled {
-    .spectrum-Rating-icon {
+    & .spectrum-Rating-icon {
       color: var(--spectrum-rating-icon-color-disabled);
 
       &.is-selected {

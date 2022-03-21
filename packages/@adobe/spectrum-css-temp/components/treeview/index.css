@@ -29,12 +29,12 @@ governing permissions and limitations under the License.
   overflow: hidden;
 
   &.is-open {
-    > .spectrum-TreeView-itemLink > .spectrum-TreeView-indicator {
+    & > .spectrum-TreeView-itemLink > .spectrum-TreeView-indicator {
       /* Rotate the chevron */
       transform: rotate(90deg);
     }
 
-    > .spectrum-TreeView {
+    & > .spectrum-TreeView {
       /* Open the treeview */
       height: auto;
       visibility: visible;
@@ -61,7 +61,7 @@ governing permissions and limitations under the License.
     outline: none;
   }
 
-  .spectrum-Icon {
+  & .spectrum-Icon {
     vertical-align: top;
     margin-right: var(--spectrum-treeview-item-icon-gap);
   }

@@ -11,40 +11,40 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-BarLoader {
-  .spectrum-BarLoader-fill {
+  & .spectrum-BarLoader-fill {
     background: var(--spectrum-barloader-large-track-fill-color);
   }
 
-  .spectrum-BarLoader-track {
+  & .spectrum-BarLoader-track {
     background-color: var(--spectrum-barloader-large-track-color);
   }
 
   &.spectrum-BarLoader--overBackground {
-    .spectrum-BarLoader-fill {
+    & .spectrum-BarLoader-fill {
       background: var(--spectrum-barloader-large-over-background-track-fill-color);
     }
 
-    .spectrum-BarLoader-label,
-    .spectrum-BarLoader-percentage {
+    & .spectrum-BarLoader-label,
+    & .spectrum-BarLoader-percentage {
       color: var(--spectrum-barloader-large-over-background-track-fill-color);
     }
 
-    .spectrum-BarLoader-track {
+    & .spectrum-BarLoader-track {
       background-color: var(--spectrum-barloader-large-over-background-track-color);
     }
   }
   &.is-positive {
-    .spectrum-BarLoader-fill {
+    & .spectrum-BarLoader-fill {
       background: var(--spectrum-meter-large-track-color-positive);
     }
   }
   &.is-warning {
-    .spectrum-BarLoader-fill {
+    & .spectrum-BarLoader-fill {
       background: var(--spectrum-meter-large-track-color-warning);
     }
   }
   &.is-critical {
-    .spectrum-BarLoader-fill {
+    & .spectrum-BarLoader-fill {
       background: var(--spectrum-meter-large-track-color-critical);
     }
   }

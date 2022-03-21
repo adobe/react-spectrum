@@ -21,21 +21,21 @@
 }
 
 .spectrum-HelpText--neutral {
-  .spectrum-HelpText-text {
+  & .spectrum-HelpText-text {
     color: var(--spectrum-helptext-neutral-texticon-text-color);
   }
   &.is-disabled {
-    .spectrum-HelpText-text {
+    & .spectrum-HelpText-text {
       color: var(--spectrum-helptext-neutral-texticon-text-color-disabled);
     }
   }
 }
 
 .spectrum-HelpText--negative {
-  .spectrum-HelpText-validationIcon {
+  & .spectrum-HelpText-validationIcon {
     color: var(--spectrum-helptext-negative-texticon-icon-color);
   }
-  .spectrum-HelpText-text {
+  & .spectrum-HelpText-text {
     color: var(--spectrum-helptext-negative-texticon-text-color);
   }
 }

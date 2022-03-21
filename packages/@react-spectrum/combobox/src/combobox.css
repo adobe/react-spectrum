@@ -54,7 +54,7 @@
     margin-top: var(--spectrum-global-dimension-size-50);
   }
 
-  .tray-textfield-input {
+  & .tray-textfield-input {
     padding-inline-start: var(--spectrum-textfield-padding-x);
   }
 }

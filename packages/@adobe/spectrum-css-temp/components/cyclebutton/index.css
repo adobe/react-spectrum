@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
   /* Be square */
   padding: 0 var(--spectrum-actionbutton-icon-padding-x);
 
-  .spectrum-CycleButton-item:not(.is-selected) {
+  & .spectrum-CycleButton-item:not(.is-selected) {
     display: none
   }
 }

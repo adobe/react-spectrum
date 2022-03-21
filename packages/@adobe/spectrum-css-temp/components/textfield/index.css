@@ -160,7 +160,7 @@ governing permissions and limitations under the License.
     box-shadow: none;
   }
 
-  .spectrum-Textfield--multiline & {
+  @nest .spectrum-Textfield--multiline & {
     height: var(--spectrum-textfield-multiline-height);
     min-height: var(--spectrum-textfield-multiline-min-height);
     padding: var(--spectrum-textfield-multiline-padding-top) var(--spectrum-textfield-multiline-padding-x) var(--spectrum-textfield-multiline-padding-bottom) calc(var(--spectrum-textfield-multiline-padding-x) - 1px);
@@ -169,7 +169,7 @@ governing permissions and limitations under the License.
     overflow: auto;
   }
 
-  .spectrum-Textfield--quiet & {
+  @nest .spectrum-Textfield--quiet & {
     border-radius: var(--spectrum-textfield-quiet-border-radius);
     border-width: 0 0 var(--spectrum-textfield-quiet-border-size) 0;
 
@@ -182,15 +182,15 @@ governing permissions and limitations under the License.
     overflow-y: hidden;
   }
 
-  .spectrum-Textfield--valid & {
+  @nest .spectrum-Textfield--valid & {
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield--invalid & {
+  @nest .spectrum-Textfield--invalid & {
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield--loadable & {
+  @nest .spectrum-Textfield--loadable & {
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 }
@@ -204,7 +204,7 @@ governing permissions and limitations under the License.
   pointer-events: all;
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
 
-  .spectrum-Textfield--quiet & {
+  @nest .spectrum-Textfield--quiet & {
     padding-inline-end: 0;
   }
 }
@@ -244,7 +244,7 @@ governing permissions and limitations under the License.
     var(--spectrum-global-dimension-size-65)
   );
 
-  .spectrum-Textfield--quiet & {
+  @nest .spectrum-Textfield--quiet & {
     padding-inline-start: calc(var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-info-medium-width));
 
     /* Since quiet button has no left padding, push the icon all the way to the left */
@@ -267,7 +267,7 @@ governing permissions and limitations under the License.
   /* can't use padding right since it breaks the circle loader so add here */
   inset-inline-end: calc(calc(calc(var(--spectrum-textfield-icon-frame) / 2) - calc(var(--spectrum-icon-alert-medium-width) / 2)) + calc(var(--spectrum-textfield-padding-x, var(--spectrum-global-dimension-size-150)) / 2));
 
-  .spectrum-Textfield--quiet& {
+  @nest .spectrum-Textfield--quiet& {
     padding-inline-end: 0;
   }
 }

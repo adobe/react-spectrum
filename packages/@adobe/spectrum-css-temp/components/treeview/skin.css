@@ -12,10 +12,10 @@ governing permissions and limitations under the License.
 
 .spectrum-TreeView-item {
   &.is-disabled {
-    > .spectrum-TreeView-itemLink {
+    & > .spectrum-TreeView-itemLink {
       color: var(--spectrum-alias-text-color-disabled);
 
-      .spectrum-Icon {
+      & .spectrum-Icon {
         color: var(--spectrum-alias-icon-color-disabled);
       }
     }

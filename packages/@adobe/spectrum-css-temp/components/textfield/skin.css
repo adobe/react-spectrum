@@ -99,7 +99,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  .spectrum-Textfield--quiet & {
+  @nest .spectrum-Textfield--quiet & {
     background-color: var(--spectrum-textfield-quiet-background-color);
     border-color: var(--spectrum-textfield-quiet-border-color);
 
@@ -128,9 +128,10 @@ governing permissions and limitations under the License.
       background-color: var(--spectrum-textfield-quiet-background-color-disabled);
       border-color:  var(--spectrum-textfield-quiet-border-color-disabled);
     }
+
   }
 
-  .spectrum-Textfield.spectrum-Textfield--invalid & {
+  @nest .spectrum-Textfield.spectrum-Textfield--invalid & {
     border-color: var(--spectrum-textfield-border-color-error);
 
     &:focus-ring { /* might break things due to pre-defined focus-ring */
@@ -139,14 +140,16 @@ governing permissions and limitations under the License.
         box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
       }
     }
+
   }
 
-  .spectrum-Textfield--quiet.spectrum-Textfield--invalid & {
+  @nest .spectrum-Textfield--quiet.spectrum-Textfield--invalid & {
     &:focus-ring { /* might break things due to pre-defined focus-ring */
       &:not(:active) {
         box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
       }
     }
+
   }
 
 }
@@ -156,11 +159,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Textfield-validationIcon {
-  .spectrum-Textfield--valid & {
+  @nest .spectrum-Textfield--valid & {
     fill: var(--spectrum-alert-success-icon-color);
+
   }
 
-  .spectrum-Textfield--invalid & {
+  @nest .spectrum-Textfield--invalid & {
     fill: var(--spectrum-alert-error-icon-color);
+
   }
 }

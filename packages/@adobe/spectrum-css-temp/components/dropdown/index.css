@@ -28,7 +28,7 @@ governing permissions and limitations under the License.
   min-inline-size: var(--spectrum-dropdown-min-width);
 
   /* Hack to enable select-powered Dropdowns */
-  select {
+  & select {
     appearance: none;
     -ms-appearance: none; /* Edge */
 
@@ -112,19 +112,19 @@ governing permissions and limitations under the License.
 
 /* Error icons */
 .spectrum-Dropdown-trigger {
-  .spectrum-Dropdown-invalidIcon {
+  & .spectrum-Dropdown-invalidIcon {
     /* Fix Safari 10 bug where align-items is ignored inside of buttons */
     margin-block-start: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
     margin-block-end: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
   }
 
-  .spectrum-Dropdown-label + .spectrum-Dropdown-invalidIcon {
+  & .spectrum-Dropdown-label + .spectrum-Dropdown-invalidIcon {
     margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
   }
 }
 
 .spectrum-Dropdown-trigger {
-  .spectrum-Dropdown-progressCircle {
+  & .spectrum-Dropdown-progressCircle {
     margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
   }
 }
@@ -137,7 +137,7 @@ governing permissions and limitations under the License.
   inline-size: auto;
   min-inline-size: var(--spectrum-dropdown-quiet-min-width);
 
-  .spectrum-Dropdown-trigger {
+  & .spectrum-Dropdown-trigger {
     contain: none;
   }
 }
@@ -157,11 +157,11 @@ governing permissions and limitations under the License.
   flex-direction: column;
   inline-size: auto;
 
-  .spectrum-Dropdown--quiet {
+  & .spectrum-Dropdown--quiet {
     inline-size: auto;
     min-inline-size: var(--spectrum-dropdown-quiet-min-width);
 
-    .spectrum-Dropdown-trigger {
+    & .spectrum-Dropdown-trigger {
       inline-size: auto;
     }
   }

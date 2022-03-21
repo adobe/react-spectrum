@@ -109,10 +109,10 @@ html, body {
   --anatomy-gray-100: #141e35;
   --anatomy-gray-75: #0e1525;
   --anatomy-gray-50: #0c1220;
-  .example {
+  & .example {
     background-color: var(--spectrum-global-color-gray-100);
   }
-  .article pre  {
+  & .article pre  {
     --hljs-background:  #212121; /* between gray-100 and gray-200 */
     background-color: var(--hljs-background);
   }
@@ -122,7 +122,7 @@ html, body {
   display: flex;
   justify-content: center;
   padding-bottom: 12px;
-  svg, img {
+  & svg, & img {
     width: auto;
     height: auto;
   }
@@ -133,7 +133,7 @@ html, body {
   justify-content: center;
   padding: 40px 0;
 
-  img {
+  & img {
     max-width: 100%;
     border-radius: 4px;
   }
@@ -161,7 +161,7 @@ html, body {
 }
 
 .homeLinks {
-  span {
+  & span {
     font-size: 1.5em;
     padding: 0 10px;
     line-height: 1em;
@@ -176,24 +176,24 @@ html, body {
   @media (max-width: 1020px) {
     display: block;
 
-    div {
+    & div {
       width: 100%;
     }
   }
 
-  div {
+  & div {
     box-sizing: border-box;
     padding: 0 16px;
   }
 
   @media (min-width: 1020px) {
-    div:first-child:nth-last-child(3),
-    div:first-child:nth-last-child(3) ~ div {
+    & div:first-child:nth-last-child(3),
+    & div:first-child:nth-last-child(3) ~ div {
       width: 33.3333%;
     }
 
-    div:first-child:nth-last-child(4),
-    div:first-child:nth-last-child(4) ~ div {
+    & div:first-child:nth-last-child(4),
+    & div:first-child:nth-last-child(4) ~ div {
       width: 50%;
     }
   }
@@ -280,7 +280,7 @@ html, body {
     border-color: var(--spectrum-alias-border-color-focus);
   }
 
-  svg {
+  & svg {
     width: 36px;
     height: 32px;
     display: block;
@@ -463,13 +463,13 @@ code {
 
 /* Override spectrum font size for code in large scale */
 .medium code {
-  &, .colorLink {
+  &, & .colorLink {
     font-size: var(--spectrum-global-dimension-static-font-size-100);
   }
 }
 
 .large code {
-  &, .colorLink {
+  &, & .colorLink {
     font-size: var(--spectrum-global-dimension-static-font-size-200);
   }
 }
@@ -558,7 +558,7 @@ details[open] > summary svg {
   transition: all 125ms ease-in-out;
   margin-left: 4px;
 
-  .anchor {
+  & .anchor {
     text-decoration: none;
   }
 }
@@ -616,10 +616,10 @@ h2.sectionHeader {
   padding: 0 8px;
   box-sizing: border-box;
   height: var(--spectrum-global-dimension-size-600);
-  [dir='ltr'] & {
+  @nest [dir='ltr'] & {
     right: 0;
   }
-  [dir='rtl'] & {
+  @nest [dir='rtl'] & {
     left: 0;
   }
 }
@@ -715,37 +715,37 @@ h2.sectionHeader {
 
 @define-mixin small-propTable {
   /* Collapse the prop table into a list with key/value pairs */
-  .propTable {
-    tr, td, th {
+  & .propTable {
+    & tr, & td, & th {
       display: block;
       text-align: left;
     }
   }
 
-  .propTable tr.tableRow td.tableCell {
+  & .propTable tr.tableRow td.tableCell {
     border: none;
     padding-top: 5px;
     padding-bottom: 5px;
   }
 
-  .propTable tr.tableRow:last-child td.tableCell {
+   & .propTable tr.tableRow:last-child td.tableCell {
     border: none;
     padding-top: 5px;
     padding-bottom: 5px;
   }
 
-  .propTable thead {
+  & .propTable thead {
     display: none;
   }
 
-  .propTable td[data-column] code {
+  & .propTable td[data-column] code {
     display: inline-block;
     vertical-align: text-top;
     word-break: break-word;
     max-width: calc(100% - 80px);
   }
 
-  .propTable td[data-column]:before {
+  & .propTable td[data-column]:before {
     content: attr(data-column);
     font-size: var(--spectrum-table-header-text-size);
     font-weight: var(--spectrum-table-header-text-font-weight);
@@ -758,26 +758,26 @@ h2.sectionHeader {
     vertical-align: middle;
   }
 
-  .propTable tr td:first-child {
+  & .propTable tr td:first-child {
     padding-top: 10px;
   }
-  .propTable tr td:last-child {
+  & .propTable tr td:last-child {
     padding-bottom: 10px;
   }
 
-  .noDefault {
+  & .noDefault {
     text-align: left;
   }
 
-  .methodTable td[data-column]:before {
+  & .methodTable td[data-column]:before {
     display: none;
   }
 
-  .methodTable td > span {
+  & .methodTable td > span {
     display: block;
   }
 
-  .methodTable td[data-column] code {
+  & .methodTable td[data-column] code {
     width: 100%;
   }
 }

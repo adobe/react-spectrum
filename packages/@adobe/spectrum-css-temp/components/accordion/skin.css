@@ -26,7 +26,7 @@ governing permissions and limitations under the License.
 
     background-color: var(--spectrum-accordion-background-color-hover);
 
-    + .spectrum-Accordion-itemIndicator {
+    & + .spectrum-Accordion-itemIndicator {
       color: var(--spectrum-accordion-icon-color-hover);
     }
   }
@@ -40,7 +40,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Accordion-item {
   &.is-open {
-    .spectrum-Accordion-itemHeader {
+    & .spectrum-Accordion-itemHeader {
       &:hover {
         background-color: transparent;
       }
@@ -49,7 +49,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Accordion-item.is-disabled {
-  .spectrum-Accordion-itemHeader {
+  & .spectrum-Accordion-itemHeader {
     &,
     &:hover,
     &:focus-ring {
@@ -57,7 +57,7 @@ governing permissions and limitations under the License.
       background-color: transparent;
     }
 
-    + .spectrum-Accordion-itemIndicator {
+    & + .spectrum-Accordion-itemIndicator {
       color: var(--spectrum-accordion-icon-color-disabled);
     }
   }

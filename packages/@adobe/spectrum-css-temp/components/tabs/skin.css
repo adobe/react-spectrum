@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
   border-block-end-color: var(--spectrum-tabs-rule-color);
 
   &.spectrum-Tabs--isCollapsed {
-    :focus-ring {
+    & :focus-ring {
       /* FieldButton Picker focus ring override */
       box-shadow: none;
 
@@ -36,14 +36,14 @@ governing permissions and limitations under the License.
 .spectrum-Tabs-item {
   color: var(--spectrum-tabs-text-color);
 
-  .spectrum-Icon {
+  & .spectrum-Icon {
     fill: var(--spectrum-tabs-icon-color)
   }
 
   &:hover {
     color: var(--spectrum-tabs-text-color-hover);
 
-    .spectrum-Icon {
+    & .spectrum-Icon {
       fill: var(--spectrum-tabs-icon-color-hover)
     }
   }
@@ -51,7 +51,7 @@ governing permissions and limitations under the License.
   &.is-selected {
     color: var(--spectrum-tabs-text-color-selected);
 
-    .spectrum-Icon {
+    & .spectrum-Icon {
       fill: var(--spectrum-tabs-icon-color-selected)
     }
   }
@@ -63,7 +63,7 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-tabs-focus-ring-color);
     }
 
-    .spectrum-Icon {
+    & .spectrum-Icon {
       fill: var(--spectrum-tabs-icon-color-key-focus)
     }
   }
@@ -71,7 +71,7 @@ governing permissions and limitations under the License.
   &.is-disabled {
     color: var(--spectrum-tabs-text-color-disabled);
 
-    .spectrum-Icon {
+    & .spectrum-Icon {
       fill: var(--spectrum-tabs-icon-color-disabled)
     }
   }
@@ -80,7 +80,7 @@ governing permissions and limitations under the License.
 .spectrum-Tabs--quiet {
   border-block-end-color: var(--spectrum-tabs-quiet-rule-color);
 
-  .spectrum-Tabs-selectionIndicator {
+  & .spectrum-Tabs-selectionIndicator {
     background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
   }
 }
@@ -90,7 +90,7 @@ governing permissions and limitations under the License.
   &.spectrum-Tabs--compact {
     border-inline-start-color: var(--spectrum-tabs-quiet-vertical-rule-color);
 
-    .spectrum-Tabs-selectionIndicator {
+    & .spectrum-Tabs-selectionIndicator {
       background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
     }
   }
@@ -126,29 +126,29 @@ governing permissions and limitations under the License.
     --spectrum-tabs-text-color-key-focus: ButtonText;
     --spectrum-tabs-text-color-selected: HighlightText;
     --spectrum-tabs-vertical-rule-color: transparent;
-    .spectrum-Tabs-item {
+    & .spectrum-Tabs-item {
       &:before {
         background-color: ButtonFace;
       }
-      .spectrum-Icon {
+      & .spectrum-Icon {
         z-index: 1;
         position: relative;
       }
-      .spectrum-Tabs-itemLabel {
+      & .spectrum-Tabs-itemLabel {
         position: relative;
         z-index: 1;
       }
     }
-    .is-selected {
+    & .is-selected {
       color: HighlightText;
-      .spectrum-Icon {
+      & .spectrum-Icon {
         fill: HighlightText;
       }
       &:before {
         background-color: Highlight;
         color: HighlightText;
       }
-      .spectrum-Tabs-itemLabel {
+      & .spectrum-Tabs-itemLabel {
         color: HighlightText;
       }
     }

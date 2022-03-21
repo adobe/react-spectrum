@@ -24,7 +24,7 @@ governing permissions and limitations under the License.
   display: inline-block;
   position: relative;
 
-  .spectrum-ClearButton {
+  & .spectrum-ClearButton {
     position: absolute;
     inset-inline-end: 0;
     top: 0;
@@ -81,15 +81,15 @@ governing permissions and limitations under the License.
     -webkit-appearance: none;
   }
 
-  .spectrum-Textfield.spectrum-Search--invalid & {
+  @nest .spectrum-Textfield.spectrum-Search--invalid & {
     padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield.spectrum-Search--valid & {
+  @nest .spectrum-Textfield.spectrum-Search--valid & {
     padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 
-  .spectrum-Textfield.spectrum-Search--loadable & {
+  @nest .spectrum-Textfield.spectrum-Search--loadable & {
     padding-inline-end: calc(var(--spectrum-search-padding-right) + var(--spectrum-textfield-padding-x) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-textfield-icon-margin-left));
   }
 }

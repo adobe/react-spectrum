@@ -16,7 +16,7 @@
   &.focus-ring {
     z-index: 2;
 
-    .spectrum-ColorArea-handle {
+    & .spectrum-ColorArea-handle {
       /* Bigger handle when focused */
       width: calc(var(--spectrum-colorhandle-size) * 2);
       height: calc(var(--spectrum-colorhandle-size) * 2);

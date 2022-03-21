@@ -47,7 +47,7 @@ governing permissions and limitations under the License.
   --column-gap: var(--spectrum-actionbuttongroup-text-button-gap-x);
   --row-gap: var(--spectrum-actionbuttongroup-text-button-gap-y);
 
-  .spectrum-ActionGroup-item {
+  & .spectrum-ActionGroup-item {
     flex-shrink: 0;
   }
 
@@ -63,14 +63,14 @@ governing permissions and limitations under the License.
   --column-gap: var(--spectrum-actiongroup-button-gap-reset);
   --row-gap: var(--spectrum-actionbuttongroup-text-button-gap-y);
 
-  .spectrum-ActionGroup-item {
-    > :not(svg) {
+  & .spectrum-ActionGroup-item {
+    & > :not(svg) {
       inline-size: auto;
     }
   }
 
   &.spectrum-ActionGroup--quiet {
-    .spectrum-ActionGroup-item {
+    & .spectrum-ActionGroup-item {
       justify-content: flex-start;
     }
   }
@@ -97,7 +97,7 @@ governing permissions and limitations under the License.
   &:not(.spectrum-ActionGroup--quiet) {
     flex-wrap: nowrap;
 
-    .spectrum-ActionGroup-item {
+    & .spectrum-ActionGroup-item {
       position: relative;
       border-radius: 0;
       z-index: 1;
@@ -133,7 +133,7 @@ governing permissions and limitations under the License.
       --column-gap: var(--spectrum-actiongroup-button-gap-reset);
       --row-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
 
-      .spectrum-ActionGroup-item {
+      & .spectrum-ActionGroup-item {
         border-radius: 0;
 
         &:first-child {
@@ -153,16 +153,16 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ActionGroup--justified {
-  .spectrum-ActionGroup-item {
+  & .spectrum-ActionGroup-item {
     flex: 1;
 
-    > :not(svg) {
+    & > :not(svg) {
       inline-size: auto;
     }
   }
 
   &.spectrum-ActionGroup--vertical {
-    .spectrum-ActionGroup-item {
+    & .spectrum-ActionGroup-item {
       flex: 1 0 auto;
     }
   }
@@ -174,13 +174,13 @@ governing permissions and limitations under the License.
 
 .spectrum-ActionGroup-menu {
   /* specificity must be higher than `.spectrum-ActionButton .spectrum-Icon` */
-  svg.spectrum-ActionGroup-menu-chevron {
+  & svg.spectrum-ActionGroup-menu-chevron {
     order: 2;
     padding-inline-start: 0;
     padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
   }
 
-  .spectrum-ActionGroup-menu-contents {
+  & .spectrum-ActionGroup-menu-contents {
     /* This wrapper is needed to keep the :only-child/sibling selectors
      * in button CSS working with the additional chevron element. */
     display: inline-flex;

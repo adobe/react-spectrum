@@ -32,13 +32,13 @@ governing permissions and limitations under the License.
     @inherit: %spectrum-overlay--open;
   }
 
-  .spectrum-ActionButton + .spectrum-ActionButton {
+  & .spectrum-ActionButton + .spectrum-ActionButton {
     margin-left: var(--spectrum-quickactions-icon-button-gap-x);
   }
 }
 
 .spectrum-QuickActions--textOnly {
-  .spectrum-ActionButton + .spectrum-ActionButton {
+  & .spectrum-ActionButton + .spectrum-ActionButton {
     margin-left: var(--spectrum-quickactions-text-button-gap-x);
   }
 }

@@ -62,8 +62,8 @@ governing permissions and limitations under the License.
   flex: 0 0 auto;
   align-items: flex-start;
 
-  .spectrum-Button,
-  .spectrum-ClearButton {
+  & .spectrum-Button,
+  & .spectrum-ClearButton {
     & + .spectrum-Button,
     & + .spectrum-ClearButton {
       margin-inline-start: var(--spectrum-toast-button-gap);
@@ -75,7 +75,7 @@ governing permissions and limitations under the License.
   flex: 1 1 auto;
   align-self: center;
 
-  .spectrum-Button {
+  & .spectrum-Button {
     margin-inline-end: var(--spectrum-toast-button-margin-right);
   }
 

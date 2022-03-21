@@ -31,7 +31,7 @@ governing permissions and limitations under the License.
     &.is-hovered {
       background-color: var(--spectrum-rail-handle-background-color-hover);
 
-      .spectrum-SplitView-gripper {
+      & .spectrum-SplitView-gripper {
         border-color: var(--spectrum-rail-handle-background-color-hover);
         &:before {
           background-color: var(--spectrum-rail-handle-background-color-hover);
@@ -43,7 +43,7 @@ governing permissions and limitations under the License.
     &.is-active {
       background-color: var(--spectrum-rail-handle-background-color-down);
 
-      .spectrum-SplitView-gripper {
+      & .spectrum-SplitView-gripper {
         border-color: var(--spectrum-rail-handle-background-color-down);
         &:before {
           background-color: var(--spectrum-rail-handle-background-color-down);
@@ -58,7 +58,7 @@ governing permissions and limitations under the License.
     &:focus-ring {
       background-color: var(--spectrum-alias-focus-color);
 
-      .spectrum-SplitView-gripper {
+      & .spectrum-SplitView-gripper {
         border-color: var(--spectrum-alias-focus-color);
         box-shadow: 0 0 0 1px var(--spectrum-alias-focus-color);
         &:before {

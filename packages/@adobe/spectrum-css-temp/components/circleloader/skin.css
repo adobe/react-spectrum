@@ -19,19 +19,19 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-CircleLoader--overBackground {
-  .spectrum-CircleLoader-track {
+  & .spectrum-CircleLoader-track {
     border-color: var(--spectrum-loader-circle-medium-over-background-track-color);
   }
-  .spectrum-CircleLoader-fill {
+  & .spectrum-CircleLoader-fill {
     border-color: var(--spectrum-loader-circle-medium-over-background-track-fill-color);
   }
 }
 
 .spectrum-CircleLoader--indeterminate.spectrum-CircleLoader--overBackground {
-  .spectrum-CircleLoader-track {
+  & .spectrum-CircleLoader-track {
     border-color: var(--spectrum-loader-circle-medium-over-background-track-color);
   }
-  .spectrum-CircleLoader-fill {
+  & .spectrum-CircleLoader-fill {
     border-color: var(--spectrum-loader-circle-medium-over-background-track-fill-color);
   }
 }

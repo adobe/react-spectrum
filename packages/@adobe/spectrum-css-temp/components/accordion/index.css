@@ -115,31 +115,31 @@ governing permissions and limitations under the License.
 
 .spectrum-Accordion-item {
   &.is-open {
-    > .spectrum-Accordion-itemHeading {
-      > .spectrum-Accordion-itemHeader {
-        > .spectrum-Accordion-itemIndicator {
-          [dir='ltr'] & {
+    & > .spectrum-Accordion-itemHeading {
+      & > .spectrum-Accordion-itemHeader {
+        & > .spectrum-Accordion-itemIndicator {
+          @nest [dir='ltr'] & {
             transform: rotate(90deg);
           }
-          [dir='rtl'] & {
+          @nest [dir='rtl'] & {
             transform: rotate(-90deg);
           }
         }
       }
     }
 
-    > .spectrum-Accordion-itemHeader::after {
+    & > .spectrum-Accordion-itemHeader::after {
       /* No bottom border when open, so be less tall */
       height: var(--spectrum-accordion-item-height-actual);
     }
 
-    > .spectrum-Accordion-itemContent {
+    & > .spectrum-Accordion-itemContent {
       display: block;
     }
   }
 
   &.is-disabled {
-    .spectrum-Accordion-itemHeader {
+    & .spectrum-Accordion-itemHeader {
       cursor: default;
     }
   }

@@ -73,7 +73,7 @@
   &.is-focused {
     z-index: 2;
 
-    .spectrum-ColorSlider-handle {
+    & .spectrum-ColorSlider-handle {
       @extend %spectrum-ColorControl-handle--focused;
     }
   }
@@ -89,7 +89,7 @@
   width: var(--spectrum-colorslider-vertical-width);
   flex: 1;
 
-  .spectrum-ColorSlider-handle {
+  & .spectrum-ColorSlider-handle {
     left: 50%;
     top: 0;
   }

@@ -72,7 +72,7 @@ svg.spectrum-Table-sortedIcon {
 
   &.is-sorted-asc,
   &.is-sorted-desc {
-    .spectrum-Table-sortedIcon {
+    & .spectrum-Table-sortedIcon {
       display: inline-block;
       /* offset icon because it's not properly aligned */
       margin-top: calc(var(--spectrum-global-dimension-size-25) * -1);
@@ -80,15 +80,15 @@ svg.spectrum-Table-sortedIcon {
   }
 
   &.is-sorted-asc {
-    .spectrum-Table-sortedIcon {
+    & .spectrum-Table-sortedIcon {
       transform: rotateZ(180deg);
     }
   }
 }
 
 .spectrum-Table--resizingColumn {
-  .spectrum-Table-row,
-  .spectrum-Table-headCell {
+  & .spectrum-Table-row,
+  & .spectrum-Table-headCell {
     cursor: col-resize;
   }
 }
@@ -164,23 +164,23 @@ svg.spectrum-Table-sortedIcon {
 /* The tbody tag doesn't allow setting a border-radius, so these hacks are to make that work
    by putting it on the individual cells instead. */
 .spectrum-Table:not(.spectrum-Table--quiet) {
-  tbody.spectrum-Table-body {
+  & tbody.spectrum-Table-body {
     border-width: var(--spectrum-table-border-size);
     border-radius: var(--spectrum-table-border-radius);
 
-    .spectrum-Table-row:first-child .spectrum-Table-cell:first-child {
+    & .spectrum-Table-row:first-child .spectrum-Table-cell:first-child {
       border-top-left-radius: var(--spectrum-table-border-radius);
     }
 
-    .spectrum-Table-row:first-child .spectrum-Table-cell:last-child {
+    & .spectrum-Table-row:first-child .spectrum-Table-cell:last-child {
       border-top-right-radius: var(--spectrum-table-border-radius);
     }
 
-    .spectrum-Table-row:last-child .spectrum-Table-cell:first-child {
+    & .spectrum-Table-row:last-child .spectrum-Table-cell:first-child {
       border-bottom-left-radius: var(--spectrum-table-border-radius);
     }
 
-    .spectrum-Table-row:last-child .spectrum-Table-cell:last-child {
+    & .spectrum-Table-row:last-child .spectrum-Table-cell:last-child {
       border-bottom-right-radius: var(--spectrum-table-border-radius);
     }
   }
@@ -319,17 +319,17 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table--quiet {
-  .spectrum-Table-headWrapper {
+  & .spectrum-Table-headWrapper {
     border-left: 0;
     border-right: 0;
   }
 
-  .spectrum-Table-body {
+  & .spectrum-Table-body {
     border-radius: var(--spectrum-table-quiet-border-radius);
   }
 
-  .spectrum-Table-body,
-  .spectrum-Table-row {
+  & .spectrum-Table-body,
+  & .spectrum-Table-row {
     &.is-drop-target {
       &::before {
         border-radius: var(--spectrum-border-radius);
@@ -346,7 +346,7 @@ svg.spectrum-Table-sortedIcon {
   padding-bottom: 0px;
   vertical-align: var(--spectrum-table-cell-checkbox-vertical-alignment);
 
-  .spectrum-Table-checkbox {
+  & .spectrum-Table-checkbox {
     padding-inline-end: 0px;
   }
 }

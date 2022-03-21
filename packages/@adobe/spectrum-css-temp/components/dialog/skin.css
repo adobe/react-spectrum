@@ -26,13 +26,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog--error {
-  .spectrum-Dialog-typeIcon {
+  & .spectrum-Dialog-typeIcon {
     color: var(--spectrum-dialog-error-icon-color);
   }
 }
 
 .spectrum-Dialog--warning {
-  .spectrum-Dialog-typeIcon {
+  & .spectrum-Dialog-typeIcon {
     color: var(--spectrum-dialog-warning-icon-color);
   }
 }

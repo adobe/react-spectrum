@@ -41,14 +41,14 @@
   touch-action: none;
   cursor: default;
 
-  .spectrum-ColorWheel-handle {
+  & .spectrum-ColorWheel-handle {
     margin: 0;
   }
 
   &.is-focused {
     z-index: 2;
 
-    .spectrum-ColorWheel-handle {
+    & .spectrum-ColorWheel-handle {
       @extend %spectrum-ColorControl-handle--focused;
     }
   }

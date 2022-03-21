@@ -27,7 +27,7 @@ governing permissions and limitations under the License.
 .spectrum-Alert--info {
   border-color: var(--spectrum-alert-info-border-color);
 
-  .spectrum-Alert-icon {
+  & .spectrum-Alert-icon {
     color: var(--spectrum-alert-info-icon-color);
   }
 }
@@ -35,7 +35,7 @@ governing permissions and limitations under the License.
 .spectrum-Alert--help {
   border-color: var(--spectrum-alert-info-border-color);
 
-  .spectrum-Alert-icon {
+  & .spectrum-Alert-icon {
     color: var(--spectrum-alert-info-icon-color);
   }
 }
@@ -43,7 +43,7 @@ governing permissions and limitations under the License.
 .spectrum-Alert--error {
   border-color: var(--spectrum-alert-error-border-color);
 
-  .spectrum-Alert-icon {
+  & .spectrum-Alert-icon {
     color: var(--spectrum-alert-error-icon-color);
   }
 }
@@ -51,7 +51,7 @@ governing permissions and limitations under the License.
 .spectrum-Alert--success {
   border-color: var(--spectrum-alert-success-border-color);
 
-  .spectrum-Alert-icon {
+  & .spectrum-Alert-icon {
     color: var(--spectrum-alert-success-icon-color);
   }
 }
@@ -59,7 +59,7 @@ governing permissions and limitations under the License.
 .spectrum-Alert--warning {
   border-color: var(--spectrum-alert-warning-border-color);
 
-  .spectrum-Alert-icon {
+  & .spectrum-Alert-icon {
     color: var(--spectrum-alert-warning-icon-color);
   }
 }

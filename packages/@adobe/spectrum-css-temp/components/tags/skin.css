@@ -42,9 +42,9 @@ governing permissions and limitations under the License.
     }
     &.is-invalid {
       border-color: var(--spectrum-tag-border-color-error-selected);
-      .spectrum-Tags-itemIcon,
-      .spectrum-Tags-itemLabel,
-      .spectrum-Tags-itemClearButton {
+      & .spectrum-Tags-itemIcon,
+      & .spectrum-Tags-itemLabel,
+      & .spectrum-Tags-itemClearButton {
         color: var(--spectrum-tag-text-color-error-selected);
       }
       &.focus-ring {
@@ -72,8 +72,8 @@ governing permissions and limitations under the License.
       box-shadow: 0 0 0 1px var(--spectrum-tag-border-color-key-focus);
     }
 
-    .spectrum-Tags-itemIcon,
-    .spectrum-Tags-itemClearButton {
+    & .spectrum-Tags-itemIcon,
+    & .spectrum-Tags-itemClearButton {
       color: var(--spectrum-tag-border-color-error);
     }
 
@@ -84,7 +84,7 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-tag-background-color-disabled);
     border-color: var(--spectrum-tag-border-color-disabled);
 
-    .spectrum-Avatar {
+    & .spectrum-Avatar {
       /* Duplicated so state is on the tag */
       opacity: var(--spectrum-avatar-small-opacity-disabled);
     }
@@ -103,12 +103,12 @@ governing permissions and limitations under the License.
   &.is-invalid {
     &:hover {
       border-color: var(--spectrum-tag-removable-border-color-error-hover);
-      .spectrum-Tags-itemClearButton {
+      & .spectrum-Tags-itemClearButton {
         color: var(--spectrum-tag-removable-border-color-error-hover);
       }
     }
 
-    .spectrum-Tags-itemClearButton {
+    & .spectrum-Tags-itemClearButton {
       &.is-focused {
          color: var(--spectrum-tag-icon-color-error-hover);
        }
@@ -133,7 +133,7 @@ governing permissions and limitations under the License.
     &.is-focused {
        color: var(--spectrum-tag-removable-text-color-selected-key-focus);
     }
-    .spectrum-Tags-itemClearButton {
+    & .spectrum-Tags-itemClearButton {
       color: var(--spectrum-tag-removable-button-icon-color-selected);
       &:hover {
          background-color: var(--spectrum-tag-removable-button-background-color-selected-hover);
@@ -142,7 +142,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  .spectrum-Tags-itemClearButton {
+  & .spectrum-Tags-itemClearButton {
     &.is-focused {
        border: 2px solid var(--spectrum-tag-removable-border-color-key-focus);
        border-radius: var(--spectrum-alias-border-radius-regular);

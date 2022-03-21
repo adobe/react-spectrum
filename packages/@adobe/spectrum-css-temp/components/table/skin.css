@@ -20,14 +20,14 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-alias-background-color-default);
 
   &.is-sortable {
-    .spectrum-Table-sortedIcon {
+    & .spectrum-Table-sortedIcon {
       color: var(--spectrum-table-header-sort-icon-color);
     }
 
     &.is-hovered {
       color: var(--spectrum-table-header-text-color-hover);
 
-      .spectrum-Table-sortedIcon {
+      & .spectrum-Table-sortedIcon {
         color: var(--spectrum-table-header-sort-icon-color-hover);
       }
     }
@@ -36,7 +36,7 @@ governing permissions and limitations under the License.
     &.is-focused {
       color: var(--spectrum-table-header-text-color-key-focus);
 
-      .spectrum-Table-sortedIcon {
+      & .spectrum-Table-sortedIcon {
         color: var(--spectrum-table-header-sort-icon-color-key-focus);
       }
     }
@@ -44,7 +44,7 @@ governing permissions and limitations under the License.
     &:active {
       color: var(--spectrum-table-header-text-color-down);
 
-      .spectrum-Table-sortedIcon {
+      & .spectrum-Table-sortedIcon {
         color: var(--spectrum-table-header-sort-icon-color-down);
       }
     }
@@ -97,23 +97,23 @@ governing permissions and limitations under the License.
 tbody.spectrum-Table-body {
   border: none;
 
-  .spectrum-Table-row {
+  & .spectrum-Table-row {
     border-top: none;
   }
 
-  .spectrum-Table-cell {
+  & .spectrum-Table-cell {
     border-top: 1px solid var(--spectrum-table-cell-border-color);
   }
 
-  .spectrum-Table-row .spectrum-Table-cell:first-child {
+  & .spectrum-Table-row .spectrum-Table-cell:first-child {
     border-left: 1px solid var(--spectrum-table-cell-border-color);
   }
 
-  .spectrum-Table-row .spectrum-Table-cell:last-child {
+  & .spectrum-Table-row .spectrum-Table-cell:last-child {
     border-right: 1px solid var(--spectrum-table-cell-border-color);
   }
 
-  .spectrum-Table-row:last-child .spectrum-Table-cell {
+  & .spectrum-Table-row:last-child .spectrum-Table-cell {
     border-bottom: 1px solid var(--spectrum-table-cell-border-color);
   }
 }
@@ -122,7 +122,7 @@ tbody.spectrum-Table-body {
   border-bottom: 1px solid var(--spectrum-table-cell-border-color);
   box-sizing: border-box;
 
-  .spectrum-Table-cellWrapper {
+  & .spectrum-Table-cellWrapper {
     /* Add an opaque background so that the transparent background
      * on the cell doesn't allow other cells to show through sticky cells. */
     background-color: var(--spectrum-table-background-color);
@@ -150,7 +150,7 @@ tbody.spectrum-Table-body {
   }
 
   &.is-selected {
-    .spectrum-Table-cell {
+    & .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected);
     }
 
@@ -188,7 +188,7 @@ tbody.spectrum-Table-body {
 }
 
 .spectrum-Table--quiet {
-  .spectrum-Table-body {
+  & .spectrum-Table-body {
     border-width: 1px 0;
     background-color: var(--spectrum-table-quiet-cell-background-color);
 
@@ -202,8 +202,8 @@ tbody.spectrum-Table-body {
     }
   }
 
-  .spectrum-Table-row {
-    .spectrum-Table-cellWrapper {
+  & .spectrum-Table-row {
+    & .spectrum-Table-cellWrapper {
       background-color: var(--spectrum-alias-background-color-default);
     }
 
@@ -221,7 +221,7 @@ tbody.spectrum-Table-body {
     }
 
     &.is-selected {
-      .spectrum-Table-cell {
+      & .spectrum-Table-cell {
         background-color: var(--spectrum-table-quiet-row-background-color-selected);
       }
 
@@ -236,9 +236,9 @@ tbody.spectrum-Table-body {
     }
   }
 
-  tbody.spectrum-Table-body {
-    .spectrum-Table-row .spectrum-Table-cell:first-child,
-    .spectrum-Table-row .spectrum-Table-cell:last-child {
+  & tbody.spectrum-Table-body {
+    & .spectrum-Table-row .spectrum-Table-cell:first-child,
+    & .spectrum-Table-row .spectrum-Table-cell:last-child {
       border-left: none;
       border-right: none;
     }

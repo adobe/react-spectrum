@@ -31,7 +31,7 @@
     transition-delay: 0ms;
   }
 
-  .react-spectrum-ActionBar-bar {
+  & .react-spectrum-ActionBar-bar {
     display: grid;
     grid-template-areas: "clear selected . actiongroup";
     grid-template-columns: auto max-content minmax(var(--spectrum-global-dimension-size-300), 1fr) auto;
@@ -69,14 +69,14 @@
     border: none;
   }
 
-  .react-spectrum-ActionBar-selectedCount {
+  & .react-spectrum-ActionBar-selectedCount {
     grid-area: selected;
     padding: 0 var(--spectrum-global-dimension-size-50);
     user-select: none;
     cursor: default;
   }
 
-  .react-spectrum-ActionBar-actionGroup {
+  & .react-spectrum-ActionBar-actionGroup {
     grid-area: actiongroup;
     min-width: 0;
   }
