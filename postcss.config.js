@@ -13,8 +13,8 @@
 module.exports = {
   plugins: require("@spectrum-css/component-builder/css/processors").processors.concat(
     [
-      require("postcss-logical")(),
-      require("postcss-dir-pseudo-class")(),
+      // require("postcss-logical")(),
+      // require("postcss-dir-pseudo-class")(),
 
       // Use the hover media query in the docs because of SSR - some components have no client JS available.
       // Otherwise, convert :hover to .is-hovered.

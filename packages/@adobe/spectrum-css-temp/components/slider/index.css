@@ -199,8 +199,7 @@ governing permissions and limitations under the License.
     }
 
     /* Force specificity otherwise the ~ rules above override */
-    &:dir(ltr),
-    &:dir(rtl) {
+    &.spectrum-Slider-track {
       padding-block: 0;
       padding-inline: var(--spectrum-slider-track-middle-handleoffset) var(--spectrum-slider-track-middle-handleoffset);
       inset-inline-start: auto;
