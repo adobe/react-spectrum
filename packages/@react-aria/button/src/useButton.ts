@@ -32,8 +32,9 @@ export interface ButtonAria<T> {
   isPressed: boolean
 }
 
-export function useButton(props: AriaButtonProps<'a'>, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
+// Order with overrides is important: 'button' should be default
 export function useButton(props: AriaButtonProps<'button'>, ref: RefObject<HTMLButtonElement>): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
+export function useButton(props: AriaButtonProps<'a'>, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
 export function useButton(props: AriaButtonProps<'div'>, ref: RefObject<HTMLDivElement>): ButtonAria<HTMLAttributes<HTMLDivElement>>;
 export function useButton(props: AriaButtonProps<'input'>, ref: RefObject<HTMLInputElement>): ButtonAria<InputHTMLAttributes<HTMLInputElement>>;
 export function useButton(props: AriaButtonProps<'span'>, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;

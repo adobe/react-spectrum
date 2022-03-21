@@ -152,7 +152,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     selectionManager: state.selectionManager,
     key,
     ref,
-    shouldSelectOnPressUp: true
+    shouldSelectOnPressUp: true,
+    allowsDifferentPressOrigin: true
   });
 
   let {pressProps} = usePress({onPressStart, onPressUp, isDisabled});

@@ -18,6 +18,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
 let headingFormatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'});
@@ -225,6 +226,36 @@ describe('CalendarBase', () => {
     });
 
     it.each`
+      Name                    | Calendar              | props
+      ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new CalendarDate(2019, 3, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
+      ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new CalendarDate(2019, 3, 10), end: new CalendarDate(2019, 3, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
+    `('$Name should move focus when the previous or next buttons become disabled', ({Calendar, props}) => {
+      let {getByLabelText} = render(<Calendar {...props} />);
+
+      let prevButton = getByLabelText('Previous');
+      let nextButton = getByLabelText('Next');
+
+      expect(prevButton).not.toHaveAttribute('disabled');
+      expect(nextButton).not.toHaveAttribute('disabled');
+
+      act(() => userEvent.click(prevButton));
+      expect(prevButton).toHaveAttribute('disabled');
+      expect(nextButton).not.toHaveAttribute('disabled');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Sunday, February 10, 2019')).toBe(true);
+
+      act(() => userEvent.click(nextButton));
+
+      expect(prevButton).not.toHaveAttribute('disabled');
+      expect(nextButton).not.toHaveAttribute('disabled');
+      expect(document.activeElement).toBe(nextButton);
+
+      act(() => userEvent.click(nextButton));
+      expect(prevButton).not.toHaveAttribute('disabled');
+      expect(nextButton).toHaveAttribute('disabled');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, April 10, 2019')).toBe(true);
+    });
+
+    it.each`
       Name                   | Calendar         | props
       ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
@@ -253,6 +284,101 @@ describe('CalendarBase', () => {
       expect(grids[0]).toHaveAttribute('aria-label', 'May 2019');
       expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
       expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
+    });
+
+    it.each`
+      Name                   | Calendar         | props
+      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2021, 12, 15)}}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}}
+    `('$Name should set aria-disabled on cells for which isDateUnavailable returns true', ({Calendar, props}) => {
+      const isDateUnavailable = (date) => {
+        const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      };
+      let {getByRole, getAllByRole} = render(<Calendar {...props} isDateUnavailable={isDateUnavailable} />);
+
+      expect(getByRole('button', {name: 'Monday, December 6, 2021'})).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('button', {name: 'Tuesday, December 7, 2021'})).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('button', {name: 'Wednesday, December 8, 2021'})).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('button', {name: 'Thursday, December 9, 2021'})).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('button', {name: 'Friday, December 10, 2021'})).toHaveAttribute('aria-disabled', 'true');
+
+      expect(getByRole('button', {name: 'Wednesday, December 22, 2021'})).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('button', {name: 'Thursday, December 23, 2021'})).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('button', {name: 'Friday, December 24, 2021'})).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('button', {name: 'Saturday, December 25, 2021'})).toHaveAttribute('aria-disabled', 'true');
+      expect(getByRole('button', {name: 'Sunday, December 26, 2021'})).toHaveAttribute('aria-disabled', 'true');
+
+      let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
+      expect(gridCells.length).toBe(21);
+
+      let cell = getByRole('button', {name: 'Wednesday, December 22, 2021'});
+      triggerPress(cell);
+      expect(cell.parentElement).not.toHaveAttribute('aria-selected');
+
+      cell = getByRole('button', {name: 'Sunday, December 12, 2021'});
+      triggerPress(cell);
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should support defaultFocusedValue', ({Calendar}) => {
+      let onFocusChange = jest.fn();
+      let {getByRole} = render(<Calendar defaultFocusedValue={new CalendarDate(2019, 6, 5)} autoFocus onFocusChange={onFocusChange} />);
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-label', 'June 2019');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')).toBe(true);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Thursday, June 6, 2019')).toBe(true);
+      expect(onFocusChange).toHaveBeenCalledWith(new CalendarDate(2019, 6, 6));
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should support controlled focusedValue', ({Calendar}) => {
+      let onFocusChange = jest.fn();
+      let {getByRole} = render(<Calendar focusedValue={new CalendarDate(2019, 6, 5)} autoFocus onFocusChange={onFocusChange} />);
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-label', 'June 2019');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')).toBe(true);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')).toBe(true);
+      expect(onFocusChange).toHaveBeenCalledWith(new CalendarDate(2019, 6, 6));
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should constrain defaultFocusedValue', ({Calendar}) => {
+      let {getByRole} = render(<Calendar defaultFocusedValue={new CalendarDate(2019, 6, 5)} minValue={new CalendarDate(2019, 7, 5)} autoFocus />);
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-label', 'July 2019');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should constrain focusedValue', ({Calendar}) => {
+      let {getByRole} = render(<Calendar focusedValue={new CalendarDate(2019, 6, 5)} minValue={new CalendarDate(2019, 7, 5)} autoFocus />);
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-label', 'July 2019');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
     });
   });
 

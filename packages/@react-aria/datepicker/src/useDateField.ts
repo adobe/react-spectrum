@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
-import {createFocusManager} from '@react-aria/focus';
-import {DatePickerFieldState} from '@react-stately/datepicker';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {AriaDatePickerProps, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
+import {createFocusManager, FocusManager} from '@react-aria/focus';
+import {DateFieldState} from '@react-stately/datepicker';
+import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 import {mergeProps, useDescription} from '@react-aria/utils';
-import {useDateFormatter} from '@react-aria/i18n';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -24,7 +23,9 @@ import {useFocusWithin} from '@react-aria/interactions';
 interface DateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
 
 interface DateFieldAria {
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+   /** Props for the field's visible label element, if any. */
+  labelProps: HTMLAttributes<HTMLElement>,
+   /** Props for the field grouping element. */
   fieldProps: HTMLAttributes<HTMLElement>,
   /** Props for the description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
@@ -32,9 +33,27 @@ interface DateFieldAria {
   errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
-export const labelIds = new WeakMap<DatePickerFieldState, {ariaLabelledBy: string, ariaDescribedBy: string}>();
+// Data that is passed between useDateField and useDateSegment.
+interface HookData {
+  ariaLabel: string,
+  ariaLabelledBy: string,
+  ariaDescribedBy: string,
+  focusManager: FocusManager
+}
 
-export function useDateField<T extends DateValue>(props: DateFieldProps<T>, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+export const hookData = new WeakMap<DateFieldState, HookData>();
+
+// Private props that we pass from useDatePicker/useDateRangePicker.
+// Ideally we'd use a Symbol for this, but React doesn't support them: https://github.com/facebook/react/issues/7552
+export const roleSymbol = '__role_' + Date.now();
+export const focusManagerSymbol = '__focusManager_' + Date.now();
+
+/**
+ * Provides the behavior and accessibility implementation for a date field component.
+ * A date field allows users to enter and edit date and time values using a keyboard.
+ * Each part of a date value is displayed in an individually editable segment.
+ */
+export function useDateField<T extends DateValue>(props: DateFieldProps<T>, state: DateFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
@@ -48,31 +67,68 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
     }
   });
 
-  let formatter = useDateFormatter(state.getFormatOptions({month: 'long'}));
-  let descProps = useDescription(state.value ? formatter.format(state.dateValue) : null);
+  let descProps = useDescription(state.formatValue({month: 'long'}));
 
-  let segmentLabelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
-  let describedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
+  // If within a date picker or date range picker, the date field will have role="presentation" and an aria-describedby
+  // will be passed in that references the value (e.g. entire range). Otherwise, add the field's value description.
+  let describedBy = props[roleSymbol] === 'presentation'
+    ? fieldProps['aria-describedby']
+    : [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
+  let propsFocusManager = props[focusManagerSymbol];
+  let focusManager = useMemo(() => propsFocusManager || createFocusManager(ref), [propsFocusManager, ref]);
 
-  labelIds.set(state, {
-    ariaLabelledBy: segmentLabelledBy,
-    ariaDescribedBy: describedBy
+  // Pass labels and other information to segments.
+  hookData.set(state, {
+    ariaLabel: props['aria-label'],
+    ariaLabelledBy: [props['aria-labelledby'], labelProps.id].filter(Boolean).join(' ') || undefined,
+    ariaDescribedBy: describedBy,
+    focusManager
   });
+
+  let autoFocusRef = useRef(props.autoFocus);
+
+  // When used within a date picker or date range picker, the field gets role="presentation"
+  // rather than role="group". Since the date picker/date range picker already has a role="group"
+  // with a label and description, and the segments are already labeled by this as well, this
+  // avoids very verbose duplicate announcements.
+  let fieldDOMProps: HTMLAttributes<HTMLElement>;
+  if (props[roleSymbol] === 'presentation') {
+    fieldDOMProps = {
+      role: 'presentation'
+    };
+  } else {
+    fieldDOMProps = mergeProps(fieldProps, {
+      role: 'group',
+      'aria-disabled': props.isDisabled || undefined,
+      'aria-describedby': describedBy
+    });
+  }
+
+  useEffect(() => {
+    if (autoFocusRef.current) {
+      focusManager.focusFirst();
+    }
+    autoFocusRef.current = false;
+  }, [focusManager]);
 
   return {
     labelProps: {
       ...labelProps,
       onClick: () => {
-        let focusManager = createFocusManager(ref);
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(fieldProps, descProps, groupProps, focusWithinProps, {
-      role: 'group',
-      'aria-disabled': props.isDisabled || undefined,
-      'aria-describedby': describedBy
-    }),
+    fieldProps: mergeProps(fieldDOMProps, groupProps, focusWithinProps),
     descriptionProps,
     errorMessageProps
   };
+}
+
+/**
+ * Provides the behavior and accessibility implementation for a time field component.
+ * A time field allows users to enter and edit time values using a keyboard.
+ * Each part of a time value is displayed in an individually editable segment.
+ */
+export function useTimeField<T extends TimeValue>(props: AriaTimeFieldProps<T>, state: DateFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+  return useDateField(props, state, ref);
 }

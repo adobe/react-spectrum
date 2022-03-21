@@ -12,6 +12,7 @@
 
 /// <reference types="css-module-types" />
 
+export * from './ColorArea';
 export * from './ColorWheel';
 export * from './ColorSlider';
 export * from './ColorField';

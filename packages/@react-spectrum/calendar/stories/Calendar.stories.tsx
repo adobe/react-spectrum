@@ -11,8 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import {Calendar} from '../';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
@@ -56,6 +58,13 @@ storiesOf('Date and Time/Calendar', module)
     () => render({defaultValue: new CalendarDate(2019, 6, 5), isDisabled: true})
   )
   .add(
+    'isDateUnavailable',
+    () => render({isDateUnavailable: (date: DateValue) => {
+      const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+    }})
+  )
+  .add(
     'isReadOnly',
     () => render({defaultValue: new CalendarDate(2019, 6, 5), isReadOnly: true})
   )
@@ -78,6 +87,14 @@ storiesOf('Date and Time/Calendar', module)
   .add(
     'minValue, visibleMonths: 3, defaultValue',
     () => render({minValue: new CalendarDate(2019, 6, 1), defaultValue: new CalendarDate(2019, 6, 5), visibleMonths: 3})
+  )
+  .add(
+    'defaultFocusedValue',
+    () => render({defaultFocusedValue: new CalendarDate(2019, 6, 5)})
+  )
+  .add(
+    'focusedValue',
+    () => <ControlledFocus />
   );
 
 function render(props = {}) {
@@ -149,7 +166,7 @@ function Example(props) {
         </Picker>
       </Flex>
       <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
-        <View maxWidth="100vw" overflow="auto">
+        <View maxWidth="100vw" padding="size-10" overflow="auto">
           <Calendar {...props} />
         </View>
       </Provider>
@@ -183,6 +200,16 @@ function CalendarWithZonedTime() {
     <Flex direction="column">
       <Calendar value={value} onChange={onChange} />
       <TimeField label="Time" value={value} onChange={onChange} />
+    </Flex>
+  );
+}
+
+function ControlledFocus() {
+  let [focusedDate, setFocusedDate] = useState(new CalendarDate(2019, 6, 5));
+  return (
+    <Flex direction="column" alignItems="start" gap="size-200">
+      <ActionButton onPress={() => setFocusedDate(new CalendarDate(2019, 6, 5))}>Reset focused date</ActionButton>
+      <Calendar focusedValue={focusedDate} onFocusChange={setFocusedDate} />
     </Flex>
   );
 }

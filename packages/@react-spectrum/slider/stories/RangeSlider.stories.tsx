@@ -71,10 +71,6 @@ storiesOf('Slider/RangeSlider', module)
   .add(
     'min/max',
     () => render({label: 'Label', minValue: 30, maxValue: 70})
-  )
-  .add(
-    'pageSize',
-    () => render({label: 'Label', minValue: 0, maxValue: 360, pageSize: 15, formatOptions: {style: 'unit', unit: 'degree', unitDisplay: 'narrow'}})
   );
 
 function render(props: SpectrumRangeSliderProps = {}) {
