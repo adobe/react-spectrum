@@ -24,6 +24,7 @@ import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
+import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import {LoadingState, SelectionMode} from '@react-types/shared';
@@ -66,6 +67,11 @@ let items = [
   {test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
   {test: 'Test 1', foo: 'Foo 7', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
   {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+];
+
+let itemsWithFalsyId = [
+  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 0},
+  {test: 'Test 1', foo: 'Foo 2', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 1}
 ];
 
 let manyColunns = [];
@@ -155,6 +161,23 @@ storiesOf('TableView', module)
         <TableBody items={items}>
           {item =>
             (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'dynamic, falsy row keys',
+    () => (
+      <TableView aria-label="TableView with dynamic contents and falsy keys" width={300} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={itemsWithFalsyId}>
+          {item =>
+            (<Row>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -1022,9 +1045,249 @@ storiesOf('TableView', module)
       </TableView>
     )
   )
-  .add('table with breadcrumb navigation', () => <TableWithBreadcrumbs />);
+  .add('table with breadcrumb navigation', () => <TableWithBreadcrumbs />)
+  .add(
+    'allowsResizing, uncontrolled, dynamic widths',
+    () => (
+      <>
+        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+          <TableHeader>
+            <Column allowsResizing defaultWidth="1fr">File Name</Column>
+            <Column allowsResizing defaultWidth="2fr">Type</Column>
+            <Column allowsResizing defaultWidth="2fr">Size</Column>
+            <Column allowsResizing defaultWidth="1fr">Weight</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>2018 Proposal</Cell>
+              <Cell>PDF</Cell>
+              <Cell>214 KB</Cell>
+              <Cell>1 LB</Cell>
+            </Row>
+            <Row>
+              <Cell>Budget</Cell>
+              <Cell>XLS</Cell>
+              <Cell>120 KB</Cell>
+              <Cell>20 LB</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+        <input aria-label="Focusable after" placeholder="Focusable after" />
+      </>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, static widths', () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth="50%">File Name</Column>
+          <Column allowsResizing defaultWidth="20%">Type</Column>
+          <Column allowsResizing defaultWidth={239}>Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, column divider', () => (
+      <TableView aria-label="TableView with resizable columns and divider" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing showDivider>File Name</Column>
+          <Column allowsResizing defaultWidth="3fr">Type</Column>
+          <Column allowsResizing>Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, min/max widths', () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>File Name</Column>
+          <Column allowsResizing defaultWidth="1fr" minWidth={175} maxWidth={500}>Size</Column>
+          <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>Type</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, some columns not allowed resizing', () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing >File Name</Column>
+          <Column defaultWidth="1fr">Type</Column>
+          <Column defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="2fr">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, undefined table width and height', () => (
+      <TableView aria-label="TableView with resizable columns and no width or height set">
+        <TableHeader>
+          <Column allowsResizing defaultWidth={150}>File Name</Column>
+          <Column allowsResizing defaultWidth={100}>Type</Column>
+          <Column allowsResizing defaultWidth={100}>Size</Column>
+          <Column allowsResizing defaultWidth={100}>Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, sortable columns',
+    () => <AsyncLoadingExample isResizable />,
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'allowsResizing, many columns and rows',
+    () => (
+      <>
+        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
+          <TableHeader columns={manyColunns}>
+            {column =>
+              <Column allowsResizing minWidth={100}>{column.name}</Column>
+            }
+          </TableHeader>
+          <TableBody items={manyRows}>
+            {item =>
+              (<Row key={item.foo}>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </TableView>
+        <input aria-label="Focusable after" placeholder="Focusable after" />
+      </>
+    ),
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'allowsResizing, onColumnResize action',
+    () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResize={action('onColumnResize')}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+  ))
+  .add(
+    'allowsResizing, onColumnResizeEnd action',
+    () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResizeEnd={action('onColumnResizeEnd')}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+  ))
+  .add(
+    'allowsResizing, hiding columns',
+    () => (
+      <HidingColumnsAllowsResizing />
+    )
+  );
 
-function AsyncLoadingExample() {
+function AsyncLoadingExample(props) {
+  const {isResizable} = props;
   interface Item {
     data: {
       id: string,
@@ -1063,10 +1326,10 @@ function AsyncLoadingExample() {
       <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
       <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
-          <Column key="score" width={100} allowsSorting>Score</Column>
-          <Column key="title" isRowHeader allowsSorting>Title</Column>
-          <Column key="author" width={200} allowsSorting>Author</Column>
-          <Column key="num_comments" width={100} allowsSorting>Comments</Column>
+          <Column key="score" defaultWidth={100} allowsResizing={isResizable} allowsSorting>Score</Column>
+          <Column key="title" isRowHeader allowsResizing={isResizable} allowsSorting>Title</Column>
+          <Column key="author" defaultWidth={200} allowsResizing={isResizable} allowsSorting>Author</Column>
+          <Column key="num_comments" defaultWidth={100} allowsResizing={isResizable} allowsSorting>Comments</Column>
         </TableHeader>
         <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
           {item =>

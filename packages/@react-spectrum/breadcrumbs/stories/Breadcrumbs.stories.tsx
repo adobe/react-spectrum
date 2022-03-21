@@ -140,6 +140,14 @@ storiesOf('Breadcrumbs', module)
     )
   )
   .add(
+    'Only one item, showRoot',
+    () => (
+      <Breadcrumbs showRoot>
+        <Item key="Root-1">Root</Item>
+      </Breadcrumbs>
+    )
+  )
+  .add(
     'Dynamic breadcrumbs with focus management',
     () => (
       <DynamicBreadcrumbs />

@@ -10,18 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, getLocalTimeZone, Time, toCalendarDateTime, today, toTime} from '@internationalized/date';
+import {DateFieldState, useDateFieldState} from '.';
 import {DateValue, TimePickerProps, TimeValue} from '@react-types/datepicker';
+import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime} from '@internationalized/date';
 import {useControlledState} from '@react-stately/utils';
-import {useDatePickerFieldState} from '.';
 import {useMemo} from 'react';
 
-interface TimeFieldProps<T extends TimeValue> extends TimePickerProps<T> {
-  locale: string,
-  createCalendar: (name: string) => Calendar
+interface TimeFieldProps extends TimePickerProps<TimeValue> {
+  /** The locale to display and edit the value according to. */
+  locale: string
 }
 
-export function useTimeFieldState<T extends TimeValue>(props: TimeFieldProps<T>) {
+/**
+ * Provides state management for a time field component.
+ * A time field allows users to enter and edit time values using a keyboard.
+ * Each part of a time value is displayed in an individually editable segment.
+ */
+export function useTimeFieldState(props: TimeFieldProps): DateFieldState {
   let {
     placeholderValue = new Time(),
     minValue,
@@ -46,7 +51,7 @@ export function useTimeFieldState<T extends TimeValue>(props: TimeFieldProps<T>)
     setValue(v && 'day' in v ? newValue : newValue && toTime(newValue));
   };
 
-  return useDatePickerFieldState({
+  return useDateFieldState({
     ...props,
     value: dateTime,
     defaultValue: undefined,
@@ -55,7 +60,9 @@ export function useTimeFieldState<T extends TimeValue>(props: TimeFieldProps<T>)
     onChange,
     granularity: granularity || 'minute',
     maxGranularity: 'hour',
-    placeholderValue: placeholderDate
+    placeholderValue: placeholderDate,
+    // Calendar should not matter for time fields.
+    createCalendar: () => new GregorianCalendar()
   });
 }
 

@@ -283,14 +283,13 @@ describe('ColorField', function () {
 
   it.each`
     Name                                | expected                 | key
-    ${'increment with arrow up key'}    | ${parseColor('#AAAAAE')}  | ${'ArrowUp'}
-    ${'decrement with arrow down key'}  | ${parseColor('#AAAAA6')}  | ${'ArrowDown'}
+    ${'increment with arrow up key'}    | ${parseColor('#AAAAAB')}  | ${'ArrowUp'}
+    ${'decrement with arrow down key'}  | ${parseColor('#AAAAA9')}  | ${'ArrowDown'}
   `('should handle $Name event', function ({expected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
       defaultValue: '#aaa',
-      onChange: onChangeSpy,
-      step: 4
+      onChange: onChangeSpy
     });
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AAAAAA');
@@ -303,14 +302,13 @@ describe('ColorField', function () {
 
   it.each`
     Name                                | expected                        | deltaY
-    ${'increment with mouse wheel'}     | ${parseColor('#AAAAAE')}  | ${10}
-    ${'decrement with mouse wheel'}     | ${parseColor('#AAAAA6')}  | ${-10}
+    ${'increment with mouse wheel'}     | ${parseColor('#AAAAAB')}  | ${10}
+    ${'decrement with mouse wheel'}     | ${parseColor('#AAAAA9')}  | ${-10}
   `('should handle $Name event', function ({expected, deltaY}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
       defaultValue: '#aaa',
-      onChange: onChangeSpy,
-      step: 4
+      onChange: onChangeSpy
     });
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AAAAAA');
