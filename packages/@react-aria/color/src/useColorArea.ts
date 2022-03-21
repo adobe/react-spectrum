@@ -15,9 +15,9 @@ import {ColorAreaState} from '@react-stately/color';
 import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import React, {ChangeEvent, FocusEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useColorAreaGradient} from './useColorAreaGradient';
-import {useFocusWithin, useKeyboard, useMove} from '@react-aria/interactions';
+import {useFocus, useFocusWithin, useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -110,7 +110,6 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
       stateRef.current.setDragging(false);
       if (focusedInputRef.current) {
         focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
-        focusedInputRef.current = undefined;
       }
     }
   });
@@ -163,7 +162,6 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
       isOnColorArea.current = undefined;
       stateRef.current.setDragging(false);
       focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
-      focusedInputRef.current = undefined;
     }
   };
   let {moveProps: movePropsThumb} = useMove(moveHandler);
@@ -173,6 +171,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     onFocusWithinChange: (value:boolean) => {
       if (value === false) {
         valueChangedViaKeyboard.current = false;
+        focusedInputRef.current === undefined;
       }
     }
   });
@@ -314,10 +313,28 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
       })
   }, focusWithinProps, keyboardProps, movePropsThumb);
 
+  let {focusProps: inputFocusProps} = useFocus({
+    onFocus: (event: FocusEvent<HTMLElement>) => {
+      focusedInputRef.current = event.target;
+    }
+  });
+
   let isMobile = isIOS() || isAndroid();
 
   function getAriaLabelForChannel(channel: ColorChannel): string {
     return isMobile ? state.value.getChannelName(channel, locale) : formatMessage('colorPicker');
+  }
+
+  function getAriaValueTextForChannel(channel:ColorChannel) {
+    return (
+      isMobile || valueChangedViaKeyboard.current ?
+      formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)})
+      :
+      [
+        formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)}),
+        formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
+      ].join(', ')
+    );
   }
 
   let colorPickerLabel = formatMessage('colorPicker');
@@ -363,7 +380,6 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     isDisabled: props.isDisabled
   });
 
-
   return {
     colorAreaProps: {
       ...colorAriaLabellingProps,
@@ -383,23 +399,22 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     xInputProps: {
       ...xInputLabellingProps,
       ...visuallyHiddenProps,
+      ...inputFocusProps,
       type: 'range',
       min: state.value.getChannelRange(xChannel).minValue,
       max: state.value.getChannelRange(xChannel).maxValue,
       step: xChannelStep,
       'aria-roledescription': ariaRoleDescription,
-      'aria-valuetext': (
-        isMobile || valueChangedViaKeyboard.current ?
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)})
-          :
-          [
-            formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)}),
-            formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
-          ].join(', ')
-      ),
+      'aria-valuetext': getAriaValueTextForChannel(xChannel),
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),
-      tabIndex: 0,
+      tabIndex: (isMobile || !focusedInputRef.current || focusedInputRef.current === inputXRef.current ? undefined : -1),
+      /*
+        So that only a single "2d slider" control shows up when listing form elements for screen readers,
+        add aria-hidden="true" to the unfocused control when the value has not changed via the keyboard,
+        but remove aria-hidden to reveal the input for each channel when the value has changed with the keyboard.
+      */
+      'aria-hidden': (!isMobile && focusedInputRef.current === inputYRef.current && !valueChangedViaKeyboard.current ? 'true' : undefined),
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         state.setXValue(parseFloat(e.target.value));
       }
@@ -407,24 +422,23 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     yInputProps: {
       ...yInputLabellingProps,
       ...visuallyHiddenProps,
+      ...inputFocusProps,
       type: 'range',
       min: state.value.getChannelRange(yChannel).minValue,
       max: state.value.getChannelRange(yChannel).maxValue,
       step: yChannelStep,
       'aria-roledescription': ariaRoleDescription,
-      'aria-valuetext': (
-        isMobile || valueChangedViaKeyboard.current ?
-          formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
-          :
-          [
-            formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)}),
-            formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)})
-          ].join(', ')
-      ),
+      'aria-valuetext': getAriaValueTextForChannel(yChannel),
       'aria-orientation': 'vertical',
       disabled: isDisabled,
       value: state.value.getChannelValue(yChannel),
-      tabIndex: -1,
+      tabIndex: (isMobile || focusedInputRef.current === inputYRef.current ? undefined : -1),
+      /*
+        So that only a single "2d slider" control shows up when listing form elements for screen readers,
+        add aria-hidden="true" to the unfocused input when the value has not changed via the keyboard,
+        but remove aria-hidden to reveal the input for each channel when the value has changed with the keyboard.
+      */
+      'aria-hidden': (isMobile || focusedInputRef.current === inputYRef.current || valueChangedViaKeyboard.current ? undefined : 'true'),
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         state.setYValue(parseFloat(e.target.value));
       }
