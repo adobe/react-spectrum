@@ -274,11 +274,6 @@ governing permissions and limitations under the License.
   }
 
   &:active,
-  & $.is-dragged {
-
-  }
-
-  &:active,
   &.is-focused,
   &.is-dragged,
   &.is-tophandle {
@@ -458,7 +453,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial {
-  @inherit: .spectrum-Slider;
+  composes: spectrum-Slider;
   display: inline-flex;
   flex-direction: column;
 
@@ -469,7 +464,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial-labelContainer {
-  @inherit: .spectrum-Slider-labelContainer;
+  composes: spectrum-Slider-labelContainer;
   margin-block-end: var(--spectrum-dial-label-gap-y);
 }
 
@@ -481,7 +476,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial-controls {
-  @inherit: .spectrum-Slider-controls;
+  composes: spectrum-Slider-controls;
   inline-size: var(--spectrum-dial-width);
   block-size: var(--spectrum-dial-width);
   min-block-size: var(--spectrum-dial-controls-min-height);
@@ -515,7 +510,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial-handle {
-  @inherit: .spectrum-Slider-handle;
+  composes: spectrum-Slider-handle;
   inline-size: var(--spectrum-dial-handle-size);
   block-size: var(--spectrum-dial-handle-size);
   border-width: var(--spectrum-slider-handle-border-size);
@@ -554,7 +549,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial-input {
-  @inherit: .spectrum-Slider-input;
+  composes: spectrum-Slider-input;
   inline-size: var(--spectrum-dial-handle-size);
   block-size: var(--spectrum-dial-handle-size);
   inset-inline-start: 0;

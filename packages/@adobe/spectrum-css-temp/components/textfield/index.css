@@ -69,7 +69,7 @@ governing permissions and limitations under the License.
   overflow: visible;
 
   /* Change the input font styles in all browsers */
-  @extend %i18nFontFamily;
+  composes: i18nFontFamily;
   font-size: var(--spectrum-textfield-text-size);
   line-height: var(--spectrum-textfield-text-line-height);
   text-overflow: ellipsis;

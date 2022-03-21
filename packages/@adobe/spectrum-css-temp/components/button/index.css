@@ -24,7 +24,7 @@ governing permissions and limitations under the License.
   --spectrum-button-line-height: 1.3;
 }
 
-%spectrum-BaseButton {
+.spectrum-BaseButton {
   /* Contain halo */
   position: relative;
 
@@ -48,11 +48,6 @@ governing permissions and limitations under the License.
   /* Font smoothing for Firefox */
   -moz-osx-font-smoothing: grayscale;
 
-  @nest button& {
-    /* Correct the inability to style clickable types in iOS and Safari. */
-    -webkit-appearance: button;
-  }
-
   /* Adjacent buttons should be aligned correctly */
   vertical-align: top;
 
@@ -63,7 +58,7 @@ governing permissions and limitations under the License.
 
   text-decoration: none;
 
-  @extend %i18nFontFamily;
+  composes: i18nFontFamily;
 
   line-height: var(--spectrum-button-line-height);
 
@@ -74,6 +69,11 @@ governing permissions and limitations under the License.
   cursor: default;
 
   isolation: isolate;
+
+  @nest button& {
+    /* Correct the inability to style clickable types in iOS and Safari. */
+    -webkit-appearance: button;
+  }
 
   &:focus {
     outline: none;
@@ -109,10 +109,9 @@ governing permissions and limitations under the License.
                 fill var(--spectrum-global-animation-duration-100) ease-out;
     box-sizing: initial;
   }
-
 }
 
-%spectrum-ButtonWithFocusRing {
+.spectrum-ButtonWithFocusRing {
   &:after {
     border-radius: calc(var(--spectrum-button-primary-border-radius) + var(--spectrum-alias-focus-ring-gap));
     content: '';
@@ -137,8 +136,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Button {
-  @inherit: %spectrum-BaseButton;
-  @inherit: %spectrum-ButtonWithFocusRing;
+  composes: spectrum-BaseButton spectrum-ButtonWithFocusRing;
 
   border-width: var(--spectrum-button-primary-border-size);
   border-style: solid;
@@ -182,7 +180,7 @@ a.spectrum-ActionButton {
 }
 
 .spectrum-ActionButton {
-  @inherit: %spectrum-BaseButton;
+  composes: spectrum-BaseButton;
   position: relative;
 
   block-size: var(--spectrum-actionbutton-height);
@@ -273,7 +271,7 @@ a.spectrum-ActionButton {
 
 .spectrum-ActionButton--emphasized,
 .spectrum-ActionButton--staticColor {
-  @inherit: %spectrum-ButtonWithFocusRing;
+  composes: spectrum-ButtonWithFocusRing;
 
   &:after {
     /* Override border-radius set in %spectrum-ButtonWithFocusRing since this is not a pill button */
@@ -289,8 +287,7 @@ a.spectrum-ActionButton {
 }
 
 .spectrum-LogicButton {
-  @inherit: %spectrum-BaseButton;
-  @inherit: %spectrum-ButtonWithFocusRing;
+  composes: spectrum-BaseButton spectrum-ButtonWithFocusRing;
 
   block-size: var(--spectrum-logicbutton-and-height);
   padding: var(--spectrum-logicbutton-and-padding-x);
@@ -309,7 +306,7 @@ a.spectrum-ActionButton {
 }
 
 .spectrum-FieldButton {
-  @inherit: %spectrum-BaseButton;
+  composes: spectrum-BaseButton;
 
   block-size: var(--spectrum-dropdown-height);
 
@@ -364,8 +361,7 @@ a.spectrum-ActionButton {
 }
 
 .spectrum-ClearButton {
-  @inherit: %spectrum-BaseButton;
-  @inherit: %spectrum-ButtonWithFocusRing;
+  composes: spectrum-BaseButton spectrum-ButtonWithFocusRing;
 
   inline-size: var(--spectrum-clearbutton-medium-width);
   block-size: var(--spectrum-clearbutton-medium-height);

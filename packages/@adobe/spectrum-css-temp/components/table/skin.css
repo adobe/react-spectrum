@@ -58,7 +58,7 @@ governing permissions and limitations under the License.
 }
 
 /* Helper for shared drop target overlay */
-%drop-target {
+.drop-target {
   border-color: var(--spectrum-alias-border-color-focus);
   box-shadow: 0 0 0 1px var(--spectrum-alias-border-color-focus);
 

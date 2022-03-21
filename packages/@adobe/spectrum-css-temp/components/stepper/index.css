@@ -220,7 +220,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper-button {
-  @inherit: %spectrum-BaseButton;
+  composes: spectrum-BaseButton;
 
   border-width: 0;
 

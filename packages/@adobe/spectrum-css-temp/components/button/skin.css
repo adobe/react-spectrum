@@ -217,7 +217,7 @@ governing permissions and limitations under the License.
   &:focus-ring {
     background-color: var(--spectrum-button-over-background-background-color-hover);
     border-color: var(--spectrum-button-over-background-border-color-hover);
-    color: var(--spectrum-button-over-background-color);;
+    color: var(--spectrum-button-over-background-color);
 
     &:after {
       box-shadow: 0 0 0 var(--spectrum-alias-focus-ring-size) var(--spectrum-button-over-background-border-color-key-focus);
@@ -227,7 +227,7 @@ governing permissions and limitations under the License.
   &.is-active {
     background-color: var(--spectrum-button-over-background-background-color-down);
     border-color: var(--spectrum-button-over-background-border-color-down);
-    color: var(--spectrum-button-over-background-color);;
+    color: var(--spectrum-button-over-background-color);
   }
 
   &:disabled,

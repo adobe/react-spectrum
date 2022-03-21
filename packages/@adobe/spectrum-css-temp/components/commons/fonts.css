@@ -42,7 +42,7 @@ governing permissions and limitations under the License.
   --spectrum-line-height-text-label: var(--spectrum-label-text-line-height);
 }
 
-%i18nFontFamily {
+.i18nFontFamily {
   font-family: var(--spectrum-font-family-base);
 
   &:lang(ar) {

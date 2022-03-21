@@ -128,6 +128,7 @@ governing permissions and limitations under the License.
   z-index: 0;
   transform-origin: top left;
 
+  border-radius: var(--spectrum-tabs-rule-border-radius);
 
   @nest [dir='ltr'] .spectrum-Tabs--horizontal & {
     transform: translateX(var(--spectrum-tabs-focus-ring-padding-x));
@@ -136,8 +137,6 @@ governing permissions and limitations under the License.
   @nest [dir='rtl'] .spectrum-Tabs--horizontal & {
     transform: translateX(calc(var(--spectrum-tabs-focus-ring-padding-x) * -1));
   }
-
-  border-radius: var(--spectrum-tabs-rule-border-radius);
 }
 
 .spectrum-Tabs--compact {

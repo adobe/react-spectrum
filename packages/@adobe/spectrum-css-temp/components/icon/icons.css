@@ -20,13 +20,13 @@ governing permissions and limitations under the License.
   /* Fill should match the current text color */
   fill: currentColor;
 
+  /* Don't catch clicks or hover, otherwise they may not escape the SVG */
+  pointer-events: none;
+
   /* Hide the svg overflow in IE. */
   &:not(:root) {
     overflow: hidden;
   }
-
-  /* Don't catch clicks or hover, otherwise they may not escape the SVG */
-  pointer-events: none;
 }
 @media (forced-colors: active) {
   .spectrum-Icon,

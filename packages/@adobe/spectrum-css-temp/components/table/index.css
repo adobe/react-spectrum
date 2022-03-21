@@ -104,7 +104,7 @@ svg.spectrum-Table-sortedIcon {
   block-size: 100%;
   cursor: col-resize;
   user-select: none;
-  
+
   &::after {
     content: "";
     position: absolute;
@@ -114,7 +114,7 @@ svg.spectrum-Table-sortedIcon {
     block-size: 100%;
     background-color: var(--spectrum-table-divider-border-color);
   }
-  
+
   &:active,
   &:focus {
     &::after {
@@ -133,7 +133,7 @@ svg.spectrum-Table-sortedIcon {
 }
 
 /* Helper for shared drop target overlay */
-%drop-target {
+.drop-target {
   &::before {
     content: '';
     position: absolute;
@@ -155,10 +155,6 @@ svg.spectrum-Table-sortedIcon {
 
   /* Fix scrollbars on iOS with sticky row headers */
   transform: translate3d(0, 0, 0);
-
-  &.is-drop-target {
-    @inherit: %drop-target;
-  }
 }
 
 /* The tbody tag doesn't allow setting a border-radius, so these hacks are to make that work
@@ -303,10 +299,10 @@ svg.spectrum-Table-sortedIcon {
       z-index: 3;
     }
   }
+}
 
-  &.is-drop-target {
-    @inherit: %drop-target;
-  }
+.is-drop-target {
+  composes: drop-target;
 }
 
 /* the CSS logical properties postcss plugin doesn't seem to work with :focus-ring. */
