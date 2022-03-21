@@ -14,6 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
 import {CalendarDate, isWeekend} from '@internationalized/date';
+import {installPointerEvent} from '@react-spectrum/test-utils';
 import {RangeCalendar} from '../';
 import React from 'react';
 import {useLocale} from '@react-aria/i18n';
@@ -580,49 +581,51 @@ describe('RangeCalendar', () => {
       expect(end).toEqual(new CalendarDate(2019, 6, 25));
     });
 
-    it('selects by dragging with touch', () => {
-      let onChange = jest.fn();
-      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
+    describe('touch', () => {
+      installPointerEvent();
 
-      fireEvent.pointerDown(getByText('17'), {pointerType: 'touch'});
-      fireEvent.touchStart(getByText('17'), {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+      it('selects by dragging with touch', () => {
+        let onChange = jest.fn();
+        let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
 
-      // There is a delay to distinguish between dragging and scrolling
-      let selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates).toHaveLength(6);
+        fireEvent.pointerDown(getByText('17'), {pointerType: 'touch'});
 
-      act(() => jest.advanceTimersByTime(300));
+        // There is a delay to distinguish between dragging and scrolling
+        let selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates).toHaveLength(6);
 
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates).toHaveLength(1);
-      expect(selectedDates[0].textContent).toBe('17');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('17');
-      expect(onChange).toHaveBeenCalledTimes(0);
+        act(() => jest.advanceTimersByTime(300));
 
-      // dragging updates the highlighted dates
-      fireEvent.pointerEnter(getByText('18'));
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('17');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('18');
-      expect(onChange).toHaveBeenCalledTimes(0);
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates).toHaveLength(1);
+        expect(selectedDates[0].textContent).toBe('17');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('17');
+        expect(onChange).toHaveBeenCalledTimes(0);
 
-      fireEvent.pointerEnter(getByText('23'));
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('17');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('23');
-      expect(onChange).toHaveBeenCalledTimes(0);
+        // dragging updates the highlighted dates
+        fireEvent.pointerEnter(getByText('18'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('17');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('18');
+        expect(onChange).toHaveBeenCalledTimes(0);
 
-      fireEvent.touchEnd(getByText('23'), {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
-      fireEvent.pointerUp(getByText('17'), {pointerType: 'touch'});
+        fireEvent.pointerEnter(getByText('23'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('17');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('23');
+        expect(onChange).toHaveBeenCalledTimes(0);
 
-      selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('17');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('23');
-      expect(onChange).toHaveBeenCalledTimes(1);
+        fireEvent.pointerUp(getByText('23'), {pointerType: 'touch'});
 
-      let {start, end} = onChange.mock.calls[0][0];
-      expect(start).toEqual(new CalendarDate(2019, 6, 17));
-      expect(end).toEqual(new CalendarDate(2019, 6, 23));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('17');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('23');
+        expect(onChange).toHaveBeenCalledTimes(1);
+
+        let {start, end} = onChange.mock.calls[0][0];
+        expect(start).toEqual(new CalendarDate(2019, 6, 17));
+        expect(end).toEqual(new CalendarDate(2019, 6, 23));
+      });
     });
 
     it('clicking outside calendar commits selection', () => {

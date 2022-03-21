@@ -19,7 +19,7 @@ import {Field} from '@react-spectrum/label';
 import {Input} from './Input';
 import React, {useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
-import {useDatePickerFieldState} from '@react-stately/datepicker';
+import {useDateFieldState} from '@react-stately/datepicker';
 import {useFormatHelpText} from './utils';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -40,7 +40,7 @@ export function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>)
 
   let ref = useRef();
   let {locale} = useLocale();
-  let state = useDatePickerFieldState({
+  let state = useDateFieldState({
     ...props,
     locale,
     createCalendar
