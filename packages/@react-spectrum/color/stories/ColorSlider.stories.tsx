@@ -20,23 +20,19 @@ import {Text} from '@react-spectrum/text';
 storiesOf('ColorSlider', module)
   .add(
     'default',
-    () => <ColorSlider defaultValue="#7f0000" channel={'red'} />
+    () => <ColorSlider defaultValue="#800000" channel={'red'} />
   )
   .add(
     'no label, default aria-label',
-    () => <ColorSlider defaultValue="#7f0000" channel={'red'} label={null} />
+    () => <ColorSlider defaultValue="#800000" channel={'red'} label={null} />
   )
   .add(
     'no value label',
-    () => <ColorSlider defaultValue="#7f0000" channel={'red'} showValueLabel={false} />
+    () => <ColorSlider defaultValue="#800000" channel={'red'} showValueLabel={false} />
   )
   .add(
     'custom aria-label',
-    () => <ColorSlider defaultValue="#7f0000" channel={'red'} aria-label="Color Picker Channel: Red" />
-  )
-  .add(
-    'step',
-    () => <ColorSlider defaultValue="hsl(0, 100%, 50%)" channel={'hue'} step={72} />
+    () => <ColorSlider defaultValue="#800000" channel={'red'} aria-label="Color Picker Channel: Red" />
   )
   .add(
     'disabled',
@@ -52,11 +48,11 @@ storiesOf('ColorSlider', module)
   )
   .add(
     'custom width',
-    () => <ColorSlider defaultValue="#7f0000" channel={'red'} width={300} />
+    () => <ColorSlider defaultValue="#800000" channel={'red'} width={300} />
   )
   .add(
     'custom height',
-    () => <ColorSlider defaultValue="#7f0000" channel={'red'} orientation="vertical" height={300} />
+    () => <ColorSlider defaultValue="#800000" channel={'red'} orientation="vertical" height={300} />
   )
   .add(
     'rgba',

@@ -11,6 +11,6 @@
  */
 
 export * from './useDatePickerState';
-export * from './useDatePickerFieldState';
+export * from './useDateFieldState';
 export * from './useDateRangePickerState';
 export * from './useTimeFieldState';
