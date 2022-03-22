@@ -27,6 +27,31 @@ const IMPORT_MAPPINGS = {
   }
 };
 
+const indexHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Spectrum Example</title>
+  </head>
+  <body>
+      <style>
+        body {
+          min-height: 100vh;
+          margin: 0;
+        }
+        #root {
+          min-height: 100vh;
+        }
+        #root > div {
+          padding: 20px;
+          min-height: calc(100vh - 40px);
+        }
+      </style>
+    <div id="root"></div>
+  </body>
+</html>`;
+
 const getIndexFile = (componentName) => `import React from "react";
 import ReactDOM from "react-dom";
 import { Provider, defaultTheme } from "@adobe/react-spectrum";
@@ -109,10 +134,18 @@ ReactDOM.render(
         dependencies: {
           "@adobe/react-spectrum": "latest",
         },
-        files: {"/${name}.js": {code: \`${getNamedExampleFile(code.replace(/`/g, '\\`'), exampleImports.join('\n'))}\`, active: true}, "/index.js": \`${getIndexFile(name)}\`}
+        files: {
+          "/${name}.js":
+            {
+              code: \`${getNamedExampleFile(code.replace(/`/g, '\\`'), exampleImports.join('\n'))}\`,
+              active: true
+            },
+          "/index.js": \`${getIndexFile(name)}\`,
+          "/public/index.html": \`${indexHtml}\`
+        }
       }}>
       <SandpackLayout>
-        <SandpackCodeEditor showTabs={false} />
+        <SandpackCodeEditor showTabs={false} wrapContent={true} />
         <SandpackPreview />
       </SandpackLayout>
     </SandpackProvider>
@@ -128,10 +161,14 @@ ReactDOM.render(
         dependencies: {
           "@adobe/react-spectrum": "latest",
         },
-        files: {"/App.js": \`${getExampleFile(code.replace(/`/g, '\\`'), exampleImports.join('\n').replace(/`/g, '\\`'))}\`, "/index.js": \`${getIndexFile('App')}\`}
+        files: {
+          "/App.js": \`${getExampleFile(code.replace(/`/g, '\\`'), exampleImports.join('\n').replace(/`/g, '\\`'))}\`,
+          "/index.js": \`${getIndexFile('App')}\`,
+          "/public/index.html": \`${indexHtml}\`
+        }
       }}>
       <SandpackLayout>
-        <SandpackCodeEditor showTabs={false} />
+        <SandpackCodeEditor showTabs={false} wrapContent={true} />
         <SandpackPreview />
       </SandpackLayout>
     </SandpackProvider>
