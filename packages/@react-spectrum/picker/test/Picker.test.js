@@ -1944,7 +1944,8 @@ describe('Picker', function () {
     beforeEach(() => {
       focusSpies = {
         onFocus: jest.fn(),
-        onBlur: jest.fn()
+        onBlur: jest.fn(),
+        onFocusChange: jest.fn()
       };
     });
 
