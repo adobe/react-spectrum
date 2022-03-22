@@ -27,6 +27,35 @@ const IMPORT_MAPPINGS = {
   }
 };
 
+const getIndexFile = (componentName) => `import React from "react";
+import ReactDOM from "react-dom";
+import { Provider, defaultTheme } from "@adobe/react-spectrum";
+import ${componentName} from "./${componentName}";
+const rootElement = document.getElementById("root");
+ReactDOM.render(
+  <Provider theme={defaultTheme}>
+    <${componentName} />
+  </Provider>,
+  rootElement
+);
+`;
+
+const getExampleFile = (exampleCode, imports) => `import React from "react";
+${imports}
+
+export default function App() {
+  return (
+    ${exampleCode}
+  );
+}
+`;
+
+const getNamedExampleFile = (exampleCode, imports) => `import React from "react";
+${imports}
+
+export default ${exampleCode}
+`;
+
 module.exports = new Transformer({
   async loadConfig({config}) {
     let pkg = await config.getPackage();
@@ -68,27 +97,6 @@ module.exports = new Transformer({
               provider = 'ExampleThemeSwitcher';
             }
 
-            const getIndex = (fileName) => `import React from "react";
-import ReactDOM from "react-dom";
-import { Provider, defaultTheme } from "@adobe/react-spectrum";
-import ${fileName} from "./${fileName}";
-const rootElement = document.getElementById("root");
-ReactDOM.render(
-  <Provider theme={defaultTheme}>
-    <${fileName} />
-  </Provider>,
-  rootElement
-);
-`;
-
-            const getExample = (renderContent) => `import React from "react";
-${exampleImports.join('\n').replace(/`/g, '\\`')}
-
-export default function App() {
-  return (
-    ${renderContent}
-  );
-}`;
             if (!options.includes('render=false')) {
               if (/^\s*function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/^\s*function (.*?)\s*\(/)[1];
@@ -101,7 +109,7 @@ ReactDOM.render(
         dependencies: {
           "@adobe/react-spectrum": "latest",
         },
-        files: {"/${name}.js": {code: \`import React from 'react';\n${exampleImports.join('\n')}\n\nexport default ${code.replace(/`/g, '\\`')}\`, active: true}, "/index.js": \`${getIndex(name)}\`}
+        files: {"/${name}.js": {code: \`${getNamedExampleFile(code.replace(/`/g, '\\`'), exampleImports.join('\n'))}\`, active: true}, "/index.js": \`${getIndexFile(name)}\`}
       }}>
       <SandpackLayout>
         <SandpackCodeEditor showTabs={false} />
@@ -120,7 +128,7 @@ ReactDOM.render(
         dependencies: {
           "@adobe/react-spectrum": "latest",
         },
-        files: {"/App.js": \`${getExample(code.replace(/`/g, '\\`'))}\`, "/index.js": \`${getIndex('App')}\`}
+        files: {"/App.js": \`${getExampleFile(code.replace(/`/g, '\\`'), exampleImports.join('\n').replace(/`/g, '\\`'))}\`, "/index.js": \`${getIndexFile('App')}\`}
       }}>
       <SandpackLayout>
         <SandpackCodeEditor showTabs={false} />
