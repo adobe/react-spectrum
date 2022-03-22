@@ -36,6 +36,7 @@ module.exports = new Transformer({
   },
   async transform({asset, options, config}) {
     let exampleCode = [];
+    let exampleImports = [];
     let preReleaseParts = config.version.match(/(alpha)|(beta)|(rc)/);
     let preRelease = preReleaseParts ? preReleaseParts[0] : '';
     const extractExamples = () => (tree, file) => (
@@ -44,6 +45,7 @@ module.exports = new Transformer({
           let [meta, ...options] = (node.meta || '').split(' ');
           if (meta === 'import') {
             exampleCode.push(node.value);
+            exampleImports.push(node.value);
             node.meta = null;
             return [];
           }
@@ -66,12 +68,67 @@ module.exports = new Transformer({
               provider = 'ExampleThemeSwitcher';
             }
 
+            const getIndex = (fileName) => `import React from "react";
+import ReactDOM from "react-dom";
+import { Provider, defaultTheme } from "@adobe/react-spectrum";
+import ${fileName} from "./${fileName}";
+const rootElement = document.getElementById("root");
+ReactDOM.render(
+  <Provider theme={defaultTheme}>
+    <${fileName} />
+  </Provider>,
+  rootElement
+);
+`;
+
+            const getExample = (renderContent) => `import React from "react";
+${exampleImports.join('\n').replace(/`/g, '\\`')}
+
+export default function App() {
+  return (
+    ${renderContent}
+  );
+}`;
             if (!options.includes('render=false')) {
               if (/^\s*function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-                code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
+                code = `${code}
+ReactDOM.render(
+  <${provider}>
+    <SandpackProvider
+      template="react"
+      customSetup={{
+        dependencies: {
+          "@adobe/react-spectrum": "latest",
+        },
+        files: {"/${name}.js": {code: \`import React from 'react';\n${exampleImports.join('\n')}\n\nexport default ${code.replace(/`/g, '\\`')}\`, active: true}, "/index.js": \`${getIndex(name)}\`}
+      }}>
+      <SandpackLayout>
+        <SandpackCodeEditor showTabs={false} />
+        <SandpackPreview />
+      </SandpackLayout>
+    </SandpackProvider>
+  </${provider}>,
+  document.getElementById("${id}"));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+                code = code.replace(/^(<(.|\n)*>)$/m, `
+ReactDOM.render(
+  <${provider}>
+    <SandpackProvider
+      template="react"
+      customSetup={{
+        dependencies: {
+          "@adobe/react-spectrum": "latest",
+        },
+        files: {"/App.js": \`${getExample(code.replace(/`/g, '\\`'))}\`, "/index.js": \`${getIndex('App')}\`}
+      }}>
+      <SandpackLayout>
+        <SandpackCodeEditor showTabs={false} />
+        <SandpackPreview />
+      </SandpackLayout>
+    </SandpackProvider>
+  </${provider}>,
+  document.getElementById("${id}"));`);
               }
             }
 
@@ -324,6 +381,13 @@ module.exports = new Transformer({
       clientBundle += `import React from 'react';
 import ReactDOM from 'react-dom';
 import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
+import {
+  SandpackProvider,
+  SandpackLayout,
+  SandpackCodeEditor,
+  SandpackPreview
+} from "@codesandbox/sandpack-react";
+import "@codesandbox/sandpack-react/dist/index.css";
 ${exampleCode.join('\n')}
 export default {};
 `;
