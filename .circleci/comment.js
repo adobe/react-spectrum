@@ -24,7 +24,7 @@ async function run() {
         // to find the fork PR the original commit lives in
         const forkHeadCommit = commit.data.parents[1].sha;
         const searchRes = await octokit.search.issuesAndPullRequests({
-          q: `${forkHeadCommit}+repo:adobe/react-spectrum+is:pr`
+          q: `${forkHeadCommit}+repo:adobe/react-spectrum+is:pr+is:open`
         });
 
         // Look for a PR that is from a fork and has a matching head commit as the current branch
