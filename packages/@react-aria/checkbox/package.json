@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/checkbox",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -19,7 +19,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/label": "^3.2.4",
-    "@react-aria/toggle": "^3.2.2",
+    "@react-aria/toggle": "^3.2.3",
     "@react-aria/utils": "^3.11.3",
     "@react-stately/checkbox": "^3.0.6",
     "@react-stately/toggle": "^3.2.6",

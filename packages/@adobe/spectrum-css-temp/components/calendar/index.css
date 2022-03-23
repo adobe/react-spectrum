@@ -90,7 +90,7 @@ governing permissions and limitations under the License.
   justify-content: flex-end;
   height: 100%;
 
-  width: var(--spectrum-calendar-day-width);
+  width: 100%;
 
   border-bottom: none !important; /* override abbr styling from normalize.css */
 
@@ -207,6 +207,7 @@ governing permissions and limitations under the License.
         height: 2px;
         transform: rotate(-16deg);
         border-radius: 1px;
+        background: currentColor;
       }
     }
   }

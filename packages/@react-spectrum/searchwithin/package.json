@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/searchwithin",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-alpha.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -32,13 +32,13 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.3.7",
+    "@react-aria/i18n": "^3.3.8",
     "@react-aria/label": "^3.2.4",
     "@react-aria/utils": "^3.11.3",
-    "@react-aria/visually-hidden": "^3.2.6",
-    "@react-spectrum/form": "^3.2.7",
-    "@react-spectrum/label": "^3.4.4",
-    "@react-spectrum/utils": "^3.6.6",
+    "@react-aria/visually-hidden": "^3.2.7",
+    "@react-spectrum/form": "^3.2.8",
+    "@react-spectrum/label": "^3.4.5",
+    "@react-spectrum/utils": "^3.6.7",
     "@react-types/searchwithin": "3.0.0-alpha.3",
     "@react-types/shared": "^3.11.2"
   },
