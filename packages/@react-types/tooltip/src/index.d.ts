@@ -33,7 +33,7 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
 }
 
 export interface SpectrumTooltipTriggerProps extends TooltipTriggerProps, PositionProps {
-  children: [ReactElement, ReactElement],
+  children: [ReactElement, ReactElement] | ReactNode,
 
   /**
    * The additional offset applied along the main axis between the element and its
