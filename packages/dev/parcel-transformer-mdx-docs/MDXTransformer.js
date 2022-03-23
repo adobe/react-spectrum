@@ -100,7 +100,12 @@ function CustomSandpack() {
       }
       // Todo, use sandpack api to update file
     });
+
     observer.observe(document.documentElement, {attributes: true, attributeFilter: ['style']});
+
+    return () => {
+      observer.disconnect();
+    }
   }, []);
 
   return (
