@@ -74,23 +74,23 @@ export function Example(props: any = {}) {
           setSelectedKeys(new Set());
         }}
         {...props}>
-        <Item key="edit">
+        <Item key="edit" textValue="Edit">
           <Edit />
           <Text>Edit</Text>
         </Item>
-        <Item key="copy">
+        <Item key="copy" textValue="Copy">
           <Copy />
           <Text>Copy</Text>
         </Item>
-        <Item key="delete">
+        <Item key="delete" textValue="Delete">
           <Delete />
           <Text>Delete</Text>
         </Item>
-        <Item key="move">
+        <Item key="move" textValue="Move">
           <Move />
           <Text>Move</Text>
         </Item>
-        <Item key="duplicate">
+        <Item key="duplicate" textValue="Duplicate">
           <Duplicate />
           <Text>Duplicate</Text>
         </Item>

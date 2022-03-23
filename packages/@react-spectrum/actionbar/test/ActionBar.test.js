@@ -20,11 +20,23 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('ActionBar', () => {
+  let offsetWidth, offsetHeight;
+
+  function pressKey(element, options) {
+    fireEvent.keyDown(element, options);
+    fireEvent.keyUp(element, options);
+  }
+
   beforeAll(() => {
-    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 500);
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 500);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.useFakeTimers('legacy');
+  });
+
+  afterAll(function () {
+    offsetWidth.mockReset();
+    offsetHeight.mockReset();
   });
 
   afterEach(() => {
@@ -117,8 +129,7 @@ describe('ActionBar', () => {
     let toolbar = tree.getByRole('toolbar');
     act(() => within(toolbar).getAllByRole('button')[0].focus());
 
-    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
-    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+    pressKey(document.activeElement, {key: 'Escape'});
     act(() => jest.runAllTimers());
 
     expect(tree.queryByRole('toolbar')).toBeNull();
@@ -139,5 +150,98 @@ describe('ActionBar', () => {
     triggerPress(within(toolbar).getAllByRole('button')[0]);
 
     expect(onAction).toHaveBeenCalledWith('edit');
+  });
+
+  it('should restore focus back to the table', () => {
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => {
+      if (this instanceof HTMLButtonElement) {
+        return 100;
+      }
+
+      return 250;
+    });
+
+
+    let onAction = jest.fn();
+    let tree = render(<Provider theme={theme}><Example onAction={onAction} /></Provider>);
+    act(() => jest.runAllTimers());
+
+    let table = tree.getByRole('grid');
+    let rows = within(table).getAllByRole('row');
+
+    triggerPress(rows[1]);
+
+    let moreButton = tree.getByLabelText('Actions');
+    triggerPress(moreButton);
+
+    act(() => jest.runAllTimers());
+
+    let menu = tree.getByRole('menu');
+
+    expect(document.activeElement).toBe(menu);
+
+    pressKey(document.activeElement, {key: 'Escape'});
+
+    act(() => jest.runAllTimers());
+
+    expect(document.activeElement).toBe(moreButton);
+
+    pressKey(document.activeElement, {key: 'Escape'});
+
+    act(() => jest.runAllTimers());
+
+    expect(document.activeElement).toBe(rows[1]);
+  });
+
+  it('should restore focus back to the table when focused element index is scrolled out of view', () => {
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => {
+      if (this instanceof HTMLButtonElement) {
+        return 100;
+      }
+
+      return 250;
+    });
+
+    let onAction = jest.fn();
+    let tree = render(<Provider theme={theme}><Example onAction={onAction} /></Provider>);
+    act(() => jest.runAllTimers());
+
+    let table = tree.getByRole('grid');
+    let body = table.childNodes[1];
+    let rows = within(table).getAllByRole('row');
+
+    triggerPress(rows[1]);
+
+    act(() => rows[2].focus());
+
+    expect(body.scrollTop).toBe(0);
+
+    body.scrollTop = 392;
+    fireEvent.scroll(body);
+    act(() => jest.runAllTimers());
+
+    expect(body.scrollTop).toBe(392);
+    expect(document.activeElement).toBe(table);
+
+    let moreButton = tree.getByLabelText('Actions');
+    triggerPress(moreButton);
+
+    act(() => jest.runAllTimers());
+
+    let menu = tree.getByRole('menu');
+
+    expect(document.activeElement).toBe(menu);
+
+    pressKey(document.activeElement, {key: 'Escape'});
+
+    act(() => jest.runAllTimers());
+
+    expect(document.activeElement).toBe(moreButton);
+
+    pressKey(document.activeElement, {key: 'Escape'});
+
+    act(() => jest.runAllTimers());
+
+    expect(document.activeElement === within(table).getAllByRole('row')[2] || document.activeElement === table).toBe(true);
   });
 });

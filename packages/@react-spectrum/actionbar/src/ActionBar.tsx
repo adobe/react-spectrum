@@ -17,7 +17,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {FocusScope} from '@react-aria/focus';
+import {focusSafely, FocusScope, getFocusableTreeWalker} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {OpenTransition} from '@react-spectrum/overlays';
@@ -81,6 +81,70 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
   useEffect(() => {
     announce(formatMessage('actionsAvailable'));
   }, [formatMessage]);
+
+  let restoreFocusRef = useRef<HTMLElement>(null);
+  let containerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    // Event handler to keep track of focus changes within ActionBarContainer when ActionBar is open.
+    let timeoutId = null;
+    let onFocusContainer = (e:FocusEvent) => {
+      let activeElement = e.target as HTMLElement;
+      if (timeoutId) {
+        cancelAnimationFrame(timeoutId);
+        timeoutId = null;
+      }
+      timeoutId = requestAnimationFrame(() => {
+        if (domRef.current && !domRef.current.contains(activeElement)) {
+          restoreFocusRef.current = activeElement;
+        }
+      });
+    };
+
+    // When the ActionBar opens,
+    if (domRef.current) {
+      // store the last element to have focus,
+      if (!restoreFocusRef.current) {
+        restoreFocusRef.current = document.activeElement as HTMLElement;
+      }
+
+      // and store a reference to the parent ActionBarContainer element.
+      containerRef.current = domRef.current.parentElement;
+
+      // Listen for focus events within the ActionBarContainer,
+      // and if necessary update the element to which focus
+      // should be restored when the ActionBar closes.
+      containerRef.current.addEventListener('focus', onFocusContainer, true);
+    }
+
+    // When the ActionBar closes.
+    return () => {
+      // Wait a frame.
+      requestAnimationFrame(() => {
+        if (restoreFocusRef.current && document.body.contains(restoreFocusRef.current)) {
+          // If the restoreFocusRef.current is in the DOM, we can simply focus it.
+          requestAnimationFrame(() => {
+            focusSafely(restoreFocusRef.current);
+            restoreFocusRef.current = null;
+          });
+        } else if (containerRef.current) {
+          // Otherwise, we assume that the element using a SelectableCollection
+          // is the first child if the ActionBarContainer.
+          // We use a TreeWalker to find the first tabbable element to focus,
+          // where, on receiving focus, the SelectableCollection should set focus to the focusedKey.
+          let walker = getFocusableTreeWalker(containerRef.current, {tabbable: true});
+          let node = walker.nextNode() as HTMLElement;
+          requestAnimationFrame(() => node && focusSafely(node));
+        }
+
+        // Clean up focus event listener on ActionBarContainer.
+        if (containerRef.current) {
+          containerRef.current.removeEventListener('focus', onFocusContainer, true);
+          containerRef.current = null;
+        }
+      });
+    };
+  }, [domRef]);
 
   return (
     <FocusScope restoreFocus>
