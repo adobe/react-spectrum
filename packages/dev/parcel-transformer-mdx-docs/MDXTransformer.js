@@ -89,16 +89,13 @@ const getExampleRender = (id, provider, code, imports, name) => `
 function CustomSandpack(props) {
   const { code } = useActiveCode();
   const { sandpack } = useSandpack();
-  const [theme, setTheme] = React.useState(localStorage.theme);
 
   React.useEffect(() => {
-    // Detect when dark/light mode is changed and update preview's theme and index.js file.
+    // Detect when dark/light mode is changed and update index.js file.
     const observer = new MutationObserver((mutations) => {
       if (mutations[0].target.style.cssText.includes('dark')) {
-        setTheme('dark');
         sandpack.updateFile('/index.js', props.indexFiles.dark);
       } else {
-        setTheme('light');
         sandpack.updateFile('/index.js', props.indexFiles.light);
       }
     });
@@ -111,10 +108,29 @@ function CustomSandpack(props) {
   }, []);
 
   return (
-    <SandpackLayout theme={theme} style={{ flexDirection: "column" }}>
+    <SandpackLayout
+      theme={{
+        palette: {
+          defaultBackground: 'var(--hljs-background)',
+          activeBackground: 'var(--hljs-background)',
+          activeText: 'var(--hljs-color)'
+        },
+        syntax: {
+          comment: 'var(--hljs-comment-color)',
+          definition: 'var(--hljs-section-color)',
+          keyword: 'var(--hljs-keyword-color)',
+          plain: 'var(--hljs-color)', // Unsure
+          property: 'var(--hljs-attribute-color)',
+          punctuation: 'var(--hljs-color)',
+          static: 'var(--hljs-literal-color)',
+          string: 'var(--hljs-string-color)',
+          tag: 'var(--hljs-section-color)'
+        }
+      }}
+      style={{ flexDirection: "column", border: 'none' }}>
       <SandpackCodeEditor showTabs={false} wrapContent={true} customStyle={{height: 'auto'}} />
       <SandpackPreview
-        customStyle={{display: 'block', background: 'none'}}
+        customStyle={{display: 'block', background: 'none', border: 'none'}}
         actionsChildren={
           <button
             aria-label="Copy example code"
