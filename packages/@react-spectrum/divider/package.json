@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/divider",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -33,7 +33,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/separator": "^3.1.6",
-    "@react-spectrum/utils": "^3.6.6",
+    "@react-spectrum/utils": "^3.6.7",
     "@react-types/divider": "^3.1.5",
     "@react-types/shared": "^3.11.2"
   },

@@ -15,6 +15,7 @@ import {
   Calendar,
   CalendarDate,
   DateDuration,
+  DateFormatter,
   GregorianCalendar,
   isSameDay,
   toCalendar,
@@ -24,18 +25,33 @@ import {
 import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
-import {useDateFormatter} from '@react-aria/i18n';
 import {useMemo, useRef, useState} from 'react';
 
-interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
+interface CalendarStateOptions extends CalendarProps<DateValue> {
+  /** The locale to display and edit the value according to. */
   locale: string,
+  /**
+   * A function that creates a [Calendar](../internationalized/date/Calendar.html)
+   * object for a given calendar identifier. Such a function may be imported from the
+   * `@internationalized/date` package, or manually implemented to include support for
+   * only certain calendars.
+   */
   createCalendar: (name: string) => Calendar,
+  /**
+   * The amount of days that will be displayed at once. This affects how pagination works.
+   * @default {months: 1}
+   */
   visibleDuration?: DateDuration,
+  /** Determines how to align the initial selection relative to the visible date range. */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
 
-export function useCalendarState<T extends DateValue>(props: CalendarStateOptions<T>): CalendarState {
-  let defaultFormatter = useDateFormatter();
+/**
+ * Provides state management for a calendar component.
+ * A calendar displays one or more date grids and allows users to select a single date.
+ */
+export function useCalendarState(props: CalendarStateOptions): CalendarState {
+  let defaultFormatter = useMemo(() => new DateFormatter(props.locale), [props.locale]);
   let resolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
     locale,

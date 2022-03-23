@@ -20,13 +20,28 @@ import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
 
-interface RangeCalendarStateOptions<T extends DateValue> extends RangeCalendarProps<T> {
+interface RangeCalendarStateOptions extends RangeCalendarProps<DateValue> {
+  /** The locale to display and edit the value according to. */
   locale: string,
+  /**
+   * A function that creates a [Calendar](../internationalized/date/Calendar.html)
+   * object for a given calendar identifier. Such a function may be imported from the
+   * `@internationalized/date` package, or manually implemented to include support for
+   * only certain calendars.
+   */
   createCalendar: (name: string) => Calendar,
+  /**
+   * The amount of days that will be displayed at once. This affects how pagination works.
+   * @default {months: 1}
+   */
   visibleDuration?: DateDuration
 }
 
-export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState {
+/**
+ * Provides state management for a range calendar component.
+ * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
+ */
+export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCalendarState {
   let {value: valueProp, defaultValue, onChange, createCalendar, locale, visibleDuration = {months: 1}, minValue, maxValue, ...calendarProps} = props;
   let [value, setValue] = useControlledState<DateRange>(
     valueProp,

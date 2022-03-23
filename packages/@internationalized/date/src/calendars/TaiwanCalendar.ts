@@ -52,13 +52,7 @@ export class TaiwanCalendar extends GregorianCalendar {
   }
 
   toJulianDay(date: AnyCalendarDate) {
-    return super.toJulianDay(
-      new CalendarDate(
-        gregorianYear(date),
-        date.month,
-        date.day
-      )
-    );
+    return super.toJulianDay(toGregorian(date));
   }
 
   getEras() {
@@ -72,4 +66,16 @@ export class TaiwanCalendar extends GregorianCalendar {
   getYearsToAdd(date: Mutable<AnyCalendarDate>, years: number) {
     return date.era === 'before_minguo' ? -years : years;
   }
+
+  getDaysInMonth(date: AnyCalendarDate): number {
+    return super.getDaysInMonth(toGregorian(date));
+  }
+}
+
+function toGregorian(date: AnyCalendarDate) {
+  return new CalendarDate(
+    gregorianYear(date),
+    date.month,
+    date.day
+  );
 }
