@@ -18,7 +18,7 @@ jobs:
       - name: install
         run: yarn install
       - name: Comment contains trigger
-        if: contains(github.event.comment.body, 'get build link')
+        if: contains(github.event.comment.body, 'GET_BUILD')
         uses: ./.github/actions/branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
