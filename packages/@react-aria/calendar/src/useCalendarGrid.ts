@@ -120,8 +120,8 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
     'aria-labelledby': calendarIds.get(state)
   });
 
-  let dayFormatter = useDateFormatter({weekday: 'narrow'});
-  let dayFormatterLong = useDateFormatter({weekday: 'long'});
+  let dayFormatter = useDateFormatter({weekday: 'narrow', timeZone: state.timeZone});
+  let dayFormatterLong = useDateFormatter({weekday: 'long', timeZone: state.timeZone});
   let {locale} = useLocale();
   let weekStart = startOfWeek(state.visibleRange.start, locale);
   let weekDays = [...new Array(7).keys()].map((index) => {
