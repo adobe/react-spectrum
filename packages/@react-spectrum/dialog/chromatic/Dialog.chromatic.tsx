@@ -99,48 +99,42 @@ storiesOf('Dialog', module)
   )
   .add(
     'tray',
-    () => renderTriggerProps({type: 'tray'}),
-    {
+    () => renderTriggerProps({type: 'tray'}), {
       chromatic: {viewports: [320, 1200]},
       chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
     }
   )
   .add(
     'popover',
-    () => renderTriggerProps({type: 'popover'}),
-    {
+    () => renderTriggerProps({type: 'popover'}), {
       chromatic: {viewports: [320, 1200]},
       chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
     }
   )
   .add(
     'mobileType fullscreen, modal',
-    () => renderTriggerProps({type: 'modal', mobileType: 'fullscreen'}),
-    {
+    () => renderTriggerProps({type: 'modal', mobileType: 'fullscreen'}), {
       chromatic: {viewports: [320, 1200]},
       chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
     }
   )
   .add(
     'mobileType fullscreenTakeover, modal',
-    () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'}),
-    {
+    () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'}), {
       chromatic: {viewports: [320, 1200]},
       chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
     }
   )
   .add(
     'mobileType: modal, popover',
-    () => renderTriggerProps({type: 'popover', mobileType: 'modal'}),
-    {
+    () => renderTriggerProps({type: 'popover', mobileType: 'modal'}), {
       chromatic: {viewports: [320, 1200]},
       chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
     }
   )
   .add(
     'mobileType: tray, popover',
-    () => renderTriggerProps({type: 'popover', mobileType: 'tray'}),
-    {
+    () => renderTriggerProps({type: 'popover', mobileType: 'tray'}), {
       chromatic: {viewports: [320, 1200]},
       chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
     }

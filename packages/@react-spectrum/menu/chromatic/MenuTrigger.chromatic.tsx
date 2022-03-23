@@ -173,7 +173,7 @@ export const ComplexMobile = TemplateWithIcons().bind({});
 ComplexMobile.storyName = 'complex items, mobile viewport';
 ComplexMobile.parameters = {
   chromatic: {viewports: [320]},
-  chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true},
+  chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
 };
 
 export const AlignEnd = Template().bind({});

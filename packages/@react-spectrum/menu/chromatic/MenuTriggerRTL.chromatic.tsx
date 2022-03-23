@@ -48,5 +48,5 @@ export const ComplexItemsMobileViewport = ComplexMobile.bind({});
 ComplexItemsMobileViewport.storyName = 'complex items, mobile viewport';
 ComplexItemsMobileViewport.parameters = {
   chromatic: {viewports: [320]},
-  chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true},
+  chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
 };
