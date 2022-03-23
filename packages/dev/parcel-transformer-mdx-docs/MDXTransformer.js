@@ -85,7 +85,31 @@ ${formatImports(imports)}
 export default ${formatExampleCode(exampleCode)}
 `;
 
-const getExampleRender = (id, provider, code, imports, name) => `ReactDOM.render(
+const getExampleRender = (id, provider, code, imports, name) => `
+function CustomSandpack() {
+  const { code } = useActiveCode();
+  return (
+    <SandpackLayout style={{ flexDirection: "column" }}>
+      <SandpackCodeEditor showTabs={false} wrapContent={true} customStyle={{height: 'auto'}} />
+      <SandpackPreview
+        customStyle={{display: 'block', background: 'none'}}
+        actionsChildren={
+          <button
+            aria-label="Copy example code"
+            className="sp-button"
+            style={{ padding: "var(--sp-space-1) var(--sp-space-3)" }}
+            onClick={() => {
+              navigator.clipboard.writeText(code.trim());
+            }}
+          >
+            <Copy size="S" />
+          </button>
+        } />
+    </SandpackLayout>
+  );
+}
+
+ReactDOM.render(
   <${provider}>
     <SandpackProvider
       template="react"
@@ -103,10 +127,7 @@ const getExampleRender = (id, provider, code, imports, name) => `ReactDOM.render
           "/public/index.html": \`${indexHtml}\`
         }
       }}>
-      <SandpackLayout style={{ flexDirection: "column" }}>
-        <SandpackCodeEditor showTabs={false} wrapContent={true} customStyle={{height: 'auto'}} />
-        <SandpackPreview customStyle={{display: 'block', background: 'none'}} />
-      </SandpackLayout>
+      <CustomSandpack />
     </SandpackProvider>
   </${provider}>,
   document.getElementById("${id}"));`; 
@@ -415,9 +436,11 @@ import {
   SandpackProvider,
   SandpackLayout,
   SandpackCodeEditor,
-  SandpackPreview
+  SandpackPreview,
+  useActiveCode
 } from "@codesandbox/sandpack-react";
 import "@codesandbox/sandpack-react/dist/index.css";
+import Copy from '@spectrum-icons/workflow/Copy';
 ${exampleCode.join('\n')}
 export default {};
 `;
