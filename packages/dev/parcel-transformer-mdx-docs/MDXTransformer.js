@@ -56,13 +56,13 @@ const formatExampleCode = (code, fixIndention = false) => fixIndention ? code.re
 
 const formatImports = (imports) => imports.join('\n').replace(/`/g, '\\`');
 
-const getIndexFile = (componentName) => `import React from "react";
+const getIndexFile = (componentName, colorScheme = 'light') => `import React from "react";
 import ReactDOM from "react-dom";
 import { Provider, defaultTheme } from "@adobe/react-spectrum";
 import ${componentName} from "./${componentName}";
 const rootElement = document.getElementById("root");
 ReactDOM.render(
-  <Provider theme={defaultTheme}>
+  <Provider theme={defaultTheme} colorScheme="${colorScheme}">
     <${componentName} />
   </Provider>,
   rootElement
@@ -86,8 +86,9 @@ export default ${formatExampleCode(exampleCode)}
 `;
 
 const getExampleRender = (id, provider, code, imports, name) => `
-function CustomSandpack() {
+function CustomSandpack(props) {
   const { code } = useActiveCode();
+  const { sandpack } = useSandpack();
   const [theme, setTheme] = React.useState(localStorage.theme);
 
   React.useEffect(() => {
@@ -95,10 +96,11 @@ function CustomSandpack() {
     const observer = new MutationObserver((mutations) => {
       if (mutations[0].target.style.cssText.includes('dark')) {
         setTheme('dark');
+        sandpack.updateFile('/index.js', props.indexFiles.dark);
       } else {
         setTheme('light');
+        sandpack.updateFile('/index.js', props.indexFiles.light);
       }
-      // Todo, use sandpack api to update file
     });
 
     observer.observe(document.documentElement, {attributeFilter: ['style']});
@@ -143,11 +145,11 @@ ReactDOM.render(
               code: \`${name === 'App' ? getExampleFile(code, imports) : getNamedExampleFile(code, imports)}\`,
               active: true
             },
-          "/index.js": \`${getIndexFile(name)}\`,
+          "/index.js": localStorage.theme === 'dark' ? \`${getIndexFile(name, 'dark')}\` : \`${getIndexFile(name, 'light')}\`,
           "/public/index.html": \`${indexHtml}\`
         }
       }}>
-      <CustomSandpack />
+      <CustomSandpack indexFiles={{light: \`${getIndexFile(name, 'light')}\`, dark: \`${getIndexFile(name, 'dark')}\` }} />
     </SandpackProvider>
   </${provider}>,
   document.getElementById("${id}"));`; 
@@ -457,7 +459,8 @@ import {
   SandpackLayout,
   SandpackCodeEditor,
   SandpackPreview,
-  useActiveCode
+  useActiveCode,
+  useSandpack
 } from "@codesandbox/sandpack-react";
 import "@codesandbox/sandpack-react/dist/index.css";
 import Copy from '@spectrum-icons/workflow/Copy';
