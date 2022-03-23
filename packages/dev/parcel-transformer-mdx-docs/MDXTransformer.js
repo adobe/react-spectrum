@@ -88,8 +88,23 @@ export default ${formatExampleCode(exampleCode)}
 const getExampleRender = (id, provider, code, imports, name) => `
 function CustomSandpack() {
   const { code } = useActiveCode();
+  const [theme, setTheme] = React.useState(localStorage.theme);
+
+  React.useEffect(() => {
+    // Detect when dark/light mode is changed and update preview's theme and index.js file.
+    const observer = new MutationObserver((mutations) => {
+      if (mutations[0].target.style.cssText.includes('dark')) {
+        setTheme('dark');
+      } else {
+        setTheme('light');
+      }
+      // Todo, use sandpack api to update file
+    });
+    observer.observe(document.documentElement, {attributes: true, attributeFilter: ['style']});
+  }, []);
+
   return (
-    <SandpackLayout style={{ flexDirection: "column" }}>
+    <SandpackLayout theme={theme} style={{ flexDirection: "column" }}>
       <SandpackCodeEditor showTabs={false} wrapContent={true} customStyle={{height: 'auto'}} />
       <SandpackPreview
         customStyle={{display: 'block', background: 'none'}}
