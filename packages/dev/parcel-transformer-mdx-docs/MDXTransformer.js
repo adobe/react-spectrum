@@ -52,6 +52,10 @@ const indexHtml = `<!DOCTYPE html>
   </body>
 </html>`;
 
+const formatExampleCode = (code, fixIndention = false) => fixIndention ? code.replace(/`/g, '\\`').replace(/\n/g, '\n    ') : code.replace(/`/g, '\\`');
+
+const formatImports = (imports) => imports.join('\n').replace(/`/g, '\\`');
+
 const getIndexFile = (componentName) => `import React from "react";
 import ReactDOM from "react-dom";
 import { Provider, defaultTheme } from "@adobe/react-spectrum";
@@ -66,20 +70,47 @@ ReactDOM.render(
 `;
 
 const getExampleFile = (exampleCode, imports) => `import React from "react";
-${imports}
+${formatImports(imports)}
 
 export default function App() {
   return (
-    ${exampleCode}
+    ${formatExampleCode(exampleCode, true)}
   );
 }
 `;
 
 const getNamedExampleFile = (exampleCode, imports) => `import React from "react";
-${imports}
+${formatImports(imports)}
 
-export default ${exampleCode}
+export default ${formatExampleCode(exampleCode)}
 `;
+
+const getExampleRender = (id, provider, code, imports, name) => `ReactDOM.render(
+  <${provider}>
+    <SandpackProvider
+      template="react"
+      customSetup={{
+        dependencies: {
+          "@adobe/react-spectrum": "latest",
+        },
+        files: {
+          "/${name}.js":
+            {
+              code: \`${name === 'App' ? getExampleFile(code, imports) : getNamedExampleFile(code, imports)}\`,
+              active: true
+            },
+          "/index.js": \`${getIndexFile(name)}\`,
+          "/public/index.html": \`${indexHtml}\`
+        }
+      }}>
+      <SandpackLayout style={{ flexDirection: "column" }}>
+        <SandpackCodeEditor showTabs={false} wrapContent={true} customStyle={{height: 'auto'}} />
+        <SandpackPreview customStyle={{display: 'block', background: 'none'}} />
+      </SandpackLayout>
+    </SandpackProvider>
+  </${provider}>,
+  document.getElementById("${id}"));`; 
+
 
 module.exports = new Transformer({
   async loadConfig({config}) {
@@ -125,55 +156,9 @@ module.exports = new Transformer({
             if (!options.includes('render=false')) {
               if (/^\s*function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-                code = `${code}
-ReactDOM.render(
-  <${provider}>
-    <SandpackProvider
-      template="react"
-      customSetup={{
-        dependencies: {
-          "@adobe/react-spectrum": "latest",
-        },
-        files: {
-          "/${name}.js":
-            {
-              code: \`${getNamedExampleFile(code.replace(/`/g, '\\`'), exampleImports.join('\n'))}\`,
-              active: true
-            },
-          "/index.js": \`${getIndexFile(name)}\`,
-          "/public/index.html": \`${indexHtml}\`
-        }
-      }}>
-      <SandpackLayout>
-        <SandpackCodeEditor showTabs={false} wrapContent={true} />
-        <SandpackPreview />
-      </SandpackLayout>
-    </SandpackProvider>
-  </${provider}>,
-  document.getElementById("${id}"));`;
+                code = `${code}${getExampleRender(id, provider, code, exampleImports, name)}`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, `
-ReactDOM.render(
-  <${provider}>
-    <SandpackProvider
-      template="react"
-      customSetup={{
-        dependencies: {
-          "@adobe/react-spectrum": "latest",
-        },
-        files: {
-          "/App.js": \`${getExampleFile(code.replace(/`/g, '\\`'), exampleImports.join('\n').replace(/`/g, '\\`'))}\`,
-          "/index.js": \`${getIndexFile('App')}\`,
-          "/public/index.html": \`${indexHtml}\`
-        }
-      }}>
-      <SandpackLayout>
-        <SandpackCodeEditor showTabs={false} wrapContent={true} />
-        <SandpackPreview />
-      </SandpackLayout>
-    </SandpackProvider>
-  </${provider}>,
-  document.getElementById("${id}"));`);
+                code = code.replace(/^(<(.|\n)*>)$/m, getExampleRender(id, provider, code, exampleImports, 'App'));
               }
             }
 
