@@ -49,6 +49,12 @@ governing permissions and limitations under the License.
       }
     }
   }
+
+  &.is-resizable {
+    &.is-hovered {
+      color: var(--spectrum-table-header-text-color-hover);
+    }
+  }
 }
 
 /* Helper for shared drop target overlay */

@@ -51,7 +51,7 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
   let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
   let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isUnavailable});
+  let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isUnavailable || state.isReadOnly});
 
   return (
     <td
@@ -73,7 +73,7 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
           'is-selection-start': isSelectionStart,
           'is-selection-end': isSelectionEnd,
           'is-hovered': isHovered,
-          'is-pressed': isPressed
+          'is-pressed': isPressed && !state.isReadOnly
         })}>
         <span className={classNames(styles, 'spectrum-Calendar-dateText')}>
           <span>{formattedDate}</span>
