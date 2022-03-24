@@ -85,10 +85,11 @@ ${formatImports(imports)}
 export default ${formatExampleCode(exampleCode)}
 `;
 
-const getExampleRender = (id, code, imports, name, named = false) => `
+const getExampleRender = (id, provider, code, imports, name, named = false) => `
 function CustomSandpack(props) {
   const { code } = useActiveCode();
   const { sandpack } = useSandpack();
+  const { refresh } = useSandpackNavigation();
 
   React.useEffect(() => {
     // Detect when dark/light mode is changed and update index.js file.
@@ -106,6 +107,8 @@ function CustomSandpack(props) {
       observer.disconnect();
     }
   }, []);
+
+  const openInCodeSandboxButtonRef = React.useRef(null);
 
   return (
     <SandpackLayout
@@ -132,40 +135,64 @@ function CustomSandpack(props) {
       <SandpackPreview
         customStyle={{display: 'block', background: 'none', border: 'none'}}
         actionsChildren={
-          <button
-            aria-label="Copy example code"
-            className="sp-button"
-            style={{ padding: "var(--sp-space-1) var(--sp-space-3)" }}
-            onClick={() => {
-              navigator.clipboard.writeText(code.trim());
-            }}
-          >
-            <Copy size="S" />
-          </button>
-        } />
+          <ButtonGroup>
+            <ActionButton
+              isQuiet
+              aria-label="Copy example code"
+              onPress={() => {
+                navigator.clipboard.writeText(code.trim());
+              }}
+            >
+              <Copy size="S" />
+            </ActionButton>
+            <ActionButton
+              isQuiet
+              aria-label="Refresh example"
+              onPress={() => refresh()}
+            >
+              <Refresh size="S" />
+            </ActionButton>
+            <ActionButton
+              isQuiet
+              aria-label="Open example in CodeSandbox"
+              onPress={() => openInCodeSandboxButtonRef.current.firstChild.click()}
+            >
+              <LinkOut size="S" />
+            </ActionButton>
+          </ButtonGroup>
+        }
+        showRefreshButton={false}
+        showOpenInCodeSandbox={false} />
+        <div ref={openInCodeSandboxButtonRef} style={{ display: "none" }}>
+          <UnstyledOpenInCodeSandboxButton>
+            Open in CodeSandbox
+          </UnstyledOpenInCodeSandboxButton>
+        </div>
     </SandpackLayout>
   );
 }
 
 ReactDOM.render(
-  <SandpackProvider
-    template="react"
-    customSetup={{
-      dependencies: {
-        "@adobe/react-spectrum": "latest",
-      },
-      files: {
-        "/${name}.js":
-          {
-            code: \`${named ? getNamedExampleFile(code, imports) : getExampleFile(code, imports)}\`,
-            active: true
-          },
-        "/index.js": localStorage.theme === 'dark' ? \`${getIndexFile(name, 'dark')}\` : \`${getIndexFile(name, 'light')}\`,
-        "/public/index.html": \`${indexHtml}\`
-      }
-    }}>
-    <CustomSandpack indexFiles={{light: \`${getIndexFile(name, 'light')}\`, dark: \`${getIndexFile(name, 'dark')}\` }} />
-  </SandpackProvider>,
+  <${provider}>
+    <SandpackProvider
+      template="react"
+      customSetup={{
+        dependencies: {
+          "@adobe/react-spectrum": "latest",
+        },
+        files: {
+          "/${name}.js":
+            {
+              code: \`${named ? getNamedExampleFile(code, imports) : getExampleFile(code, imports)}\`,
+              active: true
+            },
+          "/index.js": localStorage.theme === 'dark' ? \`${getIndexFile(name, 'dark')}\` : \`${getIndexFile(name, 'light')}\`,
+          "/public/index.html": \`${indexHtml}\`
+        }
+      }}>
+      <CustomSandpack indexFiles={{light: \`${getIndexFile(name, 'light')}\`, dark: \`${getIndexFile(name, 'dark')}\` }} />
+    </SandpackProvider>
+  </${provider}>,
   document.getElementById("${id}"));`; 
 
 
@@ -205,19 +232,18 @@ module.exports = new Transformer({
               return '';
             });
 
-            // TODO: Fix
-            // let provider = 'ExampleProvider';
+            let provider = 'ExampleProvider';
             if (options.includes('themeSwitcher=true')) {
               exampleCode.push('import {ExampleThemeSwitcher} from "@react-spectrum/docs/src/ExampleThemeSwitcher";\n');
-              // provider = 'ExampleThemeSwitcher';
+              provider = 'ExampleThemeSwitcher';
             }
 
             if (!options.includes('render=false')) {
               if (/^\s*function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-                code = `${code}${getExampleRender(id, code, exampleImports, name, true)}`;
+                code = `${code}${getExampleRender(id, provider, code, exampleImports, name, true)}`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, getExampleRender(id, code, exampleImports, 'Example'));
+                code = code.replace(/^(<(.|\n)*>)$/m, getExampleRender(id, provider, code, exampleImports, 'Example'));
               }
             }
 
@@ -476,10 +502,15 @@ import {
   SandpackCodeEditor,
   SandpackPreview,
   useActiveCode,
-  useSandpack
+  useSandpack,
+  useSandpackNavigation,
+  UnstyledOpenInCodeSandboxButton
 } from "@codesandbox/sandpack-react";
 import "@codesandbox/sandpack-react/dist/index.css";
 import Copy from '@spectrum-icons/workflow/Copy';
+import Refresh from '@spectrum-icons/workflow/Refresh';
+import LinkOut from '@spectrum-icons/workflow/LinkOut';
+import {ActionButton, ButtonGroup} from '@adobe/react-spectrum';
 ${exampleCode.join('\n')}
 export default {};
 `;
