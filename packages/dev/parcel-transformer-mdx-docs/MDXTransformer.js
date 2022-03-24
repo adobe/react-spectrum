@@ -205,10 +205,11 @@ module.exports = new Transformer({
               return '';
             });
 
-            let provider = 'ExampleProvider';
+            // TODO: Fix
+            // let provider = 'ExampleProvider';
             if (options.includes('themeSwitcher=true')) {
               exampleCode.push('import {ExampleThemeSwitcher} from "@react-spectrum/docs/src/ExampleThemeSwitcher";\n');
-              provider = 'ExampleThemeSwitcher';
+              // provider = 'ExampleThemeSwitcher';
             }
 
             if (!options.includes('render=false')) {
