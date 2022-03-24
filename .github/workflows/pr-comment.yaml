@@ -22,5 +22,3 @@ jobs:
         uses: ./.github/actions/branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: testing modification
-        run: echo Hi
