@@ -7,7 +7,8 @@ jobs:
     if: |
       github.event.issue.pull_request &&
       github.repository == 'adobe/react-spectrum' &&
-      github.actor == 'LFDanLu'
+      github.event.comment.author_association == 'MEMBER' &&
+      contains(github.event.comment.body, 'GET_BUILD')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
@@ -18,7 +19,6 @@ jobs:
       - name: install
         run: yarn install
       - name: Comment contains trigger
-        if: contains(github.event.comment.body, 'GET_BUILD')
         uses: ./.github/actions/branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
