@@ -184,7 +184,8 @@
       "nesting": true
     },
     "pseudoClasses": {
-      "focusVisible": "focus-ring"
+      "focusVisible": "focus-ring",
+      "hover": "is-hovered"
     }
   }
 }

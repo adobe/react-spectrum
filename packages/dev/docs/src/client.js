@@ -223,3 +223,29 @@ window.addEventListener('pagehide', () => {
   sessionStorage.setItem('sidebarSelectedItem', location.pathname);
   sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
 });
+
+// We replace :hover with .is-hovered in CSS so hover states are not applied on touch.
+// For components rendered client side, the hover class will already be applied.
+// For server rendered components, a data-hover attribute is added with the class
+// that should be applied on hover and we do that here using global listeners.
+let ignoreSimulatedMouseEvents = false;
+document.addEventListener('touchstart', () => {
+  ignoreSimulatedMouseEvents = true;
+}, true);
+
+document.addEventListener('mouseenter', e => {
+  if (ignoreSimulatedMouseEvents) {
+    ignoreSimulatedMouseEvents = false;
+    return;
+  }
+
+  if (e.target instanceof Element && e.target.dataset.hover) {
+    e.target.classList.add(e.target.dataset.hover);
+  }
+}, true);
+
+document.addEventListener('mouseleave', e => {
+  if (e.target instanceof Element && e.target.dataset.hover) {
+    e.target.classList.remove(e.target.dataset.hover);
+  }
+}, true);

@@ -56,7 +56,7 @@ export function ResourceCard(props) {
   }
 
   return (
-    <a href={url} rel="noreferrer" target="_blank" title={cardContent.title} className={styles['resourceCard']}>
+    <a href={url} rel="noreferrer" target="_blank" title={cardContent.title} className={styles['resourceCard']} data-hover={styles['is-hovered']}>
       <div>
         {cardContent.svg}
       </div>
