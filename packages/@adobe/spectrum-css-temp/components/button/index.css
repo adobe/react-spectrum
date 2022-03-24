@@ -77,7 +77,7 @@ governing permissions and limitations under the License.
   &:focus {
     outline: none;
   }
-  &:focus-ring {
+  &:focus-visible {
     z-index: 3;
   }
 
@@ -127,7 +127,7 @@ governing permissions and limitations under the License.
                 margin var(--spectrum-global-animation-duration-100) ease-out;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     &:after {
       margin: calc(var(--spectrum-alias-focus-ring-gap) * -2);
     }
@@ -277,7 +277,7 @@ a.spectrum-ActionButton {
     border-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
   }
 
-  &:focus-ring {
+  &:focus-visible {
     &:after {
       /* action buttons only have a 1px border, not 2px */
       margin: calc(calc(var(--spectrum-alias-focus-ring-gap) * -1) - var(--spectrum-actionbutton-quiet-border-size));
@@ -353,7 +353,7 @@ a.spectrum-ActionButton {
   border-radius: var(--spectrum-fieldbutton-quiet-border-radius);
   &:disabled,
   &.is-disabled {
-    &:focus-ring {
+    &:focus-visible {
       box-shadow: none;
     }
   }
@@ -380,7 +380,7 @@ a.spectrum-ActionButton {
 }
 
 .spectrum-ClearButton--overBackground {
-  &:focus-ring {
+  &:focus-visible {
     &:after {
       /* Adjust margin because ClearButton does not have a border */
       margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);

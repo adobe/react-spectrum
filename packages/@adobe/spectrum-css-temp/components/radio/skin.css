@@ -71,8 +71,8 @@ governing permissions and limitations under the License.
       color: var(--spectrum-radio-emphasized-text-color-down);
     }
   }
-  & .spectrum-Radio-input:focus-ring,
-  &:hover .spectrum-Radio-input:focus-ring {
+  & .spectrum-Radio-input:focus-visible,
+  &:hover .spectrum-Radio-input:focus-visible {
     &:checked + .spectrum-Radio-button {
       &:before {
         border-color: var(--spectrum-radio-emphasized-circle-border-color-selected-key-focus);
@@ -101,8 +101,8 @@ governing permissions and limitations under the License.
       }
     }
   }
-  & .spectrum-Radio-input:focus-ring,
-  &:hover .spectrum-Radio-input:focus-ring {
+  & .spectrum-Radio-input:focus-visible,
+  &:hover .spectrum-Radio-input:focus-visible {
     &:checked + .spectrum-Radio-button {
       &:before {
         border-color: var(--spectrum-radio-quiet-circle-border-color-selected-key-focus);
@@ -144,8 +144,8 @@ governing permissions and limitations under the License.
       color: var(--spectrum-radio-emphasized-circle-border-color-error-down);
     }
   }
-  &.is-invalid .spectrum-Radio-input:focus-ring,
-  &.is-invalid:hover .spectrum-Radio-input:focus-ring {
+  &.is-invalid .spectrum-Radio-input:focus-visible,
+  &.is-invalid:hover .spectrum-Radio-input:focus-visible {
     &:not(:checked) + .spectrum-Radio-button {
       &:before {
         border-color: var(--spectrum-radio-circle-border-color-error-key-focus);
@@ -175,8 +175,8 @@ governing permissions and limitations under the License.
 /* Removed :before so that border-color isn't overwritten by keyboard focus */
 .spectrum-Radio,
 .spectrum-Radio--quiet {
-  & .spectrum-Radio-input:focus-ring,
-  &:hover .spectrum-Radio-input:focus-ring {
+  & .spectrum-Radio-input:focus-visible,
+  &:hover .spectrum-Radio-input:focus-visible {
     &:not(:checked) + .spectrum-Radio-button {
       &:before {
         border-color: var(--spectrum-radio-circle-border-color-key-focus);

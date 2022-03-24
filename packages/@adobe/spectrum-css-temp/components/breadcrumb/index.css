@@ -106,7 +106,7 @@ governing permissions and limitations under the License.
     cursor: pointer;
 
     &:hover,
-    &:focus-ring {
+    &:focus-visible {
       text-decoration: underline;
     }
   }
@@ -114,7 +114,7 @@ governing permissions and limitations under the License.
 
 
 .spectrum-Breadcrumbs-item.is-dragged .spectrum-Breadcrumbs-itemLink:before,
-.spectrum-Breadcrumbs-itemLink:focus-ring:before {
+.spectrum-Breadcrumbs-itemLink:focus-visible:before {
   position: absolute;
   top: 0;
   inset-inline-start: 0;

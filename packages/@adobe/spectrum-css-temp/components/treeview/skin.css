@@ -34,7 +34,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring {
+  &:focus-visible {
     color: var(--spectrum-treeview-item-text-color-hover);
 
     &::before {

@@ -32,7 +32,7 @@ governing permissions and limitations under the License.
       }
     }
 
-    &:focus-ring,
+    &:focus-visible,
     &.is-focused {
       color: var(--spectrum-table-header-text-color-key-focus);
 
@@ -69,7 +69,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Table-cell,
 .spectrum-Table-headCell {
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     &::before {
       box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
@@ -134,12 +134,12 @@ tbody.spectrum-Table-body {
     background-color: var(--spectrum-table-row-background-color-hover);
   }
 
-  &:focus-ring .spectrum-Table-cell,
+  &:focus-visible .spectrum-Table-cell,
   &.is-focused .spectrum-Table-cell {
     background-color: var(--spectrum-table-row-background-color-hover);
   }
 
-  &:focus-ring {
+  &:focus-visible {
     &:before {
       background: var(--spectrum-selectlist-option-focus-indicator-color);
     }
@@ -159,7 +159,7 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-table-row-background-color-selected-hover);
     }
 
-    &:focus-ring .spectrum-Table-cell,
+    &:focus-visible .spectrum-Table-cell,
     &.is-focused .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected-key-focus);
     }
@@ -211,7 +211,7 @@ tbody.spectrum-Table-body {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
 
-    &:focus-ring .spectrum-Table-cell,
+    &:focus-visible .spectrum-Table-cell,
     &.is-focused .spectrum-Table-cell {
       background-color: var(--spectrum-table-quiet-row-background-color-hover);
     }
@@ -229,7 +229,7 @@ tbody.spectrum-Table-body {
         background-color: var(--spectrum-table-quiet-row-background-color-selected-hover);
       }
 
-      &:focus-ring .spectrum-Table-cell,
+      &:focus-visible .spectrum-Table-cell,
       &.is-focused .spectrum-Table-cell {
         background-color: var(--spectrum-table-quiet-row-background-color-selected-key-focus);
       }

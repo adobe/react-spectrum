@@ -24,7 +24,7 @@
     outline: none;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
   }
@@ -91,7 +91,7 @@
     outline: none;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     box-shadow: 0 0 0 1px var(--spectrum-dropzone-border-color-selected-hover);
   }
@@ -120,7 +120,7 @@
     outline: none;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     box-shadow: 0 0 0 2px var(--spectrum-dropzone-border-color-selected-hover);
   }
 }

@@ -32,7 +32,7 @@ governing permissions and limitations under the License.
   color: var(--spectrum-toast-warning-background-color);
 
   & .spectrum-Toast-closeButton {
-    &:focus-ring:not(:active) {
+    &:focus-visible:not(:active) {
       color: var(--spectrum-toast-warning-background-color);
     }
   }
@@ -44,7 +44,7 @@ governing permissions and limitations under the License.
   color: var(--spectrum-toast-error-background-color);
 
   & .spectrum-Toast-closeButton {
-    &:focus-ring:not(:active) {
+    &:focus-visible:not(:active) {
       color: var(--spectrum-toast-error-background-color);
     }
   }
@@ -55,7 +55,7 @@ governing permissions and limitations under the License.
   color: var(--spectrum-toast-info-background-color);
 
   & .spectrum-Toast-closeButton {
-    &:focus-ring:not(:active) {
+    &:focus-visible:not(:active) {
       color: var(--spectrum-toast-info-background-color);
     }
   }
@@ -67,7 +67,7 @@ governing permissions and limitations under the License.
   color: var(--spectrum-toast-positive-background-color);
 
   & .spectrum-Toast-closeButton {
-    &:focus-ring:not(:active) {
+    &:focus-visible:not(:active) {
       color: var(--spectrum-toast-positive-background-color);
     }
   }

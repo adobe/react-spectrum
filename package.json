@@ -182,6 +182,9 @@
     "cssModules": true,
     "drafts": {
       "nesting": true
+    },
+    "pseudoClasses": {
+      "focusVisible": "focus-ring"
     }
   }
 }

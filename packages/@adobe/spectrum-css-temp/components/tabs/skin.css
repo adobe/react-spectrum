@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
   border-block-end-color: var(--spectrum-tabs-rule-color);
 
   &.spectrum-Tabs--isCollapsed {
-    & :focus-ring {
+    & :focus-visible {
       /* FieldButton Picker focus ring override */
       box-shadow: none;
 
@@ -56,7 +56,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring {
+  &:focus-visible {
     color: var(--spectrum-tabs-text-color-key-focus);
 
     &::before {
@@ -101,7 +101,7 @@ governing permissions and limitations under the License.
     outline: none;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     border-color: var(--spectrum-tabs-focus-ring-color);
   }
 }

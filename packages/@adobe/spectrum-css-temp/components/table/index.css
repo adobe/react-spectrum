@@ -232,7 +232,7 @@ svg.spectrum-Table-sortedIcon {
     outline: none;
   }
 
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     outline: none;
 
@@ -254,7 +254,7 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table-headCell {
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     &::before {
       top: var(--spectrum-table-border-size);
@@ -287,7 +287,7 @@ svg.spectrum-Table-sortedIcon {
   }
 
   /* The focus ring must be on top of the first cell, so needs to be absolutely positioned. */
-  &:focus-ring {
+  &:focus-visible {
     &:before {
       content: '';
       position: absolute;
@@ -305,7 +305,7 @@ svg.spectrum-Table-sortedIcon {
 }
 
 /* the CSS logical properties postcss plugin doesn't seem to work with :focus-ring. */
-[dir="rtl"] .spectrum-Table-row:focus-ring:before {
+[dir="rtl"] .spectrum-Table-row:focus-visible:before {
   right: 0;
 }
 
