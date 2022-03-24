@@ -10,6 +10,8 @@ jobs:
       github.actor == 'LFDanLu'
     runs-on: ubuntu-latest
     steps:
+      - name: testing modification
+        run: echo blah
       - uses: actions/checkout@main
       - name: Use Node 16
         uses: actions/setup-node@v2
