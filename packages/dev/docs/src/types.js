@@ -171,7 +171,7 @@ function Keyof({keyof}) {
 function Keyword({type}) {
   let link = getDoc(type);
   if (link) {
-    return <a href={link} className={`${styles.colorLink} token hljs-keyword`} rel="noreferrer" target="_blank">{type}</a>;
+    return <a href={link} className={`${styles.colorLink} token hljs-keyword`} data-hover={styles['is-hovered']} rel="noreferrer" target="_blank">{type}</a>;
   }
 
   return <span className="token hljs-keyword">{type}</span>;
@@ -180,7 +180,7 @@ function Keyword({type}) {
 function Identifier({name}) {
   let link = getDoc(name) || DOC_LINKS[name];
   if (link) {
-    return <a href={link} className={`${styles.colorLink} token hljs-name`} rel="noreferrer" target="_blank">{name}</a>;
+    return <a href={link} className={`${styles.colorLink} token hljs-name`} data-hover={styles['is-hovered']} rel="noreferrer" target="_blank">{name}</a>;
   }
 
   return <span className="token hljs-name">{name}</span>;
@@ -412,7 +412,7 @@ export function LinkType({id}) {
     registered.set(id, {type: used[id], links});
   }
 
-  return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
+  return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`} data-hover={styles['is-hovered']}>{value.name}</a>;
 }
 
 function SpectrumLink({href, children, title}) {

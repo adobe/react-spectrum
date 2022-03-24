@@ -21,7 +21,7 @@
     box-shadow: 0 0 0 2px var(--spectrum-alias-border-color-focus);
   }
 
-  img {
+  & img {
     max-width: 100%;
     height: 150px;
     object-fit: contain;
@@ -29,7 +29,7 @@
     background: white;
   }
 
-  svg {
+  & svg {
     margin-bottom: 12px;
     border-bottom: 1px solid var(--anatomy-gray-200);
   }

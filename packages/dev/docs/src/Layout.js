@@ -55,28 +55,28 @@ const mdxComponents = {
   ),
   h2: ({children, ...props}) => (
     <>
-      <h2 {...props} className={clsx(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+      <h2 {...props} className={clsx(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])} data-hover={docStyles['is-hovered']}>
         {children}
         <span className={clsx(docStyles['headingAnchor'])}>
-          <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+          <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} data-hover={docStyles['is-hovered']} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
         </span>
       </h2>
       <Divider marginBottom="33px" />
     </>
   ),
   h3: ({children, ...props}) => (
-    <h3 {...props} className={clsx(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+    <h3 {...props} className={clsx(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])} data-hover={docStyles['is-hovered']}>
       {children}
       <span className={docStyles['headingAnchor']}>
-        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} data-hover={docStyles['is-hovered']} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
       </span>
     </h3>
   ),
   h4: ({children, ...props}) => (
-    <h4 {...props} className={clsx(typographyStyles['spectrum-Heading5'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+    <h4 {...props} className={clsx(typographyStyles['spectrum-Heading5'], docStyles['sectionHeader'], docStyles['docsHeader'])} data-hover={docStyles['is-hovered']}>
       {children}
       <span className={docStyles['headingAnchor']}>
-        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} data-hover={docStyles['is-hovered']} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
       </span>
     </h4>
   ),
@@ -357,6 +357,7 @@ function Nav({currentPageName, pages}) {
       <li className={clsx(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage || (name === blogIndex && isBlog)})}>
         <a
           className={clsx(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
+          data-hover={sideNavStyles['is-hovered']}
           href={url}
           aria-current={isCurrentPage ? 'page' : null}
           {...getAnchorProps(url)}>{title}

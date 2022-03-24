@@ -182,7 +182,7 @@ html, body {
   display: flex;
   justify-content: center;
   padding-bottom: 12px;
-  svg, img {
+  & svg, & img {
     width: auto;
     height: auto;
   }
@@ -193,7 +193,7 @@ html, body {
   justify-content: center;
   padding: 40px 0;
 
-  img {
+  & img {
     max-width: 100%;
     border-radius: 4px;
   }
@@ -221,7 +221,7 @@ html, body {
 }
 
 .homeLinks {
-  span {
+  & span {
     font-size: 1.5em;
     padding: 0 10px;
     line-height: 1em;
@@ -236,24 +236,24 @@ html, body {
   @media (max-width: 1020px) {
     display: block;
 
-    div {
+    & div {
       width: 100%;
     }
   }
 
-  div {
+  & div {
     box-sizing: border-box;
     padding: 0 16px;
   }
 
   @media (min-width: 1020px) {
-    div:first-child:nth-last-child(3),
-    div:first-child:nth-last-child(3) ~ div {
+    & div:first-child:nth-last-child(3),
+    & div:first-child:nth-last-child(3) ~ div {
       width: 33.3333%;
     }
 
-    div:first-child:nth-last-child(2n),
-    div:first-child:nth-last-child(2n) ~ div {
+    & div:first-child:nth-last-child(2n),
+    & div:first-child:nth-last-child(2n) ~ div {
       width: 50%;
     }
   }
@@ -340,7 +340,7 @@ html, body {
     border-color: var(--spectrum-alias-border-color-focus);
   }
 
-  svg {
+  & svg {
     width: 36px;
     height: 32px;
     display: block;
@@ -910,7 +910,7 @@ body.docsearch-open [data-testid="popover"] {
 @define-mixin small-propTable {
   /* Collapse the prop table into a list with key/value pairs */
   .propTable {
-    tr, td, th {
+    & tr, & td, & th {
       display: block;
       text-align: left;
     }
@@ -1094,7 +1094,7 @@ body.docsearch-open [data-testid="popover"] {
   margin-top: var(--spectrum-global-dimension-size-200);
   margin-bottom: var(--spectrum-global-dimension-size-400);
 
-  a {
+  & a {
     width: 100%;
     margin: 0;
   }
