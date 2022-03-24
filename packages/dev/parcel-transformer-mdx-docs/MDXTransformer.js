@@ -200,6 +200,7 @@ module.exports = new Transformer({
             code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m, _, s) => {
               if (s.slice(1, -1) !== 'your-component-library') {
                 exampleCode.push(m);
+                exampleImports.push(m);
               }
               return '';
             });
