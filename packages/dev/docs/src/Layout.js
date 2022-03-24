@@ -141,6 +141,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
             let style = document.documentElement.style;
             let dark = window.matchMedia('(prefers-color-scheme: dark)');
             let fine = window.matchMedia('(any-pointer: fine)');
+            let small = window.matchMedia('(max-width: 1020px)');
             let update = () => {
               if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
@@ -159,6 +160,12 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
                 classList.add("${theme.medium['spectrum--medium']}", "${docStyles.medium}");
                 classList.remove("${theme.large['spectrum--large']}", "${docStyles.large}");
               }
+
+              if (small.matches) {
+                classList.add("${docStyles['small-propTable']}");
+              } else {
+                classList.remove("${docStyles['small-propTable']}");
+              }
             };
 
             update();
@@ -167,6 +174,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
               update();
             });
             fine.addListener(update);
+            small.addListener(update);
             window.addEventListener('storage', update);
           })();
         `.replace(/\n|\s{2,}/g, '')}} />

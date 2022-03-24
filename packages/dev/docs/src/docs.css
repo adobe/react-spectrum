@@ -713,7 +713,7 @@ h2.sectionHeader {
   }
 }
 
-@define-mixin small-propTable {
+.small-propTable {
   /* Collapse the prop table into a list with key/value pairs */
   & .propTable {
     & tr, & td, & th {
@@ -861,8 +861,6 @@ h2.sectionHeader {
   .article pre {
     padding: 8px;
   }
-
-  @mixin small-propTable;
 }
 
 @media (max-width: 500px) {
@@ -887,5 +885,5 @@ h2.sectionHeader {
 }
 
 .popover {
-  @mixin small-propTable;
+  composes: small-propTable;
 }
