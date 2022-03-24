@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-@import '../overlay/index.css';
 
 :root {
   --spectrum-tooltip-target-offset: var(--spectrum-global-dimension-size-40);
@@ -20,7 +18,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tooltip {
-  composes: spectrum-overlay;
+  composes: spectrum-overlay from "../overlay/index.css";
 
   position: relative;
 
@@ -56,7 +54,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open {
-  composes: spectrum-overlay--open;
+  composes: spectrum-overlay--open from "../overlay/index.css";
 }
 
 .spectrum-Tooltip-tip {
@@ -89,7 +87,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open--right {
-  composes: spectrum-overlay--right--open;
+  composes: spectrum-overlay--right--open from "../overlay/index.css";
 }
 
 .spectrum-Tooltip--left {
@@ -101,7 +99,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open--left {
-  composes: spectrum-overlay--left--open;
+  composes: spectrum-overlay--left--open from "../overlay/index.css";
 }
 
 .spectrum-Tooltip--top {
@@ -112,7 +110,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open--top {
-  composes: spectrum-overlay--top--open;
+  composes: spectrum-overlay--top--open from "../overlay/index.css";
 }
 
 .spectrum-Tooltip--bottom {
@@ -124,7 +122,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open--bottom {
-  composes: spectrum-overlay--bottom--open;
+  composes: spectrum-overlay--bottom--open from "../overlay/index.css";
 }
 
 .spectrum-Tooltip--bottom,

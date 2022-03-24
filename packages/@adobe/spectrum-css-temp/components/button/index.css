@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
 
 :root {
   /* Todo: fix in DNA, should have been zero */
@@ -58,7 +57,7 @@ governing permissions and limitations under the License.
 
   text-decoration: none;
 
-  composes: i18nFontFamily;
+  composes: i18nFontFamily from "../commons/fonts.css";
 
   line-height: var(--spectrum-button-line-height);
 

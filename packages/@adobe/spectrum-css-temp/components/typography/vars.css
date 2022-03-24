@@ -2849,6 +2849,7 @@
 .spectrum-Code5 {
             color: var(--spectrum-body-code-5-text-color, var(--spectrum-global-color-gray-800));
           }
+.spectrum,
 .spectrum-Body {
   color: var(--spectrum-body-text-color, var(--spectrum-global-color-gray-800));
 }

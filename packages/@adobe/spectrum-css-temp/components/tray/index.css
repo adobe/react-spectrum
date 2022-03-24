@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-@import '../commons/index.css';
-@import '../overlay/index.css';
 
 :root {
   /* Bug: this must be 0ms, not 0 */
@@ -42,7 +40,7 @@
 }
 
 .spectrum-Tray {
-  composes: spectrum-overlay;
+  composes: spectrum-overlay from "../overlay/index.css";
 
   /* defined here so it can be accessed from JS */
   --spectrum-tray-margin-top: 64px;
@@ -69,7 +67,7 @@
 }
 
 .is-open {
-  composes: spectrum-overlay--open;
+  composes: spectrum-overlay--open from "../overlay/index.css";
 
   /* Entry animations */
   transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),

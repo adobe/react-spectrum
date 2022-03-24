@@ -10,13 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-@import '../overlay/index.css';
 
 .spectrum-QuickActions {
   box-sizing: border-box;
 
-  composes: spectrum-overlay;
+  composes: spectrum-overlay from "../overlay/index.css";
 
   display: inline-flex;
   align-items: center;
@@ -29,7 +27,7 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-quickactions-border-radius);
 
   &.is-open {
-    composes: spectrum-overlay--open;
+    composes: spectrum-overlay--open from "../overlay/index.css";
   }
 
   & .spectrum-ActionButton + .spectrum-ActionButton {
@@ -45,13 +43,13 @@ governing permissions and limitations under the License.
 
 .spectrum-QuickActions--right {
   &.is-open {
-    composes: spectrum-overlay--left--open; /* should animate to the left when aligned right */
+    composes: spectrum-overlay--left--open from "../overlay/index.css"; /* should animate to the left when aligned right */
   }
 }
 
 .spectrum-QuickActions--left {
   &.is-open {
-    composes: spectrum-overlay--right--open; /* should animate to the right when aligned left */
+    composes: spectrum-overlay--right--open from "../overlay/index.css"; /* should animate to the right when aligned left */
   }
 }
 

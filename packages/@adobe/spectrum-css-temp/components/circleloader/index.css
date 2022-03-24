@@ -10,9 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-@import 'animation.css';
-
 .spectrum-CircleLoader {
   display: inline-block;
   width: var(--spectrum-loader-circle-medium-width);
@@ -102,25 +99,5 @@ governing permissions and limitations under the License.
     border-style: solid;
     border-width: var(--spectrum-loader-circle-large-border-size);
     border-radius: var(--spectrum-loader-circle-large-width);
-  }
-}
-
-.spectrum-CircleLoader--indeterminate {
-  & .spectrum-CircleLoader-fills {
-    will-change: transform;
-    transform: translateZ(0);
-    animation: spectrum-fills-rotate 1s infinite cubic-bezier(.25,.78,.48,.89);
-    transform-origin: center;
-  }
-  & .spectrum-CircleLoader-fillSubMask1 {
-    will-change: transform;
-    transform: translateZ(0);
-    animation: spectrum-fill-mask-1 1s infinite linear;
-  }
-
-  & .spectrum-CircleLoader-fillSubMask2 {
-    will-change: transform;
-    transform: translateZ(0);
-    animation: spectrum-fill-mask-2 1s infinite linear;
   }
 }

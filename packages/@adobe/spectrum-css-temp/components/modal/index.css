@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-@import '../overlay/index.css';
 
 :root {
   --spectrum-dialog-vertical-offset: -2vh;
@@ -59,7 +57,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Modal {
-  composes: spectrum-overlay;
+  composes: spectrum-overlay from "../overlay/index.css";
 
   /* Start offset by the animation distance */
   transform: translateY(var(--spectrum-dialog-entry-animation-distance));
@@ -83,7 +81,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open {
-  composes: spectrum-overlay--open;
+  composes: spectrum-overlay--open from "../overlay/index.css";
 
   /* Entry animations */
   transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),

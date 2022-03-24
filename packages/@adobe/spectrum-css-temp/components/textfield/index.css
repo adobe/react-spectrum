@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
 
 :root {
   --spectrum-textfield-padding-top: 3px;
@@ -69,7 +68,7 @@ governing permissions and limitations under the License.
   overflow: visible;
 
   /* Change the input font styles in all browsers */
-  composes: i18nFontFamily;
+  composes: i18nFontFamily from "../commons/fonts.css";
   font-size: var(--spectrum-textfield-text-size);
   line-height: var(--spectrum-textfield-text-line-height);
   text-overflow: ellipsis;

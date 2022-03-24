@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
 
 :root {
   --spectrum-menu-margin-x: var(--spectrum-global-dimension-size-40);

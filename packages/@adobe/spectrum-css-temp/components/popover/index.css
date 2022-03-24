@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-@import '../overlay/index.css';
 
 :root {
   --spectrum-popover-target-offset: 13px;
@@ -30,7 +28,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Popover {
-  composes: spectrum-overlay;
+  composes: spectrum-overlay from "../overlay/index.css";
 
   /* Be a flexbox to allow a full sized content area that scrolls */
   display: inline-flex;
@@ -51,7 +49,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open {
-  composes: spectrum-overlay--open;
+  composes: spectrum-overlay--open from "../overlay/index.css";
 }
 
 .spectrum-Popover-tip {
@@ -84,7 +82,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open--left {
-  composes: spectrum-overlay--left--open;
+  composes: spectrum-overlay--left--open from "../overlay/index.css";
 }
 
 .spectrum-Popover--right {
@@ -99,7 +97,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open--right {
-  composes: spectrum-overlay--right--open;
+  composes: spectrum-overlay--right--open from "../overlay/index.css";
 }
 
 /* Center the tip by default */
@@ -123,7 +121,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open--bottom {
-  composes: spectrum-overlay--bottom--open;
+  composes: spectrum-overlay--bottom--open from "../overlay/index.css";
 }
 
 .spectrum-Popover--top {
@@ -137,7 +135,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open--top {
-  composes: spectrum-overlay--top--open;
+  composes: spectrum-overlay--top--open from "../overlay/index.css";
 }
 
 /* Center the tip by default */

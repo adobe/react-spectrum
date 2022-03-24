@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import '../commons/index.css';
-@import '../overlay/index.css';
 
 :root {
   /* Bug: this must be 0ms, not 0 */
@@ -21,7 +19,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Underlay {
-  composes: spectrum-overlay;
+  composes: spectrum-overlay from "../overlay/index.css";
 
   position: fixed;
   top: 0;
@@ -40,7 +38,7 @@ governing permissions and limitations under the License.
 }
 
 .is-open {
-  composes: spectrum-overlay--open;
+  composes: spectrum-overlay--open from "../overlay/index.css";
 
   /* Entry animations */
   transition: opacity var(--spectrum-dialog-background-entry-animation-duration) var(--spectrum-dialog-background-entry-animation-ease) var(--spectrum-dialog-background-entry-animation-delay);

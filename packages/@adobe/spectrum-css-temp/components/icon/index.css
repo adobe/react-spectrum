@@ -10,6 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import 'icons.css';
-@import 'workflow-icons.css';
-@import 'ui-icons.css';
+@import './icons.css';
+@import './workflow-icons.css';
+@import './ui-icons.css';

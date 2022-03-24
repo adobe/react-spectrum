@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-@import '../commons/index.css';
 
 :root {
   --spectrum-helptext-neutral-texticon-text-size: var(--spectrum-global-dimension-font-size-75);
