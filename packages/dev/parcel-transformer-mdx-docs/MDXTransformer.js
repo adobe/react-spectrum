@@ -52,6 +52,7 @@ const indexHtml = `<!DOCTYPE html>
   </body>
 </html>`;
 
+// TODO: Can we use dprint here?
 const formatExampleCode = (code, fixIndention = false) => fixIndention ? code.replace(/`/g, '\\`').replace(/\n/g, '\n    ') : code.replace(/`/g, '\\`');
 
 const formatImports = (imports) => imports.join('\n').replace(/`/g, '\\`');
@@ -85,7 +86,7 @@ ${formatImports(imports)}
 export default ${formatExampleCode(exampleCode)}
 `;
 
-const getExampleRender = (id, provider, code, imports, name, named = false) => `
+const getExampleSandpack = (id, provider, code, imports, componentName, named = false) => `
 function CustomSandpack(props) {
   const { code } = useActiveCode();
   const { sandpack } = useSandpack();
@@ -181,16 +182,16 @@ ReactDOM.render(
           "@adobe/react-spectrum": "latest",
         },
         files: {
-          "/${name}.js":
+          "/${componentName}.js":
             {
               code: \`${named ? getNamedExampleFile(code, imports) : getExampleFile(code, imports)}\`,
               active: true
             },
-          "/index.js": localStorage.theme === 'dark' ? \`${getIndexFile(name, 'dark')}\` : \`${getIndexFile(name, 'light')}\`,
+          "/index.js": localStorage.theme === 'dark' ? \`${getIndexFile(componentName, 'dark')}\` : \`${getIndexFile(componentName, 'light')}\`,
           "/public/index.html": \`${indexHtml}\`
         }
       }}>
-      <CustomSandpack indexFiles={{light: \`${getIndexFile(name, 'light')}\`, dark: \`${getIndexFile(name, 'dark')}\` }} />
+      <CustomSandpack indexFiles={{light: \`${getIndexFile(componentName, 'light')}\`, dark: \`${getIndexFile(componentName, 'dark')}\` }} />
     </SandpackProvider>
   </${provider}>,
   document.getElementById("${id}"));`; 
@@ -208,10 +209,17 @@ module.exports = new Transformer({
     let exampleImports = [];
     let preReleaseParts = config.version.match(/(alpha)|(beta)|(rc)/);
     let preRelease = preReleaseParts ? preReleaseParts[0] : '';
+    let shouldImportSandpack = false;
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
         if (node.type === 'code') {
           let [meta, ...options] = (node.meta || '').split(' ');
+
+          let shouldUseSandpack = true; // TODO: options.includes('sandpack=true');
+          if (shouldUseSandpack) {
+            shouldImportSandpack = true;
+          }
+
           if (meta === 'import') {
             exampleCode.push(node.value);
             exampleImports.push(node.value);
@@ -241,9 +249,13 @@ module.exports = new Transformer({
             if (!options.includes('render=false')) {
               if (/^\s*function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-                code = `${code}${getExampleRender(id, provider, code, exampleImports, name, true)}`;
+                code = shouldUseSandpack ? 
+                  `${code}${getExampleSandpack(id, provider, code, exampleImports, name, true)}` :
+                  `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, getExampleRender(id, provider, code, exampleImports, 'Example'));
+                code = shouldUseSandpack ?
+                  code.replace(/^(<(.|\n)*>)$/m, getExampleSandpack(id, provider, code, exampleImports, 'Example')) :
+                  code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
               }
             }
 
@@ -278,7 +290,7 @@ module.exports = new Transformer({
             // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
             node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
-            node.meta = 'example';
+            node.meta = shouldUseSandpack ? 'sandpack' : 'example';
 
             return [
               ...transformExample(node, preRelease),
@@ -422,6 +434,11 @@ module.exports = new Transformer({
         flatMap(tree, node => {
           if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].data?.meta) {
             node.properties.className = node.children[0].data.meta.split(' ');
+            
+            // Don't render normal example if using sandpack 
+            if (node.children[0].data.meta.includes('sandpack')) {
+              return [];
+            }
           }
 
           return [node];
@@ -496,7 +513,8 @@ module.exports = new Transformer({
       clientBundle += `import React from 'react';
 import ReactDOM from 'react-dom';
 import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
-import {
+${shouldImportSandpack ?
+`import {
   SandpackProvider,
   SandpackLayout,
   SandpackCodeEditor,
@@ -510,7 +528,7 @@ import "@codesandbox/sandpack-react/dist/index.css";
 import Copy from '@spectrum-icons/workflow/Copy';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
-import {ActionButton, ButtonGroup} from '@adobe/react-spectrum';
+import {ActionButton, ButtonGroup} from '@adobe/react-spectrum';` : ''}
 ${exampleCode.join('\n')}
 export default {};
 `;
