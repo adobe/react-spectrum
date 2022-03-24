@@ -72,7 +72,7 @@ ReactDOM.render(
 const getExampleFile = (exampleCode, imports) => `import React from "react";
 ${formatImports(imports)}
 
-export default function App() {
+export default function Example() {
   return (
     ${formatExampleCode(exampleCode, true)}
   );
@@ -85,7 +85,7 @@ ${formatImports(imports)}
 export default ${formatExampleCode(exampleCode)}
 `;
 
-const getExampleRender = (id, provider, code, imports, name) => `
+const getExampleRender = (id, code, imports, name, named = false) => `
 function CustomSandpack(props) {
   const { code } = useActiveCode();
   const { sandpack } = useSandpack();
@@ -148,26 +148,24 @@ function CustomSandpack(props) {
 }
 
 ReactDOM.render(
-  <${provider}>
-    <SandpackProvider
-      template="react"
-      customSetup={{
-        dependencies: {
-          "@adobe/react-spectrum": "latest",
-        },
-        files: {
-          "/${name}.js":
-            {
-              code: \`${name === 'App' ? getExampleFile(code, imports) : getNamedExampleFile(code, imports)}\`,
-              active: true
-            },
-          "/index.js": localStorage.theme === 'dark' ? \`${getIndexFile(name, 'dark')}\` : \`${getIndexFile(name, 'light')}\`,
-          "/public/index.html": \`${indexHtml}\`
-        }
-      }}>
-      <CustomSandpack indexFiles={{light: \`${getIndexFile(name, 'light')}\`, dark: \`${getIndexFile(name, 'dark')}\` }} />
-    </SandpackProvider>
-  </${provider}>,
+  <SandpackProvider
+    template="react"
+    customSetup={{
+      dependencies: {
+        "@adobe/react-spectrum": "latest",
+      },
+      files: {
+        "/${name}.js":
+          {
+            code: \`${named ? getNamedExampleFile(code, imports) : getExampleFile(code, imports)}\`,
+            active: true
+          },
+        "/index.js": localStorage.theme === 'dark' ? \`${getIndexFile(name, 'dark')}\` : \`${getIndexFile(name, 'light')}\`,
+        "/public/index.html": \`${indexHtml}\`
+      }
+    }}>
+    <CustomSandpack indexFiles={{light: \`${getIndexFile(name, 'light')}\`, dark: \`${getIndexFile(name, 'dark')}\` }} />
+  </SandpackProvider>,
   document.getElementById("${id}"));`; 
 
 
@@ -215,9 +213,9 @@ module.exports = new Transformer({
             if (!options.includes('render=false')) {
               if (/^\s*function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-                code = `${code}${getExampleRender(id, provider, code, exampleImports, name)}`;
+                code = `${code}${getExampleRender(id, code, exampleImports, name, true)}`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, getExampleRender(id, provider, code, exampleImports, 'App'));
+                code = code.replace(/^(<(.|\n)*>)$/m, getExampleRender(id, code, exampleImports, 'Example'));
               }
             }
 
