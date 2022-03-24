@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 
 .spectrum-Banner {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-banner.css";
   display: inline-block;
   border-radius: var(--spectrum-banner-border-radius);
   padding: var(--spectrum-banner-padding-y) var(--spectrum-banner-padding-x);

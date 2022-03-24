@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropzone {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dropzone.css";
   border-color: var(--spectrum-dropzone-border-color);
 
   &.is-dragged {

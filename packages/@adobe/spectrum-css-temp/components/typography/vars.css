@@ -33,6 +33,7 @@
     font-family: adobe-clean-han-japanese, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 .spectrum-Body1 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-body.css";
             font-size: var(--spectrum-body-1-text-size, var(--spectrum-global-dimension-font-size-400));
   font-weight: var(--spectrum-body-1-text-font-weight, 400);
   line-height: var(--spectrum-body-1-text-line-height, 1.5);
@@ -100,6 +101,7 @@
 
             }
 .spectrum-Body3 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-body.css";
             font-size: var(--spectrum-body-3-text-size, var(--spectrum-global-dimension-font-size-200));
   font-weight: var(--spectrum-body-3-text-font-weight, 400);
   line-height: var(--spectrum-body-3-text-line-height, 1.5);
@@ -202,6 +204,8 @@
 
             }
 .spectrum-Heading1 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-display.css";
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-heading.css";
             font-size: var(--spectrum-heading-1-text-size, var(--spectrum-alias-heading-display2-margin-top));
   font-weight: var(--spectrum-heading-1-text-font-weight, 700);
   line-height: var(--spectrum-heading-1-text-line-height, 1.3);
@@ -234,6 +238,8 @@
 
             }
 .spectrum-Heading2 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-display.css";
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-heading.css";
             font-size: var(--spectrum-heading-2-text-size, var(--spectrum-alias-heading2-text-size));
   font-weight: var(--spectrum-heading-2-text-font-weight, 700);
   line-height: var(--spectrum-heading-2-text-line-height, 1.3);
@@ -266,6 +272,7 @@
 
             }
 .spectrum-Heading3 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-heading.css";
             font-size: var(--spectrum-heading-3-text-size, var(--spectrum-alias-heading3-text-size));
   font-weight: var(--spectrum-heading-3-text-font-weight, 700);
   line-height: var(--spectrum-heading-3-text-line-height, 1.3);
@@ -333,6 +340,7 @@
 
             }
 .spectrum-Heading5 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-heading.css";
             font-size: var(--spectrum-heading-5-text-size, var(--spectrum-global-dimension-font-size-200));
   font-weight: var(--spectrum-heading-5-text-font-weight, 700);
   line-height: var(--spectrum-heading-5-text-line-height, 1.3);
@@ -435,6 +443,7 @@
 
             }
 .spectrum-Detail {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-detail.css";
             font-size: var(--spectrum-detail-text-size, var(--spectrum-global-dimension-font-size-50));
   font-weight: var(--spectrum-detail-text-font-weight, 400);
   line-height: var(--spectrum-detail-text-line-height, 1.5);
@@ -893,6 +902,11 @@
             margin-bottom: var(--spectrum-display-quiet-2-margin-bottom, var(--spectrum-global-dimension-size-125));
           }
 .spectrum-Article {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-display.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-detail.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-subheading.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-heading.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-body.css";
   font-family: var(--spectrum-body-article-1-text-font-family, adobe-clean-serif, 'Source Serif Pro', Georgia, serif);
 }
 .spectrum-Article .spectrum-Body1 {
@@ -2384,6 +2398,7 @@
 
             }
 .spectrum-Code1 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-body.css";
             font-size: var(--spectrum-body-code-1-text-size, var(--spectrum-global-dimension-font-size-400));
   font-weight: var(--spectrum-body-code-1-text-font-weight, 400);
   line-height: var(--spectrum-body-code-1-text-line-height, 1.5);
@@ -2414,6 +2429,7 @@
 
             }
 .spectrum-Code2 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-body.css";
             font-size: var(--spectrum-body-code-2-text-size, var(--spectrum-global-dimension-size-225));
   font-weight: var(--spectrum-body-code-2-text-font-weight, 400);
   line-height: var(--spectrum-body-code-2-text-line-height, 1.5);
@@ -2444,6 +2460,7 @@
 
             }
 .spectrum-Code3 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-body.css";
             font-size: var(--spectrum-body-code-3-text-size, var(--spectrum-global-dimension-font-size-200));
   font-weight: var(--spectrum-body-code-3-text-font-weight, 400);
   line-height: var(--spectrum-body-code-3-text-line-height, 1.5);
@@ -2474,6 +2491,7 @@
 
             }
 .spectrum-Code4 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-body.css";
             font-size: var(--spectrum-body-code-4-text-size, var(--spectrum-global-dimension-font-size-100));
   font-weight: var(--spectrum-body-code-4-text-font-weight, 400);
   line-height: var(--spectrum-body-code-4-text-line-height, 1.5);
@@ -2504,6 +2522,7 @@
 
             }
 .spectrum-Code5 {
+            composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-body.css";
             font-size: var(--spectrum-body-code-5-text-size, var(--spectrum-global-dimension-size-150));
   font-weight: var(--spectrum-body-code-5-text-font-weight, 400);
   line-height: var(--spectrum-body-code-5-text-line-height, 1.5);

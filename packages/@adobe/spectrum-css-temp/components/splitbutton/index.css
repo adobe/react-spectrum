@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-SplitButton {
   --spectrum-splitbutton-trigger-border-left: 0;
   --spectrum-splitbutton-trigger-min-width: 0;
   --spectrum-spltibutton-margin-left: 0;
@@ -19,6 +19,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-SplitButton {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-button.css";
   position: relative;
   display: inline-flex;
   flex-direction: row;

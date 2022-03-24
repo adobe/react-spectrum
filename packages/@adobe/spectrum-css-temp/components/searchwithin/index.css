@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-SearchWithin {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-textfield.css";
   --spectrum-searchwithin-width: var(--spectrum-global-dimension-size-3000);
   --spectrum-searchwithin-searchfield-width: var(--spectrum-global-dimension-size-1600);
 

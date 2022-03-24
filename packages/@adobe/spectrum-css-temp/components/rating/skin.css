@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Rating {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-rating.css";
   &.is-focused {
     box-shadow: 0 0 0 var(--spectrum-global-dimension-static-size-25) var(--spectrum-rating-focus-ring-color);
   }

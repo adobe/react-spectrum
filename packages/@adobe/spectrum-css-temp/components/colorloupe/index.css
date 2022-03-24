@@ -1,4 +1,4 @@
-:root {
+.spectrum-ColorLoupe {
   /* size is the same on desktop and mobile */
   --spectrum-colorloupe-width-adjusted: calc(
     var(--spectrum-colorloupe-width) +
@@ -21,6 +21,7 @@
 }
 
 .spectrum-ColorLoupe {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-colorloupe.css";
   width: var(--spectrum-colorloupe-width-adjusted);
   height: var(--spectrum-colorloupe-height-adjusted);
 

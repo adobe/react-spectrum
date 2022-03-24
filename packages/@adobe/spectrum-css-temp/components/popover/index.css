@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Popover {
   --spectrum-popover-target-offset: 13px;
   --spectrum-popover-dialog-padding: 30px 29px;
   --spectrum-popover-dialog-min-width: 270px;
@@ -28,6 +28,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Popover {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-popover.css";
   composes: spectrum-overlay from "../overlay/index.css";
 
   /* Be a flexbox to allow a full sized content area that scrolls */

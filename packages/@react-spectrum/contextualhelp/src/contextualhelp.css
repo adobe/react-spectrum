@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-:root {
+.react-spectrum-ContextualHelp {
   --spectrum-contextualhelp-button-size: var(--spectrum-global-dimension-size-250);
   --spectrum-contextualhelp-icon-size: var(--spectrum-global-dimension-size-175);
   --spectrum-contexualhelp-dialog-width: 250px;

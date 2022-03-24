@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-StatusLight {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-statuslight.css";
   color: var(--spectrum-statuslight-text-color);
 
   &[disabled],

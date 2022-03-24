@@ -11,6 +11,8 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Card {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-quickactions.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-card.css";
 
   &.is-drop-target {
     border-color: var(--spectrum-card-border-color-key-focus);

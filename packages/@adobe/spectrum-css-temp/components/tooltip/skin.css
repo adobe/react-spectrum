@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Tooltip {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-tooltip.css";
   background-color: var(--spectrum-tooltip-background-color);
 
   color: var(--spectrum-tooltip-text-color);

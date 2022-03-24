@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Checkbox {
   /* Hardcoded for wrapping study.
   Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466 */
   --spectrum-checkbox-label-margin-top: var(--spectrum-global-dimension-size-65);
@@ -22,6 +22,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Checkbox {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-checkbox.css";
   display: inline-flex;
   box-sizing: border-box;
   align-items: flex-start;

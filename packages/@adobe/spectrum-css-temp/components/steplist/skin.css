@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Steplist {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-steplist.css";
   /* Default Label Style is 'incomplete' */
   & .spectrum-Steplist-label {
     color: var(--spectrum-steplist-incomplete-label-text-color)

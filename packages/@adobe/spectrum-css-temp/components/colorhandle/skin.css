@@ -1,4 +1,4 @@
-:root {
+.spectrum-ColorHandle {
   /* redefine this var so it can be used in skin.css */
   --spectrum-colorhandle-background-offset: calc(-1 * var(--spectrum-global-dimension-static-size-25));
   --spectrum-colorhandle-checkerboard-size: var(--spectrum-global-dimension-static-size-100);
@@ -8,6 +8,7 @@
 }
 
 .spectrum-ColorHandle {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-colorhandle.css";
   border-color: var(--spectrum-colorhandle-inner-border-color);
   box-shadow: 0 0 0 var(--spectrum-colorhandle-outer-border-size) var(--spectrum-colorhandle-outer-border-color);
 

@@ -11,5 +11,6 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Modal {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dialog.css";
   background: var(--spectrum-dialog-background-color);
 }

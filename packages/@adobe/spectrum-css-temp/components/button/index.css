@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-BaseButton {
   /* Todo: fix in DNA, should have been zero */
   --spectrum-fieldbutton-quiet-border-size: 0;
   --spectrum-fieldbutton-disabled-border-size: 0;
@@ -111,6 +111,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ButtonWithFocusRing {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-button.css";
   &:after {
     border-radius: calc(var(--spectrum-button-primary-border-radius) + var(--spectrum-alias-focus-ring-gap));
     content: '';
@@ -135,6 +136,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Button {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-button.css";
   composes: spectrum-BaseButton spectrum-ButtonWithFocusRing;
 
   border-width: var(--spectrum-button-primary-border-size);
@@ -179,6 +181,7 @@ a.spectrum-ActionButton {
 }
 
 .spectrum-ActionButton {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-actionbutton.css";
   composes: spectrum-BaseButton;
   position: relative;
 
@@ -286,6 +289,7 @@ a.spectrum-ActionButton {
 }
 
 .spectrum-LogicButton {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-logicbutton.css";
   composes: spectrum-BaseButton spectrum-ButtonWithFocusRing;
 
   block-size: var(--spectrum-logicbutton-and-height);
@@ -305,6 +309,8 @@ a.spectrum-ActionButton {
 }
 
 .spectrum-FieldButton {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-fieldbutton.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dropdown.css";
   composes: spectrum-BaseButton;
 
   block-size: var(--spectrum-dropdown-height);
@@ -360,6 +366,7 @@ a.spectrum-ActionButton {
 }
 
 .spectrum-ClearButton {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-clearbutton.css";
   composes: spectrum-BaseButton spectrum-ButtonWithFocusRing;
 
   inline-size: var(--spectrum-clearbutton-medium-width);

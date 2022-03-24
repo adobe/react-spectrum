@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 
 .spectrum-CycleButton {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-actionbutton.css";
   /* Be square */
   padding: 0 var(--spectrum-actionbutton-icon-padding-x);
 

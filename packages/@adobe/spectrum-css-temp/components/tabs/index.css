@@ -11,12 +11,13 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-TabsPanel {
   --spectrum-tabs-item-height: calc(var(--spectrum-tabs-height) - var(--spectrum-tabs-rule-height));
   --spectrum-tabs-compact-item-height: calc(var(--spectrum-tabs-quiet-compact-height) - var(--spectrum-tabs-rule-height));
 }
 
 .spectrum-TabsPanel {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-tabs.css";
   display: flex;
   /* This is so TabsPanel can collapse with wrapping block/flex containers out of the box. If end user wants to place element next to tabpanel,
   they must include flex: 1 1 auto and min-width: 0 on the Tabs component. */
@@ -32,6 +33,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tabs {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-tabs.css";
   display: flex;
 
   /* Contain the selection indicator */

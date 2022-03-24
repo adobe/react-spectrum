@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-SplitView {
   --spectrum-splitview-vertical-width: 100%;
   --spectrum-splitview-vertical-gripper-width: 50%;
   --spectrum-splitview-vertical-gripper-outer-width: 100%;
@@ -19,6 +19,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-SplitView {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-rail.css";
   display: flex;
   overflow: hidden;
 }

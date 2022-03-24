@@ -1,4 +1,5 @@
 .spectrum-ColorArea {
+    composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-colorarea.css";
     &:before {
       box-shadow: inset 0 0 0 var(--spectrum-colorarea-border-size) var(--spectrum-colorarea-border-color);
     }

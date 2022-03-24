@@ -11,7 +11,7 @@
  */
 
 
-:root {
+.spectrum-HelpText {
   --spectrum-helptext-neutral-texticon-text-size: var(--spectrum-global-dimension-font-size-75);
   --spectrum-helptext-neutral-texticon-icon-gap: var(--spectrum-global-dimension-size-100);
 

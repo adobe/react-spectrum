@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Radio {
   --spectrum-radio-radius: calc(var(--spectrum-radio-circle-diameter) / 2);
   --spectrum-radio-border-width-checked: calc(calc(var(--spectrum-radio-circle-diameter) / 2) - calc(var(--spectrum-radio-circle-dot-size) / 2));
 
@@ -28,6 +28,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Radio {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-radio.css";
   display: inline-flex;
   align-items: flex-start;
 

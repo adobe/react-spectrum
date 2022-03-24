@@ -1,4 +1,4 @@
-:root {
+.spectrum-ColorWheel {
   /* todo: fix this in DNA */
   --spectrum-colorwheel-focus-ring-size: var(--spectrum-global-dimension-static-size-25);
   --spectrum-colorwheel-border-radius: 100%;
@@ -19,6 +19,7 @@
 }
 
 .spectrum-ColorWheel {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-colorwheel.css";
   position: relative;
   display: block;
   width: var(--spectrum-colorwheel-width);

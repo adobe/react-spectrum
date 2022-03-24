@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 
 /* override DNA variables to use ones that change in large scale instead of staying static */
-:root {
+.spectrum-Search {
   --spectrum-search-padding-left: var(--spectrum-global-dimension-size-450);
   --spectrum-search-padding-right: var(--spectrum-global-dimension-size-350);
   --spectrum-search-quiet-padding-left: var(--spectrum-global-dimension-size-300);
@@ -20,6 +20,9 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Search {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-textfield.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-icon.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-search.css";
   display: inline-block;
   position: relative;
 

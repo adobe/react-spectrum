@@ -11,11 +11,13 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-SideNav {
   --spectrum-sidenav-item-padding-y: var(--spectrum-global-dimension-size-65);
 }
 
 .spectrum-SideNav {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-tabs.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-sidenav.css";
   list-style-type: none;
   margin: 0;
   padding: 0;

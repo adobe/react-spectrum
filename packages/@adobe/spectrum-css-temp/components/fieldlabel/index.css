@@ -11,13 +11,14 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-FieldLabel {
   --spectrum-tableform-border-spacing: 0 var(--spectrum-global-dimension-size-300);
   --spectrum-tableform-margin: calc(var(--spectrum-global-dimension-size-250) * -1) 0;
   --spectrum-fieldlabel-margin: var(--spectrum-global-dimension-size-100);
 }
 
 .spectrum-FieldLabel {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-fieldlabel.css";
   display: flex;
   flex: 0 0 auto;
 

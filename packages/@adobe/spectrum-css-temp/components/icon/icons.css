@@ -12,6 +12,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Icon,
 .spectrum-UIIcon {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-icon.css";
+
   display: inline-block;
 
   /* Inherit the text color */

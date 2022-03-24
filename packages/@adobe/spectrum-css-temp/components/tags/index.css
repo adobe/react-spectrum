@@ -12,6 +12,8 @@ governing permissions and limitations under the License.
 
 
 .spectrum-Tags {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-tag.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-taggroup.css";
   display: inherit;
 
   margin: 0;

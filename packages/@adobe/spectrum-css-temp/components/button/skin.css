@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-BaseButton {
   /* Overridden because of the way we draw focus rings */
   --spectrum-actionbutton-quiet-border-size-key-focus: 1px;
   /* Interactions with overbackground button should match background. Not a DNA token, overridden in WHCM. */
@@ -29,6 +29,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ClearButton {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-button.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-clearbutton.css";
   background-color: var(--spectrum-clearbutton-medium-background-color);
 
   color: var(--spectrum-clearbutton-medium-icon-color);
@@ -338,6 +340,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ActionButton {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-actionbutton.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-button.css";
   background-color: var(--spectrum-actionbutton-background-color);
   border-color: var(--spectrum-actionbutton-border-color);
   color: var(--spectrum-actionbutton-text-color);
@@ -918,6 +922,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-FieldButton {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-button.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-fieldbutton.css";
   color: var(--spectrum-fieldbutton-text-color);
   background-color: var(--spectrum-fieldbutton-background-color);
   border-color: var(--spectrum-fieldbutton-border-color);

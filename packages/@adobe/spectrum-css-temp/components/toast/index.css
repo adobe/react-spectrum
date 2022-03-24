@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-Toast {
   --spectrum-toast-icon-padding-y: var(--spectrum-global-dimension-size-85);
   --spectrum-toast-content-padding-top: var(--spectrum-global-dimension-size-65);
   --spectrum-toast-content-padding-bottom: var(--spectrum-global-dimension-size-65);
@@ -19,6 +19,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Toast {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-toast.css";
   box-sizing: border-box;
   display: inline-flex;
   flex-direction: row;

@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-Slider {
   --spectrum-slider-focus-ring-size-key-focus: var(--spectrum-alias-focus-ring-size);
 
     /* todo: remove when fixed */
@@ -19,6 +19,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-label.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-slider.css";
   --spectrum-slider-track-gradient: var(--spectrum-slider-track-color);
 }
 
@@ -206,6 +208,9 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-label.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-slider.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dial.css";
   &.is-disabled {
     & .spectrum-Dial-labelContainer {
       color: var(--spectrum-label-text-color-disabled);

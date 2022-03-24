@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-Accordion {
   --spectrum-accordion-icon-width: 6px;
   --spectrum-accordion-icon-height: 10px;
 
@@ -23,6 +23,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Accordion {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-accordion.css";
   display: block;
   list-style: none;
   padding: 0;

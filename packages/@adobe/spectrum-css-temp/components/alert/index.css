@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Alert {
   --spectrum-alert-header-height: 38px;
   --spectrum-alert-corner-radius: 4px;
 
@@ -20,6 +20,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Alert {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-alert.css";
   position: relative;
 
   display: inline-block;

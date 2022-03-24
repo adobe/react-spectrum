@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Slider {
   --spectrum-slider-controls-margin: calc(var(--spectrum-slider-handle-width) / 2);
   --spectrum-slider-track-margin-offset: calc(var(--spectrum-slider-controls-margin) * -1);
 
@@ -47,6 +47,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Slider {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-fieldlabel.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-slider.css";
   position: relative;
 
   /* Don't let z-index'd child elements float above other things on the page */
@@ -452,6 +454,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-slider.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dial.css";
   composes: spectrum-Slider;
   display: inline-flex;
   flex-direction: column;

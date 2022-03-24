@@ -11,6 +11,9 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-BarLoader {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-fieldlabel.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-meter.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-barloader.css";
   & .spectrum-BarLoader-fill {
     background: var(--spectrum-barloader-large-track-fill-color);
   }

@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 
 .spectrum-TreeView {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-treeview.css";
   display: block;
   list-style: none;
   position: relative;

@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Toast {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-toast.css";
   background-color: var(--spectrum-toast-background-color);
   color: var(--spectrum-toast-background-color);
 }

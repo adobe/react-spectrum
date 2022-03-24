@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Dialog {
   /* Distance between the edge of the fullscreen dialog and header */
   --spectrum-dialog-fullscreen-padding-top: calc(var(--spectrum-dialog-padding) - 10px);
 
@@ -45,6 +45,7 @@ governing permissions and limitations under the License.
 
 
 .spectrum-Dialog {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dialog.css";
   /* Be a flexbox to allow a full sized content area that scrolls */
   display: flex;
 

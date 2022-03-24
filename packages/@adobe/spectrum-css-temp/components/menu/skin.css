@@ -10,13 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-Menu {
   --spectrum-menu-selected-color: var(--spectrum-global-color-blue-600);
   --spectrum-selectlist-divider-color: var(--spectrum-global-color-gray-300);
 }
 
 
 .spectrum-Menu {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-heading.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-selectlist.css";
   background-color: var(--spectrum-selectlist-background-color);
 }
 

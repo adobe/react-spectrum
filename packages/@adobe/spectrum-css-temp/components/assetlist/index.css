@@ -11,13 +11,15 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-AssetList {
   --spectrum-miller-column-chevron-height: 10px;
   --spectrum-miller-column-chevron-width: 6px;
   --spectrum-miller-column-checkbox-margin: 0;
 }
 
 .spectrum-AssetList {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-selectlist.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-column.css";
   margin-top: 0;
   margin-bottom: 0;
   padding: 0;

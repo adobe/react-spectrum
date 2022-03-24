@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 
 .spectrum-Asset {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-asset.css";
   display: flex;
   align-items: center;
   justify-content: center;

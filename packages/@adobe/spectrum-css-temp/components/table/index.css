@@ -11,13 +11,16 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Table {
   --spectrum-table-cell-compact-padding-y: var(--spectrum-global-dimension-size-75);
   --spectrum-table-cell-regular-padding-y: var(--spectrum-global-dimension-size-125);
   --spectrum-table-cell-spacious-padding-y: var(--spectrum-global-dimension-size-175);
 }
 
 .spectrum-Table {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-selectlist.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-icon.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-table.css";
   border-collapse: separate;
   border-spacing: 0;
   outline: none;

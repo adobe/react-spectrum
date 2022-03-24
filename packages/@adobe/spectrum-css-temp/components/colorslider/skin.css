@@ -1,9 +1,10 @@
-:root {
+.spectrum-ColorSlider {
   /* todo: fix this in DNA */
   --spectrum-colorslider-border-color: var(--spectrum-colorarea-border-color);
 }
 
 .spectrum-ColorSlider {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-colorslider.css";
   background-color: var(--spectrum-global-color-static-white);
   box-shadow: inset 0 0 0 var(--spectrum-colorslider-border-size) var(--spectrum-colorslider-border-color);
 

@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-CircleLoader {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-loader.css";
   display: inline-block;
   width: var(--spectrum-loader-circle-medium-width);
   height: var(--spectrum-loader-circle-medium-height);

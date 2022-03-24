@@ -93,6 +93,10 @@ user-provided
 
 /** Shared **/
 .spectrum-Card {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-actionbutton.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-checkbox.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-quickactions.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-card.css";
   box-sizing: border-box;
   min-inline-size: var(--spectrum-card-body-header-height);;
   block-size: 100%;

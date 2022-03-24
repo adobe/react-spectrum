@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Alert {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-alert.css";
   background-color: var(--spectrum-alert-background-color);
   /* default color set to body color, header element overwrites this */
   color: var(--spectrum-alert-text-color);

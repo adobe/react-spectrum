@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Textfield {
   --spectrum-textfield-padding-top: 3px;
   --spectrum-textfield-padding-bottom: 5px;
 
@@ -29,6 +29,9 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Textfield {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-loader.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-icon.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-textfield.css";
   display: inline-flex;
   position: relative;
   min-width: var(--spectrum-textfield-min-width);

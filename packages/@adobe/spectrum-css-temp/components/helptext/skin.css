@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-:root {
+.spectrum-HelpText {
   --spectrum-helptext-neutral-texticon-text-color: var(--spectrum-alias-label-text-color);
   --spectrum-helptext-neutral-texticon-text-color-disabled: var(--spectrum-alias-text-color-disabled);
 

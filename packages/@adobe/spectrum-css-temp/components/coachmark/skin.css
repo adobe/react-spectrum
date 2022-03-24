@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-CoachMarkPopover {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-coachmark.css";
   background-color: var(--spectrum-coachmark-background-color);
   border-color: var(--spectrum-coachmark-border-color);
   box-shadow: 0 1px 4px var(--spectrum-coachmark-shadow-color);

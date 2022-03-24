@@ -54,6 +54,8 @@ governing permissions and limitations under the License.
 
 
 .spectrum-Stepper {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-textfield.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-actionbutton.css";
   & .spectrum-Stepper-button-icon {
     fill: var(--spectrum-actionbutton-icon-color);
   }

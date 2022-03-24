@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-IllustratedMessage {
   --spectrum-illustrated-message-description-max-width: 500px;
   --spectrum-illustrated-message-heading-max-width: 500px;
   --spectrum-illustrated-message-illustration-margin-bottom: 24px;
@@ -19,6 +19,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-IllustratedMessage {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-body.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-heading.css";
   height: 100%;
 
   display: flex;

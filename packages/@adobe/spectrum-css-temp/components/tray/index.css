@@ -11,7 +11,7 @@
  */
 
 
-:root {
+.spectrum-Tray {
   /* Bug: this must be 0ms, not 0 */
   --spectrum-dialog-exit-animation-delay: 0ms;
 }
@@ -40,6 +40,8 @@
 }
 
 .spectrum-Tray {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dialog.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-tray.css";
   composes: spectrum-overlay from "../overlay/index.css";
 
   /* defined here so it can be accessed from JS */

@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 @import 'animation.css';
 
 .spectrum-CoachMarkPopover {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-coachmark.css";
   position: relative;
 
   min-width: var(--spectrum-coachmark-min-width);
@@ -76,6 +77,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-CoachMarkIndicator {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-coachmark.css";
   position: relative;
 
   margin: var(--spectrum-coachmark-indicator-gap);

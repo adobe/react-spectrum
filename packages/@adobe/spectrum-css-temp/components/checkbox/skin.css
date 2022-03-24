@@ -10,13 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-Checkbox {
   /* todo: fix in DNA */
   --spectrum-checkbox-emphasized-text-color-key-focus: var(--spectrum-checkbox-emphasized-text-color-hover);
   --spectrum-checkbox-emphasized-box-border-color-selected-key-focus: var(--spectrum-checkbox-emphasized-box-border-color-selected-hover);
 }
 
 .spectrum-Checkbox {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-checkbox.css";
   color: var(--spectrum-checkbox-text-color);
 }
 .spectrum-Checkbox .spectrum-Checkbox-checkmark,

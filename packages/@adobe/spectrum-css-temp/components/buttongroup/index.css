@@ -10,11 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-ButtonGroup {
   --spectrum-buttongroup-button-gap-reset: 0;
 }
 
 .spectrum-ButtonGroup {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-buttongroup.css";
   display: inline-flex;
   align-items: flex-start;
   /* necessary so that offsetLeft on button children is correct */

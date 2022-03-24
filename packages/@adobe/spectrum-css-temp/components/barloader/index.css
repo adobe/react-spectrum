@@ -12,6 +12,8 @@ governing permissions and limitations under the License.
 
 
 .spectrum-BarLoader {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-fieldlabel.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-barloader.css";
   position: relative;
   display: inline-flex;
   flex-flow: row wrap;

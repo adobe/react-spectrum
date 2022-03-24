@@ -9,7 +9,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-Radio {
   /* todo: fix in DNA */
   --spectrum-radio-emphasized-circle-border-color-selected-key-focus: var(--spectrum-radio-emphasized-circle-border-color-selected-hover);
 
@@ -35,6 +35,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Radio {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-radio.css";
   &:hover {
     & .spectrum-Radio-button {
       &:before {

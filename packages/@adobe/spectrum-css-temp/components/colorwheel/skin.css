@@ -1,9 +1,10 @@
-:root {
+.spectrum-ColorWheel {
   /* todo: fix this in DNA */
   --spectrum-colorwheel-border-color: var(--spectrum-colorarea-border-color);
 }
 
 .spectrum-ColorWheel {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-colorwheel.css";
   &.is-disabled {
     & .spectrum-ColorWheel-gradient {
       background: var(--spectrum-colorwheel-fill-color-disabled) !important;

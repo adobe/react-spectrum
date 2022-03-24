@@ -11,12 +11,15 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Dropdown {
   --spectrum-dropdown-popover-max-width: var(--spectrum-global-dimension-size-3000);
   --spectrum-dropdown-width: var(--spectrum-global-dimension-size-2400);
 }
 
 .spectrum-Dropdown {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-popover.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-icon.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dropdown.css";
   position: relative;
   display: inline-block;
   user-select: none;

@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Avatar {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-avatar.css";
   opacity: var(--spectrum-avatar-small-opacity);
   outline: none;
   transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out;

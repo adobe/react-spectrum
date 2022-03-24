@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Avatar {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-avatar.css";
   width: var(--spectrum-avatar-small-width);
   height: var(--spectrum-avatar-small-height);
 

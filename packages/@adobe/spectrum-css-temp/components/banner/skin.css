@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Banner {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-banner.css";
   color: var(--spectrum-banner-text-color);
 }
 

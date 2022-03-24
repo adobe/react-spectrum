@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 
 .spectrum-Breadcrumbs {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-breadcrumb.css";
   display: flex;
   justify-content: flex-start;
   list-style-type: none;

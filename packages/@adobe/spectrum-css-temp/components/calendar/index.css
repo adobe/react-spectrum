@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Calendar {
   --spectrum-calendar-border-radius-reset: 0;
   --spectrum-calendar-border-width-reset: 0;
   --spectrum-calendar-margin-y: 24px;
@@ -23,6 +23,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Calendar {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-calendar.css";
   display: block;
   isolation: isolate;
 }

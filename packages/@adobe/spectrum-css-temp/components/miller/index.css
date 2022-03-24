@@ -11,11 +11,12 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-MillerColumns {
   --spectrum-miller-column-margin: 8px;
 }
 
 .spectrum-MillerColumns {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-column.css";
   overflow-x: auto;
   white-space: nowrap;
   user-select: none;

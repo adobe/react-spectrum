@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-InputGroup {
   /* Todo: move to DNA */
   --spectrum-combobox-quiet-fieldbutton-border-radius: 0;
   --spectrum-combobox-quiet-fieldbutton-padding-right: 0;
@@ -27,6 +27,10 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InputGroup {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-popover.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-textfield.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-combobox.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dropdown.css";
   position: relative;
   display: inline-flex;
   flex-direction: row;

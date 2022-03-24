@@ -1,5 +1,5 @@
 
-:root {
+.react-spectrum-ListView {
   --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
   --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-75);
   --spectrum-listview-item-spacious-padding-y: var(--spectrum-global-dimension-size-100);

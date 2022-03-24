@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-DropIndicator {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dropindicator.css";
   background: var(--spectrum-dropindicator-border-color);
 
   &:before,

@@ -32,6 +32,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Rating {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-icon.css";
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-rating.css";
   position: relative;
   display: inline-flex;
   flex: 0 0 auto;

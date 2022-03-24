@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-Modal {
   --spectrum-dialog-vertical-offset: -2vh;
 
   /* Bug: this must be 0ms, not 0 */
@@ -57,6 +57,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Modal {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-dialog.css";
   composes: spectrum-overlay from "../overlay/index.css";
 
   /* Start offset by the animation distance */

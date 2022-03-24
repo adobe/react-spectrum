@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Link {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-link.css";
   color: var(--spectrum-link-text-color);
 
   &:hover {

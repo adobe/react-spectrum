@@ -10,7 +10,7 @@ governing permissions and limitations under the License.
 */
 
 
-:root {
+.spectrum-StatusLight {
   --spectrum-statuslight-padding-y: var(--spectrum-global-dimension-size-65);
 
   /* Override line-height to fix Firefox */
@@ -22,6 +22,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-StatusLight {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-statuslight.css";
   min-block-size: var(--spectrum-statuslight-height);
   display: flex;
   flex-direction: row;
