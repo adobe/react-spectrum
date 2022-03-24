@@ -3,16 +3,12 @@ const spawn = require('child_process').spawnSync;
 const fs = require('fs');
 const Octokit = require('@octokit/rest');
 
-
-
 const octokit = new Octokit();
 
 run();
 
 async function run() {
   let packages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
-
-
   let commits = new Map();
 
   // Diff each package individually. Some packages might have been skipped during last release,
@@ -36,7 +32,6 @@ async function run() {
         ':!**/stories/**',
         ':!**/chromatic/**'
       ];
-
 
       let res = spawn('git', args, {encoding: 'utf8'});
       if (res.stdout.length === 0) {
@@ -78,10 +73,4 @@ async function run() {
     }
     console.log(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
   }
-
-
-
 }
-
-
-
