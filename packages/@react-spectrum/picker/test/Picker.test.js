@@ -1964,6 +1964,7 @@ describe('Picker', function () {
       let picker = getByRole('button');
       expect(document.activeElement).toBe(picker);
       expect(focusSpies.onFocus).toHaveBeenCalled();
+      expect(focusSpies.onFocusChange).toHaveBeenCalledWith(true);
     });
 
     it('calls onBlur and onFocus for the closed Picker', function () {
@@ -1984,14 +1985,22 @@ describe('Picker', function () {
       let picker = getByTestId('picker');
       expect(document.activeElement).toBe(picker);
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(1, true);
 
       userEvent.tab();
       expect(document.activeElement).toBe(afterBtn);
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenCalledTimes(2);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(2, false);
+
       userEvent.tab({shift: true});
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(3, true);
+
       userEvent.tab({shift: true});
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(4, false);
       expect(document.activeElement).toBe(beforeBtn);
     });
 
@@ -2028,6 +2037,10 @@ describe('Picker', function () {
 
       userEvent.tab({shift: true});
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(1, true);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(2, false);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(3, true);
+
       fireEvent.keyDown(picker, {key: 'ArrowDown'});
       fireEvent.keyUp(picker, {key: 'ArrowDown'});
       act(() => jest.runAllTimers());
@@ -2038,6 +2051,8 @@ describe('Picker', function () {
       userEvent.tab({shift: true});
       act(() => jest.runAllTimers());
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(4, false);
+
       expect(document.activeElement).toBe(beforeBtn);
     });
 
@@ -2057,7 +2072,8 @@ describe('Picker', function () {
       );
       let picker = getByTestId('picker');
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(1);
-
+      expect(focusSpies.onFocusChange).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenCalledWith(true);
       fireEvent.keyDown(picker, {key: 'ArrowDown'});
       fireEvent.keyUp(picker, {key: 'ArrowDown'});
       act(() => jest.runAllTimers());
@@ -2069,6 +2085,9 @@ describe('Picker', function () {
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenCalledWith(true);
+
       expect(focusSpies.onBlur).not.toHaveBeenCalled();
       expect(otherButtonFocus).not.toHaveBeenCalled();
     });
