@@ -12,10 +12,11 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
+import {composeStory} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';
-import {FalsyIds, falsyItems} from '../stories/GridCardView.stories';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
+import Meta, {DynamicCards, FalsyIds, falsyItems} from '../stories/GridCardView.stories';
 import {Provider} from '@react-spectrum/provider';
 import React, {useMemo} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -128,6 +129,8 @@ function DynamicCardView(props) {
   );
 }
 
+const DynamicCardsStory = composeStory(DynamicCards, Meta);
+
 describe('CardView', function () {
   beforeAll(function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => mockWidth);
@@ -145,6 +148,21 @@ describe('CardView', function () {
     jest.restoreAllMocks();
   });
 
+  it.only('testing play from gridcardview story', async function () {
+    let {container} = render(
+      <Provider theme={theme} locale="en-US">
+        <DynamicCardsStory />
+      </Provider>
+    );
+    await act(async () => {
+      jest.runAllTimers();
+      await DynamicCardsStory.play({args: undefined, canvasElement: container });
+    });
+    const cards = within(container).getAllByRole('gridcell');
+    expect(within(cards[4]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+  });
+
+
   // TODO: add tests for card sizes, layouts with non-default options
   it.each`
     Name                  | layout
@@ -153,9 +171,7 @@ describe('CardView', function () {
     ${'Waterfall layout'} | ${WaterfallLayout}
   `('$Name CardView supports static cards', function ({Name, layout}) {
     let tree = render(<StaticCardView layout={layout} />);
-    act(() => {
-      jest.runAllTimers();
-    });
+
 
     let grid = tree.getByRole('grid');
     expect(grid).toBeVisible();

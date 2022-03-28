@@ -4817,6 +4817,13 @@
     "@testing-library/user-event" "^13.2.1"
     ts-dedent "^2.2.0"
 
+"@storybook/testing-react@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@storybook/testing-react/-/testing-react-1.2.4.tgz#2cc8bf6685e358e8c570a9d823dacecb5995ef37"
+  integrity sha512-qkyXpE66zp0iyfhdiMV2jxNF32SWXW8vOo+rqLHg29Vg/ssor+G7o+wgWkGP9PaID6pTMstzotVSp/mUa3oN3w==
+  dependencies:
+    "@storybook/csf" "0.0.2--canary.87bc651.0"
+
 "@storybook/theming@6.1.14":
   version "6.1.14"
   resolved "https://registry.yarnpkg.com/@storybook/theming/-/theming-6.1.14.tgz#fecb66cab22d3b3218b4a98a9c210eb8a7be91e8"
