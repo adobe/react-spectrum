@@ -54,7 +54,9 @@ function ProviderUpdater(props) {
           </Dialog>
         </DialogTrigger>)}
       </div>
-      {storyReady && props.children}
+      <main>
+        {storyReady && props.children}
+      </main>
     </Provider>
   );
 }
