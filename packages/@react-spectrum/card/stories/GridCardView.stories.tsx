@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Card, CardView, GridLayout} from '../';
 import {Content} from '@react-spectrum/view';
+import {expect} from '@storybook/jest';
 import {Flex} from '@react-spectrum/layout';
 import {getImageFullData} from './utils';
 import {GridLayoutOptions} from '../src/GridLayout';
@@ -28,6 +29,8 @@ import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
 import {useCollator} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
+import {userEvent, waitFor, within} from '@storybook/testing-library';
+
 
 let items = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
@@ -77,7 +80,11 @@ const StoryFn = ({storyFn}) => storyFn();
 export default {
   title: 'CardView/Grid layout',
   excludeStories: ['NoCards', 'CustomLayout', 'falsyItems'],
-  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
+  decorators: [storyFn => <StoryFn storyFn={storyFn} />],
+  // TODO: figure out why the below doesn't work. Also figure out why we can't make templates like in storybook examples
+  // argTypes: {
+  //   onSelectionChange: {action: true}
+  // }
 };
 
 let onSelectionChange = action('onSelectionChange');
@@ -85,15 +92,32 @@ let actions = {
   onSelectionChange: s => onSelectionChange([...s])
 };
 
-// TODO add stories for Layouts with non-default options passed in
 const DynamicTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <DynamicCardView {...args} />;
 export const DynamicCards = DynamicTemplate().bind({});
 DynamicCards.args = {
   items: items,
   'aria-label': 'Test CardView',
-  selectionMode: 'multiple'
+  selectionMode: 'multiple',
+  onSelectionChange
 };
+
 DynamicCards.storyName = 'default Grid layout with initialized layout';
+DynamicCards.play = async ({ args, canvasElement }) => {
+  const canvas = within(canvasElement);
+  await waitFor(() => canvas.findAllByRole('gridcell'));
+  let cards = await canvas.getAllByRole('gridcell');
+  await userEvent.click(cards[0]);
+  await waitFor(() => expect(new Set(args.onSelectionChange.mock.calls[0][0])).toEqual(new Set([items[0].title])));
+  expect(args.onSelectionChange).toHaveBeenCalledTimes(1);
+
+  await userEvent.keyboard('[ArrowDown][Enter]');
+  await waitFor(() => expect(new Set(args.onSelectionChange.mock.calls[1][0])).toEqual(new Set([items[0].title, items[3].title])));
+  expect(args.onSelectionChange).toHaveBeenCalledTimes(2);
+
+  await userEvent.keyboard('[Escape]');
+  expect(args.onSelectionChange).toHaveBeenCalledTimes(3);
+  await waitFor(() => expect(new Set(args.onSelectionChange.mock.calls[2][0])).toEqual(new Set([])));
+};
 
 const StaticTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <StaticCardView {...args} />;
 export const StaticCards = StaticTemplate().bind({});

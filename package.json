@@ -37,7 +37,8 @@
     "build:api-branch": "node scripts/buildBranchAPI.js",
     "compare:apis": "node scripts/compareAPIs.js",
     "check-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
-    "bumpVersions": "node scripts/bumpVersions.js"
+    "bumpVersions": "node scripts/bumpVersions.js",
+    "test-storybook": "test-storybook --url http://localhost:9003 CardView --browsers chromium firefox webkit"
   },
   "workspaces": [
     "packages/react-stately",
@@ -71,12 +72,16 @@
     "@spectrum-css/vars": "^2.3.0",
     "@storybook/addon-a11y": "^6.1.10",
     "@storybook/addon-actions": "^6.1.10",
+    "@storybook/addon-interactions": "^6.4",
     "@storybook/addon-knobs": "^6.1.10",
     "@storybook/addon-links": "^6.1.10",
     "@storybook/addons": "^6.1.10",
     "@storybook/api": "^6.1.10",
     "@storybook/components": "^6.1.10",
-    "@storybook/react": "^6.1.10",
+    "@storybook/jest": "^0.0.10",
+    "@storybook/react": "^6.4.0",
+    "@storybook/test-runner": "^0.0.4",
+    "@storybook/testing-library": "^0.0.9",
     "@testing-library/dom": "^8.0.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",

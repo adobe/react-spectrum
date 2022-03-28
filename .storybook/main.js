@@ -11,11 +11,15 @@ module.exports = {
     'storybook-dark-mode',
     './custom-addons/provider/register',
     './custom-addons/descriptions/register',
-    './theme.register'
+    './theme.register',
+    '@storybook/addon-interactions'
   ],
   typescript: {
     check: false,
     reactDocgen: false
+  },
+  features: {
+    interactionsDebugger: true,
   },
   webpackFinal: async (config) => {
     let custom = webpackconfig();
