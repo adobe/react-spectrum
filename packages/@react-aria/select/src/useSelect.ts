@@ -165,10 +165,11 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         }
 
         if (props.onBlur) {
-          if (props.onFocusChange) {
-            props.onFocusChange(false);
-          }
           props.onBlur(e);
+        }
+
+        if (props.onFocusChange) {
+          props.onFocusChange(false);
         }
 
         state.setFocused(false);
@@ -189,11 +190,13 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         }
 
         if (props.onBlur) {
-          if (props.onFocusChange) {
-            props.onFocusChange(false);
-          }
           props.onBlur(e);
         }
+
+        if (props.onFocusChange) {
+          props.onFocusChange(false);
+        }
+        
         state.setFocused(false);
       },
       'aria-labelledby': [
