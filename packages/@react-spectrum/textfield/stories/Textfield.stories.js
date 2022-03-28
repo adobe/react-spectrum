@@ -143,6 +143,9 @@ storiesOf('TextField', module)
   )
   .add('placeholder arabic',
     () => render({placeholder: 'أدخل رقماً'})
+  )
+  .add('another change',
+    () => render({placeholder: 'change'})
   );
 
 function render(props = {}) {
@@ -162,7 +165,7 @@ function renderWithDescriptionErrorMessageAndValidation() {
   function Example() {
     let [value, setValue] = React.useState('0');
     let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
-  
+
     return (
       <TextField
         validationState={isValid ? 'valid' : 'invalid'}
