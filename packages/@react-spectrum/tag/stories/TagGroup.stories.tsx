@@ -69,6 +69,29 @@ storiesOf('TagGroup', module)
       onRemove: action('onRemove')
     })
   )
+  .add('wrapping', () => (
+    <div style={{width: '200px'}}>
+      <TagGroup aria-label="tag group">
+        <Item key="1">Cool Tag 1</Item>
+        <Item key="2">Another cool tag</Item>
+        <Item key="3">This tag</Item>
+        <Item key="3">What tag?</Item>
+        <Item key="3">This tag is cool too</Item>
+        <Item key="3">Shy tag</Item>
+      </TagGroup>
+    </div>
+    )
+  )
+  .add('truncation', () => (
+    <div style={{width: '100px'}}>
+      <TagGroup aria-label="tag group">
+        <Item key="1">Cool Tag 1 with a really long label</Item>
+        <Item key="2">Another long cool tag label</Item>
+        <Item key="3">This tag</Item>
+      </TagGroup>
+    </div>
+    )
+  )
   .add(
     'using items prop',
     () => (
