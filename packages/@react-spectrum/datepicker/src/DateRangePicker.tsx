@@ -34,13 +34,16 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
+/**
+ * DateRangePickers combine two DateFields and a RangeCalendar popover to allow users
+ * to enter or select a date and time range.
+ */
 export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProps<T>) {
   props = useProviderProps(props);
   let {
     isQuiet,
     isDisabled,
     isReadOnly,
-    isRequired,
     autoFocus,
     placeholderValue,
     maxVisibleMonths = 1,
@@ -49,9 +52,12 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
-  let state = useDateRangePickerState(props);
-  let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descriptionProps, errorMessageProps} = useDateRangePicker(props, state, targetRef);
-  let {value, isOpen, setOpen} = state;
+  let state = useDateRangePickerState({
+    ...props,
+    shouldCloseOnSelect: () => !state.hasTime
+  });
+  let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descriptionProps, errorMessageProps, calendarProps} = useDateRangePicker(props, state, targetRef);
+  let {isOpen, setOpen} = state;
   let {direction} = useLocale();
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
@@ -102,6 +108,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   return (
     <Field
       {...props}
+      elementType="span"
       ref={targetRef}
       description={description}
       labelProps={labelProps}
@@ -117,37 +124,18 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={state.validationState}
-          autoFocus={autoFocus}
           className={classNames(styles, 'spectrum-InputGroup-field')}
           inputClassName={fieldClassName}>
           <DatePickerField
             {...startFieldProps}
+            data-testid="start-date"
             isQuiet={props.isQuiet}
-            isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
-            isRequired={isRequired}
-            validationState={state.validationState}
-            placeholderValue={placeholderValue}
-            value={value?.start || null}
-            defaultValue={null}
-            onChange={start => state.setDateTime('start', start)}
-            granularity={props.granularity}
-            hourCycle={props.hourCycle}
             inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
           <DateRangeDash />
           <DatePickerField
             {...endFieldProps}
+            data-testid="end-date"
             isQuiet={props.isQuiet}
-            isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
-            isRequired={isRequired}
-            validationState={state.validationState}
-            placeholderValue={placeholderValue}
-            value={value?.end || null}
-            defaultValue={null}
-            onChange={end => state.setDateTime('end', end)}
-            granularity={props.granularity}
-            hourCycle={props.hourCycle}
             inputClassName={classNames(
               styles,
               'spectrum-Datepicker-endField',
@@ -176,12 +164,8 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
             <Content UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
               <RangeCalendar
-                autoFocus
-                value={state.dateRange}
-                onChange={state.setDateRange}
-                visibleMonths={visibleMonths}
-                minValue={props.minValue}
-                maxValue={props.maxValue} />
+                {...calendarProps}
+                visibleMonths={visibleMonths} />
               {showTimeField &&
                 <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
                   <TimeField

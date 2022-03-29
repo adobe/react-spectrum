@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Item} from '@react-spectrum/menu';
 import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Card} from '..';
 import {CardBase} from '../src/CardBase';
@@ -26,7 +25,6 @@ import {
   LongDetail,
   LongEverything,
   LongTitle,
-  NoActionMenu,
   NoDescription,
   NoDescriptionSquare,
   WithIllustration
@@ -116,9 +114,6 @@ QuietNoDescription.args = {...Quiet.args, ...NoDescription.args};
 export const QuietNoDescriptionSquare = Template().bind({});
 QuietNoDescriptionSquare.args = {...Quiet.args, ...NoDescriptionSquare.args};
 
-export const QuietNoActionMenu = Template().bind({});
-QuietNoActionMenu.args = {...Quiet.args, ...NoActionMenu.args};
-
 export const QuietWithIllustration = Template().bind({});
 QuietWithIllustration.args = {...Quiet.args, ...WithIllustration.args};
 
@@ -156,10 +151,6 @@ export const CardGrid = (props: SpectrumCardProps) => (
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
           </Card>
         );
       })
@@ -188,10 +179,6 @@ export const CardWaterfall = (props: SpectrumCardProps) => (
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
               <Content>{getDescription(index)}</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
             </Card>
           </div>
         );
@@ -219,10 +206,6 @@ export const CardGallery = (props: SpectrumCardProps) => (
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
               <Content>Description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
             </Card>
           </div>
         );
@@ -248,10 +231,6 @@ export const CardFloat = (props: SpectrumCardProps) => (
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
               <Content>Description</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
             </Card>
           </div>
         );
@@ -279,10 +258,6 @@ export const CardGridNoDescription = (props: SpectrumCardProps) => (
             <Image src={url} />
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
           </Card>
         );
       })
@@ -309,10 +284,6 @@ export const CardGridIllustrations = (props: SpectrumCardProps) => (
             <File slot="illustration" />
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
           </Card>
         );
       })
@@ -340,10 +311,6 @@ export const CardGridLongTitle = (props: SpectrumCardProps) => (
             <Heading>This is a long title about how dinosaurs used to rule the earth before a meteor came and wiped them all out {index}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
           </Card>
         );
       })
@@ -372,10 +339,6 @@ export const CardGridTallRows = (props: SpectrumCardProps) => (
             <Heading>Title {index}</Heading>
             <Text slot="detail">PNG</Text>
             <Content>Description</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
           </Card>
         );
       })
@@ -402,10 +365,6 @@ export const CardGridMessyText = (props: SpectrumCardProps) => (
             <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
             <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
             <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-            <ActionMenu>
-              <Item>Action 1</Item>
-              <Item>Action 2</Item>
-            </ActionMenu>
           </Card>
         );
       })
@@ -434,10 +393,6 @@ export const CardWaterfallMessyText = (props: SpectrumCardProps) => (
               <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
               <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
               <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
             </Card>
           </div>
         );
@@ -465,10 +420,6 @@ export const CardGalleryMessyText = (props: SpectrumCardProps) => (
               <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
               <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
               <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-              <ActionMenu>
-                <Item>Action 1</Item>
-                <Item>Action 2</Item>
-              </ActionMenu>
             </Card>
           </div>
         );

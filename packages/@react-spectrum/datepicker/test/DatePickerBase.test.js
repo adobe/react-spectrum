@@ -156,6 +156,36 @@ describe('DatePickerBase', function () {
         expect(tz).not.toHaveAttribute('contenteditable');
       }
     });
+
+    it.each`
+      Name                   | Component
+      ${'DatePicker'}        | ${DatePicker}
+      ${'DateRangePicker'}   | ${DateRangePicker}
+    `('$Name should focus placeholderValue in calendar', ({Component}) => {
+      let {getByRole} = render(<Component label="Date" placeholderValue={new CalendarDate(2019, 6, 5)} />);
+
+      let button = getByRole('button');
+      triggerPress(button);
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-label', 'June 2019');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, June 5, 2019')).toBe(true);
+    });
+
+    it.each`
+      Name                   | Component          | props
+      ${'DatePicker'}        | ${DatePicker}      | ${{defaultValue: new CalendarDate(2019, 7, 5)}}
+      ${'DateRangePicker'}   | ${DateRangePicker} | ${{defaultValue: {start: new CalendarDate(2019, 7, 5), end: new CalendarDate(2019, 7, 10)}}}
+    `('$Name should focus selected date over placeholderValue', ({Component, props}) => {
+      let {getByRole} = render(<Component label="Date" {...props} placeholderValue={new CalendarDate(2019, 6, 5)} />);
+
+      let button = getByRole('button');
+      triggerPress(button);
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-label', 'July 2019');
+      expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
+    });
   });
 
   describe('calendar popover', function () {
@@ -347,13 +377,13 @@ describe('DatePickerBase', function () {
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
-    `('$Name should focus the next segment on mouse down on a literal segment', ({Component}) => {
+    `('$Name should focus the previous segment on mouse down on a literal segment', ({Component}) => {
       let {getAllByRole, getAllByText} = render(<Component label="Date" />);
       let literals = getAllByText('/');
       let segments = getAllByRole('spinbutton');
 
       fireEvent(literals[0], pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      expect(segments[1]).toHaveFocus();
+      expect(segments[0]).toHaveFocus();
     });
 
     it.each`

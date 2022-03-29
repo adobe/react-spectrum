@@ -11,6 +11,7 @@
  */
 
 const exec = require('child_process').execSync;
+const spawn = require('child_process').spawnSync;
 const fs = require('fs');
 const fetch = require('node-fetch');
 const semver = require('semver');
@@ -43,7 +44,18 @@ let monopackages = new Set([
 class VersionManager {
   constructor() {
     // Get dependency tree from yarn workspaces
-    this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+    try {
+      // yarn 1.21 returns this structure
+      this.workspacePackages = JSON.parse(JSON.parse(exec('yarn workspaces info --json').toString()).data);
+    } catch (e) {
+      try {
+        // Unknown what versions of yarn return this, but it was the original implementation.
+        this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
+      } catch (e) {
+        // If that failed to parse, then it's because we have yarn 1.22 and this is how we need to parse it.
+        this.workspacePackages = JSON.parse(exec('yarn workspaces info --json').toString());
+      }
+    }
     this.existingPackages = new Set();
     this.changedPackages = new Set();
     this.versionBumps = {};
@@ -91,38 +103,43 @@ class VersionManager {
 
   async getExistingPackages() {
     // Find what packages already exist on npm
-    let promises = [];
-    for (let name in this.workspacePackages) {
-      let filePath = this.workspacePackages[name].location + '/package.json';
-      let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-      if (pkg.private) {
-        continue;
+    let packages = Object.keys(this.workspacePackages);
+    for (let i = 0; i < packages.length; i += 20) {
+      let promises = [];
+      for (let name of packages.slice(i, i + 20)) {
+        let filePath = this.workspacePackages[name].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (pkg.private) {
+          continue;
+        }
+
+        console.log('Checking ' + name + ' on npm');
+
+        promises.push(
+          fetch(`https://registry.npmjs.com/${name}`)
+            .then(res => {
+              if (res.ok) {
+                return res.json();
+              }
+            })
+            .then(json => {
+              if (!json) {
+                return;
+              }
+
+              let tags = json['dist-tags'];
+              for (let tag in tags) {
+                if (!tags[tag].includes('nightly')) {
+                  this.existingPackages.add(name);
+                  break;
+                }
+              }
+            })
+        );
       }
 
-      promises.push(
-        fetch(`https://registry.npmjs.com/${name}`)
-          .then(res => {
-            if (res.ok) {
-              return res.json();
-            }
-          })
-          .then(json => {
-            if (!json) {
-              return;
-            }
-
-            let tags = json['dist-tags'];
-            for (let tag in tags) {
-              if (!tags[tag].includes('nightly')) {
-                this.existingPackages.add(name);
-                break;
-              }
-            }
-          })
-      );
+      await Promise.all(promises);
     }
-
-    await Promise.all(promises);
   }
 
   getChangedPackages() {
@@ -134,22 +151,20 @@ class VersionManager {
       return;
     }
 
-    let sinceIndex = process.argv.findIndex(arg => arg === '--since');
-    let since = sinceIndex >= 0 ? process.argv[sinceIndex + 1] : '$(git describe --tags --abbrev=0)';
-    let res = exec(`git diff ${since}..HEAD --name-only packages ':!**/dev/**' ':!**/docs/**' ':!**/test/**' ':!**/stories/**' ':!**/chromatic/**'`, {encoding: 'utf8'});
 
-    for (let line of res.trim().split('\n')) {
-      let parts = line.split('/').slice(1, 3);
-      if (!parts[0].startsWith('@')) {
-        parts.pop();
-      }
-
-      let name = parts.join('/');
-      try {
-        let pkg = JSON.parse(fs.readFileSync(`packages/${name}/package.json`, 'utf8'));
-        this.changedPackages.add(name);
-      } catch (err) {
-        console.log(err);
+    // Diff each package individually. Some packages might have been skipped during last release,
+    // so we cannot simply look at the last tag on the whole repo.
+    for (let name in this.workspacePackages) {
+      let filePath = this.workspacePackages[name].location + '/package.json';
+      let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (!pkg.private) {
+        // Diff this package since the last published version, according to the package.json.
+        // We create a git tag for each package version.
+        let tag = `${pkg.name}@${pkg.version}`;
+        let res = spawn('git', ['diff', '--exit-code', tag + '..HEAD',  this.workspacePackages[name].location, ':!**/docs/**', ':!**/test/**', ':!**/test-utils/**', ':!**/stories/**', ':!**/chromatic/**']);
+        if (res.status !== 0) {
+          this.changedPackages.add(name);
+        }
       }
     }
 
@@ -273,22 +288,23 @@ class VersionManager {
 
     // Bump anything that depends on this package if it's a prerelease
     // because dependencies will be pinned rather than caret ranges.
-    if (status !== 'released') {
-      for (let p in this.workspacePackages) {
-        if (this.releasedPackages.has(p)) {
-          continue;
-        }
+    // Bump anything that has this as a dep by a patch, all the way up the tree
+    for (let p in this.workspacePackages) {
+      if (this.releasedPackages.has(p)) {
+        continue;
+      }
 
-        if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
-          if (this.existingPackages.has(p)) {
-            // Bump a patch version of the dependent package if it's not also a prerelease.
-            // Otherwise, bump to the next prerelease in the existing status.
-            let filePath = this.workspacePackages[p].location + '/package.json';
-            let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-            let prerelease = semver.parse(pkg.version).prerelease;
-            let b = prerelease.length === 0 ? 'patch' : prerelease[0];
-            this.addReleasedPackage(p, b, true);
-          }
+      if (this.workspacePackages[p].workspaceDependencies.includes(pkg)) {
+        let filePath = this.workspacePackages[p].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        let prerelease = semver.parse(pkg.version).prerelease;
+        let b = prerelease.length === 0 ? 'patch' : prerelease[0];
+        if (this.existingPackages.has(p) && status !== 'released') {
+          // Bump a patch version of the dependent package if it's not also a prerelease.
+          // Otherwise, bump to the next prerelease in the existing status.
+          this.addReleasedPackage(p, b, true);
+        } else if (this.existingPackages.has(p) && status === 'released') {
+          this.addReleasedPackage(p, b);
         }
       }
     }
@@ -296,7 +312,13 @@ class VersionManager {
     // Ensure all dependencies of this package are published and up to date
     for (let dep of this.workspacePackages[pkg].workspaceDependencies) {
       if (!this.existingPackages.has(dep) || this.changedPackages.has(dep)) {
-        this.addReleasedPackage(dep, bump);
+        // Bump a patch version of the dependent package if it's not also a prerelease.
+        // Otherwise, bump to the next prerelease in the existing status.
+        let filePath = this.workspacePackages[dep].location + '/package.json';
+        let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        let prerelease = semver.parse(pkg.version).prerelease;
+        let b = prerelease.length === 0 ? 'patch' : prerelease[0];
+        this.addReleasedPackage(dep, b);
       }
     }
   }
@@ -329,6 +351,8 @@ class VersionManager {
         versions.set(name, [pkg.version, newVersion, pkg.private]);
       }
     }
+
+
 
     return versions;
   }

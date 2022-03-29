@@ -30,7 +30,7 @@ describe('DialogTrigger', function () {
   let matchMedia;
   beforeAll(() => {
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
   afterAll(() => {
     jest.clearAllMocks();

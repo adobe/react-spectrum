@@ -252,7 +252,7 @@ describe('ComboBox', function () {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   beforeEach(() => {
@@ -286,6 +286,13 @@ describe('ComboBox', function () {
 
     let label = getAllByText('Test')[0];
     expect(label).toBeVisible();
+  });
+
+  it('propagates the name attribute', function () {
+    let {getByRole} = renderComboBox({name: 'test name'});
+
+    let combobox = getByRole('combobox');
+    expect(combobox).toHaveAttribute('name', 'test name');
   });
 
   it('can be disabled', function () {

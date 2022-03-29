@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 .spectrum-Tags {
-  display: inline-block;
+  display: inherit;
 
   margin: 0;
   padding: 0;
@@ -21,12 +21,14 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags-item {
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "icon content action";
   align-items: center;
   box-sizing: border-box;
 
   margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
-  padding: 0 calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
+  padding-inline-start:calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
   block-size: var(--spectrum-tag-height);
   max-inline-size: 100%;
 
@@ -44,29 +46,38 @@ governing permissions and limitations under the License.
   &.is-disabled {
     pointer-events: none;
   }
-
-  > .spectrum-Tags-itemIcon {
-    margin-inline-end: var(--spectrum-tag-icon-padding-x);
-    margin-inline-start: calc(var(--spectrum-tag-deletable-border-size-key-focus) * -1);
-  }
-
-  .spectrum-Tags-itemClearButton {
-    display: flex;
-    margin-inline-end: calc(-0.5 * var(--spectrum-tag-padding-x));
-    margin-inline-start: var(--spectrum-tag-deletable-border-size-key-focus);
-    block-size: var(--spectrum-alias-font-size-default);
-    inline-size: var(--spectrum-alias-font-size-default);
-    border-radius: var(--spectrum-alias-border-radius-small);
-  }
 }
 
-.spectrum-Tags-itemLabel {
+.spectrum-Tag-icon {
+  grid-area: icon;
+  margin-inline-end: var(--spectrum-global-dimension-size-100);
+}
+
+.spectrum-Tag-content {
+  grid-area: content;
   block-size: 100%;
   line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
+  margin-inline-end: var(--spectrum-tag-padding-x);
   flex: 1 1 auto;
   font-size: var(--spectrum-tag-text-size);
   cursor: default;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  outline: none;
 }
+
+.tags-removable {
+  margin-inline-end: 0;
+}
+
+.spectrum-Tag-label {
+  grid-area: label;
+}
+
+.spectrum-Tag-action {
+  grid-area: action;
+  height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
+  width: var(--spectrum-global-dimension-size-300);
+}
+

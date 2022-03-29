@@ -339,6 +339,14 @@ governing permissions and limitations under the License.
     justify-content: flex-start;
   }
 
+  .spectrum-Dialog-footer {
+    min-width: fit-content;
+  }
+
+  .spectrum-Dialog-buttonGroup {
+    min-width: 0;
+  }
+
   .spectrum-Dialog--fullscreen,
   .spectrum-Dialog--fullscreenTakeover {
 
@@ -363,5 +371,37 @@ governing permissions and limitations under the License.
     .spectrum-Dialog-heading {
       font-size: var(--spectrum-dialog-title-text-size);
     }
+  }
+}
+
+/* additional a11y support by moveing scrolling from content to dialog */
+@media screen and (max-height: 400px) {
+  .spectrum-Dialog .spectrum-Dialog-grid {
+    border-top-left-radius: var(--spectrum-dialog-border-radius);
+    border-top-right-radius: var(--spectrum-dialog-border-radius);
+    overflow-y: auto;
+
+    grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding-x);
+    grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto auto var(--spectrum-dialog-padding-y);
+    grid-template-areas:
+      "hero hero        hero        hero        hero        hero"
+      ".    .           .           .           .           ."
+      ".    heading     heading     heading     typeIcon    ."
+      ".    header      header      header      header      ."
+      ".    divider     divider     divider     divider     ."
+      ".    content     content     content     content     ."
+      ".    footer      footer      footer      footer      ."
+      ".    buttonGroup buttonGroup buttonGroup buttonGroup ."
+      ".    .           .           .           .           .";
+  }
+
+  .spectrum-Dialog-content {
+    overflow-y: visible;
+    height: min-content;
+    display: inline-table;
+  }
+
+  .spectrum-Dialog-footer + .spectrum-Dialog-buttonGroup {
+    padding-block-start: calc(var(--spectrum-global-dimension-size-25) * 2);
   }
 }

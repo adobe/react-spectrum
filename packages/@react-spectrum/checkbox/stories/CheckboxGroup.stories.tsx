@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Checkbox, CheckboxGroup} from '../';
-import React from 'react';
+import React, {useState} from 'react';
 import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
 import {storiesOf} from '@storybook/react';
 
@@ -109,6 +109,10 @@ storiesOf('CheckboxGroup', module)
   .add(
     'form name',
     () => render({name: 'pets'})
+  )
+  .add(
+    'controlled',
+    () => <ControlledCheckboxGroup />
   );
 
 function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkboxProps: any[] = []) {
@@ -117,6 +121,17 @@ function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkb
       <Checkbox value="dogs" {...checkboxProps[0]}>Dogs</Checkbox>
       <Checkbox value="cats" {...checkboxProps[1]}>Cats</Checkbox>
       <Checkbox value="dragons" {...checkboxProps[2]}>Dragons</Checkbox>
+    </CheckboxGroup>
+  );
+}
+
+function ControlledCheckboxGroup() {
+  let [checked, setChecked] = useState([]);
+  return (
+    <CheckboxGroup label="Pets" onChange={setChecked} value={checked}>
+      <Checkbox value="dogs">Dogs</Checkbox>
+      <Checkbox value="cats">Cats</Checkbox>
+      <Checkbox value="dragons">Dragons</Checkbox>
     </CheckboxGroup>
   );
 }

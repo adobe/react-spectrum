@@ -20,7 +20,7 @@ import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('Breadcrumbs', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
@@ -78,6 +78,17 @@ describe('Breadcrumbs', function () {
     let item3 = getByText('Folder 3');
     expect(item3.tabIndex).toBe(-1);
     expect(item3).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('Handles single item and showRoot', () => {
+    let {getByText} = render(
+      <Breadcrumbs showRoot>
+        <Item key="Folder-1">Folder 1</Item>
+      </Breadcrumbs>
+    );
+    let item = getByText('Folder 1');
+    expect(item).toBeTruthy();
+    expect(item.tabIndex).toBe(-1);
   });
 
   it('Should handle forward ref', function () {
