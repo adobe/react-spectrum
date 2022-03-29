@@ -50,12 +50,14 @@ export function useVisibleRangeDescription(startDate: CalendarDate, endDate: Cal
     month: 'long',
     year: 'numeric',
     era: startDate.calendar.identifier !== 'gregory' ? 'long' : undefined,
-    calendar: startDate.calendar.identifier
+    calendar: startDate.calendar.identifier,
+    timeZone
   });
 
   let dateFormatter = useDateFormatter({
     dateStyle: 'long',
-    calendar: startDate.calendar.identifier
+    calendar: startDate.calendar.identifier,
+    timeZone
   });
 
   return useMemo(() => {

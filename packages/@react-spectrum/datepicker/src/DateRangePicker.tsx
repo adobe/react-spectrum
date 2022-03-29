@@ -128,11 +128,13 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
           inputClassName={fieldClassName}>
           <DatePickerField
             {...startFieldProps}
+            data-testid="start-date"
             isQuiet={props.isQuiet}
             inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
           <DateRangeDash />
           <DatePickerField
             {...endFieldProps}
+            data-testid="end-date"
             isQuiet={props.isQuiet}
             inputClassName={classNames(
               styles,
