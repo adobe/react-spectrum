@@ -17,7 +17,7 @@ import InfoSmall from '@spectrum-icons/ui/InfoSmall';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useImperativeHandle, useRef} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
-import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 import SuccessSmall from '@spectrum-icons/ui/SuccessSmall';
 import {TooltipContext} from './context';
 import {useTooltip} from '@react-aria/tooltip';

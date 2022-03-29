@@ -19,7 +19,7 @@ import {mergeProps} from '@react-aria/utils';
 import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
-import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
+import * as stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';

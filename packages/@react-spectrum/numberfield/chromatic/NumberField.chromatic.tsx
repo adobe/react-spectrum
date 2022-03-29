@@ -18,7 +18,7 @@ import {Meta, Story} from '@storybook/react';
 import {NumberField} from '../src';
 import React from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
-import stepperStyles from '@adobe/spectrum-css-temp/components/stepper/vars.css';
+import * as stepperStyles from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 
 let states = [
   {isQuiet: true},

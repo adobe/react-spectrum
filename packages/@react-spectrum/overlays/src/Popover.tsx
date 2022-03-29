@@ -14,10 +14,10 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Overlay} from './Overlay';
-import overrideStyles from './overlays.css';
+import * as overrideStyles from './overlays.css';
 import {PlacementAxis, PopoverProps} from '@react-types/overlays';
 import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useRef, useState} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useModal, useOverlay} from '@react-aria/overlays';
 
 interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {

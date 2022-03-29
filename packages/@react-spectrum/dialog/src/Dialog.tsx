@@ -23,7 +23,7 @@ import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useMemo, useRef} from 'react';
 import {SpectrumDialogProps} from '@react-types/dialog';
-import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog} from '@react-aria/dialog';
 import {useMessageFormatter} from '@react-aria/i18n';
 

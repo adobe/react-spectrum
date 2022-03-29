@@ -23,7 +23,7 @@ import intlMessages from '../intl/*.json';
 import {OpenTransition} from '@react-spectrum/overlays';
 import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
-import styles from './actionbar.css';
+import * as styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
 import {useKeyboard} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';

@@ -11,11 +11,11 @@
  */
 
 import clsx from 'clsx';
-import docStyles from './docs.css';
+import * as docStyles from './docs.css';
 import React from 'react';
-import sidenavstyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
-import styles from './toc.css';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import * as sidenavstyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import * as styles from './toc.css';
+import * as typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function ToC(props) {
   let {

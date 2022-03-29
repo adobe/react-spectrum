@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumActionBarContainerProps} from '@react-types/actionbar';
-import styles from './actionbar.css';
+import * as styles from './actionbar.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionBarContainer(props: SpectrumActionBarContainerProps, ref: DOMRef<HTMLDivElement>) {

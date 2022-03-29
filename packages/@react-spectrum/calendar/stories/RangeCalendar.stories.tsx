@@ -19,7 +19,7 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {RangeCalendar} from '../';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {TimeField} from '@react-spectrum/datepicker';
 import {useLocale} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';

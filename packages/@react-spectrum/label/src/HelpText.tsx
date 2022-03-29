@@ -14,7 +14,7 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
 import {DOMRef, SpectrumHelpTextProps} from '@react-types/shared';
 import React, {HTMLAttributes} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/helptext/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/helptext/vars.css';
 
 interface HelpTextProps extends SpectrumHelpTextProps {
   /** Props for the help text description element. */

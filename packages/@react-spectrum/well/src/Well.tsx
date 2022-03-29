@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumWellProps} from '@react-types/well';
-import styles from '@adobe/spectrum-css-temp/components/well/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/well/vars.css';
 
 function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
   let {

@@ -15,7 +15,7 @@ import Light from '@spectrum-icons/workflow/Light';
 import Moon from '@spectrum-icons/workflow/Moon';
 import {Provider} from '@react-spectrum/provider';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import styles from './docs.css';
+import * as styles from './docs.css';
 import {theme} from '@react-spectrum/theme-default';
 
 function useCurrentColorScheme() {

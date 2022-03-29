@@ -26,8 +26,8 @@ import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState}
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {Resizer} from './Resizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
-import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import stylesOverrides from './table.css';
+import * as styles from '@adobe/spectrum-css-temp/components/table/vars.css';
+import * as stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
 import {TableView_DEPRECATED} from './TableView_DEPRECATED';
@@ -371,7 +371,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     if (state.virtualizer.contentSize.height > 0) {
       setTableWidth(rect.width);
     }
-      
+
     state.setVisibleRect(rect);
 
     if (!isLoading && onLoadMore) {
@@ -776,7 +776,7 @@ function CenteredWrapper({children}) {
  */
 const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
-/* 
+/*
   When ready to remove this feature flag, you can remove this whole section of code, delete the _DEPRECATED files, and just replace the export with the _TableView above.
 */
 function FeatureFlaggedTableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {

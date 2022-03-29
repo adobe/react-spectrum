@@ -14,7 +14,7 @@ import {classNames, useDOMRef, useSlotProps, useStyleProps} from '@react-spectru
 import {DOMRef} from '@react-types/shared';
 import React from 'react';
 import {SpectrumDividerProps} from '@react-types/divider';
-import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import {useSeparator} from '@react-aria/separator';
 
 let sizeMap = {

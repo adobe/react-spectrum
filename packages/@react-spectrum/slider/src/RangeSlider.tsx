@@ -18,7 +18,7 @@ import React from 'react';
 import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBase';
 import {SliderThumb} from './SliderThumb';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
-import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {

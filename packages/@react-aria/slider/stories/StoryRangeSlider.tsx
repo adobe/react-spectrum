@@ -1,7 +1,7 @@
 import {AriaSliderProps} from '@react-types/slider';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
-import styles from './story-slider.css';
+import * as styles from './story-slider.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {useSliderState} from '@react-stately/slider';

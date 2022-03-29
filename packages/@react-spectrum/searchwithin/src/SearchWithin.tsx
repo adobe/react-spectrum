@@ -17,7 +17,7 @@ import {FocusableRef} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import React, {useCallback, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
-import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useFormProps} from '@react-spectrum/form';
 import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';

@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumStatusLightProps} from '@react-types/statuslight';
-import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement>) {

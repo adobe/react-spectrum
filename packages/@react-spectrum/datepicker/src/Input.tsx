@@ -13,10 +13,10 @@
 import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
-import datepickerStyles from './index.css';
+import * as datepickerStyles from './index.css';
 import {FocusRing} from '@react-aria/focus';
 import React, {useCallback, useRef} from 'react';
-import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import * as textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 
 export function Input(props) {

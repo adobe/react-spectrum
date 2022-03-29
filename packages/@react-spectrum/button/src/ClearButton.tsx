@@ -17,7 +17,7 @@ import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {ElementType} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 

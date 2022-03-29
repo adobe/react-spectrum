@@ -12,8 +12,8 @@
 
 import clsx from 'clsx';
 import React from 'react';
-import styles from './resourceCard.css';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import * as styles from './resourceCard.css';
+import * as typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function ResourceCard(props) {
 

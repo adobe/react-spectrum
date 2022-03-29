@@ -11,7 +11,7 @@
  */
 import {chain, useId} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
-import dndStyles from './dnd.css';
+import * as dndStyles from './dnd.css';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';

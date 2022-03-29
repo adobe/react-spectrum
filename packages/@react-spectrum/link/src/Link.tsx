@@ -15,7 +15,7 @@ import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
-import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {useHover} from '@react-aria/interactions';
 import {useLink} from '@react-aria/link';
 import {useProviderProps} from '@react-spectrum/provider';

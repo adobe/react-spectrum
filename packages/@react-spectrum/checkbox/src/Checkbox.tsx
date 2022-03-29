@@ -18,7 +18,7 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useContext, useRef} from 'react';
 import {SpectrumCheckboxProps} from '@react-types/checkbox';
-import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
 import {useCheckbox, useCheckboxGroupItem} from '@react-aria/checkbox';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';

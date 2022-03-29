@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import {Image} from './Image';
 import React from 'react';
-import styles from './ExampleCard.css';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import * as styles from './ExampleCard.css';
+import * as typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function ExampleCard(props) {
   return (

@@ -12,13 +12,13 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {AriaButtonProps} from '@react-types/button';
-import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import * as buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
-import comboboxStyles from './combobox.css';
+import * as comboboxStyles from './combobox.css';
 import {DismissButton} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
@@ -26,17 +26,17 @@ import {FocusRing, FocusScope} from '@react-aria/focus';
 import {focusSafely} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import * as labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
-import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
+import * as searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
-import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
-import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import * as textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {Tray} from '@react-spectrum/overlays';
 import {useButton} from '@react-aria/button';
 import {useComboBox} from '@react-aria/combobox';

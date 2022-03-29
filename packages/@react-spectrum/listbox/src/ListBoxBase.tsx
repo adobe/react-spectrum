@@ -24,7 +24,7 @@ import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
-import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';

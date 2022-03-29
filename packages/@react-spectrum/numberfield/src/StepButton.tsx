@@ -19,7 +19,7 @@ import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import Remove from '@spectrum-icons/workflow/Remove';
-import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
+import * as stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';

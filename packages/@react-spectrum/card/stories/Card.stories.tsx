@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
+import * as assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Avatar} from '@react-spectrum/avatar';
 import {Card} from '..';
 import {CardBase} from '../src/CardBase';

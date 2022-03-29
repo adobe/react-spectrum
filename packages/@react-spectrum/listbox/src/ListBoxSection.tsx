@@ -16,7 +16,7 @@ import {ListBoxContext} from './ListBoxContext';
 import {Node} from '@react-types/shared';
 import React, {Fragment, ReactNode, useContext, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
-import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useListBoxSection} from '@react-aria/listbox';
 import {useLocale} from '@react-aria/i18n';
 import {useSeparator} from '@react-aria/separator';

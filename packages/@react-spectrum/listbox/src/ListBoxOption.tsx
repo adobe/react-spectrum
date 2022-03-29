@@ -19,7 +19,7 @@ import {ListBoxContext} from './ListBoxContext';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {useContext} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useOption} from '@react-aria/listbox';
 import {useRef} from 'react';

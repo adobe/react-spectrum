@@ -18,7 +18,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import intlMessages from '../intl/*.json';
 import React from 'react';
 import {SpectrumLabelProps} from '@react-types/label';
-import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 

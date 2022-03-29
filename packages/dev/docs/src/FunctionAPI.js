@@ -12,7 +12,7 @@
 
 import {Indent, JoinList, Type, TypeContext, TypeParameters} from './types';
 import React from 'react';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import * as typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function FunctionAPI({function: func, links}) {
   let {name, parameters, return: returnType, typeParameters} = func;

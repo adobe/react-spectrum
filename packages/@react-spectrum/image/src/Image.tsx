@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumImageProps} from '@react-types/image';
-import styles from '@adobe/spectrum-css-temp/components/image/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/image/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
 // incomplete component for show right now

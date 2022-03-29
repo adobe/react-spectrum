@@ -18,7 +18,7 @@ import {MenuSection} from './MenuSection';
 import {mergeProps, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
-import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 

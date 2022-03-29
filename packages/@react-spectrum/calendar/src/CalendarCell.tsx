@@ -16,7 +16,7 @@ import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';

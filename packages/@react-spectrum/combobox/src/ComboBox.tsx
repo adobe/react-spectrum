@@ -19,7 +19,7 @@ import {
   useResizeObserver,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
-import comboboxStyles from './combobox.css';
+import * as comboboxStyles from './combobox.css';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
@@ -43,9 +43,9 @@ import React, {
   useState
 } from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
-import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
-import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import * as textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';

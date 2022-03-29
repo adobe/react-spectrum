@@ -16,7 +16,7 @@ import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
-import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useSliderThumb} from '@react-aria/slider';

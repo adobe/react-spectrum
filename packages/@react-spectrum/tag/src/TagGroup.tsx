@@ -16,7 +16,7 @@ import {GridCollection, useGridState} from '@react-stately/grid';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useMemo} from 'react';
 import {SpectrumTagGroupProps} from '@react-types/tag';
-import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
 import {useGrid} from '@react-aria/grid';

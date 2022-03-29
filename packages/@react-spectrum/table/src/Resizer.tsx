@@ -2,7 +2,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
-import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useTableColumnResize} from '@react-aria/table/src/useTableColumnResize';
 import {useTableContext} from './TableView';
 

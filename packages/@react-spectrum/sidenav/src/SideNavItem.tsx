@@ -16,7 +16,7 @@ import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {SideNavContext} from './SideNavContext';
 import {SpectrumSideNavItemProps} from '@react-types/sidenav';
-import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {useHover} from '@react-aria/interactions';
 import {useSideNavItem} from '@react-aria/sidenav';
 

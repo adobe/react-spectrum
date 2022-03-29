@@ -15,7 +15,7 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
 import {SpectrumRadioProps} from '@react-types/radio';
-import styles from '@adobe/spectrum-css-temp/components/radio/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/radio/vars.css';
 import {useHover} from '@react-aria/interactions';
 import {useRadio} from '@react-aria/radio';
 import {useRadioProvider} from './context';

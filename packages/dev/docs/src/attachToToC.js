@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import * as sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 
 export function attachToToC() {
   let tocLinks = document.querySelectorAll('#toc a');

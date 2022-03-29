@@ -17,7 +17,7 @@ import {FocusableRef} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import React, {useRef, useState} from 'react';
 import {SpectrumColorSliderProps} from '@react-types/color';
-import styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
 import {useColorSlider} from '@react-aria/color';
 import {useColorSliderState} from '@react-stately/color';
 import {useFocus, useFocusVisible} from '@react-aria/interactions';

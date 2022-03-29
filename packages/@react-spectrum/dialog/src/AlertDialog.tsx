@@ -26,7 +26,7 @@ import intlMessages from '../intl/*.json';
 import React, {forwardRef, useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
-import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 /**

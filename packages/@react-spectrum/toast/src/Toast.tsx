@@ -17,9 +17,9 @@ import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMRef} from '@react-types/shared';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import React from 'react';
-import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
-import toastContainerStyles from './toastContainer.css';
+import * as toastContainerStyles from './toastContainer.css';
 import {ToastProps, ToastState} from '@react-types/toast';
 import {useToast} from '@react-aria/toast';
 

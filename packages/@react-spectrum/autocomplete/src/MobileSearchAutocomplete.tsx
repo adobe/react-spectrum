@@ -28,13 +28,13 @@ import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
-import searchAutocompleteStyles from './searchautocomplete.css';
-import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
+import * as searchAutocompleteStyles from './searchautocomplete.css';
+import * as searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
-import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
-import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import * as textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {Tray} from '@react-spectrum/overlays';
 import {useButton} from '@react-aria/button';
 import {useDialog} from '@react-aria/dialog';
@@ -70,7 +70,7 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
     selectedKey: undefined,
     defaultSelectedKey: undefined
   });
-  
+
   let buttonRef = useRef<HTMLElement>();
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);

@@ -14,7 +14,7 @@ import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
 interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {

@@ -15,7 +15,7 @@ import CalendarIcon from '@spectrum-icons/workflow/Calendar';
 import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
-import datepickerStyles from './index.css';
+import * as datepickerStyles from './index.css';
 import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
@@ -24,7 +24,7 @@ import {Input} from './Input';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
-import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';

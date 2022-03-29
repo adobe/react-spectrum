@@ -29,7 +29,7 @@ import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import * as typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
 
 storiesOf('Form', module)

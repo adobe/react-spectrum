@@ -17,7 +17,7 @@ import React from 'react';
 import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBase';
 import {SliderThumb} from './SliderThumb';
 import {SpectrumSliderProps} from '@react-types/slider';
-import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale} from '@react-aria/i18n';
 
 function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {

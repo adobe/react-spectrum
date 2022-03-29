@@ -16,7 +16,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
 import React, {forwardRef} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';
-import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
 
 function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'illustration');

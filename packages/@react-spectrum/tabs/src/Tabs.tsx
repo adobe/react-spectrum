@@ -20,7 +20,7 @@ import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import React, {Key, MutableRefObject, ReactElement, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
-import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {TabListState, useTabListState} from '@react-stately/tabs';
 import {Text} from '@react-spectrum/text';
 import {useCollection} from '@react-stately/collections';

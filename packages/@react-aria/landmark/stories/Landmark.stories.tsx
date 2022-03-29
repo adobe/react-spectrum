@@ -19,7 +19,7 @@ import {Link} from '@react-spectrum/link';
 import {Meta, Story} from '@storybook/react';
 import React, {useRef} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import styles from './index.css';
+import * as styles from './index.css';
 import {TextField} from '@react-spectrum/textfield';
 import {useLandmark} from '../';
 

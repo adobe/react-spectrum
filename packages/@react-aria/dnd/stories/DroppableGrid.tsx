@@ -11,8 +11,8 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import dndStyles from './dnd.css';
-import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
+import * as dndStyles from './dnd.css';
+import * as dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
 import {DroppableCollectionDropEvent} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';

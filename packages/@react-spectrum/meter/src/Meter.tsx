@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import {ProgressBarBase} from '@react-spectrum/progress';
 import React from 'react';
 import {SpectrumMeterProps} from '@react-types/meter';
-import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useMeter} from '@react-aria/meter';
 
 function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {

@@ -21,7 +21,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
-import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';

@@ -15,7 +15,7 @@ import {ClearButton} from '@react-spectrum/button';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumTagProps} from '@react-types/tag';
-import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';

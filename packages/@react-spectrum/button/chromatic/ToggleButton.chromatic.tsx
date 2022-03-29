@@ -15,7 +15,7 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat, View} from '@adobe/react-spectrum';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {ToggleButton} from '../';
 
 let states = [

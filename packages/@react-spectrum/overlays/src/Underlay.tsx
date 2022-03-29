@@ -12,7 +12,7 @@
 
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
-import underlayStyles from '@adobe/spectrum-css-temp/components/underlay/vars.css';
+import * as underlayStyles from '@adobe/spectrum-css-temp/components/underlay/vars.css';
 
 interface UnderlayProps {
   isOpen?: boolean

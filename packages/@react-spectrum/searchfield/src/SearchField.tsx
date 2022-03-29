@@ -15,7 +15,7 @@ import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import React, {forwardRef, RefObject, useRef} from 'react';
 import {SpectrumSearchFieldProps} from '@react-types/searchfield';
-import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useProviderProps} from '@react-spectrum/provider';

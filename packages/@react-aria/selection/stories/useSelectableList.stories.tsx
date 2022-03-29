@@ -5,7 +5,7 @@ import {ListState, useListState} from '@react-stately/list';
 import * as React from 'react';
 import {Section} from '@react-spectrum/menu';
 import {storiesOf} from '@storybook/react';
-import styles from './styles.css';
+import * as styles from './styles.css';
 import {useSelectableItem, useSelectableList} from '../src';
 
 function SelectableList(props: CollectionBase<any> & {

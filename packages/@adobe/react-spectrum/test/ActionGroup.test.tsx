@@ -14,8 +14,8 @@ import {ActionGroup, Item} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@testing-library/react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import * as scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import * as themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 
 let theme = {
   light: themeLight,

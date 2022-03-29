@@ -17,7 +17,7 @@ import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../intl';
 import React from 'react';
 import {SpectrumAlertProps} from '@react-types/alert';
-import styles from '@adobe/spectrum-css-temp/components/alert/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/alert/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {useMessageFormatter} from '@react-aria/i18n';
 

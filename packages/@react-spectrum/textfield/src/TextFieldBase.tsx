@@ -19,7 +19,7 @@ import {mergeProps} from '@react-aria/utils';
 import {PressEvents} from '@react-types/shared';
 import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
-import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useHover} from '@react-aria/interactions';
 
 interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, PressEvents {

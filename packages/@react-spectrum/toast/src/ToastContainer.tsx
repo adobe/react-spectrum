@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement} from 'react';
 import {Toast} from './';
-import toastContainerStyles from './toastContainer.css';
+import * as toastContainerStyles from './toastContainer.css';
 import {ToastState} from '@react-types/toast';
 // import {useProvider} from '@react-spectrum/provider';
 

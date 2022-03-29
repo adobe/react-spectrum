@@ -14,7 +14,7 @@ import {classNames} from '@react-spectrum/utils';
 import {MenuItem} from './MenuItem';
 import {Node} from '@react-types/shared';
 import React, {Fragment, Key} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState} from '@react-stately/tree';
 import {useMenuSection} from '@react-aria/menu';
 import {useSeparator} from '@react-aria/separator';

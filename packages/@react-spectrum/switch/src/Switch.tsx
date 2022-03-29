@@ -15,7 +15,7 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
 import {SpectrumSwitchProps} from '@react-types/switch';
-import styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSwitch} from '@react-aria/switch';

@@ -15,7 +15,7 @@ import {FocusableRef} from '@react-types/shared';
 import React, {CSSProperties, ReactNode, RefObject, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase} from '@react-types/slider';
-import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSlider} from '@react-aria/slider';

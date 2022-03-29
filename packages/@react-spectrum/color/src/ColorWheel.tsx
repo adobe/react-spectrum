@@ -15,7 +15,7 @@ import {ColorThumb} from './ColorThumb';
 import {FocusableRef} from '@react-types/shared';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SpectrumColorWheelProps} from '@react-types/color';
-import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
 import {useColorWheel} from '@react-aria/color';
 import {useColorWheelState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';

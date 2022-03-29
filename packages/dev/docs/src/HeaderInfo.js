@@ -15,8 +15,8 @@ import js from 'highlight.js/lib/languages/javascript';
 import Lowlight from 'react-lowlight';
 import React from 'react';
 import {ResourceCard} from './ResourceCard';
-import styles from './headerInfo.css';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import * as styles from './headerInfo.css';
+import * as typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 Lowlight.registerLanguage('js', js);
 

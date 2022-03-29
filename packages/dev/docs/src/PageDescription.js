@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import * as typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function PageDescription({children}) {
   return <p className={typographyStyles['spectrum-Body3']}>{children}</p>;

@@ -11,7 +11,7 @@
  */
 
 import clsx from 'clsx';
-import docStyles from './docs.css';
+import * as docStyles from './docs.css';
 import path from 'path';
 import React from 'react';
 

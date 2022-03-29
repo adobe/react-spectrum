@@ -11,7 +11,7 @@
  */
 
 
-import badgeStyles from '@adobe/spectrum-css-temp/components/label/vars.css';
+import * as badgeStyles from '@adobe/spectrum-css-temp/components/label/vars.css';
 import clsx from 'clsx';
 import React from 'react';
 

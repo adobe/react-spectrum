@@ -15,7 +15,7 @@ import {DateFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerBase, DateValue} from '@react-types/datepicker';
 import {NumberParser} from '@internationalized/number';
 import React, {useMemo, useRef} from 'react';
-import styles from './index.css';
+import * as styles from './index.css';
 import {useDateSegment} from '@react-aria/datepicker';
 import {useLocale} from '@react-aria/i18n';
 

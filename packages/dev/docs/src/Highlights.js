@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import docStyles from './docs.css';
-import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
+import * as docStyles from './docs.css';
+import * as linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import React from 'react';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import * as typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function Highlights({items}) {
   return (

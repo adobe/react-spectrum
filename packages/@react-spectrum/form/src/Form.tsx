@@ -16,7 +16,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {useContext} from 'react';
 import {SpectrumFormProps} from '@react-types/form';
-import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 
 let FormContext = React.createContext<SpectrumLabelableProps>({});
 export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {

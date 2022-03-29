@@ -19,7 +19,7 @@ import {SideNavContext} from './SideNavContext';
 import {SideNavItem} from './SideNavItem';
 import {SideNavSection} from './SideNavSection';
 import {SpectrumSideNavProps} from '@react-types/sidenav';
-import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {useCollator} from '@react-aria/i18n';
 import {useSideNav} from '@react-aria/sidenav';
 import {useTreeState} from '@react-stately/tree';

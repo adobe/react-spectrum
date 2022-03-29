@@ -20,7 +20,7 @@ import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {HTMLAttributes, RefObject} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 

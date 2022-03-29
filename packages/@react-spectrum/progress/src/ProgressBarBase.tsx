@@ -16,7 +16,7 @@ import {DOMRef} from '@react-types/shared';
 import {ProgressBarProps} from '@react-types/progress';
 import React, {CSSProperties, HTMLAttributes} from 'react';
 import {SpectrumProgressBarBaseProps} from '@react-types/progress';
-import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 
 interface ProgressBarBaseProps extends SpectrumProgressBarBaseProps, ProgressBarProps {
   barClassName?: string,

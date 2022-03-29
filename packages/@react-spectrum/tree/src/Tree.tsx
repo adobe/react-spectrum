@@ -17,7 +17,7 @@ import {FocusRing} from '@react-aria/focus';
 import {Item, Section} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React, {Key, useMemo, useRef} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 import {Virtualizer} from '@react-aria/virtualizer';

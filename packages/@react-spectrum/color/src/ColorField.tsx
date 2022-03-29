@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumColorFieldProps} from '@react-types/color';
-import styles from './colorfield.css';
+import * as styles from './colorfield.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useColorField} from '@react-aria/color';

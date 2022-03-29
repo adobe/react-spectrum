@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../';
-import snStyles from './SideNav.css';
+import * as snStyles from './SideNav.css';
 import {storiesOf} from '@storybook/react';
 
 let flatItems = [

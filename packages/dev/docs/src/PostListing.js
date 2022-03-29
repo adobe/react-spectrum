@@ -11,12 +11,12 @@
  */
 
 import clsx from 'clsx';
-import docStyles from '@react-spectrum/docs/src/docs.css';
+import * as docStyles from '@react-spectrum/docs/src/docs.css';
 import {getAnchorProps} from './utils';
-import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
+import * as linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {PageContext, renderHTMLfromMarkdown, Time} from '@react-spectrum/docs';
 import React from 'react';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+import * as typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function PostListing({type}) {
   let {pages} = React.useContext(PageContext);

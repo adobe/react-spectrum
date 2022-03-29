@@ -17,7 +17,7 @@ import {Grid} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {Key, useRef} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
 import {useHover} from '@react-aria/interactions';

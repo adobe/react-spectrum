@@ -14,8 +14,8 @@ import {classNames} from '@react-spectrum/utils';
 import {Color} from '@react-types/color';
 import {DOMProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
-import stylesHandle from '@adobe/spectrum-css-temp/components/colorhandle/vars.css';
-import stylesLoupe from '@adobe/spectrum-css-temp/components/colorloupe/vars.css';
+import * as stylesHandle from '@adobe/spectrum-css-temp/components/colorhandle/vars.css';
+import * as stylesLoupe from '@adobe/spectrum-css-temp/components/colorloupe/vars.css';
 import {useId} from '@react-aria/utils';
 
 interface ColorThumbProps extends DOMProps {

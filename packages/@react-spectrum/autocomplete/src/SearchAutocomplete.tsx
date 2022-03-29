@@ -25,11 +25,11 @@ import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
-import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
+import * as searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
-import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
-import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import * as textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useMessageFormatter} from '@react-aria/i18n';
 import {useHover} from '@react-aria/interactions';
@@ -83,7 +83,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
     }
   );
   let layout = useListBoxLayout(state);
-  
+
   let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
     {
       ...props,

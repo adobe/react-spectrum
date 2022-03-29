@@ -18,7 +18,7 @@ import {filterDOMProps, mergeProps, useLayoutEffect, useResizeObserver, useSlotI
 import {FocusRing} from '@react-aria/focus';
 import {getFocusableTreeWalker} from  '@react-aria/focus';
 import React, {HTMLAttributes, useCallback, useMemo, useRef, useState} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCardViewContext} from './CardViewContext';
 import {useFocusWithin, useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';

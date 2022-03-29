@@ -16,7 +16,7 @@ import {FocusableRef} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumColorAreaProps} from '@react-types/color';
-import styles from '@adobe/spectrum-css-temp/components/colorarea/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/colorarea/vars.css';
 import {useColorArea} from '@react-aria/color';
 import {useColorAreaState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';

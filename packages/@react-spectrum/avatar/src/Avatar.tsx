@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumAvatarProps} from '@react-types/avatar';
-import styles from '@adobe/spectrum-css-temp/components/avatar/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/avatar/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
 const DEFAULT_SIZE = 'avatar-size-100';

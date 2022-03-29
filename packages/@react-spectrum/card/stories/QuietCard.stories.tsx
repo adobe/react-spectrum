@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
+import * as assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
 import {Card} from '..';
 import {CardBase} from '../src/CardBase';
 import {CardViewContext} from '../src/CardViewContext';
@@ -35,7 +35,7 @@ import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React, {Dispatch, SetStateAction, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/card';
-import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {usePress} from '@react-aria/interactions';
 
 // see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940

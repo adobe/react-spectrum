@@ -16,7 +16,7 @@ import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumLogicButtonProps} from '@react-types/button';
-import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import * as styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
