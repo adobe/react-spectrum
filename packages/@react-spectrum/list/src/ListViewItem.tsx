@@ -56,7 +56,8 @@ export function ListViewItem(props) {
     shouldSelectOnPressUp: isListDraggable
   }, state, rowRef);
   let {gridCellProps} = useGridCell({
-    node: cellNode
+    node: cellNode,
+    skipCell: true
   }, state, cellRef);
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {

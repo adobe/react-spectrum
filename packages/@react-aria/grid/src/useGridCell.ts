@@ -35,7 +35,9 @@ interface GridCellProps {
    * Please use onCellAction at the collection level instead.
    * @deprecated
    **/
-  onAction?: () => void
+  onAction?: () => void,
+  // TODO: check naming convention
+  skipCell?: boolean
 }
 
 interface GridCellAria {
@@ -56,7 +58,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     isVirtualized,
     focusMode = 'child',
     shouldSelectOnPressUp,
-    onAction
+    onAction,
+    skipCell
   } = props;
 
   let {direction} = useLocale();
@@ -67,7 +70,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   // TODO: this focus logic will coerce focus to the first focusable child when clicking on a listview's row child element
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
-    if (focusMode === 'child') {
+    if (focusMode === 'child' || skipCell) {
       let focusable = state.selectionManager.childFocusStrategy === 'last'
         ? last(treeWalker)
         : treeWalker.firstChild() as HTMLElement;
@@ -78,8 +81,14 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
     }
 
-    if (!ref.current.contains(document.activeElement)) {
+    if (!ref.current.contains(document.activeElement) && !skipCell) {
       focusSafely(ref.current);
+      return;
+    }
+
+    // TODO: If parent key exists and skipCell is true, set the focusedKey to be the parentKey
+    if (node.parentKey != null && skipCell) {
+      state.selectionManager.setFocusedKey(node.parentKey);
     }
   };
 

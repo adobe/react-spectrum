@@ -25,6 +25,7 @@ export interface GridKeyboardDelegateOptions<T, C> {
   focusMode?: 'row' | 'cell',
   // TODO: whether to prioritize focusing the row over the cell? Specifically for Up/Down where we always want to move focus
   // to the row
+  // TODO: check naming convention
   skipCell?: boolean
 }
 
