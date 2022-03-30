@@ -37,6 +37,7 @@
     "@react-aria/grid": "^3.2.4",
     "@react-aria/i18n": "^3.3.7",
     "@react-aria/interactions": "^3.8.2",
+    "@react-aria/list": "3.0.0-alpha.1",
     "@react-aria/listbox": "^3.4.3",
     "@react-aria/separator": "^3.1.6",
     "@react-aria/utils": "^3.11.3",

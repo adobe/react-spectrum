@@ -26,9 +26,9 @@ import {Content} from '@react-spectrum/view';
 import type {DraggableCollectionState} from '@react-stately/dnd';
 import {DragHooks} from '@react-spectrum/dnd';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
-import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {ListGridKeyboardDelegate} from '@react-aria/list';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
@@ -38,11 +38,12 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue {
   state: GridState<object, GridCollection<any>>,
-  keyboardDelegate: GridKeyboardDelegate<unknown, GridCollection<any>>,
+  keyboardDelegate: ListGridKeyboardDelegate<unknown, GridCollection<any>>,
   dragState: DraggableCollectionState,
   onAction:(key: string) => void,
   isListDraggable: boolean
@@ -145,14 +146,13 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let layout = useListLayout(state, props.density || 'regular');
-  let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({
+  let keyboardDelegate = useMemo(() => new ListGridKeyboardDelegate<T>({
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     ref: domRef,
     direction,
     collator,
-    focusMode: 'row',
-    skipCell: true
+    layout
   }), [state, domRef, direction, collator]);
 
   let provider = useProvider();

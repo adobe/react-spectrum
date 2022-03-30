@@ -22,11 +22,7 @@ export interface GridKeyboardDelegateOptions<T, C> {
   direction: Direction,
   collator?: Intl.Collator,
   layout?: Layout<Node<T>>,
-  focusMode?: 'row' | 'cell',
-  // TODO: whether to prioritize focusing the row over the cell? Specifically for Up/Down where we always want to move focus
-  // to the row
-  // TODO: check naming convention
-  skipCell?: boolean
+  focusMode?: 'row' | 'cell'
 }
 
 export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements KeyboardDelegate {
@@ -47,7 +43,6 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     this.collator = options.collator;
     this.layout = options.layout;
     this.focusMode = options.focusMode || 'row';
-    this.skipCell = options.skipCell || false;
   }
 
   protected isCell(node: Node<T>) {
@@ -103,7 +98,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     key = this.findNextKey(key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
-      if (!this.skipCell && this.isCell(startItem)) {
+      if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
         return [...item.childNodes][startItem.index].key;
       }
@@ -130,7 +125,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     key = this.findPreviousKey(key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
-      if (!this.skipCell && this.isCell(startItem)) {
+      if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
         return [...item.childNodes][startItem.index].key;
       }
@@ -253,7 +248,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
       // If global flag is not set, and a cell is currently focused,
       // move focus to the last cell in the parent row.
-      if (this.isCell(item) && !global && !this.skipCell) {
+      if (this.isCell(item) && !global) {
         let parent = this.collection.getItem(item.parentKey);
         let children = [...parent.childNodes];
         return children[children.length - 1].key;
