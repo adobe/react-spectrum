@@ -10,7 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
 import {ClickThroughExample} from './ClickthroughExample';
+import {Flex} from '@react-spectrum/layout';
+import {Item, Picker} from '@react-spectrum/picker';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -31,5 +35,39 @@ storiesOf('useModal/issues', module)
       If you are unable to close the Dialog, or it reopens very quickly, that means it is broken.
       `
     }
-  });
-
+  })
+  .add(
+    'Click through form submit',
+    () => (
+      <form
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          alert('onSubmit');
+        }}>
+        <Flex marginTop="auto" direction="column">
+          <Picker marginBottom={100} shouldFlip={false}>
+            <Item key="option1">Option 1</Item>
+            <Item key="option2">Option 2</Item>
+            <Item key="option3">Option 3</Item>
+            <Item key="option4">Option 4</Item>
+          </Picker>
+          <Button
+            type="submit"
+            variant="primary"
+            onPress={action('onPress')}
+            onPressStart={action('onPressStart')}
+            onPressEnd={action('onPressEnd')}
+            onPressChange={action('onPressChange')}>
+            Click Me
+          </Button>
+        </Flex>
+      </form>
+    )
+  );
