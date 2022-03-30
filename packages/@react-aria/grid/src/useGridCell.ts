@@ -66,16 +66,22 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let {keyboardDelegate, actions: {onCellAction}} = gridMap.get(state);
 
   // Handles focusing the cell. If there is a focusable child,
-  // it is focused, otherwise the cell itself is focused.
-  // TODO: this focus logic will coerce focus to the first focusable child when clicking on a listview's row child element
+  // it is focused, otherwise the cell itself is focused. If skipCell is
+  // true, always attempt to put focus on a focusable child if any or back on the parent
+  // row.
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
     if (focusMode === 'child' || skipCell) {
+      // If focus is already on a focusable child within the cell, early return so we don't shift focus
+      if (ref.current.contains(document.activeElement) && ref.current !== document.activeElement) {
+        return;
+      }
+
       let focusable = state.selectionManager.childFocusStrategy === 'last'
         ? last(treeWalker)
         : treeWalker.firstChild() as HTMLElement;
-      // TODO: only move focus to the child within the cell if focus isn't already within the cell (e.g. clicking on a buton within a listview row)
-      if (focusable && !ref.current.contains(document.activeElement) && ref.current !== document.activeElement) {
+
+      if (focusable) {
         focusSafely(focusable);
         return;
       }
@@ -86,7 +92,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       return;
     }
 
-    // TODO: If parent key exists and skipCell is true, set the focusedKey to be the parentKey
     if (node.parentKey != null && skipCell) {
       state.selectionManager.setFocusedKey(node.parentKey);
     }
