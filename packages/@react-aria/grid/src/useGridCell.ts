@@ -100,7 +100,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
-    console.log('gwaegaweg')
     switch (e.key) {
       case 'ArrowLeft': {
         // Find the next focusable element within the cell.
@@ -215,7 +214,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
       if (focusMode === 'child' && document.activeElement === ref.current) {
-        console.log('blah')
         focus();
       }
     });

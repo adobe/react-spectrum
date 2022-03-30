@@ -23,8 +23,8 @@ export interface GridKeyboardDelegateOptions<T, C> {
   collator?: Intl.Collator,
   layout?: Layout<Node<T>>,
   focusMode?: 'row' | 'cell',
-  // TODO: whether to prioritize focusing the row over the cell? Really this mode is for ListView where we
-  // either want to focus the row or the child elements of the cell, but never the cell itself
+  // TODO: whether to prioritize focusing the row over the cell? Specifically for Up/Down where we always want to move focus
+  // to the row
   skipCell?: boolean
 }
 
@@ -36,6 +36,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   protected collator: Intl.Collator;
   protected layout: Layout<Node<T>>;
   protected focusMode;
+  protected skipCell;
 
   constructor(options: GridKeyboardDelegateOptions<T, C>) {
     this.collection = options.collection;
@@ -45,13 +46,9 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     this.collator = options.collator;
     this.layout = options.layout;
     this.focusMode = options.focusMode || 'row';
-    // TODO: temp hack to make up/down arrow focus the row instead of trying to focus
-    // the same cell contents of the above/below row
-    this.skipCell = true;
+    this.skipCell = options.skipCell || false;
   }
 
-  // TODO: Fix Home, End, Page Down, and Page Up for ListView. It should work if you are focused on the row
-  // or within the cell
   protected isCell(node: Node<T>) {
     return node.type === 'cell';
   }
@@ -307,10 +304,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return this.ref?.current?.scrollHeight;
   }
 
-  // TODO: check if the key is a cell key or a row key. Should always use the
-  // row key? Need to debug
   getKeyPageAbove(key: Key) {
-    console.log('key in getPageAbovec', key)
     let itemRect = this.getItemRect(key);
     if (!itemRect) {
       return null;
@@ -326,10 +320,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
-  // TODO: check if the key is a cell key or a row key. Should always use the
-  // row key? Need to debug
   getKeyPageBelow(key: Key) {
-    console.log('key in getPageBelow', key)
     let itemRect = this.getItemRect(key);
 
     if (!itemRect) {
