@@ -85,7 +85,6 @@ const ComplexItemsTemplate = <T extends object>(): Story<SpectrumPickerProps<T>>
   </Picker>
 );
 
-
 export const Default = Template().bind({});
 Default.args = {label: 'Pick your favorite', isOpen: true};
 
@@ -107,3 +106,10 @@ ValidationStateValid.args = {...Default.args, validationState: 'valid'};
 
 export const ComplexItems = ComplexItemsTemplate().bind({});
 ComplexItems.args = {...Default.args};
+
+export const ComplexItemsLabelPositionSideValidationStateInvalidMobileViewport = ComplexItemsTemplate().bind({});
+ComplexItemsLabelPositionSideValidationStateInvalidMobileViewport.args = {...Default.args, labelPosition: 'side', validationState: 'invalid'};
+ComplexItemsLabelPositionSideValidationStateInvalidMobileViewport.parameters = {
+  chromatic: {viewports: [320]},
+  chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+};
