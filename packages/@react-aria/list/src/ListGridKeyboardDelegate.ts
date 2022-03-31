@@ -13,6 +13,7 @@
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate, GridKeyboardDelegateOptions} from '@react-aria/grid';
 import {Key} from 'react';
+import {Rect} from '@react-stately/virtualizer';
 
 // TODO: Open to feedback about name, ListKeyboardDelegate already exists
 export class ListGridKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollection<T>> {
@@ -20,37 +21,54 @@ export class ListGridKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCol
     super({...options, focusMode: 'row'});
   }
 
+  private getRowKey(key: Key) {
+    let startItem = key != null ? this.collection.getItem(key) : null;
+    if (!startItem) {
+      return;
+    }
+
+    // If focus was on a cell, start searching from the parent row
+    if (this.isCell(startItem)) {
+      key = startItem.parentKey;
+    }
+
+    return key;
+  }
+
   // TODO: think about whether or not focus should be moved to the row or to the children in the cell
   // Feels kinda weird to move it to the first child in the cell when focus used to be on the last child in the
   // cell above...
   getKeyBelow(key: Key) {
-    let startItem = this.collection.getItem(key);
-    if (!startItem) {
-      return;
-    }
-
-    // If focus was on a cell, start searching from the parent row
-    if (this.isCell(startItem)) {
-      key = startItem.parentKey;
-    }
-
-    return this.findNextKey(key);
+    key = this.getRowKey(key);
+    return key != null ? this.findNextKey(key) : null;
   }
 
   getKeyAbove(key: Key) {
-    let startItem = this.collection.getItem(key);
-    if (!startItem) {
-      return;
-    }
-
-    // If focus was on a cell, start searching from the parent row
-    if (this.isCell(startItem)) {
-      key = startItem.parentKey;
-    }
-
+    key = this.getRowKey(key);
     return this.findPreviousKey(key);
   }
 
+  getFirstKey() {
+    return this.collection.getFirstKey();
+  }
 
-  // TODO: double check if getLastKey needs to be overridden here as well
+  getLastKey() {
+    return this.collection.getLastKey();
+  }
+
+  protected getItemRect(key: Key): Rect {
+    key = this.getRowKey(key);
+    if (key == null) {
+      return;
+    }
+
+    if (this.layout) {
+      return this.layout.getLayoutInfo(key)?.rect;
+    }
+
+    let item = this.getItem(key);
+    if (item) {
+      return new Rect(item.offsetLeft, item.offsetTop, item.offsetWidth, item.offsetHeight);
+    }
+  }
 }

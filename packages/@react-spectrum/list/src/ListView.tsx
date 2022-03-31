@@ -43,7 +43,7 @@ import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue {
   state: GridState<object, GridCollection<any>>,
-  keyboardDelegate: ListGridKeyboardDelegate<unknown, GridCollection<any>>,
+  keyboardDelegate: ListGridKeyboardDelegate<unknown>,
   dragState: DraggableCollectionState,
   onAction:(key: string) => void,
   isListDraggable: boolean
@@ -146,7 +146,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let layout = useListLayout(state, props.density || 'regular');
-  let keyboardDelegate = useMemo(() => new ListGridKeyboardDelegate<T>({
+  let keyboardDelegate = useMemo(() => new ListGridKeyboardDelegate({
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     ref: domRef,
