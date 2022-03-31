@@ -588,13 +588,13 @@ describe('ListView', function () {
         let rows = tree.getAllByRole('row');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getCell(tree, 'Bar'), {ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Bar'), {ctrlKey: true}));
 
         checkSelection(onSelectionChange, ['bar']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
         onSelectionChange.mockClear();
-        act(() => userEvent.click(getCell(tree, 'Baz'), {ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Baz'), {ctrlKey: true}));
         checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
@@ -610,13 +610,13 @@ describe('ListView', function () {
         expect(rows[0]).toHaveAttribute('aria-selected', 'false');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getCell(tree, 'Foo'), {ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Foo'), {ctrlKey: true}));
 
         checkSelection(onSelectionChange, ['foo']);
         expect(rows[0]).toHaveAttribute('aria-selected', 'true');
 
         onSelectionChange.mockClear();
-        act(() => userEvent.click(getCell(tree, 'Baz'), {ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Baz'), {ctrlKey: true}));
         checkSelection(onSelectionChange, ['foo', 'baz']);
         expect(rows[0]).toHaveAttribute('aria-selected', 'true');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -632,13 +632,13 @@ describe('ListView', function () {
         let rows = tree.getAllByRole('row');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getCell(tree, 'Bar'), {metaKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Bar'), {metaKey: true}));
 
         checkSelection(onSelectionChange, ['bar']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
         onSelectionChange.mockClear();
-        act(() => userEvent.click(getCell(tree, 'Baz'), {metaKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Baz'), {metaKey: true}));
         checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
@@ -700,7 +700,7 @@ describe('ListView', function () {
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getCell(tree, 'Bar'), {ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Bar'), {ctrlKey: true}));
 
         checkSelection(onSelectionChange, ['bar']);
         expect(row).toHaveAttribute('aria-selected', 'true');
