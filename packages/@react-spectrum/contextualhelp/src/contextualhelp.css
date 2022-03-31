@@ -10,14 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-ContextualHelp {
+.react-spectrum-ContextualHelp-button.react-spectrum-ContextualHelp-button {
   --spectrum-contextualhelp-button-size: var(--spectrum-global-dimension-size-250);
   --spectrum-contextualhelp-icon-size: var(--spectrum-global-dimension-size-175);
-  --spectrum-contexualhelp-dialog-width: 250px;
-  --spectrum-contextualhelp-dialog-padding: var(--spectrum-global-dimension-static-size-300);
-}
 
-.react-spectrum-ContextualHelp-button {
   --spectrum-button-primary-height: var(--spectrum-contextualhelp-button-size);
   --spectrum-actionbutton-height: var(--spectrum-contextualhelp-button-size);
   --spectrum-actionbutton-min-width: var(--spectrum-contextualhelp-button-size);
@@ -31,6 +27,9 @@
 }
 
 .react-spectrum-ContextualHelp-dialog.react-spectrum-ContextualHelp-dialog {
+  --spectrum-contexualhelp-dialog-width: 250px;
+  --spectrum-contextualhelp-dialog-padding: var(--spectrum-global-dimension-static-size-300);
+
   width: var(--spectrum-contexualhelp-dialog-width);
   --spectrum-dialog-padding-x: var(--spectrum-contextualhelp-dialog-padding);
   --spectrum-dialog-padding-y: var(--spectrum-contextualhelp-dialog-padding);

@@ -249,7 +249,7 @@ html, body {
     right: 0;
     bottom: 0;
 
-    border: var(--spectrum-tabs-focus-ring-size) solid transparent;
+    border: var(--spectrum-alias-border-size-thick) solid transparent;
     border-radius: var(--spectrum-sidenav-item-border-radius);
 
     border-color: var(--spectrum-sidenav-item-border-color-key-focus);

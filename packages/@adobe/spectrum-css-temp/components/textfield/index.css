@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-.spectrum-Textfield {
+.spectrum-Textfield.spectrum-Textfield {
   --spectrum-textfield-padding-top: 3px;
   --spectrum-textfield-padding-bottom: 5px;
 

@@ -160,12 +160,12 @@ governing permissions and limitations under the License.
 
 .spectrum-Textfield-validationIcon {
   @nest .spectrum-Textfield--valid & {
-    fill: var(--spectrum-alert-success-icon-color);
+    fill: var(--spectrum-semantic-positive-color-icon);
 
   }
 
   @nest .spectrum-Textfield--invalid & {
-    fill: var(--spectrum-alert-error-icon-color);
+    fill: var(--spectrum-textfield-validation-icon-color-error)
 
   }
 }

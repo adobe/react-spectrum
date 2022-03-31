@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-.spectrum-Stepper {
+.spectrum-Stepper-vars {
   --spectrum-stepper-button-height: calc(var(--spectrum-component-single-line-height) / 2);
   --spectrum-stepper-button-width: 24px;
   --spectrum-stepper-padding: calc(var(--spectrum-padding) / 2);
@@ -27,6 +27,7 @@ governing permissions and limitations under the License.
 .spectrum-Stepper {
   composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-actionbutton.css";
   composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-textfield.css";
+  composes: spectrum-Stepper-vars;
   display: inline-grid;
 
   inline-size: var(--spectrum-stepper-default-width-desktop);
@@ -108,6 +109,8 @@ governing permissions and limitations under the License.
     &.spectrum-Stepper--showStepper {
       &:not(.spectrum-Stepper--isMobile) {
         & .spectrum-Stepper-input {
+          border-start-start-radius: var(--spectrum-border-radius);
+          border-end-start-radius: var(--spectrum-border-radius);
           border-start-end-radius: 0;
           border-end-end-radius: 0;
         }
@@ -208,6 +211,8 @@ governing permissions and limitations under the License.
 
 /* this is specific to handling default width */
 .spectrum-Stepper-container {
+  composes: spectrum-Stepper-vars;
+
   /* ensure we have higher specificity than .spectrum-Field */
   &.spectrum-Stepper-container {
     /* override the default width of the field container, only with labelPosition=top. */

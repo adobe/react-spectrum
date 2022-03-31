@@ -37,9 +37,6 @@ governing permissions and limitations under the License.
   --spectrum-font-family-ko: 'adobe-clean-han-korean', 'Malgun Gothic', 'Apple Gothic', var(--spectrum-font-fallbacks-sans);
   --spectrum-font-family-ja: 'adobe-clean-han-japanese', 'Yu Gothic', '\30E1 \30A4 \30EA \30AA', '\30D2 \30E9 \30AE \30CE \89D2 \30B4  Pro W3', 'Hiragino Kaku Gothic Pro W3', 'Osaka', '\FF2D \FF33 \FF30 \30B4 \30B7 \30C3 \30AF', 'MS PGothic', var(--spectrum-font-fallbacks-sans);
   --spectrum-text-size: var(--spectrum-alias-font-size-default);
-  --spectrum-text-body-line-height: var(--spectrum-alias-line-height-medium);
-  --spectrum-text-size-text-label: var(--spectrum-label-text-size);
-  --spectrum-line-height-text-label: var(--spectrum-label-text-line-height);
 }
 
 .i18nFontFamily {

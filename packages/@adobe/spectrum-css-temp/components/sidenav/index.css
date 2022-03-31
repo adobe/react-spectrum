@@ -16,7 +16,6 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-SideNav {
-  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-tabs.css";
   composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-sidenav.css";
   list-style-type: none;
   margin: 0;
@@ -71,7 +70,7 @@ governing permissions and limitations under the License.
     right: 0;
     bottom: 0;
 
-    border: var(--spectrum-tabs-focus-ring-size) solid transparent;
+    border: var(--spectrum-alias-border-size-thick) solid transparent;
     border-radius: var(--spectrum-sidenav-item-border-radius);
   }
 
