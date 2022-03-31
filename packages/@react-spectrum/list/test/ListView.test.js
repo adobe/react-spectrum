@@ -37,7 +37,7 @@ function pointerEvent(type, opts) {
 }
 
 describe('ListView', function () {
-  let offsetWidth, offsetHeight;
+  let offsetWidth, offsetHeight, scrollHeight;
   let onSelectionChange = jest.fn();
   let onAction = jest.fn();
   let onDragStart = jest.fn();
@@ -48,10 +48,21 @@ describe('ListView', function () {
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
   };
+  let items = [
+    {key: 'foo', label: 'Foo'},
+    {key: 'bar', label: 'Bar'},
+    {key: 'baz', label: 'Baz'}
+  ];
+
+  let manyItems = [];
+  for (let i = 1; i <= 100; i++) {
+    manyItems.push({id: i, label: 'Foo ' + i});
+  }
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
     jest.useFakeTimers();
   });
 
@@ -62,6 +73,7 @@ describe('ListView', function () {
   afterAll(function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
+    scrollHeight.mockReset();
   });
 
   let render = (children, locale = 'en-US', scale = 'medium') => {
@@ -75,10 +87,50 @@ describe('ListView', function () {
     return tree;
   };
 
-  let getCell = (tree, text) => {
-    // Find by text, then go up to the element with the cell role.
+  let renderList = (props = {}) => {
+    let {
+      locale,
+      scale,
+      ...otherProps
+    } = props;
+    return render(
+      <ListView items={items} aria-label="List" {...otherProps}>
+        {item => (
+          <Item textValue={item.label}>
+            {item.label}
+          </Item>
+        )}
+      </ListView>,
+      locale,
+      scale
+    );
+  };
+
+  let renderListWithFocusables = (props = {}) => {
+    let {
+      locale,
+      scale,
+      ...otherProps
+    } = props;
+    return render(
+      <ListView items={items} aria-label="List" {...otherProps}>
+        {item => (
+          <Item textValue={item.label}>
+            {item.label}
+            <ActionButton>button1 {item.label}</ActionButton>
+            <ActionButton>button2 {item.label}</ActionButton>
+          </Item>
+        )}
+      </ListView>,
+      locale,
+      scale
+    );
+  };
+
+  let getRow = (tree, text) => {
+    // Find by text, then go up to the element with the row role.
     let el = tree.getByText(text);
-    while (el && !/gridcell|rowheader|columnheader/.test(el.getAttribute('role'))) {
+    while (el && !/row/.test(el.getAttribute('role'))) {
       el = el.parentElement;
     }
 
@@ -114,7 +166,7 @@ describe('ListView', function () {
     expect(gridCells[0]).toHaveTextContent('Foo');
   });
 
-  it('renders a dynamic table', function () {
+  it('renders a dynamic listview', function () {
     let items = [
       {key: 'foo', label: 'Foo'},
       {key: 'bar', label: 'Bar'},
@@ -166,40 +218,35 @@ describe('ListView', function () {
     expect(gridCells[0]).toHaveTextContent('Foo');
   });
 
+  it('should retain focus on the pressed child', function () {
+    let tree = renderListWithFocusables();
+    let button = within(getRow(tree, 'Foo')).getAllByRole('button')[1];
+    act(() => triggerPress(button));
+    expect(document.activeElement).toBe(button);
+  });
+
+  it('should focus the row if the cell is pressed', function () {
+    let tree = renderList();
+    let cell = within(getRow(tree, 'Bar')).getByRole('gridcell');
+    act(() => {
+      cell.focus();
+      jest.runAllTimers();
+    });
+    expect(document.activeElement).toBe(getRow(tree, 'Bar'));
+  });
+
+  it('should have an aria-label on the row for the row text content', function () {
+    let tree = renderList();
+    expect(getRow(tree, 'Foo')).toHaveAttribute('aria-label', 'Foo');
+    expect(getRow(tree, 'Bar')).toHaveAttribute('aria-label', 'Bar');
+    expect(getRow(tree, 'Baz')).toHaveAttribute('aria-label', 'Baz');
+  });
+
   describe('keyboard focus', function () {
-    let items = [
-      {key: 'foo', label: 'Foo'},
-      {key: 'bar', label: 'Bar'},
-      {key: 'baz', label: 'Baz'}
-    ];
-    let renderList = () => render(
-      <ListView items={items} aria-label="List">
-        {item => (
-          <Item textValue={item.key}>
-            {item.label}
-          </Item>
-        )}
-      </ListView>
-    );
-
-    let renderListWithFocusables = (locale, scale) => render(
-      <ListView items={items} aria-label="List">
-        {item => (
-          <Item textValue={item.key}>
-            {item.label}
-            <ActionButton>button1 {item.label}</ActionButton>
-            <ActionButton>button2 {item.label}</ActionButton>
-          </Item>
-        )}
-      </ListView>,
-      locale,
-      scale
-    );
-
     describe('Type to select', function () {
       it('focuses the correct cell when typing', function () {
         let tree = renderList();
-        let target = getCell(tree, 'Baz');
+        let target = getRow(tree, 'Baz');
         let grid = tree.getByRole('grid');
         act(() => grid.focus());
         fireEvent.keyDown(grid, {key: 'B'});
@@ -215,7 +262,7 @@ describe('ListView', function () {
     describe('ArrowRight', function () {
       it('should not move focus if no focusables present', function () {
         let tree = renderList();
-        let start = getCell(tree, 'Foo');
+        let start = getRow(tree, 'Foo');
         act(() => start.focus());
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(start);
@@ -224,8 +271,8 @@ describe('ListView', function () {
       describe('with cell focusables', function () {
         it('should move focus to next cell and back to row', function () {
           let tree = renderListWithFocusables();
-          let focusables = within(tree.getAllByRole('row')[0]).getAllByRole('button');
-          let start = getCell(tree, 'Foo');
+          let start = getRow(tree, 'Foo');
+          let focusables = within(start).getAllByRole('button');
           act(() => start.focus());
           moveFocus('ArrowRight');
           expect(document.activeElement).toBe(focusables[0]);
@@ -236,12 +283,14 @@ describe('ListView', function () {
         });
 
         it('should move focus to previous cell in RTL', function () {
-          let tree = renderListWithFocusables('ar-AE');
+          let tree = renderListWithFocusables({locale: 'ar-AE'});
           // Should move from button two to button one
-          let start = within(tree.getAllByRole('row')[0]).getAllByRole('button')[1];
-          let end = within(tree.getAllByRole('row')[0]).getAllByRole('button')[0];
-          act(() => start.focus());
+          let start = within(getRow(tree, 'Foo')).getAllByRole('button')[1];
+          let end = within(getRow(tree, 'Foo')).getAllByRole('button')[0];
+          // Need to press to set a modality, otherwise useSelectableCollection will think this is a tab operation
+          act(() => triggerPress(start));
           expect(document.activeElement).toHaveTextContent('button2 Foo');
+          expect(document.activeElement).toBe(start);
           moveFocus('ArrowRight');
           expect(document.activeElement).toBe(end);
           expect(document.activeElement).toHaveTextContent('button1 Foo');
@@ -252,7 +301,7 @@ describe('ListView', function () {
     describe('ArrowLeft', function () {
       it('should not move focus if no focusables present', function () {
         let tree = renderList();
-        let start = getCell(tree, 'Foo');
+        let start = getRow(tree, 'Foo');
         act(() => start.focus());
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(start);
@@ -261,9 +310,8 @@ describe('ListView', function () {
       describe('with cell focusables', function () {
         it('should move focus to previous cell and back to row', function () {
           let tree = renderListWithFocusables();
-          let focusables = within(tree.getAllByRole('row')[0]).getAllByRole('button');
-          let start = getCell(tree, 'Foo');
-          // console.log('start', start)
+          let focusables = within(getRow(tree, 'Foo')).getAllByRole('button');
+          let start = getRow(tree, 'Foo');
           act(() => start.focus());
           moveFocus('ArrowLeft');
           expect(document.activeElement).toBe(focusables[1]);
@@ -274,12 +322,14 @@ describe('ListView', function () {
         });
 
         it('should move focus to next cell in RTL', function () {
-          let tree = renderListWithFocusables('ar-AE');
+          let tree = renderListWithFocusables({locale: 'ar-AE'});
           // Should move from button one to button two
-          let start = within(tree.getAllByRole('row')[0]).getAllByRole('button')[0];
-          let end = within(tree.getAllByRole('row')[0]).getAllByRole('button')[1];
-          act(() => start.focus());
+          let start = within(getRow(tree, 'Foo')).getAllByRole('button')[0];
+          let end = within(getRow(tree, 'Foo')).getAllByRole('button')[1];
+          // Need to press to set a modality, otherwise useSelectableCollection will think this is a tab operation
+          act(() => triggerPress(start));
           expect(document.activeElement).toHaveTextContent('button1 Foo');
+          expect(document.activeElement).toBe(start);
           moveFocus('ArrowLeft');
           expect(document.activeElement).toBe(end);
           expect(document.activeElement).toHaveTextContent('button2 Foo');
@@ -288,9 +338,9 @@ describe('ListView', function () {
     });
 
     describe('ArrowUp', function () {
-      it('should not change focus from first item', function () {
+      it('should not wrap focus', function () {
         let tree = renderListWithFocusables();
-        let start = getCell(tree, 'Foo');
+        let start = getRow(tree, 'Foo');
         act(() => start.focus());
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(start);
@@ -298,8 +348,8 @@ describe('ListView', function () {
 
       it('should move focus to above row', function () {
         let tree = renderListWithFocusables();
-        let start = getCell(tree, 'Bar');
-        let end = getCell(tree, 'Foo');
+        let start = getRow(tree, 'Bar');
+        let end = getRow(tree, 'Foo');
         act(() => start.focus());
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(end);
@@ -307,9 +357,9 @@ describe('ListView', function () {
     });
 
     describe('ArrowDown', function () {
-      it('should not change focus from first item', function () {
+      it('should not wrap focus', function () {
         let tree = renderListWithFocusables();
-        let start = getCell(tree, 'Baz');
+        let start = getRow(tree, 'Baz');
         act(() => start.focus());
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(start);
@@ -317,11 +367,95 @@ describe('ListView', function () {
 
       it('should move focus to below row', function () {
         let tree = renderListWithFocusables();
-        let start = getCell(tree, 'Foo');
-        let end = getCell(tree, 'Bar');
+        let start = getRow(tree, 'Foo');
+        let end = getRow(tree, 'Bar');
         act(() => start.focus());
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(end);
+      });
+    });
+
+    describe('PageUp', function () {
+      it('should move focus to a row a page above when focus starts on a row', function () {
+        let tree = renderListWithFocusables({items: manyItems});
+        let start = getRow(tree, 'Foo 25');
+        act(() => start.focus());
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
+      });
+
+      it('should move focus to a row a page above when focus starts in the row cell', function () {
+        let tree = renderListWithFocusables({items: manyItems});
+        let focusables = within(getRow(tree, 'Foo 25')).getAllByRole('button');
+        let start = focusables[0];
+        act(() => triggerPress(start));
+        expect(document.activeElement).toBe(start);
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
+      });
+    });
+
+    describe('PageDown', function () {
+      it('should move focus to a row a page below when focus starts on a row', function () {
+        let tree = renderListWithFocusables({items: manyItems});
+        let start = getRow(tree, 'Foo 1');
+        act(() => start.focus());
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getRow(tree, 'Foo 25'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getRow(tree, 'Foo 49'));
+      });
+
+      it('should move focus to a row a page below when focus starts in the row cell', function () {
+        let tree = renderListWithFocusables({items: manyItems});
+        let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
+        let start = focusables[0];
+        act(() => triggerPress(start));
+        expect(document.activeElement).toBe(start);
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getRow(tree, 'Foo 25'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(getRow(tree, 'Foo 49'));
+      });
+    });
+
+    describe('Home', function () {
+      it('should move focus to the first row when focus starts on a row', function () {
+        let tree = renderListWithFocusables({items: manyItems});
+        let start = getRow(tree, 'Foo 15');
+        act(() => start.focus());
+        moveFocus('Home');
+        expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
+      });
+
+      it('should move focus to the first row when focus starts in the row cell', function () {
+        let tree = renderListWithFocusables({items: manyItems});
+        let focusables = within(getRow(tree, 'Foo 15')).getAllByRole('button');
+        let start = focusables[0];
+        act(() => triggerPress(start));
+        expect(document.activeElement).toBe(start);
+        moveFocus('Home');
+        expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
+      });
+    });
+
+    describe('End', function () {
+      it('should move focus to the last row when focus starts on a row', function () {
+        let tree = renderListWithFocusables({items: manyItems});
+        let start = getRow(tree, 'Foo 1');
+        act(() => start.focus());
+        moveFocus('End');
+        expect(document.activeElement).toBe(getRow(tree, 'Foo 100'));
+      });
+
+      it('should move focus to the last row when focus starts in the row cell', function () {
+        let tree = renderListWithFocusables({items: manyItems});
+        let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
+        let start = focusables[0];
+        act(() => triggerPress(start));
+        expect(document.activeElement).toBe(start);
+        moveFocus('End');
+        expect(document.activeElement).toBe(getRow(tree, 'Foo 100'));
       });
     });
   });
@@ -587,14 +721,7 @@ describe('ListView', function () {
   });
 
   describe('scrolling', function () {
-    beforeAll(() => {
-      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
-        .mockImplementation(function () {
-          return 40;
-        });
-    });
-
-    it('should scroll to a cell when it is focused', function () {
+    it('should scroll to a row when it is focused', function () {
       let tree = render(
         <ListView
           width="250px"
@@ -633,13 +760,13 @@ describe('ListView', function () {
       moveFocus('ArrowDown');
       moveFocus('ArrowDown');
       moveFocus('ArrowDown');
-      expect(document.activeElement).toBe(getCell(tree, 'Item 3'));
+      expect(document.activeElement).toBe(getRow(tree, 'Item 3'));
       expect(grid.scrollTop).toBe(100);
 
       moveFocus('ArrowUp');
       moveFocus('ArrowUp');
       moveFocus('ArrowUp');
-      expect(document.activeElement).toBe(getCell(tree, 'Item 0'));
+      expect(document.activeElement).toBe(getRow(tree, 'Item 0'));
       expect(grid.scrollTop).toBe(0);
     });
   });

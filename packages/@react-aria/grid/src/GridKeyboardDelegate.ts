@@ -33,7 +33,6 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   protected collator: Intl.Collator;
   protected layout: Layout<Node<T>>;
   protected focusMode;
-  protected skipCell;
 
   constructor(options: GridKeyboardDelegateOptions<T, C>) {
     this.collection = options.collection;

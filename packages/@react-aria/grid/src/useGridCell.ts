@@ -80,7 +80,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       let focusable = state.selectionManager.childFocusStrategy === 'last'
         ? last(treeWalker)
         : treeWalker.firstChild() as HTMLElement;
-
       if (focusable) {
         focusSafely(focusable);
         return;
@@ -114,6 +113,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
+
     switch (e.key) {
       case 'ArrowLeft': {
         // Find the next focusable element within the cell.
