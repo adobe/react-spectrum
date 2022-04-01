@@ -62,24 +62,10 @@ function ExampleDialog(props) {
 }
 
 
-export function NestedDialogContainerExample(props) {
-  let {useRestoreFocusRef = false} = props;
+export function NestedDialogContainerExample() {
   let [dialog, setDialog] = React.useState(null);
-  let [shouldUseRestoreFocusRef, setShouldUseRestoreFocusRef] = React.useState(useRestoreFocusRef);
   let triggerRef = useRef();
-  let afterThisRef = useRef();
-  let afterThatRef = useRef();
-  let dismiss = () => {
-    if (!useRestoreFocusRef) {
-      setDialog(null);
-      return;
-    }
-    setShouldUseRestoreFocusRef(false);
-    requestAnimationFrame(() => {
-      setDialog(null);
-      setShouldUseRestoreFocusRef(true);
-    });
-  };
+  let dismiss = () => setDialog(null);
 
   return (
     <>
@@ -90,73 +76,18 @@ export function NestedDialogContainerExample(props) {
           <Item key="doThat">Do that…</Item>
         </Menu>
       </MenuTrigger>
-      {useRestoreFocusRef &&
-        <>
-          <input ref={afterThisRef} placeholder="Focus after this" />
-          <input ref={afterThatRef} placeholder="Focus after that" />
-        </>
-      }
       <DialogContainer onDismiss={dismiss}>
-        {dialog === 'doThis' &&
+        {dialog !== null &&
           <Dialog
             onDismiss={dismiss}
-            {
-              ...(
-                useRestoreFocusRef ?
-                {
-                  restoreFocus: (shouldUseRestoreFocusRef ? afterThisRef : triggerRef)
-                } : {
-                  isDismissable: true
-                }
-              )
-            }>
-            <Heading>This</Heading>
+            isDismissable>
+            <Heading>{dialog === 'doThis' ? 'This' : 'That' }</Heading>
             <Divider />
-            {useRestoreFocusRef ? (
-              <>
-                <Content><Text>Press “Do that” button to open a secondary dialog, or “This” button to “Do this.”</Text></Content>
-                <ButtonGroup>
-                  <Button variant="secondary" onPress={() => setDialog('doThat')} autoFocus>Do that</Button>
-                  <Button variant="secondary" onPress={dismiss}>Cancel</Button>
-                  <Button variant="cta" onPress={() => setDialog(null)}>This</Button>
-                </ButtonGroup>
-              </>
-            ) : (
-              <Content>
-                <ActionButton onPress={() => setDialog('doThat')} autoFocus>Do that</ActionButton>
-              </Content>
-            )}
-          </Dialog>
-        }
-        {dialog === 'doThat' &&
-          <Dialog
-            onDismiss={dismiss}
-            {
-              ...(
-                useRestoreFocusRef ?
-                {
-                  restoreFocus: (shouldUseRestoreFocusRef ? afterThatRef : triggerRef)
-                } : {
-                  isDismissable: true
-                }
-              )
-            }>
-            <Heading>That</Heading>
-            <Divider />
-            {useRestoreFocusRef ? (
-              <>
-                <Content><Text>Press “Do this” button to open a secondary dialog, or “That” button to “Do that.”</Text></Content>
-                <ButtonGroup>
-                  <Button variant="secondary" onPress={() => setDialog('doThis')} autoFocus>Do this</Button>
-                  <Button variant="secondary" onPress={dismiss}>Cancel</Button>
-                  <Button variant="cta" onPress={() => setDialog(null)}>That</Button>
-                </ButtonGroup>
-              </>
-            ) : (
-              <Content>
-                <ActionButton onPress={() => setDialog('doThis')} autoFocus>Do this</ActionButton>
-              </Content>
-            )}
+            <Content>
+              <ActionButton
+                onPress={() => setDialog(dialog === 'doThis' ? 'doThat' : 'doThis')}
+                autoFocus>{dialog === 'doThis' ? 'Do that' : 'Do this' }</ActionButton>
+            </Content>
           </Dialog>
         }
       </DialogContainer>

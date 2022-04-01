@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRefValue, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode, RefObject} from 'react';
 
@@ -74,9 +74,8 @@ export interface SpectrumDialogProps extends AriaDialogProps, StyleProps {
   /**
    * Whether to restore focus back to the element that was focused
    * when the focus scope mounted, after the focus scope unmounts.
-   * Optionally accepts a RefObject for the element that should receive focus.
    */
-  restoreFocus?: boolean | RefObject<DOMRefValue<HTMLElement>> | RefObject<HTMLElement>
+  restoreFocus?: boolean
 }
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {

@@ -45,7 +45,6 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     isDismissable = contextProps.isDismissable,
     onDismiss = contextProps.onClose,
     size,
-    restoreFocus = true,
     ...otherProps
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
@@ -70,7 +69,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     content: {UNSAFE_className: styles['spectrum-Dialog-content']},
     footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
     buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter}), align: 'end'}
-  }), [styles, hasFooter, hasHeader, titleProps]);
+  }), [hasFooter, hasHeader, titleProps]);
 
   // If rendered in a popover or tray there won't be a visible dismiss button,
   // so we render a hidden one for screen readers.
@@ -80,7 +79,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   }
 
   return (
-    <FocusScope contain restoreFocus={restoreFocus}>
+    <FocusScope contain restoreFocus>
       <section
         {...styleProps}
         {...dialogProps}

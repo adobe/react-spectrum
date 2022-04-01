@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRefValue} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
@@ -34,7 +33,7 @@ interface FocusScopeProps {
    * when the focus scope mounted, after the focus scope unmounts.
    * Optionally accepts a RefObject for the element that should receive focus.
    */
-  restoreFocus?: boolean | RefObject<DOMRefValue<HTMLElement>> | RefObject<HTMLElement>,
+  restoreFocus?: boolean,
 
   /** Whether to auto focus the first focusable element in the focus scope on mount. */
   autoFocus?: boolean
@@ -404,23 +403,15 @@ function removeFromNodeToRestoreArray(node: HTMLElement) {
   }
 }
 
-function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean | RefObject<DOMRefValue<HTMLElement>> | RefObject<HTMLElement>, contain: boolean) {
+function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
   const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? document.activeElement as HTMLElement : null);
 
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
+    let nodeToRestore = nodeToRestoreRef.current;
     if (!restoreFocus) {
       return;
-    }
-
-    let defaultNodeToRestore: HTMLElement = nodeToRestoreRef.current as HTMLElement;
-    let nodeToRestore: HTMLElement;
-
-    if (typeof restoreFocus === 'boolean') {
-      nodeToRestore = defaultNodeToRestore;
-    } else if (restoreFocus.current) {
-      nodeToRestore = restoreFocus.current instanceof HTMLElement ? restoreFocus.current : restoreFocus.current.UNSAFE_getDOMNode();
     }
 
     addToNodeToRestoreArray(nodeToRestore);
@@ -485,13 +476,6 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
     return () => {
       if (!contain) {
         document.removeEventListener('keydown', onKeyDown, true);
-      }
-
-      if (!nodeToRestore || !document.body.contains(nodeToRestore) || !isElementVisible(nodeToRestore)) {
-        // If the expected nodeToRestore was an explicit ref no longer in the document,
-        // we should try to restore focus to what would have been the node to restore when the scope opened.
-        addToNodeToRestoreArray(defaultNodeToRestore);
-        nodeToRestore = defaultNodeToRestore;
       }
 
       if (nodeToRestore) {
