@@ -35,6 +35,24 @@ export class ListGridKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCol
     return key;
   }
 
+  // Return the same key since the ListView is a single column grid and focusMode is 'cell', thus we will never
+  // leave the cell via left/right arrows. useGridCell will handle moving focus to any focusable children that exist as well as RTL behavior
+  getKeyLeftOf(key: Key) {
+    return key;
+  }
+
+  getKeyRightOf(key: Key) {
+    return key;
+  }
+
+  getFirstKey() {
+    return this.collection.getFirstKey();
+  }
+
+  getLastKey() {
+    return this.collection.getLastKey();
+  }
+
   protected getItemRect(key: Key): Rect {
     // Get row key since the list layout will only have the row keys, not cell keys
     key = this.getRowKey(key);
