@@ -38,7 +38,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
+import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue {
@@ -142,7 +142,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let state = useGridState({
     ...props,
     collection: gridCollection,
-    focusMode: 'row',
+    focusMode: 'cell',
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let layout = useListLayout(state, props.density || 'regular');

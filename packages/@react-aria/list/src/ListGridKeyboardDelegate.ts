@@ -18,7 +18,7 @@ import {Rect} from '@react-stately/virtualizer';
 // TODO: Open to feedback about name, ListKeyboardDelegate already exists
 export class ListGridKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollection<T>> {
   constructor(options: Omit<GridKeyboardDelegateOptions<T, GridCollection<T>>, 'focusMode'>) {
-    super({...options, focusMode: 'row'});
+    super({...options, focusMode: 'cell'});
   }
 
   private getRowKey(key: Key) {
@@ -35,28 +35,8 @@ export class ListGridKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCol
     return key;
   }
 
-  // TODO: think about whether or not focus should be moved to the row or to the children in the cell
-  // Feels kinda weird to move it to the first child in the cell when focus used to be on the last child in the
-  // cell above...
-  getKeyBelow(key: Key) {
-    key = this.getRowKey(key);
-    return key != null ? this.findNextKey(key) : null;
-  }
-
-  getKeyAbove(key: Key) {
-    key = this.getRowKey(key);
-    return this.findPreviousKey(key);
-  }
-
-  getFirstKey() {
-    return this.collection.getFirstKey();
-  }
-
-  getLastKey() {
-    return this.collection.getLastKey();
-  }
-
   protected getItemRect(key: Key): Rect {
+    // Get row key since the list layout will only have the row keys, not cell keys
     key = this.getRowKey(key);
     if (key == null) {
       return;
