@@ -35,14 +35,15 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
     isSelected,
     isDisabled,
     isFocused,
+    isInvalid,
     formattedDate
   } = useCalendarCell({
     ...props,
     isDisabled: !isSameMonth(props.date, currentMonth)
   }, state, ref);
   let isUnavailable = state.isCellUnavailable(props.date) && !isDisabled;
-  let isLastSelectedBeforeDisabled = !isDisabled && state.isCellUnavailable(props.date.add({days: 1}));
-  let isFirstSelectedAfterDisabled = !isDisabled && state.isCellUnavailable(props.date.subtract({days: 1}));
+  let isLastSelectedBeforeDisabled = !isDisabled && !isInvalid && state.isCellUnavailable(props.date.add({days: 1}));
+  let isFirstSelectedAfterDisabled = !isDisabled && !isInvalid && state.isCellUnavailable(props.date.subtract({days: 1}));
   let highlightedRange = 'highlightedRange' in state && state.highlightedRange;
   let isSelectionStart = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.start);
   let isSelectionEnd = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.end);
@@ -52,6 +53,13 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
   let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isUnavailable || state.isReadOnly});
+
+  // Style disabled (i.e. out of min/max range), but selected dates as unavailable
+  // since it is more clear than than trying to dim the selection.
+  if (isDisabled && isInvalid) {
+    isDisabled = false;
+    isUnavailable = true;
+  }
 
   return (
     <td
@@ -73,7 +81,8 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
           'is-selection-start': isSelectionStart,
           'is-selection-end': isSelectionEnd,
           'is-hovered': isHovered,
-          'is-pressed': isPressed && !state.isReadOnly
+          'is-pressed': isPressed && !state.isReadOnly,
+          'is-invalid': isInvalid
         })}>
         <span className={classNames(styles, 'spectrum-Calendar-dateText')}>
           <span>{formattedDate}</span>

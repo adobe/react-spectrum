@@ -1179,6 +1179,111 @@ describe('RangeCalendar', () => {
 
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2022, 3, 9), end: new CalendarDate(2022, 4, 8)});
     });
+
+    it('should support validationState', () => {
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2022, 3, 10), end: new CalendarDate(2022, 3, 12)}}
+          validationState="invalid" />
+      );
+
+      let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
+      expect(cell).toHaveAttribute('aria-invalid', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
+
+      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected dates unavailable.');
+
+      act(() => cell.focus());
+
+      description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected dates unavailable. Click to start selecting date range');
+
+      let grid = getByRole('grid');
+      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected Range: March 10, 2022 to March 12, 2022 Selected dates unavailable.');
+    });
+
+    it('should support a custom errorMessage', () => {
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2022, 3, 10), end: new CalendarDate(2022, 3, 12)}}
+          validationState="invalid"
+          errorMessage="Selection dates cannot include weekends." />
+      );
+
+      let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
+      expect(cell).toHaveAttribute('aria-invalid', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
+
+      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selection dates cannot include weekends.');
+
+      act(() => cell.focus());
+
+      description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selection dates cannot include weekends. Click to start selecting date range');
+
+      let grid = getByRole('grid');
+      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected Range: March 10, 2022 to March 12, 2022 Selection dates cannot include weekends.');
+    });
+
+    it('does not show error message without validationState="invalid"', () => {
+      let {getByRole} = render(
+        <RangeCalendar
+          defaultValue={{start: new CalendarDate(2022, 3, 10), end: new CalendarDate(2022, 3, 12)}}
+          errorMessage="Selection dates cannot include weekends." />
+      );
+
+      let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
+      expect(cell).not.toHaveAttribute('aria-invalid', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(cell.parentElement).not.toHaveAttribute('aria-invalid', 'true');
+
+      expect(cell).not.toHaveAttribute('aria-describedby');
+      act(() => cell.focus());
+
+      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Click to start selecting date range');
+
+      let grid = getByRole('grid');
+      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected Range: March 10, 2022 to March 12, 2022');
+    });
+
+    it('automatically marks selection as invalid using isDateUnavailable', () => {
+      function Example() {
+        let {locale} = useLocale();
+        return (
+          <RangeCalendar
+            defaultValue={{start: new CalendarDate(2022, 3, 1), end: new CalendarDate(2022, 3, 5)}}
+            isDateUnavailable={date => isWeekend(date, locale)}
+            allowsNonContiguousRanges />
+        );
+      }
+
+      let {getByRole} = render(<Example />);
+
+      let cell = getByRole('button', {name: 'Friday, March 4, 2022 selected'});
+      expect(cell).toHaveAttribute('aria-invalid', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
+
+      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected dates unavailable.');
+
+      act(() => cell.focus());
+
+      description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected dates unavailable. Click to start selecting date range');
+
+      let grid = getByRole('grid');
+      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected Range: March 1, 2022 to March 5, 2022 Selected dates unavailable.');
+    });
   });
 
   // These tests only work against v3

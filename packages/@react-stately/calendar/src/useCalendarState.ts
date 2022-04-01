@@ -59,7 +59,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     visibleDuration = {months: 1},
     minValue,
     maxValue,
-    selectionAlignment
+    selectionAlignment,
+    isDateUnavailable
   } = props;
 
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
@@ -142,6 +143,9 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     }
   }
 
+  let isUnavailable = useMemo(() => calendarDateValue && isDateUnavailable && isDateUnavailable(calendarDateValue), [calendarDateValue, isDateUnavailable]);
+  let validationState = props.validationState || (isUnavailable ? 'invalid' : null);
+
   return {
     isDisabled: props.isDisabled,
     isReadOnly: props.isReadOnly,
@@ -153,6 +157,7 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     },
     focusedDate,
     timeZone,
+    validationState,
     setFocusedDate(date) {
       focusCell(date);
       setFocused(true);

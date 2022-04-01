@@ -133,6 +133,17 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
 
   let [isDragging, setDragging] = useState(false);
 
+  let {isDateUnavailable} = props;
+  let isInvalidSelection = useMemo(() => {
+    if (!isDateUnavailable || !value || anchorDate) {
+      return false;
+    }
+
+    return isDateUnavailable(value.start) || isDateUnavailable(value.end);
+  }, [isDateUnavailable, value, anchorDate]);
+
+  let validationState = props.validationState || (isInvalidSelection ? 'invalid' : null);
+
   return {
     ...calendar,
     value,
@@ -140,6 +151,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     anchorDate,
     setAnchorDate,
     highlightedRange,
+    validationState,
     selectFocusedDate() {
       selectDate(calendar.focusedDate);
     },

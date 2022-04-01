@@ -17,11 +17,14 @@ import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
+import {HelpText} from '@react-spectrum/label';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {HTMLAttributes, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
-import {useDateFormatter, useLocale} from '@react-aria/i18n';
+import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
@@ -30,6 +33,7 @@ interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extend
   calendarProps: HTMLAttributes<HTMLElement>,
   nextButtonProps: AriaButtonProps,
   prevButtonProps: AriaButtonProps,
+  errorMessageProps: HTMLAttributes<HTMLElement>,
   calendarRef: RefObject<HTMLDivElement>
 }
 
@@ -40,9 +44,12 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     calendarProps,
     nextButtonProps,
     prevButtonProps,
+    errorMessageProps,
     calendarRef: ref,
     visibleMonths = 1
   } = props;
+  let {styleProps} = useStyleProps(props);
+  let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
   let currentMonth = state.visibleRange.start;
   let monthDateFormatter = useDateFormatter({
@@ -93,11 +100,13 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
 
   return (
     <div
+      {...styleProps}
       {...calendarProps}
       ref={ref}
       className={
         classNames(styles,
-          'spectrum-Calendar'
+          'spectrum-Calendar',
+          styleProps.className
         )
       }>
       <div className={classNames(styles, 'spectrum-Calendar-header')}>
@@ -106,6 +115,15 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
       <div className={classNames(styles, 'spectrum-Calendar-months')}>
         {calendars}
       </div>
+      {state.validationState === 'invalid' &&
+        <HelpText
+          showErrorIcon
+          errorMessage={props.errorMessage || formatMessage('invalidSelection', {selectedCount: 'highlightedRange' in state ? 2 : 1})}
+          errorMessageProps={errorMessageProps}
+          validationState="invalid"
+          // Intentionally a global class name so it can be targeted in DatePicker CSS...
+          UNSAFE_className="spectrum-Calendar-helpText" />
+      }
     </div>
   );
 }

@@ -115,9 +115,10 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
   let descriptionProps = useDescription(selectedDateDescription);
   let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone);
 
+  let {calendarId, errorMessageId} = calendarIds.get(state);
   let labelProps = useLabels({
     'aria-label': visibleRangeDescription,
-    'aria-labelledby': calendarIds.get(state)
+    'aria-labelledby': calendarId
   });
 
   let dayFormatter = useDateFormatter({weekday: 'narrow', timeZone: state.timeZone});
@@ -136,11 +137,15 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
   });
 
   return {
-    gridProps: mergeProps(descriptionProps, labelProps, {
+    gridProps: mergeProps(labelProps, {
       role: 'grid',
       'aria-readonly': state.isReadOnly || null,
       'aria-disabled': state.isDisabled || null,
       'aria-multiselectable': ('highlightedRange' in state) || undefined,
+      'aria-describedby': [
+        descriptionProps['aria-describedby'],
+        state.validationState === 'invalid' ? errorMessageId : null
+      ].filter(Boolean).join(' ') || undefined,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)

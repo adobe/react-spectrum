@@ -18,7 +18,7 @@ import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
+import {mergeProps, useDescription, useId, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useRef} from 'react';
 
@@ -46,9 +46,13 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   }, [selectedDateDescription]);
 
   let descriptionProps = useDescription(visibleRangeDescription);
+  let errorMessageId = useSlotId([Boolean(props.errorMessage), props.validationState]);
 
   // Label the child grid elements by the group element if it is labelled.
-  calendarIds.set(state, props['aria-label'] || props['aria-labelledby'] ? calendarId : null);
+  calendarIds.set(state, {
+    calendarId: props['aria-label'] || props['aria-labelledby'] ? calendarId : null,
+    errorMessageId
+  });
 
   // If the next or previous buttons become disabled while they are focused, move focus to the calendar body.
   let nextFocused = useRef(false);
@@ -66,11 +70,15 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   }
 
   return {
-    calendarProps: mergeProps(descriptionProps, {
+    calendarProps: mergeProps({
       role: 'group',
       id: calendarId,
       'aria-label': props['aria-label'],
-      'aria-labelledby': props['aria-labelledby']
+      'aria-labelledby': props['aria-labelledby'],
+      'aria-describedby': [
+        props['aria-describedby'],
+        descriptionProps['aria-describedby']
+      ].filter(Boolean).join(' ') || undefined
     }),
     nextButtonProps: {
       onPress: () => state.focusNextPage(),
@@ -85,6 +93,9 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
       isDisabled: previousDisabled,
       onFocus: () => previousFocused.current = true,
       onBlur: () => previousFocused.current = false
+    },
+    errorMessageProps: {
+      id: errorMessageId
     },
     title: visibleRangeDescription
   };

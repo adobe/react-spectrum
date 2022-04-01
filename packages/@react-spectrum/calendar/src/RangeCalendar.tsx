@@ -33,7 +33,7 @@ export function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarP
   });
 
   let ref = useRef();
-  let {calendarProps, prevButtonProps, nextButtonProps} = useRangeCalendar(props, state, ref);
+  let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps} = useRangeCalendar(props, state, ref);
 
   return (
     <CalendarBase
@@ -42,6 +42,7 @@ export function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarP
       calendarRef={ref}
       calendarProps={calendarProps}
       prevButtonProps={prevButtonProps}
-      nextButtonProps={nextButtonProps} />
+      nextButtonProps={nextButtonProps}
+      errorMessageProps={errorMessageProps} />
   );
 }
