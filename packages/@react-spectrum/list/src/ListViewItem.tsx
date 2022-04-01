@@ -64,7 +64,8 @@ export function ListViewItem(props) {
 
   let {gridCellProps} = useGridCell({
     node: cellNode,
-    focusMode: 'cell'
+    focusMode: 'cell',
+    isVirtualized: true
   }, state, rowRef);
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {

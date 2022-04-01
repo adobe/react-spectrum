@@ -226,10 +226,10 @@ describe('ListView', function () {
   });
 
   it('should focus the row if the cell is pressed', function () {
-    let tree = renderList();
+    let tree = renderList({selectionMode: 'single'});
     let cell = within(getRow(tree, 'Bar')).getByRole('gridcell');
     act(() => {
-      cell.focus();
+      triggerPress(cell);
       jest.runAllTimers();
     });
     expect(document.activeElement).toBe(getRow(tree, 'Bar'));
