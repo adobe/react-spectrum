@@ -38,7 +38,6 @@ export function ListViewItem(props) {
   let {state, dragState, onAction, isListDraggable} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
-  let cellRef =  useRef<HTMLDivElement>();
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
