@@ -7,5 +7,7 @@
   "todayDateSelected": "Today, {date, date, full} selected",
   "dateSelected": "{date, date, full} selected",
   "startRangeSelectionPrompt": "Click to start selecting date range",
-  "finishRangeSelectionPrompt": "Click to finish selecting date range"
+  "finishRangeSelectionPrompt": "Click to finish selecting date range",
+  "minimumDate": "First available date",
+  "maximumDate": "Last available date"
 }

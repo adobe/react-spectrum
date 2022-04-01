@@ -915,14 +915,14 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('15');
       expect(onChange).not.toHaveBeenCalled();
 
-      userEvent.click(getByLabelText('Tuesday, February 5, 2019'));
+      userEvent.click(getByLabelText('Tuesday, February 5, 2019, First available date'));
 
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('5');
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('5');
       expect(onChange).not.toHaveBeenCalled();
 
-      userEvent.click(getByLabelText('Friday, February 15, 2019'));
+      userEvent.click(getByLabelText('Friday, February 15, 2019, Last available date'));
 
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('5');
@@ -1090,7 +1090,7 @@ describe('RangeCalendar', () => {
 
       act(() => userEvent.click(nextButton));
 
-      cell = getByRole('button', {name: 'Sunday, May 1, 2022 selected'});
+      cell = getByRole('button', {name: 'Sunday, May 1, 2022 selected, Last available date'});
       expect(cell).not.toHaveAttribute('aria-disabled');
       expect(cell).toHaveAttribute('tabindex', '0');
 

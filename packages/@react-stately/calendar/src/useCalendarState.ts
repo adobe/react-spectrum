@@ -155,6 +155,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
       start: startDate,
       end: endDate
     },
+    minValue,
+    maxValue,
     focusedDate,
     timeZone,
     validationState,

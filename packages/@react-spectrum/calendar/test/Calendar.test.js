@@ -301,13 +301,13 @@ describe('Calendar', () => {
       expect(selectedDate.textContent).toBe('8');
       expect(onChange).not.toHaveBeenCalled();
 
-      triggerPress(getByLabelText('Tuesday, February 5, 2019'));
+      triggerPress(getByLabelText('Tuesday, February 5, 2019, First available date'));
 
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
       expect(onChange).toHaveBeenCalledTimes(1);
 
-      triggerPress(getByLabelText('Friday, February 15, 2019'));
+      triggerPress(getByLabelText('Friday, February 15, 2019, Last available date'));
 
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('15');
