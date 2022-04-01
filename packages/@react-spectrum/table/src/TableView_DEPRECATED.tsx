@@ -280,7 +280,8 @@ function TableView_DEPRECATED<T extends object>(props: SpectrumTableProps<T>, re
             `spectrum-Table--${density}`,
             {
               'spectrum-Table--quiet': isQuiet,
-              'spectrum-Table--wrap': props.overflowMode === 'wrap'
+              'spectrum-Table--wrap': props.overflowMode === 'wrap',
+              'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore'
             },
             classNames(
               stylesOverrides,
@@ -545,6 +546,8 @@ function TableRow({item, children, hasActions, ...otherProps}) {
     hoverProps,
     pressProps
   );
+  let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
+  let isLastRow = item.nextKey == null;
 
   return (
     <div
@@ -557,11 +560,14 @@ function TableRow({item, children, hasActions, ...otherProps}) {
           {
             'is-active': isPressed,
             'is-selected': isSelected,
-            'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
+            'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace',
+            'is-next-selected': state.selectionManager.isSelected(item.nextKey),
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
             'is-hovered': isHovered,
-            'is-disabled': isDisabled
+            'is-disabled': isDisabled,
+            'spectrum-Table-row--firstRow': isFirstRow,
+            'spectrum-Table-row--lastRow': isLastRow
           }
         )
       }>
