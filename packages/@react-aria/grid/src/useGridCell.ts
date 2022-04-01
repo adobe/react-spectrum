@@ -35,9 +35,7 @@ interface GridCellProps {
    * Please use onCellAction at the collection level instead.
    * @deprecated
    **/
-  onAction?: () => void,
-  // TODO: check naming convention
-  skipCell?: boolean
+  onAction?: () => void
 }
 
 interface GridCellAria {
@@ -65,9 +63,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let {keyboardDelegate, actions: {onCellAction}} = gridMap.get(state);
 
   // Handles focusing the cell. If there is a focusable child,
-  // it is focused, otherwise the cell itself is focused. If skipCell is
-  // true, always attempt to put focus on a focusable child if any or back on the parent
-  // row.
+  // it is focused, otherwise the cell itself is focused.
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
     if (focusMode === 'child') {
@@ -87,7 +83,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
     if (!ref.current.contains(document.activeElement)) {
       focusSafely(ref.current);
-      return;
     }
   };
 
