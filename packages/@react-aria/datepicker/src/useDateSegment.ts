@@ -17,7 +17,6 @@ import {NumberParser} from '@internationalized/number';
 import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
 import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from './useDisplayNames';
-import {usePress} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 interface DateSegmentAria {
@@ -301,22 +300,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
   });
 
-  // Focus on mouse down/touch up to match native textfield behavior.
-  // usePress handles canceling text selection.
-  let {pressProps} = usePress({
-    preventFocusOnPress: true,
-    onPressStart: (e) => {
-      if (e.pointerType === 'mouse') {
-        e.target.focus();
-      }
-    },
-    onPress(e) {
-      if (e.pointerType !== 'mouse') {
-        e.target.focus();
-      }
-    }
-  });
-
   // For Android: prevent selection on long press.
   useEvent(ref, 'selectstart', e => {
     e.preventDefault();
@@ -360,7 +343,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   }
 
   return {
-    segmentProps: mergeProps(spinButtonProps, pressProps, labelProps, {
+    segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
       ...touchPropOverrides,
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
@@ -379,7 +362,16 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       onKeyDown,
       onFocus,
       style: {
-        caretColor: 'transparent'
+        caretColor: 'transparent',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
+      },
+      // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
+      onPointerDown(e) {
+        e.stopPropagation();
+      },
+      onMouseDown(e) {
+        e.stopPropagation();
       }
     })
   };

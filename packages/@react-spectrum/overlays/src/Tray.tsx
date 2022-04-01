@@ -75,27 +75,8 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   // Also, the visual viewport is smaller than the layout viewport when the virtual keyboard
   // is up, so use the VisualViewport API to ensure the tray is displayed above the keyboard.
   let viewport = useViewportSize();
-  let [height, setHeight] = useState(viewport.height);
-  let timeoutRef = useRef<any>();
-
-  useEffect(() => {
-    clearTimeout(timeoutRef.current);
-
-    // When the height is decreasing, and the keyboard is visible
-    // (visual viewport smaller than layout viewport), delay setting
-    // the new max height until after the animation is complete
-    // so that there isn't an empty space under the tray briefly.
-    if (viewport.height < height && viewport.height < window.innerHeight) {
-      timeoutRef.current = setTimeout(() => {
-        setHeight(viewport.height);
-      }, 500);
-    } else {
-      setHeight(viewport.height);
-    }
-  }, [height, viewport.height]);
-
   let wrapperStyle: any = {
-    '--spectrum-visual-viewport-height': height + 'px'
+    '--spectrum-visual-viewport-height': viewport.height + 'px'
   };
 
   let wrapperClassName = classNames(
