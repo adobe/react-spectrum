@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import {mergeProps, useViewportSize} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useEffect, useRef, useState} from 'react';
+import React, {forwardRef, HTMLAttributes, ReactNode, RefObject} from 'react';
 import {TrayProps} from '@react-types/overlays';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';

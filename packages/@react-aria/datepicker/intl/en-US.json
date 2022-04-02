@@ -12,8 +12,8 @@
   "dateRange": "Date Range",
   "startDate": "Start Date",
   "endDate": "End Date",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} to {end, date, long}",
   "weekday": "day of the week",
-  "timeZoneName": "time zone"
+  "timeZoneName": "time zone",
+  "selectedDateDescription": "Selected Date: {date}",
+  "selectedRangeDescription": "Selected Range: {startDate} to {endDate}"
 }

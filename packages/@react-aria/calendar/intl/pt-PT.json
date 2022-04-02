@@ -6,6 +6,6 @@
   "selectedDateDescription": "Data Selecionada: {data, data, completo}",
   "selectedRangeDescription": "Selecionar Intervalo: {início, data, longo} a {término, data, longo}",
   "startRangeSelectionPrompt": "Clique para começar a selecionar o intervalo de datas",
-  "todayDate": "Hoje, {date, date, full}",
-  "todayDateSelected": "Hoje, {date, date, full} selecionado"
+  "todayDate": "Hoje, {date}",
+  "todayDateSelected": "Hoje, {date} selecionado"
 }

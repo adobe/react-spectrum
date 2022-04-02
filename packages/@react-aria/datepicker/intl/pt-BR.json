@@ -1,7 +1,5 @@
 {
   "calendar": "Calendário",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} a {end, date, long}",
   "date": "Data",
   "dateRange": "Intervalo de datas",
   "day": "dia",
@@ -15,5 +13,7 @@
   "startDate": "Data inicial",
   "year": "ano",
   "weekday": "dia da semana",
-  "timeZoneName": "fuso horário"
+  "timeZoneName": "fuso horário",
+  "selectedDateDescription": "Data selecionada: {date}",
+  "selectedRangeDescription": "Intervalo selecionado: {startDate} até {endDate}"
 }

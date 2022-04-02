@@ -688,11 +688,11 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3 – 10, 2020 Help text');
+      expect(description).toBe('Selected Range: February 3 to 10, 2020 Help text');
 
       let segments = within(startField).getAllByRole('spinbutton');
       description = segments[0].getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3 – 10, 2020 Help text');
+      expect(description).toBe('Selected Range: February 3 to 10, 2020 Help text');
 
       for (let segment of segments.slice(1)) {
         expect(segment).not.toHaveAttribute('aria-describedby');
@@ -700,7 +700,7 @@ describe('DateRangePicker', function () {
 
       segments = within(endField).getAllByRole('spinbutton');
       description = segments[0].getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3 – 10, 2020 Help text');
+      expect(description).toBe('Selected Range: February 3 to 10, 2020 Help text');
 
       for (let segment of segments.slice(1)) {
         expect(segment).not.toHaveAttribute('aria-describedby');
@@ -718,18 +718,18 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3 – 10, 2020 Error message');
+      expect(description).toBe('Selected Range: February 3 to 10, 2020 Error message');
 
       let segments = within(startField).getAllByRole('spinbutton');
       for (let segment of segments) {
         description = segment.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-        expect(description).toBe('February 3 – 10, 2020 Error message');
+        expect(description).toBe('Selected Range: February 3 to 10, 2020 Error message');
       }
 
       segments = within(endField).getAllByRole('spinbutton');
       for (let segment of segments) {
         description = segment.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-        expect(description).toBe('February 3 – 10, 2020 Error message');
+        expect(description).toBe('Selected Range: February 3 to 10, 2020 Error message');
       }
     });
 

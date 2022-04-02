@@ -29,6 +29,11 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
     start = end = state.value;
   }
 
+  let dateFormatter = useDateFormatter({
+    dateStyle: 'full',
+    timeZone: state.timeZone
+  });
+
   let anchorDate = 'anchorDate' in state ? state.anchorDate : null;
   return useMemo(() => {
     // No message if currently selecting a range, or there is nothing highlighted.
@@ -36,13 +41,39 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
       // Use a single date message if the start and end dates are the same day,
       // otherwise include both dates.
       if (isSameDay(start, end)) {
-        return formatMessage('selectedDateDescription', {date: start.toDate(state.timeZone)});
+        let date = dateFormatter.format(start.toDate(state.timeZone));
+        return formatMessage('selectedDateDescription', {date});
       } else {
-        return formatMessage('selectedRangeDescription', {start: start.toDate(state.timeZone), end: end.toDate(state.timeZone)});
+        let parts = dateFormatter.formatRangeToParts(start.toDate(state.timeZone), end.toDate(state.timeZone));
+
+        // Find the separator between the start and end date. This is determined
+        // by finding the last shared literal before the end range.
+        let separatorIndex = -1;
+        for (let i = 0; i < parts.length; i++) {
+          let part = parts[i];
+          if (part.source === 'shared' && part.type === 'literal') {
+            separatorIndex = i;
+          } else if (part.source === 'endRange') {
+            break;
+          }
+        }
+
+        // Now we can combine the parts into start and end strings.
+        let startValue = '';
+        let endValue = '';
+        for (let i = 0; i < parts.length; i++) {
+          if (i < separatorIndex) {
+            startValue += parts[i].value;
+          } else if (i > separatorIndex) {
+            endValue += parts[i].value;
+          }
+        }
+
+        return formatMessage('selectedRangeDescription', {startDate: startValue, endDate: endValue});
       }
     }
     return '';
-  }, [start, end, anchorDate, state.timeZone, formatMessage]);
+  }, [start, end, anchorDate, state.timeZone, formatMessage, dateFormatter]);
 }
 
 export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string) {

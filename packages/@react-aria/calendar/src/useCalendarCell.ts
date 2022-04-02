@@ -112,19 +112,17 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   // aria-label should be localize Day of week, Month, Day and Year without Time.
   let isDateToday = isToday(date, state.timeZone);
   let label = useMemo(() => {
-    let label: string;
+    let label = dateFormatter.format(nativeDate);
     if (isDateToday) {
       // If date is today, set appropriate string depending on selected state:
       label = formatMessage(isSelected ? 'todayDateSelected' : 'todayDate', {
-        date: nativeDate
+        date: label
       });
     } else if (isSelected) {
       // If date is selected but not today:
       label = formatMessage('dateSelected', {
-        date: nativeDate
+        date: label
       });
-    } else {
-      label = dateFormatter.format(nativeDate);
     }
 
     if (state.minValue && isSameDay(date, state.minValue)) {
@@ -140,7 +138,6 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   // screenreader users know that they are in a range selection mode.
   let rangeSelectionPrompt = '';
   if ('anchorDate' in state && isFocused && !state.isReadOnly && isSelectable) {
-
     // If selection has started add "click to finish selecting range"
     if (state.anchorDate) {
       rangeSelectionPrompt = formatMessage('finishRangeSelectionPrompt');

@@ -1202,7 +1202,7 @@ describe('RangeCalendar', () => {
 
       let grid = getByRole('grid');
       description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
-      expect(description).toBe('Selected Range: March 10, 2022 to March 12, 2022 Selected dates unavailable.');
+      expect(description).toBe('Selected Range: Thursday, March 10 to Saturday, March 12, 2022 Selected dates unavailable.');
     });
 
     it('should support a custom errorMessage', () => {
@@ -1228,7 +1228,7 @@ describe('RangeCalendar', () => {
 
       let grid = getByRole('grid');
       description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
-      expect(description).toBe('Selected Range: March 10, 2022 to March 12, 2022 Selection dates cannot include weekends.');
+      expect(description).toBe('Selected Range: Thursday, March 10 to Saturday, March 12, 2022 Selection dates cannot include weekends.');
     });
 
     it('does not show error message without validationState="invalid"', () => {
@@ -1251,7 +1251,7 @@ describe('RangeCalendar', () => {
 
       let grid = getByRole('grid');
       description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
-      expect(description).toBe('Selected Range: March 10, 2022 to March 12, 2022');
+      expect(description).toBe('Selected Range: Thursday, March 10 to Saturday, March 12, 2022');
     });
 
     it('automatically marks selection as invalid using isDateUnavailable', () => {
@@ -1282,7 +1282,7 @@ describe('RangeCalendar', () => {
 
       let grid = getByRole('grid');
       description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
-      expect(description).toBe('Selected Range: March 1, 2022 to March 5, 2022 Selected dates unavailable.');
+      expect(description).toBe('Selected Range: Tuesday, March 1 to Saturday, March 5, 2022 Selected dates unavailable.');
     });
   });
 
@@ -1305,7 +1305,7 @@ describe('RangeCalendar', () => {
       act(() => userEvent.click(getByText('10')));
 
       expect(announce).toHaveBeenCalledTimes(1);
-      expect(announce).toHaveBeenCalledWith('Selected Range: June 10, 2019 to June 17, 2019', 'polite', 4000);
+      expect(announce).toHaveBeenCalledWith('Selected Range: Monday, June 10 to Monday, June 17, 2019', 'polite', 4000);
     });
 
     it('ensures that the active descendant is announced when the focused date changes', () => {
@@ -1324,7 +1324,7 @@ describe('RangeCalendar', () => {
 
       let grid = getByRole('grid');
       let caption = document.getElementById(grid.getAttribute('aria-describedby'));
-      expect(caption).toHaveTextContent('Selected Range: June 5, 2019 to June 10, 2019');
+      expect(caption).toHaveTextContent('Selected Range: Wednesday, June 5 to Monday, June 10, 2019');
 
       act(() => userEvent.click(getByText('17')));
 
@@ -1335,7 +1335,7 @@ describe('RangeCalendar', () => {
 
       caption = document.getElementById(grid.getAttribute('aria-describedby'));
       expect(grid).toHaveAttribute('aria-describedby', caption.id);
-      expect(caption).toHaveTextContent('Selected Range: June 10, 2019 to June 17, 2019');
+      expect(caption).toHaveTextContent('Selected Range: Monday, June 10 to Monday, June 17, 2019');
     });
   });
 });

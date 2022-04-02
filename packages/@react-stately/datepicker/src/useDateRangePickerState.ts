@@ -65,6 +65,8 @@ export interface DateRangePickerState {
   formatValue(locale: string, fieldOptions: FieldOptions): string,
   /** Replaces the start and/or end value of the selected range with the placeholder value if unentered. */
   confirmPlaceholder(): void
+  /** The smallest unit that is displayed in the date picker. */
+  granularity: Granularity
 }
 
 /**
@@ -194,7 +196,7 @@ export function useDateRangePickerState(props: DateRangePickerOptions): DateRang
     validationState,
     formatValue(locale, fieldOptions) {
       if (!value || !value.start || !value.end) {
-        return '';
+        return null;
       }
 
       let startTimeZone = 'timeZone' in value.start ? value.start.timeZone : undefined;
@@ -216,7 +218,32 @@ export function useDateRangePickerState(props: DateRangePickerOptions): DateRang
         // are shared between the start and end dates (e.g. the same month).
         // Formatting will fail if the end date is before the start date. Fall back below when that happens.
         try {
-          return startFormatter.formatRange(value.start.toDate(startTimeZone), value.end.toDate(endTimeZone));
+          let parts = startFormatter.formatRangeToParts(value.start.toDate(startTimeZone), value.end.toDate(endTimeZone));
+
+          // Find the separator between the start and end date. This is determined
+          // by finding the last shared literal before the end range.
+          let separatorIndex = -1;
+          for (let i = 0; i < parts.length; i++) {
+            let part = parts[i];
+            if (part.source === 'shared' && part.type === 'literal') {
+              separatorIndex = i;
+            } else if (part.source === 'endRange') {
+              break;
+            }
+          }
+
+          // Now we can combine the parts into start and end strings.
+          let start = '';
+          let end = '';
+          for (let i = 0; i < parts.length; i++) {
+            if (i < separatorIndex) {
+              start += parts[i].value;
+            } else if (i > separatorIndex) {
+              end += parts[i].value;
+            }
+          }
+
+          return {start, end};
         } catch (e) {
           // ignore
         }
@@ -233,7 +260,10 @@ export function useDateRangePickerState(props: DateRangePickerOptions): DateRang
         endFormatter = new DateFormatter(locale, endOptions);
       }
 
-      return `${startFormatter.format(value.start.toDate(startTimeZone))} – ${endFormatter.format(value.end.toDate(endTimeZone))}`;
+      return {
+        start: startFormatter.format(value.start.toDate(startTimeZone)),
+        end: endFormatter.format(value.end.toDate(endTimeZone))
+      };
     },
     confirmPlaceholder() {
       // Need to use ref value here because the value can be set in the same tick as

@@ -1,7 +1,5 @@
 {
   "calendar": "달력",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} ~ {end, date, long}",
   "date": "날짜",
   "dateRange": "날짜 범위",
   "day": "일",
@@ -15,5 +13,7 @@
   "startDate": "시작 날짜",
   "year": "년",
   "weekday": "요일",
-  "timeZoneName": "시간대"
+  "timeZoneName": "시간대",
+  "selectedDateDescription": "선택한 날짜: {date}",
+  "selectedRangeDescription": "선택한 범위: {startDate} ~ {endDate}"
 }

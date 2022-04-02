@@ -1,7 +1,5 @@
 {
   "calendar": "Calendar",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} - {end, date, long}",
   "date": "Dată",
   "dateRange": "Raza datei",
   "day": "zi",
@@ -15,5 +13,7 @@
   "startDate": "Dată început",
   "year": "an",
   "weekday": "ziua din săptămână",
-  "timeZoneName": "fus orar"
+  "timeZoneName": "fus orar",
+  "selectedDateDescription": "Dată selectată: {date}",
+  "selectedRangeDescription": "Selectaţi raza: {startDate} la {endDate}"
 }
