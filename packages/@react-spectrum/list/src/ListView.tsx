@@ -169,7 +169,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         return (
           <Provider
             {...provider}
-            UNSAFE_style={{width: itemWidth}}>
+            UNSAFE_style={{width: itemWidth, direction}}>
             <div className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
               <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
                 <SlotProvider
