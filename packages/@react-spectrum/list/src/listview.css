@@ -241,10 +241,11 @@
   border-color: var(--spectrum-dropzone-border-color-selected-hover);
   display: grid;
   grid-template-areas:
-    "icon image content     . . badge"
-    "icon image description . . badge"
+    "icon image content     . badge"
+    "icon image description . badge"
   ;
   grid-template-rows: 1fr auto;
+  grid-template-columns: auto auto auto auto 1fr auto auto;
 
   .react-spectrum-ListViewItem-badge {
     grid-area: badge;
@@ -270,5 +271,38 @@
       border-radius: var(--spectrum-alias-border-radius-regular);
       background: var(--spectrum-global-color-gray-50);
     }
+  }
+
+  .react-spectrum-ListViewItem-actions,
+  .react-spectrum-ListViewItem-actionmenu {
+    display: none;
+  }
+
+  .react-spectrum-ListViewItem-content {
+    grid-area: content;
+  }
+
+  .react-spectrum-ListViewItem-description {
+    grid-area: description;
+  }
+
+  .react-spectrum-ListViewItem-image {
+    grid-area: image;
+  }
+
+  .react-spectrum-ListViewItem-icon {
+    grid-area: icon;
+  }
+
+  .react-spectrum-ListViewItem-content,
+  .react-spectrum-ListViewItem-description {
+    flex-grow: 1;
+  }
+
+  .react-spectrum-ListViewItem-icon,
+  .react-spectrum-ListViewItem-image {
+    align-items: center;
+    justify-items: center;
+    padding-inline-end: var(--spectrum-global-dimension-size-100);
   }
 }
