@@ -190,8 +190,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                   }}>
                   {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
                   {isDraggingMultiple &&
-                  <div className={classNames(listStyles, 'react-spectrum-ListViewItem-badge')}>{selectedKeys.size}</div>
-                }
+                    <div className={classNames(listStyles, 'react-spectrum-ListViewItem-badge')}>{selectedKeys.size}</div>
+                  }
                 </SlotProvider>
               </Grid>
             </div>
