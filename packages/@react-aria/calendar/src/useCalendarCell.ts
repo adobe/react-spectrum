@@ -14,12 +14,12 @@ import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/d
 import {calendarIds} from './utils';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {focusWithoutScrolling, useDescription} from '@react-aria/utils';
+import {getInteractionModality, usePress} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
 
 export interface AriaCalendarCellProps {
   /** The date that this cell represents. */
@@ -267,7 +267,13 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   // Focus the button in the DOM when the state updates.
   useEffect(() => {
     if (isFocused && ref.current) {
-      focusWithoutScrolling(ref.current);
+      // Scroll into view if navigating with a keyboard, otherwise
+      // try not to shift the view under the user's mouse/finger.
+      if (getInteractionModality() === 'pointer') {
+        focusWithoutScrolling(ref.current);
+      } else {
+        ref.current.focus();
+      }
     }
   }, [isFocused, ref]);
 
