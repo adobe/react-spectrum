@@ -408,25 +408,18 @@ export function DragExample(props?) {
       {...listViewProps}>
       {(item: any) => (
         <Item key={item.key} textValue={item.textValue}>
+          {item.key === 'a' && <Folder />}
           <Content>
-            <Flex alignItems="center" gap="10px">
-              <View flexGrow={1}>Item {item.key}</View>
-              <ActionButton><Add /></ActionButton>
-              <MenuTrigger>
-                <ActionButton><MoreSmall /></ActionButton>
-                <Menu>
-                  <Item textValue="Edit">
-                    <Edit />
-                    <Text>Edit</Text>
-                  </Item>
-                  <Item textValue="Delete">
-                    <Delete />
-                    <Text>Delete</Text>
-                  </Item>
-                </Menu>
-              </MenuTrigger>
-            </Flex>
+            Item {item.key}
           </Content>
+          <ActionGroup onAction={action('onAction')}>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+            </Item>
+            <Item key="edit" textValue="Edit">
+              <Edit />
+            </Item>
+          </ActionGroup>
         </Item>
       )}
     </ListView>
