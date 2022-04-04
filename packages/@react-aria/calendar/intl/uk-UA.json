@@ -4,8 +4,9 @@
   "next": "Наступний",
   "previous": "Попередній",
   "selectedDateDescription": "Вибрана дата: {date}",
-  "selectedRangeDescription": "Вибраний діапазон: від {startDate} до {endDate}",
+  "selectedRangeDescription": "Вибраний діапазон: від {dateRange}",
   "startRangeSelectionPrompt": "Натисніть, щоб почати вибір діапазону дат",
   "todayDate": "Сьогодні: {date}",
-  "todayDateSelected": "Сьогодні вибрано: {date}"
+  "todayDateSelected": "Сьогодні вибрано: {date}",
+  "dateRange": "{startDate} до {endDate}"
 }

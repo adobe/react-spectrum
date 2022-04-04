@@ -4,8 +4,9 @@
   "next": "Sonraki",
   "previous": "Önceki",
   "selectedDateDescription": "Seçili Tarih: {date}",
-  "selectedRangeDescription": "Seçili Aralık: {startDate} - {endDate}",
+  "selectedRangeDescription": "Seçili Aralık: {dateRange}",
   "startRangeSelectionPrompt": "Tarih aralığı seçimini başlatmak için tıklayın",
   "todayDate": "Bugün, {date}",
-  "todayDateSelected": "Bugün, {date} seçildi"
+  "todayDateSelected": "Bugün, {date} seçildi",
+  "dateRange": "{startDate} - {endDate}"
 }

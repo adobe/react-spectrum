@@ -4,8 +4,9 @@
   "next": "التالي",
   "previous": "السابق",
   "selectedDateDescription": "التاريخ المحدد: {date}",
-  "selectedRangeDescription": "النطاق المحدد: {startDate} إلى {endDate}",
+  "selectedRangeDescription": "النطاق المحدد: {dateRange}",
   "startRangeSelectionPrompt": "انقر لبدء عملية تحديد نطاق التاريخ",
   "todayDate": "اليوم، {date}",
-  "todayDateSelected": "اليوم، تم تحديد {date}"
+  "todayDateSelected": "اليوم، تم تحديد {date}",
+  "dateRange": "{startDate} إلى {endDate}"
 }

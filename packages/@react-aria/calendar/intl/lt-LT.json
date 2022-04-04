@@ -4,8 +4,9 @@
   "next": "Paskesnis",
   "previous": "Ankstesnis",
   "selectedDateDescription": "Pasirinkta data: {date}",
-  "selectedRangeDescription": "Pasirinktas intervalas: nuo {startDate} iki {endDate}",
+  "selectedRangeDescription": "Pasirinktas intervalas: nuo {dateRange}",
   "startRangeSelectionPrompt": "Spustelėkite, kad pradėtumėte pasirinkti datų intervalą",
   "todayDate": "Šiandien, {date}",
-  "todayDateSelected": "Šiandien, pasirinkta {date}"
+  "todayDateSelected": "Šiandien, pasirinkta {date}",
+  "dateRange": "{startDate} iki {endDate}"
 }

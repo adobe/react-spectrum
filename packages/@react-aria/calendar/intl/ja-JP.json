@@ -4,8 +4,9 @@
   "next": "次へ",
   "previous": "前へ",
   "selectedDateDescription": "日付を選択：{date}",
-  "selectedRangeDescription": "範囲を選択：{startDate} から {endDate}",
+  "selectedRangeDescription": "範囲を選択：{dateRange}",
   "startRangeSelectionPrompt": "クリックして日付範囲の選択を開始",
   "todayDate": "本日、{date}",
-  "todayDateSelected": "本日、{date} を選択"
+  "todayDateSelected": "本日、{date} を選択",
+  "dateRange": "{startDate} から {endDate}"
 }

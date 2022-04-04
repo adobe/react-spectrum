@@ -4,8 +4,9 @@
   "next": "Următorul",
   "previous": "Înainte",
   "selectedDateDescription": "Dată selectată: {date}",
-  "selectedRangeDescription": "Selectaţi raza: {startDate} la {endDate}",
+  "selectedRangeDescription": "Selectaţi raza: {dateRange}",
   "startRangeSelectionPrompt": "Apăsaţi pentru a începe selecţia razei pentru dată",
   "todayDate": "Astăzi, {date}",
-  "todayDateSelected": "Dată, {date} selectată"
+  "todayDateSelected": "Dată, {date} selectată",
+  "dateRange": "{startDate} la {endDate}"
 }

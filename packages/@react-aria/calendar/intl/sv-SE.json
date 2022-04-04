@@ -4,8 +4,9 @@
   "next": "Nästa",
   "previous": "Föregående",
   "selectedDateDescription": "Valt datum: {date}",
-  "selectedRangeDescription": "Valt intervall: {startDate} till {endDate}",
+  "selectedRangeDescription": "Valt intervall: {dateRange}",
   "startRangeSelectionPrompt": "Klicka för att välja datumintervall",
   "todayDate": "I dag, {date}",
-  "todayDateSelected": "I dag, {date} har valts"
+  "todayDateSelected": "I dag, {date} har valts",
+  "dateRange": "{startDate} till {endDate}"
 }

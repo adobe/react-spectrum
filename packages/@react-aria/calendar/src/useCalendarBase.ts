@@ -26,7 +26,8 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   let formatMessage = useMessageFormatter(intlMessages);
   let calendarId = useId(props.id);
 
-  let visibleRangeDescription = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone);
+  let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);
+  let visibleRangeDescription = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, true);
 
   // Announce when the visible date range changes
   useUpdateEffect(() => {
@@ -97,6 +98,6 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     errorMessageProps: {
       id: errorMessageId
     },
-    title: visibleRangeDescription
+    title
   };
 }

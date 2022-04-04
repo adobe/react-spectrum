@@ -4,8 +4,9 @@
   "next": "Weiter",
   "previous": "Zurück",
   "selectedDateDescription": "Ausgewähltes Datum: {date}",
-  "selectedRangeDescription": "Bereich auswählen: {startDate} bis {endDate}",
+  "selectedRangeDescription": "Bereich auswählen: {dateRange}",
   "startRangeSelectionPrompt": "Klicken, um die Auswahl des Datumsbereichs zu beginnen",
   "todayDate": "Heute, {date}",
-  "todayDateSelected": "Heute, {date} ausgewählt"
+  "todayDateSelected": "Heute, {date} ausgewählt",
+  "dateRange": "{startDate} bis {endDate}"
 }

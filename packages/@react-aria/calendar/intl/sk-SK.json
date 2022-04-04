@@ -4,8 +4,9 @@
   "next": "Nasledujúce",
   "previous": "Predchádzajúce",
   "selectedDateDescription": "Vybratý dátum: {date}",
-  "selectedRangeDescription": "Vybratý rozsah dátumov: {startDate} do {endDate}",
+  "selectedRangeDescription": "Vybratý rozsah dátumov: {dateRange}",
   "startRangeSelectionPrompt": "Kliknutím spustíte výber rozsahu dátumov",
   "todayDate": "Dnešný dátum, {date}",
-  "todayDateSelected": "Vybratý dnešný dátum, {date}"
+  "todayDateSelected": "Vybratý dnešný dátum, {date}",
+  "dateRange": "{startDate} do {endDate}"
 }

@@ -4,8 +4,9 @@
   "next": "다음",
   "previous": "이전",
   "selectedDateDescription": "선택한 날짜: {date}",
-  "selectedRangeDescription": "선택한 범위: {startDate} ~ {endDate}",
+  "selectedRangeDescription": "선택한 범위: {dateRange}",
   "startRangeSelectionPrompt": "날짜 범위 선택을 시작하려면 클릭하십시오.",
   "todayDate": "오늘, {date}",
-  "todayDateSelected": "오늘, {date} 선택함"
+  "todayDateSelected": "오늘, {date} 선택함",
+  "dateRange": "{startDate} ~ {endDate}"
 }

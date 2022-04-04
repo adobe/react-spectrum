@@ -4,8 +4,9 @@
   "next": "Järgmine",
   "previous": "Eelmine",
   "selectedDateDescription": "Valitud kuupäev: {date}",
-  "selectedRangeDescription": "Valitud vahemik: {startDate} kuni {endDate}",
+  "selectedRangeDescription": "Valitud vahemik: {dateRange}",
   "startRangeSelectionPrompt": "Klõpsake kuupäevavahemiku valimiseks",
   "todayDate": "Täna {date}",
-  "todayDateSelected": "Täna {date} valitud"
+  "todayDateSelected": "Täna {date} valitud",
+  "dateRange": "{startDate} kuni {endDate}"
 }

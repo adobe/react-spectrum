@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, endOfMonth, isSameDay, startOfMonth} from '@internationalized/date';
+import {CalendarDate, DateFormatter, endOfMonth, isSameDay, startOfMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
+import {FormatMessage, useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
 export const calendarIds = new WeakMap<CalendarState | RangeCalendarState, {calendarId: string, errorMessageId: string}>();
@@ -44,39 +44,17 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
         let date = dateFormatter.format(start.toDate(state.timeZone));
         return formatMessage('selectedDateDescription', {date});
       } else {
-        let parts = dateFormatter.formatRangeToParts(start.toDate(state.timeZone), end.toDate(state.timeZone));
+        let dateRange = formatRange(dateFormatter, formatMessage, start, end, state.timeZone);
 
-        // Find the separator between the start and end date. This is determined
-        // by finding the last shared literal before the end range.
-        let separatorIndex = -1;
-        for (let i = 0; i < parts.length; i++) {
-          let part = parts[i];
-          if (part.source === 'shared' && part.type === 'literal') {
-            separatorIndex = i;
-          } else if (part.source === 'endRange') {
-            break;
-          }
-        }
-
-        // Now we can combine the parts into start and end strings.
-        let startValue = '';
-        let endValue = '';
-        for (let i = 0; i < parts.length; i++) {
-          if (i < separatorIndex) {
-            startValue += parts[i].value;
-          } else if (i > separatorIndex) {
-            endValue += parts[i].value;
-          }
-        }
-
-        return formatMessage('selectedRangeDescription', {startDate: startValue, endDate: endValue});
+        return formatMessage('selectedRangeDescription', {dateRange});
       }
     }
     return '';
   }, [start, end, anchorDate, state.timeZone, formatMessage, dateFormatter]);
 }
 
-export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string) {
+export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string, isAria: boolean) {
+  let formatMessage = useMessageFormatter(intlMessages);
   let monthFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
@@ -98,10 +76,43 @@ export function useVisibleRangeDescription(startDate: CalendarDate, endDate: Cal
       if (isSameDay(endDate, endOfMonth(startDate))) {
         return monthFormatter.format(startDate.toDate(timeZone));
       } else if (isSameDay(endDate, endOfMonth(endDate))) {
-        return monthFormatter.formatRange(startDate.toDate(timeZone), endDate.toDate(timeZone));
+        return isAria
+          ? formatRange(monthFormatter, formatMessage, startDate, endDate, timeZone)
+          : monthFormatter.formatRange(startDate.toDate(timeZone), endDate.toDate(timeZone));
       }
     }
 
-    return dateFormatter.formatRange(startDate.toDate(timeZone), endDate.toDate(timeZone));
-  }, [startDate, endDate, monthFormatter, dateFormatter, timeZone]);
+    return isAria
+      ? formatRange(dateFormatter, formatMessage, startDate, endDate, timeZone)
+      : dateFormatter.formatRange(startDate.toDate(timeZone), endDate.toDate(timeZone));
+  }, [startDate, endDate, monthFormatter, dateFormatter, formatMessage, timeZone, isAria]);
+}
+
+function formatRange(dateFormatter: DateFormatter, formatMessage: FormatMessage, start: CalendarDate, end: CalendarDate, timeZone: string) {
+  let parts = dateFormatter.formatRangeToParts(start.toDate(timeZone), end.toDate(timeZone));
+
+  // Find the separator between the start and end date. This is determined
+  // by finding the last shared literal before the end range.
+  let separatorIndex = -1;
+  for (let i = 0; i < parts.length; i++) {
+    let part = parts[i];
+    if (part.source === 'shared' && part.type === 'literal') {
+      separatorIndex = i;
+    } else if (part.source === 'endRange') {
+      break;
+    }
+  }
+
+  // Now we can combine the parts into start and end strings.
+  let startValue = '';
+  let endValue = '';
+  for (let i = 0; i < parts.length; i++) {
+    if (i < separatorIndex) {
+      startValue += parts[i].value;
+    } else if (i > separatorIndex) {
+      endValue += parts[i].value;
+    }
+  }
+
+  return formatMessage('dateRange', {startDate: startValue, endDate: endValue});
 }

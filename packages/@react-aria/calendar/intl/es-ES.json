@@ -4,8 +4,9 @@
   "next": "Siguiente",
   "previous": "Anterior",
   "selectedDateDescription": "Fecha seleccionada: {date}",
-  "selectedRangeDescription": "Seleccionar rango: {startDate} a {endDate}",
+  "selectedRangeDescription": "Seleccionar rango: {dateRange}",
   "startRangeSelectionPrompt": "Haga clic para comenzar a seleccionar un rango de fechas",
   "todayDate": "Hoy, {date}",
-  "todayDateSelected": "Hoy, {date} seleccionado"
+  "todayDateSelected": "Hoy, {date} seleccionado",
+  "dateRange": "{startDate} a {endDate}"
 }

@@ -4,8 +4,9 @@
   "next": "Successivo",
   "previous": "Precedente",
   "selectedDateDescription": "Data selezionata: {date}",
-  "selectedRangeDescription": "Intervallo selezionato: da {startDate} a {endDate}",
+  "selectedRangeDescription": "Intervallo selezionato: da {dateRange}",
   "startRangeSelectionPrompt": "Fai clic per selezionare l’intervallo di date",
   "todayDate": "Oggi, {date}",
-  "todayDateSelected": "Oggi, {date} selezionato"
+  "todayDateSelected": "Oggi, {date} selezionato",
+  "dateRange": "{startDate} a {endDate}"
 }

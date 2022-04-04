@@ -4,8 +4,9 @@
   "next": "Következő",
   "previous": "Előző",
   "selectedDateDescription": "Kijelölt dátum: {date}",
-  "selectedRangeDescription": "Kijelölt tartomány: {startDate} – {endDate}",
+  "selectedRangeDescription": "Kijelölt tartomány: {dateRange}",
   "startRangeSelectionPrompt": "Kattintson a dátumtartomány kijelölésének indításához",
   "todayDate": "Ma, {date}",
-  "todayDateSelected": "Ma, {date} kijelölve"
+  "todayDateSelected": "Ma, {date} kijelölve",
+  "dateRange": "{startDate} – {endDate}"
 }

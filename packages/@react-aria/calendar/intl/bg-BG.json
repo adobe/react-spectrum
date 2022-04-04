@@ -4,8 +4,9 @@
   "next": "Напред",
   "previous": "Назад",
   "selectedDateDescription": "Избрана дата: {date}",
-  "selectedRangeDescription": "Избран интервал: от {startDate} до {endDate}",
+  "selectedRangeDescription": "Избран интервал: от {dateRange}",
   "startRangeSelectionPrompt": "Натиснете, за да пристъпите към избора на времеви интервал",
   "todayDate": "Днес {date}",
-  "todayDateSelected": "Днес са избрани {date}"
+  "todayDateSelected": "Днес са избрани {date}",
+  "dateRange": "{startDate} до {endDate}"
 }

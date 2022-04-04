@@ -4,8 +4,9 @@
   "next": "Neste",
   "previous": "Forrige",
   "selectedDateDescription": "Valgt dato: {date}",
-  "selectedRangeDescription": "Valgt område: {startDate} til {endDate}",
+  "selectedRangeDescription": "Valgt område: {dateRange}",
   "startRangeSelectionPrompt": "Klikk for å starte valg av datoområde",
   "todayDate": "I dag, {date}",
-  "todayDateSelected": "I dag, {date} valgt"
+  "todayDateSelected": "I dag, {date} valgt",
+  "dateRange": "{startDate} til {endDate}"
 }

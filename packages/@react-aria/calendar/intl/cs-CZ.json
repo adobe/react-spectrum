@@ -4,8 +4,9 @@
   "next": "Další",
   "previous": "Předchozí",
   "selectedDateDescription": "Zvolené datum: {date}",
-  "selectedRangeDescription": "Zvolený rozsah: {startDate} až {endDate}",
+  "selectedRangeDescription": "Zvolený rozsah: {dateRange}",
   "startRangeSelectionPrompt": "Kliknutím zahájíte výběr rozsahu dat",
   "todayDate": "Dnes, {date}",
-  "todayDateSelected": "Vybrán dnešek: {date}"
+  "todayDateSelected": "Vybrán dnešek: {date}",
+  "dateRange": "{startDate} až {endDate}"
 }

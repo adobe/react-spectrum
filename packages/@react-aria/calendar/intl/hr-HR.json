@@ -4,8 +4,9 @@
   "next": "Sljedeći",
   "previous": "Prethodni",
   "selectedDateDescription": "Odabrani datum: {date}",
-  "selectedRangeDescription": "Odabrani raspon: od {startDate} do {endDate}",
+  "selectedRangeDescription": "Odabrani raspon: od {dateRange}",
   "startRangeSelectionPrompt": "Kliknite da započnete raspon odabranih datuma",
   "todayDate": "Danas, {date}",
-  "todayDateSelected": "Danas, odabran {date}"
+  "todayDateSelected": "Danas, odabran {date}",
+  "dateRange": "{startDate} do {endDate}"
 }

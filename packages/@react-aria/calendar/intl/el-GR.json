@@ -4,8 +4,9 @@
   "next": "Επόμενο",
   "previous": "Προηγούμενο",
   "selectedDateDescription": "Επιλεγμένη ημερομηνία: {date}",
-  "selectedRangeDescription": "Επιλεγμένο εύρος: {startDate} έως {endDate}",
+  "selectedRangeDescription": "Επιλεγμένο εύρος: {dateRange}",
   "startRangeSelectionPrompt": "Κάντε κλικ για να ξεκινήσετε την επιλογή εύρους ημερομηνιών",
   "todayDate": "Σήμερα, {date}",
-  "todayDateSelected": "Σήμερα, επιλέχτηκε {date}"
+  "todayDateSelected": "Σήμερα, επιλέχτηκε {date}",
+  "dateRange": "{startDate} έως {endDate}"
 }

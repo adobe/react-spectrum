@@ -4,8 +4,9 @@
   "next": "Далее",
   "previous": "Назад",
   "selectedDateDescription": "Выбранная дата: {date}",
-  "selectedRangeDescription": "Выбранный диапазон: {startDate} – {endDate}",
+  "selectedRangeDescription": "Выбранный диапазон: {dateRange}",
   "startRangeSelectionPrompt": "Щелкните, чтобы начать выбор диапазона дат",
   "todayDate": "Сегодня, {date}",
-  "todayDateSelected": "Сегодня, выбрано {date}"
+  "todayDateSelected": "Сегодня, выбрано {date}",
+  "dateRange": "{startDate} – {endDate}"
 }

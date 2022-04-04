@@ -4,8 +4,9 @@
   "next": "Tālāk",
   "previous": "Atpakaļ",
   "selectedDateDescription": "Atlasītais datums: {date}",
-  "selectedRangeDescription": "Atlasītais diapazons: {startDate} līdz {endDate}",
+  "selectedRangeDescription": "Atlasītais diapazons: {dateRange}",
   "startRangeSelectionPrompt": "Noklikšķiniet, lai sāktu datumu diapazona atlasi",
   "todayDate": "Šodiena, {date}",
-  "todayDateSelected": "Atlasīta šodiena, {date}"
+  "todayDateSelected": "Atlasīta šodiena, {date}",
+  "dateRange": "{startDate} līdz {endDate}"
 }

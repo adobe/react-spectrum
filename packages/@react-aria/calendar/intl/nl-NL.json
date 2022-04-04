@@ -4,8 +4,9 @@
   "next": "Volgende",
   "previous": "Vorige",
   "selectedDateDescription": "Geselecteerde datum: {date}",
-  "selectedRangeDescription": "Geselecteerd bereik: {startDate} t/m {endDate}",
+  "selectedRangeDescription": "Geselecteerd bereik: {dateRange}",
   "startRangeSelectionPrompt": "Klik om het datumbereik te selecteren",
   "todayDate": "Vandaag, {date}",
-  "todayDateSelected": "Vandaag, {date} geselecteerd"
+  "todayDateSelected": "Vandaag, {date} geselecteerd",
+  "dateRange": "{startDate} t/m {endDate}"
 }

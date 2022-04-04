@@ -4,8 +4,9 @@
   "next": "Suivant",
   "previous": "Précédent",
   "selectedDateDescription": "Date sélectionnée : {date}",
-  "selectedRangeDescription": "Plage sélectionnée : {startDate} à {endDate}",
+  "selectedRangeDescription": "Plage sélectionnée : {dateRange}",
   "startRangeSelectionPrompt": "Cliquer pour commencer à sélectionner la plage de dates",
   "todayDate": "Aujourd’hui, {date}",
-  "todayDateSelected": "Aujourd’hui, {date} sélectionné"
+  "todayDateSelected": "Aujourd’hui, {date} sélectionné",
+  "dateRange": "{startDate} à {endDate}"
 }

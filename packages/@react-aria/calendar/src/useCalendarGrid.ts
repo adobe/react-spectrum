@@ -113,7 +113,7 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
 
   let selectedDateDescription = useSelectedDateDescription(state);
   let descriptionProps = useDescription(selectedDateDescription);
-  let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone);
+  let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
 
   let {calendarId, errorMessageId} = calendarIds.get(state);
   let labelProps = useLabels({
