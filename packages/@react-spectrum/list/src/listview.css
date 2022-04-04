@@ -196,6 +196,7 @@
           "icon image content     . badge"
           "icon image description . badge"
         ;
+        grid-template-columns: auto auto auto 1fr;
       }
 
       .react-spectrum-ListViewItem-badge {
@@ -204,7 +205,6 @@
         background: var(--spectrum-global-color-blue-400);
         padding: 0 8px;
         border-radius: var(--spectrum-alias-border-radius-regular);
-        margin-inline-start: auto;
       }
 
       &.react-spectrum-ListViewItem-dragPreview--multiple  {
