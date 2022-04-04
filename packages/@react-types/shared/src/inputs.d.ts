@@ -41,6 +41,11 @@ export interface ValueBase<T, C = T> {
 }
 
 export interface TextInputBase {
+  /** Temporary text that occupies the text input when it is empty. */
+  placeholder?: string
+}
+
+export interface SpectrumTextInputBase {
   /**
    * Temporary text that occupies the text input when it is empty.
    * Please use help text instead.

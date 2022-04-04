@@ -20,8 +20,8 @@ import {
   InputBase,
   LabelableProps,
   SpectrumLabelableProps,
+  SpectrumTextInputBase,
   StyleProps,
-  TextInputBase,
   TextInputDOMProps,
   Validation,
   ValueBase
@@ -92,7 +92,7 @@ export interface Color {
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
 
-export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
+export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, SpectrumTextInputBase, LabelableProps {
   /** Handler that is called when the value changes. */
   onChange?: (color: Color | null) => void
 }
