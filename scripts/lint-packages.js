@@ -138,3 +138,4 @@ if (errors) {
 }
 
 require('./checkPublishedDependencies');
+require('./findCircularDeps');

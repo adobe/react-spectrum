@@ -50,7 +50,6 @@ touch-friendly color sliders that can be styled as needed.
 * Pressing on the track moves the thumb to that position
 * Supports using the arrow keys, as well as page up/down, home, and end keys
 * Support for both horizontal and vertical orientations
-* Support for custom step values with handling for rounding errors
 * Support for disabling the color slider
 * Prevents text selection while dragging
 * Exposed to assistive technology as a `slider` element via ARIA
@@ -297,14 +296,6 @@ function Example() {
     </>
   );
 }
-```
-
-### Step
-
-The `step` prop can be used to make a `ColorSlider` snap its value to specific increments.
-
-```tsx example
-<ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" step={30} />
 ```
 
 ### onChangeEnd

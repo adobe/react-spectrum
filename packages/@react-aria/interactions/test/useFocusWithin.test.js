@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
+import {act, render, waitFor} from '@testing-library/react';
 import React from 'react';
 import {useFocusWithin} from '../';
 
@@ -137,5 +137,23 @@ describe('useFocusWithin', function () {
     expect(onInnerBlur).toHaveBeenCalledTimes(1);
     expect(onWrapperFocus).toHaveBeenCalledTimes(1);
     expect(onWrapperBlur).toHaveBeenCalledTimes(1);
+  });
+
+  it('should fire onBlur when a focused element is disabled', async function () {
+    function Example(props) {
+      let {focusWithinProps} = useFocusWithin(props);
+      return <div {...focusWithinProps}><button disabled={props.disabled}>Button</button></div>;
+    }
+
+    let onFocus = jest.fn();
+    let onBlur = jest.fn();
+    let tree = render(<Example onFocusWithin={onFocus} onBlurWithin={onBlur} />);
+    let button = tree.getByRole('button');
+
+    act(() => {button.focus();});
+    expect(onFocus).toHaveBeenCalled();
+    tree.rerender(<Example disabled onFocusWithin={onFocus} onBlurWithin={onBlur} />);
+    // MutationObserver is async
+    await waitFor(() => expect(onBlur).toHaveBeenCalled());
   });
 });

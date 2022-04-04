@@ -58,13 +58,12 @@ describe('DateField', function () {
       let field = getByRole('group');
       expect(field).toHaveAttribute('aria-label', 'Birth date');
       expect(field).toHaveAttribute('id');
-      let comboboxId = field.getAttribute('id');
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
-        let segmentId = segment.getAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `${comboboxId} ${segmentId}`);
+        expect(segment.getAttribute('aria-label').startsWith('Birth date ')).toBe(true);
+        expect(segment).not.toHaveAttribute('aria-labelledby');
       }
     });
 
