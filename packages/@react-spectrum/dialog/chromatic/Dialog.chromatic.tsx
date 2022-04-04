@@ -44,6 +44,11 @@ storiesOf('Dialog', module)
     () => renderLongContent({})
   )
   .add(
+    'long content, mobile viewport',
+    () => renderLongContent({}),
+    {chromatic: {viewports: [320]}}
+  )
+  .add(
     'with hero',
     () => renderHero({})
   )
@@ -76,6 +81,11 @@ storiesOf('Dialog', module)
     () => renderWithForm({type: 'fullscreenTakeover'})
   )
   .add(
+    'fullscreenTakeover form, mobile viewport',
+    () => renderWithForm({type: 'fullscreenTakeover'}),
+    {chromatic: {viewports: [320]}}
+  )
+  .add(
     'three buttons',
     () => renderWithThreeButtons({})
   )
@@ -86,7 +96,50 @@ storiesOf('Dialog', module)
   .add(
     'cleared content',
     () => renderWithDividerInContent({})
+  )
+  .add(
+    'tray',
+    () => renderTriggerProps({type: 'tray'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'popover',
+    () => renderTriggerProps({type: 'popover'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'mobileType fullscreen, modal',
+    () => renderTriggerProps({type: 'modal', mobileType: 'fullscreen'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'mobileType fullscreenTakeover, modal',
+    () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'mobileType: modal, popover',
+    () => renderTriggerProps({type: 'popover', mobileType: 'modal'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'mobileType: tray, popover',
+    () => renderTriggerProps({type: 'popover', mobileType: 'tray'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
   );
+
 
 storiesOf('Dialog/Alert', module)
   .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
@@ -207,6 +260,29 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            {!isDismissable &&
+              <ButtonGroup>
+                <Button variant="secondary" onPress={close}>Cancel</Button>
+                <Button variant="cta" onPress={close}>Confirm</Button>
+              </ButtonGroup>}
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderTriggerProps({width = 'auto', isDismissable = undefined, ...triggerProps}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger isDismissable={isDismissable} defaultOpen {...triggerProps}>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog>
             <Heading>The Heading</Heading>
             <Header>The Header</Header>
             <Divider />

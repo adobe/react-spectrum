@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
-import {chain, filterDOMProps, mergeProps} from '@react-aria/utils';
+import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {FocusEvent, HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
@@ -121,8 +121,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let domProps = filterDOMProps(props, {labelable: true});
   let triggerProps = mergeProps(typeSelectProps, menuTriggerProps, fieldProps);
 
-  // used to make predictable id's based on the trigger which is already generated, this aids us in testing
-  let valueId = `${triggerProps.id}-value`;
+  let valueId = useId();
 
   return {
     labelProps: {

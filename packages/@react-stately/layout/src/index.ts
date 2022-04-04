@@ -12,3 +12,4 @@
 
 export * from './ListLayout';
 export * from './TableLayout';
+export * from './TableLayout_DEPRECATED';

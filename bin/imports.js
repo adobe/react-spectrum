@@ -18,7 +18,7 @@ const substrings = ['-', '+'];
 
 module.exports = function (context) {
   let processNode = (node) => {
-    if (!node.source) {
+    if (!node.source || node.importKind === 'type') {
       return;
     }
 
