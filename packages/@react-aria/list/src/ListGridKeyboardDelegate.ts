@@ -15,7 +15,6 @@ import {GridKeyboardDelegate, GridKeyboardDelegateOptions} from '@react-aria/gri
 import {Key} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 
-// TODO: Open to feedback about name, ListKeyboardDelegate already exists
 export class ListGridKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollection<T>> {
   constructor(options: Omit<GridKeyboardDelegateOptions<T, GridCollection<T>>, 'focusMode'>) {
     super({...options, focusMode: 'cell'});
