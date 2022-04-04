@@ -41,7 +41,7 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   props = useProviderProps(props);
 
   if (props.placeholder) {
-    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/SearchAutocomplete.html#help-text');
+    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
   }
 
   let isMobile = useIsMobileDevice();
