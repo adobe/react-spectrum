@@ -24,6 +24,7 @@ import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectru
 import {Content} from '@react-spectrum/view';
 import type {DraggableCollectionState} from '@react-stately/dnd';
 import {DragHooks} from '@react-spectrum/dnd';
+import {Grid} from '@react-spectrum/layout';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 // @ts-ignore
@@ -169,28 +170,30 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           <Provider
             {...provider}
             UNSAFE_style={{width: itemWidth}}>
-            <div className={classNames(listStyles, 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
-              <SlotProvider
-                slots={{
-                  content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-                  text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-                  description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
-                  icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
-                  image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
-                  link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
-                  actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
-                  actionGroup: {
-                    UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
-                    isQuiet: true,
-                    density: 'compact'
-                  },
-                  actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
-                }}>
-                {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
-                {isDraggingMultiple &&
-                <div className={classNames(listStyles, 'react-spectrum-ListViewItem-badge')}>{selectedKeys.size}</div>
-              }
-              </SlotProvider>
+            <div className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
+              <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
+                <SlotProvider
+                  slots={{
+                    content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+                    text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+                    description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
+                    icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
+                    image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
+                    link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
+                    actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
+                    actionGroup: {
+                      UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
+                      isQuiet: true,
+                      density: 'compact'
+                    },
+                    actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
+                  }}>
+                  {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
+                  {isDraggingMultiple &&
+                  <div className={classNames(listStyles, 'react-spectrum-ListViewItem-badge')}>{selectedKeys.size}</div>
+                }
+                </SlotProvider>
+              </Grid>
             </div>
           </Provider>
         );
