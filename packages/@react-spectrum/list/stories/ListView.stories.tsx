@@ -412,14 +412,17 @@ export function DragExample(props?) {
           <Content>
             Item {item.key}
           </Content>
-          <ActionGroup onAction={action('onAction')}>
-            <Item key="delete" textValue="Delete">
-              <Delete />
-            </Item>
+          <ActionMenu
+            onAction={action('onAction')}>
             <Item key="edit" textValue="Edit">
               <Edit />
+              <Text>Edit</Text>
             </Item>
-          </ActionGroup>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionMenu>
         </Item>
       )}
     </ListView>
