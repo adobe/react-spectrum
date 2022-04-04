@@ -62,11 +62,9 @@ export interface DateRangePickerState {
   /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
   validationState: ValidationState,
   /** Formats the selected range using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): string,
+  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string},
   /** Replaces the start and/or end value of the selected range with the placeholder value if unentered. */
   confirmPlaceholder(): void
-  /** The smallest unit that is displayed in the date picker. */
-  granularity: Granularity
 }
 
 /**
