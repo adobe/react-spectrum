@@ -165,6 +165,14 @@ describe('CalendarDate conversion', function () {
         date = new CalendarDate(2020, 4, 30);
         expect(toCalendar(date, new JapaneseCalendar())).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 4, 30));
       });
+
+      it('returns the correct number of days for leap and non-leap years', function () {
+        let date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 4, 2, 5);
+        expect(date.calendar.getDaysInMonth(date)).toBe(28);
+
+        date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 2, 5);
+        expect(date.calendar.getDaysInMonth(date)).toBe(29);
+      });
     });
 
     describe('taiwan', function () {

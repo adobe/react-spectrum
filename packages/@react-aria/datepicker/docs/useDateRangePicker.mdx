@@ -208,12 +208,12 @@ The `DateField` component implements the keyboard editable inputs used in a `Dat
 
 ```tsx example export=true render=false
 import {useLocale} from '@react-aria/i18n';
-import {useDatePickerFieldState} from '@react-stately/datepicker';
+import {useDateFieldState} from '@react-stately/datepicker';
 import {useDateField, useDateSegment} from '@react-aria/datepicker';
 
 function DateField(props) {
   let {locale} = useLocale();
-  let state = useDatePickerFieldState({
+  let state = useDateFieldState({
     ...props,
     locale,
     createCalendar
