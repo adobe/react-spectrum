@@ -343,12 +343,12 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
 
   let xInputLabellingProps = useLabels({
     ...props,
-    'aria-label': ariaLabel ? `${ariaLabel} ${xChannelLabel}` : xChannelLabel
+    'aria-label': ariaLabel ? formatMessage('colorInputLabel', {label: ariaLabel, channelLabel: xChannelLabel}) : xChannelLabel
   });
 
   let yInputLabellingProps = useLabels({
     ...props,
-    'aria-label': ariaLabel ? `${ariaLabel} ${yChannelLabel}` : yChannelLabel
+    'aria-label': ariaLabel ? formatMessage('colorInputLabel', {label: ariaLabel, channelLabel: yChannelLabel}) : yChannelLabel
   });
 
   let colorAriaLabellingProps = useLabels(

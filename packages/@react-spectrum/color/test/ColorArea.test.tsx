@@ -109,8 +109,8 @@ describe('ColorArea', () => {
           let [xSlider] = getAllByRole('slider');
           let ySlider = xSlider.nextElementSibling;
 
-          expect(xSlider).toHaveAttribute('aria-label', 'Color hue Color picker');
-          expect(ySlider).toHaveAttribute('aria-label', 'Color hue Color picker');
+          expect(xSlider).toHaveAttribute('aria-label', 'Color hue, Color picker');
+          expect(ySlider).toHaveAttribute('aria-label', 'Color hue, Color picker');
           expect(xSlider).not.toHaveAttribute('aria-labelledby');
           expect(ySlider).not.toHaveAttribute('aria-labelledby');
         });
