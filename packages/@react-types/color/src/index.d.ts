@@ -22,6 +22,7 @@ import {
   SpectrumLabelableProps,
   SpectrumTextInputBase,
   StyleProps,
+  TextInputBase,
   TextInputDOMProps,
   Validation,
   ValueBase
@@ -92,14 +93,14 @@ export interface Color {
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
 
-export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, SpectrumTextInputBase, LabelableProps {
+export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
   /** Handler that is called when the value changes. */
   onChange?: (color: Color | null) => void
 }
 
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
 
-export interface SpectrumColorFieldProps extends AriaColorFieldProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumColorFieldProps extends SpectrumTextInputBase, AriaColorFieldProps, SpectrumLabelableProps, StyleProps {
   /** Whether the ColorField should be displayed with a quiet style. */
   isQuiet?: boolean
 }
