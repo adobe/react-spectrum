@@ -221,15 +221,15 @@ describe('ListView', function () {
   it('should retain focus on the pressed child', function () {
     let tree = renderListWithFocusables();
     let button = within(getRow(tree, 'Foo')).getAllByRole('button')[1];
-    act(() => triggerPress(button));
+    triggerPress(button);
     expect(document.activeElement).toBe(button);
   });
 
   it('should focus the row if the cell is pressed', function () {
     let tree = renderList({selectionMode: 'single'});
     let cell = within(getRow(tree, 'Bar')).getByRole('gridcell');
+    triggerPress(cell);
     act(() => {
-      triggerPress(cell);
       jest.runAllTimers();
     });
     expect(document.activeElement).toBe(getRow(tree, 'Bar'));
@@ -288,7 +288,7 @@ describe('ListView', function () {
           let start = within(getRow(tree, 'Foo')).getAllByRole('button')[1];
           let end = within(getRow(tree, 'Foo')).getAllByRole('button')[0];
           // Need to press to set a modality, otherwise useSelectableCollection will think this is a tab operation
-          act(() => triggerPress(start));
+          triggerPress(start);
           expect(document.activeElement).toHaveTextContent('button2 Foo');
           expect(document.activeElement).toBe(start);
           moveFocus('ArrowRight');
@@ -327,7 +327,7 @@ describe('ListView', function () {
           let start = within(getRow(tree, 'Foo')).getAllByRole('button')[0];
           let end = within(getRow(tree, 'Foo')).getAllByRole('button')[1];
           // Need to press to set a modality, otherwise useSelectableCollection will think this is a tab operation
-          act(() => triggerPress(start));
+          triggerPress(start);
           expect(document.activeElement).toHaveTextContent('button1 Foo');
           expect(document.activeElement).toBe(start);
           moveFocus('ArrowLeft');
@@ -388,7 +388,7 @@ describe('ListView', function () {
         let tree = renderListWithFocusables({items: manyItems});
         let focusables = within(getRow(tree, 'Foo 25')).getAllByRole('button');
         let start = focusables[0];
-        act(() => triggerPress(start));
+        triggerPress(start);
         expect(document.activeElement).toBe(start);
         moveFocus('PageUp');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
@@ -410,7 +410,7 @@ describe('ListView', function () {
         let tree = renderListWithFocusables({items: manyItems});
         let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
         let start = focusables[0];
-        act(() => triggerPress(start));
+        triggerPress(start);
         expect(document.activeElement).toBe(start);
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 25'));
@@ -432,7 +432,7 @@ describe('ListView', function () {
         let tree = renderListWithFocusables({items: manyItems});
         let focusables = within(getRow(tree, 'Foo 15')).getAllByRole('button');
         let start = focusables[0];
-        act(() => triggerPress(start));
+        triggerPress(start);
         expect(document.activeElement).toBe(start);
         moveFocus('Home');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
@@ -452,7 +452,7 @@ describe('ListView', function () {
         let tree = renderListWithFocusables({items: manyItems});
         let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
         let start = focusables[0];
-        act(() => triggerPress(start));
+        triggerPress(start);
         expect(document.activeElement).toBe(start);
         moveFocus('End');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 100'));
