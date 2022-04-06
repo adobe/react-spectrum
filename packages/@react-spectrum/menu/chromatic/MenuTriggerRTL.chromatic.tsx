@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComplexMobile} from './MenuTrigger.chromatic';
 import {Meta} from '@storybook/react';
 import React from 'react';
 
