@@ -31,6 +31,11 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
     let ignoreList = ['index.js', 'util.js'];
     // get all icon files
     let iconFiles = items.filter(item => !!item.endsWith('.js')).filter(item => !ignoreList.includes(item));
+    let renamingFile = path.join(outputDir, '..', 'scripts', 'updatedNamesMap.js');
+    let renameMap;
+    if (fs.existsSync(renamingFile)) {
+      renameMap = require(renamingFile).renameMap;
+    }
 
     // generate all icon files
     iconFiles.forEach(icon => {
@@ -42,14 +47,25 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
         let iconFileName = path.basename(icon).substring(0, icon.length - 3);
         let filepath = `${outputDir}/${iconFileName}.tsx`;
         writeToFile(filepath, newFile);
+
+        // if the file underwent a name change in a4u, create a copy that maintains the old name so we
+        // don't introduce a breaking change
+        if (renameMap && renameMap[iconName]) {
+          let renamedFilePath = `${outputDir}/${renameMap[iconName]}.tsx`;
+          writeToFile(renamedFilePath, newFile);
+        }
       });
     });
+
     // generate index barrel
-    let indexFile = iconFiles.map(icon => {
+    let indexFileLines = iconFiles.map(icon => {
       let iconName = icon.substring(0, icon.length - 3);
       return `export * as ${isNaN(Number(iconName[0])) ? iconName : `_${iconName}`} from './${iconName}';\n`;
-    }).join('');
+    });
+    if (renameMap) {
+      indexFileLines = indexFileLines.concat(Object.keys(renameMap).map(entry => `export * as ${isNaN(Number(renameMap[entry][0])) ? renameMap[entry] : `_${renameMap[entry]}`} from './${entry.replace('A4u', '')}';\n`))
+    }
     let indexFilepath = `${outputDir}/index.ts`;
-    writeToFile(indexFilepath, indexFile);
+    writeToFile(indexFilepath, indexFileLines.join(''));
   });
 }

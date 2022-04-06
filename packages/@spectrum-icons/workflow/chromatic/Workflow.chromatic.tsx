@@ -23,7 +23,7 @@ let alphabet = [...Array(26)]
 alphabet = ['_', ...alphabet];
 let alphabetizedIcons = alphabet
   .reduce((acc, char) => {
-    acc[char] = allIcons.filter(iconName => iconName[0] === char);
+    acc[char] = allIcons.filter(iconName => iconName[0] === char).sort();
     return acc;
   }, {});
 
