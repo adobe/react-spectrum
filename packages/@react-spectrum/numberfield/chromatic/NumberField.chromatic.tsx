@@ -113,6 +113,17 @@ const Template: Story<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
+const TemplateVertical: Story<SpectrumNumberFieldProps> = (args) => (
+  <Grid autoFlow="row" gap="size-300">
+    {combinations.map(c => {
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      if (!key) {
+        key = 'empty';
+      }
+      return <NumberField key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} />;
+    })}
+  </Grid>
+);
 
 const TemplateSmall: Story<SpectrumNumberFieldProps> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
@@ -146,6 +157,14 @@ PropDefaultValue.args = {...PropDefaults.args, defaultValue: 10};
 export const PropValue = Template.bind({});
 PropValue.storyName = 'value';
 PropValue.args = {...PropDefaults.args, value: 10};
+
+export const PropValueMobileViewport = TemplateVertical.bind({});
+PropValueMobileViewport.storyName = 'value, mobile viewport';
+PropValueMobileViewport.args = {...PropDefaults.args, value: 10};
+PropValueMobileViewport.parameters = {
+  chromatic: {viewports: [320]},
+  chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+};
 
 export const PropAriaLabelled = Template.bind({});
 PropAriaLabelled.storyName = 'aria-label';
