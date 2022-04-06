@@ -59,6 +59,7 @@ export class NumberFormatter implements Intl.NumberFormat {
     this.options = options;
   }
 
+  /** Formats a number value as a string, according to the locale and options provided to the constructor. */
   format(value: number): string {
     let res = '';
     if (!supportsSignDisplay && this.options.signDisplay != null) {
@@ -76,12 +77,14 @@ export class NumberFormatter implements Intl.NumberFormat {
     return res;
   }
 
+  /** Formats a number to an array of parts such as separators, digits, punctuation, and more. */
   formatToParts(value: number): Intl.NumberFormatPart[] {
     // TODO: implement signDisplay for formatToParts
     // @ts-ignore
     return this.numberFormatter.formatToParts(value);
   }
 
+  /** Returns the resolved formatting options based on the values passed to the constructor. */
   resolvedOptions(): Intl.ResolvedNumberFormatOptions {
     let options = this.numberFormatter.resolvedOptions();
     if (!supportsSignDisplay && this.options.signDisplay != null) {

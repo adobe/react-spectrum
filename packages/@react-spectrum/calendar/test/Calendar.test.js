@@ -241,7 +241,7 @@ describe('Calendar', () => {
       ${'v3'}   | ${Calendar}   | ${{isDisabled: true}}
     `('$Name does not select a date on click if isDisabled', ({Calendar, props}) => {
       let onChange = jest.fn();
-      let {getByLabelText, getByText} = render(
+      let {getAllByLabelText, getByText} = render(
         <Calendar
           value={new CalendarDate(2019, 6, 5)}
           onChange={onChange}
@@ -251,8 +251,9 @@ describe('Calendar', () => {
       let newDate = getByText('17');
       triggerPress(newDate);
 
-      let selectedDate = getByLabelText('selected', {exact: false});
-      expect(selectedDate.textContent).toBe('5');
+      expect(() => {
+        getAllByLabelText('selected', {exact: false});
+      }).toThrow();
       expect(onChange).not.toHaveBeenCalled();
     });
 

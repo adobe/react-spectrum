@@ -10,6 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+:root {
+  --spectrum-icon-listgripper-width: var(--spectrum-global-dimension-size-75);
+  --spectrum-icon-listgripper-height: var(--spectrum-global-dimension-size-150);
+}
+
 /* Hide UI icons on older browsers with SVG 1.1 implementations */
 .spectrum--medium {
   .spectrum-UIIcon--large {
@@ -150,6 +155,10 @@ governing permissions and limitations under the License.
 .spectrum-UIIcon-InfoSmall {
   inline-size: var(--spectrum-icon-info-small-width);
   block-size: var(--spectrum-icon-info-small-height);
+}
+.spectrum-UIIcon-ListGripper {
+  inline-size: var(--spectrum-icon-listgripper-width);
+  block-size: var(--spectrum-icon-listgripper-height);
 }
 .spectrum-UIIcon-Magnifier {
   inline-size: var(--spectrum-icon-magnifier-width);

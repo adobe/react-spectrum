@@ -39,12 +39,7 @@ export interface SliderProps<T = number[]> extends RangeInputBase<number>, Value
    * The slider's step value.
    * @default 1
    */
-  step?: number,
-  /**
-   * The slider's page step value, used when incrementing and decrementing.
-   * @default 1
-   */
-  pageSize?: number
+  step?: number
 }
 
 export interface SliderThumbProps extends FocusableProps, Validation, LabelableProps {

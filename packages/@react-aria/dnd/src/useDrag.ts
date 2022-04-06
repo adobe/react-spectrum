@@ -18,7 +18,7 @@ import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './c
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import ReactDOM from 'react-dom';
-import {useDescription} from '@react-aria/utils';
+import {useDescription, useGlobalListeners} from '@react-aria/utils';
 import {useDragModality} from './utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {writeToDataTransfer} from './utils';
@@ -62,6 +62,7 @@ export function useDrag(options: DragOptions): DragResult {
   }).current;
   state.options = options;
   let [isDragging, setDragging] = useState(false);
+  let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   let onDragStart = (e: DragEvent) => {
     let items = options.getItems();
@@ -114,6 +115,15 @@ export function useDrag(options: DragOptions): DragResult {
       }
     }
 
+    // Enforce that drops are handled by useDrop.
+    addGlobalListener(window, 'drop', e => {
+      if (!DragManager.isValidDropTarget(e.target as Element)) {
+        e.preventDefault();
+        e.stopPropagation();
+        throw new Error('Drags initiated from the React Aria useDrag hook may only be dropped on a target created with useDrop. This ensures that a keyboard and screen reader accessible alternative is available.');
+      }
+    }, {capture: true, once: true});
+
     if (typeof options.onDragStart === 'function') {
       options.onDragStart({
         type: 'dragstart',
@@ -160,6 +170,7 @@ export function useDrag(options: DragOptions): DragResult {
     }
 
     setDragging(false);
+    removeAllGlobalListeners();
   };
 
   let onPress = (e: PressEvent) => {
