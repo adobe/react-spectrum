@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -14,13 +14,9 @@ import docs from 'docs:@react-aria/listbox';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/list';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/listbox/package.json';
 import Anatomy from './anatomy.svg';
-
-```jsx import
-import {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
-```
 
 ---
 category: Collections
@@ -29,7 +25,7 @@ keywords: [listbox, aria]
 
 # useListBox
 
-<p>{docs.exports.useListBox.description}</p>
+<PageDescription>{docs.exports.useListBox.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -125,6 +121,7 @@ props from <TypeLink links={docs.links} type={docs.exports.useListBox} />
 and <TypeLink links={docs.links} type={docs.exports.useOption} />.
 
 ```tsx example
+import {useListBox, useOption} from '@react-aria/listbox';
 import {useListState} from '@react-stately/list';
 import {Item} from '@react-stately/collections';
 import {useFocusRing} from '@react-aria/focus';
@@ -206,6 +203,7 @@ are correct.
 
 ```tsx example
 import {Section} from '@react-stately/collections';
+import {useListBoxSection} from '@react-aria/listbox';
 import {useSeparator} from '@react-aria/separator';
 
 function ListBox(props) {

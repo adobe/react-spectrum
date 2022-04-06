@@ -19,7 +19,10 @@ import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
 import {watchModals} from '@react-aria/aria-modal-polyfill';
 
-window.addEventListener('load', () => listen());
+if (process.env.NODE_ENV === 'production') {
+  window.addEventListener('load', () => listen());
+}
+
 window.addEventListener('load', () => watchModals());
 
 let title = document.querySelector('h1');

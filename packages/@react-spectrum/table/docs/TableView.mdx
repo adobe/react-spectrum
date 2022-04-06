@@ -1,18 +1,19 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/table';
 import tableTypes from 'docs:@react-types/table/src/index.d.ts';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/table/package.json';
 
 ```jsx import
@@ -29,7 +30,7 @@ keywords: [table, grid]
 
 # TableView
 
-<p>{docs.exports.TableView.description}</p>
+<PageDescription>{docs.exports.TableView.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -469,9 +470,9 @@ You can disable specific rows by providing an array of keys to TableView via the
 
 By default, TableView uses the checkbox selection style, which includes a column of checkboxes in each row for selection. When the `selectionStyle` prop is set to `"highlight"`, the checkboxes are hidden, and the selected rows are displayed with a highlighted background instead.
 
-In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping, or pressing the <kbd>Space</kbd> or <kbd>Enter</kbd> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
+In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
 
-In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <kbd>Ctrl</kbd>, <kbd>Cmd</kbd>, and <kbd>Shift</kbd> can be used.  To move focus without moving selection, the <kbd>Ctrl</kbd> key on Windows or the <kbd>Option</kbd> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <kbd>Space</kbd> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows.
+In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used.  To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows.
 
 ```tsx example
 <PokemonTable selectionMode="multiple" selectionStyle="highlight" />
@@ -481,7 +482,7 @@ In the highlight selection style, however, clicking a row with the mouse _replac
 
 TableView may be used in use cases where users can perform actions on rows, such as navigating into items to open them or get more details. In the default checkbox selection style, it is recommended to use a [Link](Link.html) component in the first column for navigation.
 
-In the highlight selection style, the `onAction` prop can be used to enable row actions, which differ depending on the interaction method. When provided, double clicking with a mouse or pressing the <kbd>Enter</kbd> key triggers `onAction`, while single click and the <kbd>Space</kbd> key are reserved for selection. On touch devices, `onAction` becomes the primary tap interaction, and a long press enters into selection mode, which displays checkboxes to perform selection. Deselecting all items exits selection mode and hides the checkboxes. Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
+In the highlight selection style, the `onAction` prop can be used to enable row actions, which differ depending on the interaction method. When provided, double clicking with a mouse or pressing the <Keyboard>Enter</Keyboard> key triggers `onAction`, while single click and the <Keyboard>Space</Keyboard> key are reserved for selection. On touch devices, `onAction` becomes the primary tap interaction, and a long press enters into selection mode, which displays checkboxes to perform selection. Deselecting all items exits selection mode and hides the checkboxes. Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
 
 ```tsx example
 <PokemonTable selectionMode="multiple" selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} />

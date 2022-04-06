@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -16,7 +16,7 @@ import focusDocs from 'docs:@react-aria/focus';
 import menuDocs from 'docs:@react-aria/menu';
 import buttonDocs from 'docs:@react-aria/button';
 import statelyDocs from 'docs:@react-stately/menu';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/menu/package.json';
 import Anatomy from './menu-trigger-anatomy.svg';
 
@@ -27,7 +27,7 @@ keywords: [menu trigger, mutli-select menu, aria]
 
 # useMenuTrigger
 
-<p>{docs.exports.useMenuTrigger.description}</p>
+<PageDescription>{docs.exports.useMenuTrigger.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}

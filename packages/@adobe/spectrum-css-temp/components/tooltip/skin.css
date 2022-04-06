@@ -46,3 +46,16 @@ governing permissions and limitations under the License.
     border-top-color: var(--spectrum-tooltip-positive-background-color);
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-Tooltip {
+    border: 1px solid transparent;
+  }
+  .spectrum-Tooltip-tip {
+    forced-color-adjust: none;
+    --spectrum-tooltip-background-color: CanvasText;
+    --spectrum-tooltip-negative-background-color: Highlight;
+    --spectrum-tooltip-info-background-color: Highlight;
+    --spectrum-tooltip-positive-background-color: Highlight;
+  }
+}

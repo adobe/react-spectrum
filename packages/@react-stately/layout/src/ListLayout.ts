@@ -187,7 +187,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let layoutNode = this.buildNode(node, x, y);
     layoutNode.node = node;
 
-    layoutNode.layoutInfo.parentKey = node.parentKey || null;
+    layoutNode.layoutInfo.parentKey = node.parentKey ?? null;
     this.layoutInfos.set(layoutNode.layoutInfo.key, layoutNode.layoutInfo);
     if (layoutNode.header) {
       this.layoutInfos.set(layoutNode.header.key, layoutNode.header);

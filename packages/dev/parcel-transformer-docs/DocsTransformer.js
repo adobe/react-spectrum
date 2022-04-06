@@ -36,6 +36,10 @@ module.exports = new Transformer({
 
     let exports = {};
 
+    asset.symbols.ensure();
+    asset.symbols.set('*', `$${asset.id}$exports`);
+    asset.isBundleSplittable = false;
+
     traverse(ast, {
       ExportNamedDeclaration(path) {
         if (path.node.source) {
@@ -46,7 +50,8 @@ module.exports = new Transformer({
           }
 
           asset.addDependency({
-            moduleSpecifier: path.node.source.value,
+            specifier: path.node.source.value,
+            specifierType: 'esm',
             symbols,
             pipeline: 'docs-json'
           });
@@ -74,7 +79,8 @@ module.exports = new Transformer({
 
       ExportAllDeclaration(path) {
         asset.addDependency({
-          moduleSpecifier: path.node.source.value,
+          specifier: path.node.source.value,
+          specifierType: 'esm',
           symbols: new Map([['*', {local: '*'}]]),
           pipeline: 'docs-json'
         });
@@ -244,7 +250,8 @@ module.exports = new Transformer({
 
       if (path.isImportSpecifier()) {
         asset.addDependency({
-          moduleSpecifier: path.parent.source.value,
+          specifier: path.parent.source.value,
+          specifierType: 'esm',
           symbols: new Map([[path.node.imported.name, {local: path.node.local.name}]]),
           pipeline: 'docs-json'
         });
@@ -476,6 +483,7 @@ module.exports = new Transformer({
         type: 'parameter',
         name: p.isRestElement() ? p.node.argument.name : p.node.name,
         value: p.node.typeAnnotation ? processExport(p.get('typeAnnotation.typeAnnotation')) : {type: 'any'},
+        optional: p.node.optional,
         rest: p.isRestElement()
       };
     }

@@ -72,3 +72,9 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-Toast {
+    border: 1px solid transparent;
+  }
+}

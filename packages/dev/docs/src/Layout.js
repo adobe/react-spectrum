@@ -24,15 +24,18 @@ import {ImageContext} from './Image';
 import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
+import pageStyles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import path from 'path';
 import React from 'react';
 import ruleStyles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import {SlotProvider} from '@react-spectrum/utils';
 import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
 
+const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
 const TLD = 'react-spectrum.adobe.com';
 const HERO = {
   'react-spectrum': heroImageSpectrum,
@@ -70,8 +73,7 @@ const mdxComponents = {
   ol: ({children, ...props}) => <ol {...props} className={typographyStyles['spectrum-Body3']}>{children}</ol>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  a: ({children, ...props}) => <a {...props} className={clsx(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(props.href)}>{children}</a>,
-  kbd: ({children, ...props}) => <kbd {...props} className={docStyles['keyboard']}>{children}</kbd>
+  a: ({children, ...props}) => <a {...props} className={clsx(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(props.href)}>{children}</a>
 };
 
 const sectionTitles = {
@@ -98,7 +100,7 @@ function isBlogSection(section) {
 function Page({children, currentPage, publicUrl, styles, scripts}) {
   let parts = currentPage.name.split('/');
   let isBlog = isBlogSection(parts[0]);
-  let isSubpage = parts.length > 1 && !/index\.html$/.test(currentPage.name);
+  let isSubpage = parts.length > 1 && !INDEX_RE.test(currentPage.name);
   let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
   if (isBlog && isSubpage) {
     pageSection = sectionTitles[parts[0]];
@@ -106,7 +108,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
 
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
-  let title = currentPage.title + (!/index\.html$/.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
+  let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
   let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
 
@@ -116,7 +118,8 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
       dir="ltr"
       prefix="og: http://ogp.me/ns#"
       className={clsx(
-        theme.global.spectrum,
+        pageStyles.spectrum,
+        Object.values(theme.global),
         theme.light['spectrum--light'],
         theme.medium['spectrum--medium'],
         typographyStyles.spectrum,
@@ -232,7 +235,6 @@ const CATEGORY_ORDER = [
 ];
 
 function Nav({currentPageName, pages}) {
-  let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
   let isBlog = isBlogSection(currentParts[0]);
   let blogIndex = currentParts[0] + '/index.html';
@@ -256,16 +258,16 @@ function Nav({currentPageName, pages}) {
 
     // Pages within same directory (react-spectrum/Alert.html)
     if (currentParts.length > 1) {
-      return currentDir === pageDir && !isIndex.test(p.name);
+      return currentDir === pageDir && !INDEX_RE.test(p.name);
     }
 
     // Top-level index pages (react-spectrum/index.html)
-    if (currentParts.length === 1 && pageParts.length > 1 && isIndex.test(p.name)) {
+    if (currentParts.length === 1 && pageParts.length > 1 && INDEX_RE.test(p.name)) {
       return true;
     }
 
     // Other top-level pages
-    return !isIndex.test(p.name) && pageParts.length === 1;
+    return !INDEX_RE.test(p.name) && pageParts.length === 1;
   });
 
   if (currentParts.length === 1) {
@@ -314,7 +316,13 @@ function Nav({currentPageName, pages}) {
   }
 
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
-  let currentPageIsIndex = isIndex.test(currentPageName);
+  let currentPageIsIndex = INDEX_RE.test(currentPageName);
+  let sectionIndex = './index.html';
+  if (isBlog) {
+    sectionIndex = '/index.html';
+  } else if (currentPageName.startsWith('internationalized/')) {
+    sectionIndex = '../index.html';
+  }
 
   function SideNavItem({name, url, title, preRelease}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
@@ -339,7 +347,7 @@ function Nav({currentPageName, pages}) {
             <ChevronLeft aria-label="Back" />
           </a>
         }
-        <a href={isBlog ? '/index.html' : './index.html'} className={docStyles.homeBtn} id="nav-title-id">
+        <a href={sectionIndex} className={docStyles.homeBtn} id="nav-title-id">
           <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -396,7 +404,9 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
             <ImageContext.Provider value={publicUrl}>
               <LinkProvider>
                 <PageContext.Provider value={{pages, currentPage}}>
-                  {children}
+                  <SlotProvider slots={{keyboard: {UNSAFE_className: docStyles['keyboard']}}}>
+                    {children}
+                  </SlotProvider>
                 </PageContext.Provider>
               </LinkProvider>
             </ImageContext.Provider>
@@ -412,7 +422,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
 export function Layout(props) {
   return (
     <BaseLayout {...props}>
-      <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !props.currentPage.name.endsWith('index.html')})}>
+      <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(props.currentPage.name)})}>
         <VersionBadge version={props.currentPage.preRelease} size="large" />
         {props.children}
       </article>

@@ -68,6 +68,7 @@ describe('useControlledState tests', function () {
 
   it('can handle callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
+    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('defaultValue');
@@ -79,6 +80,7 @@ describe('useControlledState tests', function () {
     [value, setValue] = result.current;
     expect(value).toBe('newValue');
     expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
   });
 
   it('does not trigger too many renders', () => {
@@ -128,6 +130,7 @@ describe('useControlledState tests', function () {
 
   it('can handle controlled callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
+    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {result} = renderHook(() => useControlledState('controlledValue', 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
@@ -150,11 +153,13 @@ describe('useControlledState tests', function () {
     [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
   });
 
   it('can handle controlled callback setValue behavior after prop change', () => {
     let onChangeSpy = jest.fn();
     let propValue = 'controlledValue';
+    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {result, rerender} = renderHook(() => useControlledState(propValue, 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
@@ -180,6 +185,9 @@ describe('useControlledState tests', function () {
     [value, setValue] = result.current;
     expect(value).toBe('updated');
     expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(2);
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
+
   });
 
   it('will console warn if the programmer tries to switch from controlled to uncontrolled', () => {

@@ -273,7 +273,7 @@ function FormWithControls(props: any = {}) {
 
   return (
     <Flex>
-      <Checkbox isSelected={preventDefault} onChange={setPreventDefault}>Prevent Default onSubmit</Checkbox>
+      <Checkbox alignSelf="start" isSelected={preventDefault} onChange={setPreventDefault}>Prevent Default onSubmit</Checkbox>
       <Form
         onSubmit={e => {
           action('onSubmit')(e);
@@ -321,6 +321,12 @@ function FormWithControls(props: any = {}) {
             <Item key="purple">Purple</Item>
           </Picker>
         </SearchWithin>
+        <ComboBox label="Favorite Animal" name="favorite-animal">
+          <Item key="red panda">Red Panda</Item>
+          <Item key="aardvark">Aardvark</Item>
+          <Item key="kangaroo">Kangaroo</Item>
+          <Item key="snake">Snake</Item>
+        </ComboBox>
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>
         </ButtonGroup>

@@ -28,7 +28,7 @@ module.exports = {
       sourceType: 'module'
     },
     rules: {
-      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc']}],
+      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc', 'i.e']}],
       'jsdoc/check-alignment': ERROR,
       'jsdoc/check-indentation': ERROR,
       'jsdoc/check-tag-names': ERROR,
@@ -79,7 +79,10 @@ module.exports = {
     'expect': true,
     'JSX': 'readonly',
     'NodeJS': 'readonly',
-    'AsyncIterable': 'readonly'
+    'AsyncIterable': 'readonly',
+    'FileSystemFileEntry': 'readonly',
+    'FileSystemDirectoryEntry': 'readonly',
+    'FileSystemEntry': 'readonly'
   },
   settings: {
     jsdoc: {
@@ -166,6 +169,7 @@ module.exports = {
     // custom rules
     'rulesdir/sort-imports': [ERROR],
     'rulesdir/imports': [ERROR],
+    'rulesdir/useLayoutEffectRule': [ERROR],
 
     // jsx-a11y rules
     'jsx-a11y/accessible-emoji': ERROR,

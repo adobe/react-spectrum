@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -14,7 +14,8 @@ import docs from 'docs:@react-aria/switch';
 import hiddenDocs from 'docs:@react-aria/visually-hidden';
 import focusDocs from 'docs:@react-aria/focus';
 import statelyDocs from 'docs:@react-stately/toggle';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/switch/package.json';
 import Anatomy from './anatomy.svg';
 
@@ -25,7 +26,7 @@ keywords: [switch, input, checkbox, aria]
 
 # useSwitch
 
-<p>{docs.exports.useSwitch.description}</p>
+<PageDescription>{docs.exports.useSwitch.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -56,7 +57,7 @@ as a switch. `useSwitch` helps achieve accessible switches that can be styled as
 <Anatomy />
 
 A switch consists of a visual selection indicator and a label. Users may click or touch a switch
-to toggle the selection state, or use the <kbd>Tab</kbd> key to navigate to it and the <kbd>Space</kbd> key to toggle it.
+to toggle the selection state, or use the <Keyboard>Tab</Keyboard> key to navigate to it and the <Keyboard>Space</Keyboard> key to toggle it.
 
 `useSwitch` returns props to be spread onto its input element:
 

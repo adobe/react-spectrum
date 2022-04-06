@@ -100,6 +100,7 @@ governing permissions and limitations under the License.
     .spectrum-ActionGroup-item {
       position: relative;
       border-radius: 0;
+      z-index: 1;
 
       &:first-child {
         border-start-start-radius: var(--spectrum-actionbutton-border-radius);
@@ -111,16 +112,20 @@ governing permissions and limitations under the License.
         border-end-end-radius: var(--spectrum-actionbutton-border-radius);
       }
 
-      &.is-selected {
-        z-index: 1;
+      &.spectrum-ActionGroup-item--isDisabled {
+        z-index: 0;
       }
 
-      &:hover {
+      &.is-selected {
         z-index: 2;
       }
 
-      &:focus {
+      &:hover {
         z-index: 3;
+      }
+
+      &:focus {
+        z-index: 4;
       }
     }
 

@@ -31,7 +31,7 @@ describe('useDraggableCollection', () => {
       height: 50
     }));
 
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {

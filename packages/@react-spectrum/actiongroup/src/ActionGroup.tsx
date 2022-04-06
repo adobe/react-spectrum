@@ -309,7 +309,8 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
                 {
                   'is-selected': isSelected,
                   'is-hovered': isHovered,
-                  'spectrum-ActionGroup-item--iconOnly': hideButtonText
+                  'spectrum-ActionGroup-item--iconOnly': hideButtonText,
+                  'spectrum-ActionGroup-item--isDisabled': isDisabled
                 },
                 classNames(
                   buttonStyles,

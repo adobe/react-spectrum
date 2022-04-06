@@ -23,7 +23,7 @@ module.exports = new Transformer({
       engines: {
         browsers: asset.env.engines.browsers
       },
-      minify: options.mode === 'production'
+      shouldOptimize: options.mode === 'production'
     });
 
     return [asset];

@@ -1,25 +1,25 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {BlogPostLayout, Hero} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
-description: As we head into the holiday season, our latest release focuses on kick-starting some of our pre-release components as well a whole list of fixes, and to top it all off, a new selection mode! 
+description: As we head into the holiday season, our latest release focuses on kick-starting some of our pre-release components as well a whole list of fixes, and to top it all off, a new selection mode!
 date: 2021-11-24
 ---
 
 # November 24, 2021 Release
 
-As we head into the holiday season, our latest release focuses on kick-starting some of our pre-release components as well a whole list of fixes, and to top it all off, a new selection mode! 
+As we head into the holiday season, our latest release focuses on kick-starting some of our pre-release components as well a whole list of fixes, and to top it all off, a new selection mode!
 
-Our `@react-aria/interactions` package now includes a new `useLongPress` hook for handling long press interactions across both mouse and touch devices. This hook automatically supports preventing text selection and context menus, allowing customizable time thresholds, and an accessibility description to help discoverability with assistive technology users. Take a look at the documentation in our [React Aria docs](https://react-spectrum.adobe.com/react-aria/useLongPress.html). 
+Our `@react-aria/interactions` package now includes a new `useLongPress` hook for handling long press interactions across both mouse and touch devices. This hook automatically supports preventing text selection and context menus, allowing customizable time thresholds, and an accessibility description to help discoverability with assistive technology users. Take a look at the documentation in our [React Aria docs](https://react-spectrum.adobe.com/react-aria/useLongPress.html).
 
 Highlight selection is an alternative selection behavior that works similarly to native platforms such as macOS and Windows, which can be used when checkboxes on each item are undesired. The `onAction` prop enables actions on each item, such as navigating to a detail view, to be triggered via double click or the Enter key. It also takes advantage of the new `useLongPress` hook to provide a multi-selection mode on touch devices. For examples on use and implementation, visit our [TableView](https://react-spectrum.adobe.com/react-spectrum/TableView.html#highlight-selection) and [useTable](https://react-spectrum.adobe.com/react-aria/useTable.html#selection-behavior) docs.
 
@@ -31,7 +31,7 @@ Thank you to all our contributors for their help with this release.
 - Add new `useLongPress` hook to `@react-aria/interactions` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2363)
 
 ## Fixed
-- Restrict resize updates to `TextArea` only - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2344) 
+- Restrict resize updates to `TextArea` only - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2344)
 - Add focus hook to `useLink` to fix Tooltips on `Link` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2276)
 - Update `CheckboxGroup`, `RadioGroup`, `useToggle` to use `aria-required` - [@paulkenney](https://github.com/paulkenney) - [PR](https://github.com/adobe/react-spectrum/pull/2377)
 - Update generic types for `useTextField` - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/2369)

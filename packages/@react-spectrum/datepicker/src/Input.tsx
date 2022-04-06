@@ -14,10 +14,10 @@ import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
 import datepickerStyles from './index.css';
-import {FocusRing, FocusScope} from '@react-aria/focus';
-import {mergeProps, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {FocusRing} from '@react-aria/focus';
 import React, {useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import {useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 
 export function Input(props) {
   let defaultRef = useRef();
@@ -30,7 +30,6 @@ export function Input(props) {
     fieldProps,
     inputRef = defaultRef,
     className,
-    autoFocus,
     style
   } = props;
 
@@ -113,13 +112,11 @@ export function Input(props) {
   }
 
   return (
-    <div {...mergeProps(fieldProps)} className={textfieldClass} style={style}>
+    <div role="presentation" {...fieldProps} className={textfieldClass} style={style}>
       <FocusRing focusClass={classNames(textfieldStyles, 'is-focused')} focusRingClass={classNames(textfieldStyles, 'focus-ring')} isTextInput within>
         <div role="presentation" className={inputClass}>
           <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={inputRef}>
-            <FocusScope autoFocus={autoFocus}>
-              {children}
-            </FocusScope>
+            {children}
           </div>
         </div>
       </FocusRing>

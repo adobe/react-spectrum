@@ -13,10 +13,10 @@
 import {AriaCardProps, SpectrumCardProps} from '@react-types/card';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
-import {Divider} from '@react-spectrum/divider';
 import {DOMRef, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLayoutEffect, useResizeObserver, useSlotId} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
+import {getFocusableTreeWalker} from  '@react-aria/focus';
 import React, {HTMLAttributes, useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCardViewContext} from './CardViewContext';
@@ -38,7 +38,8 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     orientation = 'vertical',
     articleProps = {},
     item,
-    layout
+    layout,
+    children
   } = props;
 
   let key = item?.key;
@@ -50,6 +51,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   let {cardProps, titleProps, contentProps} = useCard(props);
   let domRef = useDOMRef(ref);
   let gridRef = useRef<HTMLDivElement>();
+  let checkboxRef = useRef(null);
 
   // cards are only interactive if there is a selection manager and it allows selection
   let {hoverProps, isHovered} = useHover({isDisabled: manager === undefined || manager?.selectionMode === 'none' || isDisabled});
@@ -58,8 +60,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     onFocusWithinChange: setIsFocused,
     isDisabled
   });
-
-  let hasFooter = useHasChild(`.${styles['spectrum-Card-footer']}`, gridRef);
 
   // ToDo: see css for comment about avatar under selector .spectrum-Card--noLayout.spectrum-Card--default
   let hasPreviewImage = useHasChild(`.${styles['spectrum-Card-image']}`, gridRef);
@@ -92,63 +92,22 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     avatar: {UNSAFE_className: classNames(styles, 'spectrum-Card-avatar'), size: 'avatar-size-400'},
     heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
     content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
-    detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')},
-    actionmenu: {UNSAFE_className: classNames(styles, 'spectrum-Card-actions'), align: 'end', isQuiet: true},
-    footer: {UNSAFE_className: classNames(styles, 'spectrum-Card-footer'), isHidden: isQuiet},
-    divider: {UNSAFE_className: classNames(styles, 'spectrum-Card-divider'), size: 'S'}
+    detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')}
   }), [titleProps, contentProps, height, isQuiet, orientation]);
 
-  // This is only for quiet grid cards
-  let [isCloseToSquare, setIsCloseToSquare] = useState(false);
   useLayoutEffect(() => {
-    if (!(layout === 'grid' && isQuiet)) {
-      return;
-    }
-    // ToDo: how to handle illustrations? what if the illustration looks like an image? What about swatches/fonts https://spectrum-contributions.corp.adobe.com/page/asset-card-beta/#File-type
-    let image = gridRef.current.querySelector(`.${styles['spectrum-Card-image']} img`) as HTMLImageElement;
-    if (!image) {
-      return;
-    }
-    let measure = () => {
-      let height = image.naturalHeight;
-      let width = image.naturalWidth;
-      /*
-      * ToDo: Choose between min-padding and plain ratio
-      * Do we want to just do a ratio measurement when it's close to being a square?
-      * or do we want to actually figure out min-padding?
-      * Min Padding would require us to check that the padding is not less than the min in both Vertical and Horizontal
-      * Unfortunately img contain doesn't actually create padding, which is what this math below can figure out
-      * Vs the commented out straight ratio check
-      * */
-      let imgTagHeight = image.clientHeight;
-      let imgTagWidth = image.clientWidth;
-      let ratio = Math.min(imgTagWidth / width, imgTagHeight / height);
-      let trueHeight = ratio * height;
-      let trueWidth = ratio * width;
-      let paddingVertical = imgTagHeight - trueHeight;
-      let paddingHorizontal = imgTagWidth - trueWidth;
-      if (paddingVertical < 16 && paddingHorizontal < 16) { // ToDo: does this need to be different per scale?
-        setIsCloseToSquare(true);
-      } else {
-        setIsCloseToSquare(false);
+    if (gridRef?.current) {
+      let walker = getFocusableTreeWalker(gridRef.current);
+      let nextNode = walker.nextNode();
+      while (nextNode != null) {
+        if (checkboxRef.current && !checkboxRef.current.UNSAFE_getDOMNode().contains(nextNode)) {
+          console.warn('Card does not support focusable elements, please contact the team regarding your use case.');
+          break;
+        }
+        nextNode = walker.nextNode();
       }
-
-      // let ratio = height / width;
-      // if (ratio > 0.9 && ratio < 1.1) {
-      //   setIsCloseToSquare(true);
-      // }
-    };
-    if (image.complete) {
-      measure();
-    } else {
-      image.addEventListener('load', measure);
-      return () => {
-        image.removeEventListener('load', measure);
-      };
     }
-    // ToDo: how to re-run if image src changes?
-  }, [props.children, setIsCloseToSquare, isQuiet, layout]);
-
+  }, [children]);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -160,7 +119,6 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           'spectrum-Card--default': !isQuiet && orientation !== 'horizontal',
           'spectrum-Card--isQuiet': isQuiet && orientation !== 'horizontal',
           'spectrum-Card--horizontal': orientation === 'horizontal',
-          'spectrum-Card--closeToSquare': isCloseToSquare,
           'spectrum-Card--noPreview': !hasPreview,
           'is-hovered': isHovered,
           'is-focused': isFocused,
@@ -174,6 +132,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
           {manager && manager.selectionMode !== 'none' && (
             <div className={classNames(styles, 'spectrum-Card-checkboxWrapper')}>
               <Checkbox
+                ref={checkboxRef}
                 isDisabled={isDisabled}
                 excludeFromTabOrder
                 isSelected={isSelected}
@@ -184,8 +143,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
             </div>
           )}
           <SlotProvider slots={slots}>
-            {props.children}
-            {hasFooter && <Divider />}
+            {children}
           </SlotProvider>
           <div className={classNames(styles, 'spectrum-Card-decoration')} />
         </div>
