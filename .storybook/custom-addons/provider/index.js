@@ -46,15 +46,17 @@ function ProviderUpdater(props) {
 
   return (
     <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
-      <div style={{position: 'absolute', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px'}}>
-        {props.context.parameters.note && (<DialogTrigger type="popover">
-          <ActionButton>Note</ActionButton>
-          <Dialog>
-            <Content><Text>{props.context.parameters.note}</Text></Content>
-          </Dialog>
-        </DialogTrigger>)}
-      </div>
-      {storyReady && props.children}
+      <main>
+        <div style={{position: 'absolute', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px'}}>
+          {props.context.parameters.note && (<DialogTrigger type="popover">
+            <ActionButton>Note</ActionButton>
+            <Dialog>
+              <Content><Text>{props.context.parameters.note}</Text></Content>
+            </Dialog>
+          </DialogTrigger>)}
+        </div>
+        {storyReady && props.children}
+      </main>
     </Provider>
   );
 }
