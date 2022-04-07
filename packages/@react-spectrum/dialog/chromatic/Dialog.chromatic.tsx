@@ -112,13 +112,6 @@ storiesOf('Dialog', module)
     }
   )
   .add(
-    'mobileType fullscreen, modal',
-    () => renderTriggerProps({type: 'modal', mobileType: 'fullscreen'}), {
-      chromatic: {viewports: [320, 1200]},
-      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
-    }
-  )
-  .add(
     'mobileType fullscreenTakeover, modal',
     () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'}), {
       chromatic: {viewports: [320, 1200]},
