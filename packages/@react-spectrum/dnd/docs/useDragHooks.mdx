@@ -1,0 +1,119 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/dnd';
+import listviewDocs from 'docs:@react-spectrum/list';
+import {FunctionAPI, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+
+---
+category: Concepts
+keywords: [drag and drop, dnd]
+---
+
+# Drag and Drop
+
+This page describes how to enable drag and drop functionality for the various React Spectrum components that support it.
+
+## Introduction
+
+Drag and drop is an operation performed when a user "grabs" a UI element via their pointing device and drops it on a different location or element.
+It has become a common interaction in many modern applications due to its flexibilty across a variety of use cases but can come saddled with
+a variety of accessibility issues, including but not limited to keyboard interaction parity and difficulties mimicking drag operations with mouse emulators.
+React Spectrum components that support drag and drop operations seek to address these issues by providing full keyboard and screen reader drag and drop
+support.
+
+If you are interested in adding drag and drop support to your own components, feel free to check out the drag and drop react-aria hooks!
+
+## API
+
+TODO: figure out why the drag options aren't omitting things like collection, etc
+<FunctionAPI function={docs.exports.useDragHooks} links={docs.links} />
+
+## How to use
+
+Enabling drag and drop for a supported React Spectrum component is a bit different from the typical event handler prop pattern that you maybe familiar with.
+Instead of providing each event handler directly to the component, you must first import `useDragHooks` from `@react-spectrum/dnd` package and provide it with
+your desired options. `useDragHooks` will then provide you with `dragHooks` that you can pass to the component via the `dragHooks` prop.
+
+You may be wondering why we didn't simply import the drag and drop hooks within the components themselves. The reason behind this is to reduce the bundle size of
+the component for users who don't need the drag and drop support for their component.
+
+
+TODO: rebase branch against Reid's listview pr so I can reference it here
+
+The following list shows which components currently support drag and drop:
+-  `ListView`
+
+
+### Example
+
+The example below illustrates how one would use `useDragHooks` to enable drag and drop for a ListView. Note how only non-folder type items are made draggable via
+the `allowsDraggingItem` option provided to `useDragHooks`. The data transferred during the drop operation is specified by the value returned by `getItems`. To perform a
+drag and drop operations via a keyboard, first select the items to be dragged. You can then start the drag operation by focusing the drag handle on any of the
+selected rows and hitting <Keyboard>Enter</Keyboard>/<Keyboard>Space</Keyboard>. For screen readers, please follow the instructions announced when focusing the row's drag handle.
+
+```tsx example
+import Folder from '@spectrum-icons/workflow/Folder';
+import {Item, ListView} from '@react-spectrum/list';
+import {Text, View} from '@adobe/react-spectrum';
+import {useDragHooks} from '@react-spectrum/dnd';
+
+function DragExample() {
+  let [event, setEvent] = React.useState('none');
+  let items = [
+    {key: 'a', textValue: 'File a', type: 'file'},
+    {key: 'b', textValue: 'File b', type: 'file'},
+    {key: 'c', textValue: 'Folder c', type: 'folder'}
+  ];
+  let getItems = (keys) => [...keys].map(key => {
+    let item = items.find(item => item.key === key);
+    return {
+      'text/plain': item.textValue
+    };
+  });
+  let allowsDraggingItem = (key) => {
+    let item = items.find(item => item.key === key);
+    return item.type !== 'folder';
+  };
+  let onDragStart = (e) => setEvent(JSON.stringify(e));
+  let onDragEnd = (e) => setEvent(JSON.stringify(e));
+  let dragHooks = useDragHooks({
+    allowsDraggingItem,
+    getItems,
+    onDragStart,
+    onDragEnd
+  });
+
+  // TODO: add a drop region
+  return (
+    <>
+      <ListView
+        aria-label="Draggable list view example"
+        width="size-3600"
+        selectionMode="multiple"
+        items={items}
+        dragHooks={dragHooks}>
+        {item => (
+          <Item key={item.key} textValue={item.textValue}>
+            {item.type === 'folder' && <Folder />}
+            <Text slot="content">{item.textValue}</Text>
+          </Item>
+        )}
+      </ListView>
+      <View maxHeight="size-3000" overflow="auto">
+        Last drag event: {event}
+      </View>
+    </>
+  );
+}
+```
