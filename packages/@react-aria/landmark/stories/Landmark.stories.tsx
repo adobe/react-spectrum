@@ -27,7 +27,8 @@ import {useLandmark} from '../';
 interface StoryProps {}
 
 const meta: Meta<StoryProps> = {
-  title: 'Landmark'
+  title: 'Landmark',
+  parameters: {providerSwitcher: {mainElement: false}}
 };
 
 export default meta;
