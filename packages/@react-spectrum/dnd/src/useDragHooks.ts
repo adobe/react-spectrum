@@ -3,11 +3,11 @@ import {DraggableItemProps, DraggableItemResult, useDraggableItem} from '@react-
 import {useMemo} from 'react';
 
 export interface DragHooks {
-    useDraggableCollectionState(props: Omit<DraggableCollectionOptions, 'getItems'>): DraggableCollectionState,
-    useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult
+  useDraggableCollectionState(props: Omit<DraggableCollectionOptions, 'getItems'>): DraggableCollectionState,
+  useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult
 }
 
-export type DragHookOptions = Omit<DraggableCollectionOptions, 'collection' | 'selectionManager' | 'isDragging' | 'getKeysForDrag'>
+export interface DragHookOptions extends Omit<DraggableCollectionOptions, 'collection' | 'selectionManager' | 'isDragging' | 'getKeysForDrag'> {}
 
 export function useDragHooks(options: DragHookOptions): DragHooks {
   return useMemo(() => ({
@@ -19,7 +19,7 @@ export function useDragHooks(options: DragHookOptions): DragHooks {
         getItems,
         renderPreview
       } = props;
-      
+
       return useDraggableCollectionState({
         collection,
         selectionManager,

@@ -10,6 +10,7 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import docs from 'docs:@react-spectrum/dnd';
 import listviewDocs from 'docs:@react-spectrum/list';
 import {FunctionAPI, PageDescription} from '@react-spectrum/docs';
@@ -32,35 +33,75 @@ a variety of accessibility issues, including but not limited to keyboard interac
 React Spectrum components that support drag and drop operations seek to address these issues by providing full keyboard and screen reader drag and drop
 support.
 
-If you are interested in adding drag and drop support to your own components, feel free to check out the drag and drop react-aria hooks!
+If you are interested in adding drag and drop support to your own components, feel free to check out the [drag and drop react-aria hooks](https://www.npmjs.com/package/@react-aria/dnd)!
 
 ## API
 
-TODO: figure out why the drag options aren't omitting things like collection, etc
 <FunctionAPI function={docs.exports.useDragHooks} links={docs.links} />
 
 ## How to use
 
-Enabling drag and drop for a supported React Spectrum component is a bit different from the typical event handler prop pattern that you maybe familiar with.
+Enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you maybe familiar with.
 Instead of providing each event handler directly to the component, you must first import `useDragHooks` from `@react-spectrum/dnd` package and provide it with
-your desired options. `useDragHooks` will then provide you with `dragHooks` that you can pass to the component via the `dragHooks` prop.
+your desired options. `useDragHooks` will then provide you with `DragHooks` that you can pass to the component via the `dragHooks` prop.
 
 You may be wondering why we didn't simply import the drag and drop hooks within the components themselves. The reason behind this is to reduce the bundle size of
 the component for users who don't need the drag and drop support for their component.
 
-
-TODO: rebase branch against Reid's listview pr so I can reference it here
-
 The following list shows which components currently support drag and drop:
--  `ListView`
-
+-  [ListView](ListView.html)
 
 ### Example
 
 The example below illustrates how one would use `useDragHooks` to enable drag and drop for a ListView. Note how only non-folder type items are made draggable via
-the `allowsDraggingItem` option provided to `useDragHooks`. The data transferred during the drop operation is specified by the value returned by `getItems`. To perform a
-drag and drop operations via a keyboard, first select the items to be dragged. You can then start the drag operation by focusing the drag handle on any of the
-selected rows and hitting <Keyboard>Enter</Keyboard>/<Keyboard>Space</Keyboard>. For screen readers, please follow the instructions announced when focusing the row's drag handle.
+the `allowsDraggingItem` option provided to `useDragHooks`. The data transferred during the drop operation is specified by the value returned by `getItems`, in this case
+returning plain text matching the text value associated with the dragged row. Finally, the `onDragStart`, `onDragMove`, `onDragEnd` event handlers just need to be provided
+to `useDragHooks` and ListView will handle attaching those event handlers to each draggable row.
+
+To perform a drag and drop operations via a keyboard, first select the items to be dragged. You can then start the drag operation by focusing the drag handle on any of the
+selected rows and hitting <Keyboard>Enter</Keyboard>/<Keyboard>Space</Keyboard>. Once a drag operation is started, <Keyboard>Tab</Keyboard> can be used to cycle through valid
+drop targets. Hitting <Keyboard>Enter</Keyboard> will then confirm the drop operation on the focused drop target. For screen readers, please follow the instructions announced
+when focusing the row's drag handle to begin a drag operation.
+
+A custom droppable input element is used in the example below. TODO: ask if we will have a spectrum dropzone or if people will be expected to create their own
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {mergeProps} from '@react-aria/utils';
+import {useDrop} from '@react-aria/dnd';
+import {useTextField} from '@react-aria/textfield';
+
+function DroppableInput(props) {
+  let {label, type} = props;
+  let ref = React.useRef();
+  let onDrop = async (e) => {
+    let text = ref.current.value;
+    for (let item of e.items) {
+      let type = item.types.values().next().value;
+      text = text.concat(await item.getText(type));
+    }
+    ref.current.value = text;
+  };
+
+  let {dropProps} = useDrop({
+    ref,
+    onDrop,
+    getDropOperation(types, allowedOperations) {
+      return type && types.has(type) && allowedOperations.includes('move') ? 'move' : 'cancel';
+    }
+  });
+
+  let {labelProps, inputProps} = useTextField(props, ref);
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
+      <label {...labelProps}>{label}</label>
+      <input {...mergeProps(dropProps, inputProps)} ref={ref} />
+    </div>
+  );
+}
+```
+</details>
 
 ```tsx example
 import Folder from '@spectrum-icons/workflow/Folder';
@@ -70,6 +111,7 @@ import {useDragHooks} from '@react-spectrum/dnd';
 
 function DragExample() {
   let [event, setEvent] = React.useState('none');
+  let [dragPosition, setDragPosition] = React.useState('n/a');
   let items = [
     {key: 'a', textValue: 'File a', type: 'file'},
     {key: 'b', textValue: 'File b', type: 'file'},
@@ -86,15 +128,16 @@ function DragExample() {
     return item.type !== 'folder';
   };
   let onDragStart = (e) => setEvent(JSON.stringify(e));
+  let onDragMove = (e) => setDragPosition(JSON.stringify(e));
   let onDragEnd = (e) => setEvent(JSON.stringify(e));
   let dragHooks = useDragHooks({
     allowsDraggingItem,
     getItems,
     onDragStart,
+    onDragMove,
     onDragEnd
   });
 
-  // TODO: add a drop region
   return (
     <>
       <ListView
@@ -110,8 +153,12 @@ function DragExample() {
           </Item>
         )}
       </ListView>
-      <View maxHeight="size-3000" overflow="auto">
-        Last drag event: {event}
+      <DroppableInput label="Drop target" type="text/plain" />
+      <View marginTop="size-200">
+        Last drag start/end: {event}
+      </View>
+      <View>
+        Drag position: {dragPosition}
       </View>
     </>
   );
