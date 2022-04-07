@@ -48,7 +48,7 @@ Lastly, please follow the pull request template when submitting a pull request!
 All third-party contributions to this project must be accompanied by a signed contributor license agreement. This gives Adobe permission to redistribute your contributions as part of the project. [Sign our CLA](https://opensource.adobe.com/cla.html). You only need to submit an Adobe CLA one time, so if you have submitted one previously, you are good to go!
 
 ## Where to start
-There are many places to dive into react-spectrum to help out. Before you take on a feature or issue, make sure you become familiar with [our architecture](architecture.html).
+There are many places to dive into react-spectrum to help out. Before you take on a feature or issue, make sure you become familiar with [our architecture](https://react-spectrum.adobe.com/architecture.html).
 
 If you are looking for place to start, consider the following options:
 - Look for issues tagged with help wanted and/or good first issue.
@@ -58,7 +58,7 @@ If you are looking for place to start, consider the following options:
 
 ## Developing
 When you are ready to start developing you can clone the repo and start storybook.
-Make sure you have the following requirements installed: [node](https://nodejs.org/) (v11.0.0+) and [yarn](https://yarnpkg.com/en/) (v1.22.0+)
+Make sure you have the following requirements installed: [node](https://nodejs.org/) (v14.15.0+) and [yarn](https://yarnpkg.com/en/) (v1.22.0+)
 
 Fork the repo first using [this guide](https://help.github.com/articles/fork-a-repo), then clone it locally.
 ```

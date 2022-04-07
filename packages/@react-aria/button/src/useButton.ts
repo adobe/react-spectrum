@@ -32,9 +32,9 @@ export interface ButtonAria<T> {
   isPressed: boolean
 }
 
-/* eslint-disable no-redeclare */
-export function useButton(props: AriaButtonProps<'a'>, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
+// Order with overrides is important: 'button' should be default
 export function useButton(props: AriaButtonProps<'button'>, ref: RefObject<HTMLButtonElement>): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
+export function useButton(props: AriaButtonProps<'a'>, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
 export function useButton(props: AriaButtonProps<'div'>, ref: RefObject<HTMLDivElement>): ButtonAria<HTMLAttributes<HTMLDivElement>>;
 export function useButton(props: AriaButtonProps<'input'>, ref: RefObject<HTMLInputElement>): ButtonAria<InputHTMLAttributes<HTMLInputElement>>;
 export function useButton(props: AriaButtonProps<'span'>, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
@@ -46,7 +46,6 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<HT
  * @param ref - A ref to a DOM element for the button.
  */
 export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<any>): ButtonAria<HTMLAttributes<any>> {
-/* eslint-enable no-redeclare */
   let {
     elementType = 'button',
     isDisabled,
@@ -56,6 +55,8 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
     onPressChange,
     // @ts-ignore - undocumented
     preventFocusOnPress,
+    // @ts-ignore - undocumented
+    allowFocusWhenDisabled,
     // @ts-ignore
     onClick: deprecatedOnClick,
     href,
@@ -93,8 +94,10 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
   });
 
   let {focusableProps} = useFocusable(props, ref);
-  let buttonProps = mergeProps(focusableProps, pressProps);
-  buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
+  if (allowFocusWhenDisabled) {
+    focusableProps.tabIndex = isDisabled ? -1 : focusableProps.tabIndex;
+  }
+  let buttonProps = mergeProps(focusableProps, pressProps, filterDOMProps(props, {labelable: true}));
 
   return {
     isPressed, // Used to indicate press state for visual

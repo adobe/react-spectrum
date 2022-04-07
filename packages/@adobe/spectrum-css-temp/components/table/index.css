@@ -25,9 +25,12 @@ governing permissions and limitations under the License.
   isolation: isolate;
 }
 
-.spectrum-Table-sortedIcon {
+/* specificity must be higher than `.spectrum-Icon` */
+svg.spectrum-Table-sortedIcon {
   display: none;
+  flex: 0 0 auto;
   margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-arrow-down-small-width);
 
   vertical-align: middle;
 
@@ -40,8 +43,16 @@ governing permissions and limitations under the License.
   border-right-width: 1px;
   border-right-style: solid;
 }
+.spectrum-Table-headCellContents {
+  display: inline-block;
+  min-inline-size: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 .spectrum-Table-headCell {
+  display: flex;
   box-sizing: border-box;
   font-size: var(--spectrum-table-header-text-size);
   font-weight: var(--spectrum-table-header-text-font-weight);
@@ -71,6 +82,44 @@ governing permissions and limitations under the License.
   &.is-sorted-asc {
     .spectrum-Table-sortedIcon {
       transform: rotateZ(180deg);
+    }
+  }
+}
+
+.spectrum-Table--resizingColumn {
+  .spectrum-Table-row,
+  .spectrum-Table-headCell {
+    cursor: col-resize;
+  }
+}
+
+.spectrum-Table-columnResizer {
+  display: flex;
+  justify-content: end;
+  box-sizing: border-box;
+  position: absolute;
+  inset-block-start: 0px;
+  inset-inline-end: 0px;
+  inline-size: 10px;
+  block-size: 100%;
+  cursor: col-resize;
+  user-select: none;
+  
+  &::after {
+    content: "";
+    position: absolute;
+    display: block;
+    box-sizing: border-box;
+    inline-size: 1px;
+    block-size: 100%;
+    background-color: var(--spectrum-table-divider-border-color);
+  }
+  
+  &:active,
+  &:focus {
+    &::after {
+      inline-size: 2px;
+      background-color: var(--spectrum-global-color-blue-400);
     }
   }
 }
@@ -157,6 +206,10 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-cellContents {
+  flex: 1 1 0%;
+  /* To ensure the flex child only takes up available width, see https://makandracards.com/makandra/66994-css-flex-and-min-width */
+  min-width: 0px;
+
   /* truncate text with ellipsis */
   overflow: hidden;
   white-space: nowrap;
@@ -219,6 +272,14 @@ governing permissions and limitations under the License.
 
 .spectrum-Table-cell--divider {
   border-inline-end-width: var(--spectrum-table-divider-border-size);
+}
+
+.spectrum-Table-cell--divider {
+  &.is-resizable {
+    &:hover {
+      border-inline-end-width: 3px;
+    }
+  }
 }
 
 .spectrum-Table-row {
@@ -284,6 +345,10 @@ governing permissions and limitations under the License.
   padding-top: 0px;
   padding-bottom: 0px;
   vertical-align: var(--spectrum-table-cell-checkbox-vertical-alignment);
+
+  .spectrum-Table-checkbox {
+    padding-inline-end: 0px;
+  }
 }
 
 .spectrum-Table-checkbox {

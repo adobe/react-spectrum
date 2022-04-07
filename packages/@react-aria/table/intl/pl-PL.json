@@ -1,0 +1,9 @@
+{
+  "ascending": "rosnąco",
+  "ascendingSort": "posortowano według kolumny {columnName} w porządku rosnącym",
+  "descending": "malejąco",
+  "descendingSort": "posortowano według kolumny {columnName} w porządku malejącym",
+  "select": "Zaznacz",
+  "selectAll": "Zaznacz wszystko",
+  "sortable": "kolumna z możliwością sortowania"
+}

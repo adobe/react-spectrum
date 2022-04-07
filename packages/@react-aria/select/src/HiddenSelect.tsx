@@ -16,6 +16,11 @@ import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 interface AriaHiddenSelectProps {
+  /**
+   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   */
+   autoComplete?: string,
+
   /** The text label for the select. */
   label?: ReactNode,
 
@@ -40,7 +45,7 @@ interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
  * navigation, and native HTML form submission.
  */
 export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectState<T>, triggerRef: RefObject<HTMLElement>) {
-  let {name, isDisabled} = props;
+  let {autoComplete, name, isDisabled} = props;
   let modality = useInteractionModality();
   let {visuallyHiddenProps} = useVisuallyHidden();
 
@@ -76,6 +81,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectSt
     },
     selectProps: {
       tabIndex: -1,
+      autoComplete,
       disabled: isDisabled,
       name,
       size: state.collection.size,
@@ -124,6 +130,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
     return (
       <input
         type="hidden"
+        autoComplete={selectProps.autoComplete}
         name={name}
         disabled={isDisabled}
         value={state.selectedKey} />

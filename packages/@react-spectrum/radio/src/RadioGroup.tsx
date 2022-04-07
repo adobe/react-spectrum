@@ -88,7 +88,6 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
         <RadioContext.Provider
           value={{
             isEmphasized,
-            isRequired,
             validationState,
             state
           }}>

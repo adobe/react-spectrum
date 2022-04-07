@@ -27,9 +27,6 @@ governing permissions and limitations under the License.
   --spectrum-textfield-multiline-padding-x: var(--spectrum-textfield-padding-x);
   --spectrum-textfield-multiline-padding-top: var(--spectrum-textfield-padding-top);
   --spectrum-textfield-multiline-padding-bottom: var(--spectrum-textfield-padding-bottom);
-
-  /* Todo: DNA uses incorrect font family "Adobe Clean" */;
-  --spectrum-textfield-text-font-family-fixed: var(--spectrum-font-family-base);
 }
 
 .spectrum-Textfield {
@@ -37,6 +34,10 @@ governing permissions and limitations under the License.
   position: relative;
   min-width: var(--spectrum-textfield-min-width);
   width: var(--spectrum-component-single-line-width);
+
+  &:not(.spectrum-Textfield--quiet).spectrum-Textfield--multiline .spectrum-Textfield-input:not(:disabled) {
+    resize: vertical;
+  }
 
   &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input {
     height: var(--spectrum-textfield-height);
@@ -56,7 +57,7 @@ governing permissions and limitations under the License.
   /* Use padding instead of text-indent because text-indent does not left align the text in Edge browser  */
   text-indent: 0;
 
-  width: 100%;
+  inline-size: 100%;
   height: var(--spectrum-textfield-height);
 
   vertical-align: top; /* used to align them correctly in forms. */
@@ -68,7 +69,7 @@ governing permissions and limitations under the License.
   overflow: visible;
 
   /* Change the input font styles in all browsers */
-  font-family: var(--spectrum-textfield-text-font-family-fixed);
+  @extend %i18nFontFamily;
   font-size: var(--spectrum-textfield-text-size);
   line-height: var(--spectrum-textfield-text-line-height);
   text-overflow: ellipsis;

@@ -28,13 +28,15 @@ module.exports = {
       sourceType: 'module'
     },
     rules: {
-      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc']}],
+      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc', 'i.e']}],
       'jsdoc/check-alignment': ERROR,
       'jsdoc/check-indentation': ERROR,
       'jsdoc/check-tag-names': ERROR,
       // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
       // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
       'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
+      'no-redeclare': OFF,
+      '@typescript-eslint/no-redeclare': ERROR,
       'no-unused-vars': OFF,
       '@typescript-eslint/no-unused-vars': ERROR,
       '@typescript-eslint/member-delimiter-style': [ERROR, {
@@ -77,7 +79,10 @@ module.exports = {
     'expect': true,
     'JSX': 'readonly',
     'NodeJS': 'readonly',
-    'AsyncIterable': 'readonly'
+    'AsyncIterable': 'readonly',
+    'FileSystemFileEntry': 'readonly',
+    'FileSystemDirectoryEntry': 'readonly',
+    'FileSystemEntry': 'readonly'
   },
   settings: {
     jsdoc: {
@@ -164,6 +169,7 @@ module.exports = {
     // custom rules
     'rulesdir/sort-imports': [ERROR],
     'rulesdir/imports': [ERROR],
+    'rulesdir/useLayoutEffectRule': [ERROR],
 
     // jsx-a11y rules
     'jsx-a11y/accessible-emoji': ERROR,
@@ -278,7 +284,6 @@ module.exports = {
       {
         ignore: [
           '@adobe/spectrum-css-temp',
-          '@react/react-spectrum',
           '@spectrum-icons/ui',
           '@spectrum-icons/workflow',
           '@spectrum-icons/illustrations'

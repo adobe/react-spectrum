@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "未选择 {item}。",
+  "longPressToSelect": "长按以进入选择模式。",
+  "select": "选择",
+  "selectedAll": "已选择所有项目。",
+  "selectedCount": "{count, plural, =0 {未选择项目} one {已选择 # 个项目} other {已选择 # 个项目}}。",
+  "selectedItem": "已选择 {item}。"
+}

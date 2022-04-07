@@ -11,7 +11,7 @@
  */
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
-import {classNames, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -19,7 +19,7 @@ import React, {Key, ReactElement, useCallback, useRef} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useResizeObserver} from '@react-aria/utils';
 
@@ -56,8 +56,14 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   let updateOverflow = useCallback(() => {
     let computeVisibleItems = (visibleItems: number) => {
-      let listItems = Array.from(listRef.current.children) as HTMLLIElement[];
-      let containerWidth = listRef.current.offsetWidth;
+      // Refs can be null at runtime.
+      let currListRef: HTMLUListElement | null = listRef.current;
+      if (!currListRef) {
+        return;
+      }
+
+      let listItems = Array.from(currListRef.children) as HTMLLIElement[];
+      let containerWidth = currListRef.offsetWidth;
       let isShowingMenu = childArray.length > visibleItems;
       let calculatedWidth = 0;
       let newVisibleItems = 0;
@@ -82,16 +88,18 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         listItems.pop();
         newVisibleItems++;
       } else {
-        // Ensure the last breadcrumb isn't truncated when we measure it.
-        let last = listItems.pop();
-        last.style.overflow = 'visible';
+        if (listItems.length > 0) {
+          // Ensure the last breadcrumb isn't truncated when we measure it.
+          let last = listItems.pop();
+          last.style.overflow = 'visible';
 
-        calculatedWidth += last.offsetWidth;
-        if (calculatedWidth < containerWidth) {
-          newVisibleItems++;
+          calculatedWidth += last.offsetWidth;
+          if (calculatedWidth < containerWidth) {
+            newVisibleItems++;
+          }
+
+          last.style.overflow = '';
         }
-
-        last.style.overflow = '';
       }
 
       for (let breadcrumb of listItems.reverse()) {

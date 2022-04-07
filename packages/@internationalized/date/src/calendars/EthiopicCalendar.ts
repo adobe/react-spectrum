@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar} from '../types';
+import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {Mutable} from '../utils';
 
@@ -61,6 +61,11 @@ function getDaysInMonth(year: number, month: number) {
   }
 }
 
+/**
+ * The Ethiopic calendar system is the official calendar used in Ethiopia.
+ * It includes 12 months of 30 days each, plus 5 or 6 intercalary days depending
+ * on whether it is a leap year. Two eras are supported: 'AA' and 'AM'.
+ */
 export class EthiopicCalendar implements Calendar {
   identifier = 'ethiopic';
 
@@ -73,10 +78,10 @@ export class EthiopicCalendar implements Calendar {
       date.year += AMETE_MIHRET_DELTA;
     }
 
-    return date;
+    return date as CalendarDate;
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     let year = date.year;
     if (date.era === 'AA') {
       year -= AMETE_MIHRET_DELTA;
@@ -85,7 +90,7 @@ export class EthiopicCalendar implements Calendar {
     return ceToJulianDay(ETHIOPIC_EPOCH, year, date.month, date.day);
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     let year = date.year;
     if (date.era === 'AA') {
       year -= AMETE_MIHRET_DELTA;
@@ -98,15 +103,23 @@ export class EthiopicCalendar implements Calendar {
     return 13;
   }
 
-  getDaysInYear(date: CalendarDate): number {
+  getDaysInYear(date: AnyCalendarDate): number {
     return 365 + getLeapDay(date.year);
   }
 
-  getCurrentEra() {
-    return 'AM';
+  getYearsInEra(): number {
+    return 9999;
+  }
+
+  getEras() {
+    return ['AA', 'AM'];
   }
 }
 
+/**
+ * The Ethiopic (Amete Alem) calendar is the same as the modern Ethiopic calendar,
+ * except years were measured from a different epoch. Only one era is supported: 'AA'.
+ */
 export class EthiopicAmeteAlemCalendar extends EthiopicCalendar {
   identifier = 'ethioaa'; // also known as 'ethiopic-amete-alem' in ICU
 
@@ -114,14 +127,19 @@ export class EthiopicAmeteAlemCalendar extends EthiopicCalendar {
     let date = julianDayToCE(this, ETHIOPIC_EPOCH, jd);
     date.era = 'AA';
     date.year += AMETE_MIHRET_DELTA;
-    return date;
+    return date as CalendarDate;
   }
 
-  getCurrentEra() {
-    return 'AA';
+  getEras() {
+    return ['AA'];
   }
 }
 
+/**
+ * The Coptic calendar is similar to the Ethiopic calendar.
+ * It includes 12 months of 30 days each, plus 5 or 6 intercalary days depending
+ * on whether it is a leap year. Two eras are supported: 'BCE' and 'CE'.
+ */
 export class CopticCalendar extends EthiopicCalendar {
   identifier = 'coptic';
 
@@ -134,10 +152,10 @@ export class CopticCalendar extends EthiopicCalendar {
       date.era = 'CE';
     }
 
-    return date;
+    return date as CalendarDate;
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     let year = date.year;
     if (date.era === 'BCE') {
       year = 1 - year;
@@ -146,7 +164,7 @@ export class CopticCalendar extends EthiopicCalendar {
     return ceToJulianDay(COPTIC_EPOCH, year, date.month, date.day);
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     let year = date.year;
     if (date.era === 'BCE') {
       year = 1 - year;
@@ -155,15 +173,11 @@ export class CopticCalendar extends EthiopicCalendar {
     return getDaysInMonth(year, date.month);
   }
 
-  addYears(date: Mutable<CalendarDate>, years: number) {
-    if (date.era === 'BCE') {
-      years = -years;
-    }
-
-    date.year += years;
+  getYearsToAdd(date: Mutable<AnyCalendarDate>, years: number) {
+    return date.era === 'BCE' ? -years : years;
   }
 
-  getCurrentEra() {
-    return 'CE';
+  getEras() {
+    return ['BCE', 'CE'];
   }
 }

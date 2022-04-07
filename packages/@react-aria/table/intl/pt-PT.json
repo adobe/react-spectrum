@@ -1,0 +1,9 @@
+{
+  "ascending": "ascendente",
+  "ascendingSort": "Ordenar por coluna {columnName} em ordem ascendente",
+  "descending": "descendente",
+  "descendingSort": "Ordenar por coluna {columnName} em ordem descendente",
+  "select": "Selecionar",
+  "selectAll": "Selecionar tudo",
+  "sortable": "Coluna ordenável"
+}

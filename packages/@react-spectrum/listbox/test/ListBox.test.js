@@ -35,8 +35,19 @@ let withSection = [
   ]}
 ];
 
+let itemsWithFalsyId = [
+  {id: 0, name: 'Heading 1', children: [
+    {id: 1, name: 'Foo'},
+    {id: 2, name: 'Bar'}
+  ]},
+  {id: '', name: 'Heading 2', children: [
+    {id: 3, name: 'Blah'},
+    {id: 4, name: 'Bleh'}
+  ]}
+];
+
 function renderComponent(props) {
-  return render(
+  let tree = render(
     <Provider theme={theme}>
       <span id="label">Choose an item</span>
       <ListBox items={withSection} aria-labelledby="label" {...props}>
@@ -48,6 +59,9 @@ function renderComponent(props) {
       </ListBox>
     </Provider>
   );
+  // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+  act(() => jest.runAllTimers());
+  return tree;
 }
 
 describe('ListBox', function () {
@@ -58,7 +72,6 @@ describe('ListBox', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.useFakeTimers();
   });
 
@@ -96,7 +109,7 @@ describe('ListBox', function () {
     let i = 1;
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
-      expect(item).toHaveAttribute('aria-selected');
+      expect(item).not.toHaveAttribute('aria-selected');
       expect(item).toHaveAttribute('aria-disabled');
       expect(item).toHaveAttribute('aria-posinset', '' + i++);
       expect(item).toHaveAttribute('aria-setsize');
@@ -113,6 +126,35 @@ describe('ListBox', function () {
     expect(item4).toBeTruthy();
     expect(item5).toBeTruthy();
     expect(item3).toBeTruthy();
+  });
+
+  it('renders with falsy id', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ListBox items={itemsWithFalsyId} aria-label="listbox">
+          {item => (
+            <Section items={item.children} title={item.name}>
+              {item => <Item childItems={item.children}>{item.name}</Item>}
+            </Section>
+          )}
+        </ListBox>
+      </Provider>
+    );
+
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    expect(listbox).toBeTruthy();
+
+    let sections = within(listbox).getAllByRole('group');
+    expect(sections.length).toBe(itemsWithFalsyId.length);
+
+    for (let [i, section] of sections.entries()) {
+      let items = within(section).getAllByRole('option');
+      expect(items.length).toBe(itemsWithFalsyId[i].children.length);
+      for (let [j, item] of items.entries()) {
+        expect(within(item).getByText(itemsWithFalsyId[i].children[j].name)).toBeTruthy();
+      }
+    }
   });
 
   it('allows user to change menu item focus via up/down arrow keys', function () {
@@ -246,7 +288,7 @@ describe('ListBox', function () {
     });
 
     it('supports disabled items', function () {
-      let tree = renderComponent({onSelectionChange, disabledKeys: ['Baz'], autoFocus: 'first'});
+      let tree = renderComponent({onSelectionChange, selectionMode: 'single', disabledKeys: ['Baz'], autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
 
@@ -621,6 +663,8 @@ describe('ListBox', function () {
         </ListBox>
       </Provider>
     );
+    // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+    act(() => jest.runAllTimers());
 
     let listbox = tree.getByRole('listbox');
     let option = within(listbox).getByRole('option');
@@ -653,6 +697,8 @@ describe('ListBox', function () {
         </ListBox>
       </Provider>
     );
+    // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+    act(() => jest.runAllTimers());
 
     let listbox = tree.getByRole('listbox');
     let group = within(listbox).getByRole('group');
@@ -670,7 +716,7 @@ describe('ListBox', function () {
   });
 
   describe('async loading', function () {
-    it('should display a spinner while loading', function () {
+    it('should display a spinner while loading', async function () {
       let {getByRole, rerender} = render(
         <Provider theme={theme}>
           <ListBox aria-label="listbox" items={[]} isLoading>
@@ -678,6 +724,8 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
@@ -694,6 +742,8 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       expect(progressbar).not.toBeInTheDocument();
     });
@@ -707,6 +757,8 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
@@ -723,6 +775,8 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(2);
@@ -739,6 +793,7 @@ describe('ListBox', function () {
       for (let i = 1; i <= 100; i++) {
         items.push({name: 'Test ' + i});
       }
+      // total height if all are rendered would be about 100 * 48px = 4800px
 
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -747,6 +802,8 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
@@ -754,17 +811,22 @@ describe('ListBox', function () {
 
       listbox.scrollTop = 250;
       fireEvent.scroll(listbox);
+      // allow time for updates to run
+      act(() => jest.runAllTimers());
 
       listbox.scrollTop = 1500;
       fireEvent.scroll(listbox);
+      act(() => jest.runAllTimers());
 
+      // there are no more items to load at this height, so loadMore is only called twice
       listbox.scrollTop = 5000;
       fireEvent.scroll(listbox);
+      act(() => jest.runAllTimers());
 
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
 
-    it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', function () {
+    it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {
       // Mock clientHeight to match maxHeight prop
       let maxHeight = 300;
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
@@ -782,13 +844,15 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
       // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
-      // onLoadMore called three times from useLayoutEffect
-      expect(onLoadMore).toHaveBeenCalledTimes(5);
+      // onLoadMore called twice from useLayoutEffect
+      expect(onLoadMore).toHaveBeenCalledTimes(4);
     });
   });
 });

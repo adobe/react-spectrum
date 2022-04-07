@@ -13,6 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
+import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {GregorianCalendar, gregorianToJulianDay, isLeapYear} from './GregorianCalendar';
 import {Mutable} from '../utils';
@@ -23,6 +24,11 @@ const INDIAN_ERA_START = 78;
 // The Indian year starts 80 days later than the Gregorian year.
 const INDIAN_YEAR_START = 80;
 
+/**
+ * The Indian National Calendar is similar to the Gregorian calendar, but with
+ * years numbered since the Saka era in 78 AD (Gregorian). There are 12 months
+ * in each year, with either 30 or 31 days. Only one era identifier is supported: 'saka'.
+ */
 export class IndianCalendar extends GregorianCalendar {
   identifier = 'indian';
 
@@ -70,7 +76,7 @@ export class IndianCalendar extends GregorianCalendar {
     return new CalendarDate(this, indianYear, indianMonth, indianDay);
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     let year = date.year + INDIAN_ERA_START;
 
     let leapMonth: number;
@@ -97,7 +103,7 @@ export class IndianCalendar extends GregorianCalendar {
     return jd;
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     if (date.month === 1 && isLeapYear(date.year + INDIAN_ERA_START)) {
       return 31;
     }
@@ -109,7 +115,11 @@ export class IndianCalendar extends GregorianCalendar {
     return 30;
   }
 
-  getCurrentEra() {
-    return 'saka';
+  getYearsInEra(): number {
+    return 9999;
+  }
+
+  getEras() {
+    return ['saka'];
   }
 }

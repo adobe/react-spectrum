@@ -19,6 +19,9 @@ describe('useSideNavItem', function () {
     selectionManager: {
       isSelected(key) {
         return key === 'selected';
+      },
+      canSelectItem() {
+        return true;
       }
     },
     disabledKeys: new Set()

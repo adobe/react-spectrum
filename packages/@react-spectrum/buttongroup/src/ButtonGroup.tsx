@@ -16,11 +16,10 @@ import {
   useDOMRef,
   useResizeObserver,
   useSlotProps,
-  useStyleProps,
-  useValueEffect
+  useStyleProps
 } from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, useValueEffect} from '@react-aria/utils';
 import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
 import React, {useCallback, useEffect, useRef} from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';

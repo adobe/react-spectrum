@@ -80,7 +80,6 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:invalid,
   &.spectrum-Textfield--invalid {
     border-color: var(--spectrum-textfield-border-color-error);
 
@@ -128,17 +127,6 @@ governing permissions and limitations under the License.
     &.is-disabled {
       background-color: var(--spectrum-textfield-quiet-background-color-disabled);
       border-color:  var(--spectrum-textfield-quiet-border-color-disabled);
-    }
-
-    &:invalid {
-      border-color: var(--spectrum-textfield-border-color-error);
-
-      &:focus-ring { /* might break things due to pre-defined focus-ring */
-        &:not(:active) {
-          border-color: var(--spectrum-textfield-border-color-error);
-          box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
-        }
-      }
     }
   }
 

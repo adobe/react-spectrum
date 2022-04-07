@@ -11,7 +11,7 @@
  */
 
 import {Collection, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
-import {HTMLAttributes, Key, RefObject, useEffect, useMemo} from 'react';
+import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCollator} from '@react-aria/i18n';
@@ -109,17 +109,6 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(collection, disabledKeys, ref, collator), [keyboardDelegate, collection, disabledKeys, ref, collator]);
 
-  // If not virtualized, scroll the focused element into view when the focusedKey changes.
-  // When virtualized, Virtualizer handles this internally.
-  useEffect(() => {
-    if (!isVirtualized && selectionManager.focusedKey && ref?.current) {
-      let element = ref.current.querySelector(`[data-key="${selectionManager.focusedKey}"]`) as HTMLElement;
-      if (element) {
-        scrollIntoView(ref.current, element);
-      }
-    }
-  }, [isVirtualized, ref, selectionManager.focusedKey]);
-
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager,
@@ -130,64 +119,12 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     selectOnFocus,
     disallowTypeAhead,
     shouldUseVirtualFocus,
-    allowsTabNavigation
+    allowsTabNavigation,
+    isVirtualized,
+    scrollRef: ref
   });
 
   return {
     listProps: collectionProps
   };
-}
-
-/**
- * Scrolls `scrollView` so that `element` is visible.
- * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
- * but doesn't affect parents above `scrollView`.
- */
-function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
-  let offsetX = relativeOffset(scrollView, element, 'left');
-  let offsetY = relativeOffset(scrollView, element, 'top');
-  let width = element.offsetWidth;
-  let height = element.offsetHeight;
-  let x = scrollView.scrollLeft;
-  let y = scrollView.scrollTop;
-  let maxX = x + scrollView.offsetWidth;
-  let maxY = y + scrollView.offsetHeight;
-
-  if (offsetX <= x) {
-    x = offsetX;
-  } else if (offsetX + width > maxX) {
-    x += offsetX + width - maxX;
-  }
-  if (offsetY <= y) {
-    y = offsetY;
-  } else if (offsetY + height > maxY) {
-    y += offsetY + height - maxY;
-  }
-
-  scrollView.scrollLeft = x;
-  scrollView.scrollTop = y;
-}
-
-/**
- * Computes the offset left or top from child to ancestor by accumulating
- * offsetLeft or offsetTop through intervening offsetParents.
- */
-function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
-  const prop = axis === 'left' ? 'offsetLeft' : 'offsetTop';
-  let sum = 0;
-  while (child.offsetParent) {
-    sum += child[prop];
-    if (child.offsetParent === ancestor) {
-      // Stop once we have found the ancestor we are interested in.
-      break;
-    } else if (child.offsetParent.contains(ancestor)) {
-      // If the ancestor is not `position:relative`, then we stop at 
-      // _its_ offset parent, and we subtract off _its_ offset, so that
-      // we end up with the proper offset from child to ancestor.
-      sum -= ancestor[prop];
-      break;
-    }
-    child = child.offsetParent as HTMLElement;
-  }
-  return sum;
 }

@@ -19,7 +19,6 @@ import {ListLayout} from '@react-stately/layout';
 import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
-import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 import {Virtualizer} from '@react-aria/virtualizer';
 
@@ -97,13 +96,11 @@ function TreeItem<T>(props: TreeItemProps<T>) {
     ref
   });
 
-  let {pressProps} = usePress(itemProps);
-
   return (
     <div className={itemClassName} role="presentation">
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <div
-          {...pressProps}
+          {...itemProps}
           ref={ref}
           className={linkClassName}>
           {hasChildNodes &&

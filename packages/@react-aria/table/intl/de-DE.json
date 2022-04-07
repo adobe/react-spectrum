@@ -1,0 +1,9 @@
+{
+  "ascending": "aufsteigend",
+  "ascendingSort": "sortiert nach Spalte {columnName} in aufsteigender Reihenfolge",
+  "descending": "absteigend",
+  "descendingSort": "sortiert nach Spalte {columnName} in absteigender Reihenfolge",
+  "select": "Auswählen",
+  "selectAll": "Alles auswählen",
+  "sortable": "sortierbare Spalte"
+}

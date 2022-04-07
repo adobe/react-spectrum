@@ -50,6 +50,7 @@ describe('useColorField', function () {
     expect(inputProps['aria-invalid']).toBeUndefined();
     expect(inputProps.disabled).toBe(false);
     expect(inputProps.readOnly).toBe(false);
+    expect(inputProps.spellCheck).toBe('false');
   });
 
   it('should return props for colorValue provided', function () {

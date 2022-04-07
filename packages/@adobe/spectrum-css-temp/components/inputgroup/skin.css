@@ -42,8 +42,7 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-dropdown-border-color-key-focus);
   }
 
-  &.spectrum-InputGroup--invalid,
-  &:invalid {
+  &.spectrum-InputGroup--invalid {
     .spectrum-FieldButton,
     .spectrum-InputGroup-input {
       border-color: var(--spectrum-dropdown-border-color-error);
@@ -62,8 +61,7 @@ governing permissions and limitations under the License.
     box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
   }
 
-  &.spectrum-InputGroup--invalid,
-  &:invalid {
+  &.spectrum-InputGroup--invalid {
     .spectrum-FieldButton,
     .spectrum-InputGroup-input {
       box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
@@ -91,7 +89,6 @@ governing permissions and limitations under the License.
     &:focus,
     &:active,
     &.is-selected,
-    &:invalid,
     &.spectrum-FieldButton--invalid {
       border-color: var(--spectrum-textfield-quiet-border-color);
     }
@@ -109,8 +106,7 @@ governing permissions and limitations under the License.
   }
 
   &.spectrum-InputGroup {
-    &.spectrum-InputGroup--invalid,
-    &:invalid {
+    &.spectrum-InputGroup--invalid {
       .spectrum-FieldButton,
       .spectrum-InputGroup-input {
         border-color: var(--spectrum-textfield-border-color-error);
@@ -122,8 +118,7 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       }
 
-      &.spectrum-InputGroup--invalid,
-      &:invalid {
+      &.spectrum-InputGroup--invalid {
         .spectrum-FieldButton {
           border-color: var(--spectrum-textfield-border-color-error);
         }
@@ -140,8 +135,7 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
       }
 
-      &.spectrum-InputGroup--invalid,
-      &:invalid {
+      &.spectrum-InputGroup--invalid {
         .spectrum-InputGroup-input {
           box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
         }
@@ -171,7 +165,6 @@ governing permissions and limitations under the License.
   &:focus-ring {
     box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
 
-    &:invalid,
     &.spectrum-InputGroup--invalid {
       box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
 

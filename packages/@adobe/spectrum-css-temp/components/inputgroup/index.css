@@ -161,7 +161,7 @@ governing permissions and limitations under the License.
     }
   }
   .spectrum-Datepicker-endField {
-    .spectrum-InputGroup-field {
+    .spectrum-InputGroup-input {
       flex: 1;
       border-inline-start: 0;
       border-radius: 0;

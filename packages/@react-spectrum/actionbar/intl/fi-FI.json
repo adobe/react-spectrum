@@ -1,0 +1,7 @@
+{
+  "actions": "Toiminnot",
+  "actionsAvailable": "Toiminnot käytettävissä.",
+  "clearSelection": "Poista valinta",
+  "selected": "{count, plural, =0 {Ei mitään valittu} other {# valittu}}",
+  "selectedAll": "Kaikki valittu"
+}

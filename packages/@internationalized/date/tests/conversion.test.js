@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {BuddhistCalendar, CalendarDate, CalendarDateTime, fromAbsolute, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, possibleAbsolutes, TaiwanCalendar, Time, toAbsolute, toCalendar, toCalendarDate, toCalendarDateTime, toDate, toTime} from '..';
+import {BuddhistCalendar, CalendarDate, CalendarDateTime, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
+import {fromAbsolute, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
 
 describe('CalendarDate conversion', function () {
   describe('toAbsolute', function () {
@@ -130,10 +131,10 @@ describe('CalendarDate conversion', function () {
   describe('fromAbsolute', function () {
     it('should convert a date from absolute using a timezone', function () {
       let date = fromAbsolute(new Date('2020-02-03T10:00Z').getTime(), 'America/Los_Angeles');
-      expect(date).toEqual(new CalendarDateTime(2020, 2, 3, 2));
+      expect(date).toEqual(new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 2));
 
       date = fromAbsolute(new Date('2020-02-03T10:00Z').getTime(), 'America/New_York');
-      expect(date).toEqual(new CalendarDateTime(2020, 2, 3, 5));
+      expect(date).toEqual(new ZonedDateTime(2020, 2, 3, 'America/New_York', -18000000, 5));
     });
   });
 
@@ -163,6 +164,14 @@ describe('CalendarDate conversion', function () {
 
         date = new CalendarDate(2020, 4, 30);
         expect(toCalendar(date, new JapaneseCalendar())).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 4, 30));
+      });
+
+      it('returns the correct number of days for leap and non-leap years', function () {
+        let date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 4, 2, 5);
+        expect(date.calendar.getDaysInMonth(date)).toBe(28);
+
+        date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 2, 5);
+        expect(date.calendar.getDaysInMonth(date)).toBe(29);
       });
     });
 

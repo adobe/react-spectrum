@@ -15,29 +15,36 @@ const NodeResolver = require('@parcel/node-resolver-core').default;
 const path = require('path');
 
 module.exports = new Resolver({
-  async resolve({dependency, options, filePath}) {
-    if (dependency.moduleSpecifier.startsWith('docs:') || dependency.pipeline === 'docs' || dependency.pipeline === 'docs-json') {
+  async resolve({dependency, options, specifier}) {
+    if (dependency.specifier.startsWith('docs:') || dependency.specifier.startsWith('apiCheck:') || dependency.pipeline === 'docs' || dependency.pipeline === 'docs-json' || dependency.pipeline === 'apiCheck') {
       const resolver = new NodeResolver({
+        fs: options.inputFS,
+        projectRoot: options.projectRoot,
         extensions: ['ts', 'tsx', 'd.ts', 'js'],
-        mainFields: ['source', 'types', 'main'],
-        options
+        mainFields: ['source', 'types', 'main']
       });
 
       let resolved = await resolver.resolve({
-        filename: filePath,
-        isURL: dependency.isURL,
-        parent: dependency.sourcePath,
-        env: dependency.env
+        filename: specifier,
+        specifierType: dependency.specifierType,
+        parent: dependency.resolveFrom,
+        env: dependency.env,
+        sourcePath: dependency.sourcePath
       });
 
-      if (resolved) {
+      if (resolved && resolved.filePath) {
         // HACK: ensure source code is used to build types, not compiled code.
         // Parcel removes the source field from package.json when the code comes from node_modules.
-        if (resolved.filePath.endsWith('.d.ts') && !resolved.filePath.includes('@react-types')) {
+        // these are full filepaths, so don't check if they start with the pattern, they won't
+        if ((
+          /@(react-spectrum|react-aria|react-stately|internationalized|spectrum-icons|adobe\/react-spectrum)/g.test(resolved.filePath)
+          || /(react-aria|react-stately)/g.test(resolved.filePath)
+        ) && resolved.filePath.endsWith('.d.ts')) {
           resolved.filePath = path.resolve(path.dirname(resolved.filePath), '..', 'src', 'index.ts');
         }
 
         resolved.filePath = await options.inputFS.realpath(resolved.filePath);
+        resolved.sideEffects = true;
         return resolved;
       }
     }

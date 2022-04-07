@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {ReactNode} from 'react';
+
 export type ValidationState = 'valid' | 'invalid';
 
 export interface Validation {
@@ -29,13 +31,13 @@ export interface InputBase {
   isReadOnly?: boolean
 }
 
-export interface ValueBase<T> {
+export interface ValueBase<T, C = T> {
   /** The current value (controlled). */
   value?: T,
   /** The default value (uncontrolled). */
   defaultValue?: T,
   /** Handler that is called when the value changes. */
-  onChange?: (value: T) => void
+  onChange?: (value: C) => void
 }
 
 export interface TextInputBase {
@@ -57,4 +59,19 @@ export interface RangeInputBase<T> {
   maxValue?: T,
   /** The amount that the input value changes with each increment or decrement "tick". */
   step?: T // ??
+}
+
+export interface HelpTextProps {
+  /** A description for the field. Provides a hint such as specific requirements for what to choose. */
+  description?: ReactNode,
+  /** An error message for the field. */
+  errorMessage?: ReactNode
+}
+
+// Spectrum specific types. Extends `Validation` so that the `validationState` prop is available.
+export interface SpectrumHelpTextProps extends HelpTextProps, Validation {
+  /** Whether the description is displayed with lighter text. */
+  isDisabled?: boolean,
+  /** Whether an error icon is rendered. */
+  showErrorIcon?: boolean
 }

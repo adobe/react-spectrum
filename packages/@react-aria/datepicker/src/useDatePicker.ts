@@ -11,105 +11,119 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-types/dialog';
-import {DatePickerProps, DateRangePickerProps} from '@react-types/datepicker';
-import {DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
-import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId, useLabels} from '@react-aria/utils';
-import {HTMLAttributes, KeyboardEvent} from 'react';
+import {CalendarProps} from '@react-types/calendar';
+import {createFocusManager} from '@react-aria/focus';
+import {DatePickerState} from '@react-stately/datepicker';
+import {HTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useMemo} from 'react';
-import {useMessageFormatter} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
-
-interface DateFieldDescProps extends DOMProps {
-  children?: string,
-  hidden?: boolean
-}
+import {mergeProps, useDescription, useId} from '@react-aria/utils';
+import {roleSymbol} from './useDateField';
+import {useDatePickerGroup} from './useDatePickerGroup';
+import {useField} from '@react-aria/label';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 interface DatePickerAria {
+  /** Props for the date picker's visible label element, if any. */
+  labelProps: HTMLAttributes<HTMLElement>,
+  /** Props for the grouping element containing the date field and button. */
   groupProps: HTMLAttributes<HTMLElement>,
-  fieldProps: HTMLAttributes<HTMLElement>,
+  /** Props for the date field. */
+  fieldProps: AriaDatePickerProps<DateValue>,
+  /** Props for the popover trigger button. */
   buttonProps: AriaButtonProps,
+  /** Props for the description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>,
+  /** Props for the popover dialog. */
   dialogProps: AriaDialogProps,
-  descProps: DateFieldDescProps
+  /** Props for the calendar within the popover dialog. */
+  calendarProps: CalendarProps<DateValue>
 }
 
-type DatePickerAriaProps = (DatePickerProps | DateRangePickerProps) & DOMProps;
-
-export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState | DateRangePickerState): DatePickerAria {
+/**
+ * Provides the behavior and accessibility implementation for a date picker component.
+ * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ */
+export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<HTMLElement>): DatePickerAria {
   let buttonId = useId();
   let dialogId = useId();
-  let descId = useId();
   let formatMessage = useMessageFormatter(intlMessages);
-  let labels = useLabels(props, formatMessage('date'));
-  let labelledBy = labels['aria-labelledby'] || labels.id;
-  let domProps = filterDOMProps(props, {labelable: true});
-  let dateValueDescription = useMemo(
-    () => {
-      if (state.value) {
-        if (state.value instanceof Date) {
-          return formatMessage('currentDate', {date: state.value});
-        } else if (state.value.start && state.value.start instanceof Date && state.value.end && state.value.end instanceof Date) {
-          return formatMessage('currentDateRange', {start: state.value.start, end: state.value.end});
-        }
-      }
-      return null;
-    },
-    [formatMessage, state.value]
-  );
 
-  // When a touch event occurs on the date field, open the calendar instead.
-  // The date segments are too small to interact with on a touch device.
-  // TODO: time picker in popover??
-  let {pressProps} = usePress({
-    onPress: (e) => {
-      if (e.pointerType === 'touch' || e.pointerType === 'pen' || e.pointerType === 'keyboard') {
-        state.setOpen(true);
-      }
-    }
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+    ...props,
+    labelElementType: 'span'
   });
 
-  // Open the popover on alt + arrow down
-  let onKeyDown = (e: KeyboardEvent) => {
-    if (e.altKey && e.key === 'ArrowDown') {
-      e.preventDefault();
-      e.stopPropagation();
-      state.setOpen(true);
-    }
-  };
+  let groupProps = useDatePickerGroup(state, ref);
+
+  let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
+
+  let {locale} = useLocale();
+  let descProps = useDescription(state.formatValue(locale, {month: 'long'}));
+  let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
 
   return {
-    groupProps: mergeProps(domProps, {
+    groupProps: mergeProps(groupProps, fieldProps, descProps, {
       role: 'group',
-      'aria-describedby': dateValueDescription ? descId : null,
       'aria-disabled': props.isDisabled || null,
-      ...mergeProps(pressProps, {onKeyDown}),
-      ...labels
+      'aria-labelledby': labelledBy,
+      'aria-describedby': ariaDescribedBy
     }),
-    descProps: {
-      children: dateValueDescription,
-      hidden: true,
-      id: descId
+    labelProps: {
+      ...labelProps,
+      onClick: () => {
+        let focusManager = createFocusManager(ref);
+        focusManager.focusFirst();
+      }
     },
     fieldProps: {
-      role: 'presentation',
-      'aria-controls': state.isOpen ? dialogId : null,
-      'aria-haspopup': 'dialog',
-      'aria-invalid': state.validationState === 'invalid' || null,
-      'aria-labelledby': labelledBy
+      ...fieldProps,
+      [roleSymbol]: 'presentation',
+      'aria-describedby': ariaDescribedBy,
+      value: state.value,
+      onChange: state.setValue,
+      minValue: props.minValue,
+      maxValue: props.maxValue,
+      placeholderValue: props.placeholderValue,
+      hideTimeZone: props.hideTimeZone,
+      hourCycle: props.hourCycle,
+      granularity: props.granularity,
+      isDisabled: props.isDisabled,
+      isReadOnly: props.isReadOnly,
+      isRequired: props.isRequired,
+      validationState: state.validationState,
+      autoFocus: props.autoFocus
     },
+    descriptionProps,
+    errorMessageProps,
     buttonProps: {
+      ...descProps,
       id: buttonId,
-      'aria-describedby': dateValueDescription ? descId : null,
+      excludeFromTabOrder: true,
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
-      'aria-labelledby': `${labelledBy} ${buttonId}`
+      'aria-labelledby': `${labelledBy} ${buttonId}`,
+      'aria-describedby': ariaDescribedBy,
+      onPress: () => state.setOpen(true)
     },
     dialogProps: {
       id: dialogId,
       'aria-labelledby': `${labelledBy} ${buttonId}`
+    },
+    calendarProps: {
+      autoFocus: true,
+      value: state.dateValue,
+      onChange: state.setDateValue,
+      minValue: props.minValue,
+      maxValue: props.maxValue,
+      isDisabled: props.isDisabled,
+      isReadOnly: props.isReadOnly,
+      isDateUnavailable: props.isDateUnavailable,
+      defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue
     }
   };
 }

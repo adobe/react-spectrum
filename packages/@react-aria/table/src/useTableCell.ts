@@ -20,12 +20,20 @@ interface TableCellProps {
   /** An object representing the table cell. Contains all the relevant information that makes up the row header. */
   node: GridNode<unknown>,
   /** Whether the cell is contained in a virtual scroller. */
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the cell.
+   * Please use onCellAction at the collection level instead.
+   * @deprecated
+   **/
+  onAction?: () => void
 }
 
 interface TableCellAria {
   /** Props for the table cell element. */
-  gridCellProps: HTMLAttributes<HTMLElement>
+  gridCellProps: HTMLAttributes<HTMLElement>,
+  /** Whether the cell is currently in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -35,7 +43,7 @@ interface TableCellAria {
  * @param ref - The ref attached to the cell element.
  */
 export function useTableCell<T>(props: TableCellProps, state: TableState<T>, ref: RefObject<HTMLElement>): TableCellAria {
-  let {gridCellProps} = useGridCell(props, state, ref);
+  let {gridCellProps, isPressed} = useGridCell(props, state, ref);
 
   let columnKey = props.node.column.key;
   if (state.collection.rowHeaderColumnKeys.has(columnKey)) {
@@ -44,6 +52,7 @@ export function useTableCell<T>(props: TableCellProps, state: TableState<T>, ref
   }
 
   return {
-    gridCellProps
+    gridCellProps,
+    isPressed
   };
 }

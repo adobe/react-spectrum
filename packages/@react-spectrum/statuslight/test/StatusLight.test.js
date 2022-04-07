@@ -13,14 +13,12 @@
 import React from 'react';
 import {render} from '@testing-library/react';
 import {StatusLight} from '../';
-import V2StatusLight from '@react/react-spectrum/StatusLight';
 
 
 describe('StatusLight', function () {
   it.each`
     Name               | Component        | props
     ${'StatusLight'}   | ${StatusLight}   | ${{}}
-    ${'V2StatusLight'} | ${V2StatusLight} | ${{}}
   `('$Name default', function ({Component, props}) {
     let {getByText} = render(<Component {...props} id="status-light">StatusLight of Love</Component>);
 
@@ -31,7 +29,6 @@ describe('StatusLight', function () {
   it.each`
     Name               | Component        | props
     ${'StatusLight'}   | ${StatusLight}   | ${{variant: 'celery'}}
-    ${'V2StatusLight'} | ${V2StatusLight} | ${{variant: 'celery'}}
   `('$Name supports variant and aria-label', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props} id="status-light" role="status" aria-label="StatusLight of Love" />);
 
@@ -39,7 +36,6 @@ describe('StatusLight', function () {
     expect(statuslight).toHaveAttribute('id', 'status-light');
   });
 
-  // V2 does not have a warning
   it.each`
     Name               | Component        | props
     ${'StatusLight'}   | ${StatusLight}   | ${{variant: 'celery'}}
@@ -61,7 +57,6 @@ describe('StatusLight', function () {
   it.each`
     Name               | Component        | props
     ${'StatusLight'}   | ${StatusLight}   | ${{isDisabled: true}}
-    ${'V2StatusLight'} | ${V2StatusLight} | ${{disabled: true}}
   `('$Name disabled, its css only, so this just makes sure it does not blow up', function ({Component, props}) {
     let {getByText} = render(<Component {...props} id="status-light">StatusLight of Love</Component>);
 

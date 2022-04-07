@@ -1,0 +1,9 @@
+{
+  "ascending": "oplopend",
+  "ascendingSort": "gesorteerd in oplopende volgorde in kolom {columnName}",
+  "descending": "aflopend",
+  "descendingSort": "gesorteerd in aflopende volgorde in kolom {columnName}",
+  "select": "Selecteren",
+  "selectAll": "Alles selecteren",
+  "sortable": "sorteerbare kolom"
+}

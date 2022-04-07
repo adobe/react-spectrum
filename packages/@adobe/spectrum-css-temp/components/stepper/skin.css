@@ -108,7 +108,7 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-border-color-disabled);
       }
     }
-    &.is-invalid, &:invalid {
+    &.is-invalid {
       &.focus-ring, &:focus-ring {
         box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
       }
@@ -171,7 +171,7 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-quiet-border-color-disabled);
       }
     }
-    &.is-invalid, &:invalid {
+    &.is-invalid {
       &.focus-ring, &:focus-ring {
         box-shadow: 0 1px 0 0 var(--spectrum-textfield-quiet-border-color-error);
       }

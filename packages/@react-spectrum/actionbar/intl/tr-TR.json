@@ -1,0 +1,7 @@
+{
+  "actions": "Eylemler",
+  "actionsAvailable": "Eylemler mevcut.",
+  "clearSelection": "Seçimi temizle",
+  "selected": "{count, plural, =0 {Hiçbiri seçilmedi} other {# seçildi}}",
+  "selectedAll": "Tümü seçildi"
+}

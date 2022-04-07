@@ -1,17 +1,43 @@
+import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
+import {ActionGroup} from '@react-spectrum/actiongroup';
+import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
 import {Content, View} from '@react-spectrum/view';
+import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
+import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {Menu, MenuTrigger} from '@react-spectrum/menu';
+import {Link} from '@react-spectrum/link';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
-import React from 'react';
+import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
+import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {useAsyncList} from '@react-stately/data';
+import {useDragHooks} from '@react-spectrum/dnd';
 
+const items = [
+  {key: 'a', textValue: 'Item a', isDraggable: true},
+  {key: 'b', textValue: 'Item b', isDraggable: true},
+  {key: 'c', textValue: 'Item c', isDraggable: false},
+  {key: 'd', textValue: 'Item d', isDraggable: true},
+  {key: 'e', textValue: 'Item e', isDraggable: false},
+  {key: 'f', textValue: 'Item f', isDraggable: true},
+  {key: 'g', textValue: 'Item g', isDraggable: true},
+  {key: 'h', textValue: 'Item h', isDraggable: true},
+  {key: 'i', textValue: 'Item i', isDraggable: true},
+  {key: 'j', textValue: 'Item j', isDraggable: true},
+  {key: 'k', textValue: 'Item k', isDraggable: true},
+  {key: 'l', textValue: 'Item l', isDraggable: true},
+  {key: 'm', textValue: 'Item m', isDraggable: false},
+  {key: 'n', textValue: 'Item n', isDraggable: true}
+];
 
 function renderEmptyState() {
   return (
@@ -28,54 +54,39 @@ function renderEmptyState() {
 storiesOf('ListView', module)
   .add('default', () => (
     <ListView width="250px">
-      <Item textValue="row1">row 1</Item>
-      <Item textValue="row2">row 2</Item>
-      <Item textValue="row3">row 3</Item>
+      <Item textValue="row 1">row 1</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
+    </ListView>
+  ))
+  .add('isQuiet', () => (
+    <ListView width="250px" isQuiet>
+      <Item textValue="row 1">row 1</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
     </ListView>
   ))
   .add('with buttons', () => (
     <ListView width="300px">
-      <Item textValue="one">
-        <Flex alignItems="center">
-          <View flexGrow={1}>row 1</View>
-          <ActionButton>Button 1</ActionButton>
-        </Flex>
+      <Item textValue="row 1">
+        <Content>row 1</Content>
+        <ActionButton>Button 1</ActionButton>
       </Item>
-      <Item textValue="two">
-        <Flex alignItems="center">
-          <View flexGrow={1}>row 2</View>
-          <ActionButton>Button 1</ActionButton>
-        </Flex>
+      <Item textValue="row 2">
+        <Content>row 2</Content>
+        <ActionButton>Button 1</ActionButton>
       </Item>
-      <Item textValue="three">
-        <Flex alignItems="center">
-          <View flexGrow={1}>row 3</View>
-          <ActionButton>Button 1</ActionButton>
-        </Flex>
+      <Item textValue="row 3">
+        <Content>row 3</Content>
+        <ActionButton>Button 1</ActionButton>
       </Item>
     </ListView>
   ))
-  .add('dynamic items', () => {
-    const items = [
-      {key: 'a'},
-      {key: 'b'},
-      {key: 'c'},
-      {key: 'd'},
-      {key: 'e'},
-      {key: 'f'},
-      {key: 'g'},
-      {key: 'h'},
-      {key: 'i'},
-      {key: 'j'},
-      {key: 'k'},
-      {key: 'l'},
-      {key: 'm'},
-      {key: 'n'}
-    ];
-    return (
-      <ListView items={items} width="300px" height="250px">
-        {(item) => (
-          <Item>
+  .add('dynamic items', () => (
+    <ListView items={items} width="300px" height="250px">
+      {(item) => (
+        <Item key={item.key} textValue={item.textValue}>
+          <Content>
             <Flex alignItems="center" gap="10px">
               <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
               <ActionButton><Add /></ActionButton>
@@ -93,18 +104,382 @@ storiesOf('ListView', module)
                 </Menu>
               </MenuTrigger>
             </Flex>
-          </Item>
+          </Content>
+        </Item>
         )}
-      </ListView>
-    );
-  })
+    </ListView>
+    )
+  )
+  .add('falsy ids as keys', () => (
+    <FalsyIds />
+  ))
   .add('empty list', () => (
     <ListView width="300px" height="300px" renderEmptyState={renderEmptyState}>
       {[]}
     </ListView>
   ))
   .add('loading', () => (
-    <ListView width="300px" height="300px" isLoading>
+    <ListView width="300px" height="300px" loadingState="loading">
       {[]}
     </ListView>
-  ));
+  ))
+  .add('loadingMore', () => (
+    <ListView width="300px" height="300px" loadingState="loadingMore">
+      <Item textValue="row 1">row 1</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
+    </ListView>
+  ))
+  .add('async listview loading', () => (
+    <AsyncList />
+  ))
+  .add('density: compact', () => (
+    <ListView width="250px" density="compact">
+      <Item textValue="row 1">row 1</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
+    </ListView>
+  ))
+  .add('density: spacious', () => (
+    <ListView width="250px" density="spacious">
+      <Item textValue="row 1">row 1</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
+    </ListView>
+  ))
+  .add('selection: none', () => (
+    <Example selectionMode="none" />
+  ))
+  .add('selection: single, checkbox', () => (
+    <Example selectionMode="single" />
+  ))
+  .add('selection: single, checkbox, disabled', () => (
+    <Example selectionMode="single" disabledKeys={['row1']} />
+  ))
+  .add('selection: single, checkbox, isQuiet', () => (
+    <Example selectionMode="single" isQuiet />
+  ))
+  .add('selection: multiple, checkbox', () => (
+    <Example selectionMode="multiple" />
+  ))
+  .add('selection: multiple, checkbox, isQuiet', () => (
+    <Example selectionMode="multiple" isQuiet />
+  ))
+  .add('parent link example', () => (
+    <Example2 selectionMode="multiple" />
+  ))
+  .add('actions: ActionButton', () =>
+    renderActionsExample(props => <ActionButton {...props}><Copy /></ActionButton>))
+  .add('actions: ActionGroup', () =>
+    renderActionsExample(props => (
+      <ActionGroup buttonLabelBehavior="hide" {...props}>
+        <Item key="add">
+          <Add />
+          <Text>Add</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionGroup>
+    )))
+  .add('actions: ActionMenu', () =>
+    renderActionsExample(props => (
+      <ActionMenu {...props}>
+        <Item key="add">
+          <Add />
+          <Text>Add</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionMenu>
+    )))
+  .add('actions: ActionGroup + ActionMenu', () =>
+    renderActionsExample(props => (
+      <>
+        <ActionGroup buttonLabelBehavior="hide" {...props} slot="actionGroup">
+          <Item key="info">
+            <Info />
+            <Text>Info</Text>
+          </Item>
+        </ActionGroup>
+        <ActionMenu {...props} slot="actionMenu">
+          <Item key="add">
+            <Add />
+            <Text>Add</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionMenu>
+      </>
+    )))
+  .add('dynamic items + renderEmptyState', () => (<EmptyTest />))
+  .add('selectionStyle: highlight', () => (
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+      {item => <Item>{item.name}</Item>}
+    </ListView>
+  ))
+  .add('selectionStyle: highlight, onAction', () => (
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+      {item => <Item>{item.name}</Item>}
+    </ListView>
+  ))
+  .add('selectionMode: none, onAction', () => (
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionMode="none" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+      {item => <Item>{item.name}</Item>}
+    </ListView>
+  ))
+  .add(
+    'draggable rows',
+    () => (
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExample dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      </Flex>
+    )
+  );
+
+function Example(props?) {
+  return (
+    <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
+      <Item key="folder1" hasChildItems>
+        <Content>folder 1</Content>
+      </Item>
+      <Item key="row1" textValue="row 1">
+        <Content>row 1</Content>
+      </Item>
+      <Item key="row2" textValue="row 2">
+        <Content>row 2</Content>
+      </Item>
+      <Item key="row3" textValue="row 3">
+        <Content>row 3</Content>
+      </Item>
+    </ListView>
+  );
+}
+
+function Example2(props?) {
+  return (
+    <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
+      <Item key="folder1" hasChildItems>
+        <Link>folder 1</Link>
+      </Item>
+      <Item textValue="row 1">
+        <Content>row 1</Content>
+      </Item>
+      <Item textValue="row 2">
+        <Content>row 2</Content>
+      </Item>
+      <Item textValue="row 3">
+        <Content>row 3</Content>
+      </Item>
+    </ListView>
+  );
+}
+
+function renderActionsExample(renderActions, props?) {
+  return (
+    <ListView width="300px" selectionMode="single" {...props} onSelectionChange={keys => console.log('sel', keys)}>
+      <Item key="a" textValue="folder 1" hasChildItems>
+        <Folder />
+        <Link>folder 1</Link>
+        <Text slot="description">description for folder 1</Text>
+        {renderActions({onPress: action('actionPress')})}
+      </Item>
+      <Item key="b" textValue="row 1">
+        <Text>row 1</Text>
+        <Text slot="description">description for row 1</Text>
+        {renderActions({onPress: action('actionPress')})}
+      </Item>
+      <Item key="c" textValue="row 2">
+        <Text>row 2</Text>
+        <Text slot="description">description for row 2</Text>
+        {renderActions({onPress: action('actionPress')})}
+      </Item>
+      <Item key="d" textValue="row 3">
+        <Text>row 3</Text>
+        <Text slot="description">description for row 3</Text>
+        {renderActions({onPress: action('actionPress')})}
+      </Item>
+    </ListView>
+  );
+}
+
+let i = 0;
+function EmptyTest() {
+  const [items, setItems] = useState([]);
+  const [divProps, setDivProps] = useState({});
+
+  useEffect(() => {
+    let newItems = [];
+    for (i = 0; i < 20; i++) {
+      newItems.push({key: i, name: `Item ${i}`});
+    }
+    setItems(newItems);
+  }, []);
+
+  const renderEmpty = () => (
+    <IllustratedMessage>
+      <NoSearchResults />
+      <Heading>No items</Heading>
+    </IllustratedMessage>
+  );
+  let hasDivProps = Object.keys(divProps).length > 0;
+  return (
+    <div>
+      <Flex direction="row">
+        <div {...divProps}>
+          <ListView items={items} width="250px" height={hasDivProps ? null : '500px'} renderEmptyState={renderEmpty}>
+            {
+              item => (
+                <Item key={item.key}>
+                  <Content>{item.name}</Content>
+                </Item>
+              )
+            }
+          </ListView>
+        </div>
+        <div style={{paddingLeft: '10px'}}>
+          <ActionButton
+            isDisabled={hasDivProps}
+            onPress={() => setDivProps({style: {display: 'flex', flexGrow: 1, minWidth: '200px', maxHeight: '500px'}})}>
+            Use flex div wrapper (no set height)
+          </ActionButton>
+          <Flex gap={10} marginTop={10}>
+            <ActionButton onPress={() => setItems([])}>
+              Clear All
+            </ActionButton>
+            <ActionButton
+              onPress={() => {
+                let newArr = [...items];
+                newArr.push({key: i++, name: `Item ${i}`});
+                setItems(newArr);
+              }}>
+              Add 1
+            </ActionButton>
+            <ActionButton
+              onPress={() => {
+                let newItems = [...items];
+                setItems(newItems.slice(0, 4));
+              }}>
+              Slice (0, 4)
+            </ActionButton>
+          </Flex>
+        </div>
+      </Flex>
+    </div>
+  );
+}
+
+
+export function DragExample(props?) {
+  let {listViewProps, dragHookOptions} = props;
+  let getItems = (keys) => [...keys].map(key => {
+    let item = items.find(item => item.key === key);
+    return {
+      'text/plain': item.textValue
+    };
+  });
+
+  let allowsDraggingItem = (key) => {
+    let item = items.find(item => item.key === key);
+    return item.isDraggable;
+  };
+
+  let dragHooks = useDragHooks({
+    allowsDraggingItem,
+    getItems,
+    ...dragHookOptions
+  });
+
+  return (
+    <ListView
+      aria-label="draggable list view"
+      width="300px"
+      selectionMode="multiple"
+      items={items}
+      disabledKeys={['f']}
+      dragHooks={dragHooks}
+      {...listViewProps}>
+      {(item: any) => (
+        <Item key={item.key} textValue={item.textValue}>
+          <Content>
+            <Flex alignItems="center" gap="10px">
+              <View flexGrow={1}>Item {item.key}</View>
+              <ActionButton><Add /></ActionButton>
+              <MenuTrigger>
+                <ActionButton><MoreSmall /></ActionButton>
+                <Menu>
+                  <Item textValue="Edit">
+                    <Edit />
+                    <Text>Edit</Text>
+                  </Item>
+                  <Item textValue="Delete">
+                    <Delete />
+                    <Text>Delete</Text>
+                  </Item>
+                </Menu>
+              </MenuTrigger>
+            </Flex>
+          </Content>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function AsyncList() {
+  interface StarWarsChar {
+    name: string,
+    url: string
+  }
+
+  let list = useAsyncList<StarWarsChar>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+  return (
+    <ListView
+      selectionMode="multiple"
+      aria-label="example async loading list"
+      width="size-6000"
+      height="size-3000"
+      items={list.items}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {(item) => (
+        <Item key={item.name} textValue={item.name}>{item.name}</Item>
+      )}
+    </ListView>
+  );
+}
+
+function FalsyIds() {
+  let items = [
+    {id: 1, name: 'key=1'},
+    {id: 0, name: 'key=0'}
+  ];
+
+  return (
+    <ListView width="250px" height={400} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={items} onAction={action('onAction')}>
+      {item => <Item>{item.name}</Item>}
+    </ListView>
+  );
+}

@@ -11,15 +11,20 @@
  */
 
 import {Button} from '@react-spectrum/button';
-import {Checkbox} from '@react-spectrum/checkbox';
+import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+import {ComboBox} from '@react-spectrum/combobox';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
+import {Item, Picker} from '@react-spectrum/picker';
+import {NumberField} from '@react-spectrum/numberfield';
 import {Provider} from '../';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
+import {SearchField} from '@react-spectrum/searchfield';
+import {SearchWithin} from '@react-spectrum/searchwithin';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -168,18 +173,42 @@ function render(props = {}) {
         <Flex> {/* Extra div via Flex so that the button does not expand to 100% width */}
           <Button variant="primary">I am a button</Button>
         </Flex>
-        <TextField
-          label="A text field"
-          placeholder="Something"
-          marginTop="size-100"
-          necessityIndicator="label" />
-        <Checkbox>Cats!</Checkbox>
-        <Switch>Dogs!</Switch>
+        <CheckboxGroup defaultValue={['dragons']} label="Pets">
+          <Checkbox value="dogs">Dogs</Checkbox>
+          <Checkbox value="cats">Cats</Checkbox>
+          <Checkbox value="dragons">Dragons</Checkbox>
+        </CheckboxGroup>
+        <ComboBox label="More Animals">
+          <Item key="red panda">Red Panda</Item>
+          <Item key="aardvark">Aardvark</Item>
+          <Item key="kangaroo">Kangaroo</Item>
+          <Item key="snake">Snake</Item>
+        </ComboBox>
+        <NumberField label="Years lived there" />
         <RadioGroup label="A radio group">
           <Radio value="dogs">Dogs</Radio>
           <Radio value="cats">Cats</Radio>
           <Radio value="horses">Horses</Radio>
         </RadioGroup>
+        <SearchField label="Search" />
+        <SearchWithin label="Search">
+          <SearchField placeholder="Search" />
+          <Picker name="favorite-color3" label="Favorite color searchwithin">
+            <Item key="red">Red</Item>
+            <Item key="orange">Orange</Item>
+            <Item key="yellow">Yellow</Item>
+            <Item key="green">Green</Item>
+            <Item key="blue">Blue</Item>
+            <Item key="purple">Purple</Item>
+          </Picker>
+        </SearchWithin>
+        <Switch isSelected>Dogs!</Switch>
+        <TextField
+          label="A text field"
+          placeholder="Something"
+          marginTop="size-100"
+          necessityIndicator="label"
+          value="dummy value" />
       </Form>
     </Provider>
   );

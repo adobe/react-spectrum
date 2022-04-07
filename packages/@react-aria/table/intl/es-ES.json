@@ -1,0 +1,9 @@
+{
+  "ascending": "de subida",
+  "ascendingSort": "ordenado por columna {columnName} en orden de subida",
+  "descending": "de bajada",
+  "descendingSort": "ordenado por columna {columnName} en orden de bajada",
+  "select": "Seleccionar",
+  "selectAll": "Seleccionar todos",
+  "sortable": "columna ordenable"
+}

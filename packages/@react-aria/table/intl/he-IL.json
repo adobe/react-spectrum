@@ -1,0 +1,9 @@
+{
+  "ascending": "עולה",
+  "ascendingSort": "מוין לפי עמודה {columnName} בסדר עולה",
+  "descending": "יורד",
+  "descendingSort": "מוין לפי עמודה {columnName} בסדר יורד",
+  "select": "בחר",
+  "selectAll": "בחר הכול",
+  "sortable": "עמודה שניתן למיין"
+}

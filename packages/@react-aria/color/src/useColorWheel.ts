@@ -33,8 +33,6 @@ interface ColorWheelAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-const PAGE_MIN_STEP_SIZE = 6;
-
 /**
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
@@ -42,7 +40,6 @@ const PAGE_MIN_STEP_SIZE = 6;
 export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState, inputRef: RefObject<HTMLElement>): ColorWheelAria {
   let {
     isDisabled,
-    step = 1,
     innerRadius,
     outerRadius,
     'aria-label': ariaLabel
@@ -62,12 +59,38 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   stateRef.current = state;
 
   let currentPosition = useRef<{x: number, y: number}>(null);
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown(e) {
+      // these are the cases that useMove doesn't handle
+      if (!/^(PageUp|PageDown)$/.test(e.key)) {
+        e.continuePropagation();
+        return;
+      }
+      // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
+      e.preventDefault();
+      // remember to set this and unset it so that onChangeEnd is fired
+      stateRef.current.setDragging(true);
+      switch (e.key) {
+        case 'PageUp':
+          e.preventDefault();
+          state.increment(stateRef.current.pageStep);
+          break;
+        case 'PageDown':
+          e.preventDefault();
+          state.decrement(stateRef.current.pageStep);
+          break;
+      }
+      stateRef.current.setDragging(false);
+    }
+  });
+
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
       state.setDragging(true);
     },
-    onMove({deltaX, deltaY, pointerType}) {
+    onMove({deltaX, deltaY, pointerType, shiftKey}) {
       if (currentPosition.current == null) {
         currentPosition.current = stateRef.current.getThumbPosition(thumbRadius);
       }
@@ -75,9 +98,9 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPosition.current.y += deltaY;
       if (pointerType === 'keyboard') {
         if (deltaX > 0 || deltaY < 0) {
-          state.increment();
+          state.increment(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
         } else if (deltaX < 0 || deltaY > 0) {
-          state.decrement();
+          state.decrement(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
         }
       } else {
         stateRef.current.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);
@@ -116,9 +139,13 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPointer.current = id;
       focusInput();
       state.setDragging(true);
-      addGlobalListener(window, 'mouseup', onThumbUp, false);
-      addGlobalListener(window, 'touchend', onThumbUp, false);
-      addGlobalListener(window, 'pointerup', onThumbUp, false);
+
+      if (typeof PointerEvent !== 'undefined') {
+        addGlobalListener(window, 'pointerup', onThumbUp, false);
+      } else {
+        addGlobalListener(window, 'mouseup', onThumbUp, false);
+        addGlobalListener(window, 'touchend', onThumbUp, false);
+      }
     }
   };
 
@@ -130,9 +157,12 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPointer.current = undefined;
       isOnTrack.current = false;
 
-      removeGlobalListener(window, 'mouseup', onThumbUp, false);
-      removeGlobalListener(window, 'touchend', onThumbUp, false);
-      removeGlobalListener(window, 'pointerup', onThumbUp, false);
+      if (typeof PointerEvent !== 'undefined') {
+        removeGlobalListener(window, 'pointerup', onThumbUp, false);
+      } else {
+        removeGlobalListener(window, 'mouseup', onThumbUp, false);
+        removeGlobalListener(window, 'touchend', onThumbUp, false);
+      }
     }
   };
 
@@ -149,9 +179,12 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       focusInput();
       state.setDragging(true);
 
-      addGlobalListener(window, 'mouseup', onTrackUp, false);
-      addGlobalListener(window, 'touchend', onTrackUp, false);
-      addGlobalListener(window, 'pointerup', onTrackUp, false);
+      if (typeof PointerEvent !== 'undefined') {
+        addGlobalListener(window, 'pointerup', onTrackUp, false);
+      } else {
+        addGlobalListener(window, 'mouseup', onTrackUp, false);
+        addGlobalListener(window, 'touchend', onTrackUp, false);
+      }
     }
   };
 
@@ -163,43 +196,34 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       state.setDragging(false);
       focusInput();
 
-      removeGlobalListener(window, 'mouseup', onTrackUp, false);
-      removeGlobalListener(window, 'touchend', onTrackUp, false);
-      removeGlobalListener(window, 'pointerup', onTrackUp, false);
+
+      if (typeof PointerEvent !== 'undefined') {
+        removeGlobalListener(window, 'pointerup', onTrackUp, false);
+      } else {
+        removeGlobalListener(window, 'mouseup', onTrackUp, false);
+        removeGlobalListener(window, 'touchend', onTrackUp, false);
+      }
     }
   };
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      switch (e.key) {
-        case 'PageUp':
-          e.preventDefault();
-          state.increment(PAGE_MIN_STEP_SIZE);
-          break;
-        case 'PageDown':
-          e.preventDefault();
-          state.decrement(PAGE_MIN_STEP_SIZE);
-          break;
-      }
-    }
-  });
-
   let trackInteractions = isDisabled ? {} : mergeProps({
-    onMouseDown: (e: React.MouseEvent) => {
-      if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-        return;
-      }
-      onTrackDown(e.currentTarget, undefined, e.clientX, e.clientY);
-    },
-    onPointerDown: (e: React.PointerEvent) => {
-      if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
-        return;
-      }
-      onTrackDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
-    },
-    onTouchStart: (e: React.TouchEvent) => {
-      onTrackDown(e.currentTarget, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-    }
+    ...(typeof PointerEvent !== 'undefined' ? {
+      onPointerDown: (e: React.PointerEvent) => {
+        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        onTrackDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
+      }} : {
+        onMouseDown: (e: React.MouseEvent) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onTrackDown(e.currentTarget, undefined, e.clientX, e.clientY);
+        },
+        onTouchStart: (e: React.TouchEvent) => {
+          onTrackDown(e.currentTarget, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+        }
+      })
   }, movePropsContainer);
 
   let thumbInteractions = isDisabled ? {} : mergeProps({
@@ -218,7 +242,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     onTouchStart: (e: React.TouchEvent) => {
       onThumbDown(e.changedTouches[0].identifier);
     }
-  }, movePropsThumb, keyboardProps);
+  }, keyboardProps, movePropsThumb);
   let {x, y} = state.getThumbPosition(thumbRadius);
 
   // Provide a default aria-label if none is given
@@ -232,6 +256,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     'aria-label': ariaLabel
   });
 
+  let {minValue, maxValue, step} = state.value.getChannelRange('hue');
   return {
     trackProps: {
       ...trackInteractions,
@@ -275,8 +300,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       inputLabellingProps,
       {
         type: 'range',
-        min: '0',
-        max: '360',
+        min: String(minValue),
+        max: String(maxValue),
         step: String(step),
         'aria-valuetext': state.value.formatChannelValue('hue', locale),
         disabled: isDisabled,

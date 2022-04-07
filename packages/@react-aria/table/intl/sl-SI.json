@@ -1,0 +1,9 @@
+{
+  "ascending": "naraščajoče",
+  "ascendingSort": "razvrščeno po stolpcu {columnName} v naraščajočem vrstnem redu",
+  "descending": "padajoče",
+  "descendingSort": "razvrščeno po stolpcu {columnName} v padajočem vrstnem redu",
+  "select": "Izberite",
+  "selectAll": "Izberite vse",
+  "sortable": "razvrstljivi stolpec"
+}

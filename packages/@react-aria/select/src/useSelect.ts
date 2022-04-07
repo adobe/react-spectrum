@@ -20,7 +20,7 @@ import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useCollator} from '@react-aria/i18n';
-import {useLabel} from '@react-aria/label';
+import {useField} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 
 interface AriaSelectOptions<T> extends AriaSelectProps<T> {
@@ -42,7 +42,13 @@ interface SelectAria {
   valueProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the popup. */
-  menuProps: AriaListBoxOptions<unknown>
+  menuProps: AriaListBoxOptions<unknown>,
+
+  /** Props for the select's description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the select's error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -104,7 +110,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     }
   });
 
-  let {labelProps, fieldProps} = useLabel({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
   });
@@ -147,6 +153,10 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
           props.onFocus(e);
         }
 
+        if (props.onFocusChange) {
+          props.onFocusChange(true);
+        }
+
         state.setFocused(true);
       },
       onBlur(e: FocusEvent) {
@@ -156,6 +166,10 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
 
         if (props.onBlur) {
           props.onBlur(e);
+        }
+
+        if (props.onFocusChange) {
+          props.onFocusChange(false);
         }
 
         state.setFocused(false);
@@ -178,12 +192,19 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         if (props.onBlur) {
           props.onBlur(e);
         }
+
+        if (props.onFocusChange) {
+          props.onFocusChange(false);
+        }
+        
         state.setFocused(false);
       },
       'aria-labelledby': [
         fieldProps['aria-labelledby'],
         triggerProps['aria-label'] && !fieldProps['aria-labelledby'] ? triggerProps.id : null
       ].filter(Boolean).join(' ')
-    }
+    },
+    descriptionProps,
+    errorMessageProps
   };
 }

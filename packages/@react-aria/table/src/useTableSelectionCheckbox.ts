@@ -12,9 +12,12 @@
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
 import {getRowLabelledBy} from './utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Key} from 'react';
 import {TableState} from '@react-stately/table';
-import {useId} from '@react-aria/utils';
+import {useGridSelectionCheckbox} from '@react-aria/grid';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 interface SelectionCheckboxProps {
   /** A unique key for the checkbox. */
@@ -38,22 +41,12 @@ interface SelectAllCheckboxAria {
  */
 export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, state: TableState<T>): SelectionCheckboxAria {
   let {key} = props;
-
-  let manager = state.selectionManager;
-  let checkboxId = useId();
-  let isDisabled = state.disabledKeys.has(key);
-  let isSelected = state.selectionManager.isSelected(key);
-
-  let onChange = () => manager.select(key);
+  const {checkboxProps} = useGridSelectionCheckbox(props, state);
 
   return {
     checkboxProps: {
-      id: checkboxId,
-      'aria-label': 'Select',
-      'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`,
-      isSelected,
-      isDisabled: isDisabled || manager.selectionMode === 'none',
-      onChange
+      ...checkboxProps,
+      'aria-labelledby': `${checkboxProps.id} ${getRowLabelledBy(state, key)}`
     }
   };
 }
@@ -65,9 +58,11 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
  */
 export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectAllCheckboxAria {
   let {isEmpty, isSelectAll, selectionMode} = state.selectionManager;
+  const formatMessage = useMessageFormatter(intlMessages);
+
   return {
     checkboxProps: {
-      'aria-label': 'Select All',
+      'aria-label': formatMessage(selectionMode === 'single' ? 'select' : 'selectAll'),
       isSelected: isSelectAll,
       isDisabled: selectionMode !== 'multiple',
       isIndeterminate: !isEmpty && !isSelectAll,

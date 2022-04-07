@@ -13,8 +13,8 @@
 import {AriaTabPanelProps} from '@react-types/tabs';
 import {generateId} from './utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {HTMLAttributes, RefObject, useLayoutEffect, useState} from 'react';
-import {mergeProps, useLabels} from '@react-aria/utils';
+import {HTMLAttributes, RefObject, useState} from 'react';
+import {mergeProps, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {TabListState} from '@react-stately/tabs';
 
 interface TabPanelAria {

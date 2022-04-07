@@ -109,7 +109,7 @@ export function useHover(props: HoverProps): HoverResult {
       }
 
       state.isHovered = true;
-      let target = event.target;
+      let target = event.currentTarget;
       state.target = target;
 
       if (onHoverStart) {
@@ -136,7 +136,7 @@ export function useHover(props: HoverProps): HoverResult {
       }
 
       state.isHovered = false;
-      let target = event.target;
+      let target = event.currentTarget;
       if (onHoverEnd) {
         onHoverEnd({
           type: 'hoverend',
@@ -194,7 +194,7 @@ export function useHover(props: HoverProps): HoverResult {
     // Call the triggerHoverEnd as soon as isDisabled changes to true
     // Safe to call triggerHoverEnd, it will early return if we aren't currently hovering
     if (isDisabled) {
-      triggerHoverEnd({target: state.target}, state.pointerType);
+      triggerHoverEnd({currentTarget: state.target}, state.pointerType);
     }
   }, [isDisabled]);
 

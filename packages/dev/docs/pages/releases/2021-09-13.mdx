@@ -1,0 +1,128 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: Today we're excited to announce the stable release of TableView! This component includes many useful features such as selection, keyboard navigation, sorting, tiered column headers, async data loading, infinite scrolling, virtualization and type ahead. Also included in this release is a new option for help text included with many form components and React Aria hooks.
+date: 2021-09-13
+---
+
+# September 13, 2021 Release
+
+Today we're excited to announce the stable release of TableView! 🚀🚀 This component includes many useful features such as selection, keyboard navigation, sorting, tiered column headers,
+async data loading, infinite scrolling, virtualization and type ahead. You can see the `TableView` in action in the [React Spectrum docs](https://react-spectrum.adobe.com/react-spectrum/TableView.html) also view our [React Aria docs](https://react-spectrum.adobe.com/react-aria/useTable.html) for more details on the `useTable` hook.
+
+Also included in this release is a new option for help text included with [Combobox](https://react-spectrum.adobe.com/react-spectrum/ComboBox.html#help-text), [Picker](https://react-spectrum.adobe.com/react-spectrum/Picker.html#help-text), [TextField](https://react-spectrum.adobe.com/react-spectrum/TextField.html#help-text), [TextArea](https://react-spectrum.adobe.com/react-spectrum/TextArea.html#help-text), [SearchField](https://react-spectrum.adobe.com/react-spectrum/SearchField.html#help-text) and [NumberField](https://react-spectrum.adobe.com/react-spectrum/NumberField.html#help-text) via the new `useField` [hook](https://react-spectrum.adobe.com/react-aria/useField.html). This hook associates a form control with a label, and an optional description and/or error message. `useField` takes care of creating ids for each element and associating them with the correct ARIA attributes (`aria-labelledby` and `aria-describedby`). Many React Aria hooks have been updated to support this out of the box as well. See examples in the component docs, [aria examples](https://react-spectrum.adobe.com/react-aria/useTextField.html#example) or the `useField` [hook](https://react-spectrum.adobe.com/react-aria/useField.html).
+
+Plenty of other new features, bug fixes and updates to our documentation in the notes below. Thank you all for your contributions! 🤩
+
+## New component
+- **TableView**
+    - `@react-spectrum/table` - [Docs](https://react-spectrum.adobe.com/react-spectrum/TableView.html)
+    - `@react-aria/table` - [Docs](https://react-spectrum.adobe.com/react-aria/useTable.html)
+    - `@react-stately/table` - [Docs](https://react-spectrum.adobe.com/react-stately/useTableState.html)
+
+## New features
+- Add `altKey` modifier to `usePress` hook events - [@jeroenwienk](https://github.com/jeroenwienk) - [PR](https://github.com/adobe/react-spectrum/pull/2240)
+- Add `shouldCancelOnPointerExit` option to `usePress` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2264)
+- Add auto scroll-to-item for non-virtualized collections - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2232)
+- Added slots to ActionButton and ActionGroup - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/2238)
+- Added description and error message support to TextField, TextArea, SearchField, NumberField, ComboBox, and Picker and associated React Aria hooks - [@dkario](https://github.com/dkario) - [PR](https://github.com/adobe/react-spectrum/pull/1846)
+
+## Fixes
+- Fix `useListData` to check when selection is `all` - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/2206)
+- Fix `NumberField` for percentage without `minimumFractionDigits` - [@garrettberg](https://github.com/garrettberg) - [PR](https://github.com/adobe/react-spectrum/pull/2224)
+- Update `FocusScope` to better handle nesting and restoring focus - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2223)
+- Update `useListData` to handle unloaded lists when selection is `all` - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/2225)
+- Update translations for List, Menu, Table, Grid - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/2255)
+- Update type for children in `Flex` - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/2260)
+- Improve `plop` script for file renaming - [@neeraj3029](https://github.com/neeraj3029) - [PR](https://github.com/adobe/react-spectrum/pull/2269)
+- Append a prefix to avoid ID conflicts in `SSRProvider` - [@jfuchs](https://github.com/jfuchs) - [PR](https://github.com/adobe/react-spectrum/pull/2278)
+- Omit duplicate type in `ColorFieldProps` - [@kwoncharles](https://github.com/kwoncharles) - [PR](https://github.com/adobe/react-spectrum/pull/2290)
+- Update `TextArea` to respect min-width when resizing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2311)
+- Restore scroll position when tabbing back into collection - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2314)
+
+## Docs
+- Update SSR docs for Next.js 11 - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/2215)
+- Add missing refs to `useNumberField` examples - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2300)
+- Add `TooltipTrigger` to `Tooltip` docs - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/2303)
+- Simplify `useTable` example - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2321)
+- Add `useField` docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2302)
+
+## Under construction
+
+Pre-release versions of the following components have been released. Please feel free to try them out, and report any issues you encounter.
+
+
+- ColorSlider beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorSlider.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorSlider.html)
+- ColorWheel beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorWheel.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorWheel.html)
+- ColorField beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorField.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorField.html)
+
+
+## Released packages
+```
+- @adobe/react-spectrum@3.14.0
+- @internationalized/number@3.0.3
+- @react-aria/button@3.3.4
+- @react-aria/color@3.0.0-beta.4
+- @react-aria/combobox@3.1.0
+- @react-aria/focus@3.5.0
+- @react-aria/grid@3.0.0
+- @react-aria/interactions@3.6.0
+- @react-aria/label@3.2.0
+- @react-aria/numberfield@3.1.0
+- @react-aria/searchfield@3.2.0
+- @react-aria/select@3.5.0
+- @react-aria/selection@3.6.0
+- @react-aria/ssr@3.1.0
+- @react-aria/table@3.0.0
+- @react-aria/tabs@3.0.2
+- @react-aria/textfield@3.4.0
+- @react-aria/utils@3.9.0
+- @react-spectrum/actionbar@3.0.0-alpha.3
+- @react-spectrum/actiongroup@3.3.0
+- @react-spectrum/button@3.6.0
+- @react-spectrum/color@3.0.0-beta.4
+- @react-spectrum/combobox@3.1.0
+- @react-spectrum/label@3.4.0
+- @react-spectrum/link@3.2.0
+- @react-spectrum/listbox@3.5.2
+- @react-spectrum/menu@3.5.0
+- @react-spectrum/numberfield@3.1.0
+- @react-spectrum/picker@3.4.0
+- @react-spectrum/searchfield@3.2.0
+- @react-spectrum/table@3.0.0
+- @react-spectrum/textfield@3.2.0
+- @react-stately/color@3.0.0-beta.4
+- @react-stately/data@3.4.2
+- @react-stately/grid@3.0.0
+- @react-stately/layout@3.4.2
+- @react-stately/table@3.0.0
+- @react-types/color@3.0.0-beta.3
+- @react-types/combobox@3.1.0
+- @react-types/grid@3.0.0
+- @react-types/label@3.5.0
+- @react-types/layout@3.2.0
+- @react-types/menu@3.4.0
+- @react-types/numberfield@3.1.0
+- @react-types/select@3.4.0
+- @react-types/shared@3.9.0
+- @react-types/table@3.0.0
+- @react-types/textfield@3.3.0
+- react-aria@3.10.0
+- react-stately@3.9.0
+```

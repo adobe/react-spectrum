@@ -22,7 +22,7 @@ import {useHover} from '../';
 
 function Example(props) {
   let {hoverProps, isHovered} = useHover(props);
-  return <div {...hoverProps}>test{isHovered && '-hovered'}</div>;
+  return <div {...hoverProps}>test{isHovered && '-hovered'}<div data-testid="inner-target" /></div>;
 }
 
 function pointerEvent(type, opts) {
@@ -38,7 +38,7 @@ function pointerEvent(type, opts) {
 
 describe('useHover', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   it('does not handle hover events if disabled', function () {
@@ -75,6 +75,43 @@ describe('useHover', function () {
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+
+      expect(events).toEqual([
+        {
+          type: 'hoverstart',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: true
+        },
+        {
+          type: 'hoverend',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: false
+        }
+      ]);
+    });
+
+    it('hover event target should be the same element we attached listeners to even if we hover over inner elements', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+
+      let el = res.getByText('test');
+      let inner = res.getByTestId('inner-target');
+      fireEvent(inner, pointerEvent('pointerover', {pointerType: 'mouse'}));
+      fireEvent(inner, pointerEvent('pointerout', {pointerType: 'mouse'}));
 
       expect(events).toEqual([
         {
@@ -494,7 +531,7 @@ describe('useHover', function () {
     }
 
     beforeAll(() => {
-      jest.useFakeTimers();
+      jest.useFakeTimers('legacy');
     });
     afterAll(() => {
       jest.useRealTimers();

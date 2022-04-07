@@ -158,7 +158,7 @@ storiesOf('ActionGroup', module)
   )
   .add(
     'isQuiet, isEmphasized',
-    () => render({isEmphasized: true, isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)
+    () => render({isEmphasized: true, isQuiet: true, defaultSelectedKeys: ['1', '2'], disabledKeys: ['2']}, viewItems)
   )
   .add(
     'staticColor=white',
@@ -310,6 +310,17 @@ storiesOf('ActionGroup', module)
         {renderCollapsible({density: 'compact'})}
         {renderCollapsible({density: 'compact', isJustified: true})}
         {renderCollapsible({isQuiet: true})}
+      </div>
+    )
+  )
+  .add(
+    'overflowMode: collapse, disabledKeys',
+    () => (
+      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderCollapsible({disabledKeys: ['edit', 'duplicate']})}
+        {renderCollapsible({density: 'compact', disabledKeys: ['edit', 'duplicate']})}
+        {renderCollapsible({density: 'compact', disabledKeys: ['edit', 'duplicate'], isJustified: true})}
+        {renderCollapsible({disabledKeys: ['edit', 'duplicate'], isQuiet: true})}
       </div>
     )
   )

@@ -89,6 +89,14 @@ storiesOf('Button', module)
   .add(
     'element: a, rel: \'noopener noreferrer\'',
     () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
+  )
+  .add(
+    'user-select:none on press test',
+    () => <Example />
+  )
+  .add(
+    'styles to check WHCM support',
+    () => renderStyles()
   );
 
 function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
@@ -119,6 +127,174 @@ function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> 
         Quiet
       </Button>
       )}
+    </Flex>
+  );
+}
+
+function Example() {
+  let [show, setShow] = React.useState(false);
+  let [show2, setShow2] = React.useState(false);
+
+  return (
+    <Flex gap="size-200">
+      <Button
+        variant="cta"
+        UNSAFE_style={show && {background: 'red', userSelect: 'text'}}
+        onPressStart={() => setTimeout(() => setShow(true), 3000)}>
+        Press and hold (overwrite)
+      </Button>
+      <Button
+        variant="cta"
+        UNSAFE_style={show2 && {background: 'red'}}
+        onPressStart={() => setTimeout(() => setShow2(true), 3000)}>
+        Press and hold (no overwrite)
+      </Button>
+    </Flex>
+  );
+}
+
+function renderStyles<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
+  return (
+    <Flex direction="column" gap="size-200">
+      <Flex gap="size-200">
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          {...props}
+          variant="cta">
+          CTA
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled
+          {...props}
+          variant="cta">
+          Disabled
+        </Button>
+      </Flex>
+      <Flex gap="size-200">
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          variant="primary"  
+          {...props}>
+          Primary
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          variant="primary"
+          isDisabled
+          {...props}>
+          Disabled
+        </Button>
+      </Flex>
+      <Flex gap="size-200">
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          {...props}
+          variant="secondary">
+          Secondary
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled
+          {...props}
+          variant="secondary">
+          Disabled
+        </Button>
+      </Flex>
+      <Flex gap="size-200">
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          {...props}
+          variant="negative">
+          Warning
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled
+          {...props}
+          variant="negative">
+          Disabled
+        </Button>
+      </Flex>
+      <Flex gap="size-200">
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          variant="primary"
+          isQuiet
+          {...props}>
+          Primary Quiet
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          variant="primary"
+          isDisabled
+          isQuiet
+          {...props}>
+          Disabled
+        </Button>
+      </Flex>
+      <Flex gap="size-200">
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isQuiet
+          {...props}
+          variant="secondary">
+          Secondary Quiet
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled
+          isQuiet
+          {...props}
+          variant="secondary">
+          Disabled
+        </Button>
+      </Flex>
+      <Flex gap="size-200">
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isQuiet
+          {...props}
+          variant="negative">
+          Warning Quiet
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled
+          isQuiet
+          {...props}
+          variant="negative">
+          Disabled
+        </Button>
+      </Flex>
     </Flex>
   );
 }

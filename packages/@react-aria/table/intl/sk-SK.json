@@ -1,0 +1,9 @@
+{
+  "ascending": "vzostupne",
+  "ascendingSort": "zoradené zostupne podľa stĺpca {columnName}",
+  "descending": "zostupne",
+  "descendingSort": "zoradené zostupne podľa stĺpca {columnName}",
+  "select": "Vybrať",
+  "selectAll": "Vybrať všetko",
+  "sortable": "zoraditeľný stĺpec"
+}

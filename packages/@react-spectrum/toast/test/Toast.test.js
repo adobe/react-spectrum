@@ -14,7 +14,6 @@ import {act, render} from '@testing-library/react';
 import React from 'react';
 import {Toast} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
-import {Toast as V2Toast} from '@react/react-spectrum/Toast';
 
 let testId = 'test-id';
 
@@ -35,21 +34,17 @@ describe('Toast', function () {
   it.each`
     name           | Component    | props  | message
     ${'Toast'}     | ${Toast}     | ${{}}  | ${'Toast time!'}
-    ${'V2Toast'}   | ${V2Toast}   | ${{}}  | ${'Toast time!'}
   `('$name handles defaults', function ({name, Component, props, message}) {
     let {getAllByRole, getByRole, getByText} = renderComponent(Component, props, message);
 
     expect(getByRole('alert')).toBeTruthy();
     expect(getByText(message)).toBeTruthy();
-    if (name === 'Toast') {
-      expect(getAllByRole('img', {hidden: true}).length).toBe(1);
-    }
+    expect(getAllByRole('img', {hidden: true}).length).toBe(1);
   });
 
   it.each`
     Name           | Component    | props                             | message
     ${'Toast'}     | ${Toast}     | ${{UNSAFE_className: 'myClass'}}  | ${'Toast time!'}
-    ${'V2Toast'}   | ${V2Toast}   | ${{className: 'myClass'}}         | ${'Toast time!'}
   `('$Name supports UNSAFE_className', function ({Component, props, message}) {
     let {getByTestId} = renderComponent(Component, props, message);
     let className = getByTestId(testId).className;
@@ -69,7 +64,6 @@ describe('Toast', function () {
   it.each`
     Name           | Component    | props                                    | message
     ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo', onRemove}}       | ${'Toast time!'}
-    ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true}} | ${'Toast time!'}
   `('$Name handles action and close button clicks', function ({Component, props, message}) {
     let {getAllByRole, getByText} = renderComponent(Component, {onClose, onAction, ...props}, message);
     let button = getAllByRole('button');
@@ -85,15 +79,11 @@ describe('Toast', function () {
     triggerPress(button[1]);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onAction).toHaveBeenCalledTimes(1);
-    if (name === 'Toast') {
-      expect(onRemove).toHaveBeenCalledTimes(0);
-    }
   });
 
   it.each`
     Name           | Component    | props                                                          | message
     ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo', shouldCloseOnAction: true, onRemove}}  | ${'Toast time!'}
-    ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true, closeOnAction: true}}  | ${'Toast time!'}
   `('$Name handles action and close button clicks when action closes', function ({Component, props, message}) {
     let {getAllByRole, getByText} = renderComponent(Component, {onClose, onAction, ...props}, message);
     let button = getAllByRole('button');
@@ -102,24 +92,19 @@ describe('Toast', function () {
     triggerPress(button[0]);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onAction).toHaveBeenCalledTimes(1);
-    if (name === 'Toast') {
-      expect(onRemove).toHaveBeenCalledTimes(1);
-    }
+    expect(onRemove).toHaveBeenCalledTimes(1);
     expect(getByText(props.actionLabel)).toBeTruthy();
 
     // close button
     triggerPress(button[1]);
     expect(onClose).toHaveBeenCalledTimes(2);
     expect(onAction).toHaveBeenCalledTimes(1);
-    if (name === 'Toast') {
-      expect(onRemove).toHaveBeenCalledTimes(2);
-    }
+    expect(onRemove).toHaveBeenCalledTimes(2);
   });
 
   it.each`
     Name           | Component    | props                                                          | message
     ${'Toast'}     | ${Toast}     | ${{actionLabel: 'Undo', shouldCloseOnAction: true, onRemove}}  | ${'Toast time!'}
-    ${'V2Toast'}   | ${V2Toast}   | ${{actionLabel: 'Undo', closable: true, closeOnAction: true}}  | ${'Toast time!'}
   `('$Name action button and close button are focusable', function ({Component, props, message}) {
     let {getAllByRole} = renderComponent(Component, {onClose, onAction, ...props}, message);
     let button = getAllByRole('button');
@@ -129,18 +114,14 @@ describe('Toast', function () {
     triggerPress(document.activeElement);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onAction).toHaveBeenCalledTimes(1);
-    if (name === 'Toast') {
-      expect(onRemove).toHaveBeenCalledTimes(1);
-    }
+    expect(onRemove).toHaveBeenCalledTimes(1);
 
     // close button
     act(() => {button[1].focus();});
     triggerPress(document.activeElement);
     expect(onClose).toHaveBeenCalledTimes(2);
     expect(onAction).toHaveBeenCalledTimes(1);
-    if (name === 'Toast') {
-      expect(onRemove).toHaveBeenCalledTimes(2);
-    }
+    expect(onRemove).toHaveBeenCalledTimes(2);
   });
 
   // New v3 functionality, omitting v2 components

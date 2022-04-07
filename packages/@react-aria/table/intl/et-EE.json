@@ -1,0 +1,9 @@
+{
+  "ascending": "tõusev järjestus",
+  "ascendingSort": "sorditud veeru järgi {columnName} tõusvas järjestuses",
+  "descending": "laskuv järjestus",
+  "descendingSort": "sorditud veeru järgi {columnName} laskuvas järjestuses",
+  "select": "Vali",
+  "selectAll": "Vali kõik",
+  "sortable": "sorditav veerg"
+}

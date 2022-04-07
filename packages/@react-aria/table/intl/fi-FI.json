@@ -1,0 +1,9 @@
+{
+  "ascending": "nouseva",
+  "ascendingSort": "lajiteltu sarakkeen {columnName} mukaan nousevassa järjestyksessä",
+  "descending": "laskeva",
+  "descendingSort": "lajiteltu sarakkeen {columnName} mukaan laskevassa järjestyksessä",
+  "select": "Valitse",
+  "selectAll": "Valitse kaikki",
+  "sortable": "lajiteltava sarake"
+}

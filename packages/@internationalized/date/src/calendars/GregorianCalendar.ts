@@ -13,9 +13,9 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar} from '../types';
+import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
-import {mod} from '../utils';
+import {mod, Mutable} from '../utils';
 
 const EPOCH = 1721426; // 001/01/03 Julian C.E.
 export function gregorianToJulianDay(year: number, month: number, day: number): number {
@@ -47,6 +47,10 @@ const daysInMonth = {
   leapyear: [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 };
 
+/**
+ * The Gregorian calendar is the most commonly used calendar system in the world. It supports two eras: BC, and AD.
+ * Years always contain 12 months, and 365 or 366 days depending on whether it is a leap year.
+ */
 export class GregorianCalendar implements Calendar {
   identifier = 'gregory';
 
@@ -75,23 +79,40 @@ export class GregorianCalendar implements Calendar {
     return new CalendarDate(this, year, month, day);
   }
 
-  toJulianDay(date: CalendarDate): number {
+  toJulianDay(date: AnyCalendarDate): number {
     return gregorianToJulianDay(date.year, date.month, date.day);
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     return daysInMonth[isLeapYear(date.year) ? 'leapyear' : 'standard'][date.month - 1];
   }
 
-  getMonthsInYear(): number {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getMonthsInYear(date: AnyCalendarDate): number {
     return 12;
   }
 
-  getDaysInYear(date: CalendarDate): number {
+  getDaysInYear(date: AnyCalendarDate): number {
     return isLeapYear(date.year) ? 366 : 365;
   }
 
-  getCurrentEra() {
-    return 'AD';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getYearsInEra(date: AnyCalendarDate): number {
+    return 9999;
+  }
+
+  getEras() {
+    return ['BC', 'AD'];
+  }
+
+  getYearsToAdd(date: Mutable<AnyCalendarDate>, years: number) {
+    return date.era === 'BC' ? -years : years;
+  }
+
+  balanceDate(date: Mutable<AnyCalendarDate>) {
+    if (date.year <= 0) {
+      date.era = date.era === 'BC' ? 'AD' : 'BC';
+      date.year = 1 - date.year;
+    }
   }
 }

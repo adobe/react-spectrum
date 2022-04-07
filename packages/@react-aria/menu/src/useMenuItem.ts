@@ -152,10 +152,11 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     selectionManager: state.selectionManager,
     key,
     ref,
-    shouldSelectOnPressUp: true
+    shouldSelectOnPressUp: true,
+    allowsDifferentPressOrigin: true
   });
 
-  let {pressProps} = usePress(mergeProps({onPressStart, onPressUp, onKeyDown, isDisabled}, itemProps));
+  let {pressProps} = usePress({onPressStart, onPressUp, isDisabled});
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
@@ -169,7 +170,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(pressProps, hoverProps)
+      ...mergeProps(itemProps, pressProps, hoverProps, {onKeyDown})
     },
     labelProps: {
       id: labelId

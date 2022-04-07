@@ -12,6 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
+import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {
   HTMLAttributes,
   InputHTMLAttributes,
@@ -23,7 +24,6 @@ import {
 } from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useFocus, useFocusWithin} from '@react-aria/interactions';
@@ -45,7 +45,11 @@ interface NumberFieldAria {
   /** Props for the increment button, to be passed to [useButton](useButton.html). */
   incrementButtonProps: AriaButtonProps,
   /** Props for the decrement button, to be passed to [useButton](useButton.html). */
-  decrementButtonProps: AriaButtonProps
+  decrementButtonProps: AriaButtonProps,
+  /** Props for the number field's description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the number field's error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -70,7 +74,10 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onFocus,
     onFocusChange,
     onKeyDown,
-    onKeyUp
+    onKeyUp,
+    description,
+    errorMessage,
+    ...otherProps
   } = props;
 
   let {
@@ -166,7 +173,11 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     state.setInputValue(value);
   };
 
-  let {labelProps, inputProps: textFieldProps} = useFormattedTextField({
+  let domProps = filterDOMProps(props);
+
+  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
+    ...otherProps,
+    ...domProps,
     label,
     autoFocus,
     isDisabled,
@@ -174,6 +185,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     isRequired,
     validationState,
     value: state.inputValue,
+    defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
     'aria-label': props['aria-label'] || null,
     'aria-labelledby': props['aria-labelledby'] || null,
@@ -185,7 +197,9 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onFocus,
     onFocusChange,
     onKeyDown,
-    onKeyUp
+    onKeyUp,
+    description,
+    errorMessage
   }, state, inputRef);
 
   let inputProps = mergeProps(
@@ -249,6 +263,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     preventFocusOnPress: true,
+    allowFocusWhenDisabled: true,
     isDisabled: !state.canIncrement,
     onPressStart: onButtonPressStart
   });
@@ -260,6 +275,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     preventFocusOnPress: true,
+    allowFocusWhenDisabled: true,
     isDisabled: !state.canDecrement,
     onPressStart: onButtonPressStart
   });
@@ -274,6 +290,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     labelProps,
     inputProps,
     incrementButtonProps,
-    decrementButtonProps
+    decrementButtonProps,
+    errorMessageProps,
+    descriptionProps
   };
 }

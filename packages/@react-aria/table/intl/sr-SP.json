@@ -1,0 +1,9 @@
+{
+  "ascending": "rastući",
+  "ascendingSort": "sortirano po kolonama {columnName} rastućim redosledom",
+  "descending": "padajući",
+  "descendingSort": "sortirano po kolonama {columnName} padajućim redosledom",
+  "select": "Izaberite",
+  "selectAll": "Izaberite sve",
+  "sortable": "kolona koja se može sortirati"
+}

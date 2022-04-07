@@ -10,33 +10,48 @@
  * governing permissions and limitations under the License.
  */
 
+import {DateFormatter} from '@internationalized/date';
 import {useLocale} from './context';
+import {useMemo, useRef} from 'react';
 
 interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
   calendar?: string
 }
-
-let formatterCache = new Map<string, Intl.DateTimeFormat>();
 
 /**
  * Provides localized date formatting for the current locale. Automatically updates when the locale changes,
  * and handles caching of the date formatter for performance.
  * @param options - Formatting options.
  */
-export function useDateFormatter(options?: DateFormatterOptions): Intl.DateTimeFormat {
+export function useDateFormatter(options?: DateFormatterOptions): DateFormatter {
+  // Reuse last options object if it is shallowly equal, which allows the useMemo result to also be reused.
+  let lastOptions = useRef(null);
+  if (options && lastOptions.current && isEqual(options, lastOptions.current)) {
+    options = lastOptions.current;
+  }
+
+  lastOptions.current = options;
+
   let {locale} = useLocale();
+  return useMemo(() => new DateFormatter(locale, options), [locale, options]);
+}
 
-  // Polyfill the `calendar` option - not supported in Safari.
-  if (options?.calendar && !locale.includes('-u-ca-')) {
-    locale += '-u-ca-' + options.calendar;
+function isEqual(a: DateFormatterOptions, b: DateFormatterOptions) {
+  if (a === b) {
+    return true;
   }
 
-  let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
-  if (formatterCache.has(cacheKey)) {
-    return formatterCache.get(cacheKey);
+  let aKeys = Object.keys(a);
+  let bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) {
+    return false;
   }
 
-  let formatter = new Intl.DateTimeFormat(locale, options);
-  formatterCache.set(cacheKey, formatter);
-  return formatter;
+  for (let key of aKeys) {
+    if (b[key] !== a[key]) {
+      return false;
+    }
+  }
+
+  return true;
 }

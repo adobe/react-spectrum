@@ -136,3 +136,6 @@ for (let pkg of packages) {
 if (errors) {
   return process.exit(1);
 }
+
+require('./checkPublishedDependencies');
+require('./findCircularDeps');

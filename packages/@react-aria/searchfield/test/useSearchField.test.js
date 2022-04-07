@@ -54,6 +54,7 @@ describe('useSearchField hook', () => {
       let preventDefault = jest.fn();
       let stopPropagation = jest.fn();
       let onSubmit = jest.fn();
+      let onKeyDown = jest.fn();
       let event = (key) => ({
         key,
         preventDefault,
@@ -96,6 +97,12 @@ describe('useSearchField hook', () => {
       it('does not return an defaultValue prop', () => {
         let {inputProps} = renderSearchHook({onClear, onSubmit, defaultValue: 'ABC'});
         expect(inputProps.defaultValue).not.toBeDefined();
+      });
+
+      it('onKeyDown prop is called', () => {
+        let {inputProps} = renderSearchHook({onKeyDown});
+        inputProps.onKeyDown(event('Enter'));
+        expect(onKeyDown).toHaveBeenCalledTimes(1);
       });
     });
   });

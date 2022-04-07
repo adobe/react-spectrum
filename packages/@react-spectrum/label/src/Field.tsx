@@ -11,30 +11,44 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {Flex} from '@react-spectrum/layout';
+import {HelpText} from './HelpText';
 import {Label} from './Label';
+import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
+import {useFormProps} from '@react-spectrum/form';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
+  props = useFormProps(props);
   let {
     label,
-    labelPosition = 'top',
+    labelPosition = 'top' as LabelPosition,
     labelAlign,
     isRequired,
     necessityIndicator,
     includeNecessityIndicatorInAccessibilityName,
+    validationState,
+    description,
+    errorMessage,
+    isDisabled,
+    showErrorIcon,
     children,
     labelProps,
+    // Not every component that uses <Field> supports help text.
+    descriptionProps = {},
+    errorMessageProps = {},
     elementType,
     wrapperClassName,
 
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let hasHelpText = !!description || errorMessage && validationState === 'invalid';
 
-  if (label) {
+  if (label || hasHelpText) {
     let labelWrapperClass = classNames(
       labelStyles,
       'spectrum-Field',
@@ -53,22 +67,42 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       )
     }));
 
+    let renderHelpText = () => (
+      <HelpText
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        description={description}
+        errorMessage={errorMessage}
+        validationState={validationState}
+        isDisabled={isDisabled}
+        showErrorIcon={showErrorIcon} />
+    );
+
+    let renderChildren = () => (
+      <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
+        {children}
+        {hasHelpText && renderHelpText()}
+      </Flex>
+    );
+
     return (
       <div
         {...styleProps}
         ref={ref as RefObject<HTMLDivElement>}
         className={labelWrapperClass}>
-        <Label
-          {...labelProps}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}
-          includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
-          elementType={elementType}>
-          {label}
-        </Label>
-        {children}
+        {label && (
+          <Label
+            {...labelProps}
+            labelPosition={labelPosition}
+            labelAlign={labelAlign}
+            isRequired={isRequired}
+            necessityIndicator={necessityIndicator}
+            includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
+            elementType={elementType}>
+            {label}
+          </Label>
+        )}
+        {renderChildren()}
       </div>
     );
   }

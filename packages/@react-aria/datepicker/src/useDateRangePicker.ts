@@ -10,94 +10,151 @@
  * governing permissions and limitations under the License.
  */
 
-import {DateRangePickerProps} from '@react-types/datepicker';
+import {AriaButtonProps} from '@react-types/button';
+import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-types/datepicker';
+import {AriaDialogProps} from '@react-types/dialog';
+import {createFocusManager} from '@react-aria/focus';
 import {DateRangePickerState} from '@react-stately/datepicker';
-import {DOMProps} from '@react-types/shared';
-import {HTMLAttributes, useMemo} from 'react';
+import {focusManagerSymbol, roleSymbol} from './useDateField';
+import {HTMLAttributes, RefObject, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId, useLabels} from '@react-aria/utils';
-import {useDatePicker} from './useDatePicker';
-import {useMessageFormatter} from '@react-aria/i18n';
-
-interface DateFieldDescProps extends DOMProps {
-  children?: string,
-  hidden?: boolean
-}
+import {mergeProps, useDescription, useId} from '@react-aria/utils';
+import {RangeCalendarProps} from '@react-types/calendar';
+import {useDatePickerGroup} from './useDatePickerGroup';
+import {useField} from '@react-aria/label';
+import {useFocusWithin} from '@react-aria/interactions';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 interface DateRangePickerAria {
+  /** Props for the date range picker's visible label element, if any. */
+  labelProps: HTMLAttributes<HTMLElement>,
+  /** Props for the grouping element containing the date fields and button. */
   groupProps: HTMLAttributes<HTMLElement>,
-  startFieldProps: HTMLAttributes<HTMLElement> & {
-    descProps?: DateFieldDescProps
-  },
-  endFieldProps: HTMLAttributes<HTMLElement> & {
-    descProps?: DateFieldDescProps
-  },
-  buttonProps: HTMLAttributes<HTMLElement>,
-  dialogProps:  HTMLAttributes<HTMLElement> & {role?: 'dialog' | 'alertdialog'},
-  descProps: DateFieldDescProps
+  /** Props for the start date field. */
+  startFieldProps: AriaDatePickerProps<DateValue>,
+  /** Props for the end date field. */
+  endFieldProps: AriaDatePickerProps<DateValue>,
+  /** Props for the popover trigger button. */
+  buttonProps: AriaButtonProps,
+  /** Props for the description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>,
+  /** Props for the popover dialog. */
+  dialogProps: AriaDialogProps,
+  /** Props for the range calendar within the popover dialog. */
+  calendarProps: RangeCalendarProps<DateValue>
 }
 
-export function useDateRangePicker(props: DateRangePickerProps & DOMProps, state: DateRangePickerState): DateRangePickerAria {
+/**
+ * Provides the behavior and accessibility implementation for a date picker component.
+ * A date range picker combines two DateFields and a RangeCalendar popover to allow
+ * users to enter or select a date and time range.
+ */
+export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<HTMLElement>): DateRangePickerAria {
   let formatMessage = useMessageFormatter(intlMessages);
-  // @ts-ignore
-  let {groupProps, buttonProps, fieldProps, dialogProps, descProps} = useDatePicker({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    ...useLabels(props, formatMessage('dateRange'))
-  }, state);
+    labelElementType: 'span'
+  });
 
-  let startFieldDescId = useId();
-  let startFieldValue:string = useMemo(
-    () => state.value.start && state.value.start instanceof Date ? formatMessage('currentDate', {date: state.value.start}) : null,
-    [formatMessage, state.value.start]
-  );
+  let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
 
-  let startFieldProps = mergeProps(
-    fieldProps,
-    {
-      role: 'group',
-      'aria-describedby': startFieldValue ? startFieldDescId : null,
-      ...useLabels({
-        'aria-label': formatMessage('startDate'),
-        'aria-labelledby': fieldProps['aria-labelledby']
-      }),
-      descProps: {
-        children: startFieldValue,
-        hidden: true,
-        id: startFieldDescId
-      }
+  let {locale} = useLocale();
+  let description = state.formatValue(locale, {month: 'long'});
+  let descProps = useDescription(description);
+
+  let startFieldProps = {
+    'aria-label': formatMessage('startDate'),
+    'aria-labelledby': labelledBy
+  };
+
+  let endFieldProps = {
+    'aria-label': formatMessage('endDate'),
+    'aria-labelledby': labelledBy
+  };
+
+  let buttonId = useId();
+  let dialogId = useId();
+
+  let groupProps = useDatePickerGroup(state, ref);
+  let {focusWithinProps} = useFocusWithin({
+    onBlurWithin() {
+      state.confirmPlaceholder();
     }
-  );
+  });
 
-  let endFieldDescId = useId();
-  let endFieldValue:string = useMemo(
-    () => state.value.end && state.value.end instanceof Date ? formatMessage('currentDate', {date: state.value.end}) : null,
-    [formatMessage, state.value.end]
-  );
-
-  let endFieldProps = mergeProps(
-    fieldProps,
-    {
-      role: 'group',
-      'aria-describedby': endFieldValue ? endFieldDescId : null,
-      ...useLabels({
-        'aria-label': formatMessage('endDate'),
-        'aria-labelledby': fieldProps['aria-labelledby']
-      }),
-      descProps: {
-        children: endFieldValue,
-        hidden: true,
-        id: endFieldDescId
-      }
-    }
-  );
+  let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
+  let focusManager = useMemo(() => createFocusManager(ref), [ref]);
+  let commonFieldProps = {
+    [focusManagerSymbol]: focusManager,
+    [roleSymbol]: 'presentation',
+    'aria-describedby': ariaDescribedBy,
+    minValue: props.minValue,
+    maxValue: props.maxValue,
+    placeholderValue: props.placeholderValue,
+    hideTimeZone: props.hideTimeZone,
+    hourCycle: props.hourCycle,
+    granularity: props.granularity,
+    isDisabled: props.isDisabled,
+    isReadOnly: props.isReadOnly,
+    isRequired: props.isRequired,
+    validationState: state.validationState
+  };
 
   return {
-    groupProps,
-    buttonProps,
-    dialogProps,
-    startFieldProps,
-    endFieldProps,
-    descProps
+    groupProps: mergeProps(groupProps, fieldProps, descProps, focusWithinProps, {
+      role: 'group',
+      'aria-disabled': props.isDisabled || null,
+      'aria-describedby': ariaDescribedBy
+    }),
+    labelProps: {
+      ...labelProps,
+      onClick: () => {
+        focusManager.focusFirst();
+      }
+    },
+    buttonProps: {
+      ...descProps,
+      id: buttonId,
+      excludeFromTabOrder: true,
+      'aria-haspopup': 'dialog',
+      'aria-label': formatMessage('calendar'),
+      'aria-labelledby': `${labelledBy} ${buttonId}`,
+      'aria-describedby': ariaDescribedBy,
+      onPress: () => state.setOpen(true)
+    },
+    dialogProps: {
+      id: dialogId,
+      'aria-labelledby': `${labelledBy} ${buttonId}`
+    },
+    startFieldProps: {
+      ...startFieldProps,
+      ...commonFieldProps,
+      value: state.value?.start,
+      onChange: start => state.setDateTime('start', start),
+      autoFocus: props.autoFocus
+    },
+    endFieldProps: {
+      ...endFieldProps,
+      ...commonFieldProps,
+      value: state.value?.end,
+      onChange: end => state.setDateTime('end', end)
+    },
+    descriptionProps,
+    errorMessageProps,
+    calendarProps: {
+      autoFocus: true,
+      value: state.dateRange,
+      onChange: state.setDateRange,
+      minValue: props.minValue,
+      maxValue: props.maxValue,
+      isDisabled: props.isDisabled,
+      isReadOnly: props.isReadOnly,
+      isDateUnavailable: props.isDateUnavailable,
+      allowsNonContiguousRanges: props.allowsNonContiguousRanges,
+      defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue
+    }
   };
 }

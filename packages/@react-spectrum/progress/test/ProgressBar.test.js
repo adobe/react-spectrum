@@ -13,14 +13,12 @@
 import {ProgressBar} from '../';
 import React from 'react';
 import {render} from '@testing-library/react';
-import V2ProgressBar from '@react/react-spectrum/Progress';
 
 
 describe('ProgressBar', function () {
   it.each`
     Name               | Component
     ${'ProgressBar'}   | ${ProgressBar}
-    ${'V2ProgressBar'} | ${V2ProgressBar}
   `('$Name handles defaults', function ({Component}) {
     let {getByRole} = render(<Component label="Progress Bar" />);
     let progressBar = getByRole('progressbar');
@@ -38,7 +36,6 @@ describe('ProgressBar', function () {
   it.each`
     Name               | Component        | props
     ${'ProgressBar'}   | ${ProgressBar}   | ${{value: 30}}
-    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{value: 30}}
   `('$Name update all fileds by value', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} label="Progress Bar" />);
     let progressBar = getByRole('progressbar');
@@ -51,7 +48,6 @@ describe('ProgressBar', function () {
   it.each`
     Name               | Component        | props
     ${'ProgressBar'}   | ${ProgressBar}   | ${{value: -1}}
-    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{value: -1}}
   `('$Name clamps values to 0', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} label="Progress Bar" />);
     let progressBar = getByRole('progressbar');
@@ -62,7 +58,6 @@ describe('ProgressBar', function () {
   it.each`
     Name               | Component        | props
     ${'ProgressBar'}   | ${ProgressBar}   | ${{value: 1000}}
-    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{value: 1000}}
   `('$Name clamps values to 100', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} label="Progress Bar" />);
     let progressBar = getByRole('progressbar');
@@ -73,7 +68,6 @@ describe('ProgressBar', function () {
   it.each`
     Name               | Component        | props
     ${'ProgressBar'}   | ${ProgressBar}   | ${{size: 'S', UNSAFE_className: 'testClass'}}
-    ${'V2ProgressBar'} | ${V2ProgressBar} | ${{size: 'S', className: 'testClass'}}
   `('$Name supports UNSAFE_className', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} label="Progress Bar" />);
     let progressBar = getByRole('progressbar');

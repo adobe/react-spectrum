@@ -49,6 +49,10 @@ storiesOf('NumberField', module)
     () => render({formatOptions: {style: 'percent'}, label: 'Tax'})
   )
   .add(
+    'percent, max fraction digits: 2, no min fraction digits',
+    () => render({formatOptions: {style: 'percent', maximumFractionDigits: 2}, label: 'Tax'})
+  )
+  .add(
     'percent min = 2 max = 2 fraction digits',
     () => render({formatOptions: {style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2}, label: 'Tax'})
   )
@@ -182,6 +186,14 @@ storiesOf('NumberField', module)
     )
   )
   .add(
+    'with description, no visible label',
+    () => renderNoLabel({'aria-label': 'Age', description: 'Please select your age.'})
+  )
+  .add(
+    'with error message, labelPosition: side',
+    () => render({labelPosition: 'side', errorMessage: 'Please enter a positive number.', validationState: 'invalid'})
+  )
+  .add(
     'custom width',
     () => render({width: 'size-3000'})
   )
@@ -216,6 +228,13 @@ storiesOf('NumberField', module)
   .add(
     'focus events',
     () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp')})
+  )
+  .add(
+    'input dom events',
+    () => render({
+      onCopy: action('onCopy'), onCut: action('onCut'), onPaste: action('onPaste'), onCompositionStart: action('onCompositionStart'), onCompositionEnd: action('onCompositionEnd'),
+      onCompositionUpdate: action('onCompositionUpdate'), onSelect: action('onSelect'), onBeforeInput: action('onBeforeInput'), onInput: action('onInput')
+    })
   );
 
 function render(props: any = {}) {
