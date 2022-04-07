@@ -79,7 +79,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   }
 
   return (
-    <FocusScope contain restoreFocus allowFocusableFirstInScope>
+    <FocusScope contain restoreFocus>
       <section
         {...styleProps}
         {...dialogProps}

@@ -105,16 +105,28 @@ function Example({usePortal, contain}: StoryProps) {
   );
 }
 
-function AllowFocusableFirstInScopeExample() {
-  let [allowFocusableFirstInScope, setAllowFocusableFirstInScope] = useState(true);
+function FocusableFirstInScopeExample() {
   let [contentIndex, setContentIndex] = useState(0);
   function DialogContent(index = 0) {
     const nextIndex = index === 2 ? 0 : index + 1;
     return (
       <>
         <h1 id={`heading-${index}`}>Dialog {index + 1}</h1>
-        <p>Content that will be replaced by <strong>Dialog {nextIndex + 1}</strong>.</p>
-        <button id={`button-${index}`} key={`button-${index}`} onClick={() => setContentIndex(nextIndex)}>Go to Dialog {nextIndex + 1}</button>
+        {index === 2 ?
+          (
+            <>
+              <p>The end of the road.</p>
+              <p>With no tabbable elements within the scope, FocusScope will try to focus the first focusable element within the scope, in this case, the dialog itself.</p>
+            </>
+          ) :
+          (
+            <>
+              <p>Content that will be replaced by <strong>Dialog {nextIndex + 1}</strong>.</p>
+              <button id={`button-${index}`} key={`button-${index}`} onClick={() => setContentIndex(nextIndex)}>Go to Dialog {nextIndex + 1}</button>
+            </>
+          )
+        }
+
       </>
     );
   }
@@ -123,18 +135,13 @@ function AllowFocusableFirstInScopeExample() {
     contents.push(DialogContent(i));
   }
   return (
-    <FocusScope contain allowFocusableFirstInScope={allowFocusableFirstInScope}>
-      <div role="dialog" tabIndex={-1} aria-labelledby={`heading-${contentIndex}`} style={{border: '1px solid currentColor', borderRadius: '5px', padding: '0 1.5rem 1.5rem'}}>
+    <FocusScope contain>
+      <div role="dialog" tabIndex={-1} aria-labelledby={`heading-${contentIndex}`} style={{border: '1px solid currentColor', borderRadius: '5px', padding: '0 1.5rem 1.5rem', width: '15rem'}}>
         {contents[contentIndex]}
-        <p>
-          <label htmlFor="checkbox-id">
-            <input type="checkbox" id="checkbox-id" checked={allowFocusableFirstInScope} onChange={e => setAllowFocusableFirstInScope(e.target.checked)} /> allowFocusableFirstInScope
-          </label>
-        </p>
       </div>
     </FocusScope>
   );
-}       
+}
 
 export const KeyboardNavigation = Template().bind({});
 KeyboardNavigation.args = {usePortal: false};
@@ -148,6 +155,6 @@ KeyboardNavigationNoContain.args = {usePortal: false, contain: false};
 export const KeyboardNavigationInsidePortalNoContain = Template().bind({});
 KeyboardNavigationInsidePortalNoContain.args = {usePortal: true, contain: false};
 
-const AllowFocusableFirstInScopeTemplate = (): Story<StoryProps> => () => <AllowFocusableFirstInScopeExample />;
+const FocusableFirstInScopeTemplate = (): Story<StoryProps> => () => <FocusableFirstInScopeExample />;
 
-export const AllowFocusableFirstInScope = AllowFocusableFirstInScopeTemplate().bind({});
+export const FocusableFirstInScope = FocusableFirstInScopeTemplate().bind({});

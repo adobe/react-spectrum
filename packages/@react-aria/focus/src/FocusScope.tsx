@@ -35,14 +35,7 @@ interface FocusScopeProps {
   restoreFocus?: boolean,
 
   /** Whether to auto focus the first focusable element in the focus scope on mount. */
-  autoFocus?: boolean,
-
-  /** 
-   * Whether to include focusable but not tabbable elements when identifying the first focusable element in scope.
-   * This is relevant for components like a Dialog, where when the contents of the FocusScope changes,
-   * and focus gets lost, we want to restore focus to the Dialog itself, which is focusable but not tabbable.
-   */
-  allowFocusableFirstInScope?: boolean
+  autoFocus?: boolean
 }
 
 interface FocusManagerOptions {
@@ -89,7 +82,7 @@ let scopes: Map<ScopeRef, ScopeRef | null> = new Map();
  * to user events.
  */
 export function FocusScope(props: FocusScopeProps) {
-  let {children, contain, restoreFocus, autoFocus, allowFocusableFirstInScope} = props;
+  let {children, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);
@@ -124,7 +117,7 @@ export function FocusScope(props: FocusScopeProps) {
     };
   }, [scopeRef, parentScope]);
 
-  useFocusContainment(scopeRef, contain, allowFocusableFirstInScope);
+  useFocusContainment(scopeRef, contain);
   useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
 
@@ -234,7 +227,7 @@ function getScopeRoot(scope: HTMLElement[]) {
   return scope[0].parentElement;
 }
 
-function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean, allowFocusableFirstInScope: boolean) {
+function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
   let focusedNode = useRef<HTMLElement>();
 
   let raf = useRef(null);
@@ -299,7 +292,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
             focusedNode.current = e.target;
             focusedNode.current.focus();
           } else if (activeScope) {
-            focusFirstInScope(activeScope.current, !allowFocusableFirstInScope);
+            focusFirstInScope(activeScope.current);
           }
         }
       });
@@ -315,7 +308,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
       scope.forEach(element => element.removeEventListener('focusout', onBlur, false));
     };
-  }, [scopeRef, contain, allowFocusableFirstInScope]);
+  }, [scopeRef, contain]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {

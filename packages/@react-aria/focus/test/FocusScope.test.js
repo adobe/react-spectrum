@@ -1252,11 +1252,11 @@ describe('FocusScope', function () {
     });
   });
 
-  describe('allowFocusableFirstInScope', function () {
+  describe('focusableFirstInScope', function () {
     it('should restore focus to the first focusable or tabbable element within the scope when focus is lost within the scope', function () {
       let {getByTestId} = render(
         <div>
-          <FocusScope contain allowFocusableFirstInScope>
+          <FocusScope contain>
             <div role="dialog" data-testid="focusable" tabIndex={-1}>
               <button data-testid="tabbable1" onClick={e => act(() => e.target.remove())}>Remove me!</button>
               <Item data-testid="item1" tabIndex={0}>Remove me, too!</Item>
