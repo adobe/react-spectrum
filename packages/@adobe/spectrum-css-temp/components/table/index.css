@@ -319,7 +319,7 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table:not(.spectrum-Table--loadingMore):not(.spectrum-Table--quiet) {
   .spectrum-Table-row {
-    &.spectrum-Table-row--lastRow.spectrum-Table-row--roundedCorners.is-selected {
+    &.spectrum-Table-row--lastRow.spectrum-Table-row--isFlushBottom.is-selected {
       &:after {
         border-end-start-radius: var(--spectrum-table-row-border-radius);
         border-end-end-radius: var(--spectrum-table-row-border-radius);

@@ -638,10 +638,12 @@ function TableRow({item, children, hasActions, ...otherProps}) {
   );
   let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
   let isLastRow = item.nextKey == null;
-  let shouldRoundCorners = false;
+  // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
+  // border corners of the last row when selected.
+  let isFlushWithContainerBottom = false;
   if (isLastRow) {
     if (layout.getContentSize()?.height >= layout.virtualizer?.getVisibleRect().height) {
-      shouldRoundCorners = true;
+      isFlushWithContainerBottom = true;
     }
   }
 
@@ -664,7 +666,7 @@ function TableRow({item, children, hasActions, ...otherProps}) {
             'is-disabled': isDisabled,
             'spectrum-Table-row--firstRow': isFirstRow,
             'spectrum-Table-row--lastRow': isLastRow,
-            'spectrum-Table-row--roundedCorners': shouldRoundCorners
+            'spectrum-Table-row--isFlushBottom': isFlushWithContainerBottom
           }
         )
       }>

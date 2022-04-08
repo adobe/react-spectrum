@@ -100,10 +100,13 @@ export function ListViewItem(props) {
   let {visuallyHiddenProps} = useVisuallyHidden();
   let isFirstRow = item.prevKey == null;
   let isLastRow = item.nextKey == null;
-  let shouldRoundCorners = false;
+  // Figure out if the ListView content is equal or greater in height to the container. If so, we'll need to round the bottom
+  // border corners of the last row when selected and we can get rid of the bottom border if it isn't selected to avoid border overlap
+  // with bottom border
+  let isFlushWithContainerBottom = false;
   if (isLastRow) {
     if (layout.getContentSize()?.height >= layout.virtualizer?.getVisibleRect().height) {
-      shouldRoundCorners = true;
+      isFlushWithContainerBottom = true;
     }
   }
 
@@ -136,7 +139,7 @@ export function ListViewItem(props) {
               'react-spectrum-ListViewItem--draggable': isDraggable,
               'react-spectrum-ListViewItem--firstRow': isFirstRow,
               'react-spectrum-ListViewItem--lastRow': isLastRow,
-              'react-spectrum-ListViewItem--roundedCorners': shouldRoundCorners
+              'react-spectrum-ListViewItem--isFlushBottom': isFlushWithContainerBottom
             }
           )
         }

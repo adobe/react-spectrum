@@ -83,7 +83,8 @@
     &:not(.react-spectrum-ListView--quiet) {
       .react-spectrum-ListViewItem {
         /* Box shadow for bottom border for non-selected rows that aren't immediatly above a selected row (grey border bottom). */
-        &:not(.is-selected):not(.is-next-selected) {
+        /* Also omit bottom border for last row if the total content height of the ListView is equal or greater than the height of the container. This avoids overlapping bottom borders. */
+        &:not(.is-selected):not(.is-next-selected):not(.react-spectrum-ListViewItem--isFlushBottom) {
           &:after {
             box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color);
           }
@@ -98,7 +99,7 @@
       }
 
       &:not(.react-spectrum-ListView--loadingMore) {
-        .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--roundedCorners.is-selected {
+        .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
           &:after {
             border-end-start-radius: var(--spectrum-listview-item-border-radius);
             border-end-end-radius: var(--spectrum-listview-item-border-radius);
