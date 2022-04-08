@@ -11,8 +11,6 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-BaseButton {
-  /* Overridden because of the way we draw focus rings */
-  --spectrum-actionbutton-quiet-border-size-key-focus: 1px;
   /* Interactions with overbackground button should match background. Not a DNA token, overridden in WHCM. */
   --spectrum-button-over-background-color: inherit;
 }
@@ -618,6 +616,9 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ActionButton--quiet {
+  /* Overridden because of the way we draw focus rings */
+  --spectrum-actionbutton-quiet-border-size-key-focus: 1px;
+
   background-color: var(--spectrum-actionbutton-quiet-background-color);
   border-color: var(--spectrum-actionbutton-quiet-border-color);
   color: var(--spectrum-actionbutton-quiet-text-color);

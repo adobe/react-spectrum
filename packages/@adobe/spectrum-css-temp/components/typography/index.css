@@ -137,6 +137,7 @@ governing permissions and limitations under the License.
 .spectrum-Body,
 .spectrum,
 .spectrum-Body {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-body.css";
   font-size: var(--spectrum-body-4-text-size);
   font-weight: var(--spectrum-body-4-text-font-weight);
   line-height: var(--spectrum-body-4-text-line-height);

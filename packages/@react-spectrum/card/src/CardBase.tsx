@@ -62,8 +62,8 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   });
 
   // ToDo: see css for comment about avatar under selector .spectrum-Card--noLayout.spectrum-Card--default
-  let hasPreviewImage = useHasChild(`.${styles['spectrum-Card-image']}`, gridRef);
-  let hasPreviewIllustration = useHasChild(`.${styles['spectrum-Card-illustration']}`, gridRef);
+  let hasPreviewImage = useHasChild(`.${styles['spectrum-Card-image'].split(' ')[0]}`, gridRef);
+  let hasPreviewIllustration = useHasChild(`.${styles['spectrum-Card-illustration'].split(' ')[0]}`, gridRef);
   let hasPreview = hasPreviewImage || hasPreviewIllustration;
 
   // this is for horizontal cards

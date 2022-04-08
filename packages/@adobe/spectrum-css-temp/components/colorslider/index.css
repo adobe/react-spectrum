@@ -21,10 +21,12 @@
 }
 
 .spectrum-ColorSlider-container--horizontal {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-colorslider.css";
   width: var(--spectrum-colorslider-default-length);
 }
 
 .spectrum-ColorSlider-container--vertical {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-colorslider.css";
   display: flex;
   flex-direction: column;
   height: var(--spectrum-colorslider-default-length);

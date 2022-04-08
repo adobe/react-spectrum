@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-.spectrum-TabsPanel {
+.spectrum-Tabs.spectrum-Tabs {
   --spectrum-tabs-item-height: calc(var(--spectrum-tabs-height) - var(--spectrum-tabs-rule-height));
   --spectrum-tabs-compact-item-height: calc(var(--spectrum-tabs-quiet-compact-height) - var(--spectrum-tabs-rule-height));
 }

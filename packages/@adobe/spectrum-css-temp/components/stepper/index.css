@@ -109,8 +109,6 @@ governing permissions and limitations under the License.
     &.spectrum-Stepper--showStepper {
       &:not(.spectrum-Stepper--isMobile) {
         & .spectrum-Stepper-input {
-          border-start-start-radius: var(--spectrum-border-radius);
-          border-end-start-radius: var(--spectrum-border-radius);
           border-start-end-radius: 0;
           border-end-end-radius: 0;
         }

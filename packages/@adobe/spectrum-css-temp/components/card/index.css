@@ -193,6 +193,11 @@ user-provided
 /** Standard Vertical **/
 /** Waterfall **/
 .spectrum-Card--waterfall.spectrum-Card--default {
+  position: relative;
+  border-width: var(--spectrum-card-border-size);
+  border-style: solid;
+  border-radius: var(--spectrum-card-border-radius);
+
   & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
@@ -200,10 +205,6 @@ user-provided
     z-index: 2;
     pointer-events: none;
   }
-  position: relative;
-  border-width: var(--spectrum-card-border-size);
-  border-style: solid;
-  border-radius: var(--spectrum-card-border-radius);
 
   &:before {
     content: ' ';
@@ -310,6 +311,11 @@ user-provided
 
 /** Tile **/
 .spectrum-Card--grid.spectrum-Card--default {
+  position: relative;
+  border-width: var(--spectrum-card-border-size);
+  border-style: solid;
+  border-radius: var(--spectrum-card-border-radius);
+
   & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
@@ -317,10 +323,6 @@ user-provided
     z-index: 2;
     pointer-events: none;
   }
-  position: relative;
-  border-width: var(--spectrum-card-border-size);
-  border-style: solid;
-  border-radius: var(--spectrum-card-border-radius);
 
   &:before {
     content: ' ';
@@ -430,6 +432,11 @@ user-provided
 
 /** Standalone **/
 .spectrum-Card--noLayout.spectrum-Card--default {
+  position: relative;
+  border-width: var(--spectrum-card-border-size);
+  border-style: solid;
+  border-radius: var(--spectrum-card-border-radius);
+
   & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
@@ -437,10 +444,6 @@ user-provided
     z-index: 2;
     pointer-events: none;
   }
-  position: relative;
-  border-width: var(--spectrum-card-border-size);
-  border-style: solid;
-  border-radius: var(--spectrum-card-border-radius);
 
   &:before {
     content: ' ';
@@ -554,6 +557,8 @@ user-provided
 /** Quiet Vertical **/
 /** Waterfall **/
 .spectrum-Card--waterfall.spectrum-Card--isQuiet {
+  min-inline-size: var(--spectrum-card-quiet-min-size);
+
   & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
@@ -563,7 +568,6 @@ user-provided
   & .spectrum-Card-grid:after {
     z-index: 2;
   }
-  min-inline-size: var(--spectrum-card-quiet-min-size);
 
   & .spectrum-Card-grid {
     block-size: 100%;
@@ -644,6 +648,8 @@ user-provided
 /** Gallery **/
 /** Non-collection version doesn't work in FF, but should work in a collection which determines the size **/
 .spectrum-Card--gallery.spectrum-Card--isQuiet {
+  min-inline-size: 0;
+
   & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
@@ -653,7 +659,6 @@ user-provided
   & .spectrum-Card-grid:after {
     z-index: 2;
   }
-  min-inline-size: 0;
 
   & .spectrum-Card-grid {
     block-size: 100%;
@@ -740,6 +745,7 @@ user-provided
 
 /** Tile **/
 .spectrum-Card--grid.spectrum-Card--isQuiet {
+  min-inline-size: var(--spectrum-card-quiet-min-size);
   & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
@@ -749,7 +755,6 @@ user-provided
   & .spectrum-Card-grid:after {
     z-index: 2;
   }
-  min-inline-size: var(--spectrum-card-quiet-min-size);
 
   & .spectrum-Card-grid {
     block-size: 100%;
@@ -844,6 +849,7 @@ user-provided
 
 /** Standalone **/
 .spectrum-Card--noLayout.spectrum-Card--isQuiet {
+  min-inline-size: var(--spectrum-card-quiet-min-size);
   & .spectrum-Card-checkboxWrapper {
     z-index: 3;
   }
@@ -853,7 +859,6 @@ user-provided
   & .spectrum-Card-grid:after {
     z-index: 2;
   }
-  min-inline-size: var(--spectrum-card-quiet-min-size);
 
   & .spectrum-Card-grid {
     block-size: 100%;
@@ -942,12 +947,13 @@ For now working around it with a useLayoutEffect in CardBase.
 **/
 /** Tile **/
 .spectrum-Card--grid.spectrum-Card--horizontal {
-  & .spectrum-Card-grid:after {
-    z-index: 2;
-  }
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
+
+  & .spectrum-Card-grid:after {
+    z-index: 2;
+  }
   & .spectrum-Card-checkboxWrapper {
     display: none;
   }
@@ -957,7 +963,7 @@ For now working around it with a useLayoutEffect in CardBase.
     & .spectrum-Card-checkboxWrapper {
       display: none;
     }
-  }
+}
 
   & .spectrum-Card-grid {
     display: grid;
@@ -1029,12 +1035,13 @@ For now working around it with a useLayoutEffect in CardBase.
 
 /** Standalone **/
 .spectrum-Card--noLayout.spectrum-Card--horizontal {
-  & .spectrum-Card-grid:after {
-    z-index: 2;
-  }
   border-width: var(--spectrum-card-border-size);
   border-style: solid;
   border-radius: var(--spectrum-card-border-radius);
+  & .spectrum-Card-grid:after {
+    z-index: 2;
+  }
+
   & .spectrum-Card-checkboxWrapper {
     display: none;
   }

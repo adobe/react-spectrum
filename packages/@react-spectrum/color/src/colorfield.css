@@ -11,6 +11,11 @@
  */
 
 .react-spectrum-ColorField-input {
-  direction: ltr;
-  text-align: start;
+  /* ensure text is formatted as ltr even though the rest of the component is mirrored.
+   * e.g. in RTL languages, #fff and not fff#. */
+  unicode-bidi: plaintext;
+
+  &:dir(rtl) {
+    text-align: right;
+  }
 }

@@ -11,7 +11,8 @@ governing permissions and limitations under the License.
 */
 
 
-.spectrum-Menu {
+/* Needs more specificity for DNA overrides. */
+.spectrum-Menu.spectrum-Menu {
   --spectrum-menu-margin-x: var(--spectrum-global-dimension-size-40);
   --spectrum-selectlist-heading-text-size: var(--spectrum-global-dimension-font-size-50);
   --spectrum-selectlist-heading-text-font-weight: 400;
@@ -43,6 +44,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu {
   composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-selectlist.css";
   composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-popover.css";
+
   text-align: start;
   display: block;
 
@@ -150,7 +152,7 @@ governing permissions and limitations under the License.
 
   font-size: var(--spectrum-selectlist-heading-text-size);
   font-weight: var(--spectrum-selectlist-heading-text-font-weight);
-  line-height: var(--spectrum-text-body-line-height);
+  line-height: var(--spectrum-alias-line-height-medium);
   text-transform: var(--spectrum-selectlist-heading-text-transform);
   letter-spacing: var(--spectrum-selectlist-heading-letter-spacing);
 }
@@ -207,4 +209,5 @@ governing permissions and limitations under the License.
   /* override default browser styling. */
   /* keyboard shortcuts are always ASCII, so use base font */
   font-family: var(--spectrum-font-family-base);
+  unicode-bidi: plaintext;
 }

@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-.spectrum-BaseButton {
+.spectrum-BaseButton.spectrum-BaseButton {
   /* Todo: fix in DNA, should have been zero */
   --spectrum-fieldbutton-quiet-border-size: 0;
   --spectrum-fieldbutton-disabled-border-size: 0;

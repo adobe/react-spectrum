@@ -78,7 +78,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
               // We put thumbProps on thumbHandle, so that you cannot drag by the tip
             }
             <div {...minThumbProps} className={styles.thumbHandle}>
-              <VisuallyHidden><input className={styles.input} ref={minInputRef} {...minInputProps} /></VisuallyHidden>
+              <VisuallyHidden><input ref={minInputRef} {...minInputProps} /></VisuallyHidden>
             </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(0)}</div>}
           </div>
@@ -95,7 +95,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
               // This means you can drag the max thumb by the tip.
             }
             <div className={styles.thumbHandle}>
-              <VisuallyHidden><input className={styles.input} ref={maxInputRef} {...maxInputProps} /></VisuallyHidden>
+              <VisuallyHidden><input ref={maxInputRef} {...maxInputProps} /></VisuallyHidden>
             </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(1)} (can drag by tip)</div>}
           </div>

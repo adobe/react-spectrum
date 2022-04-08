@@ -14,6 +14,8 @@
 }
 
 .react-spectrum-ActionBar {
+  composes: spectrum from "npm:@spectrum-css/vars/dist/components/spectrum-popover.css";
+
   transition: height var(--spectrum-global-animation-duration-100) ease-in-out,
               opacity var(--spectrum-global-animation-duration-100) ease-in-out;
 

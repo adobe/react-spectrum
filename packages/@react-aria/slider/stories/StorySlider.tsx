@@ -82,7 +82,7 @@ export function StorySlider(props: StorySliderProps) {
             }}>
             {/* We put thumbProps on thumbHandle, so that you cannot drag by the tip */}
             <div {...thumbProps} className={styles.thumbHandle}>
-              <VisuallyHidden><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
+              <VisuallyHidden><input ref={inputRef} {...inputProps} /></VisuallyHidden>
             </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(0)}</div>}
           </div>

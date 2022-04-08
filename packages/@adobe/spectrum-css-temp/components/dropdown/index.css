@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 
-.spectrum-Dropdown {
+.spectrum-Dropdown.spectrum-Dropdown {
   --spectrum-dropdown-popover-max-width: var(--spectrum-global-dimension-size-3000);
   --spectrum-dropdown-width: var(--spectrum-global-dimension-size-2400);
 }

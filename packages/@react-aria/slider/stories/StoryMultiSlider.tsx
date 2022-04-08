@@ -108,7 +108,7 @@ export function StoryThumb(props: StoryThumbProps) {
         style={{
           'left': `${state.getThumbPercent(index) * 100}%`
         }}>
-        <VisuallyHidden isFocusable><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
+        <VisuallyHidden isFocusable><input ref={inputRef} {...inputProps} /></VisuallyHidden>
         {label && <label {...labelProps}>{label}</label>}
       </div>
     </FocusRing>

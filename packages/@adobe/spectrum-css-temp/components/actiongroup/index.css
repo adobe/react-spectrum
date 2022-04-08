@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.spectrum-ActionGroup {
+.spectrum-ActionGroup.spectrum-ActionGroup {
   --spectrum-actiongroup-button-gap-reset: 0px;
   --spectrum-actiongroup-quiet-compact-button-gap: var(--spectrum-global-dimension-size-25);
 }
@@ -141,13 +141,11 @@ governing permissions and limitations under the License.
         &:first-child {
           border-start-start-radius: var(--spectrum-actionbutton-border-radius);
           border-start-end-radius: var(--spectrum-actionbutton-border-radius);
-          border-radius: 0;
         }
 
         &:last-child {
           border-end-start-radius: var(--spectrum-actionbutton-border-radius);
           border-end-end-radius: var(--spectrum-actionbutton-border-radius);
-          border-radius: 0;
         }
       }
     }

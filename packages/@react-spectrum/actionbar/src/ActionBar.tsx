@@ -109,7 +109,7 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
             {children}
           </ActionGroup>
           <ActionButton
-            gridArea="clear"
+            gridArea={styles.clear}
             aria-label={formatMessage('clearSelection')}
             onPress={() => onClearSelection()}
             isQuiet

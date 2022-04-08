@@ -9,8 +9,8 @@ OF ANY KIND, either express or implied.  See the License for the specific langua
 governing permissions and limitations under the License.
 */
 
-
-.spectrum-StatusLight {
+/* Specificity must override DNA */
+.spectrum-StatusLight.spectrum-StatusLight {
   --spectrum-statuslight-padding-y: var(--spectrum-global-dimension-size-65);
 
   /* Override line-height to fix Firefox */

@@ -191,14 +191,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Slider--range {
   & .spectrum-Slider-track {
-    &:first-of-type {
-      padding-block: 0;
-      padding-inline: 0 var(--spectrum-slider-track-handleoffset);
-      inset-inline-start: var(--spectrum-slider-range-track-reset);
-      inset-inline-end: auto;
-      margin-inline-start: var(--spectrum-slider-track-margin-offset);
-    }
-
     /* Force specificity otherwise the ~ rules above override */
     &.spectrum-Slider-track {
       padding-block: 0;
@@ -207,6 +199,13 @@ governing permissions and limitations under the License.
       inset-inline-end: auto;
       margin-inline: var(--spectrum-slider-range-track-reset);
       margin-block: var(--spectrum-slider-range-track-reset);
+    }
+    &:first-of-type {
+      padding-block: 0;
+      padding-inline: 0 var(--spectrum-slider-track-handleoffset);
+      inset-inline-start: var(--spectrum-slider-range-track-reset);
+      inset-inline-end: auto;
+      margin-inline-start: var(--spectrum-slider-track-margin-offset);
     }
     &:last-of-type {
       padding-block: 0;
