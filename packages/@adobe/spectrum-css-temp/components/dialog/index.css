@@ -407,7 +407,8 @@ governing permissions and limitations under the License.
          ".    .            .";
     }
     .spectrum-Dialog-heading {
-      &.spectrum-Dialog-heading--noHeader {
+      &.spectrum-Dialog-heading--noHeader,
+      &.spectrum-Dialog-heading--noTypeIcon {
         grid-area: heading;
       }
 
