@@ -10,18 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-// Can't `import` babel, have to require?
-const babel = require('@babel/core');
 import {evaluate} from './ssrUtils';
 import http from 'http';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {SSRProvider} from '@react-aria/ssr';
+import * as swc from '@swc/core';
 import util from 'util';
 
 export async function testSSR(filename, source) {
   // Transform the code with babel so JSX becomes JS.
-  source = babel.transformSync(source, {filename}).code;
+  source = swc.transformSync(source, {
+    filename,
+    jsc: {
+      parser: {
+        syntax: 'typescript',
+        tsx: true
+      },
+
+      transform: {
+        react: {
+          runtime: 'automatic'
+        }
+      }
+    },
+    module: {
+      type: 'commonjs'
+    }
+  }).code;
 
   // Send the HTML along with the source code to the worker to be hydrated in a DOM environment.
   return new Promise((resolve, reject) => {

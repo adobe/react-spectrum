@@ -11,7 +11,7 @@
  */
 
 const http = require('http');
-const identityObjectProxy = require('identity-obj-proxy');
+const identityObjectProxy = require('../../../../__mocks__/cssModule');
 const ignoreStyles = require('ignore-styles');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
@@ -21,8 +21,23 @@ ignoreStyles.default(undefined, (module) => {
   module.exports = identityObjectProxy;
 });
 
-require('@babel/register')({
-  extensions: ['.js', '.ts', '.tsx']
+require('@swc/register')({
+  extensions: ['.js', '.ts', '.tsx'],
+  jsc: {
+    parser: {
+      syntax: 'typescript',
+      tsx: true
+    },
+
+    transform: {
+      react: {
+        runtime: 'automatic'
+      }
+    }
+  },
+  module: {
+    type: 'commonjs'
+  }
 });
 
 let {evaluate} = require('./ssrUtils');

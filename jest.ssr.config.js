@@ -21,11 +21,13 @@ module.exports = {
   // A map from regular expressions to module names that allow to stub out resources with a single module
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
-    '\\.(css|styl)$': 'identity-obj-proxy'
+    '\\.(css|styl)$': '<rootDir>/__mocks__/cssModule.js'
   },
 
   // Run tests from one or more projects
   projects: ['<rootDir>'],
+
+  resolver: '<rootDir>/bin/glob-resolver.js',
 
   // A list of paths to directories that Jest should use to search for files in
   roots: [
@@ -43,5 +45,25 @@ module.exports = {
   // The glob patterns Jest uses to detect test files
   testMatch: [
     '**/packages/**/*.ssr.test.[tj]s?(x)'
-  ]
+  ],
+
+  transform: {
+    '^.+\\.(t|j)sx?$': [
+      '@swc/jest',
+      {
+        jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: true
+          },
+
+          transform: {
+            react: {
+              runtime: 'automatic'
+            }
+          }
+        }
+      }
+    ]
+  }
 };
