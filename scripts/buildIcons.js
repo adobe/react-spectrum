@@ -15,13 +15,6 @@ import glob from 'fast-glob';
 import path from 'path';
 import fs from 'fs';
 
-let workflowPkg = path.join(path.dirname(require.resolve('@adobe/react-spectrum-workflow/dist/')), '../package.json');
-let data = fs.readFileSync(workflowPkg);
-let myObject = JSON.parse(data);
-myObject.main = 'dist/index.js';
-let newData = JSON.stringify(myObject);
-fs.writeFileSync(workflowPkg, newData);
-
 const PACKAGES = {
   ui: path.dirname(require.resolve('@adobe/react-spectrum-ui/dist/')),
   workflow: path.dirname(
