@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 
 import {BlogPostLayout} from '@react-spectrum/docs';
@@ -25,7 +25,7 @@ Building components in React frequently involves combining or composing many oth
 
 ## What do we want
 
-As with most coding problems, we start with how do we want out API to look.
+As with most coding problems, we start with how do we want our API to look.
 ```snippet
 <Dialog>
   <Title>The dialogs title</Title>
@@ -38,7 +38,7 @@ As with most coding problems, we start with how do we want out API to look.
   </ButtonGroup>
 </Dialog>
 ```
-This was the simplest representation of a Dialog we could come up with for our Design System. I've lifted the names straight from the Design specs for the different areas that content can reside in as seen here. <!-- TODO GET IMAGE --> Now you may be looking at this and saying that it looks pretty similar to how our library works. So spoilers, we accomplished our goal. However, I think it can be valuable to look at the other options we considered in order to get here, this way, the pros and cons will have some context (no pun intended).
+This was the simplest representation of a Dialog we could come up with for our Design System. I've lifted the names straight from the Design specs for the different areas that content can reside in as seen here. {/* TODO GET IMAGE */} Now you may be looking at this and saying that it looks pretty similar to how our library works. So spoilers, we accomplished our goal. However, I think it can be valuable to look at the other options we considered in order to get here, this way, the pros and cons will have some context (no pun intended).
 
 ## Problems of passing props in React
 
@@ -146,7 +146,7 @@ Now the props can't be swapped around as easily, but it's at the cost of making 
 
 ### Context
 
-<!-- TODO better transitions in this entire section -->
+{/* TODO better transitions in this entire section */}
 Fortunately there is another method of passing information to child components that doesn't expose the information to a user and it doesn't matter how many components are placed in between the parent and the child, [Context](https://reactjs.org/docs/context.html). Typically Context is used for global values, like themes, or between two very specific components. An example of what I mean by very specific might've been something like this:
 
 ```snippet
@@ -169,7 +169,7 @@ We strike a deliberate middle ground between global and specific components. We 
 
 The most important rule and the one that took us longest to realize is the last one. As we began using Slots, we realized that if a container passed a prop to a particular slot, then the container knew best, or parent knows best. For example, in our Dialog layout, we know that we will only ever use the medium size of `Divider` to go between the Header and Body areas. We wanted to make sure that a user couldn't specify `large` or `small` variants of the `Divider`. In the case of styles and classnames though, we merge, though Slots still win in duplicate style keys. Finally, we decided that a user provided id should always win so that they can target their elements in the way they expect.
 
-Using Context can be dangerous though, there's no stopping it (<!-- todo get image you can't stop the signal mal -->). So we purposefully clear our Slots Context in cases where we expect the user to supply a lot of content that may contain anything. <!-- todo example dialog with a vertical divider in the content region -->
+Using Context can be dangerous though, there's no stopping it ({/* todo get image you can't stop the signal mal */}). So we purposefully clear our Slots Context in cases where we expect the user to supply a lot of content that may contain anything. {/* todo example dialog with a vertical divider in the content region */}
 
 The Slots Context also lent itself very nicely to our move to use Flex and Grid. If all slotted elements are provided as siblings to the parent, then we don't need to worry about the order in which they are added. We can set the CSS `order` or `grid-area` and they'll always appear in the correct place.
 
