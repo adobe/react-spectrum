@@ -125,7 +125,7 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
   function setValue(newValue: CalendarDate) {
     if (!props.isDisabled && !props.isReadOnly) {
       newValue = constrainValue(newValue, minValue, maxValue);
-      newValue = previousAvailableDate(newValue, startDate, props.isDateUnavailable);
+      newValue = previousAvailableDate(newValue, startDate, isDateUnavailable);
       if (!newValue) {
         return;
       }

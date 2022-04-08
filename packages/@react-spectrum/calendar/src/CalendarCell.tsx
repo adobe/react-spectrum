@@ -54,13 +54,6 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
   let {focusProps, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isUnavailable || state.isReadOnly});
 
-  // Style disabled (i.e. out of min/max range), but selected dates as unavailable
-  // since it is more clear than than trying to dim the selection.
-  if (isDisabled && isInvalid) {
-    isDisabled = false;
-    isUnavailable = true;
-  }
-
   return (
     <td
       {...cellProps}
@@ -72,8 +65,10 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
           'is-today': isToday(props.date, state.timeZone),
           'is-selected': isSelected,
           'is-focused': isFocused && isFocusVisible,
-          'is-disabled': isDisabled,
-          'is-unavailable': isUnavailable,
+          // Style disabled (i.e. out of min/max range), but selected dates as unavailable
+          // since it is more clear than trying to dim the selection.
+          'is-disabled': isDisabled && !isInvalid,
+          'is-unavailable': isUnavailable || (isInvalid && isDisabled),
           'is-outsideMonth': !isSameMonth(props.date, currentMonth),
           'is-range-start': isRangeStart,
           'is-range-end': isRangeEnd,
