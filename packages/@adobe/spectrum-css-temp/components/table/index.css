@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
   --spectrum-table-cell-compact-padding-y: var(--spectrum-global-dimension-size-75);
   --spectrum-table-cell-regular-padding-y: var(--spectrum-global-dimension-size-125);
   --spectrum-table-cell-spacious-padding-y: var(--spectrum-global-dimension-size-175);
-  --spectrum-table-row-border-radius : calc(var(--spectrum-table-border-radius) - 1px);
+  --spectrum-table-row-border-radius: calc(var(--spectrum-table-border-radius) - 1px);
   --spectrum-table-row-sticky-focus-indicator-width: 3px;
 }
 
@@ -321,8 +321,8 @@ svg.spectrum-Table-sortedIcon {
   .spectrum-Table-row {
     &.spectrum-Table-row--lastRow.spectrum-Table-row--roundedCorners.is-selected {
       &:after {
-        border-end-start-radius: var(--spectrum-table-row-start-end-border-radius);
-        border-end-end-radius: var(--spectrum-table-row-start-end-border-radius);
+        border-end-start-radius: var(--spectrum-table-row-border-radius);
+        border-end-end-radius: var(--spectrum-table-row-border-radius);
       }
     }
   }
@@ -332,8 +332,8 @@ svg.spectrum-Table-sortedIcon {
   .spectrum-Table-row {
     &.spectrum-Table-row--firstRow.is-selected {
       &:after {
-        border-start-start-radius: var(--spectrum-table-row-start-end-border-radius);
-        border-start-end-radius: var(--spectrum-table-row-start-end-border-radius);
+        border-start-start-radius: var(--spectrum-table-row-border-radius);
+        border-start-end-radius: var(--spectrum-table-row-border-radius);
       }
     }
   }
