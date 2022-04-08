@@ -65,6 +65,7 @@
     "@storybook/api": "^6.4.20",
     "@storybook/components": "^6.4.20",
     "@storybook/react": "^6.4.20",
+    "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.164",
     "@swc/jest": "^0.2.20",
     "@swc/register": "^0.1.10",

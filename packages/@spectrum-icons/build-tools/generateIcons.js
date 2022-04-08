@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import fs from 'fs-extra';
-import path from 'path';
+const fs = require('fs-extra');
+const path = require('path');
 
 function writeToFile(filepath, data) {
   let buffer = Buffer.from(data);
@@ -25,7 +25,7 @@ function writeToFile(filepath, data) {
  * @param nameRegex A regex to pull out the icon name from the filename.
  * @param template Template for output file, should take a name from the regex.
  */
-export function generateIcons(iconDir, outputDir, nameRegex, template) {
+exports.generateIcons = function (iconDir, outputDir, nameRegex, template) {
   fs.ensureDirSync(outputDir);
   fs.readdir(iconDir, (err, items) => {
     let ignoreList = ['index.js', 'util.js'];
@@ -52,4 +52,4 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
     let indexFilepath = `${outputDir}/index.ts`;
     writeToFile(indexFilepath, indexFile);
   });
-}
+};
