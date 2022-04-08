@@ -1272,7 +1272,7 @@ describe('FocusScope', function () {
           focusManager.focusNext();
           act(() => e.target.remove());
         };
-        return <button {...props} tabIndex={-1} onClick={onClick} />;
+        return <button tabIndex={-1} {...props} onClick={onClick} />;
       }
       let focusable = getByTestId('focusable');
       let tabbable1 = getByTestId('tabbable1');
