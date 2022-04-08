@@ -132,7 +132,6 @@ export function ListViewItem(props) {
               'is-hovered': isHovered,
               'is-selected': isSelected,
               'is-next-selected': state.selectionManager.isSelected(item.nextKey),
-              'is-prev-selected': state.selectionManager.isSelected(item.prevKey),
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
               'react-spectrum-ListViewItem--draggable': isDraggable,
               'react-spectrum-ListViewItem--firstRow': isFirstRow,
