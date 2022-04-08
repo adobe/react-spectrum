@@ -54,7 +54,7 @@ storiesOf('Icons/Workflow', module)
                 {
                   alphabetizedIcons[char].map(iconName => {
                     let Icon = AllIcons[iconName].default;
-                    return <Icon key={iconName}/>;
+                    return <Icon key={iconName} id={iconName} />;
                   })
                 }
               </Flex>
