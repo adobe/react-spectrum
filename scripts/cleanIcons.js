@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import path from 'path';
-import recursive from 'recursive-readdir';
-import rimraf from 'rimraf';
+const path = require('path');
+const recursive = require('recursive-readdir');
+const rimraf = require('rimraf');
 
 let topPaths = ['ui', 'workflow', 'color'].map(name => path.resolve(path.join(__dirname, '..', 'packages', '@spectrum-icons', name)));
 topPaths.forEach((rootPath) => {

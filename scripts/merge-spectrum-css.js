@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {exec, execSync} from 'child_process';
-import fg from 'fast-glob';
-import fs from 'fs';
+const {exec, execSync} = require('child_process');
+const fg = require('fast-glob');
+const fs = require('fs');
 
 let existingComponents = fg.sync('packages/@react-spectrum/*', {onlyFiles: false}).map(componentPath => componentPath.split('/')[componentPath.split('/').length - 1]);
 let components = fg.sync('packages/\@adobe/spectrum-css-temp/components/*', {onlyFiles: false}).map(componentPath => componentPath.split('/')[componentPath.split('/').length - 1]);

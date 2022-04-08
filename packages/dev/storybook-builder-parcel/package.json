@@ -1,0 +1,7 @@
+{
+  "name": "storybook-builder-parcel",
+  "version": "1.0.0",
+  "peerDependencies": {
+    "react": "*"
+  }
+}

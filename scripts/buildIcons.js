@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import spawn from 'cross-spawn';
-import glob from 'fast-glob';
-import {promises as fs} from 'fs';
-import path from 'path';
-import concurrently from 'concurrently';
+const glob = require('fast-glob');
+const {promises: fs} = require('fs');
+const path = require('path');
+const concurrently = require('concurrently');
 
 const PACKAGES = {
   ui: path.dirname(require.resolve('@adobe/react-spectrum-ui/dist/')),
