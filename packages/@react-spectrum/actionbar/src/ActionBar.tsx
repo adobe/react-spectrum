@@ -16,7 +16,7 @@ import {announce} from '@react-aria/live-announcer';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {focusSafely, FocusScope, getFocusableTreeWalker} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -85,7 +85,7 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
   let restoreFocusRef = useRef<HTMLElement>(null);
   let containerRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Event handler to keep track of focus changes within ActionBarContainer when ActionBar is open.
     let timeoutId = null;
     let onFocusContainer = (e:FocusEvent) => {
@@ -123,10 +123,8 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
       requestAnimationFrame(() => {
         if (restoreFocusRef.current && document.body.contains(restoreFocusRef.current)) {
           // If the restoreFocusRef.current is in the DOM, we can simply focus it.
-          requestAnimationFrame(() => {
-            focusSafely(restoreFocusRef.current);
-            restoreFocusRef.current = null;
-          });
+          focusSafely(restoreFocusRef.current);
+          restoreFocusRef.current = null;
         } else if (containerRef.current) {
           // Otherwise, we assume that the element using a SelectableCollection
           // is the first child if the ActionBarContainer.
@@ -134,7 +132,7 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
           // where, on receiving focus, the SelectableCollection should set focus to the focusedKey.
           let walker = getFocusableTreeWalker(containerRef.current, {tabbable: true});
           let node = walker.nextNode() as HTMLElement;
-          requestAnimationFrame(() => node && focusSafely(node));
+          node && focusSafely(node);
         }
 
         // Clean up focus event listener on ActionBarContainer.
