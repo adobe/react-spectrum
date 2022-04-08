@@ -35,7 +35,8 @@ export function ListViewItem(props) {
     dragHooks
   } = props;
   let cellNode = [...item.childNodes][0];
-  let {state, dragState, onAction, isListDraggable} = useContext(ListViewContext);
+  let {state, dragState, onAction, isListDraggable, layout} = useContext(ListViewContext);
+
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();
@@ -99,6 +100,13 @@ export function ListViewItem(props) {
   let {visuallyHiddenProps} = useVisuallyHidden();
   let isFirstRow = item.prevKey == null;
   let isLastRow = item.nextKey == null;
+  let shouldRoundCorners = false;
+  if (isLastRow) {
+    if (layout.getContentSize()?.height >= layout.virtualizer?.getVisibleRect().height) {
+      shouldRoundCorners = true;
+    }
+  }
+
   return (
     <div
       {...mergeProps(rowProps, pressProps, isDraggable && draggableItem?.dragProps)}
@@ -128,7 +136,8 @@ export function ListViewItem(props) {
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
               'react-spectrum-ListViewItem--draggable': isDraggable,
               'react-spectrum-ListViewItem--firstRow': isFirstRow,
-              'react-spectrum-ListViewItem--lastRow': isLastRow
+              'react-spectrum-ListViewItem--lastRow': isLastRow,
+              'react-spectrum-ListViewItem--roundedCorners': shouldRoundCorners
             }
           )
         }

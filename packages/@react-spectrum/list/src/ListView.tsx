@@ -40,15 +40,16 @@ import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {Virtualizer} from '@react-aria/virtualizer';
 
-interface ListViewContextValue {
-  state: GridState<object, GridCollection<any>>,
-  keyboardDelegate: GridKeyboardDelegate<unknown, GridCollection<any>>,
+interface ListViewContextValue<T> {
+  state: GridState<T, GridCollection<any>>,
+  keyboardDelegate: GridKeyboardDelegate<T, GridCollection<any>>,
   dragState: DraggableCollectionState,
   onAction:(key: string) => void,
-  isListDraggable: boolean
+  isListDraggable: boolean,
+  layout: ListLayout<T>
 }
 
-export const ListViewContext = React.createContext<ListViewContextValue>(null);
+export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
 
 const ROW_HEIGHTS = {
   compact: {
@@ -227,7 +228,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable, layout}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
