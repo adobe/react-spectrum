@@ -31,7 +31,6 @@ interface FocusScopeProps {
   /**
    * Whether to restore focus back to the element that was focused
    * when the focus scope mounted, after the focus scope unmounts.
-   * Optionally accepts a RefObject for the element that should receive focus.
    */
   restoreFocus?: boolean,
 

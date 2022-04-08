@@ -70,12 +70,7 @@ export interface SpectrumDialogProps extends AriaDialogProps, StyleProps {
   /** Whether the Dialog is dismissable. See the [examples](#examples) for more details. */
   isDismissable?: boolean,
   /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
-  onDismiss?: () => void,
-  /**
-   * Whether to restore focus back to the element that was focused
-   * when the focus scope mounted, after the focus scope unmounts.
-   */
-  restoreFocus?: boolean
+  onDismiss?: () => void
 }
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {

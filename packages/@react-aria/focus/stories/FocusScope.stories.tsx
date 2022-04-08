@@ -100,6 +100,8 @@ function Example({usePortal, contain}: StoryProps) {
         Open dialog
       </button>
 
+      <input  />
+
       {open && <NestedDialog onClose={() => setOpen(false)} usePortal={usePortal} contain={contain} />}
 
       <div id={dialogsRoot} />
