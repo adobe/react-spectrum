@@ -46,7 +46,7 @@ In React, we frequently want to have components that act as containers for other
 
 ### React cloneChildren
 
-The first tool you may be tempted to reach for is React's [cloneChildren](https://reactjs.org/docs/react-api.html#cloneelement). This is a powerful function that allows a component to take any children passed to it and modify what props are passed to them (not strictly how it works, but it gets the idea across). For instance, maybe you have a `List` of selectable `Option`s, and you want to add a callback to each of those so that `List` can track with `Option` is currently selected. You could make a `List` component that looks something like this.
+The first tool we tried was React's [cloneChildren](https://reactjs.org/docs/react-api.html#cloneelement). This is a powerful function that allows a component to take any children passed to it and modify what props are passed to them (not strictly how it works, but it gets the idea across). For instance, maybe you have a `List` of selectable `Option`s, and you want to add a callback to each of those so that `List` can track with `Option` is currently selected. You could make a `List` component that looks something like this.
 
 ```snippet
 function List(props) {
@@ -67,7 +67,7 @@ function List(props) {
 
 Great, we have a `List` and we can pass arbitrary `Option`s to it. Well, almost. We can pass any React Element that can take an `onSelect` prop that matches the signature `(value:string) => void`. What if we wanted to wrap some of our `Option`s in a component that performed some analytics.
 
-```snippet
+```tsx snippet
 <List>
   <Analytics><Option>One</Option></Analytics>
   <Option>Two</Option>
@@ -79,10 +79,10 @@ Well, we'd need to pass `onSelect` through the Analytics wrapping component down
 
 Or, what if we had something like the `Dialog` example where the children could be different elements. You would need something like:
 
-```snippet
+```tsx snippet
 function Dialog(props) {
   let index = 0;
-  return React.Children.map(this.props.children, child => {
+  return React.Children.map(props.children, child => {
     let childProps = {};
     if (index === 0) {/* ... add props to childProps for Title */}
     else if (index === 1) {/* ... add props to childProps for Heading */}
@@ -99,21 +99,23 @@ This is also restricted to the order in which the children are added, and if you
 
 There is another way to handle this without looping over children, called [Render Props](https://reactjs.org/docs/render-props.html). In this, we could expose the `children` prop as a function that accepts a number of props. Maybe something like this
 
-```snippet
+```tsx snippet
 function Dialog(props) {
-  return props.children({title: {id, classname}, body: {/* body props ...etc */})
+  return props.children({title: {id: props.id, className: props.classname}, body: {} /* body props ...etc */});
 }
 ```
 
 Which we could use like:
 
-```snippet
+```tsx snippet
 <Dialog>
   {({title, body}) => (
-    <Title {...title} />
-    <Heading />
-    <Analytics><Body {...body} /></Analytics>
-    ...
+    <>
+      <Title {...title} />
+      <Heading />
+      <Analytics><Body {...body} /></Analytics>
+      {/* ... */}
+    </>
   )}
 </Dialog>
 ```
