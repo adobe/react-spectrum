@@ -222,7 +222,6 @@ module.exports = new Transformer({
 
           if (meta === 'import') {
             exampleCode.push(node.value);
-            exampleImports.push(node.value);
             node.meta = null;
             return [];
           }
