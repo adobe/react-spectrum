@@ -52,7 +52,6 @@ const indexHtml = `<!DOCTYPE html>
   </body>
 </html>`;
 
-// TODO: Can we use dprint here?
 const formatExampleCode = (code, fixIndention = false) => fixIndention ? code.replace(/`/g, '\\`').replace(/\n/g, '\n    ').trim() : code.replace(/`/g, '\\`').trim();
 
 const formatImports = (imports) => imports.join('\n').replace(/`/g, '\\`');
