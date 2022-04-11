@@ -63,7 +63,7 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
       return `export * as ${isNaN(Number(iconName[0])) ? iconName : `_${iconName}`} from './${iconName}';\n`;
     });
     if (renameMap) {
-      indexFileLines = indexFileLines.concat(Object.keys(renameMap).map(entry => `export * as ${isNaN(Number(renameMap[entry][0])) ? renameMap[entry] : `_${renameMap[entry]}`} from './${entry.replace('A4u', '')}';\n`))
+      indexFileLines = indexFileLines.concat(Object.keys(renameMap).map(entry => `export * as ${isNaN(Number(renameMap[entry][0])) ? renameMap[entry] : `_${renameMap[entry]}`} from './${entry.replace('A4u', '')}';\n`));
     }
     let indexFilepath = `${outputDir}/index.ts`;
     writeToFile(indexFilepath, indexFileLines.join(''));
