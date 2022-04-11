@@ -18,7 +18,11 @@ jobs:
           node-version: '16'
       - name: install
         run: yarn install
-      - name: Comment contains trigger
+      - name: Check write permissions of commentor
+        uses: ./.github/actions/permissions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create/update branch for fork PR
         uses: ./.github/actions/branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
