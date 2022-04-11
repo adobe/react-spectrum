@@ -215,7 +215,7 @@ module.exports = new Transformer({
         if (node.type === 'code') {
           let [meta, ...options] = (node.meta || '').split(' ');
 
-          let shouldUseSandpack = true; // TODO: options.includes('sandpack=true');
+          let shouldUseSandpack = options.includes('sandpack=true');
           if (shouldUseSandpack) {
             shouldImportSandpack = true;
           }
