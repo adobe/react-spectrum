@@ -84,6 +84,7 @@ async function createParcel(options, isDev = false) {
     ],
     defaultTargetOptions: {
       distDir: options.outputDir,
+      publicUrl: './',
       shouldScopeHoist: false // TODO
     }
   });
