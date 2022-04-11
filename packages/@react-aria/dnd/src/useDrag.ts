@@ -105,6 +105,8 @@ export function useDrag(options: DragOptions): DragResult {
           x = size.width / 2;
           y = size.height / 2;
         }
+        x = Math.round(x);
+        y = Math.round(y);
 
         e.dataTransfer.setDragImage(node, x, y);
 
