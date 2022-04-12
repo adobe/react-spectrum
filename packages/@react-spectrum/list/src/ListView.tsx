@@ -161,9 +161,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     dragState = dragHooks.useDraggableCollectionState({
       collection: state.collection,
       selectionManager: state.selectionManager,
-      renderPreview(selectedKeys, draggedKey) {
+      renderPreview(draggingKeys, draggedKey) {
         let item = state.collection.getItem(draggedKey);
-        let isDraggingMultiple = selectedKeys.size > 1;
+        let isDraggingMultiple = draggingKeys.size > 1;
         let itemWidth = domRef.current.offsetWidth;
 
         return (
