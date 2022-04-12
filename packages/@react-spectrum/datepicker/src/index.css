@@ -60,7 +60,7 @@
 .react-spectrum-Datepicker-inputContents {
   display: flex;
   align-items: center;
-  /* width: auto; */
+  height: 100%;
   overflow-x: auto;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* Internet Explorer 10+ */
