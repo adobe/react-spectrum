@@ -105,9 +105,11 @@ export function useDrag(options: DragOptions): DragResult {
           x = size.width / 2;
           y = size.height / 2;
         }
-        x = Math.round(x);
-        y = Math.round(y);
 
+        // Rounding height to an even number prevents blurry preview seen on some screens
+        let height = 2 * Math.round(rect.height / 2);
+        node.style.height = `${height}px`;
+        
         e.dataTransfer.setDragImage(node, x, y);
 
         // Remove the preview from the DOM after a frame so the browser has time to paint.
