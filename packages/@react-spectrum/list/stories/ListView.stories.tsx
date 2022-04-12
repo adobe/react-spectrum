@@ -14,13 +14,14 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
+import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {useAsyncList} from '@react-stately/data';
-import {useDragHooks} from '@react-spectrum/dnd';
+import {useAsyncList, useListData} from '@react-stately/data';
+import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
 
 const items = [
   {key: 'a', textValue: 'Item a', isDraggable: true},
@@ -232,17 +233,57 @@ storiesOf('ListView', module)
     <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionMode="none" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
       {item => <Item>{item.name}</Item>}
     </ListView>
-  ))
-  .add(
-    'draggable rows',
+  ));
+
+storiesOf('ListView/Drag and Drop', module)
+    .add(
+    'Drag out of list',
     () => (
       <Flex direction="row" wrap alignItems="center">
         <input />
         <Droppable />
-        <DragExample dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+        <DragExample
+          dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      </Flex>
+    )
+  )
+  .add(
+    'Drag within list (Reorder)',
+    () => (
+      <Flex direction="row" wrap alignItems="center">
+        <ReorderExample
+          dragHookOptions={{onDrag: action('drag')}}
+          dropHookOptions={{onDrop: action('drop')}} />
+      </Flex>
+    )
+  )
+  .add(
+    'Drag into folder',
+    () => (
+      <Flex direction="row" wrap alignItems="center">
+        <ReorderExample
+          dragHookOptions={{onDrag: action('drag')}}
+          dropHookOptions={{onDrop: action('drop')}} />
+      </Flex>
+    )
+  )
+  .add(
+    'Drag between lists (Kanban)',
+    () => (
+      <Flex direction="row" wrap alignItems="center">
+        <DragExample
+          dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+          dropHookOptions={{onDrop: action('drop')}} />
+        <DragExample
+          dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+          dropHookOptions={{onDrop: action('drop')}} />
+        <DragExample
+          dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+          dropHookOptions={{onDrop: action('drop')}} />
       </Flex>
     )
   );
+
 
 function Example(props?) {
   return (
@@ -427,6 +468,81 @@ export function DragExample(props?) {
               </MenuTrigger>
             </Flex>
           </Content>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+export function ReorderExample(props?) {
+  let {listViewProps, dragHookOptions, dropHookOptions} = props;
+
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'item', textValue: 'One'},
+      {id: '2', type: 'item', textValue: 'Two'},
+      {id: '3', type: 'item', textValue: 'Three'},
+      {id: '4', type: 'item', textValue: 'Four'},
+      {id: '5', type: 'item', textValue: 'Five'},
+      {id: '6', type: 'item', textValue: 'Six'}
+    ]
+  });
+
+  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+    if (target.dropPosition === 'before') {
+      list.moveBefore(target.key, keys);
+    } else {
+      list.moveAfter(target.key, keys);
+    }
+  };
+
+  let getItems = (keys) => [...keys].map(id => {
+    let item = list.items.find(item => item.id === id);
+    return {
+      'text/plain': item.textValue
+    };
+  });
+
+  let dragHooks = useDragHooks({
+    allowsDraggingItem: () => true,
+    getItems,
+    ...dragHookOptions
+  });
+
+  // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+
+  let dropHooks = useDropHooks({
+    onDrop: async e => {
+      console.log('onDrop', e);
+      if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text' && item.types.has(dragType)) {
+            let key = JSON.parse(await item.getText(dragType));
+            keys.push(key);
+          }
+        }
+
+        onMove(keys, e.target);
+      }
+    },
+    ...dropHookOptions
+  });
+
+  return (
+    <ListView
+      aria-label="reorderable list view"
+      selectionMode="multiple"
+      width="300px"
+      items={list.items}
+      disabledKeys={['2']}
+      dragHooks={dragHooks}
+      dropHooks={dropHooks}
+      {...listViewProps}>
+      {(item: any) => (
+        <Item key={item.id} textValue={item.textValue}>
+          Item {item.id}
         </Item>
       )}
     </ListView>

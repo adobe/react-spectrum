@@ -23,10 +23,11 @@ import {
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import type {DraggableCollectionState} from '@react-stately/dnd';
-import {DragHooks} from '@react-spectrum/dnd';
+import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
+import {DragHooks, DropHooks} from '@react-spectrum/dnd';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
+import InsertionIndicator from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
@@ -34,16 +35,19 @@ import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
+import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
-import React, {ReactElement, useContext, useMemo, useRef} from 'react';
+import React, {HTMLAttributes, ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue {
   state: GridState<object, GridCollection<any>>,
   keyboardDelegate: GridKeyboardDelegate<unknown, GridCollection<any>>,
   dragState: DraggableCollectionState,
+  dropState: DroppableCollectionState,
   onAction:(key: string) => void,
   isListDraggable: boolean
 }
@@ -94,7 +98,8 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number,
   onAction?: (key: string) => void,
-  dragHooks?: DragHooks
+  dragHooks?: DragHooks,
+  dropHooks?: DropHooks
 }
 
 function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -105,12 +110,18 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     isQuiet,
     transitionDuration = 0,
     onAction,
-    dragHooks
+    dragHooks,
+    dropHooks
   } = props;
   let isListDraggable = !!dragHooks;
+  let isListDroppable = !!dropHooks;
   let dragHooksProvided = useRef(isListDraggable);
+  let dropHooksProvided = useRef(isListDroppable);
   if (dragHooksProvided.current !== isListDraggable) {
     console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+  }
+  if (dropHooksProvided.current !== isListDroppable) {
+    console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
   }
   let domRef = useDOMRef(ref);
   let {collection} = useListState(props);
@@ -211,6 +222,91 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     });
   }
 
+  let dropState: DroppableCollectionState;
+  let dropRef = useRef();
+  let collectionProps: HTMLAttributes<HTMLElement>;
+  let dropIndicatorProps: HTMLAttributes<HTMLElement>;
+  let isRootDropTarget: boolean;
+  if (isListDroppable) {
+    dropState = dropHooks.useDroppableCollectionState({
+      collection: state.collection,
+      selectionManager: state.selectionManager,
+      getDropOperation(target) {
+        if (target.type === 'root' || target.dropPosition === 'on') {
+          return 'cancel';
+        }
+
+        return 'move';
+      }
+    });
+    collectionProps = dropHooks.useDroppableCollection({
+      keyboardDelegate,
+      onDropEnter: (e) => console.log(e),
+      onDropMove: (e) => console.log(e),
+      onDropExit: (e) => console.log(e),
+      onDropActivate: (e) => console.log(e),
+      onDrop: async e => {
+        console.log(e);
+      // props.onDrop?.(e);
+      },
+      getDropTargetFromPoint(x, y) {
+        let rect = domRef.current.getBoundingClientRect();
+        x += rect.x;
+        y += rect.y;
+        let closest = null;
+        let closestDistance = Infinity;
+        let closestDir = null;
+
+        for (let child of domRef.current.children) {
+          if (!(child as HTMLElement).dataset.key) {
+            continue;
+          }
+
+          let r = child.getBoundingClientRect();
+          let points: [number, number, string][] = [
+            [r.left, r.top, 'before'],
+            [r.right, r.top, 'before'],
+            [r.left, r.bottom, 'after'],
+            [r.right, r.bottom, 'after']
+          ];
+
+          for (let [px, py, dir] of points) {
+            let dx = px - x;
+            let dy = py - y;
+            let d = dx * dx + dy * dy;
+            if (d < closestDistance) {
+              closestDistance = d;
+              closest = child;
+              closestDir = dir;
+            }
+          }
+
+          if (y >= r.top + 10 && y <= r.bottom - 10) {
+            closestDir = 'on';
+          }
+        }
+
+        let key = closest?.dataset.key;
+        if (key) {
+          return {
+            type: 'item',
+            key,
+            dropPosition: closestDir
+          };
+        }
+      }
+    }, dropState, domRef).collectionProps;
+
+    dropIndicatorProps = dropHooks.useDropIndicator({
+      target: {type: 'root'}
+    }, dropState, dropRef).dropIndicatorProps;
+
+    isRootDropTarget = dropState.isDropTarget({type: 'root'});
+  }
+
+  let {visuallyHiddenProps} = useVisuallyHidden();
+
+
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
@@ -227,14 +323,22 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, dropState, onAction, isListDraggable}}>
+      {dropIndicatorProps && !dropIndicatorProps['aria-hidden'] &&
+        <div
+          role="option"
+          aria-selected="false"
+          {...visuallyHiddenProps}
+          {...dropIndicatorProps}
+          ref={dropRef} />
+      }
       <Virtualizer
-        {...gridProps}
+        {...mergeProps(collectionProps, gridProps)}
         {...styleProps}
         isLoading={isLoading}
         onLoadMore={onLoadMore}
         ref={domRef}
-        focusedKey={focusedKey}
+        focusedKey={dropState?.target?.type === 'item' ? dropState.target.key : focusedKey}
         scrollDirection="vertical"
         className={
           classNames(
@@ -244,7 +348,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             'react-spectrum-ListView--emphasized',
             {
               'react-spectrum-ListView--quiet': isQuiet,
-              'react-spectrum-ListView--draggable': isListDraggable
+              'react-spectrum-ListView--draggable': !!isListDraggable,
+              'react-spectrum-ListView--dropTarget': !!isRootDropTarget
             },
             styleProps.className
           )
@@ -254,8 +359,26 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         transitionDuration={transitionDuration}>
         {(type, item) => {
           if (type === 'item') {
+            let target = {type: 'item', key: item.key};
+
             return (
-              <ListViewItem item={item} isEmphasized dragHooks={dragHooks}  />
+              <>
+                {isListDroppable &&
+                  <InsertionIndicator
+                    key={`${item.key}-before`}
+                    target={{...target, dropPosition: 'before'}}
+                    dropState={dropState}
+                    dropHooks={dropHooks} />
+                }
+                <ListViewItem item={item} isEmphasized dragHooks={dragHooks}  />
+                {isListDroppable && state.collection.getKeyAfter(item.key) == null &&
+                  <InsertionIndicator
+                    key={`${item.key}-after`}
+                    target={{...target, dropPosition: 'after'}}
+                    dropState={dropState}
+                    dropHooks={dropHooks} />
+                }
+              </>
             );
           } else if (type === 'loader') {
             return (

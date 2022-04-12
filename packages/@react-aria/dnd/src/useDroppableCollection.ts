@@ -21,12 +21,12 @@ import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 import {useDroppableCollectionId} from './utils';
 
-interface DroppableCollectionOptions extends DroppableCollectionProps {
+export interface DroppableCollectionOptions extends DroppableCollectionProps {
   keyboardDelegate: KeyboardDelegate,
   getDropTargetFromPoint: (x: number, y: number) => DropTarget | null
 }
 
-interface DroppableCollectionResult {
+export interface DroppableCollectionResult {
   collectionProps: HTMLAttributes<HTMLElement>
 }
 

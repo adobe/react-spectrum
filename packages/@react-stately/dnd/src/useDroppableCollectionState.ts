@@ -14,7 +14,7 @@ import {Collection, DragTypes, DropOperation, DroppableCollectionProps, DropTarg
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useState} from 'react';
 
-interface DroppableCollectionStateOptions extends DroppableCollectionProps {
+export interface DroppableCollectionStateOptions extends DroppableCollectionProps {
   collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager
 }
