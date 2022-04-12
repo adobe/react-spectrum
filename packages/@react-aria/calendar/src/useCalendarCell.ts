@@ -159,7 +159,9 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     preventFocusOnPress: true,
     isDisabled: !isSelectable,
     onPressStart(e) {
-      if (state.isReadOnly) {
+      // Don't allow dragging when invalid, or weird jumping behavior may occur as date ranges
+      // are constrained to available dates. The user will need to select a new range in this case.
+      if (state.isReadOnly || isInvalid) {
         state.setFocusedDate(date);
         return;
       }
@@ -209,13 +211,13 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     },
     onPress() {
       // For non-range selection, always select on press up.
-      if (!('anchorDate' in state) && !state.isReadOnly) {
+      if ((!('anchorDate' in state) || isInvalid) && !state.isReadOnly) {
         state.selectDate(date);
         state.setFocusedDate(date);
       }
     },
     onPressUp(e) {
-      if (state.isReadOnly) {
+      if (state.isReadOnly || isInvalid) {
         return;
       }
 

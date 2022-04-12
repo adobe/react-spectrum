@@ -630,6 +630,54 @@ describe('RangeCalendar', () => {
         expect(start).toEqual(new CalendarDate(2019, 6, 17));
         expect(end).toEqual(new CalendarDate(2019, 6, 23));
       });
+
+      it('does not allow dragging the end of an invalid range', () => {
+        let onChange = jest.fn();
+        let {getAllByLabelText, getByText} = render(<RangeCalendar validationState="invalid" onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+
+        fireEvent.pointerDown(getByText('20'), {pointerType: 'touch'});
+
+        let selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('10');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        fireEvent.pointerEnter(getByText('21'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('10');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        fireEvent.pointerEnter(getByText('19'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('10');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        fireEvent.pointerUp(getByText('19'), {pointerType: 'touch', clientX: 100, clientY: 100});
+
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('10');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        // Can click to select range
+        userEvent.click(getByText('15'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('15');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('15');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        userEvent.click(getByText('20'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('15');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');
+        expect(onChange).toHaveBeenCalledTimes(1);
+
+        let {start, end} = onChange.mock.calls[0][0];
+        expect(start).toEqual(new CalendarDate(2019, 6, 15));
+        expect(end).toEqual(new CalendarDate(2019, 6, 20));
+      });
     });
 
     it('clicking outside calendar commits selection', () => {
