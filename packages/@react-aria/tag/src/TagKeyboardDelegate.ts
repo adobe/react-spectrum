@@ -15,6 +15,14 @@ import {GridKeyboardDelegate} from '@react-aria/grid';
 import {Key} from 'react';
 
 export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollection<T>> {
+  getFirstKey() {
+    return super.getFirstKey();
+  }
+
+  getLastKey() {
+    return super.getLastKey();
+  }
+
   getKeyRightOf(key: Key) {
     return this.direction === 'rtl' ? this.getKeyAbove(key) : this.getKeyBelow(key);
   }
@@ -53,6 +61,8 @@ export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollecti
       if (this.focusMode === 'row') {
         return key;
       }
+    } else {
+      return this.getFirstKey();
     }
   }
 
@@ -86,6 +96,50 @@ export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollecti
       if (this.focusMode === 'row') {
         return key;
       }
+    } else {
+      return this.getLastKey();
+    }
+  }
+
+  getKeyPageAbove(key) {
+    let item = this.collection.getItem(key);
+    if (!item) {
+      return;
+    }
+
+    // If focus is on a cell, start searching from the parent row
+    let newKey;
+    if (this.isCell(item)) {
+      newKey = item.parentKey;
+    }
+
+    // Find the previous item
+    newKey = this.findPreviousKey(newKey);
+
+    // PageUp if there's something to page up to
+    if (newKey) {
+      return this.getKeyAbove(key);
+    }
+  }
+
+  getKeyPageBelow(key) {
+    let item = this.collection.getItem(key);
+    if (!item) {
+      return;
+    }
+
+    // If focus is on a cell, start searching from the parent row
+    let newKey;
+    if (this.isCell(item)) {
+      newKey = item.parentKey;
+    }
+
+    // Find the previous item
+    newKey = this.findNextKey(newKey);
+
+    // PageDown if there's something to page down to
+    if (newKey) {
+      return this.getKeyBelow(key);
     }
   }
 }

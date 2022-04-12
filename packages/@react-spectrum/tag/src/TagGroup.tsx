@@ -38,7 +38,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let {direction} = useLocale();
   let listState = useListState(props);
   let gridCollection = useMemo(() => new GridCollection({
-    columnCount: isRemovable ? 2 : 1, // unused, but required for grid collections
+    columnCount: 1, // unused, but required for grid collections
     items: [...listState.collection].map(item => {
       let childNodes = [{
         ...item,
