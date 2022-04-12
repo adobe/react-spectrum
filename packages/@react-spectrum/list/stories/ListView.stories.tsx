@@ -412,6 +412,7 @@ export function DragExample(props?) {
           <Content>
             Item {item.key}
           </Content>
+          {item.key === 'b' && <Text slot="description">description for item b</Text>}
           <ActionMenu
             onAction={action('onAction')}>
             <Item key="edit" textValue="Edit">
