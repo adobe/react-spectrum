@@ -28,7 +28,7 @@ export function isRTL(locale: string) {
       intlLocale = new Intl.Locale(locale);
     } catch (_err) {
       // @ts-ignore
-      intlLocale = new Intl.Locale("en-US");
+      intlLocale = new Intl.Locale('en-US');
     }
     return RTL_SCRIPTS.has(intlLocale.maximize().script);
   }
