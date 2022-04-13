@@ -13,5 +13,6 @@
   "weekday": "day of the week",
   "timeZoneName": "time zone",
   "selectedDateDescription": "Selected Date: {date}",
-  "selectedRangeDescription": "Selected Range: {startDate} to {endDate}"
+  "selectedRangeDescription": "Selected Range: {startDate} to {endDate}",
+  "selectedTimeDescription": "Selected Time: {time}"
 }

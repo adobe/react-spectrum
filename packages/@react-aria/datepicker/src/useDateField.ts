@@ -71,7 +71,9 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
   });
 
   let formatMessage = useMessageFormatter(intlMessages);
-  let description = state.value ? formatMessage('selectedDateDescription', {date: state.formatValue({month: 'long'})}) : '';
+  let message = state.maxGranularity === 'hour' ? 'selectedTimeDescription' : 'selectedDateDescription';
+  let field = state.maxGranularity === 'hour' ? 'time' : 'date';
+  let description = state.value ? formatMessage(message, {[field]: state.formatValue({month: 'long'})}) : '';
   let descProps = useDescription(description);
 
   // If within a date picker or date range picker, the date field will have role="presentation" and an aria-describedby
