@@ -21,7 +21,6 @@ import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useCalendarGrid} from '@react-aria/calendar';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface CalendarMonthProps extends CalendarPropsBase, DOMProps, StyleProps {
   state: CalendarState | RangeCalendarState,
@@ -69,15 +68,15 @@ export function CalendarMonth(props: CalendarMonthProps) {
     <table
       {...gridProps}
       className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table', {'is-range-selecting': isRangeSelecting})}>
-      <thead>
+      {/* Column headers are hidden to screen readers to make navigating with a touch screen reader easier.
+        * The day names are already included in the label of each cell, so there's no need to announce them twice. */}
+      <thead aria-hidden="true">
         <tr>
           {weekDays.map((day, index) => (
             <th
               key={index}
               className={classNames(styles, 'spectrum-Calendar-tableCell')}>
-              {/* Make sure screen readers read the full day name, but we show an abbreviation visually. */}
-              <VisuallyHidden>{day.long}</VisuallyHidden>
-              <span aria-hidden="true" className={classNames(styles, 'spectrum-Calendar-dayOfWeek')}>
+              <span className={classNames(styles, 'spectrum-Calendar-dayOfWeek')}>
                 {day.narrow}
               </span>
             </th>

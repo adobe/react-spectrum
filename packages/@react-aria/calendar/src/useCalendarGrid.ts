@@ -115,10 +115,10 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
   let descriptionProps = useDescription(selectedDateDescription);
   let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
 
-  let {calendarId, errorMessageId} = calendarIds.get(state);
+  let {ariaLabel, ariaLabelledBy, errorMessageId} = calendarIds.get(state);
   let labelProps = useLabels({
-    'aria-label': visibleRangeDescription,
-    'aria-labelledby': calendarId
+    'aria-label': [ariaLabel, visibleRangeDescription].filter(Boolean).join(', '),
+    'aria-labelledby': ariaLabelledBy
   });
 
   let dayFormatter = useDateFormatter({weekday: 'narrow', timeZone: state.timeZone});

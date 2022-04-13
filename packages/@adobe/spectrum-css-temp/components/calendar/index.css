@@ -52,6 +52,20 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
 }
 
+.spectrum-Calendar-month {
+  display: grid;
+  grid-template-areas:
+    'prev title next'
+    'grid grid  grid';
+  grid-template-columns: minmax(auto, 1fr) auto minmax(auto, 1fr);
+  align-content: start;
+  width: 100%;
+  min-width: var(--spectrum-calendar-min-width);
+  max-width: var(--spectrum-calendar-max-width);
+  padding: 0 var(--spectrum-calendar-button-gap);
+  box-sizing: border-box;
+}
+
 .spectrum-Calendar-title {
   font-size: var(--spectrum-calendar-title-text-size);
   font-weight: bold;
@@ -114,13 +128,13 @@ governing permissions and limitations under the License.
 
 .spectrum-Calendar-body {
   outline: none;
+  grid-area: grid;
 }
 
 .spectrum-Calendar-table {
   table-layout: fixed;
   width: 100%;
-  min-width: var(--spectrum-calendar-min-width);
-  max-width: var(--spectrum-calendar-max-width);
+  min-width: 0;
 
   border-collapse: collapse;
   border-spacing: 0;

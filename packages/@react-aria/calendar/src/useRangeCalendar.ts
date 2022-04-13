@@ -15,7 +15,7 @@ import {DateValue, RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from '@react-stately/calendar';
 import {RefObject, useRef} from 'react';
 import {useCalendarBase} from './useCalendarBase';
-import {useEvent, useId} from '@react-aria/utils';
+import {useEvent} from '@react-aria/utils';
 
 /**
  * Provides the behavior and accessibility implementation for a range calendar component.
@@ -23,8 +23,6 @@ import {useEvent, useId} from '@react-aria/utils';
  */
 export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<HTMLElement>): CalendarAria {
   let res = useCalendarBase(props, state);
-  res.nextButtonProps.id = useId();
-  res.prevButtonProps.id = useId();
 
   // We need to ignore virtual pointer events from VoiceOver due to these bugs.
   // https://bugs.webkit.org/show_bug.cgi?id=222627
@@ -54,9 +52,7 @@ export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<
     let body = document.getElementById(res.calendarProps.id);
     if (
       body.contains(document.activeElement) &&
-      (!body.contains(target) || !target.closest('[role="button"]')) &&
-      !document.getElementById(res.nextButtonProps.id)?.contains(target) &&
-      !document.getElementById(res.prevButtonProps.id)?.contains(target)
+      (!body.contains(target) || !target.closest('button, [role="button"]'))
     ) {
       state.selectFocusedDate();
     }
