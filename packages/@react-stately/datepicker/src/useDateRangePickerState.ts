@@ -209,14 +209,17 @@ export function useDateRangePickerState(props: DateRangePickerOptions): DateRang
         hourCycle: props.hourCycle
       });
 
+      let startDate = value.start.toDate(startTimeZone || 'UTC');
+      let endDate = value.end.toDate(endTimeZone || 'UTC');
+
       let startFormatter = new DateFormatter(locale, startOptions);
       let endFormatter: Intl.DateTimeFormat;
-      if (startTimeZone === endTimeZone && startGranularity === endGranularity) {
+      if (startTimeZone === endTimeZone && startGranularity === endGranularity && value.start.compare(value.end) !== 0) {
         // Use formatRange, as it results in shorter output when some of the fields
         // are shared between the start and end dates (e.g. the same month).
         // Formatting will fail if the end date is before the start date. Fall back below when that happens.
         try {
-          let parts = startFormatter.formatRangeToParts(value.start.toDate(startTimeZone), value.end.toDate(endTimeZone));
+          let parts = startFormatter.formatRangeToParts(startDate, endDate);
 
           // Find the separator between the start and end date. This is determined
           // by finding the last shared literal before the end range.
@@ -259,8 +262,8 @@ export function useDateRangePickerState(props: DateRangePickerOptions): DateRang
       }
 
       return {
-        start: startFormatter.format(value.start.toDate(startTimeZone)),
-        end: endFormatter.format(value.end.toDate(endTimeZone))
+        start: startFormatter.format(startDate),
+        end: endFormatter.format(endDate)
       };
     },
     confirmPlaceholder() {

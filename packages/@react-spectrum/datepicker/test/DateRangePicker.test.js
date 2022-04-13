@@ -733,6 +733,34 @@ describe('DateRangePicker', function () {
       }
     });
 
+    it('should have selected range description with a time', function () {
+      let {getByRole, getByTestId} = render(<DateRangePicker label="Date" value={{start: new CalendarDateTime(2020, 2, 3, 8), end: new CalendarDateTime(2020, 2, 10, 10)}} />);
+
+      let group = getByRole('group');
+      let startField = getByTestId('start-date');
+      let endField = getByTestId('end-date');
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(startField).not.toHaveAttribute('aria-describedby');
+      expect(endField).not.toHaveAttribute('aria-describedby');
+
+      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(description).toBe('Selected Range: February 3, 2020, 8:00 AM to February 10, 2020, 10:00 AM');
+    });
+
+    it('should handle selected range description when start and end dates are the same', function () {
+      let {getByRole, getByTestId} = render(<DateRangePicker label="Date" value={{start: new CalendarDateTime(2020, 2, 3, 8), end: new CalendarDateTime(2020, 2, 3, 8)}} />);
+
+      let group = getByRole('group');
+      let startField = getByTestId('start-date');
+      let endField = getByTestId('end-date');
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(startField).not.toHaveAttribute('aria-describedby');
+      expect(endField).not.toHaveAttribute('aria-describedby');
+
+      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(description).toBe('Selected Range: February 3, 2020, 8:00 AM to February 3, 2020, 8:00 AM');
+    });
+
     it('should support format help text', function () {
       let {getAllByRole, getByText, getByRole, getByTestId} = render(<DateRangePicker label="Date" showFormatHelpText />);
 
