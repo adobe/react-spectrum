@@ -15,6 +15,7 @@ import {
   CollectionBase,
   DOMProps,
   DOMRef,
+  ItemDropTarget,
   LoadingState,
   MultipleSelection,
   SpectrumSelectionProps,
@@ -39,8 +40,8 @@ import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {HTMLAttributes, ReactElement, useContext, useMemo, useRef} from 'react';
+import RootDropIndicator from './RootDropIndicator';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue {
@@ -223,9 +224,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   let dropState: DroppableCollectionState;
-  let dropRef = useRef();
   let collectionProps: HTMLAttributes<HTMLElement>;
-  let dropIndicatorProps: HTMLAttributes<HTMLElement>;
   let isRootDropTarget: boolean;
   if (isListDroppable) {
     dropState = dropHooks.useDroppableCollectionState({
@@ -297,15 +296,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       }
     }, dropState, domRef).collectionProps;
 
-    dropIndicatorProps = dropHooks.useDropIndicator({
-      target: {type: 'root'}
-    }, dropState, dropRef).dropIndicatorProps;
-
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
-
-  let {visuallyHiddenProps} = useVisuallyHidden();
-
 
   let {gridProps} = useGrid({
     ...props,
@@ -324,14 +316,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate, dragState, dropState, onAction, isListDraggable}}>
-      {dropIndicatorProps && !dropIndicatorProps['aria-hidden'] &&
-        <div
-          role="option"
-          aria-selected="false"
-          {...visuallyHiddenProps}
-          {...dropIndicatorProps}
-          ref={dropRef} />
-      }
       <Virtualizer
         {...mergeProps(collectionProps, gridProps)}
         {...styleProps}
@@ -359,10 +343,14 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         transitionDuration={transitionDuration}>
         {(type, item) => {
           if (type === 'item') {
-            let target = {type: 'item', key: item.key};
-
+            let target: Omit<ItemDropTarget, 'dropPosition'> = {type: 'item', key: item.key};
+            let isLastItem = state.collection.getKeyAfter(item.key) == null;
+            let isFirstItem = state.collection.getKeyBefore(item.key) == null;
             return (
               <>
+                {isListDroppable && isFirstItem &&
+                  <RootDropIndicator key="root" dropState={dropState} dropHooks={dropHooks} />
+                }
                 {isListDroppable &&
                   <InsertionIndicator
                     key={`${item.key}-before`}
@@ -371,7 +359,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                     dropHooks={dropHooks} />
                 }
                 <ListViewItem item={item} isEmphasized dragHooks={dragHooks}  />
-                {isListDroppable && state.collection.getKeyAfter(item.key) == null &&
+                {isListDroppable && isLastItem &&
                   <InsertionIndicator
                     key={`${item.key}-after`}
                     target={{...target, dropPosition: 'after'}}
