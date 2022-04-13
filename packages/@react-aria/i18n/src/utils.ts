@@ -22,15 +22,9 @@ export function isRTL(locale: string) {
   // This is more accurate than guessing by language, since languages can be written in multiple scripts.
   // @ts-ignore
   if (Intl.Locale) {
-    let intlLocale;
-    try {
-      // @ts-ignore
-      intlLocale = new Intl.Locale(locale);
-    } catch (_err) {
-      // @ts-ignore
-      intlLocale = new Intl.Locale('en-US');
-    }
-    return RTL_SCRIPTS.has(intlLocale.maximize().script);
+    // @ts-ignore
+    let script = new Intl.Locale(locale).maximize().script;
+    return RTL_SCRIPTS.has(script);
   }
 
   // If not, just guess by the language (first part of the locale)
