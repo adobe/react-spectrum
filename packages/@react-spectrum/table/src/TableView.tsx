@@ -13,6 +13,7 @@
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {ColumnResizeState, SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
@@ -25,7 +26,6 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {Resizer} from './Resizer';
-import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
@@ -47,6 +47,7 @@ import {
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
 } from '@react-aria/table';
+import {useTableColumnResizeState} from './useTableColumnResizeState';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
@@ -79,7 +80,12 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
   large: 48
 };
 
-const TableContext = React.createContext<TableState<unknown>>(null);
+interface ITableContext<T> {
+  state: TableState<T>,
+  columnState: ColumnResizeState<T>
+}
+
+const TableContext = React.createContext<ITableContext<unknown>>(null);
 export function useTableContext() {
   return useContext(TableContext);
 }
@@ -104,9 +110,14 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
-    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle',
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  });
+  const columnState = useTableColumnResizeState({
+    ...props,
+    columns: state.collection.columns,
     getDefaultWidth
   });
+
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -137,7 +148,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   );
   let {direction} = useLocale();
   layout.collection = state.collection;
-  layout.getColumnWidth = state.getColumnWidth;
+  layout.getColumnWidth = columnState.getColumnWidth;
 
   let {gridProps} = useTable({
     ...props,
@@ -283,7 +294,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   };
 
   return (
-    <TableContext.Provider value={state}>
+    <TableContext.Provider value={{state, columnState}}>
       <TableVirtualizer
         {...gridProps}
         {...styleProps}
@@ -295,7 +306,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
             {
               'spectrum-Table--quiet': isQuiet,
               'spectrum-Table--wrap': props.overflowMode === 'wrap',
-              'spectrum-Table--resizingColumn': state.isResizingColumn
+              'spectrum-Table--resizingColumn': columnState.isResizingColumn
             },
             classNames(
               stylesOverrides,
@@ -308,9 +319,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         focusedKey={state.selectionManager.focusedKey}
         renderView={renderView}
         renderWrapper={renderWrapper}
-        setTableWidth={state.setTableWidth}
+        setTableWidth={columnState.setTableWidth}
         domRef={domRef}
-        getColumnWidth={state.getColumnWidth} />
+        getColumnWidth={columnState.getColumnWidth} />
     </TableContext.Provider>
   );
 }
@@ -371,7 +382,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     if (state.virtualizer.contentSize.height > 0) {
       setTableWidth(rect.width);
     }
-      
+
     state.setVisibleRect(rect);
 
     if (!isLoading && onLoadMore) {
@@ -438,7 +449,7 @@ function TableHeader({children, ...otherProps}) {
 function TableColumnHeader(props) {
   let {column} = props;
   let ref = useRef();
-  let state = useTableContext();
+  let {state} = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true
@@ -545,7 +556,7 @@ function ResizableTableColumnHeader({item, state}) {
 
 function TableSelectAllCell({column}) {
   let ref = useRef();
-  let state = useTableContext();
+  let {state} = useTableContext();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -603,7 +614,7 @@ function TableRowGroup({children, ...otherProps}) {
 
 function TableRow({item, children, hasActions, ...otherProps}) {
   let ref = useRef();
-  let state = useTableContext();
+  let {state} = useTableContext();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
@@ -656,7 +667,7 @@ function TableRow({item, children, hasActions, ...otherProps}) {
 }
 
 function TableHeaderRow({item, children, style}) {
-  let state = useTableContext();
+  let {state} = useTableContext();
   let ref = useRef();
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
 
@@ -669,7 +680,7 @@ function TableHeaderRow({item, children, style}) {
 
 function TableCheckboxCell({cell}) {
   let ref = useRef();
-  let state = useTableContext();
+  let {state} = useTableContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
@@ -709,7 +720,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
-  let state = useTableContext();
+  let {state} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
@@ -758,7 +769,7 @@ function TableCell({cell}) {
 }
 
 function CenteredWrapper({children}) {
-  let state = useTableContext();
+  let {state} = useTableContext();
   return (
     <div
       role="row"
@@ -776,7 +787,7 @@ function CenteredWrapper({children}) {
  */
 const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
-/* 
+/*
   When ready to remove this feature flag, you can remove this whole section of code, delete the _DEPRECATED files, and just replace the export with the _TableView above.
 */
 function FeatureFlaggedTableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {

@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {ColumnResizeState} from '@react-types/table';
 import {focusSafely, useFocusable} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useRef} from 'react';
 
-export function useTableColumnResize(state, item, ref): any {
+export function useTableColumnResize<T>(state: ColumnResizeState<T>, item, ref): any {
   const stateRef = useRef(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef(null);

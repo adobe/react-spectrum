@@ -9,8 +9,8 @@ import {useTableContext} from './TableView';
 
 function Resizer(props, ref) {
   const {item} = props;
-  let state = useTableContext();
-  let {resizerProps} = useTableColumnResize(state, item, ref);
+  let {columnState} = useTableContext();
+  let {resizerProps} = useTableColumnResize(columnState, item, ref);
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -21,9 +21,9 @@ function Resizer(props, ref) {
         aria-orientation="vertical"
         aria-label="Resize column"
         aria-labelledby={item.key}
-        aria-valuenow={state.getColumnWidth(item.key)}
-        aria-valuemin={state.getColumnMinWidth(item.key)}
-        aria-valuemax={state.getColumnMaxWidth(item.key)} />
+        aria-valuenow={columnState.getColumnWidth(item.key)}
+        aria-valuemin={columnState.getColumnMinWidth(item.key)}
+        aria-valuemax={columnState.getColumnMaxWidth(item.key)} />
     </FocusRing>
   );
 }
