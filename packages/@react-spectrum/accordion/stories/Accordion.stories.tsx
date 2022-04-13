@@ -51,7 +51,9 @@ Default.args = {
 const AccordionTemplate: Story<SpectrumAccordionProps<ItemType>> = (args) => (
   <Accordion {...args} >
     <Item key="files" title="Your files">
-      files
+      <span>
+        files
+      </span>
     </Item>
     <Item key="shared" title="Shared with you">
       shared

@@ -19,7 +19,7 @@ import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
 import {SpectrumAccordionProps} from '@react-types/accordion';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
-import {TreeState, useTreeState} from '@react-stately/tree';
+import {AccordionState, useAccordionState} from '@react-stately/accordion';
 import {useAccordion, useAccordionItem} from '@react-aria/accordion';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -28,7 +28,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function Accordion<T extends object>(props: SpectrumAccordionProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let state = useTreeState<T>(props);
+  let state = useAccordionState<T>(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   let {accordionProps} = useAccordion(props, state, domRef);
@@ -49,7 +49,7 @@ function Accordion<T extends object>(props: SpectrumAccordionProps<T>, ref: DOMR
 
 interface AccordionItemProps<T> {
   item: Node<T>,
-  state: TreeState<T>
+  state: AccordionState<T>
 }
 
 function AccordionItem<T>(props: AccordionItemProps<T>) {
