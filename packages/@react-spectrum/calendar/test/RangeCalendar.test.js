@@ -662,13 +662,13 @@ describe('RangeCalendar', () => {
         expect(onChange).toHaveBeenCalledTimes(0);
 
         // Can click to select range
-        userEvent.click(getByText('15'));
+        userEvent.click(getByText('15'), {pointerType: 'mouse'});
         selectedDates = getAllByLabelText('selected', {exact: false});
         expect(selectedDates[0].textContent).toBe('15');
         expect(selectedDates[selectedDates.length - 1].textContent).toBe('15');
         expect(onChange).toHaveBeenCalledTimes(0);
 
-        userEvent.click(getByText('20'));
+        userEvent.click(getByText('20'), {pointerType: 'mouse'});
         selectedDates = getAllByLabelText('selected', {exact: false});
         expect(selectedDates[0].textContent).toBe('15');
         expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');

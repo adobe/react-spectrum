@@ -90,7 +90,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   let isSelectable = !isDisabled && !isUnavailable;
   let isInvalid = state.validationState === 'invalid' && (
     'highlightedRange' in state
-      ? state.highlightedRange && date.compare(state.highlightedRange.start) >= 0 && date.compare(state.highlightedRange.end) <= 0
+      ? !state.anchorDate && state.highlightedRange && date.compare(state.highlightedRange.start) >= 0 && date.compare(state.highlightedRange.end) <= 0
       : state.value && isSameDay(state.value, date)
   );
 
@@ -159,9 +159,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     preventFocusOnPress: true,
     isDisabled: !isSelectable,
     onPressStart(e) {
-      // Don't allow dragging when invalid, or weird jumping behavior may occur as date ranges
-      // are constrained to available dates. The user will need to select a new range in this case.
-      if (state.isReadOnly || isInvalid) {
+      if (state.isReadOnly) {
         state.setFocusedDate(date);
         return;
       }
@@ -169,7 +167,9 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       if ('highlightedRange' in state && !state.anchorDate && (e.pointerType === 'mouse' || e.pointerType === 'touch')) {
         // Allow dragging the start or end date of a range to modify it
         // rather than starting a new selection.
-        if (state.highlightedRange) {
+        // Don't allow dragging when invalid, or weird jumping behavior may occur as date ranges
+        // are constrained to available dates. The user will need to select a new range in this case.
+        if (state.highlightedRange && !isInvalid) {
           if (isSameDay(date, state.highlightedRange.start)) {
             state.setAnchorDate(state.highlightedRange.end);
             state.setFocusedDate(date);
@@ -211,13 +211,13 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     },
     onPress() {
       // For non-range selection, always select on press up.
-      if ((!('anchorDate' in state) || isInvalid) && !state.isReadOnly) {
+      if (!('anchorDate' in state) && !state.isReadOnly) {
         state.selectDate(date);
         state.setFocusedDate(date);
       }
     },
     onPressUp(e) {
-      if (state.isReadOnly || isInvalid) {
+      if (state.isReadOnly) {
         return;
       }
 
