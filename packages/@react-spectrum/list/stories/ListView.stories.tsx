@@ -237,16 +237,16 @@ storiesOf('ListView', module)
 
 storiesOf('ListView/Drag and Drop', module)
     .add(
-    'Drag out of list',
-    () => (
-      <Flex direction="row" wrap alignItems="center">
-        <input />
-        <Droppable />
-        <DragExample
-          dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
-      </Flex>
+      'Drag out of list',
+      () => (
+        <Flex direction="row" wrap alignItems="center">
+          <input />
+          <Droppable />
+          <DragExample
+            dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+        </Flex>
+      )
     )
-  )
   .add(
     'Drag within list (Reorder)',
     () => (
@@ -261,23 +261,17 @@ storiesOf('ListView/Drag and Drop', module)
     'Drag into folder',
     () => (
       <Flex direction="row" wrap alignItems="center">
-        <ReorderExample
+        <DragIntoItemExample
           dragHookOptions={{onDrag: action('drag')}}
           dropHookOptions={{onDrop: action('drop')}} />
       </Flex>
     )
   )
   .add(
-    'Drag between lists (Kanban)',
+    'Drag between lists',
     () => (
       <Flex direction="row" wrap alignItems="center">
-        <DragExample
-          dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
-          dropHookOptions={{onDrop: action('drop')}} />
-        <DragExample
-          dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
-          dropHookOptions={{onDrop: action('drop')}} />
-        <DragExample
+        <DragBetweenListsExample
           dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
           dropHookOptions={{onDrop: action('drop')}} />
       </Flex>
@@ -546,6 +540,176 @@ export function ReorderExample(props?) {
         </Item>
       )}
     </ListView>
+  );
+}
+
+export function DragIntoItemExample(props?) {
+  let {listViewProps, dragHookOptions, dropHookOptions} = props;
+
+  let [droppedItems, setDroppedItems] = useState([]);
+
+  let list = useListData({
+    initialItems: [
+      {id: '0', type: 'item', textValue: 'Folder', isFolder: true},
+      {id: '1', type: 'item', textValue: 'One'},
+      {id: '2', type: 'item', textValue: 'Two'},
+      {id: '3', type: 'item', textValue: 'Three'},
+      {id: '4', type: 'item', textValue: 'Four'},
+      {id: '5', type: 'item', textValue: 'Five'},
+      {id: '6', type: 'item', textValue: 'Six'}
+    ]
+  });
+
+  let getItems = (keys) => [...keys].map(id => {
+    let item = list.items.find(item => item.id === id);
+    return {
+      'text/plain': item.textValue
+    };
+  });
+
+  let dragHooks = useDragHooks({
+    allowsDraggingItem: (id) => id !== '0',
+    getItems,
+    ...dragHookOptions
+  });
+
+  let dropHooks = useDropHooks({
+    onDrop: async e => {
+      console.log('onDrop', e);
+      if (e.target.type === 'item' && e.target.dropPosition === 'on' && props.onMove) {
+        list.remove(e.target.key);
+        setDroppedItems((prevDropped) => [...prevDropped, e.target]);
+      }
+    },
+    ...dropHookOptions
+  });
+
+  return (
+    <ListView
+      aria-label="Drop into list view item example"
+      selectionMode="multiple"
+      width="300px"
+      items={list.items}
+      disabledKeys={['2']}
+      dragHooks={dragHooks}
+      dropHooks={dropHooks}
+      {...listViewProps}>
+      {(item: any) => (
+        <Item key={item.id} textValue={item.textValue} hasChildItems={item.isFolder}>
+          <Text>{item.isFolder ? 'Drop items here' : `Item ${item.textValue}`}</Text>
+          {item.isFolder && 
+            <>
+              <Folder />
+              <Text slot="description">contains {droppedItems.length} dropped item(s)</Text>
+            </>
+          }
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+export function DragBetweenListsExample(props?) {
+  let {listViewProps, dragHookOptions, dropHookOptions} = props;
+
+  let list1 = useListData({
+    initialItems: [
+      {id: '1', type: 'item', textValue: 'One'},
+      {id: '2', type: 'item', textValue: 'Two'},
+      {id: '3', type: 'item', textValue: 'Three'},
+      {id: '4', type: 'item', textValue: 'Four'},
+      {id: '5', type: 'item', textValue: 'Five'},
+      {id: '6', type: 'item', textValue: 'Six'}
+    ]
+  });
+
+  let list2 = useListData({
+    initialItems: [
+      {id: '7', type: 'item', textValue: 'Seven'},
+      {id: '8', type: 'item', textValue: 'Eight'},
+      {id: '9', type: 'item', textValue: 'Nine'},
+      {id: '10', type: 'item', textValue: 'Ten'},
+      {id: '11', type: 'item', textValue: 'Eleven'},
+      {id: '12', type: 'item', textValue: 'Twelve'}
+    ]
+  });
+  
+  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+    let targetList = list1;
+    if (target.dropPosition === 'before') {
+      targetList.moveBefore(target.key, keys);
+    } else {
+      targetList.moveAfter(target.key, keys);
+    }
+  };
+
+  let getItems = (keys) => [...keys].map(id => {
+    let item = list1.items.find(item => item.id === id);
+    return {
+      'text/plain': item.textValue
+    };
+  });
+
+  let dragHooks = useDragHooks({
+    allowsDraggingItem: () => true,
+    getItems,
+    ...dragHookOptions
+  });
+
+  // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+
+  let dropHooks = useDropHooks({
+    onDrop: async e => {
+      console.log('onDrop', e);
+      if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text' && item.types.has(dragType)) {
+            let key = JSON.parse(await item.getText(dragType));
+            keys.push(key);
+          }
+        }
+
+        onMove(keys, e.target);
+      }
+    },
+    ...dropHookOptions
+  });
+
+  return (
+    <>
+      <ListView
+        aria-label="First list view"
+        selectionMode="multiple"
+        width="300px"
+        items={list1.items}
+        disabledKeys={['2']}
+        dragHooks={dragHooks}
+        dropHooks={dropHooks}
+        {...listViewProps}>
+        {(item: any) => (
+          <Item key={item.id} textValue={item.textValue}>
+            Item {item.textValue}
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="Second list view"
+        selectionMode="multiple"
+        width="300px"
+        items={list2.items}
+        disabledKeys={['2']}
+        dragHooks={dragHooks}
+        dropHooks={dropHooks}
+        {...listViewProps}>
+        {(item: any) => (
+          <Item key={item.id} textValue={item.textValue}>
+            Item {item.textValue}
+          </Item>
+        )}
+      </ListView>
+    </>
   );
 }
 
