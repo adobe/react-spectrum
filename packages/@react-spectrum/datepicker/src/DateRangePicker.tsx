@@ -14,7 +14,7 @@ import CalendarIcon from '@spectrum-icons/workflow/Calendar';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
-import datepickerStyles from './index.css';
+import datepickerStyles from './styles.css';
 import {DateValue, SpectrumDateRangePickerProps} from '@react-types/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';

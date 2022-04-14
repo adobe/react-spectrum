@@ -33,7 +33,8 @@ export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<
   // We need to match that here otherwise this will fire before the press event in
   // useCalendarCell, causing range selection to not work properly.
   let isVirtualClick = useRef(false);
-  useEvent(useRef(window), 'pointerdown', e => {
+  let windowRef = useRef(typeof window !== 'undefined' ? window : null);
+  useEvent(windowRef, 'pointerdown', e => {
     isVirtualClick.current = e.width === 0 && e.height === 0;
   });
 
@@ -62,8 +63,8 @@ export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<
     }
   };
 
-  useEvent(useRef(window), 'pointerup', endDragging);
-  useEvent(useRef(window), 'pointercancel', endDragging);
+  useEvent(windowRef, 'pointerup', endDragging);
+  useEvent(windowRef, 'pointercancel', endDragging);
 
   // Also stop range selection on blur, e.g. tabbing away from the calendar.
   res.calendarProps.onBlur = e => {

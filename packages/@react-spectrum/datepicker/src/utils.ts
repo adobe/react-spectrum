@@ -55,6 +55,9 @@ export function useVisibleMonths(maxVisibleMonths: number) {
 }
 
 function getVisibleMonths(scale) {
+  if (typeof window === 'undefined') {
+    return 1;
+  }
   let monthWidth = scale === 'large' ? 336 : 280;
   let gap = scale === 'large' ? 30 : 24;
   let popoverPadding = scale === 'large' ? 32 : 48;

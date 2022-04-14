@@ -12,7 +12,7 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {DatePickerSegment} from './DatePickerSegment';
-import datepickerStyles from './index.css';
+import datepickerStyles from './styles.css';
 import {Field} from '@react-spectrum/label';
 import {Input} from './Input';
 import React, {useRef} from 'react';

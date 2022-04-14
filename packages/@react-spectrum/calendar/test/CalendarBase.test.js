@@ -574,7 +574,7 @@ describe('CalendarBase', () => {
       await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Friday, July 5, 2019', 'July 2019', props);
     });
 
-    it.only.each`
+    it.each`
       Name                    | Calendar          | props
       ${'v3 Calendar'}        | ${Calendar}       | ${{visibleMonths: 3}}
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{visibleMonths: 3}}

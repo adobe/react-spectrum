@@ -13,7 +13,7 @@
 import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
-import datepickerStyles from './index.css';
+import datepickerStyles from './styles.css';
 import {FocusRing} from '@react-aria/focus';
 import React, {useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
@@ -73,7 +73,7 @@ export function Input(props) {
   // when there is enough space for the padding to be re-added. Ideally we'd
   // use a resize observer on a parent element, but it's hard to know _what_
   // parent element.
-  useEvent(useRef(window), 'resize', onResize);
+  useEvent(useRef(typeof window !== 'undefined' ? window : null), 'resize', onResize);
 
   let isInvalid = validationState === 'invalid';
   let textfieldClass = classNames(
