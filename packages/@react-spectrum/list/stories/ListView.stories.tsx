@@ -1,4 +1,4 @@
-import {action} from '@storybook/addon-actions';
+import {action, actions} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -14,14 +14,14 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {ItemDropTarget} from '@react-types/shared';
+import {DroppableCollectionDropEvent, ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
-import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {DragHookOptions, DropHookOptions, useDragHooks, useDropHooks} from '@react-spectrum/dnd';
 
 const items = [
   {key: 'a', textValue: 'Item a', isDraggable: true},
@@ -251,9 +251,7 @@ storiesOf('ListView/Drag and Drop', module)
     'Drag within list (Reorder)',
     () => (
       <Flex direction="row" wrap alignItems="center">
-        <ReorderExample
-          dragHookOptions={{onDrag: action('drag')}}
-          dropHookOptions={{onDrop: action('drop')}} />
+        <ReorderExample />
       </Flex>
     )
   )
@@ -261,9 +259,7 @@ storiesOf('ListView/Drag and Drop', module)
     'Drag into folder',
     () => (
       <Flex direction="row" wrap alignItems="center">
-        <DragIntoItemExample
-          dragHookOptions={{onDrag: action('drag')}}
-          dropHookOptions={{onDrop: action('drop')}} />
+        <DragIntoItemExample />
       </Flex>
     )
   )
@@ -271,9 +267,7 @@ storiesOf('ListView/Drag and Drop', module)
     'Drag between lists',
     () => (
       <Flex direction="row" wrap alignItems="center">
-        <DragBetweenListsExample
-          dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
-          dropHookOptions={{onDrop: action('drop')}} />
+        <DragBetweenListsExample />
       </Flex>
     )
   );
@@ -468,8 +462,7 @@ export function DragExample(props?) {
   );
 }
 
-export function ReorderExample(props?) {
-  let {listViewProps, dragHookOptions, dropHookOptions} = props;
+export function ReorderExample() {
 
   let list = useListData({
     initialItems: [
@@ -482,6 +475,9 @@ export function ReorderExample(props?) {
     ]
   });
 
+  // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+
   let onMove = (keys: React.Key[], target: ItemDropTarget) => {
     if (target.dropPosition === 'before') {
       list.moveBefore(target.key, keys);
@@ -490,38 +486,41 @@ export function ReorderExample(props?) {
     }
   };
 
-  let getItems = (keys) => [...keys].map(id => {
-    let item = list.items.find(item => item.id === id);
-    return {
-      'text/plain': item.textValue
-    };
-  });
+  let onDrop = async (e: DroppableCollectionDropEvent) => {
+    if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
+      let keys = [];
+      for (let item of e.items) {
+        if (item.kind === 'text' && item.types.has(dragType)) {
+          let key = JSON.parse(await item.getText(dragType));
+          keys.push(key);
+        }
+      }
+
+      onMove(keys, e.target);
+      actions('onDrop');
+    }
+  };
 
   let dragHooks = useDragHooks({
     allowsDraggingItem: () => true,
-    getItems,
-    ...dragHookOptions
+    getItems(keys) {
+      return [...keys].map(key => ({
+        [dragType]: JSON.stringify(key)
+      }));
+    },
+    onDragStart: action('dragStart'),
+    onDragEnd: action('dragEnd')
   });
 
-  // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
-
   let dropHooks = useDropHooks({
-    onDrop: async e => {
-      console.log('onDrop', e);
-      if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
-        let keys = [];
-        for (let item of e.items) {
-          if (item.kind === 'text' && item.types.has(dragType)) {
-            let key = JSON.parse(await item.getText(dragType));
-            keys.push(key);
-          }
-        }
-
-        onMove(keys, e.target);
+    onDrop,
+    getDropOperation(target) {
+      if (target.type === 'root' || target.dropPosition === 'on') {
+        return 'cancel';
       }
-    },
-    ...dropHookOptions
+
+      return 'move';
+    }
   });
 
   return (
@@ -532,8 +531,7 @@ export function ReorderExample(props?) {
       items={list.items}
       disabledKeys={['2']}
       dragHooks={dragHooks}
-      dropHooks={dropHooks}
-      {...listViewProps}>
+      dropHooks={dropHooks}>
       {(item: any) => (
         <Item key={item.id} textValue={item.textValue}>
           Item {item.id}
@@ -543,9 +541,7 @@ export function ReorderExample(props?) {
   );
 }
 
-export function DragIntoItemExample(props?) {
-  let {listViewProps, dragHookOptions, dropHookOptions} = props;
-
+export function DragIntoItemExample() {
   let [droppedItems, setDroppedItems] = useState([]);
 
   let list = useListData({
@@ -569,8 +565,7 @@ export function DragIntoItemExample(props?) {
 
   let dragHooks = useDragHooks({
     allowsDraggingItem: (id) => id !== '0',
-    getItems,
-    ...dragHookOptions
+    getItems
   });
 
   let dropHooks = useDropHooks({
@@ -580,8 +575,7 @@ export function DragIntoItemExample(props?) {
         list.remove(e.target.key);
         setDroppedItems((prevDropped) => [...prevDropped, e.target]);
       }
-    },
-    ...dropHookOptions
+    }
   });
 
   return (
@@ -592,8 +586,7 @@ export function DragIntoItemExample(props?) {
       items={list.items}
       disabledKeys={['2']}
       dragHooks={dragHooks}
-      dropHooks={dropHooks}
-      {...listViewProps}>
+      dropHooks={dropHooks}>
       {(item: any) => (
         <Item key={item.id} textValue={item.textValue} hasChildItems={item.isFolder}>
           <Text>{item.isFolder ? 'Drop items here' : `Item ${item.textValue}`}</Text>
@@ -609,8 +602,7 @@ export function DragIntoItemExample(props?) {
   );
 }
 
-export function DragBetweenListsExample(props?) {
-  let {listViewProps, dragHookOptions, dropHookOptions} = props;
+export function DragBetweenListsExample() {
 
   let list1 = useListData({
     initialItems: [
@@ -652,8 +644,7 @@ export function DragBetweenListsExample(props?) {
 
   let dragHooks = useDragHooks({
     allowsDraggingItem: () => true,
-    getItems,
-    ...dragHookOptions
+    getItems
   });
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
@@ -673,8 +664,7 @@ export function DragBetweenListsExample(props?) {
 
         onMove(keys, e.target);
       }
-    },
-    ...dropHookOptions
+    }
   });
 
   return (
@@ -686,8 +676,7 @@ export function DragBetweenListsExample(props?) {
         items={list1.items}
         disabledKeys={['2']}
         dragHooks={dragHooks}
-        dropHooks={dropHooks}
-        {...listViewProps}>
+        dropHooks={dropHooks}>
         {(item: any) => (
           <Item key={item.id} textValue={item.textValue}>
             Item {item.textValue}
@@ -701,8 +690,7 @@ export function DragBetweenListsExample(props?) {
         items={list2.items}
         disabledKeys={['2']}
         dragHooks={dragHooks}
-        dropHooks={dropHooks}
-        {...listViewProps}>
+        dropHooks={dropHooks}>
         {(item: any) => (
           <Item key={item.id} textValue={item.textValue}>
             Item {item.textValue}
