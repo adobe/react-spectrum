@@ -20,6 +20,8 @@ export interface CalendarAria {
   nextButtonProps: AriaButtonProps,
   /** Props for the previous button. */
   prevButtonProps: AriaButtonProps,
+  /** Props for the error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>,
   /** A description of the visible date range, for use in the calendar title. */
   title: string
 }

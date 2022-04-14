@@ -62,7 +62,8 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
 
   let {locale} = useLocale();
-  let description = state.formatValue(locale, {month: 'long'});
+  let range = state.formatValue(locale, {month: 'long'});
+  let description = range ? formatMessage('selectedRangeDescription', {startDate: range.start, endDate: range.end}) : '';
   let descProps = useDescription(description);
 
   let startFieldProps = {
@@ -154,7 +155,9 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       isReadOnly: props.isReadOnly,
       isDateUnavailable: props.isDateUnavailable,
       allowsNonContiguousRanges: props.allowsNonContiguousRanges,
-      defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue
+      defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue,
+      validationState: state.validationState,
+      errorMessage: props.errorMessage
     }
   };
 }
