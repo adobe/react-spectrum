@@ -12,8 +12,7 @@
 
 import {act, fireEvent, render} from '@testing-library/react';
 import {Calendar, RangeCalendar} from '../';
-import {CalendarDate} from '@internationalized/date';
-import {getDaysInMonth} from 'date-fns';
+import {CalendarDate, GregorianCalendar, today} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -54,16 +53,16 @@ describe('CalendarBase', () => {
       let grid = getByRole('grid');
       expect(grid).not.toHaveAttribute('tabIndex');
 
-      let today = getByLabelText('today', {exact: false});
-      expect(today.parentElement).toHaveAttribute('role', 'gridcell');
-      expect(today).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
-      expect(today).toHaveAttribute('tabIndex', '0');
+      let todayCell = getByLabelText('today', {exact: false});
+      expect(todayCell.parentElement).toHaveAttribute('role', 'gridcell');
+      expect(todayCell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
+      expect(todayCell).toHaveAttribute('tabIndex', '0');
 
       expect(getByLabelText('Previous')).toBeVisible();
       expect(getByLabelText('Next')).toBeVisible();
 
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
-      expect(gridCells.length).toBe(getDaysInMonth(new Date()));
+      expect(gridCells.length).toBe(new GregorianCalendar().getDaysInMonth(today()));
       for (let cell of gridCells) {
         expect(cell.children[0]).toHaveAttribute('aria-label');
       }
