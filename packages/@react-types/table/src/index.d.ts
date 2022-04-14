@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
-import {Key, MutableRefObject, ReactElement, ReactNode} from 'react';
+import {Key, ReactElement, ReactNode} from 'react';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
@@ -138,25 +138,4 @@ export interface TableCollection<T> extends GridCollection<T> {
   rowHeaderColumnKeys: Set<Key>,
   /** The node that makes up the body of the table. */
   body: GridNode<T>
-}
-
-export interface ColumnResizeState<T> {
-  /** A ref whose current value is the state of all the column widths. */
-  columnWidths: MutableRefObject<Map<Key, number>>,
-  /** Setter for the table width. */
-  setTableWidth: (width: number) => void,
-  /** Trigger a resize and recalc. */
-  onColumnResize: (column: GridNode<T>, width: number) => void,
-  /** Callback for when onColumnResize has started. */
-  onColumnResizeStart: () => void,
-  /** Callback for when onColumnResize has ended. */
-  onColumnResizeEnd: () => void,
-  /** Getter for column width. */
-  getColumnWidth(key: Key): number,
-  /** Getter for column min width. */
-  getColumnMinWidth(key: Key): number,
-  /** Getter for column max widths. */
-  getColumnMaxWidth(key: Key): number,
-  /** Boolean for if a column is being resized. */
-  isResizingColumn: boolean
 }

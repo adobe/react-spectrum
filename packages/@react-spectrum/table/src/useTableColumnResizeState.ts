@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnProps, ColumnResizeState} from '@react-types/table';
+import {ColumnProps} from '@react-types/table';
 import {getContentWidth, getDynamicColumnWidths, getMaxWidth, getMinWidth, isStatic, parseStaticWidth} from './utils';
 import {GridNode} from '@react-types/grid';
-import {Key, useCallback, useRef, useState} from 'react';
+import {Key, MutableRefObject, useCallback, useRef, useState} from 'react';
 
 export interface AffectedColumnWidth {
   /** The column key. */
@@ -22,6 +22,27 @@ export interface AffectedColumnWidth {
   width: number
 }
 export interface AffectedColumnWidths extends Array<AffectedColumnWidth> {}
+
+export interface ColumnResizeState<T> {
+  /** A ref whose current value is the state of all the column widths. */
+  columnWidths: MutableRefObject<Map<Key, number>>,
+  /** Setter for the table width. */
+  setTableWidth: (width: number) => void,
+  /** Trigger a resize and recalc. */
+  onColumnResize: (column: GridNode<T>, width: number) => void,
+  /** Callback for when onColumnResize has started. */
+  onColumnResizeStart: () => void,
+  /** Callback for when onColumnResize has ended. */
+  onColumnResizeEnd: () => void,
+  /** Getter for column width. */
+  getColumnWidth(key: Key): number,
+  /** Getter for column min width. */
+  getColumnMinWidth(key: Key): number,
+  /** Getter for column max widths. */
+  getColumnMaxWidth(key: Key): number,
+  /** Boolean for if a column is being resized. */
+  isResizingColumn: boolean
+}
 
 export interface ColumnResizeStateProps<T> {
   /** Collection of existing columns. */

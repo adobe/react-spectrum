@@ -10,14 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnResizeState} from '@react-types/table';
+import {AllHTMLAttributes, RefObject, useRef} from 'react';
+import {ColumnResizeState} from './useTableColumnResizeState';
 import {focusSafely, useFocusable} from '@react-aria/focus';
+import {GridNode} from '@react-types/grid';
 import {mergeProps} from '@react-aria/utils';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {useRef} from 'react';
 
-export function useTableColumnResize<T>(state: ColumnResizeState<T>, item, ref): any {
+interface ResizerAria {
+  resizerProps: AllHTMLAttributes<HTMLElement>
+}
+
+interface ResizerProps<T> {
+  item: GridNode<T>
+}
+
+export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): ResizerAria {
+  let {item} = props;
   const stateRef = useRef(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef(null);
@@ -33,7 +43,7 @@ export function useTableColumnResize<T>(state: ColumnResizeState<T>, item, ref):
       }
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
         // switch focus back to the column header on escape
-        const columnHeader = ref.current.previousSibling;
+        const columnHeader = ref.current.previousSibling as HTMLElement;
         if (columnHeader) {
           focusSafely(columnHeader);
         }
