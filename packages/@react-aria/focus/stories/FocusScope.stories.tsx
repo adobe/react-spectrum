@@ -107,6 +107,7 @@ function Example({usePortal, contain}: StoryProps) {
 
 function FocusableFirstInScopeExample() {
   let [contentIndex, setContentIndex] = useState(0);
+  let [buttonRemoved, setButtonRemoved] = useState(false);
   function DialogContent(index = 0) {
     const nextIndex = index === 2 ? 0 : index + 1;
     return (
@@ -116,7 +117,10 @@ function FocusableFirstInScopeExample() {
           (
             <>
               <p>The end of the road.</p>
-              <p>With no tabbable elements within the scope, FocusScope will try to focus the first focusable element within the scope, in this case, the dialog itself.</p>
+              <button id={`button-${index}`} key={`button-${index}`} onClick={(e) => {(e.target as Element).remove(); setButtonRemoved(true);}}>Remove Me</button>
+              {buttonRemoved &&
+                <p>With no tabbable elements within the scope, FocusScope will try to focus the first focusable element within the scope, in this case, the dialog itself.</p>
+              }
             </>
           ) :
           (
