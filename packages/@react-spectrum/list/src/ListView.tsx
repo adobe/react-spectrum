@@ -230,25 +230,10 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   if (isListDroppable) {
     dropState = dropHooks.useDroppableCollectionState({
       collection: state.collection,
-      selectionManager: state.selectionManager,
-      getDropOperation(target) {
-        if (target.type === 'root' || target.dropPosition === 'on') {
-          return 'cancel';
-        }
-
-        return 'move';
-      }
+      selectionManager: state.selectionManager
     });
     collectionProps = dropHooks.useDroppableCollection({
       keyboardDelegate,
-      onDropEnter: (e) => console.log(e),
-      onDropMove: (e) => console.log(e),
-      onDropExit: (e) => console.log(e),
-      onDropActivate: (e) => console.log(e),
-      onDrop: async e => {
-        console.log(e);
-      // props.onDrop?.(e);
-      },
       getDropTargetFromPoint(x, y) {
         let rect = domRef.current.getBoundingClientRect();
         x += rect.x;
