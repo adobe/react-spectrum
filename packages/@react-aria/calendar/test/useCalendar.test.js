@@ -127,9 +127,9 @@ describe('useCalendar', () => {
       await testKeyboard(new CalendarDate(2019, 6, 5), 'June 2 to 15, 2019', 'ArrowDown', 2, 'Wednesday, June 19, 2019', 'June 16 to 29, 2019', {visibleDuration: {weeks: 2}});
     });
 
-    it('should move the focused date by one page with the page up/page down arrows', async () => {
-      await testKeyboard(new CalendarDate(2019, 6, 5), 'June 2 to 15, 2019', 'PageUp', 1, 'Wednesday, May 22, 2019', 'May 19 to June 1, 2019', {visibleDuration: {weeks: 2}});
-      await testKeyboard(new CalendarDate(2019, 6, 5), 'June 2 to 15, 2019', 'PageDown', 1, 'Wednesday, June 19, 2019', 'June 16 to 29, 2019', {visibleDuration: {weeks: 2}});
+    it('should move the focused date by one week with the page up/page down arrows', async () => {
+      await testKeyboard(new CalendarDate(2019, 6, 5), 'June 2 to 15, 2019', 'PageUp', 1, 'Wednesday, May 29, 2019', 'May 19 to June 1, 2019', {visibleDuration: {weeks: 2}});
+      await testKeyboard(new CalendarDate(2019, 6, 5), 'June 2 to 15, 2019', 'PageDown', 1, 'Wednesday, June 12, 2019', 'June 2 to 15, 2019', {visibleDuration: {weeks: 2}});
     });
 
     it('should move the focused date by one month with the shift + page up/page down arrows', async () => {
@@ -139,7 +139,7 @@ describe('useCalendar', () => {
 
     it('should move the focused date to the start/end of the visible range with the home/end keys', async () => {
       await testKeyboard(new CalendarDate(2019, 6, 5), 'June 2 to 15, 2019', 'Home', 1, 'Sunday, June 2, 2019', 'June 2 to 15, 2019', {visibleDuration: {weeks: 2}});
-      await testKeyboard(new CalendarDate(2019, 6, 5), 'June 2 to 15, 2019', 'End', 1, 'Saturday, June 15, 2019', 'June 2 to 15, 2019', {visibleDuration: {weeks: 2}});
+      await testKeyboard(new CalendarDate(2019, 6, 5), 'June 2 to 15, 2019', 'End', 1, 'Saturday, June 8, 2019', 'June 2 to 15, 2019', {visibleDuration: {weeks: 2}});
     });
   });
 });

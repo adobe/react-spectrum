@@ -55,27 +55,19 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
         break;
       case 'PageUp':
         e.preventDefault();
-        if (e.shiftKey) {
-          state.focusPreviousSection();
-        } else {
-          state.focusPreviousPage();
-        }
+        state.focusPreviousSection(e.shiftKey);
         break;
       case 'PageDown':
         e.preventDefault();
-        if (e.shiftKey) {
-          state.focusNextSection();
-        } else {
-          state.focusNextPage();
-        }
+        state.focusNextSection(e.shiftKey);
         break;
       case 'End':
         e.preventDefault();
-        state.focusPageEnd();
+        state.focusSectionEnd();
         break;
       case 'Home':
         e.preventDefault();
-        state.focusPageStart();
+        state.focusSectionStart();
         break;
       case 'ArrowLeft':
         e.preventDefault();

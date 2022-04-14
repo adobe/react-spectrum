@@ -16,8 +16,12 @@ import {
   CalendarDate,
   DateDuration,
   DateFormatter,
+  endOfMonth,
+  endOfWeek,
   GregorianCalendar,
   isSameDay,
+  startOfMonth,
+  startOfWeek,
   toCalendar,
   toCalendarDate,
   today
@@ -194,13 +198,30 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
       setFocusedDate(constrainValue(focusedDate.subtract(visibleDuration), minValue, maxValue));
       setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
     },
-    focusPageStart() {
-      focusCell(startDate);
+    focusSectionStart() {
+      if (visibleDuration.days) {
+        focusCell(startDate);
+      } else if (visibleDuration.weeks) {
+        focusCell(startOfWeek(focusedDate, locale));
+      } else if (visibleDuration.months || visibleDuration.years) {
+        focusCell(startOfMonth(focusedDate));
+      }
     },
-    focusPageEnd() {
-      focusCell(endDate);
+    focusSectionEnd() {
+      if (visibleDuration.days) {
+        focusCell(endDate);
+      } else if (visibleDuration.weeks) {
+        focusCell(endOfWeek(focusedDate, locale));
+      } else if (visibleDuration.months || visibleDuration.years) {
+        focusCell(endOfMonth(focusedDate));
+      }
     },
-    focusNextSection() {
+    focusNextSection(larger) {
+      if (!larger && !visibleDuration.days) {
+        focusCell(focusedDate.add(unitDuration(visibleDuration)));
+        return;
+      }
+
       if (visibleDuration.days) {
         this.focusNextPage();
       } else if (visibleDuration.weeks) {
@@ -209,7 +230,12 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         focusCell(focusedDate.add({years: 1}));
       }
     },
-    focusPreviousSection() {
+    focusPreviousSection(larger) {
+      if (!larger && !visibleDuration.days) {
+        focusCell(focusedDate.subtract(unitDuration(visibleDuration)));
+        return;
+      }
+
       if (visibleDuration.days) {
         this.focusPreviousPage();
       } else if (visibleDuration.weeks) {
@@ -248,4 +274,12 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
       return this.isInvalid(endDate.add({days: 1}), minValue, maxValue);
     }
   };
+}
+
+function unitDuration(duration: DateDuration) {
+  let unit = {...duration};
+  for (let key in duration) {
+    unit[key] = 1;
+  }
+  return unit;
 }

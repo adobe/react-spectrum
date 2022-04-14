@@ -499,7 +499,7 @@ describe('CalendarBase', () => {
         defaultValue = {start: defaultValue, end: defaultValue};
       }
 
-      let {getAllByRole, getByLabelText, getAllByLabelText, unmount} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
+      let {getAllByRole, getAllByLabelText, unmount} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
       let grid = getAllByRole('grid')[0]; // get by role will see two, role=grid and implicit <table> which also has role=grid
 
       let cell = getAllByLabelText('selected', {exact: false}).filter(cell => cell.role !== 'grid')[0];
@@ -509,9 +509,8 @@ describe('CalendarBase', () => {
       fireEvent.keyDown(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
       fireEvent.keyUp(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
 
-      cell = getByLabelText(value, {exact: false});
       expect(grid).not.toHaveAttribute('aria-activedescendant');
-      expect(document.activeElement.outerHTML).toBe(cell.outerHTML);
+      expect(document.activeElement.getAttribute('aria-label')).toMatch(value);
 
       let heading = getAllByRole('heading')[0];
       expect(heading).toHaveTextContent(month);
@@ -561,9 +560,9 @@ describe('CalendarBase', () => {
       Name                    | Calendar          | props
       ${'v3 Calendar'}        | ${Calendar}       | ${{visibleMonths: 3}}
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{visibleMonths: 3}}
-    `('$Name should move the focused date to the start or end of the page with the home/end keys when multiple months are visible', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'Home', 'Wednesday, May 1, 2019', 'May 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'End', 'Wednesday, July 31, 2019', 'May 2019', props);
+    `('$Name should move the focused date to the start or end of the month with the home/end keys when multiple months are visible', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'Home', 'Saturday, June 1, 2019', 'May 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'End', 'Sunday, June 30, 2019', 'May 2019', props);
     });
 
     it.each`
@@ -575,13 +574,13 @@ describe('CalendarBase', () => {
       await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Friday, July 5, 2019', 'July 2019', props);
     });
 
-    it.each`
+    it.only.each`
       Name                    | Calendar          | props
       ${'v3 Calendar'}        | ${Calendar}       | ${{visibleMonths: 3}}
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{visibleMonths: 3}}
-    `('$Name should move the focused date by one page with the page up/page down keys when multiple months are visible', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Tuesday, March 5, 2019', 'February 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Thursday, September 5, 2019', 'August 2019', props);
+    `('$Name should move the focused date by one month with the page up/page down keys when multiple months are visible', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Sunday, May 5, 2019', 'May 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Friday, July 5, 2019', 'May 2019', props);
     });
 
     it.each`
