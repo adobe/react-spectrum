@@ -9,7 +9,7 @@ export interface DropHooks {
     useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria
 }
 
-export type DropHookOptions = Omit<DroppableCollectionOptions, 'collection' | 'selectionManager'>
+export type DropHookOptions = Omit<DroppableCollectionOptions, 'collection' | 'selectionManager' | 'keyboardDelegate' | 'getDropTargetFromPoint'>
 
 export function useDropHooks(options: DropHookOptions): DropHooks {
   return useMemo(() => ({
