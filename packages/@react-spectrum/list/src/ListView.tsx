@@ -39,7 +39,7 @@ import {ListViewItem} from './ListViewItem';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
-import React, {HTMLAttributes, ReactElement, useContext, useMemo, useRef} from 'react';
+import React, {HTMLAttributes, Key, ReactElement, useContext, useMemo, useRef} from 'react';
 import RootDropIndicator from './RootDropIndicator';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -49,8 +49,9 @@ interface ListViewContextValue {
   keyboardDelegate: GridKeyboardDelegate<unknown, GridCollection<any>>,
   dragState: DraggableCollectionState,
   dropState: DroppableCollectionState,
-  onAction:(key: string) => void,
-  isListDraggable: boolean
+  onAction:(key: Key) => void,
+  isListDraggable: boolean,
+  isListDroppable: boolean
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue>(null);
@@ -313,16 +314,19 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   if (focusedItem?.parentKey != null) {
     focusedKey = focusedItem.parentKey;
   }
+  if (dropState?.target?.type === 'item') {
+    focusedKey = dropState.target.key;
+  }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, dropState, onAction, isListDraggable}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, dropState, onAction, isListDraggable, isListDroppable}}>
       <Virtualizer
         {...mergeProps(collectionProps, gridProps)}
         {...styleProps}
         isLoading={isLoading}
         onLoadMore={onLoadMore}
         ref={domRef}
-        focusedKey={dropState?.target?.type === 'item' ? dropState.target.key : focusedKey}
+        focusedKey={focusedKey}
         scrollDirection="vertical"
         className={
           classNames(
@@ -358,7 +362,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                     dropState={dropState}
                     dropHooks={dropHooks} />
                 }
-                <ListViewItem item={item} isEmphasized dragHooks={dragHooks}  />
+                <ListViewItem item={item} isEmphasized dragHooks={dragHooks} dropHooks={dropHooks} dropState={dropState} />
                 {isListDroppable && isLastItem &&
                   <InsertionIndicator
                     key={`${item.key}-after`}

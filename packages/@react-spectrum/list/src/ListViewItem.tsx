@@ -14,13 +14,16 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import type {DraggableItemResult} from '@react-aria/dnd';
+import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
+import {DragHooks, DropHooks} from '@react-spectrum/dnd';
+import type {DroppableCollectionState} from '@react-stately/dnd';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './listview.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
+import {Node} from '@react-types/shared';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
 import {useGridCell, useGridRow, useGridSelectionCheckbox} from '@react-aria/grid';
@@ -28,14 +31,24 @@ import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-export function ListViewItem(props) {
+interface ListViewItemProps {
+  item: Node<any>,
+  isEmphasized: boolean,
+  dragHooks: DragHooks,
+  dropHooks: DropHooks,
+  dropState: DroppableCollectionState
+}
+
+export function ListViewItem(props: ListViewItemProps) {
   let {
     item,
     isEmphasized,
-    dragHooks
+    dragHooks,
+    dropHooks,
+    dropState
   } = props;
   let cellNode = [...item.childNodes][0];
-  let {state, dragState, onAction, isListDraggable} = useContext(ListViewContext);
+  let {state, dragState, onAction, isListDraggable, isListDroppable} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();
@@ -63,6 +76,14 @@ export function ListViewItem(props) {
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
+  }
+  let droppableItem: DroppableItemResult;
+  let isDropTarget: boolean;
+  if (isListDroppable) {
+    isDropTarget = dropState.isDropTarget({type: 'item', key: item.key, dropPosition: 'on'});
+    droppableItem = dropHooks.useDroppableItem({
+      target: {type: 'item', key: item.key, dropPosition: 'on'}
+    }, dropState, rowRef);
   }
   const mergedProps = mergeProps(
     gridCellProps,
@@ -99,7 +120,7 @@ export function ListViewItem(props) {
   let {visuallyHiddenProps} = useVisuallyHidden();
   return (
     <div
-      {...mergeProps(rowProps, pressProps, isDraggable && draggableItem?.dragProps)}
+      {...mergeProps(rowProps, pressProps, isDraggable && draggableItem?.dragProps, droppableItem?.dropProps)}
       ref={rowRef}>
       <div
         className={
@@ -114,7 +135,8 @@ export function ListViewItem(props) {
               'is-selected': isSelected,
               'is-previous-selected': state.selectionManager.isSelected(item.prevKey),
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
-              'react-spectrum-ListViewItem--draggable': isDraggable
+              'react-spectrum-ListViewItem--draggable': isDraggable,
+              'react-spectrum-ListViewItem--dropTarget': !!isDropTarget
             }
           )
         }
