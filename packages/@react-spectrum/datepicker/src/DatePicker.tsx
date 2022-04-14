@@ -105,7 +105,6 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
     <Field
       {...props}
       elementType="span"
-      ref={targetRef}
       description={description}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
@@ -114,7 +113,8 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
       UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <div
         {...mergeProps(groupProps, hoverProps, focusProps)}
-        className={className}>
+        className={className}
+        ref={targetRef}>
         <Input
           isDisabled={isDisabled}
           isQuiet={isQuiet}
@@ -144,25 +144,28 @@ export function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
-            <Content UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
-              <Calendar
-                {...calendarProps}
-                visibleMonths={visibleMonths} />
-              {showTimeField &&
-                <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
-                  <TimeField
-                    label="Time"
-                    value={state.timeValue}
-                    onChange={state.setTimeValue}
-                    placeholderValue={timePlaceholder}
-                    granularity={timeGranularity}
-                    minValue={timeMinValue}
-                    maxValue={timeMaxValue}
-                    hourCycle={props.hourCycle}
-                    hideTimeZone={props.hideTimeZone}
-                    marginTop="size-100" />
-                </div>
-              }
+            <Content>
+              <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
+                <Calendar
+                  {...calendarProps}
+                  visibleMonths={visibleMonths}
+                  UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar')} />
+                {showTimeField &&
+                  <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
+                    <TimeField
+                      label="Time"
+                      value={state.timeValue}
+                      onChange={state.setTimeValue}
+                      placeholderValue={timePlaceholder}
+                      granularity={timeGranularity}
+                      minValue={timeMinValue}
+                      maxValue={timeMaxValue}
+                      hourCycle={props.hourCycle}
+                      hideTimeZone={props.hideTimeZone}
+                      marginTop="size-100" />
+                  </div>
+                }
+              </div>
             </Content>
           </Dialog>
         </DialogTrigger>

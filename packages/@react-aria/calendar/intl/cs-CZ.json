@@ -1,11 +1,12 @@
 {
-  "dateSelected": "Vybráno: {date, date, full}",
+  "dateSelected": "Vybráno: {date}",
   "finishRangeSelectionPrompt": "Kliknutím dokončíte výběr rozsahu dat",
   "next": "Další",
   "previous": "Předchozí",
-  "selectedDateDescription": "Zvolené datum: {date, date, full}",
-  "selectedRangeDescription": "Zvolený rozsah: {start, date, long} až {end, date, long}",
+  "selectedDateDescription": "Zvolené datum: {date}",
+  "selectedRangeDescription": "Zvolený rozsah: {dateRange}",
   "startRangeSelectionPrompt": "Kliknutím zahájíte výběr rozsahu dat",
-  "todayDate": "Dnes, {date, date, full}",
-  "todayDateSelected": "Vybrán dnešek: {date, date, full}"
+  "todayDate": "Dnes, {date}",
+  "todayDateSelected": "Vybrán dnešek: {date}",
+  "dateRange": "{startDate} až {endDate}"
 }

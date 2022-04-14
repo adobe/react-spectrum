@@ -1,9 +1,5 @@
 {
   "calendar": "Kalendarz",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} do {end, date, long}",
-  "date": "Data",
-  "dateRange": "Zakres dat",
   "day": "dzień",
   "dayPeriod": "rano / po południu / wieczorem",
   "endDate": "Data końcowa",
@@ -15,5 +11,7 @@
   "startDate": "Data początkowa",
   "year": "rok",
   "weekday": "dzień tygodnia",
-  "timeZoneName": "strefa czasowa"
+  "timeZoneName": "strefa czasowa",
+  "selectedDateDescription": "Wybrana data: {date}",
+  "selectedRangeDescription": "Wybrany zakres: {startDate} do {endDate}"
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid} from './utils';
+import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {
   Calendar,
   CalendarDate,
@@ -59,7 +59,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     visibleDuration = {months: 1},
     minValue,
     maxValue,
-    selectionAlignment
+    selectionAlignment,
+    isDateUnavailable
   } = props;
 
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
@@ -123,6 +124,12 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
   function setValue(newValue: CalendarDate) {
     if (!props.isDisabled && !props.isReadOnly) {
+      newValue = constrainValue(newValue, minValue, maxValue);
+      newValue = previousAvailableDate(newValue, startDate, isDateUnavailable);
+      if (!newValue) {
+        return;
+      }
+
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, value?.calendar || new GregorianCalendar());
@@ -136,6 +143,9 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     }
   }
 
+  let isUnavailable = useMemo(() => calendarDateValue && isDateUnavailable && isDateUnavailable(calendarDateValue), [calendarDateValue, isDateUnavailable]);
+  let validationState = props.validationState || (isUnavailable ? 'invalid' : null);
+
   return {
     isDisabled: props.isDisabled,
     isReadOnly: props.isReadOnly,
@@ -145,8 +155,11 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
       start: startDate,
       end: endDate
     },
+    minValue,
+    maxValue,
     focusedDate,
     timeZone,
+    validationState,
     setFocusedDate(date) {
       focusCell(date);
       setFocused(true);

@@ -47,7 +47,7 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
     // generate index barrel
     let indexFile = iconFiles.map(icon => {
       let iconName = icon.substring(0, icon.length - 3);
-      return `export * from './${iconName}';\n`;
+      return `export * as ${isNaN(Number(iconName[0])) ? iconName : `_${iconName}`} from './${iconName}';\n`;
     }).join('');
     let indexFilepath = `${outputDir}/index.ts`;
     writeToFile(indexFilepath, indexFile);
