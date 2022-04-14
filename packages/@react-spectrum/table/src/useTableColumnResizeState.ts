@@ -129,20 +129,16 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
     affectedColumnWidthsRef.current = [];
 
     let widths = new Map<Key, number>(columnWidthsRef.current);
-    // Need to set the resizeBufferColumn or "spooky column" back to 0 since done resizing;
-    const bufferColumnKey = columnsRef.current[columnsRef.current.length - 1].key;
-    widths.set(bufferColumnKey, 0);
     setColumnWidthsForRef(widths);
   }
 
-  function resizeColumn(column: GridNode<T>, newWidth: number) : AffectedColumnWidths {
+  function resizeColumn(column: GridNode<T>, newWidth: number): AffectedColumnWidths {
     let boundedWidth =  Math.max(
       getMinWidth(column.props.minWidth, tableWidth.current),
       Math.min(Math.floor(newWidth), getMaxWidth(column.props.maxWidth, tableWidth.current)));
 
     // copy the columnWidths map and set the new width for the column being resized
     let widths = new Map<Key, number>(columnWidthsRef.current);
-    widths.set(columnsRef.current[columnsRef.current.length - 1].key, 0);
     widths.set(column.key, boundedWidth);
 
     // keep track of all columns that have been sized
@@ -168,9 +164,6 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
     let recalculatedColumnWidths = buildColumnWidths(dynamicColumns, availableSpace);
     widths = new Map<Key, number>([...widths, ...recalculatedColumnWidths]);
 
-    if (startResizeContentWidth.current > tableWidth.current) {
-      widths.set(columnsRef.current[columnsRef.current.length - 1].key, Math.max(0, startResizeContentWidth.current - getContentWidth(widths)));
-    }
     setColumnWidthsForRef(widths);
 
     /*
