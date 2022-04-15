@@ -18,13 +18,14 @@ import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription, useId, useSlotId, useUpdateEffect} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useDescription, useId, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useRef} from 'react';
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarState | RangeCalendarState): CalendarAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let calendarId = useId(props.id);
+  let domProps = filterDOMProps(props);
 
   let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);
   let visibleRangeDescription = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, true);
@@ -71,7 +72,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   }
 
   return {
-    calendarProps: mergeProps({
+    calendarProps: mergeProps(domProps, {
       role: 'group',
       id: calendarId,
       'aria-label': props['aria-label'],

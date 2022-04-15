@@ -379,6 +379,43 @@ describe('CalendarBase', () => {
       expect(grid).toHaveAttribute('aria-label', 'July 2019');
       expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
     });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should support focusing via a ref', ({Calendar}) => {
+      let ref = React.createRef();
+      render(<Calendar ref={ref} />);
+      expect(ref.current).toHaveProperty('focus');
+
+      act(() => ref.current.focus());
+      expect(document.activeElement).toHaveAttribute('role', 'button');
+      expect(document.activeElement.parentElement).toHaveAttribute('role', 'gridcell');
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should pass through data attributes', ({Calendar}) => {
+      let {getByTestId} = render(<Calendar data-testid="foo" />);
+      expect(getByTestId('foo')).toHaveAttribute('role', 'group');
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should return the outer most DOM element from the ref', ({Calendar}) => {
+      let ref = React.createRef();
+      render(<Calendar ref={ref} />);
+      expect(ref.current).toHaveProperty('UNSAFE_getDOMNode');
+
+      let wrapper = ref.current.UNSAFE_getDOMNode();
+      expect(wrapper).toHaveAttribute('role', 'group');
+    });
+
   });
 
   describe('labeling', () => {

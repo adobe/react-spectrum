@@ -20,25 +20,22 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {Flex} from '@react-spectrum/layout';
+import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 import {mergeProps} from '@react-aria/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
-import React, {useRef} from 'react';
+import React, {ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
+import {useFocusManagerRef, useFormatHelpText, useVisibleMonths} from './utils';
 import {useFocusRing} from '@react-aria/focus';
-import {useFormatHelpText, useVisibleMonths} from './utils';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-/**
- * DateRangePickers combine two DateFields and a RangeCalendar popover to allow users
- * to enter or select a date and time range.
- */
-export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProps<T>) {
+function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   let {
     isQuiet,
@@ -59,6 +56,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descriptionProps, errorMessageProps, calendarProps} = useDateRangePicker(props, state, targetRef);
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();
+  let domRef = useFocusManagerRef(ref);
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true,
@@ -108,6 +106,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   return (
     <Field
       {...props}
+      ref={domRef}
       elementType="span"
       description={description}
       labelProps={labelProps}
@@ -211,3 +210,10 @@ function DateRangeDash() {
       className={classNames(datepickerStyles, 'react-spectrum-Datepicker-rangeDash')} />
   );
 }
+
+/**
+ * DateRangePickers combine two DateFields and a RangeCalendar popover to allow users
+ * to enter or select a date and time range.
+ */
+const _DateRangePicker = React.forwardRef(DateRangePicker) as <T extends DateValue>(props: SpectrumDateRangePickerProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+export {_DateRangePicker as DateRangePicker};

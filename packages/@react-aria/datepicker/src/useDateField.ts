@@ -13,10 +13,10 @@
 import {AriaDatePickerProps, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState} from '@react-stately/datepicker';
+import {filterDOMProps, mergeProps, useDescription} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription} from '@react-aria/utils';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -118,6 +118,7 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
     autoFocusRef.current = false;
   }, [focusManager]);
 
+  let domProps = filterDOMProps(props);
   return {
     labelProps: {
       ...labelProps,
@@ -125,7 +126,7 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(fieldDOMProps, groupProps, focusWithinProps),
+    fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps),
     descriptionProps,
     errorMessageProps
   };

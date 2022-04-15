@@ -15,12 +15,12 @@ import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
 import datepickerStyles from './styles.css';
 import {FocusRing} from '@react-aria/focus';
+import {mergeRefs, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import React, {useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 
-export function Input(props) {
-  let defaultRef = useRef();
+function Input(props, ref) {
+  let inputRef = useRef(null);
   let {
     isDisabled,
     isQuiet,
@@ -28,7 +28,6 @@ export function Input(props) {
     validationState,
     children,
     fieldProps,
-    inputRef = defaultRef,
     className,
     style
   } = props;
@@ -115,7 +114,7 @@ export function Input(props) {
     <div role="presentation" {...fieldProps} className={textfieldClass} style={style}>
       <FocusRing focusClass={classNames(textfieldStyles, 'is-focused')} focusRingClass={classNames(textfieldStyles, 'focus-ring')} isTextInput within>
         <div role="presentation" className={inputClass}>
-          <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={inputRef}>
+          <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={mergeRefs(ref, inputRef)}>
             {children}
           </div>
         </div>
@@ -124,3 +123,6 @@ export function Input(props) {
     </div>
   );
 }
+
+const _Input = React.forwardRef(Input);
+export {_Input as Input};

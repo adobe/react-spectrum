@@ -8,12 +8,15 @@
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- */
+*/
+import {createDOMRef} from '@react-spectrum/utils';
+import {createFocusManager} from '@react-aria/focus';
+import {FocusableRef} from '@react-types/shared';
 import {SpectrumDatePickerBase} from '@react-types/datepicker';
 import {useDateFormatter} from '@react-aria/i18n';
 import {useDisplayNames} from '@react-aria/datepicker';
+import {useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useMemo, useState} from 'react';
 import {useProvider} from '@react-spectrum/provider';
 
 export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'description' | 'showFormatHelpText'>) {
@@ -62,4 +65,15 @@ function getVisibleMonths(scale) {
   let gap = scale === 'large' ? 30 : 24;
   let popoverPadding = scale === 'large' ? 32 : 48;
   return Math.floor((window.innerWidth - popoverPadding * 2) / (monthWidth + gap));
+}
+
+export function useFocusManagerRef(ref: FocusableRef<HTMLElement>) {
+  let domRef = useRef();
+  useImperativeHandle(ref, () => ({
+    ...createDOMRef(domRef),
+    focus() {
+      createFocusManager(domRef).focusFirst({tabbable: true});
+    }
+  }));
+  return domRef;
 }
