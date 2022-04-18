@@ -15,6 +15,7 @@ import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationali
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
+import {useOverlayTriggerState} from '@react-stately/overlays';
 import {useRef, useState} from 'react';
 
 export interface DateRangePickerOptions extends DateRangePickerProps<DateValue> {
@@ -73,7 +74,7 @@ export interface DateRangePickerState {
  * users to enter or select a date and time range.
  */
 export function useDateRangePickerState(props: DateRangePickerOptions): DateRangePickerState {
-  let [isOpen, setOpen] = useState(false);
+  let overlayState = useOverlayTriggerState(props);
   let [controlledValue, setControlledValue] = useControlledState<DateRange>(props.value, props.defaultValue || null, props.onChange);
   let [placeholderValue, setPlaceholderValue] = useState(() => controlledValue || {start: null, end: null});
 
@@ -138,7 +139,7 @@ export function useDateRangePickerState(props: DateRangePickerOptions): DateRang
     }
 
     if (shouldClose) {
-      setOpen(false);
+      overlayState.setOpen(false);
     }
   };
 
@@ -177,7 +178,7 @@ export function useDateRangePickerState(props: DateRangePickerOptions): DateRang
     },
     setDateRange,
     setTimeRange,
-    isOpen,
+    isOpen: overlayState.isOpen,
     setOpen(isOpen) {
       // Commit the selected date range when the calendar is closed. Use a placeholder time if one wasn't set.
       // If only the time range was set and not the date range, don't commit. The state will be preserved until
@@ -189,7 +190,7 @@ export function useDateRangePickerState(props: DateRangePickerOptions): DateRang
         });
       }
 
-      setOpen(isOpen);
+      overlayState.setOpen(isOpen);
     },
     validationState,
     formatValue(locale, fieldOptions) {

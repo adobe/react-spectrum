@@ -151,7 +151,8 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
           targetRef={targetRef}
           hideArrow
           isOpen={isOpen}
-          onOpenChange={setOpen}>
+          onOpenChange={setOpen}
+          shouldFlip={props.shouldFlip}>
           <FieldButton
             {...buttonProps}
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
