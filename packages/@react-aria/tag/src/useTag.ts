@@ -83,7 +83,7 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
       'aria-errormessage': props['aria-errormessage'],
       'aria-label': props['aria-label'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
-      tabIndex: (isFocused || state.selectionManager.focusedKey == null) && !isDisabled ? 0 : -1,
+      tabIndex: (isFocused || state.selectionManager.focusedKey == null) && !isDisabled ? 0 : -1
     })
   };
 }
