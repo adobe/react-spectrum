@@ -224,6 +224,11 @@
   }
 }
 
+.react-spectrum-ListViewItem--dropTarget {
+  border-color: var(--spectrum-global-color-blue-500);
+  background-color: var(--spectrum-alias-highlight-selected);
+}
+
 .react-spectrum-ListView-centeredWrapper {
   display: flex;
   align-items: center;
