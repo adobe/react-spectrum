@@ -98,7 +98,7 @@ type MappedTimeValue<T> =
   T extends Time ? Time :
   never;
 
-export interface TimePickerProps<T extends TimeValue> extends InputBase, Validation, FocusableProps, LabelableProps, ValueBase<T, MappedTimeValue<T>> {
+export interface TimePickerProps<T extends TimeValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps, ValueBase<T, MappedTimeValue<T>> {
   /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
   hourCycle?: 12 | 24,
   /**
