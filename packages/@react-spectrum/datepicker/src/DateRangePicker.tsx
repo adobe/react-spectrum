@@ -109,7 +109,6 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
     <Field
       {...props}
       elementType="span"
-      ref={targetRef}
       description={description}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
@@ -119,7 +118,8 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
       <div
         {...styleProps}
         {...mergeProps(groupProps, hoverProps, focusProps)}
-        className={className}>
+        className={className}
+        ref={targetRef}>
         <Input
           isDisabled={isDisabled}
           isQuiet={isQuiet}
@@ -162,36 +162,39 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
-            <Content UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
-              <RangeCalendar
-                {...calendarProps}
-                visibleMonths={visibleMonths} />
-              {showTimeField &&
-                <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
-                  <TimeField
-                    label="Start time"
-                    value={state.timeRange?.start || null}
-                    onChange={v => state.setTime('start', v)}
-                    placeholderValue={timePlaceholder}
-                    granularity={timeGranularity}
-                    minValue={timeMinValue}
-                    maxValue={timeMaxValue}
-                    hourCycle={props.hourCycle}
-                    hideTimeZone={props.hideTimeZone}
-                    flex />
-                  <TimeField
-                    label="End time"
-                    value={state.timeRange?.end || null}
-                    onChange={v => state.setTime('end', v)}
-                    placeholderValue={timePlaceholder}
-                    granularity={timeGranularity}
-                    minValue={timeMinValue}
-                    maxValue={timeMaxValue}
-                    hourCycle={props.hourCycle}
-                    hideTimeZone={props.hideTimeZone}
-                    flex />
-                </Flex>
-              }
+            <Content>
+              <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
+                <RangeCalendar
+                  {...calendarProps}
+                  visibleMonths={visibleMonths}
+                  UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': state.validationState === 'invalid'})} />
+                {showTimeField &&
+                  <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
+                    <TimeField
+                      label="Start time"
+                      value={state.timeRange?.start || null}
+                      onChange={v => state.setTime('start', v)}
+                      placeholderValue={timePlaceholder}
+                      granularity={timeGranularity}
+                      minValue={timeMinValue}
+                      maxValue={timeMaxValue}
+                      hourCycle={props.hourCycle}
+                      hideTimeZone={props.hideTimeZone}
+                      flex />
+                    <TimeField
+                      label="End time"
+                      value={state.timeRange?.end || null}
+                      onChange={v => state.setTime('end', v)}
+                      placeholderValue={timePlaceholder}
+                      granularity={timeGranularity}
+                      minValue={timeMinValue}
+                      maxValue={timeMaxValue}
+                      hourCycle={props.hourCycle}
+                      hideTimeZone={props.hideTimeZone}
+                      flex />
+                  </Flex>
+                }
+              </div>
             </Content>
           </Dialog>
         </DialogTrigger>

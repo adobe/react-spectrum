@@ -14,7 +14,7 @@ import {CalendarDate, startOfWeek} from '@internationalized/date';
 import {CalendarGridAria} from './types';
 import {calendarIds, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {KeyboardEvent} from 'react';
+import {KeyboardEvent, useMemo} from 'react';
 import {mergeProps, useDescription, useLabels} from '@react-aria/utils';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 
@@ -113,34 +113,41 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
 
   let selectedDateDescription = useSelectedDateDescription(state);
   let descriptionProps = useDescription(selectedDateDescription);
-  let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone);
+  let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
 
+  let {calendarId, errorMessageId} = calendarIds.get(state);
   let labelProps = useLabels({
     'aria-label': visibleRangeDescription,
-    'aria-labelledby': calendarIds.get(state)
+    'aria-labelledby': calendarId
   });
 
   let dayFormatter = useDateFormatter({weekday: 'narrow', timeZone: state.timeZone});
   let dayFormatterLong = useDateFormatter({weekday: 'long', timeZone: state.timeZone});
   let {locale} = useLocale();
-  let weekStart = startOfWeek(state.visibleRange.start, locale);
-  let weekDays = [...new Array(7).keys()].map((index) => {
-    let date = weekStart.add({days: index});
-    let dateDay = date.toDate(state.timeZone);
-    let narrow = dayFormatter.format(dateDay);
-    let long = dayFormatterLong.format(dateDay);
-    return {
-      narrow,
-      long
-    };
-  });
+  let weekDays = useMemo(() => {
+    let weekStart = startOfWeek(state.visibleRange.start, locale);
+    return [...new Array(7).keys()].map((index) => {
+      let date = weekStart.add({days: index});
+      let dateDay = date.toDate(state.timeZone);
+      let narrow = dayFormatter.format(dateDay);
+      let long = dayFormatterLong.format(dateDay);
+      return {
+        narrow,
+        long
+      };
+    });
+  }, [state.visibleRange.start, locale, state.timeZone, dayFormatter, dayFormatterLong]);
 
   return {
-    gridProps: mergeProps(descriptionProps, labelProps, {
+    gridProps: mergeProps(labelProps, {
       role: 'grid',
       'aria-readonly': state.isReadOnly || null,
       'aria-disabled': state.isDisabled || null,
       'aria-multiselectable': ('highlightedRange' in state) || undefined,
+      'aria-describedby': [
+        descriptionProps['aria-describedby'],
+        state.validationState === 'invalid' ? errorMessageId : null
+      ].filter(Boolean).join(' ') || undefined,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)

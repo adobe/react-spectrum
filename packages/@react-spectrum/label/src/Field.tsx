@@ -109,7 +109,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 
   return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
-    ref
+    // @ts-ignore
+    ref: ref || children.ref
   }));
 }
 

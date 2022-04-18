@@ -12,7 +12,7 @@
 
 import {CalendarDate} from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
-import {RangeValue} from '@react-types/shared';
+import {RangeValue, ValidationState} from '@react-types/shared';
 
 export interface CalendarStateBase {
   /** Whether the calendar is disabled. */
@@ -21,8 +21,14 @@ export interface CalendarStateBase {
   readonly isReadOnly: boolean,
   /** The date range that is currently visible in the calendar. */
   readonly visibleRange: RangeValue<CalendarDate>,
+  /** The minimum allowed date that a user may select. */
+  readonly minValue?: DateValue,
+  /** The maximum allowed date that a user may select. */
+  readonly maxValue?: DateValue,
   /** The time zone of the dates currently being displayed. */
   readonly timeZone: string,
+  /** The current validation state of the selected value. */
+  readonly validationState: ValidationState,
   /** The currently focused date. */
   readonly focusedDate: CalendarDate,
   /** Sets the focused date. */
