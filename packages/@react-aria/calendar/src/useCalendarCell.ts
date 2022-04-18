@@ -31,7 +31,7 @@ export interface AriaCalendarCellProps {
   isDisabled?: boolean
 }
 
-interface CalendarCellAria {
+export interface CalendarCellAria {
   /** Props for the grid cell element (e.g. `<td>`). */
   cellProps: HTMLAttributes<HTMLElement>,
   /** Props for the button element within the cell. */

@@ -11,16 +11,29 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {CalendarAria} from './types';
+import {AriaButtonProps} from '@react-types/button';
 import {calendarIds, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useDescription, useId, useSlotId, useUpdateEffect} from '@react-aria/utils';
+import {HTMLAttributes, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {filterDOMProps, mergeProps, useDescription, useId, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useRef} from 'react';
+
+export interface CalendarAria {
+  /** Props for the calendar grouping element. */
+  calendarProps: HTMLAttributes<HTMLElement>,
+  /** Props for the next button. */
+  nextButtonProps: AriaButtonProps,
+  /** Props for the previous button. */
+  prevButtonProps: AriaButtonProps,
+  /** Props for the error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>,
+  /** A description of the visible date range, for use in the calendar title. */
+  title: string
+}
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarState | RangeCalendarState): CalendarAria {
   let formatMessage = useMessageFormatter(intlMessages);

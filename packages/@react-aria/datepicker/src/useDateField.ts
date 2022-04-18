@@ -23,9 +23,9 @@ import {useFocusWithin} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 // Allows this hook to also be used with TimeField
-interface DateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
+export interface AriaDateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
 
-interface DateFieldAria {
+export interface DateFieldAria {
    /** Props for the field's visible label element, if any. */
   labelProps: HTMLAttributes<HTMLElement>,
    /** Props for the field grouping element. */
@@ -56,7 +56,7 @@ export const focusManagerSymbol = '__focusManager_' + Date.now();
  * A date field allows users to enter and edit date and time values using a keyboard.
  * Each part of a date value is displayed in an individually editable segment.
  */
-export function useDateField<T extends DateValue>(props: DateFieldProps<T>, state: DateFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, state: DateFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'

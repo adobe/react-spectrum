@@ -26,7 +26,7 @@ import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
-interface DateRangePickerAria {
+export interface DateRangePickerAria {
   /** Props for the date range picker's visible label element, if any. */
   labelProps: HTMLAttributes<HTMLElement>,
   /** Props for the grouping element containing the date fields and button. */

@@ -20,7 +20,7 @@ import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
 
-interface RangeCalendarStateOptions extends RangeCalendarProps<DateValue> {
+export interface RangeCalendarStateOptions extends RangeCalendarProps<DateValue> {
   /** The locale to display and edit the value according to. */
   locale: string,
   /**

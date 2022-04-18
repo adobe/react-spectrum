@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarAria} from './types';
+import {CalendarAria, useCalendarBase} from './useCalendarBase';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from '@react-stately/calendar';
 import {RefObject, useRef} from 'react';
-import {useCalendarBase} from './useCalendarBase';
 import {useEvent, useId} from '@react-aria/utils';
 
 /**

@@ -11,14 +11,13 @@
  */
 
 import {CalendarDate, startOfWeek} from '@internationalized/date';
-import {CalendarGridAria} from './types';
 import {calendarIds, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {KeyboardEvent, useMemo} from 'react';
+import {HTMLAttributes, KeyboardEvent, useMemo} from 'react';
 import {mergeProps, useDescription, useLabels} from '@react-aria/utils';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 
-interface CalendarGridProps {
+export interface AriaCalendarGridProps {
   /**
    * The first date displayed in the calendar grid.
    * Defaults to the first visible date in the calendar.
@@ -33,12 +32,26 @@ interface CalendarGridProps {
   endDate?: CalendarDate
 }
 
+export interface CalendarGridAria {
+  /** Props for the date grid element (e.g. `<table>`). */
+  gridProps: HTMLAttributes<HTMLElement>,
+  /** A list of week days formatted for the current locale, typically used in column headers. */
+  weekDays: WeekDay[]
+}
+
+interface WeekDay {
+  /** A short name (e.g. single letter) for the day. */
+  narrow: string,
+  /** The full day name. If not displayed visually, it should be used as the accessiblity name. */
+  long: string
+}
+
 /**
  * Provides the behavior and accessibility implementation for a calendar grid component.
  * A calendar grid displays a single grid of days within a calendar or range calendar which
  * can be keyboard navigated and selected by the user.
  */
-export function useCalendarGrid(props: CalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
+export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
   let {
     startDate = state.visibleRange.start,
     endDate = state.visibleRange.end
