@@ -26,6 +26,7 @@ import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectru
 import {Content} from '@react-spectrum/view';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
+import type {DroppableCollectionResult} from '@react-aria/dnd';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 import InsertionIndicator from './InsertionIndicator';
@@ -39,7 +40,7 @@ import {ListViewItem} from './ListViewItem';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
-import React, {HTMLAttributes, Key, ReactElement, useContext, useMemo, useRef} from 'react';
+import React, {Key, ReactElement, useContext, useMemo, useRef} from 'react';
 import RootDropIndicator from './RootDropIndicator';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -225,14 +226,14 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   let dropState: DroppableCollectionState;
-  let collectionProps: HTMLAttributes<HTMLElement>;
+  let droppableCollection: DroppableCollectionResult;
   let isRootDropTarget: boolean;
   if (isListDroppable) {
     dropState = dropHooks.useDroppableCollectionState({
       collection: state.collection,
       selectionManager: state.selectionManager
     });
-    collectionProps = dropHooks.useDroppableCollection({
+    droppableCollection = dropHooks.useDroppableCollection({
       keyboardDelegate,
       getDropTargetFromPoint(x, y) {
         let rect = domRef.current.getBoundingClientRect();
@@ -242,8 +243,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         let closestDistance = Infinity;
         let closestDir = null;
 
-        for (let child of domRef.current.children) {
-          if (!(child as HTMLElement).dataset.key) {
+
+        for (let child of domRef.current.children[0].children) {
+          if (!(child.children[0].children[0] as HTMLElement).dataset.key) {
             continue;
           }
 
@@ -271,7 +273,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           }
         }
 
-        let key = closest?.dataset.key;
+        let key = closest?.children[0].children[0].dataset.key;
         if (key) {
           return {
             type: 'item',
@@ -280,7 +282,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           };
         }
       }
-    }, dropState, domRef).collectionProps;
+    }, dropState, domRef);
 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
@@ -306,7 +308,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate, dragState, dropState, onAction, isListDraggable, isListDroppable}}>
       <Virtualizer
-        {...mergeProps(collectionProps, gridProps)}
+        {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
         {...styleProps}
         isLoading={isLoading}
         onLoadMore={onLoadMore}
@@ -332,7 +334,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         transitionDuration={transitionDuration}>
         {(type, item) => {
           if (type === 'item') {
-            let target: Omit<ItemDropTarget, 'dropPosition'> = {type: 'item', key: item.key};
+            let target: Omit<ItemDropTarget, 'dropPosition'> = {type: 'item', key: `cell-${item.key}`};
             let isLastItem = state.collection.getKeyAfter(item.key) == null;
             let isFirstItem = state.collection.getKeyBefore(item.key) == null;
             return (
