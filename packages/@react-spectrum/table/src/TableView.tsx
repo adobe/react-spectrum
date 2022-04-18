@@ -13,7 +13,7 @@
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {ColumnResizeState} from './useTableColumnResizeState';
+import {ColumnResizeState, useTableColumnResizeState} from './useTableColumnResizeState';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
@@ -48,7 +48,6 @@ import {
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
 } from '@react-aria/table';
-import {useTableColumnResizeState} from './useTableColumnResizeState';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {

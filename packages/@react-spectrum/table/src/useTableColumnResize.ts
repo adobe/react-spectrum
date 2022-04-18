@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject, useRef} from 'react';
 import {ColumnResizeState} from './useTableColumnResizeState';
 import {focusSafely, useFocusable} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
+import {HTMLAttributes, RefObject, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
 interface ResizerAria {
-  resizerProps: AllHTMLAttributes<HTMLElement>
+  resizerProps: HTMLAttributes<HTMLElement>
 }
 
 interface ResizerProps<T> {
