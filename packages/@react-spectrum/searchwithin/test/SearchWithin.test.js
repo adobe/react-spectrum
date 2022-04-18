@@ -212,7 +212,7 @@ describe('SearchWithin labeling', function () {
   });
 
   it('aria-labelledby = {id}', function () {
-    let {getByRole, debug, getByText} = render(
+    let {getByRole, getByText} = render(
       <Provider theme={theme}>
         <label id="id-foo-label" htmlFor="id-searchfield">
           Foo
@@ -228,7 +228,6 @@ describe('SearchWithin labeling', function () {
         </SearchWithin>
       </Provider>
     );
-    debug();
 
     let group = getByRole('group');
     let searchfield = getByRole('searchbox');

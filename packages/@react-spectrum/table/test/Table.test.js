@@ -60,6 +60,11 @@ let items = [
   {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
+let itemsWithFalsyId = [
+  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 0},
+  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2', id: 1}
+];
+
 let manyItems = [];
 for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
@@ -463,6 +468,45 @@ describe('TableView', function () {
     expect(cells[3]).toHaveAttribute('aria-colindex', '1');
     expect(cells[4]).toHaveAttribute('aria-colindex', '3');
     expect(cells[5]).toHaveAttribute('aria-colindex', '4');
+  });
+
+  it('renders contents even with falsy row ids', function () {
+    // TODO: doesn't support empty string ids, fix for that to come
+    let {getByRole} = render(
+      <TableView aria-label="Table">
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={itemsWithFalsyId}>
+          {item =>
+            (<Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    );
+
+    let grid = getByRole('grid');
+    let rows = within(grid).getAllByRole('row');
+    expect(rows).toHaveLength(3);
+
+    for (let [i, row] of rows.entries()) {
+      if (i === 0) {
+        let columnheaders = within(row).getAllByRole('columnheader');
+        expect(columnheaders).toHaveLength(3);
+        for (let [j, columnheader] of columnheaders.entries()) {
+          expect(within(columnheader).getByText(columns[j].name)).toBeTruthy();
+        }
+      } else {
+        let rowheader = within(row).getByRole('rowheader');
+        expect(within(rowheader).getByText(itemsWithFalsyId[i - 1][columns[0].key])).toBeTruthy();
+        let cells = within(row).getAllByRole('gridcell');
+        expect(cells).toHaveLength(2);
+        expect(within(cells[0]).getByText(itemsWithFalsyId[i - 1][columns[1].key])).toBeTruthy();
+        expect(within(cells[1]).getByText(itemsWithFalsyId[i - 1][columns[2].key])).toBeTruthy();
+      }
+    }
   });
 
   it('renders a static table with nested columns', function () {
@@ -4195,7 +4239,7 @@ describe('TableView', function () {
     });
 
     describe('column widths', function () {
-      it('should divide the available width by default', function () {
+      it('should divide the available width by default if no defaultWidth is provided', function () {
         let tree = render(
           <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader columns={columns}>
@@ -4215,9 +4259,9 @@ describe('TableView', function () {
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('320.6666666666667px');
-          expect(row.childNodes[2].style.width).toBe('320.6666666666667px');
-          expect(row.childNodes[3].style.width).toBe('320.6666666666667px');
+          expect(row.childNodes[1].style.width).toBe('320px');
+          expect(row.childNodes[2].style.width).toBe('321px');
+          expect(row.childNodes[3].style.width).toBe('321px');
         }
       });
 
@@ -4241,9 +4285,9 @@ describe('TableView', function () {
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('48px');
-          expect(row.childNodes[1].style.width).toBe('317.3333333333333px');
-          expect(row.childNodes[2].style.width).toBe('317.3333333333333px');
-          expect(row.childNodes[3].style.width).toBe('317.3333333333333px');
+          expect(row.childNodes[1].style.width).toBe('317px');
+          expect(row.childNodes[2].style.width).toBe('317px');
+          expect(row.childNodes[3].style.width).toBe('318px');
         }
       });
 
@@ -4274,7 +4318,7 @@ describe('TableView', function () {
         }
       });
 
-      it('should divide remaining width amoung remaining columns', function () {
+      it('should divide remaining width among remaining columns', function () {
         let tree = render(
           <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader>
@@ -4381,8 +4425,65 @@ describe('TableView', function () {
           expect(row.childNodes[0].style.width).toBe('200px');
           expect(row.childNodes[1].style.width).toBe('300px');
           expect(row.childNodes[2].style.width).toBe('500px');
-
         }
+      });
+
+      describe('bounded constraint on columns where dynamic columns exist before the bounded columns', () => {
+        it('should fulfill the constraints of the static columns and give remaining width to previously defined dynamic columns', () => {
+          let tree = render(
+            <TableView aria-label="Table">
+              <TableHeader>
+                <Column allowsResizing key="foo">Foo</Column>
+                <Column key="bar" maxWidth={200}>Bar</Column>
+                <Column key="baz" maxWidth={200}>Baz</Column>
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell>{item[key]}</Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+  
+          let rows = tree.getAllByRole('row');
+  
+          for (let row of rows) {
+            expect(row.childNodes[0].style.width).toBe('600px');
+            expect(row.childNodes[1].style.width).toBe('200px');
+            expect(row.childNodes[2].style.width).toBe('200px');
+          }
+        });
+      });
+
+      describe("mutiple columns are bounded but earlier columns are 'less bounded' than future columns", () => {
+        it("should satisfy the conditions of all columns but also allocate remaining space to the 'less bounded' previous columns", () => {
+          let tree = render(
+            <TableView aria-label="Table">
+              <TableHeader>
+                <Column allowsResizing key="foo" minWidth={100}>Foo</Column>
+                <Column key="bar" minWidth={500}>Bar</Column>
+                <Column key="baz" maxWidth={200}>Baz</Column>
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell>{item[key]}</Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+  
+          let rows = tree.getAllByRole('row');
+  
+          for (let row of rows) {
+            expect(row.childNodes[0].style.width).toBe('300px');
+            expect(row.childNodes[1].style.width).toBe('500px');
+            expect(row.childNodes[2].style.width).toBe('200px');
+          }
+        });
       });
 
       it('should compute the correct widths for tiered headings with selection', function () {
@@ -4403,21 +4504,21 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
 
-        expect(rows[0].childNodes[0].style.width).toBe('230.4px');
-        expect(rows[0].childNodes[1].style.width).toBe('769.6px');
+        expect(rows[0].childNodes[0].style.width).toBe('230px');
+        expect(rows[0].childNodes[1].style.width).toBe('770px');
 
-        expect(rows[1].childNodes[0].style.width).toBe('230.4px');
-        expect(rows[1].childNodes[1].style.width).toBe('384.8px');
-        expect(rows[1].childNodes[2].style.width).toBe('192.4px');
-        expect(rows[1].childNodes[3].style.width).toBe('192.4px');
+        expect(rows[1].childNodes[0].style.width).toBe('230px');
+        expect(rows[1].childNodes[1].style.width).toBe('384px');
+        expect(rows[1].childNodes[2].style.width).toBe('193px');
+        expect(rows[1].childNodes[3].style.width).toBe('193px');
 
         for (let row of rows.slice(2)) {
           expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('192.4px');
-          expect(row.childNodes[2].style.width).toBe('192.4px');
-          expect(row.childNodes[3].style.width).toBe('192.4px');
-          expect(row.childNodes[4].style.width).toBe('192.4px');
-          expect(row.childNodes[5].style.width).toBe('192.4px');
+          expect(row.childNodes[1].style.width).toBe('192px');
+          expect(row.childNodes[2].style.width).toBe('192px');
+          expect(row.childNodes[3].style.width).toBe('192px');
+          expect(row.childNodes[4].style.width).toBe('193px');
+          expect(row.childNodes[5].style.width).toBe('193px');
         }
       });
     });

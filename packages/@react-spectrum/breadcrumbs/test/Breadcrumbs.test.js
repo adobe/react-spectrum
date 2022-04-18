@@ -80,6 +80,17 @@ describe('Breadcrumbs', function () {
     expect(item3).toHaveAttribute('aria-current', 'page');
   });
 
+  it('Handles single item and showRoot', () => {
+    let {getByText} = render(
+      <Breadcrumbs showRoot>
+        <Item key="Folder-1">Folder 1</Item>
+      </Breadcrumbs>
+    );
+    let item = getByText('Folder 1');
+    expect(item).toBeTruthy();
+    expect(item.tabIndex).toBe(-1);
+  });
+
   it('Should handle forward ref', function () {
     let ref;
     let Component = () => {

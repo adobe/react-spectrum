@@ -1,9 +1,5 @@
 {
   "calendar": "Календарь",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} – {end, date, long}",
-  "date": "Дата",
-  "dateRange": "Диапазон дат",
   "day": "день",
   "dayPeriod": "AM/PM",
   "endDate": "Дата окончания",
@@ -15,5 +11,7 @@
   "startDate": "Дата начала",
   "year": "год",
   "weekday": "день недели",
-  "timeZoneName": "часовой пояс"
+  "timeZoneName": "часовой пояс",
+  "selectedDateDescription": "Выбранная дата: {date}",
+  "selectedRangeDescription": "Выбранный диапазон: {startDate} – {endDate}"
 }

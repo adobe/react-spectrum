@@ -1,9 +1,5 @@
 {
   "calendar": "Ημερολόγιο",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} ως {end, date, long}",
-  "date": "Ημερομηνία",
-  "dateRange": "Εύρος ημερομηνιών",
   "day": "ημέρα",
   "dayPeriod": "π.μ./μ.μ.",
   "endDate": "Ημερομηνία λήξης",
@@ -15,5 +11,7 @@
   "startDate": "Ημερομηνία έναρξης",
   "year": "έτος",
   "weekday": "καθημερινή",
-  "timeZoneName": "ζώνη ώρας"
+  "timeZoneName": "ζώνη ώρας",
+  "selectedDateDescription": "Επιλεγμένη ημερομηνία: {date}",
+  "selectedRangeDescription": "Επιλεγμένο εύρος: {startDate} έως {endDate}"
 }

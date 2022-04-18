@@ -14,12 +14,17 @@ import {act, fireEvent} from '@testing-library/react';
 
 function pressKeyOnButton(key, button) {
   fireEvent.keyDown(button, {key});
+  fireEvent.keyUp(button, {key});
 }
 export const press = {
   ArrowRight: (button: HTMLElement) => pressKeyOnButton('ArrowRight', button),
   ArrowLeft: (button: HTMLElement) => pressKeyOnButton('ArrowLeft', button),
+  ArrowUp: (button: HTMLElement) => pressKeyOnButton('ArrowUp', button),
+  ArrowDown: (button: HTMLElement) => pressKeyOnButton('ArrowDown', button),
   Home: (button: HTMLElement) => pressKeyOnButton('Home', button),
-  End: (button: HTMLElement) => pressKeyOnButton('End', button)
+  End: (button: HTMLElement) => pressKeyOnButton('End', button),
+  PageUp: (button: HTMLElement) => pressKeyOnButton('PageUp', button),
+  PageDown: (button: HTMLElement) => pressKeyOnButton('PageDown', button)
 };
 
 export function testKeypresses([sliderLeft, sliderRight], commands: any[]) {

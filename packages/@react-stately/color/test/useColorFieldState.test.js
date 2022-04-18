@@ -43,20 +43,6 @@ describe('useColorFieldState tests', function () {
   });
 
   it.each`
-    action          | props
-    ${'increment'}  | ${{defaultValue: '#000008', step: 4}}
-    ${'decrement'}  | ${{defaultValue: '#000010', step: 4}}
-  `('should $action', function ({action, props}) {
-    let {result} = renderHook(() => useColorFieldState(props));
-    act(() => result.current[action]());
-    expect(result.current.colorValue.getChannelValue('red')).toBe(0);
-    expect(result.current.colorValue.getChannelValue('green')).toBe(0);
-    expect(result.current.colorValue.getChannelValue('blue')).toBe(12);
-    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
-    expect(result.current.inputValue).toBe('#00000C');
-  });
-
-  it.each`
     name                                 | action               | props
     ${'not increment beyond max value'}  | ${'increment'}       | ${{defaultValue: '#ffffff'}}
     ${'increment to max value'}          | ${'incrementToMax'}  | ${{defaultValue: '#aabbcc'}}

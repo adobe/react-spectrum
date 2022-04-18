@@ -95,18 +95,6 @@ or `aria-labelledby`, be sure to localize the string or labeling element appropr
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the ColorSlider is automatically flipped. As mentioned previously,
 ColorSlider automatically uses the current locale to format the channel and value label.
 
-## Step values
-
-The `step` prop can be used to snap the ColorSlider's value to specific increments. Be sure to provide a number that makes sense for the range of the ColorSlider's channel
-(e.g. the "alpha" channel value ranges from 0 to 1 so the step should be less than 1).
-
-```tsx example
-<Flex gap="size-300" wrap>
-  <ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" step={10} />
-  <ColorSlider channel="alpha" defaultValue="hsla(0, 100%, 50%, 0.5)" step={.05} />
-</Flex>
-```
-
 ## Events
 
 ColorSlider supports two events: `onChange` and `onChangeEnd`. `onChange` is triggered whenever the ColorSlider's handle is dragged, and `onChangeEnd`

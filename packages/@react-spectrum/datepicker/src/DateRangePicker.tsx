@@ -35,7 +35,8 @@ import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 /**
- * DatePickers combine two DateFields and a Calendar popover to allow users to enter or select a range of dates and times.
+ * DateRangePickers combine two DateFields and a RangeCalendar popover to allow users
+ * to enter or select a date and time range.
  */
 export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProps<T>) {
   props = useProviderProps(props);
@@ -43,7 +44,6 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
     isQuiet,
     isDisabled,
     isReadOnly,
-    isRequired,
     autoFocus,
     placeholderValue,
     maxVisibleMonths = 1,
@@ -52,9 +52,12 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
-  let state = useDateRangePickerState(props);
-  let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descriptionProps, errorMessageProps} = useDateRangePicker(props, state, targetRef);
-  let {value, isOpen, setOpen} = state;
+  let state = useDateRangePickerState({
+    ...props,
+    shouldCloseOnSelect: () => !state.hasTime
+  });
+  let {labelProps, groupProps, buttonProps, dialogProps, startFieldProps, endFieldProps, descriptionProps, errorMessageProps, calendarProps} = useDateRangePicker(props, state, targetRef);
+  let {isOpen, setOpen} = state;
   let {direction} = useLocale();
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
@@ -105,7 +108,7 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
   return (
     <Field
       {...props}
-      ref={targetRef}
+      elementType="span"
       description={description}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
@@ -115,44 +118,24 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
       <div
         {...styleProps}
         {...mergeProps(groupProps, hoverProps, focusProps)}
-        className={className}>
+        className={className}
+        ref={targetRef}>
         <Input
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={state.validationState}
-          autoFocus={autoFocus}
           className={classNames(styles, 'spectrum-InputGroup-field')}
           inputClassName={fieldClassName}>
           <DatePickerField
             {...startFieldProps}
+            data-testid="start-date"
             isQuiet={props.isQuiet}
-            isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
-            isRequired={isRequired}
-            validationState={state.validationState}
-            placeholderValue={placeholderValue}
-            value={value?.start || null}
-            defaultValue={null}
-            onChange={start => state.setDateTime('start', start)}
-            granularity={props.granularity}
-            hourCycle={props.hourCycle}
-            hideTimeZone={props.hideTimeZone}
             inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
           <DateRangeDash />
           <DatePickerField
             {...endFieldProps}
+            data-testid="end-date"
             isQuiet={props.isQuiet}
-            isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
-            isRequired={isRequired}
-            validationState={state.validationState}
-            placeholderValue={placeholderValue}
-            value={value?.end || null}
-            defaultValue={null}
-            onChange={end => state.setDateTime('end', end)}
-            granularity={props.granularity}
-            hourCycle={props.hourCycle}
-            hideTimeZone={props.hideTimeZone}
             inputClassName={classNames(
               styles,
               'spectrum-Datepicker-endField',
@@ -179,40 +162,39 @@ export function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePic
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
-            <Content UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
-              <RangeCalendar
-                autoFocus
-                value={state.dateRange}
-                onChange={state.setDateRange}
-                visibleMonths={visibleMonths}
-                minValue={props.minValue}
-                maxValue={props.maxValue} />
-              {showTimeField &&
-                <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
-                  <TimeField
-                    label="Start time"
-                    value={state.timeRange?.start || null}
-                    onChange={v => state.setTime('start', v)}
-                    placeholderValue={timePlaceholder}
-                    granularity={timeGranularity}
-                    minValue={timeMinValue}
-                    maxValue={timeMaxValue}
-                    hourCycle={props.hourCycle}
-                    hideTimeZone={props.hideTimeZone}
-                    flex />
-                  <TimeField
-                    label="End time"
-                    value={state.timeRange?.end || null}
-                    onChange={v => state.setTime('end', v)}
-                    placeholderValue={timePlaceholder}
-                    granularity={timeGranularity}
-                    minValue={timeMinValue}
-                    maxValue={timeMaxValue}
-                    hourCycle={props.hourCycle}
-                    hideTimeZone={props.hideTimeZone}
-                    flex />
-                </Flex>
-              }
+            <Content>
+              <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialogContent')}>
+                <RangeCalendar
+                  {...calendarProps}
+                  visibleMonths={visibleMonths}
+                  UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': state.validationState === 'invalid'})} />
+                {showTimeField &&
+                  <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
+                    <TimeField
+                      label="Start time"
+                      value={state.timeRange?.start || null}
+                      onChange={v => state.setTime('start', v)}
+                      placeholderValue={timePlaceholder}
+                      granularity={timeGranularity}
+                      minValue={timeMinValue}
+                      maxValue={timeMaxValue}
+                      hourCycle={props.hourCycle}
+                      hideTimeZone={props.hideTimeZone}
+                      flex />
+                    <TimeField
+                      label="End time"
+                      value={state.timeRange?.end || null}
+                      onChange={v => state.setTime('end', v)}
+                      placeholderValue={timePlaceholder}
+                      granularity={timeGranularity}
+                      minValue={timeMinValue}
+                      maxValue={timeMaxValue}
+                      hourCycle={props.hourCycle}
+                      hideTimeZone={props.hideTimeZone}
+                      flex />
+                  </Flex>
+                }
+              </div>
             </Content>
           </Dialog>
         </DialogTrigger>

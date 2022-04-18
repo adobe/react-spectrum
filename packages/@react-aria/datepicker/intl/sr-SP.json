@@ -1,9 +1,5 @@
 {
   "calendar": "Kalendar",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} do {end, date, long}",
-  "date": "Datum",
-  "dateRange": "Opseg datuma",
   "day": "дан",
   "dayPeriod": "пре подне/по подне",
   "endDate": "Datum završetka",
@@ -15,5 +11,7 @@
   "startDate": "Datum početka",
   "year": "година",
   "weekday": "дан у недељи",
-  "timeZoneName": "временска зона"
+  "timeZoneName": "временска зона",
+  "selectedDateDescription": "Izabrani datum: {date}",
+  "selectedRangeDescription": "Izabrani opseg: od {startDate} do {endDate}"
 }

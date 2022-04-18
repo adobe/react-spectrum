@@ -45,7 +45,7 @@
     "@react-stately/collections": "^3.1.0",
     "@react-stately/layout": "^3.2.1",
     "@react-stately/tree": "^3.1.0",
-    "@react-stately/virtualizer": "3.1.7-alpha.0",
+    "@react-stately/virtualizer": "^3.1.7",
     "@react-types/shared": "^3.1.0",
     "@react-types/sidenav": "3.0.0-alpha.1"
   },
