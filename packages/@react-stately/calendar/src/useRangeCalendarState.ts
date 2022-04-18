@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter, isInvalid} from './utils';
+import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from './types';
 import {DateRange, DateValue} from '@react-types/calendar';
@@ -113,6 +113,12 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
       return;
     }
 
+    date = constrainValue(date, min, max);
+    date = previousAvailableDate(date, calendar.visibleRange.start, props.isDateUnavailable);
+    if (!date) {
+      return;
+    }
+
     if (!anchorDate) {
       setAnchorDate(date);
     } else {
@@ -127,6 +133,17 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
 
   let [isDragging, setDragging] = useState(false);
 
+  let {isDateUnavailable} = props;
+  let isInvalidSelection = useMemo(() => {
+    if (!isDateUnavailable || !value || anchorDate) {
+      return false;
+    }
+
+    return isDateUnavailable(value.start) || isDateUnavailable(value.end);
+  }, [isDateUnavailable, value, anchorDate]);
+
+  let validationState = props.validationState || (isInvalidSelection ? 'invalid' : null);
+
   return {
     ...calendar,
     value,
@@ -134,6 +151,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     anchorDate,
     setAnchorDate,
     highlightedRange,
+    validationState,
     selectFocusedDate() {
       selectDate(calendar.focusedDate);
     },

@@ -89,10 +89,19 @@ storiesOf('Date and Time/DateRangePicker', module)
   )
   .add(
     'isDateUnavailable',
-    () => render({isDateUnavailable: (date: DateValue) => {
-      const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
-      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
-    }})
+    () => {
+      const disabledRanges = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+      let [value, setValue] = React.useState(null);
+      let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
+      let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      return render({
+        value,
+        onChange: setValue,
+        validationState: isInvalid ? 'invalid' : null,
+        isDateUnavailable,
+        errorMessage: 'Selected ranges may not include unavailable dates.'
+      });
+    }
   )
   .add(
     'isDateAvailable, allowsNonContiguousRanges',
@@ -175,6 +184,10 @@ storiesOf('Date and Time/DateRangePicker/styling', module)
   .add(
     'errorMessage',
     () => render({errorMessage: 'Dates must be after today', validationState: 'invalid'})
+  )
+  .add(
+    'invalid with time',
+    () => render({validationState: 'invalid', granularity: 'minute', defaultValue: {start: toZoned(parseDate('2020-02-03'), 'America/New_York'), end: toZoned(parseDate('2020-02-12'), 'America/Los_Angeles')}})
   )
   .add(
     'in scrollable container',

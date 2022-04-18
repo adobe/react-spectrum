@@ -63,7 +63,9 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
 
   let {locale} = useLocale();
-  let descProps = useDescription(state.formatValue(locale, {month: 'long'}));
+  let date = state.formatValue(locale, {month: 'long'});
+  let description = date ? formatMessage('selectedDateDescription', {date}) : '';
+  let descProps = useDescription(description);
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
 
   return {
@@ -123,7 +125,9 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       isDisabled: props.isDisabled,
       isReadOnly: props.isReadOnly,
       isDateUnavailable: props.isDateUnavailable,
-      defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue
+      defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue,
+      validationState: state.validationState,
+      errorMessage: props.errorMessage
     }
   };
 }
