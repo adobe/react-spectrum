@@ -11,7 +11,7 @@
  */
 
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './styles.css';
@@ -43,10 +43,8 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
     isReadOnly,
     autoFocus,
     placeholderValue,
-    maxVisibleMonths = 1,
-    ...otherProps
+    maxVisibleMonths = 1
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>();
   let state = useDateRangePickerState({
@@ -74,8 +72,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
       'is-hovered': isHovered,
       'is-focused': isFocused,
       'focus-ring': isFocusVisible
-    },
-    styleProps.className
+    }
   );
 
   let fieldClassName = classNames(
@@ -115,7 +112,6 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
       validationState={state.validationState}
       UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <div
-        {...styleProps}
         {...mergeProps(groupProps, hoverProps, focusProps)}
         className={className}
         ref={targetRef}>

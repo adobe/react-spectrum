@@ -124,8 +124,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
           <DatePickerField
             {...fieldProps}
             data-testid="date-field"
-            isQuiet={isQuiet}
-            inputClassName={fieldClassName} />
+            isQuiet={isQuiet} />
         </Input>
         <DialogTrigger
           type="popover"
@@ -150,7 +149,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
                 <Calendar
                   {...calendarProps}
                   visibleMonths={visibleMonths}
-                  UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar')} />
+                  UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': state.validationState === 'invalid'})} />
                 {showTimeField &&
                   <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
                     <TimeField
