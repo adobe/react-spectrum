@@ -26,6 +26,11 @@ governing permissions and limitations under the License.
   --spectrum-calendar-day-background-color-cap-selected: var(--spectrum-global-color-blue-400);
   --spectrum-calendar-day-background-color-cap-selected-hover: var(--spectrum-global-color-blue-500);
   --spectrum-calendar-day-background-color-cap-selected-down: var(--spectrum-global-color-blue-600);
+  --spectrum-calendar-day-background-color-cap-invalid-selected: var(--spectrum-global-color-red-500);
+  --spectrum-calendar-day-background-color-cap-invalid-selected-hover: var(--spectrum-global-color-red-600);
+  --spectrum-calendar-day-background-color-cap-invalid-selected-down: var(--spectrum-global-color-red-700);
+  --spectrum-calendar-day-background-color-selected-hover: var(--spectrum-alias-highlight-selected);
+  --spectrum-calendar-day-background-color-invalid-selected: rgba(215, 55, 63, 0.15);
   --spectrum-calendar-day-text-color-cap-selected: white;
   --spectrum-calendar-day-text-color-cap-selected-hover: white;
   --spectrum-calendar-day-today-background-color: var(--spectrum-global-color-gray-300);
@@ -39,6 +44,10 @@ governing permissions and limitations under the License.
 
   &.is-range-selection {
     background: var(--spectrum-calendar-day-background-color-selected);
+
+    &.is-invalid {
+      background: var(--spectrum-calendar-day-background-color-invalid-selected);
+    }
   }
 
   &.is-today {
@@ -52,6 +61,10 @@ governing permissions and limitations under the License.
   &.is-selection-end {
     color: var(--spectrum-calendar-day-text-color-cap-selected);
     --background: var(--spectrum-calendar-day-background-color-cap-selected);
+
+    &.is-invalid {
+      --background: var(--spectrum-calendar-day-background-color-cap-invalid-selected);
+    }
   }
 
   &:hover {
@@ -60,7 +73,11 @@ governing permissions and limitations under the License.
 
     &.is-range-selection {
       color: var(--spectrum-calendar-day-text-color-selected-hover);
-      --background: var(--spectrum-alias-highlight-selected);
+      --background: var(--spectrum-calendar-day-background-color-selected-hover);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-invalid-selected);
+      }
     }
 
     &.is-today {
@@ -72,6 +89,10 @@ governing permissions and limitations under the License.
     &.is-selection-end {
       color: var(--spectrum-calendar-day-text-color-cap-selected-hover);
       --background: var(--spectrum-calendar-day-background-color-cap-selected-hover);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-cap-invalid-selected-hover);
+      }
     }
   }
 
@@ -81,7 +102,11 @@ governing permissions and limitations under the License.
 
     &.is-range-selection {
       color: var(--spectrum-calendar-day-text-color-selected-hover);
-      --background:  var(--spectrum-alias-highlight-selected-hover);
+      --background:  var(--spectrum-calendar-day-background-color-selected-hover);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-invalid-selected);
+      }
     }
 
     &.is-today {
@@ -93,6 +118,10 @@ governing permissions and limitations under the License.
     &.is-selection-end {
       color: var(--spectrum-calendar-day-text-color-cap-selected-hover);
       --background: var(--spectrum-calendar-day-background-color-cap-selected-down);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-cap-invalid-selected-down);
+      }
     }
   }
 
@@ -115,7 +144,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &.is-unavailable {
+  &.is-unavailable:not(.is-selected) {
     &,
     &.is-today {
       --background: transparent;

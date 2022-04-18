@@ -4,8 +4,9 @@
   "next": "Próximo",
   "previous": "Anterior",
   "selectedDateDescription": "Data Selecionada: {data, data, completo}",
-  "selectedRangeDescription": "Selecionar Intervalo: {início, data, longo} a {término, data, longo}",
+  "selectedRangeDescription": "Selecionar Intervalo: {dateRange}",
   "startRangeSelectionPrompt": "Clique para começar a selecionar o intervalo de datas",
-  "todayDate": "Hoje, {date, date, full}",
-  "todayDateSelected": "Hoje, {date, date, full} selecionado"
+  "todayDate": "Hoje, {date}",
+  "todayDateSelected": "Hoje, {date} selecionado",
+  "dateRange": "{startDate} a {endDate}"
 }

@@ -1,9 +1,5 @@
 {
   "calendar": "Kalendár",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} do {end, date, long}",
-  "date": "Dátum",
-  "dateRange": "Rozsah dátumov",
   "day": "deň",
   "dayPeriod": "AM/PM",
   "endDate": "Dátum ukončenia",
@@ -15,5 +11,7 @@
   "startDate": "Dátum začatia",
   "year": "rok",
   "weekday": "deň týždňa",
-  "timeZoneName": "časové pásmo"
+  "timeZoneName": "časové pásmo",
+  "selectedDateDescription": "Vybratý dátum: {date}",
+  "selectedRangeDescription": "Vybratý rozsah dátumov: {startDate} do {endDate}"
 }
