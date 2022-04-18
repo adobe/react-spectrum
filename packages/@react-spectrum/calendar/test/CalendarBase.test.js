@@ -416,6 +416,29 @@ describe('CalendarBase', () => {
       expect(wrapper).toHaveAttribute('role', 'group');
     });
 
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should respond to provider props', ({Calendar}) => {
+      let {getByRole, getAllByRole, getByLabelText} = render(
+        <Provider theme={theme} isDisabled>
+          <Calendar />
+        </Provider>
+      );
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-disabled', 'true');
+      expect(grid).not.toHaveAttribute('tabIndex');
+
+      let gridCells = getAllByRole('gridcell');
+      for (let cell of gridCells) {
+        expect(cell).toHaveAttribute('aria-disabled', 'true');
+      }
+
+      expect(getByLabelText('Previous')).toHaveAttribute('disabled');
+      expect(getByLabelText('Next')).toHaveAttribute('disabled');
+    });
   });
 
   describe('labeling', () => {

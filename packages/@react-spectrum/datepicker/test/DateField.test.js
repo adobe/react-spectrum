@@ -204,5 +204,18 @@ describe('DateField', function () {
       expect(within(wrapper).getByText('Date')).toBeInTheDocument();
       expect(within(wrapper).getAllByRole('spinbutton')[0]).toBeInTheDocument();
     });
+
+    it('should respond to provider props', function () {
+      let {getAllByRole} = render(
+        <Provider theme={theme} isDisabled>
+          <DateField label="Date" />
+        </Provider>
+      );
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-disabled', 'true');
+      }
+    });
   });
 });

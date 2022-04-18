@@ -20,7 +20,6 @@ import React, {useEffect, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useCalendarGrid} from '@react-aria/calendar';
 import {useLocale} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface CalendarMonthProps extends CalendarPropsBase, DOMProps, StyleProps {
@@ -29,7 +28,6 @@ interface CalendarMonthProps extends CalendarPropsBase, DOMProps, StyleProps {
 }
 
 export function CalendarMonth(props: CalendarMonthProps) {
-  props = useProviderProps(props);
   let {
     state,
     startDate

@@ -17,10 +17,12 @@ import {DateValue, SpectrumRangeCalendarProps} from '@react-types/calendar';
 import {FocusableRef} from '@react-types/shared';
 import React, {ReactElement, useImperativeHandle, useMemo, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useRangeCalendar} from '@react-aria/calendar';
 import {useRangeCalendarState} from '@react-stately/calendar';
 
 function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
+  props = useProviderProps(props);
   let {visibleMonths = 1} = props;
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
   let {locale} = useLocale();

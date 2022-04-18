@@ -19,8 +19,10 @@ import React, {ReactElement, useImperativeHandle, useMemo, useRef} from 'react';
 import {useCalendar} from '@react-aria/calendar';
 import {useCalendarState} from '@react-stately/calendar';
 import {useLocale} from '@react-aria/i18n';
+import {useProviderProps} from '@react-spectrum/provider';
 
 function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
+  props = useProviderProps(props);
   let {visibleMonths = 1} = props;
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
   let {locale} = useLocale();
