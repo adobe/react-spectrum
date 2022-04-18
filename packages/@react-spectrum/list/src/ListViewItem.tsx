@@ -17,13 +17,13 @@ import {Content} from '@react-spectrum/view';
 import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
 import type {DroppableCollectionState} from '@react-stately/dnd';
+import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './listview.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
 import {useGridCell, useGridRow, useGridSelectionCheckbox} from '@react-aria/grid';
@@ -60,6 +60,7 @@ export function ListViewItem(props: ListViewItemProps) {
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isDraggable = dragState?.isDraggable(item.key) && !isDisabled;
+  let isDroppable = isListDroppable && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {pressProps, isPressed} = usePress({isDisabled});
   let {rowProps} = useGridRow({
@@ -80,10 +81,10 @@ export function ListViewItem(props: ListViewItemProps) {
   let droppableItem: DroppableItemResult;
   let isDropTarget: boolean;
   if (isListDroppable) {
-    isDropTarget = dropState.isDropTarget({type: 'item', key: item.key, dropPosition: 'on'});
-    droppableItem = dropHooks.useDroppableItem({
-      target: {type: 'item', key: item.key, dropPosition: 'on'}
-    }, dropState, rowRef);
+    let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
+    isDropTarget = dropState.isDropTarget(target);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    droppableItem = dropHooks.useDroppableItem({target}, dropState, rowRef);
   }
   const mergedProps = mergeProps(
     gridCellProps,
@@ -120,7 +121,7 @@ export function ListViewItem(props: ListViewItemProps) {
   let {visuallyHiddenProps} = useVisuallyHidden();
   return (
     <div
-      {...mergeProps(rowProps, pressProps, isDraggable && draggableItem?.dragProps, droppableItem?.dropProps)}
+      {...mergeProps(rowProps, pressProps, isDraggable && draggableItem?.dragProps, isDroppable && droppableItem?.dropProps)}
       ref={rowRef}>
       <div
         className={
