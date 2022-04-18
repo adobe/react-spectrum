@@ -1,6 +1,6 @@
 
 import {DropHooks} from '@react-spectrum/dnd';
-import {DroppableCollectionState} from '@react-stately/dnd';
+import type {DroppableCollectionState} from '@react-stately/dnd';
 import React, {useRef} from 'react';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
