@@ -15,7 +15,7 @@ import {ColorAreaState} from '@react-stately/color';
 import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {ChangeEvent, FocusEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useColorAreaGradient} from './useColorAreaGradient';
 import {useFocus, useFocusWithin, useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
@@ -313,9 +313,15 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
       })
   }, focusWithinProps, keyboardProps, movePropsThumb);
 
-  let {focusProps: inputFocusProps} = useFocus({
-    onFocus: (event: FocusEvent<HTMLElement>) => {
-      focusedInputRef.current = event.target;
+  let {focusProps: xInputFocusProps} = useFocus({
+    onFocus: () => {
+      focusedInputRef.current = inputXRef.current;
+    }
+  });
+
+  let {focusProps: yInputFocusProps} = useFocus({
+    onFocus: () => {
+      focusedInputRef.current = inputYRef.current;
     }
   });
 
@@ -399,7 +405,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     xInputProps: {
       ...xInputLabellingProps,
       ...visuallyHiddenProps,
-      ...inputFocusProps,
+      ...xInputFocusProps,
       type: 'range',
       min: state.value.getChannelRange(xChannel).minValue,
       max: state.value.getChannelRange(xChannel).maxValue,
@@ -422,7 +428,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     yInputProps: {
       ...yInputLabellingProps,
       ...visuallyHiddenProps,
-      ...inputFocusProps,
+      ...yInputFocusProps,
       type: 'range',
       min: state.value.getChannelRange(yChannel).minValue,
       max: state.value.getChannelRange(yChannel).maxValue,
