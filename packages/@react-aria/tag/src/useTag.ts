@@ -84,7 +84,6 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
       'aria-label': props['aria-label'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
       tabIndex: (isFocused || state.selectionManager.focusedKey == null) && !isDisabled ? 0 : -1,
-      ref: tagRef
     })
   };
 }

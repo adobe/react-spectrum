@@ -51,7 +51,8 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
 
   return (
     <div
-      {...tagRowProps}>
+      {...tagRowProps}
+      ref={tagRowRef}>
       <div
         {...mergeProps(tagProps, hoverProps, focusProps)}
         className={classNames(
@@ -65,7 +66,8 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
             'is-hovered': isHovered
           },
           styleProps.className
-        )}>
+        )}
+        ref={tagRef}>
         <SlotProvider
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
