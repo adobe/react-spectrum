@@ -56,7 +56,7 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
   }, state, tagRef);
 
   function onKeyDown(e: KeyboardEvent<HTMLElement>) {
-    if (e.key === 'Delete' || e.key === 'Backspace' || e.key === 'Escape' || e.key === ' ') {
+    if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
       onRemove(children, e);
       e.preventDefault();
     }
