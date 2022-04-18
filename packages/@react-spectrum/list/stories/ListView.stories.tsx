@@ -1,4 +1,4 @@
-import {action, actions} from '@storybook/addon-actions';
+import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -7,6 +7,7 @@ import {Content, View} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
+import {DroppableCollectionDropEvent, ItemDropTarget} from '@react-types/shared';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/workflow/Folder';
@@ -14,14 +15,13 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {DroppableCollectionDropEvent, ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
-import {DragHookOptions, DropHookOptions, useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
 
 const items = [
   {key: 'a', textValue: 'Item a', isDraggable: true},
@@ -484,6 +484,7 @@ export function ReorderExample() {
     } else {
       list.moveAfter(target.key, keys);
     }
+    action('onMove');
   };
 
   let onDrop = async (e: DroppableCollectionDropEvent) => {
@@ -497,7 +498,7 @@ export function ReorderExample() {
       }
 
       onMove(keys, e.target);
-      actions('onDrop');
+      action('onDrop');
     }
   };
 
@@ -571,7 +572,7 @@ export function DragIntoItemExample() {
   let dropHooks = useDropHooks({
     onDrop: async e => {
       console.log('onDrop', e);
-      if (e.target.type === 'item' && e.target.dropPosition === 'on' && props.onMove) {
+      if (e.target.type === 'item' && e.target.dropPosition === 'on') {
         list.remove(e.target.key);
         setDroppedItems((prevDropped) => [...prevDropped, e.target]);
       }
@@ -653,7 +654,7 @@ export function DragBetweenListsExample() {
   let dropHooks = useDropHooks({
     onDrop: async e => {
       console.log('onDrop', e);
-      if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
+      if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
         for (let item of e.items) {
           if (item.kind === 'text' && item.types.has(dragType)) {
