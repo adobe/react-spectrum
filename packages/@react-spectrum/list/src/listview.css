@@ -239,29 +239,32 @@
   height: var(--spectrum-dropindicator-border-size);
   margin: 0 var(--spectrum-dropindicator-circle-size);
   position: relative;
-  background: var(--spectrum-dropindicator-border-color);
   height: 2px;
   margin-bottom: -2px;
   outline: none;
 
-  &:before {
-    left: calc(var(--spectrum-dropindicator-circle-size) * -1);
-  }
+  &.react-spectrum-ListViewInsertionIndicator--dropTarget {
+    background: var(--spectrum-dropindicator-border-color);
 
-  &:after {
-    right: calc(var(--spectrum-dropindicator-circle-size) * -1);
-  }
+    &:before {
+      left: calc(var(--spectrum-dropindicator-circle-size) * -1);
+    }
 
-  &:before,
-  &:after {
-    content: '';
-    position: absolute;
-    top: calc(var(--spectrum-dropindicator-circle-size) * -1 / 2 + var(--spectrum-dropindicator-border-size) / 2);
-    width: var(--spectrum-dropindicator-circle-size);
-    height: var(--spectrum-dropindicator-circle-size);
-    border-radius: 50%;
-    border: var(--spectrum-dropindicator-border-size) solid;
-    box-sizing: border-box;
-    border-color: var(--spectrum-dropindicator-circle-border-color);
+    &:after {
+      right: calc(var(--spectrum-dropindicator-circle-size) * -1);
+    }
+
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      top: calc(var(--spectrum-dropindicator-circle-size) * -1 / 2 + var(--spectrum-dropindicator-border-size) / 2);
+      width: var(--spectrum-dropindicator-circle-size);
+      height: var(--spectrum-dropindicator-circle-size);
+      border-radius: 50%;
+      border: var(--spectrum-dropindicator-border-size) solid;
+      box-sizing: border-box;
+      border-color: var(--spectrum-dropindicator-circle-border-color);
+    }
   }
 }

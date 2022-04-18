@@ -32,7 +32,14 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
       <div
         role="gridcell"
         aria-selected="false"
-        className={classNames(listStyles, 'react-spectrum-ListViewInsertionIndicator')}>
+        className={
+          classNames(
+            listStyles,
+            'react-spectrum-ListViewInsertionIndicator',
+            {
+              'react-spectrum-ListViewInsertionIndicator--dropTarget': isDropTarget
+            }
+          )}>
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
       </div>
     </div>
