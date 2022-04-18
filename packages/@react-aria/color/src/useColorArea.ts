@@ -168,8 +168,8 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
 
   let valueChangedViaKeyboard = useRef<boolean>(false);
   let {focusWithinProps} = useFocusWithin({
-    onFocusWithinChange: (value:boolean) => {
-      if (value === false) {
+    onFocusWithinChange: (focusWithin:boolean) => {
+      if (!focusWithin) {
         valueChangedViaKeyboard.current = false;
         focusedInputRef.current === undefined;
       }
