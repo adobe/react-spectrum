@@ -135,12 +135,16 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
 
   let {isDateUnavailable} = props;
   let isInvalidSelection = useMemo(() => {
-    if (!isDateUnavailable || !value || anchorDate) {
+    if (!value || anchorDate) {
       return false;
     }
 
-    return isDateUnavailable(value.start) || isDateUnavailable(value.end);
-  }, [isDateUnavailable, value, anchorDate]);
+    if (isDateUnavailable && (isDateUnavailable(value.start) || isDateUnavailable(value.end))) {
+      return true;
+    }
+
+    return isInvalid(value.start, minValue, maxValue) || isInvalid(value.end, minValue, maxValue);
+  }, [isDateUnavailable, value, anchorDate, minValue, maxValue]);
 
   let validationState = props.validationState || (isInvalidSelection ? 'invalid' : null);
 

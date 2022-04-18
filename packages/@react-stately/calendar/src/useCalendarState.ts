@@ -147,7 +147,17 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     }
   }
 
-  let isUnavailable = useMemo(() => calendarDateValue && isDateUnavailable && isDateUnavailable(calendarDateValue), [calendarDateValue, isDateUnavailable]);
+  let isUnavailable = useMemo(() => {
+    if (!calendarDateValue) {
+      return false;
+    }
+
+    if (isDateUnavailable && isDateUnavailable(calendarDateValue)) {
+      return true;
+    }
+
+    return isInvalid(calendarDateValue, minValue, maxValue);
+  }, [calendarDateValue, isDateUnavailable, minValue, maxValue]);
   let validationState = props.validationState || (isUnavailable ? 'invalid' : null);
 
   return {
