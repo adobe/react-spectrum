@@ -90,11 +90,13 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
   stateRef.current.onBlur = onBlur;
 
   // Clean up MutationObserver on unmount. See below.
+  // eslint-disable-next-line arrow-body-style
   useLayoutEffect(() => {
+    const state = stateRef.current;
     return () => {
-      if (stateRef.current.observer) {
-        stateRef.current.observer.disconnect();
-        stateRef.current.observer = null;
+      if (state.observer) {
+        state.observer.disconnect();
+        state.observer = null;
       }
     };
   }, []);
@@ -115,7 +117,6 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
 
       let target = e.target;
       let onBlurHandler = (e: FocusEvent) => {
-        let state = stateRef.current;
         stateRef.current.isFocused = false;
 
         if (target.disabled) {
