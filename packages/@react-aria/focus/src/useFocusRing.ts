@@ -47,7 +47,7 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
   let [isFocused, setFocused] = useState(false);
   let [isFocusVisibleState, setFocusVisible] = useState(() => state.current.isFocused && state.current.isFocusVisible);
 
-  let updateState = useCallback(() => setFocusVisible(state.current.isFocused && state.current.isFocusVisible), [state.current.isFocusVisible, state.current.isFocused]);
+  let updateState = useCallback(() => setFocusVisible(state.current.isFocused && state.current.isFocusVisible), []);
 
   let onFocusChange = useCallback(isFocused => {
     state.current.isFocused = isFocused;
