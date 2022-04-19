@@ -73,6 +73,8 @@ const ROW_HEIGHTS = {
   }
 };
 
+const CELL_PREFIX = 'cell-';
+
 export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -141,7 +143,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       ...item,
       hasChildNodes: true,
       childNodes: [{
-        key: `cell-${item.key}`,
+        key: `${CELL_PREFIX}${item.key}`,
         type: 'cell',
         index: 0,
         value: null,
@@ -274,7 +276,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           }
         }
 
-        let key = closest?.children[0].children[0].dataset.key;
+        let key = closest?.children[0].children[0].dataset.key.slice(CELL_PREFIX.length);
         if (key) {
           return {
             type: 'item',
@@ -335,7 +337,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         transitionDuration={transitionDuration}>
         {(type, item) => {
           if (type === 'item') {
-            let target: Omit<ItemDropTarget, 'dropPosition'> = {type: 'item', key: `cell-${item.key}`};
+            let target: Omit<ItemDropTarget, 'dropPosition'> = {type: 'item', key: item.key};
             let isLastItem = state.collection.getKeyAfter(item.key) == null;
             let isFirstItem = state.collection.getKeyBefore(item.key) == null;
             return (
