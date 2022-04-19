@@ -3,17 +3,17 @@ import {DropHooks} from '@react-spectrum/dnd';
 import type {DroppableCollectionState} from '@react-stately/dnd';
 import {ItemDropTarget} from '@react-types/shared';
 import listStyles from './listview.css';
-import React, {useRef} from 'react';
+import {ListViewContext} from './ListView';
+import React, {useContext, useRef} from 'react';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 interface InsertionIndicatorProps {
-  target: ItemDropTarget,
-  dropState: DroppableCollectionState,
-  dropHooks: DropHooks
+  target: ItemDropTarget
 }
 
 export default function InsertionIndicator(props: InsertionIndicatorProps) {
-  const {dropHooks, dropState, target} = props;
+  let {dropState, dropHooks} = useContext(ListViewContext);
+  const {target} = props;
   let ref = useRef();
   let {dropIndicatorProps} = dropHooks.useDropIndicator(props, dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
