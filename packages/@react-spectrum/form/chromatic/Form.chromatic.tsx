@@ -60,13 +60,13 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
     </RadioGroup>
     <SearchField label="Search" />
     <SearchWithin label="Search">
-      <SearchField placeholder="Search" />
+      <SearchField />
       <Picker label="State" placeholder="Select a state" items={flatOptions}>
         {item => <Item key={item.id}>{item.name}</Item>}
       </Picker>
     </SearchWithin>
-    <TextArea label="Comments" placeholder="How do you feel?" />
-    <TextField label="City" placeholder="San Francisco" />
+    <TextArea label="Comments" />
+    <TextField label="City" />
   </Form>
 );
 

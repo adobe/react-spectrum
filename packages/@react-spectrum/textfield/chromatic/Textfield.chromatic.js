@@ -96,23 +96,19 @@ function render(props = {}, disabled = true) {
     <Flex gap="size-100" wrap>
       <TextField
         label="Default"
-        placeholder="React"
         {...props} />
       <TextField
         label="Quiet"
-        placeholder="React"
         isQuiet
         {...props} />
       {disabled && (
         <>
           <TextField
             label="Disabled"
-            placeholder="React"
             isDisabled
             {...props} />
           <TextField
             label="Quiet + Disabled"
-            placeholder="React"
             isQuiet
             isDisabled
             {...props} />

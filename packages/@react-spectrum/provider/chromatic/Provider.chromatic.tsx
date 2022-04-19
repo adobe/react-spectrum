@@ -69,7 +69,7 @@ const Template = (): Story<ProviderProps> => (args) => (
       </RadioGroup>
       <SearchField label="Search" />
       <SearchWithin label="Search">
-        <SearchField placeholder="Search" />
+        <SearchField />
         <Picker name="favorite-color3" label="Favorite color searchwithin">
           <Item key="red">Red</Item>
           <Item key="orange">Orange</Item>
@@ -82,7 +82,6 @@ const Template = (): Story<ProviderProps> => (args) => (
       <Switch isSelected>Dogs!</Switch>
       <TextField
         label="A text field"
-        placeholder="Something"
         marginTop="size-100"
         necessityIndicator="label"
         value="dummy value" />
@@ -113,7 +112,6 @@ const ResponsiveStyleTemplate = (): Story<ProviderProps> => () => (
     <div>
       <TextField
         label="A text field"
-        placeholder="Something"
         width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}} />
     </div>
     <Button

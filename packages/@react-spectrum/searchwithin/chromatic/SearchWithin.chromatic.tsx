@@ -69,7 +69,7 @@ const Template: Story<SpectrumSearchWithinProps> = (args) => (
 
       return (
         <SearchWithin key={key} {...args} {...c} label={args['aria-label'] ? undefined : key}>
-          <SearchField placeholder="Search" />
+          <SearchField />
           <Picker defaultSelectedKey="all">
             {items.map((item) => <Item key={item.id}>{item.name}</Item>)}
           </Picker>
@@ -90,7 +90,7 @@ const TemplateSideLabel: Story<SpectrumSearchWithinProps> = (args) => (
 
       return (
         <SearchWithin key={key} {...args} {...c} label={args['aria-label'] ? undefined : key}>
-          <SearchField placeholder="Search" />
+          <SearchField />
           <Picker defaultSelectedKey="all">
             {items.map((item) => <Item key={item.id}>{item.name}</Item>)}
           </Picker>

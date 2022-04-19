@@ -96,23 +96,19 @@ function render(props = {}, disabled = true) {
     <Flex gap="size-100" wrap>
       <TextArea
         label="Default"
-        placeholder="React"
         {...props} />
       <TextArea
         label="Quiet"
-        placeholder="React"
         isQuiet
         {...props} />
       {disabled && (
         <>
           <TextArea
             label="Disabled"
-            placeholder="React"
             isDisabled
             {...props} />
           <TextArea
             label="Quiet + Disabled"
-            placeholder="React"
             isQuiet
             isDisabled
             {...props} />
