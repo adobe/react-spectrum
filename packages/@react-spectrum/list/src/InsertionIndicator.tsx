@@ -1,6 +1,4 @@
 import {classNames} from '@react-spectrum/utils';
-import {DropHooks} from '@react-spectrum/dnd';
-import type {DroppableCollectionState} from '@react-stately/dnd';
 import {ItemDropTarget} from '@react-types/shared';
 import listStyles from './listview.css';
 import {ListViewContext} from './ListView';
