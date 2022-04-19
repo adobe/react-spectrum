@@ -476,6 +476,13 @@ module.exports = new Transformer({
         });
       }
 
+      if (path.isTSTypeOperator() && path.node.operator === 'keyof') {
+        return Object.assign(node, {
+          type: 'keyof',
+          keyof: processExport(path.get('typeAnnotation'))
+        });
+      }
+
       console.log('UNKNOWN TYPE', path.node.type);
     }
 
