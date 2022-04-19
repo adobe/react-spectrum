@@ -13,10 +13,9 @@
 import {action} from '@storybook/addon-actions';
 import Audio from '@spectrum-icons/workflow/Audio';
 import {Icon} from '@react-spectrum/icon';
-import {Item} from '@react-stately/collections';
+import {Item, TagGroup} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {TagGroup} from '../src';
 import {Text} from '@react-spectrum/text';
 
 storiesOf('TagGroup', module)
