@@ -58,17 +58,21 @@ function render(props = {}) {
     <Flex gap="size-100">
       <SearchField
         label="Default"
+        placeholder="React"
         {...props} />
       <SearchField
         label="Quiet"
+        placeholder="React"
         isQuiet
         {...props} />
       <SearchField
         label="Disabled"
+        placeholder="React"
         isDisabled
         {...props} />
       <SearchField
         label="Quiet + Disabled"
+        placeholder="React"
         isQuiet
         isDisabled
         {...props} />

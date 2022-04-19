@@ -100,6 +100,10 @@ export const PropDefaultValue = Template.bind({});
 PropDefaultValue.storyName = 'default value';
 PropDefaultValue.args = {...PropDefaults.args, defaultValue: '#abcdef'};
 
+export const PropPlaceholder = Template.bind({});
+PropPlaceholder.storyName = 'placeholder';
+PropPlaceholder.args = {...PropDefaults.args, placeholder: 'Enter a hex color'};
+
 export const PropAriaLabelled = NoLabelTemplate.bind({});
 PropAriaLabelled.storyName = 'aria-label';
 PropAriaLabelled.args = {'aria-label': 'Label'};

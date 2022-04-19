@@ -61,9 +61,9 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
       <Radio value="dragons">Dragons</Radio>
       <Radio value="dragons">Ringu the five headed metallic dragon of gold, silver, bronze, copper, and brass</Radio>
     </RadioGroup>
-    <SearchField label="Search for the entirety of knowledge on Creative Cloud Express" />
+    <SearchField label="Search for the entirety of knowledge on Creative Cloud Express" placeholder="Enter text" />
     <SearchWithin label="SearchWithin the depths of the human soul searching for what made us farm">
-      <SearchField />
+      <SearchField placeholder="Search" />
       <Picker defaultSelectedKey="all">
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
@@ -71,8 +71,8 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
         <Item key="tags">Tags</Item>
       </Picker>
     </SearchWithin>
-    <TextArea label="Please write an epic story of fact and fantasy in the epic sci-fi genre of dinosaurs" />
-    <TextField label="Cities of past, present, and future" />
+    <TextArea label="Please write an epic story of fact and fantasy in the epic sci-fi genre of dinosaurs" placeholder="How do you feel?" />
+    <TextField label="Cities of past, present, and future" placeholder="San Francisco" />
   </Form>
 );
 
