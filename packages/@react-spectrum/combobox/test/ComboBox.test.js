@@ -286,6 +286,17 @@ describe('ComboBox', function () {
     expect(label).toBeVisible();
   });
 
+  it('renders with placeholder text and shows warning', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByPlaceholderText, getByRole} = renderComboBox({placeholder: 'Test placeholder'});
+    
+    let searchAutocomplete = getByRole('combobox');
+
+    expect(getByPlaceholderText('Test placeholder')).toBeTruthy();
+    expect(searchAutocomplete.placeholder).toBe('Test placeholder');
+    expect(spyWarn).toHaveBeenCalledWith('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ComboBox.html#help-text');
+  });
+
   it('propagates the name attribute', function () {
     let {getByRole} = renderComboBox({name: 'test name'});
 
