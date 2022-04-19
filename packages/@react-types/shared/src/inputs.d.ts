@@ -45,6 +45,15 @@ export interface TextInputBase {
   placeholder?: string
 }
 
+export interface SpectrumTextInputBase {
+  /**
+   * Temporary text that occupies the text input when it is empty.
+   * Please use help text instead.
+   * @deprecated
+   **/
+  placeholder?: string
+}
+
 export interface RangeValue<T> {
   /** The start value of the range. */
   start: T,

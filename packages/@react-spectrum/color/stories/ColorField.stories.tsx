@@ -67,10 +67,6 @@ storiesOf('ColorField', module)
     )
   )
   .add(
-    'with placeholder',
-    () => render({placeholder: 'Enter a hex color'})
-  )
-  .add(
     'controlled value',
     () => (
       <ControlledColorField
@@ -81,10 +77,6 @@ storiesOf('ColorField', module)
   .add(
     'autofocus',
     () => render({autoFocus: true})
-  )
-  .add(
-    'placeholder',
-    () => render({placeholder: '#e73623'})
   )
   .add(
     'label side',

@@ -63,13 +63,6 @@ function Example() {
 }
 ```
 
-Placeholder text that describes the expected value or formatting for the TextArea can be provided using the `placeholder` prop.
-Placeholder text will only appear when the TextArea is empty, and should not be used as a substitute for labeling the component with a visible label.
-
-```tsx example
-<TextArea placeholder="abc@adobe.com, def@adobe.com" label="List of emails" />
-```
-
 ## Labeling
 
 A visual label should be provided for the TextArea using the `label` prop. If the TextArea is required, the `isRequired` and
@@ -109,7 +102,6 @@ function Example() {
   return (
     <Flex direction="column">
       <TextArea
-        placeholder="Enter some text"
         onChange={setText}
         label="Your text"
       />
@@ -134,7 +126,6 @@ function Example() {
     <TextArea
       validationState={isValid ? 'valid' : 'invalid'}
       value={value}
-      placeholder="Enter a description"
       onChange={setValue}
       label="Description" />
   );
@@ -155,7 +146,7 @@ In addition to changing the visual style of the TextArea, the `isQuiet` prop rem
 To compensate, the TextArea automatically adjusts its own height to accommodate for additional lines of text.
 
 ```tsx example
-<TextArea label="Email" placeholder="Email Address" isQuiet />
+<TextArea label="Email" isQuiet />
 ```
 
 ### Disabled
@@ -163,7 +154,7 @@ To compensate, the TextArea automatically adjusts its own height to accommodate 
 [View guidelines](https://spectrum.adobe.com/page/text-area/#Disabled)
 
 ```tsx example
-<TextArea label="Email" placeholder="Email Address" isDisabled />
+<TextArea label="Email" isDisabled />
 ```
 
 ### Read only
