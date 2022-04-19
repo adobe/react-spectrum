@@ -133,7 +133,7 @@ describe('DateField', function () {
       expect(group).toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3, 2020 Help text');
+      expect(description).toBe('Selected Date: February 3, 2020 Help text');
 
       let segments = getAllByRole('spinbutton');
       expect(segments[0]).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
@@ -150,7 +150,7 @@ describe('DateField', function () {
       expect(group).toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3, 2020 Error message');
+      expect(description).toBe('Selected Date: February 3, 2020 Error message');
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {

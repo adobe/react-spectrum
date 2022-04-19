@@ -479,7 +479,7 @@ describe('CalendarBase', () => {
       expect(calendar).toHaveAttribute('id');
       expect(calendar).toHaveAttribute('aria-label', 'Calendar');
       expect(calendar).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(calendar.getAttribute('aria-describedby'))).toHaveTextContent('May – July 2019');
+      expect(document.getElementById(calendar.getAttribute('aria-describedby'))).toHaveTextContent('May to July 2019');
       expect(months[0]).toHaveAttribute('aria-label', 'May 2019');
       expect(months[0]).toHaveAttribute('id');
       expect(months[0]).toHaveAttribute('aria-labelledby', `${calendar.id} ${months[0].id}`);

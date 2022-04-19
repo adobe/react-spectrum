@@ -26,7 +26,7 @@ function renderSearchWithin(props = {}, searchFieldProps = {}, pickerProps = {})
   return render(
     <Provider theme={theme}>
       <SearchWithin {...defaultProps} {...props}>
-        <SearchField placeholder="Search" {...searchFieldProps} />
+        <SearchField {...searchFieldProps} />
         <Picker defaultSelectedKey="all" {...pickerProps}>
           <Item key="all">All</Item>
           <Item key="campaigns">Campaigns</Item>
@@ -218,7 +218,7 @@ describe('SearchWithin labeling', function () {
           Foo
         </label>
         <SearchWithin aria-labelledby="id-foo-label">
-          <SearchField id="id-searchfield" placeholder="Search"  />
+          <SearchField id="id-searchfield" />
           <Picker defaultSelectedKey="all">
             <Item key="all">All</Item>
             <Item key="campaigns">Campaigns</Item>

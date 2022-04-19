@@ -15,6 +15,28 @@ import {GridKeyboardDelegate} from '@react-aria/grid';
 import {Key} from 'react';
 
 export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollection<T>> {
+  getFirstKey() {
+    let key = this.collection.getFirstKey();
+    let item = this.collection.getItem(key);
+    let newKey = [...item.childNodes][0].key;
+
+    if (this.disabledKeys.has(newKey)) {
+      newKey = this.getKeyBelow(newKey);
+    }
+    return newKey;
+  }
+
+  getLastKey() {
+    let key = this.collection.getLastKey();
+    let item = this.collection.getItem(key);
+    let newKey = [...item.childNodes][0].key;
+
+    if (this.disabledKeys.has(newKey)) {
+      newKey = this.getKeyAbove(newKey);
+    }
+    return newKey;
+  }
+
   getKeyRightOf(key: Key) {
     return this.direction === 'rtl' ? this.getKeyAbove(key) : this.getKeyBelow(key);
   }
@@ -53,6 +75,8 @@ export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollecti
       if (this.focusMode === 'row') {
         return key;
       }
+    } else {
+      return this.getFirstKey();
     }
   }
 
@@ -86,6 +110,16 @@ export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollecti
       if (this.focusMode === 'row') {
         return key;
       }
+    } else {
+      return this.getLastKey();
     }
+  }
+
+  getKeyPageAbove(key) {
+    return this.getKeyAbove(key);
+  }
+
+  getKeyPageBelow(key) {
+    return this.getKeyBelow(key);
   }
 }
