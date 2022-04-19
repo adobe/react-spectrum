@@ -144,7 +144,7 @@ describe('TagGroup', function () {
   });
 
   it.each`
-    Name                                                   | props                                         | orders
+    Name                                                | props                                         | orders
     ${'(left/right arrows, ltr + horizontal) TagGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 1}, {action: pressArrowLeft, index: 0}, {action: pressArrowLeft, index: 2}]}
     ${'(left/right arrows, rtl + horizontal) TagGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowLeft, index: 1}, {action: pressArrowRight, index: 0}, {action: pressArrowRight, index: 2}]}
     ${'(up/down arrows, ltr + horizontal) TagGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowDown, index: 1}, {action: pressArrowUp, index: 0}, {action: pressArrowUp, index: 2}]}
@@ -367,6 +367,27 @@ describe('TagGroup', function () {
     pressArrowRight(tags[0]);
     expect(tags[0]).toHaveAttribute('tabIndex', '-1');
     expect(tags[1]).toHaveAttribute('tabIndex', '0');
+  });
+
+  it.each`
+    Name                         | props
+    ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
+    ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
+    ${'on `space` keypress'}     | ${{keyPress: ' '}}
+  `('Remove tag $Name', function ({Name, props}) {
+    let {getByText} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" isRemovable onRemove={onRemoveSpy}>
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let tag = getByText('Tag 1');
+    fireEvent.keyDown(tag, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledWith('Tag 1', expect.anything());
   });
 
 

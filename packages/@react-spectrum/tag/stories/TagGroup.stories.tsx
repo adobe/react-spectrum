@@ -74,9 +74,9 @@ storiesOf('TagGroup', module)
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Another cool tag</Item>
         <Item key="3">This tag</Item>
-        <Item key="3">What tag?</Item>
-        <Item key="3">This tag is cool too</Item>
-        <Item key="3">Shy tag</Item>
+        <Item key="4">What tag?</Item>
+        <Item key="5">This tag is cool too</Item>
+        <Item key="6">Shy tag</Item>
       </TagGroup>
     </div>
     )
