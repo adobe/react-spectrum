@@ -14,10 +14,13 @@ import {AriaDatePickerProps, AriaTimeFieldProps, DateValue, TimeValue} from '@re
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState} from '@react-stately/datepicker';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps, useDescription} from '@react-aria/utils';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 // Allows this hook to also be used with TimeField
 interface DateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
@@ -67,7 +70,11 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
     }
   });
 
-  let descProps = useDescription(state.formatValue({month: 'long'}));
+  let formatMessage = useMessageFormatter(intlMessages);
+  let message = state.maxGranularity === 'hour' ? 'selectedTimeDescription' : 'selectedDateDescription';
+  let field = state.maxGranularity === 'hour' ? 'time' : 'date';
+  let description = state.value ? formatMessage(message, {[field]: state.formatValue({month: 'long'})}) : '';
+  let descProps = useDescription(description);
 
   // If within a date picker or date range picker, the date field will have role="presentation" and an aria-describedby
   // will be passed in that references the value (e.g. entire range). Otherwise, add the field's value description.

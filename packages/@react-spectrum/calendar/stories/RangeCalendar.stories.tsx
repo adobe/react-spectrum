@@ -94,6 +94,21 @@ storiesOf('Date and Time/RangeCalendar', module)
   .add(
     'defaultValue, visibleMonths: 3',
     () => render({visibleMonths: 3, defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 12, 10)}})
+  )
+  .add(
+    'validationState: invalid',
+    () => render({validationState: 'invalid', defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 10, 14)}})
+  )
+  .add(
+    'validationState: invalid, errorMessage',
+    () => render({validationState: 'invalid', errorMessage: 'Selection may not include weekends.', defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 10, 14)}})
+  )
+  .add(
+    'isDateUnavailable, invalid',
+    () => {
+      let {locale} = useLocale();
+      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true, defaultValue: {start: new CalendarDate(2021, 10, 3), end: new CalendarDate(2021, 10, 16)}});
+    }
   );
 
   // Fake cell for testing css
