@@ -463,6 +463,7 @@ export function DragExample(props?) {
 }
 
 export function ReorderExample() {
+  let onDropAction = action('onDrop');
 
   let list = useListData({
     initialItems: [
@@ -484,22 +485,6 @@ export function ReorderExample() {
     } else {
       list.moveAfter(target.key, keys);
     }
-    action('onMove');
-  };
-
-  let onDrop = async (e: DroppableCollectionDropEvent) => {
-    if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
-      let keys = [];
-      for (let item of e.items) {
-        if (item.kind === 'text' && item.types.has(dragType)) {
-          let key = JSON.parse(await item.getText(dragType));
-          keys.push(key);
-        }
-      }
-
-      onMove(keys, e.target);
-      action('onDrop');
-    }
   };
 
   let dragHooks = useDragHooks({
@@ -514,7 +499,20 @@ export function ReorderExample() {
   });
 
   let dropHooks = useDropHooks({
-    onDrop,
+    async onDrop(e) {
+      if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
+
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text' && item.types.has(dragType)) {
+            let key = JSON.parse(await item.getText(dragType));
+            keys.push(key);
+          }
+        }
+        onDropAction(e);
+        onMove(keys, e.target);
+      } 
+    },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
         return 'cancel';
@@ -523,6 +521,7 @@ export function ReorderExample() {
       return 'move';
     }
   });
+  
 
   return (
     <ListView
@@ -547,7 +546,7 @@ export function DragIntoItemExample() {
 
   let list = useListData({
     initialItems: [
-      {id: '0', type: 'item', textValue: 'Folder', isFolder: true},
+      {id: '0', type: 'folder', textValue: 'Folder', isFolder: true},
       {id: '1', type: 'item', textValue: 'One'},
       {id: '2', type: 'item', textValue: 'Two'},
       {id: '3', type: 'item', textValue: 'Three'},
@@ -571,9 +570,8 @@ export function DragIntoItemExample() {
 
   let dropHooks = useDropHooks({
     onDrop: async e => {
-      console.log('onDrop', e);
-      if (e.target.type === 'item' && e.target.dropPosition === 'on') {
-        list.remove(e.target.key);
+      if (e.target.type === 'item' && e.target.key === '0' && e.target.dropPosition === 'on') {
+        // list.remove();
         setDroppedItems((prevDropped) => [...prevDropped, e.target]);
       }
     }
@@ -670,34 +668,40 @@ export function DragBetweenListsExample() {
 
   return (
     <>
-      <ListView
-        aria-label="First list view"
-        selectionMode="multiple"
-        width="300px"
-        items={list1.items}
-        disabledKeys={['2']}
-        dragHooks={dragHooks}
-        dropHooks={dropHooks}>
-        {(item: any) => (
-          <Item key={item.id} textValue={item.textValue}>
-            Item {item.textValue}
-          </Item>
+      <Flex direction="column" margin="size-100">
+        <Text alignSelf="center">List 1</Text>
+        <ListView
+          aria-label="First list view"
+          selectionMode="multiple"
+          width="300px"
+          items={list1.items}
+          disabledKeys={['2']}
+          dragHooks={dragHooks}
+          dropHooks={dropHooks}>
+          {(item: any) => (
+            <Item key={item.id} textValue={item.textValue}>
+              Item {item.textValue}
+            </Item>
         )}
-      </ListView>
-      <ListView
-        aria-label="Second list view"
-        selectionMode="multiple"
-        width="300px"
-        items={list2.items}
-        disabledKeys={['2']}
-        dragHooks={dragHooks}
-        dropHooks={dropHooks}>
-        {(item: any) => (
-          <Item key={item.id} textValue={item.textValue}>
-            Item {item.textValue}
-          </Item>
+        </ListView>
+      </Flex>
+      <Flex direction="column" margin="size-100">
+        <Text alignSelf="center">List 2</Text>
+        <ListView
+          aria-label="Second list view"
+          selectionMode="multiple"
+          width="300px"
+          items={list2.items}
+          disabledKeys={['2']}
+          dragHooks={dragHooks}
+          dropHooks={dropHooks}>
+          {(item: any) => (
+            <Item key={item.id} textValue={item.textValue}>
+              Item {item.textValue}
+            </Item>
         )}
-      </ListView>
+        </ListView>
+      </Flex>
     </>
   );
 }
