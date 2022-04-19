@@ -1,11 +1,12 @@
 {
-  "dateSelected": "избрани {date, date, full}",
+  "dateSelected": "избрани {date}",
   "finishRangeSelectionPrompt": "Натиснете, за да довършите избора на времеви интервал",
   "next": "Напред",
   "previous": "Назад",
-  "selectedDateDescription": "Избрана дата: {date, date, full}",
-  "selectedRangeDescription": "Избран интервал: от {start, date, long} до {end, date, long}",
+  "selectedDateDescription": "Избрана дата: {date}",
+  "selectedRangeDescription": "Избран интервал: от {dateRange}",
   "startRangeSelectionPrompt": "Натиснете, за да пристъпите към избора на времеви интервал",
-  "todayDate": "Днес {date, date, full}",
-  "todayDateSelected": "Днес са избрани {date, date, full}"
+  "todayDate": "Днес {date}",
+  "todayDateSelected": "Днес са избрани {date}",
+  "dateRange": "{startDate} до {endDate}"
 }

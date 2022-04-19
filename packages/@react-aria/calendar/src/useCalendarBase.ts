@@ -18,14 +18,16 @@ import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
+import {mergeProps, useDescription, useId, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useRef} from 'react';
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarState | RangeCalendarState): CalendarAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let calendarId = useId(props.id);
 
-  let visibleRangeDescription = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone);
+  let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);
+  let visibleRangeDescription = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, true);
 
   // Announce when the visible date range changes
   useUpdateEffect(() => {
@@ -45,26 +47,57 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   }, [selectedDateDescription]);
 
   let descriptionProps = useDescription(visibleRangeDescription);
+  let errorMessageId = useSlotId([Boolean(props.errorMessage), props.validationState]);
 
   // Label the child grid elements by the group element if it is labelled.
-  calendarIds.set(state, props['aria-label'] || props['aria-labelledby'] ? calendarId : null);
+  calendarIds.set(state, {
+    calendarId: props['aria-label'] || props['aria-labelledby'] ? calendarId : null,
+    errorMessageId
+  });
+
+  // If the next or previous buttons become disabled while they are focused, move focus to the calendar body.
+  let nextFocused = useRef(false);
+  let nextDisabled = props.isDisabled || state.isNextVisibleRangeInvalid();
+  if (nextDisabled && nextFocused.current) {
+    nextFocused.current = false;
+    state.setFocused(true);
+  }
+
+  let previousFocused = useRef(false);
+  let previousDisabled = props.isDisabled || state.isPreviousVisibleRangeInvalid();
+  if (previousDisabled && previousFocused.current) {
+    previousFocused.current = false;
+    state.setFocused(true);
+  }
 
   return {
-    calendarProps: mergeProps(descriptionProps, {
+    calendarProps: mergeProps({
       role: 'group',
       id: calendarId,
       'aria-label': props['aria-label'],
-      'aria-labelledby': props['aria-labelledby']
+      'aria-labelledby': props['aria-labelledby'],
+      'aria-describedby': [
+        props['aria-describedby'],
+        descriptionProps['aria-describedby']
+      ].filter(Boolean).join(' ') || undefined
     }),
     nextButtonProps: {
       onPress: () => state.focusNextPage(),
       'aria-label': formatMessage('next'),
-      isDisabled: props.isDisabled || state.isNextVisibleRangeInvalid()
+      isDisabled: nextDisabled,
+      onFocus: () => nextFocused.current = true,
+      onBlur: () => nextFocused.current = false
     },
     prevButtonProps: {
       onPress: () => state.focusPreviousPage(),
       'aria-label': formatMessage('previous'),
-      isDisabled: props.isDisabled || state.isPreviousVisibleRangeInvalid()
-    }
+      isDisabled: previousDisabled,
+      onFocus: () => previousFocused.current = true,
+      onBlur: () => previousFocused.current = false
+    },
+    errorMessageProps: {
+      id: errorMessageId
+    },
+    title
   };
 }

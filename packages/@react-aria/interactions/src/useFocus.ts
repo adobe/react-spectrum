@@ -17,6 +17,7 @@
 
 import {FocusEvent, HTMLAttributes} from 'react';
 import {FocusEvents} from '@react-types/shared';
+import {useSyntheticBlurEvent} from './utils';
 
 interface FocusProps extends FocusEvents {
   /** Whether the focus events should be disabled. */
@@ -33,26 +34,8 @@ interface FocusResult {
  * Focus events on child elements will be ignored.
  */
 export function useFocus(props: FocusProps): FocusResult {
-  if (props.isDisabled) {
-    return {focusProps: {}};
-  }
-
-  let onFocus, onBlur;
-  if (props.onFocus || props.onFocusChange) {
-    onFocus = (e: FocusEvent) => {
-      if (e.target === e.currentTarget) {
-        if (props.onFocus) {
-          props.onFocus(e);
-        }
-
-        if (props.onFocusChange) {
-          props.onFocusChange(true);
-        }
-      }
-    };
-  }
-
-  if (props.onBlur || props.onFocusChange) {
+  let onBlur: FocusProps['onBlur'];
+  if (!props.isDisabled && (props.onBlur || props.onFocusChange)) {
     onBlur = (e: FocusEvent) => {
       if (e.target === e.currentTarget) {
         if (props.onBlur) {
@@ -62,6 +45,29 @@ export function useFocus(props: FocusProps): FocusResult {
         if (props.onFocusChange) {
           props.onFocusChange(false);
         }
+
+        return true;
+      }
+    };
+  } else {
+    onBlur = null;
+  }
+
+  let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
+
+  let onFocus: FocusProps['onFocus'];
+  if (!props.isDisabled && (props.onFocus || props.onFocusChange || props.onBlur)) {
+    onFocus = (e: FocusEvent) => {
+      if (e.target === e.currentTarget) {
+        if (props.onFocus) {
+          props.onFocus(e);
+        }
+
+        if (props.onFocusChange) {
+          props.onFocusChange(true);
+        }
+
+        onSyntheticFocus(e);
       }
     };
   }

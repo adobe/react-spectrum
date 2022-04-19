@@ -62,7 +62,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Dropdown-label {
   &.is-placeholder {
-    color: var(--spectrum-dropdown-placeholder-text-color);
+    /* Override to gray-800 to meet WCAG */
+    color: var(--spectrum-global-color-gray-800);
   }
 }
 

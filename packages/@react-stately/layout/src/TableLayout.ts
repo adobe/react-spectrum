@@ -10,29 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnProps, TableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
+import {TableCollection} from '@react-types/table';
 
-
-type TableLayoutOptions<T> = ListLayoutOptions<T> & {
-  getDefaultWidth: (props) => string | number
-}
 
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
   lastCollection: TableCollection<T>;
-  columnWidths: Map<Key, number>;
+  getColumnWidth: (key: Key) => number;
   stickyColumnIndices: number[];
-  getDefaultWidth: (props) => string | number;
   wasLoading = false;
   isLoading = false;
 
-  constructor(options: TableLayoutOptions<T>) {
+  constructor(options: ListLayoutOptions<T>) {
     super(options);
-    this.getDefaultWidth = options.getDefaultWidth;
+    this.stickyColumnIndices = [];
   }
 
 
@@ -52,72 +47,16 @@ export class TableLayout<T> extends ListLayout<T> {
     this.wasLoading = this.isLoading;
     this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
-    this.buildColumnWidths();
     let header = this.buildHeader();
     let body = this.buildBody(0);
+    this.stickyColumnIndices = this.collection.columns.filter(c => c.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(c.key)).map(c => c.index);
+
     body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
     this.contentSize = new Size(body.layoutInfo.rect.width, body.layoutInfo.rect.maxY);
     return [
       header,
       body
     ];
-  }
-
-  buildColumnWidths() {
-    this.columnWidths = new Map();
-    this.stickyColumnIndices = [];
-
-    // Pass 1: set widths for all explicitly defined columns.
-    let remainingColumns = new Set<GridNode<T>>();
-    let remainingSpace = this.virtualizer.visibleRect.width;
-    for (let column of this.collection.columns) {
-      let props = column.props as ColumnProps<T>;
-      let width = props.width ?? this.getDefaultWidth(props);
-      if (width != null) {
-        let w = this.parseWidth(width);
-        this.columnWidths.set(column.key, w);
-        remainingSpace -= w;
-      } else {
-        remainingColumns.add(column);
-      }
-
-      // The selection cell and any other sticky columns always need to be visible.
-      // In addition, row headers need to be in the DOM for accessibility labeling.
-      if (column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
-        this.stickyColumnIndices.push(column.index);
-      }
-    }
-
-    // Pass 2: if there are remaining columns, then distribute the remaining space evenly.
-    if (remainingColumns.size > 0) {
-      let columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
-
-      for (let column of remainingColumns) {
-        let props = column.props as ColumnProps<T>;
-        let minWidth = props.minWidth != null ? this.parseWidth(props.minWidth) : 75;
-        let maxWidth = props.maxWidth != null ? this.parseWidth(props.maxWidth) : Infinity;
-        let width = Math.max(minWidth, Math.min(maxWidth, columnWidth));
-
-        this.columnWidths.set(column.key, width);
-        remainingSpace -= width;
-        if (width !== columnWidth) {
-          columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
-        }
-      }
-    }
-  }
-
-  parseWidth(width: number | string): number {
-    if (typeof width === 'string') {
-      let match = width.match(/^(\d+)%$/);
-      if (!match) {
-        throw new Error('Only percentages are supported as column widths');
-      }
-
-      return this.virtualizer.visibleRect.width * (parseInt(match[1], 10) / 100);
-    }
-
-    return width;
   }
 
   buildHeader(): LayoutNode {
@@ -183,12 +122,13 @@ export class TableLayout<T> extends ListLayout<T> {
     }
   }
 
-  getColumnWidth(node: GridNode<T>) {
+  // used to get the column widths when rendering to the DOM
+  getColumnWidth_(node: GridNode<T>) {
     let colspan = node.colspan ?? 1;
     let width = 0;
-    for (let i = 0; i < colspan; i++) {
-      let column = this.collection.columns[node.index + i];
-      width += this.columnWidths.get(column.key);
+    for (let i = node.index; i < node.index + colspan; i++) {
+      let column = this.collection.columns[i];
+      width += this.getColumnWidth(column.key);
     }
 
     return width;
@@ -218,7 +158,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
-    let width = this.getColumnWidth(node);
+    let width = this.getColumnWidth_(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
@@ -318,7 +258,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
-    let width = this.getColumnWidth(node);
+    let width = this.getColumnWidth_(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
