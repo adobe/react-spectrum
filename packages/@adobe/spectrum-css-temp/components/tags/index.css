@@ -72,10 +72,6 @@ governing permissions and limitations under the License.
   margin-inline-end: 0;
 }
 
-.spectrum-Tag-label {
-  grid-area: label;
-}
-
 .spectrum-Tag-action {
   grid-area: action;
   height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));

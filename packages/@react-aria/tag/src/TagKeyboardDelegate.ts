@@ -16,11 +16,25 @@ import {Key} from 'react';
 
 export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollection<T>> {
   getFirstKey() {
-    return super.getFirstKey();
+    let key = this.collection.getFirstKey();
+    let item = this.collection.getItem(key);
+    let newKey = [...item.childNodes][0].key;
+
+    if (this.disabledKeys.has(newKey)) {
+      newKey = this.getKeyBelow(newKey);
+    }
+    return newKey;
   }
 
   getLastKey() {
-    return super.getLastKey();
+    let key = this.collection.getLastKey();
+    let item = this.collection.getItem(key);
+    let newKey = [...item.childNodes][0].key;
+
+    if (this.disabledKeys.has(newKey)) {
+      newKey = this.getKeyAbove(newKey);
+    }
+    return newKey;
   }
 
   getKeyRightOf(key: Key) {
@@ -102,44 +116,10 @@ export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollecti
   }
 
   getKeyPageAbove(key) {
-    let item = this.collection.getItem(key);
-    if (!item) {
-      return;
-    }
-
-    // If focus is on a cell, start searching from the parent row
-    let newKey;
-    if (this.isCell(item)) {
-      newKey = item.parentKey;
-    }
-
-    // Find the previous item
-    newKey = this.findPreviousKey(newKey);
-
-    // PageUp if there's something to page up to
-    if (newKey) {
-      return this.getKeyAbove(key);
-    }
+    return this.getKeyAbove(key);
   }
 
   getKeyPageBelow(key) {
-    let item = this.collection.getItem(key);
-    if (!item) {
-      return;
-    }
-
-    // If focus is on a cell, start searching from the parent row
-    let newKey;
-    if (this.isCell(item)) {
-      newKey = item.parentKey;
-    }
-
-    // Find the previous item
-    newKey = this.findNextKey(newKey);
-
-    // PageDown if there's something to page down to
-    if (newKey) {
-      return this.getKeyBelow(key);
-    }
+    return this.getKeyBelow(key);
   }
 }
