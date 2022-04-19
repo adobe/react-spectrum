@@ -38,7 +38,9 @@ export function useDropHooks(options: DropHookOptions): DropHooks {
       });
     },
     useDroppableItem,
-    useDroppableCollection,
+    useDroppableCollection(props, state, ref) {
+      return useDroppableCollection({...props, ...options}, state, ref);
+    },
     useDropIndicator
   }), [options]);
 }
