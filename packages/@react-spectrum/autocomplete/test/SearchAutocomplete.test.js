@@ -167,6 +167,17 @@ describe('SearchAutocomplete', function () {
     expect(label).toBeVisible();
   });
 
+  it('renders with placeholder text and shows warning', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByPlaceholderText, getByRole} = renderSearchAutocomplete({placeholder: 'Test placeholder'});
+    
+    let searchAutocomplete = getByRole('combobox');
+
+    expect(getByPlaceholderText('Test placeholder')).toBeTruthy();
+    expect(searchAutocomplete.placeholder).toBe('Test placeholder');
+    expect(spyWarn).toHaveBeenCalledWith('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
+  });
+
   it('can be disabled', function () {
     let {getByRole, queryByRole} = renderSearchAutocomplete({isDisabled: true});
 
