@@ -91,7 +91,7 @@ module.exports = new Packager({
         }
 
         if (t && t.type === 'application') {
-          application = recurse(t.typeParameters);
+          application = recurse(t.typeParameters, 'typeParameters');
         }
 
         let hasParams = false;
@@ -159,7 +159,7 @@ module.exports = new Packager({
         }
 
         if (t && t.type === 'alias') {
-          if (shouldMerge(t, k, keyStack)) {
+          if (k === 'props') {
             return t.value;
           }
 
@@ -199,7 +199,7 @@ module.exports = new Packager({
 function shouldMerge(t, k, keyStack) {
   if (t && (t.type === 'alias' || t.type === 'interface')) {
     // Return merged interface if the parent is a component or an interface we're extending.
-    if (t.type === 'interface' && !k || k === 'props' || k === 'extends' || k === 'keyof') {
+    if (t.type === 'interface' && (!k || k === 'props' || k === 'extends' || k === 'keyof')) {
       return true;
     }
 
@@ -225,7 +225,7 @@ function walk(obj, fn) {
   let circular = new Set();
 
   let visit = (obj, fn, k = null) => {
-    let recurse = (obj) => {
+    let recurse = (obj, key = k) => {
       if (circular.has(obj)) {
         return {
           type: 'link',
@@ -234,7 +234,7 @@ function walk(obj, fn) {
       }
       if (Array.isArray(obj)) {
         let resultArray = [];
-        obj.forEach((item, i) => resultArray[i] = visit(item, fn, k));
+        obj.forEach((item, i) => resultArray[i] = visit(item, fn, key));
         return resultArray;
       } else if (obj && typeof obj === 'object') {
         circular.add(obj);
@@ -263,6 +263,8 @@ function walk(obj, fn) {
 function mergeInterface(obj) {
   if (obj.type === 'application') {
     obj = obj.base;
+  } else if (obj.type === 'alias') {
+    obj = obj.value;
   }
 
   let properties = {};

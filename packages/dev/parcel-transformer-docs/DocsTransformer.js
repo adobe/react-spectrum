@@ -422,6 +422,10 @@ module.exports = new Transformer({
         return Object.assign(node, {type: 'unknown'});
       }
 
+      if (path.isTSNeverKeyword()) {
+        return Object.assign(node, {type: 'never'});
+      }
+
       if (path.isTSArrayType()) {
         return Object.assign(node, {
           type: 'array',
@@ -472,6 +476,23 @@ module.exports = new Transformer({
         return Object.assign(node, {
           type: 'tuple',
           elements: path.get('elementTypes').map(t => processExport(t))
+        });
+      }
+
+      if (path.isTSTypeOperator() && path.node.operator === 'keyof') {
+        return Object.assign(node, {
+          type: 'keyof',
+          keyof: processExport(path.get('typeAnnotation'))
+        });
+      }
+
+      if (path.isTSConditionalType()) {
+        return Object.assign(node, {
+          type: 'conditional',
+          checkType: processExport(path.get('checkType')),
+          extendsType: processExport(path.get('extendsType')),
+          trueType: processExport(path.get('trueType')),
+          falseType: processExport(path.get('falseType'))
         });
       }
 
