@@ -35,7 +35,7 @@ const styles: CSSProperties = {
   height: 10,
   lineHeight: 0,
   margin: '0 -10px -10px 0',
-  opacity: 0,
+  opacity: 0.0001,
   overflow: 'hidden',
   padding: 0,
   position: 'absolute',
