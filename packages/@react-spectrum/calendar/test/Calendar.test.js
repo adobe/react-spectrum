@@ -13,10 +13,11 @@
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
 import {Calendar} from '../';
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, isWeekend} from '@internationalized/date';
 import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
+import {useLocale} from '@react-aria/i18n';
 
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
 
@@ -300,17 +301,101 @@ describe('Calendar', () => {
       expect(selectedDate.textContent).toBe('8');
       expect(onChange).not.toHaveBeenCalled();
 
-      triggerPress(getByLabelText('Tuesday, February 5, 2019'));
+      triggerPress(getByLabelText('Tuesday, February 5, 2019, First available date'));
 
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('5');
       expect(onChange).toHaveBeenCalledTimes(1);
 
-      triggerPress(getByLabelText('Friday, February 15, 2019'));
+      triggerPress(getByLabelText('Friday, February 15, 2019, Last available date'));
 
       selectedDate = getByLabelText('selected', {exact: false});
       expect(selectedDate.textContent).toBe('15');
       expect(onChange).toHaveBeenCalledTimes(2);
+    });
+
+    it('should support validationState', () => {
+      let {getByRole} = render(
+        <Calendar
+          defaultValue={new CalendarDate(2022, 3, 11)}
+          validationState="invalid" />
+      );
+
+      let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
+      expect(cell).toHaveAttribute('aria-invalid', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
+
+      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected date unavailable.');
+
+      let grid = getByRole('grid');
+      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected Date: Friday, March 11, 2022 Selected date unavailable.');
+    });
+
+    it('should support a custom errorMessage', () => {
+      let {getByRole} = render(
+        <Calendar
+          defaultValue={new CalendarDate(2022, 3, 11)}
+          validationState="invalid"
+          errorMessage="Selection dates cannot include weekends." />
+      );
+
+      let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
+      expect(cell).toHaveAttribute('aria-invalid', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
+
+      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selection dates cannot include weekends.');
+
+      let grid = getByRole('grid');
+      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected Date: Friday, March 11, 2022 Selection dates cannot include weekends.');
+    });
+
+    it('does not show error message without validationState="invalid"', () => {
+      let {getByRole} = render(
+        <Calendar
+          defaultValue={new CalendarDate(2022, 3, 11)}
+          errorMessage="Selection dates cannot include weekends." />
+      );
+
+      let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
+      expect(cell).not.toHaveAttribute('aria-invalid', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(cell.parentElement).not.toHaveAttribute('aria-invalid', 'true');
+
+      let grid = getByRole('grid');
+      let description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected Date: Friday, March 11, 2022');
+    });
+
+    it('automatically marks selection as invalid using isDateUnavailable', () => {
+      function Example() {
+        let {locale} = useLocale();
+        return (
+          <Calendar
+            defaultValue={new CalendarDate(2022, 3, 5)}
+            isDateUnavailable={date => isWeekend(date, locale)}
+            allowsNonContiguousRanges />
+        );
+      }
+
+      let {getByRole} = render(<Example />);
+
+      let cell = getByRole('button', {name: 'Saturday, March 5, 2022 selected'});
+      expect(cell).toHaveAttribute('aria-invalid', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(cell.parentElement).toHaveAttribute('aria-invalid', 'true');
+
+      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected date unavailable.');
+
+      let grid = getByRole('grid');
+      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected Date: Saturday, March 5, 2022 Selected date unavailable.');
     });
   });
 

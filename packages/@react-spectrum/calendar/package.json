@@ -40,6 +40,7 @@
     "@react-aria/utils": "^3.11.2",
     "@react-aria/visually-hidden": "^3.2.7",
     "@react-spectrum/button": "^3.7.3",
+    "@react-spectrum/label": "^3.4.4",
     "@react-spectrum/utils": "^3.6.7",
     "@react-stately/calendar": "3.0.0-alpha.4",
     "@react-types/button": "^3.4.3",

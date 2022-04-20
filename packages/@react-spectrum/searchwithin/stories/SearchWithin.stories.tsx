@@ -27,7 +27,7 @@ export default {
 function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
     <SearchWithin label="This is label" {...props}>
-      <SearchField placeholder="Search" {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
+      <SearchField {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
@@ -49,7 +49,7 @@ function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, 
         <Item key="tags">Tags</Item>
         <Item key="long">This item is very long and word wraps poorly</Item>
       </Picker>
-      <SearchField placeholder="Search" {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
+      <SearchField {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
     </SearchWithin>
   );
 }
@@ -61,7 +61,7 @@ function ResizeSearchWithinApp(props) {
     <Flex direction="column" gap="size-200" alignItems="start">
       <div style={{width: state ? '300px' : '400px'}}>
         <SearchWithin label="Test label" {...props} width="100%">
-          <SearchField placeholder="Search" onChange={action('change')} onSubmit={action('submit')} />
+          <SearchField onChange={action('change')} onSubmit={action('submit')} />
           <Picker defaultSelectedKey="all" onSelectionChange={action('selectionChange')}>
             <Item key="all">All</Item>
             <Item key="campaigns">Campaigns</Item>

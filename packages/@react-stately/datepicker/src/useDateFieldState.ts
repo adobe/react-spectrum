@@ -50,6 +50,8 @@ export interface DateFieldState {
   validationState: ValidationState,
   /** The granularity for the field, based on the `granularity` prop and current value. */
   granularity: Granularity,
+  /** The maximum date or time unit that is displayed in the field. */
+  maxGranularity: 'year' | 'month' | Granularity,
   /** Whether the field is disabled. */
   isDisabled: boolean,
   /** Whether the field is read only. */
@@ -280,6 +282,7 @@ export function useDateFieldState(props: DatePickerFieldProps): DateFieldState {
     dateFormatter,
     validationState,
     granularity,
+    maxGranularity: props.maxGranularity ?? 'year',
     isDisabled,
     isReadOnly,
     isRequired,
