@@ -148,7 +148,7 @@ describe('RangeCalendar', () => {
         expect(cell).toHaveAttribute('aria-label', juneLabels[i++]);
       }
 
-      let nextButton = getAllByLabelText('Next')[1];
+      let nextButton = getAllByLabelText('Next')[0];
       userEvent.click(nextButton);
 
       selected = getAllByLabelText('selected', {exact: false}).filter(cell => cell.getAttribute('aria-disabled') !== 'true');
@@ -728,7 +728,7 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('25');
       expect(onChange).toHaveBeenCalledTimes(0);
 
-      let next = getAllByLabelText('Next')[1];
+      let next = getAllByLabelText('Next')[0];
       act(() => userEvent.click(next));
 
       selectedDates = getAllByLabelText('selected', {exact: false}).filter(d => !d.hasAttribute('aria-disabled'));
@@ -1045,7 +1045,7 @@ describe('RangeCalendar', () => {
       let prevButton = getByRole('button', {name: 'Previous'});
       expect(prevButton).toHaveAttribute('disabled');
 
-      let nextButton = getAllByLabelText('Next')[1];
+      let nextButton = getAllByLabelText('Next')[0];
       expect(nextButton).toHaveAttribute('disabled');
 
       cell = getByRole('button', {name: 'Tuesday, December 14, 2021'});
@@ -1112,7 +1112,7 @@ describe('RangeCalendar', () => {
       let prevButton = getByRole('button', {name: 'Previous'});
       expect(prevButton).not.toHaveAttribute('disabled');
 
-      let nextButton = getAllByLabelText('Next')[1];
+      let nextButton = getAllByLabelText('Next')[0];
       expect(nextButton).toHaveAttribute('disabled');
     });
 
@@ -1138,7 +1138,7 @@ describe('RangeCalendar', () => {
         expect(nextButton).not.toHaveAttribute('disabled');
       }
 
-      act(() => userEvent.click(getAllByLabelText('Next')[1]));
+      act(() => userEvent.click(getAllByLabelText('Next')[0]));
 
       cell = getByRole('button', {name: 'Sunday, May 1, 2022 selected, Last available date'});
       expect(cell).not.toHaveAttribute('aria-disabled');
@@ -1341,7 +1341,7 @@ describe('RangeCalendar', () => {
     it('announces when the current month changes', () => {
       let {getAllByLabelText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
 
-      let nextButton = getAllByLabelText('Next')[1];
+      let nextButton = getAllByLabelText('Next')[0];
       userEvent.click(nextButton);
 
       expect(announce).toHaveBeenCalledTimes(1);

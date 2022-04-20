@@ -404,7 +404,7 @@ describe('Calendar', () => {
     it('announces when the current month changes', () => {
       let {getAllByLabelText} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} />);
 
-      let nextButton = getAllByLabelText('Next')[1];
+      let nextButton = getAllByLabelText('Next')[0];
       triggerPress(nextButton);
 
       expect(announce).toHaveBeenCalledTimes(1);

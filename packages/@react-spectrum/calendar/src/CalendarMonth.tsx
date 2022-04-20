@@ -35,6 +35,7 @@ export function CalendarMonth(props: CalendarMonthProps) {
   } = props;
   let {
     gridProps,
+    headerProps,
     weekDays
   } = useCalendarGrid({
     ...props,
@@ -68,16 +69,14 @@ export function CalendarMonth(props: CalendarMonthProps) {
     <table
       {...gridProps}
       className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table', {'is-range-selecting': isRangeSelecting})}>
-      {/* Column headers are hidden to screen readers to make navigating with a touch screen reader easier.
-        * The day names are already included in the label of each cell, so there's no need to announce them twice. */}
-      <thead aria-hidden="true">
+      <thead {...headerProps}>
         <tr>
           {weekDays.map((day, index) => (
             <th
               key={index}
               className={classNames(styles, 'spectrum-Calendar-tableCell')}>
               <span className={classNames(styles, 'spectrum-Calendar-dayOfWeek')}>
-                {day.narrow}
+                {day}
               </span>
             </th>
           ))}

@@ -60,7 +60,7 @@ describe('CalendarBase', () => {
       expect(today).toHaveAttribute('tabIndex', '0');
 
       expect(getByLabelText('Previous')).toBeVisible();
-      expect(getAllByLabelText('Next')[1]).toBeVisible();
+      expect(getAllByLabelText('Next')[0]).toBeVisible();
 
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(gridCells.length).toBe(getDaysInMonth(new Date()));
@@ -178,7 +178,7 @@ describe('CalendarBase', () => {
       expect(gridCells.length).toBe(30);
       expect(getAllByLabelText('selected', {exact: false}).length).toBeGreaterThan(0);
 
-      let nextButton = getAllByLabelText('Next')[1];
+      let nextButton = getAllByLabelText('Next')[0];
       triggerPress(nextButton);
 
       expect(() => {
@@ -214,7 +214,7 @@ describe('CalendarBase', () => {
       expect(grids[1]).toHaveAttribute('aria-label', 'June 2019');
       expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
 
-      let nextButton = getAllByLabelText('Next')[1];
+      let nextButton = getAllByLabelText('Next')[0];
       triggerPress(nextButton);
 
       grids = getAllByRole('grid');
@@ -241,7 +241,7 @@ describe('CalendarBase', () => {
       let {getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
 
       let prevButton = getByLabelText('Previous');
-      let nextButton = getAllByLabelText('Next')[1];
+      let nextButton = getAllByLabelText('Next')[0];
 
       expect(prevButton).not.toHaveAttribute('disabled');
       expect(nextButton).not.toHaveAttribute('disabled');

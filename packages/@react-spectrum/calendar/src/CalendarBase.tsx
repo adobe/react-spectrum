@@ -61,24 +61,13 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     timeZone: state.timeZone
   });
 
+  let titles = [];
   let calendars = [];
   for (let i = 0; i < visibleMonths; i++) {
     let d = currentMonth.add({months: i});
-    calendars.push(
-      <div key={i} className={classNames(styles, 'spectrum-Calendar-month')}>
-        {/* Put the heading first so it is the first thing touch screen reader users encounter. */}
-        <h2
-          // If displaying more than one month, we have a visually hidden heading describing
-          // the entire visible range, and the calendar itself describes the individual month
-          // so we don't need to repeat that here for screen reader users.
-          aria-hidden={visibleMonths > 1 || undefined}
-          className={classNames(styles, 'spectrum-Calendar-title')}>
-          {monthDateFormatter.format(d.toDate(state.timeZone))}
-        </h2>
+    titles.push(
+      <div key={i} className={classNames(styles, 'spectrum-Calendar-monthHeader')}>
         {i === 0 &&
-          // Next, put the previous button, so it's easy to adjust the month if not right.
-          // With a keyboard, this will be the first tab stop, but desktop screen readers are
-          // better about reading the role="group" label as well so there is enough context.
           <ActionButton
             {...prevButtonProps}
             UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
@@ -86,24 +75,15 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
             {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
           </ActionButton>
         }
-        {i === 0 &&
-          // And for touch screen readers, add a visually hidden next button as well since it
-          // would be tedious to get past the entire grid of days to get to the visual next button.
-          <VisuallyHidden>
-            <button
-              aria-label={nextButtonProps['aria-label']}
-              disabled={nextButtonProps.isDisabled}
-              onClick={() => state.focusNextPage()}
-              tabIndex={-1} />
-          </VisuallyHidden>
-        }
-        <CalendarMonth
-          {...props}
-          state={state}
-          startDate={d} />
+        <h2
+          // We have a visually hidden heading describing the entire visible range,
+          // and the calendar itself describes the individual month
+          // so we don't need to repeat that here for screen reader users.
+          aria-hidden
+          className={classNames(styles, 'spectrum-Calendar-title')}>
+          {monthDateFormatter.format(d.toDate(state.timeZone))}
+        </h2>
         {i === visibleMonths - 1 &&
-          // Put the next button after the month grid so touch screen reader users can easily navigate
-          // after reaching the end.
           <ActionButton
             {...nextButtonProps}
             UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
@@ -112,6 +92,14 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
           </ActionButton>
         }
       </div>
+    );
+
+    calendars.push(
+      <CalendarMonth
+        {...props}
+        key={i}
+        state={state}
+        startDate={d} />
     );
   }
 
@@ -126,17 +114,30 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
           styleProps.className
         )
       }>
-      {visibleMonths > 1 &&
-        // If displaying more than one month, add a description of the entire visible range rather than
-        // a separate heading above each month grid. This makes things easier to navigate for touch screen
-        // reader users.
-        <VisuallyHidden>
-          <h2>{calendarProps['aria-label']}</h2>
-        </VisuallyHidden>
-      }
+      {/* Add a screen reader only description of the entire visible range rather than
+        * a separate heading above each month grid. This is placed first in the DOM order
+        * so that it is the first thing a touch screen reader user encounters.
+        * In addition, VoiceOver on iOS does not announce the aria-label of the grid
+        * elements, so the aria-label of the Calendar is included here as well. */}
+      <VisuallyHidden>
+        <h2>{calendarProps['aria-label']}</h2>
+      </VisuallyHidden>
+      <div className={classNames(styles, 'spectrum-Calendar-header')}>
+        {titles}
+      </div>
       <div className={classNames(styles, 'spectrum-Calendar-months')}>
         {calendars}
       </div>
+      {/* For touch screen readers, add a visually hidden next button after the month grid
+        * so it's easy to navigate after reaching the end without going all the way
+        * back to the start of the month. */}
+      <VisuallyHidden>
+        <button
+          aria-label={nextButtonProps['aria-label']}
+          disabled={nextButtonProps.isDisabled}
+          onClick={() => state.focusNextPage()}
+          tabIndex={-1} />
+      </VisuallyHidden>
       {state.validationState === 'invalid' &&
         <HelpText
           showErrorIcon
