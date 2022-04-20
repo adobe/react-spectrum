@@ -78,6 +78,7 @@ export class JapaneseCalendar extends GregorianCalendar {
     let era = findEraFromGregorianDate(date);
     date.era = ERA_NAMES[era];
     date.year -= ERA_ADDENDS[era];
+    this.constrainDate(date);
     return date as CalendarDate;
   }
 
