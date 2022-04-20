@@ -201,12 +201,24 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     focusNextPage() {
       let start = startDate.add(visibleDuration);
       setFocusedDate(constrainValue(focusedDate.add(visibleDuration), minValue, maxValue));
-      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
+      setStartDate(
+        alignStart(
+          constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue),
+          visibleDuration,
+          locale
+        )
+      );
     },
     focusPreviousPage() {
       let start = startDate.subtract(visibleDuration);
       setFocusedDate(constrainValue(focusedDate.subtract(visibleDuration), minValue, maxValue));
-      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
+      setStartDate(
+        alignStart(
+          constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue),
+          visibleDuration,
+          locale
+        )
+      );
     },
     focusSectionStart() {
       if (visibleDuration.days) {
