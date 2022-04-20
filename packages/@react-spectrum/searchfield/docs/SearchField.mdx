@@ -43,7 +43,6 @@ function Example() {
     <>
       <SearchField
         label="Search"
-        placeholder="Enter text"
         onSubmit={setSubmittedText} />
       <p>Submitted text: {submittedText}</p>
     </>
@@ -72,13 +71,6 @@ function Example() {
     </Flex>
   );
 }
-```
-
-Placeholder text that describes the expected value or formatting for the SearchField can be provided using the `placeholder` prop.
-Placeholder text will only appear when the SearchField is empty, and should not be used as a substitute for labeling the component with a visible label.
-
-```tsx example
-<SearchField placeholder="e.g. Sally Jones" label="Search for user" />
 ```
 
 ## Labeling
@@ -122,7 +114,6 @@ function Example() {
   return (
     <div>
       <SearchField
-        placeholder="Enter some text"
         onClear={() => setCurrentText('')}
         onChange={setCurrentText}
         onSubmit={setSubmittedText}
@@ -145,13 +136,13 @@ function Example() {
 ### Quiet
 
 ```tsx example
-<SearchField label="Search" placeholder="Email Address" isQuiet />
+<SearchField label="Search" isQuiet />
 ```
 
 ### Disabled
 
 ```tsx example
-<SearchField label="Search" placeholder="Email Address" isDisabled />
+<SearchField label="Search" isDisabled />
 ```
 
 ### Read only
