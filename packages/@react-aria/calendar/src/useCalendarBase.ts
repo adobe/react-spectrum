@@ -12,10 +12,10 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {CalendarAria} from './types';
-import {calendarIds, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
+import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
@@ -48,7 +48,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   let errorMessageId = useSlotId([Boolean(props.errorMessage), props.validationState]);
 
   // Pass the label to the child grid elements.
-  calendarIds.set(state, {
+  hookData.set(state, {
     ariaLabel: props['aria-label'],
     ariaLabelledBy: props['aria-labelledby'],
     errorMessageId
