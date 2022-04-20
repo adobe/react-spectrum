@@ -30,14 +30,16 @@ interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
 
 const styles: CSSProperties = {
   border: 0,
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  margin: '0 -1px -1px 0',
+  clip: 'rect(0 10px 10px 0)',
+  clipPath: 'inset(40%)',
+  height: 10,
+  lineHeight: 0,
+  margin: '0 -10px -10px 0',
+  opacity: 0.0001,
   overflow: 'hidden',
   padding: 0,
   position: 'absolute',
-  width: 1,
+  width: 10,
   whiteSpace: 'nowrap'
 };
 

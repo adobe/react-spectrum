@@ -4446,9 +4446,9 @@ describe('TableView', function () {
               </TableBody>
             </TableView>
           );
-  
+
           let rows = tree.getAllByRole('row');
-  
+
           for (let row of rows) {
             expect(row.childNodes[0].style.width).toBe('600px');
             expect(row.childNodes[1].style.width).toBe('200px');
@@ -4475,9 +4475,9 @@ describe('TableView', function () {
               </TableBody>
             </TableView>
           );
-  
+
           let rows = tree.getAllByRole('row');
-  
+
           for (let row of rows) {
             expect(row.childNodes[0].style.width).toBe('300px');
             expect(row.childNodes[1].style.width).toBe('500px');
@@ -4694,9 +4694,9 @@ describe('TableView', function () {
       expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
       expect(headers[0]).toHaveTextContent('Foo');
       // visually hidden syle
-      expect(headers[1].childNodes[0].style.clipPath).toBe('inset(50%)');
-      expect(headers[1].childNodes[0].style.width).toBe('1px');
-      expect(headers[1].childNodes[0].style.height).toBe('1px');
+      expect(headers[1].childNodes[0].style.clipPath).toBe('inset(40%)');
+      expect(headers[1].childNodes[0].style.width).toBe('10px');
+      expect(headers[1].childNodes[0].style.height).toBe('10px');
       expect(headers[1]).not.toBeEmptyDOMElement();
 
 
