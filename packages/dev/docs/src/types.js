@@ -118,7 +118,7 @@ export function Type({type}) {
       return <Type type={{...props, description: type.description}} />;
     }
     case 'conditional':
-      return <ConditionalType {...type} />
+      return <ConditionalType {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
