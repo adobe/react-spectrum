@@ -41,6 +41,7 @@ import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {Key, ReactElement, useContext, useMemo, useRef} from 'react';
+import {Rect} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -238,26 +239,24 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     });
     droppableCollection = dropHooks.useDroppableCollection({
       keyboardDelegate,
+      // TODO: Should we debounce this for better perf/ux?
       getDropTargetFromPoint(x, y) {
-        let rect = domRef.current.getBoundingClientRect();
-        x += rect.x;
-        y += rect.y;
         let closest = null;
         let closestDistance = Infinity;
         let closestDir = null;
 
+        x += domRef.current.scrollLeft;
+        y += domRef.current.scrollTop;
 
-        for (let child of domRef.current.children[0].children) {
-          if (!(child.children[0].children[0] as HTMLElement).dataset.key) {
-            continue;
-          }
+        let visible = layout.getVisibleLayoutInfos(new Rect(x - 50, y - 50, x + 50, y + 50));
 
-          let r = child.getBoundingClientRect();
+        for (let layoutInfo of visible) {
+          let r = layoutInfo.rect;
           let points: [number, number, string][] = [
-            [r.left, r.top, 'before'],
-            [r.right, r.top, 'before'],
-            [r.left, r.bottom, 'after'],
-            [r.right, r.bottom, 'after']
+            [r.x, r.y + 4, 'before'],
+            [r.maxX, r.y + 4, 'before'],
+            [r.x, r.maxY - 8, 'after'],
+            [r.maxX, r.maxY - 8, 'after']
           ];
 
           for (let [px, py, dir] of points) {
@@ -266,17 +265,18 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             let d = dx * dx + dy * dy;
             if (d < closestDistance) {
               closestDistance = d;
-              closest = child;
+              closest = layoutInfo;
               closestDir = dir;
             }
           }
 
-          if (y >= r.top + 10 && y <= r.bottom - 10) {
-            closestDir = 'on';
-          }
+          // TODO: only for when closest can be dropped on
+          // if (y >= r.y + 10 && y <= r.maxY - 10) {
+          //   closestDir = 'on';
+          // }
         }
 
-        let key = closest?.children[0].children[0].dataset.key.slice(CELL_PREFIX.length);
+        let key = closest?.key;
         if (key) {
           return {
             type: 'item',
@@ -307,7 +307,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   if (dropState?.target?.type === 'item') {
     focusedKey = dropState.target.key;
   }
-
+  console.log(dropState.target);
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate, dragState, dropState, dropHooks, onAction, isListDraggable, isListDroppable}}>
       <Virtualizer
