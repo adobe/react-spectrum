@@ -36,7 +36,6 @@ let onBlur = jest.fn();
 
 let defaultProps = {
   label: 'Test',
-  placeholder: 'Search for a topic...',
   onOpenChange,
   onInputChange,
   onFocus,
@@ -160,13 +159,23 @@ describe('SearchAutocomplete', function () {
     let {getAllByText, getByRole} = renderSearchAutocomplete();
 
     let searchAutocomplete = getByRole('combobox');
-    expect(searchAutocomplete).toHaveAttribute('placeholder', 'Search for a topic...');
     expect(searchAutocomplete).toHaveAttribute('autoCorrect', 'off');
     expect(searchAutocomplete).toHaveAttribute('spellCheck', 'false');
     expect(searchAutocomplete).toHaveAttribute('autoComplete', 'off');
 
     let label = getAllByText('Test')[0];
     expect(label).toBeVisible();
+  });
+
+  it('renders with placeholder text and shows warning', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByPlaceholderText, getByRole} = renderSearchAutocomplete({placeholder: 'Test placeholder'});
+    
+    let searchAutocomplete = getByRole('combobox');
+
+    expect(getByPlaceholderText('Test placeholder')).toBeTruthy();
+    expect(searchAutocomplete.placeholder).toBe('Test placeholder');
+    expect(spyWarn).toHaveBeenCalledWith('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
   });
 
   it('can be disabled', function () {
@@ -1434,29 +1443,29 @@ describe('SearchAutocomplete', function () {
 
       expect(button).toHaveAttribute('aria-haspopup', 'dialog');
       expect(button).toHaveAttribute('aria-expanded', 'false');
-      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText(defaultProps.placeholder).id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${button.getElementsByTagName('span')[0].id}`);
     });
 
     it('button should be labelled by external label', function () {
-      let {getByRole, getByText} = renderSearchAutocomplete({label: null, 'aria-labelledby': 'label-id'});
+      let {getByRole} = renderSearchAutocomplete({label: null, 'aria-labelledby': 'label-id'});
       let button = getByRole('button');
 
-      expect(button).toHaveAttribute('aria-labelledby', `label-id ${getByText(defaultProps.placeholder).id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `label-id ${button.getElementsByTagName('span')[0].id}`);
     });
 
     it('button should be labelled by aria-label', function () {
-      let {getByRole, getByText} = renderSearchAutocomplete({label: null, 'aria-label': 'Label'});
+      let {getByRole} = renderSearchAutocomplete({label: null, 'aria-label': 'Label'});
       let button = getByRole('button');
 
       expect(button).toHaveAttribute('aria-label', 'Label');
-      expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${getByText(defaultProps.placeholder).id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${button.getElementsByTagName('span')[0].id}`);
     });
 
     it('button should be labelled by external label and builtin label', function () {
       let {getByRole, getByText} = renderSearchAutocomplete({'aria-labelledby': 'label-id'});
       let button = getByRole('button');
 
-      expect(button).toHaveAttribute('aria-labelledby', `label-id ${getByText('Test').id} ${getByText(defaultProps.placeholder).id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `label-id ${getByText('Test').id} ${button.getElementsByTagName('span')[0].id}`);
     });
 
     it('readonly searchAutocomplete should not open on press', function () {
@@ -1845,7 +1854,7 @@ describe('SearchAutocomplete', function () {
       let button = getByRole('button');
       let label = getByText(defaultProps.label);
 
-      expect(button).toHaveAttribute('aria-labelledby', `${label.id} ${getByText(defaultProps.placeholder).id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${label.id} ${button.getElementsByTagName('span')[0].id}`);
 
       act(() => {
         triggerPress(button);
@@ -2012,7 +2021,7 @@ describe('SearchAutocomplete', function () {
     it('should include invalid in label when validationState="invalid"', function () {
       let {getAllByRole, getByText, getByLabelText} = renderSearchAutocomplete({validationState: 'invalid'});
       let button = getAllByRole('button')[0];
-      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText(defaultProps.placeholder).id} ${getByLabelText('(invalid)').id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${button.getElementsByTagName('span')[0].id} ${getByLabelText('(invalid)').id}`);
     });
 
     it('menutrigger=focus doesn\'t reopen the tray on close', function () {

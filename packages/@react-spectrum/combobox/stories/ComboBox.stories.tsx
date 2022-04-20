@@ -266,10 +266,6 @@ storiesOf('ComboBox', module)
     () => render({validationState: 'valid', isQuiet: true, defaultSelectedKey: 'two'})
   )
   .add(
-    'placeholder',
-    () => render({placeholder: 'Select an item...'})
-  )
-  .add(
     'autoFocus: true',
     () => render({autoFocus: true})
   )

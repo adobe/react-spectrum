@@ -1,11 +1,12 @@
 {
-  "dateSelected": "{date, date, full} kijelölve",
+  "dateSelected": "{date} kijelölve",
   "finishRangeSelectionPrompt": "Kattintson a dátumtartomány kijelölésének befejezéséhez",
   "next": "Következő",
   "previous": "Előző",
-  "selectedDateDescription": "Kijelölt dátum: {date, date, full}",
-  "selectedRangeDescription": "Kijelölt tartomány: {start, date, long} – {end, date, long}",
+  "selectedDateDescription": "Kijelölt dátum: {date}",
+  "selectedRangeDescription": "Kijelölt tartomány: {dateRange}",
   "startRangeSelectionPrompt": "Kattintson a dátumtartomány kijelölésének indításához",
-  "todayDate": "Ma, {date, date, full}",
-  "todayDateSelected": "Ma, {date, date, full} kijelölve"
+  "todayDate": "Ma, {date}",
+  "todayDateSelected": "Ma, {date} kijelölve",
+  "dateRange": "{startDate} – {endDate}"
 }

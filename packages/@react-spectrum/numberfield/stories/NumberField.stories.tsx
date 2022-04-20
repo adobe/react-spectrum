@@ -228,6 +228,13 @@ storiesOf('NumberField', module)
   .add(
     'focus events',
     () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp')})
+  )
+  .add(
+    'input dom events',
+    () => render({
+      onCopy: action('onCopy'), onCut: action('onCut'), onPaste: action('onPaste'), onCompositionStart: action('onCompositionStart'), onCompositionEnd: action('onCompositionEnd'),
+      onCompositionUpdate: action('onCompositionUpdate'), onSelect: action('onSelect'), onBeforeInput: action('onBeforeInput'), onInput: action('onInput')
+    })
   );
 
 function render(props: any = {}) {

@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Calendar} from '../';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
@@ -95,6 +95,21 @@ storiesOf('Date and Time/Calendar', module)
   .add(
     'focusedValue',
     () => <ControlledFocus />
+  )
+  .add(
+    'validationState: invalid',
+    () => render({validationState: 'invalid', defaultValue: new CalendarDate(2021, 10, 3)})
+  )
+  .add(
+    'validationState: invalid, errorMessage',
+    () => render({validationState: 'invalid', errorMessage: 'Selection may not include weekends.', defaultValue: new CalendarDate(2021, 10, 3)})
+  )
+  .add(
+    'isDateUnavailable, invalid',
+    () => {
+      let {locale} = useLocale();
+      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true, defaultValue: new CalendarDate(2021, 10, 3)});
+    }
   );
 
 function render(props = {}) {
