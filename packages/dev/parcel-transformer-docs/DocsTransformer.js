@@ -199,6 +199,9 @@ module.exports = new Transformer({
             props: props && props.typeAnnotation
               ? processExport(path.get('params.0.typeAnnotation.typeAnnotation'))
               : null,
+            typeParameters: path.node.typeParameters
+              ? path.get('typeParameters.params').map(p => processExport(p))
+              : [],
             description: docs.description || null
           });
         } else {
@@ -460,6 +463,7 @@ module.exports = new Transformer({
         return Object.assign(node, {
           type: 'typeParameter',
           name: path.node.name,
+          constraint: path.node.constraint ? processExport(path.get('constraint')) : null,
           default: path.node.default ? processExport(path.get('default')) : null
         });
       }

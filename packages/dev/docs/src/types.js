@@ -276,10 +276,18 @@ export function TypeParameters({typeParameters}) {
   );
 }
 
-function TypeParameter({name, default: defaultType}) {
+function TypeParameter({name, constraint, default: defaultType}) {
   return (
     <>
       <span className="token hljs-name">{name}</span>
+      {constraint &&
+        <>
+          {' '}
+          <span className="token hljs-keyword">extends</span>
+          {' '}
+          <Type type={constraint} />
+        </>
+      }
       {defaultType &&
         <>
           <span className="token punctuation">{' = '}</span>
