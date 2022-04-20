@@ -37,8 +37,8 @@ category: Forms
 
 ```tsx example
 <Form maxWidth="size-3600">
-  <TextField label="Email" placeholder="abc@adobe.com" />
-  <TextField label="Password" placeholder="1234" />
+  <TextField label="Email" />
+  <TextField label="Password" />
   <Checkbox>Remember me</Checkbox>
 </Form>
 ```
@@ -51,9 +51,9 @@ set them directly on the child instead.
 
 ```tsx example
 <Form maxWidth="size-3600" isRequired necessityIndicator="label">
-  <TextField label="Name" placeholder="Jane Smith" />
-  <TextField label="Email" placeholder="abc@adobe.com" />
-  <TextField label="Address" placeholder="123 Any Street" isRequired={false} />
+  <TextField label="Name" />
+  <TextField label="Email" />
+  <TextField label="Address" isRequired={false} />
 </Form>
 ```
 
@@ -67,8 +67,8 @@ technology as a form landmark region to which assistive technology can navigate.
 ```tsx example
 <h3 id="label-3">Personal Information</h3>
 <Form maxWidth="size-3600" aria-labelledby="label-3">
-  <TextField label="First Name" placeholder="John" />
-  <TextField label="Last Name" placeholder="Smith" />
+  <TextField label="First Name" />
+  <TextField label="Last Name" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
@@ -92,7 +92,7 @@ Top label position, start label alignment
   labelAlign="start"
   aria-label="Top position, start alignment example"
   maxWidth="size-3600">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
@@ -106,7 +106,7 @@ Side label position, start label alignment
   labelAlign="start"
   aria-label="Side position, start alignment example"
   maxWidth="size-3600">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
@@ -120,7 +120,7 @@ Side label position, end label alignment
   labelAlign="end"
   aria-label="Side position, end alignment example"
   maxWidth="size-3600">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
@@ -135,8 +135,8 @@ Side label position, end label alignment
   isQuiet
   aria-label="Quiet example"
   maxWidth="size-3600">
-  <TextField label="Name" placeholder="John Smith" />
-  <TextField label="Address" placeholder="123 Any Street" />
+  <TextField label="Name" />
+  <TextField label="Address" />
 </Form>
 ```
 
@@ -147,7 +147,7 @@ Side label position, end label alignment
   isEmphasized
   aria-label="Emphasized example"
   maxWidth="size-3600">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name"/>
   <RadioGroup label="Favorite pet" defaultValue="dogs">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
@@ -162,7 +162,7 @@ Side label position, end label alignment
   isDisabled
   aria-label="Disabled example"
   maxWidth="size-3600">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
@@ -178,7 +178,7 @@ Optional label
   necessityIndicator="label"
   aria-label="Optional with label example"
   maxWidth="size-3600">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
@@ -192,7 +192,7 @@ Required label
   necessityIndicator="label"
   aria-label="Required with label example"
   maxWidth="size-3600">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
@@ -206,7 +206,7 @@ Required with asterisk
   necessityIndicator="icon"
   aria-label="Required with asterisk example"
   maxWidth="size-3600">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
@@ -237,7 +237,7 @@ Required with asterisk
   aria-label="Invalid validationState example"
   maxWidth="size-3600"
   marginBottom="size-300">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
@@ -249,7 +249,7 @@ Required with asterisk
   validationState="valid"
   aria-label="Valid validationState example"
   maxWidth="size-3600">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
