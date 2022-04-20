@@ -173,6 +173,18 @@ module.exports = new Packager({
           };
         }
 
+        if (t && t.type === 'keyof') {
+          if (t.keyof.type === 'interface') {
+            return {
+              type: 'union',
+              elements: Object.keys(t.keyof.properties).map(key => ({
+                type: 'string',
+                value: key
+              }))
+            };
+          }
+        }
+
         return t;
       });
     }
