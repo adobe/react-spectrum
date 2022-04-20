@@ -106,7 +106,7 @@ module.exports = new Packager({
         } else if (t && (t.type === 'alias' || t.type === 'interface' || t.type === 'component') && t.typeParameters && keyStack.length === 0) {
           // If we are at a root export, replace type parameters with constraints if possible.
           // Seeing `DateValue` (as in `T extends DateValue`) is nicer than just `T`.
-          let typeParameters = recurse(t.typeParameters);
+          let typeParameters = recurse(t.typeParameters, 'typeParameters');
           let params = Object.assign({}, paramStack[paramStack.length - 1]);
           typeParameters.forEach(p => {
             if (!params[p.name] && p.constraint) {
@@ -134,7 +134,7 @@ module.exports = new Packager({
         }
 
         if (t && t.type === 'identifier' && t.name === 'Omit' && application) {
-          return omit(application[0], application[1]);
+          return omit(application[0], application[1], nodes);
         }
 
         if (t && t.type === 'identifier' && params && params[t.name]) {
@@ -300,7 +300,9 @@ function merge(a, b) {
   }
 }
 
-function omit(obj, toOmit) {
+function omit(obj, toOmit, nodes) {
+  obj = resolveValue(obj, nodes);
+
   if (obj.type === 'interface' || obj.type === 'object') {
     let keys = new Set();
     if (toOmit.type === 'string' && toOmit.value) {
@@ -328,6 +330,22 @@ function omit(obj, toOmit) {
       ...obj,
       properties
     };
+  }
+
+  return obj;
+}
+
+function resolveValue(obj, nodes) {
+  if (obj.type === 'link') {
+    return resolveValue(nodes[obj.id], nodes);
+  }
+
+  if (obj.type === 'application') {
+    return resolveValue(obj.base, nodes);
+  }
+
+  if (obj.type === 'alias') {
+    return resolveValue(obj.value, nodes);
   }
 
   return obj;

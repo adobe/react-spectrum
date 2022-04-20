@@ -57,8 +57,16 @@ module.exports = new Transformer({
           });
         } else if (path.node.declaration) {
           if (t.isIdentifier(path.node.declaration.id)) {
-            asset.symbols.set(path.node.declaration.id.name, path.node.declaration.id.name);
-            exports[path.node.declaration.id.name] = processExport(path.get('declaration'));
+            let name = path.node.declaration.id.name;
+            asset.symbols.set(name, name);
+            let prev = exports[name];
+            let val = processExport(path.get('declaration'));
+            if (val) {
+              exports[name] = val;
+              if (!exports[name].description && prev?.description) {
+                exports[name].description = prev.description;
+              }
+            }
           } else {
             let identifiers = t.getBindingIdentifiers(path.node.declaration);
             for (let [index, id] of Object.keys(identifiers).entries()) {
