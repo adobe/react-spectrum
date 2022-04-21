@@ -25,7 +25,6 @@ import intlMessages from '../intl/*.json';
 import React, {HTMLAttributes, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
@@ -39,7 +38,6 @@ interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extend
 }
 
 export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>) {
-  props = useProviderProps(props);
   let {
     state,
     calendarProps,

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render as render_, within} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render as render_} from '@testing-library/react';
 import {theme} from '@react-spectrum/theme-default';
 import {Time} from '@internationalized/date';
 import {TimeField} from '../';
@@ -49,6 +49,49 @@ describe('TimeField', function () {
 
     for (let segment of segments.slice(1)) {
       expect(segment).not.toHaveAttribute('aria-describedby');
+    }
+  });
+
+  it('should support focusing via a ref', function () {
+    let ref = React.createRef();
+    let {getAllByRole} = render(<TimeField label="Time" ref={ref} />);
+    expect(ref.current).toHaveProperty('focus');
+
+    act(() => ref.current.focus());
+    expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+  });
+
+  it('should support autoFocus', function () {
+    let {getAllByRole} = render(<TimeField label="Time" autoFocus />);
+    expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+  });
+
+  it('should pass through data attributes', function () {
+    let {getByTestId} = render(<TimeField label="Time" data-testid="foo" />);
+    expect(getByTestId('foo')).toHaveAttribute('role', 'group');
+  });
+
+  it('should return the outer most DOM element from the ref', function () {
+    let ref = React.createRef();
+    render(<TimeField label="Time" ref={ref} />);
+    expect(ref.current).toHaveProperty('UNSAFE_getDOMNode');
+
+    let wrapper = ref.current.UNSAFE_getDOMNode();
+    expect(wrapper).toBeInTheDocument();
+    expect(within(wrapper).getByText('Time')).toBeInTheDocument();
+    expect(within(wrapper).getAllByRole('spinbutton')[0]).toBeInTheDocument();
+  });
+
+  it('should respond to provider props', function () {
+    let {getAllByRole} = render(
+      <Provider theme={theme} isDisabled>
+        <TimeField label="Time" />
+      </Provider>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    for (let segment of segments) {
+      expect(segment).toHaveAttribute('aria-disabled', 'true');
     }
   });
 });

@@ -12,8 +12,7 @@
 
 import {act, fireEvent, render} from '@testing-library/react';
 import {Calendar, RangeCalendar} from '../';
-import {CalendarDate} from '@internationalized/date';
-import {getDaysInMonth} from 'date-fns';
+import {CalendarDate, GregorianCalendar, today} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -54,16 +53,16 @@ describe('CalendarBase', () => {
       let grid = getByRole('grid');
       expect(grid).not.toHaveAttribute('tabIndex');
 
-      let today = getByLabelText('today', {exact: false});
-      expect(today.parentElement).toHaveAttribute('role', 'gridcell');
-      expect(today).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
-      expect(today).toHaveAttribute('tabIndex', '0');
+      let todayCell = getByLabelText('today', {exact: false});
+      expect(todayCell.parentElement).toHaveAttribute('role', 'gridcell');
+      expect(todayCell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
+      expect(todayCell).toHaveAttribute('tabIndex', '0');
 
       expect(getByLabelText('Previous')).toBeVisible();
       expect(getAllByLabelText('Next')[0]).toBeVisible();
 
       let gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
-      expect(gridCells.length).toBe(getDaysInMonth(new Date()));
+      expect(gridCells.length).toBe(new GregorianCalendar().getDaysInMonth(today()));
       for (let cell of gridCells) {
         expect(cell.children[0]).toHaveAttribute('aria-label');
       }
@@ -388,6 +387,66 @@ describe('CalendarBase', () => {
       expect(grid).toHaveAttribute('aria-label', 'July 2019');
       expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
     });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should support focusing via a ref', ({Calendar}) => {
+      let ref = React.createRef();
+      render(<Calendar ref={ref} />);
+      expect(ref.current).toHaveProperty('focus');
+
+      act(() => ref.current.focus());
+      expect(document.activeElement).toHaveAttribute('role', 'button');
+      expect(document.activeElement.parentElement).toHaveAttribute('role', 'gridcell');
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should pass through data attributes', ({Calendar}) => {
+      let {getByTestId} = render(<Calendar data-testid="foo" />);
+      expect(getByTestId('foo')).toHaveAttribute('role', 'group');
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should return the outer most DOM element from the ref', ({Calendar}) => {
+      let ref = React.createRef();
+      render(<Calendar ref={ref} />);
+      expect(ref.current).toHaveProperty('UNSAFE_getDOMNode');
+
+      let wrapper = ref.current.UNSAFE_getDOMNode();
+      expect(wrapper).toHaveAttribute('role', 'group');
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should respond to provider props', ({Calendar}) => {
+      let {getByRole, getAllByRole, getByLabelText, getAllByLabelText} = render(
+        <Provider theme={theme} isDisabled>
+          <Calendar />
+        </Provider>
+      );
+
+      let grid = getByRole('grid');
+      expect(grid).toHaveAttribute('aria-disabled', 'true');
+      expect(grid).not.toHaveAttribute('tabIndex');
+
+      let gridCells = getAllByRole('gridcell');
+      for (let cell of gridCells) {
+        expect(cell).toHaveAttribute('aria-disabled', 'true');
+      }
+
+      expect(getByLabelText('Previous')).toHaveAttribute('disabled');
+      expect(getAllByLabelText('Next')[0]).toHaveAttribute('disabled');
+    });
   });
 
   describe('labeling', () => {
@@ -489,7 +548,7 @@ describe('CalendarBase', () => {
         defaultValue = {start: defaultValue, end: defaultValue};
       }
 
-      let {getAllByRole, getByLabelText, getAllByLabelText, unmount} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
+      let {getAllByRole, getAllByLabelText, unmount} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
       let grid = getAllByRole('grid')[0]; // get by role will see two, role=grid and implicit <table> which also has role=grid
 
       let cell = getAllByLabelText('selected', {exact: false}).filter(cell => cell.role !== 'grid')[0];
@@ -499,9 +558,8 @@ describe('CalendarBase', () => {
       fireEvent.keyDown(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
       fireEvent.keyUp(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
 
-      cell = getByLabelText(value, {exact: false});
       expect(grid).not.toHaveAttribute('aria-activedescendant');
-      expect(document.activeElement.outerHTML).toBe(cell.outerHTML);
+      expect(document.activeElement.getAttribute('aria-label')).toMatch(value);
 
       let heading = getAllByRole('heading')[0];
       expect(heading).toHaveTextContent(month);
@@ -551,9 +609,9 @@ describe('CalendarBase', () => {
       Name                    | Calendar          | props
       ${'v3 Calendar'}        | ${Calendar}       | ${{visibleMonths: 3}}
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{visibleMonths: 3}}
-    `('$Name should move the focused date to the start or end of the page with the home/end keys when multiple months are visible', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'Home', 'Wednesday, May 1, 2019', 'May to July 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'End', 'Wednesday, July 31, 2019', 'May to July 2019', props);
+    `('$Name should move the focused date to the start or end of the month with the home/end keys when multiple months are visible', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'Home', 'Saturday, June 1, 2019', 'May to July 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 12), 'End', 'Sunday, June 30, 2019', 'May to July 2019', props);
     });
 
     it.each`
@@ -569,9 +627,9 @@ describe('CalendarBase', () => {
       Name                    | Calendar          | props
       ${'v3 Calendar'}        | ${Calendar}       | ${{visibleMonths: 3}}
       ${'v3 RangeCalendar'}   | ${RangeCalendar}  | ${{visibleMonths: 3}}
-    `('$Name should move the focused date by one page with the page up/page down keys when multiple months are visible', async ({Calendar, props}) => {
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Tuesday, March 5, 2019', 'February to April 2019', props);
-      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Thursday, September 5, 2019', 'August to October 2019', props);
+    `('$Name should move the focused date by one month with the page up/page down keys when multiple months are visible', async ({Calendar, props}) => {
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageUp', 'Sunday, May 5, 2019', 'May to July 2019', props);
+      await testKeyboard(Calendar, new CalendarDate(2019, 6, 5), 'PageDown', 'Friday, July 5, 2019', 'May to July 2019', props);
     });
 
     it.each`

@@ -137,7 +137,7 @@ module.exports = new Packager({
           }
 
           // Return merged interface if the parent is a component or an interface we're extending.
-          if (!k || k === 'props' || k === 'extends') {
+          if (!k || k === 'props' || k === 'extends' || k === 'keyof') {
             return merged;
           }
 
@@ -170,6 +170,18 @@ module.exports = new Packager({
             type: 'link',
             id: t.id
           };
+        }
+
+        if (t && t.type === 'keyof') {
+          if (t.keyof.type === 'interface') {
+            return {
+              type: 'union',
+              elements: Object.keys(t.keyof.properties).map(key => ({
+                type: 'string',
+                value: key
+              }))
+            };
+          }
         }
 
         return t;

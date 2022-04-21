@@ -11,19 +11,33 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {CalendarAria} from './types';
+import {AriaButtonProps} from '@react-types/button';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
+import {HTMLAttributes, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useRef} from 'react';
+
+export interface CalendarAria {
+  /** Props for the calendar grouping element. */
+  calendarProps: HTMLAttributes<HTMLElement>,
+  /** Props for the next button. */
+  nextButtonProps: AriaButtonProps,
+  /** Props for the previous button. */
+  prevButtonProps: AriaButtonProps,
+  /** Props for the error message element, if any. */
+  errorMessageProps: HTMLAttributes<HTMLElement>,
+  /** A description of the visible date range, for use in the calendar title. */
+  title: string
+}
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarState | RangeCalendarState): CalendarAria {
   let formatMessage = useMessageFormatter(intlMessages);
+  let domProps = filterDOMProps(props);
 
   let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);
   let visibleRangeDescription = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, true);
@@ -76,7 +90,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   });
 
   return {
-    calendarProps: mergeProps(labelProps, {
+    calendarProps: mergeProps(domProps, labelProps, {
       role: 'group',
       'aria-describedby': props['aria-describedby'] || undefined
     }),
