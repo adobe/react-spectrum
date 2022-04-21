@@ -425,7 +425,7 @@ describe('calculatePosition', function () {
         crossOffset: 0
       });
       expect(positionTop).toBe(6);
-      expect(arrowOffsetTop).toBe(12);
+      expect(arrowOffsetTop).toBe(6.5);
       expect(arrowOffsetLeft).toBe(undefined);
 
       document.documentElement.removeChild(target);
@@ -454,7 +454,7 @@ describe('calculatePosition', function () {
         crossOffset: 0
       });
       expect(positionTop).toBe(6);
-      expect(arrowOffsetTop).toBe(undefined);
+      expect(arrowOffsetTop).toBe(-3.5);
       expect(arrowOffsetLeft).toBe(undefined);
 
       document.documentElement.removeChild(target);

@@ -102,10 +102,38 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   let {modalProps} = useModal({
     isDisabled: isNonModal
   });
+  let [isHideArrow, setIsHideArrow] = useState(hideArrow);
 
-  if (arrowProps?.style.left === undefined && arrowProps?.style.top === undefined) {
-    hideArrow = true;
-  }
+  useLayoutEffect(() => {
+    // check position of arrow and popover boundries
+    if (ref.current && arrowProps) {
+      let propsHideArrow = hideArrow;
+
+      // figure out the location of the offset and which popover dimension to use
+      let offset = arrowProps.style.left ? 'left' : 'top';
+      let overlayCrossSize = offset === 'left' ? ref.current.offsetWidth : ref.current.offsetHeight;
+
+      // for the start and top, no change is made to arrowPosition not caught in a condiational below
+      if (12 > arrowProps.style[offset] && arrowProps.style[offset] > 0) {
+        // using the default padding for proper arrow placement
+        let arrowStyle = {...arrowProps.style};
+        arrowStyle[offset] = 12;
+        arrowProps.style = arrowStyle;
+      } else if (arrowProps.style[offset] > overlayCrossSize - 12 && arrowProps.style[offset] + 2 <= overlayCrossSize) {
+        // for the end and bottom, keep the arrow pointing at the button and within the popover
+        let arrowStyle = {...arrowProps.style};
+        arrowStyle[offset] = overlayCrossSize - 12;
+        arrowProps.style = arrowStyle;
+      } else if (arrowProps.style[offset] <= 0 || arrowProps.style[offset] + 2 > overlayCrossSize) {
+        // trigger is too far off the page, hiding the arrow per Spectrum
+        propsHideArrow = true;
+      }
+
+      if (propsHideArrow !== isHideArrow) {
+        setIsHideArrow(propsHideArrow);
+      }
+    }
+  }, [arrowProps]);
 
   return (
     <div
@@ -131,7 +159,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
       role="presentation"
       data-testid="popover">
       {children}
-      {hideArrow ? null : (
+      {isHideArrow ? null : (
         <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement]} />
       )}
     </div>
@@ -197,6 +225,7 @@ function Arrow(props) {
       style={props.style}
       className={classNames(styles, 'spectrum-Popover-tip')}
       ref={ref}
+      data-testid="arrow"
       {...arrowProps}>
       <path className={classNames(styles, 'spectrum-Popover-tip-triangle')} d={pathData.join(' ')} />
     </svg>

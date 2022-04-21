@@ -368,20 +368,6 @@ export function calculatePositionInternal(
   let arrowPosition: Position = {};
   arrowPosition[crossAxis] = (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
 
-  // keeping the arrow placement on the popover when near the edge
-  if (crossAxis === 'left' || crossAxis === 'top') {
-    // for the start and top
-    if (12 > arrowPosition[crossAxis] && arrowPosition[crossAxis] > 0) {
-      arrowPosition[crossAxis] = 12; // using the default padding for proper arrow placement
-    } else if (arrowPosition[crossAxis] > overlaySize[crossSize] - 12 && arrowPosition[crossAxis] + 2 <= overlaySize[crossSize]) {
-      // for the end and bottom, math must catch the position in a small window where is still points at the
-      arrowPosition[crossAxis] = overlaySize[crossSize] - 12;
-    } else if (arrowPosition[crossAxis] <= 0 || arrowPosition[crossAxis] + 2 > overlaySize[crossSize]) {
-      // trigger is too far off the page, hiding the arrow per Spectrum
-      arrowPosition[crossAxis] = undefined;
-    }
-  }
-
   return {
     position,
     maxHeight: maxHeight,
