@@ -11,10 +11,10 @@
  */
 
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
-import {calendarIds} from './utils';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {focusWithoutScrolling, useDescription} from '@react-aria/utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
+import {hookData} from './utils';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -286,7 +286,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   });
 
   let formattedDate = useMemo(() => cellDateFormatter.format(nativeDate), [cellDateFormatter, nativeDate]);
-  let {errorMessageId} = calendarIds.get(state);
+  let {errorMessageId} = hookData.get(state);
 
   return {
     cellProps: {

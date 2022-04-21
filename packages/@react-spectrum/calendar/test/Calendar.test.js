@@ -402,9 +402,9 @@ describe('Calendar', () => {
   // These tests only work against v3
   describe('announcing', () => {
     it('announces when the current month changes', () => {
-      let {getByLabelText} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} />);
+      let {getAllByLabelText} = render(<Calendar defaultValue={new CalendarDate(2019, 6, 5)} />);
 
-      let nextButton = getByLabelText('Next');
+      let nextButton = getAllByLabelText('Next')[0];
       triggerPress(nextButton);
 
       expect(announce).toHaveBeenCalledTimes(1);

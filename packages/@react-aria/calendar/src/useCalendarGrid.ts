@@ -11,8 +11,8 @@
  */
 
 import {CalendarDate, startOfWeek} from '@internationalized/date';
-import {calendarIds, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
+import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 import {HTMLAttributes, KeyboardEvent, useMemo} from 'react';
 import {mergeProps, useDescription, useLabels} from '@react-aria/utils';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
@@ -35,15 +35,10 @@ export interface AriaCalendarGridProps {
 export interface CalendarGridAria {
   /** Props for the date grid element (e.g. `<table>`). */
   gridProps: HTMLAttributes<HTMLElement>,
-  /** A list of week days formatted for the current locale, typically used in column headers. */
-  weekDays: WeekDay[]
-}
-
-interface WeekDay {
-  /** A short name (e.g. single letter) for the day. */
-  narrow: string,
-  /** The full day name. If not displayed visually, it should be used as the accessiblity name. */
-  long: string
+  /** Props for the grid header element (e.g. `<thead>`). */
+  headerProps: HTMLAttributes<HTMLElement>,
+  /** A list of week day abbreviations formatted for the current locale, typically used in column headers. */
+  weekDays: string[]
 }
 
 /**
@@ -120,28 +115,22 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
   let descriptionProps = useDescription(selectedDateDescription);
   let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
 
-  let {calendarId, errorMessageId} = calendarIds.get(state);
+  let {ariaLabel, ariaLabelledBy, errorMessageId} = hookData.get(state);
   let labelProps = useLabels({
-    'aria-label': visibleRangeDescription,
-    'aria-labelledby': calendarId
+    'aria-label': [ariaLabel, visibleRangeDescription].filter(Boolean).join(', '),
+    'aria-labelledby': ariaLabelledBy
   });
 
   let dayFormatter = useDateFormatter({weekday: 'narrow', timeZone: state.timeZone});
-  let dayFormatterLong = useDateFormatter({weekday: 'long', timeZone: state.timeZone});
   let {locale} = useLocale();
   let weekDays = useMemo(() => {
     let weekStart = startOfWeek(state.visibleRange.start, locale);
     return [...new Array(7).keys()].map((index) => {
       let date = weekStart.add({days: index});
       let dateDay = date.toDate(state.timeZone);
-      let narrow = dayFormatter.format(dateDay);
-      let long = dayFormatterLong.format(dateDay);
-      return {
-        narrow,
-        long
-      };
+      return dayFormatter.format(dateDay);
     });
-  }, [state.visibleRange.start, locale, state.timeZone, dayFormatter, dayFormatterLong]);
+  }, [state.visibleRange.start, locale, state.timeZone, dayFormatter]);
 
   return {
     gridProps: mergeProps(labelProps, {
@@ -157,6 +146,11 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
     }),
+    headerProps: {
+      // Column headers are hidden to screen readers to make navigating with a touch screen reader easier.
+      // The day names are already included in the label of each cell, so there's no need to announce them twice.
+      'aria-hidden': true
+    },
     weekDays
   };
 }
