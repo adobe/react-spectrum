@@ -33,7 +33,7 @@ storiesOf('ContextualHelp', module)
   'with button',
   () => (<Flex alignItems="center">
     <Button variant="primary" isDisabled>Create</Button>
-    <ContextualHelp>
+    <ContextualHelp marginStart="size-100">
       <Heading>Help title</Heading>
       <Content>{helpText()}</Content>
     </ContextualHelp>

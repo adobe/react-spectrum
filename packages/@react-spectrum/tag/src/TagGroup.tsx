@@ -10,50 +10,87 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
-import React, {useContext} from 'react';
-import {Removable} from '@react-types/shared';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {GridCollection, useGridState} from '@react-stately/grid';
+import {mergeProps} from '@react-aria/utils';
+import React, {ReactElement, useMemo} from 'react';
 import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
+import {Tag} from './Tag';
+import {TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
+import {useGrid} from '@react-aria/grid';
+import {useListState} from '@react-stately/list';
+import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTagGroup} from '@react-aria/tag';
 
-interface TagGroupContextValue extends Removable<any, void> {
-  isDisabled?: boolean,
-  isFocused?: boolean,
-  isRequired?: boolean,
-  isReadOnly?: boolean,
-  validationState?: 'valid' | 'invalid',
-  role?: 'gridcell'
-}
 
-const TagGroupContext = React.createContext<TagGroupContextValue | {}>({});
-
-export function useTagGroupProvider(): TagGroupContextValue {
-  return useContext(TagGroupContext);
-}
-
-export const TagGroup = ((props: SpectrumTagGroupProps) => {
+function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-
   let {
-    isReadOnly,
     isDisabled,
+    isRemovable,
     onRemove,
-    validationState,
-    children,
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  const {tagGroupProps} = useTagGroup(props);
+  let {direction} = useLocale();
+  let listState = useListState(props);
+  let gridCollection = useMemo(() => new GridCollection({
+    columnCount: isRemovable ? 2 : 1,
+    items: [...listState.collection].map(item => {
+      let childNodes = [{
+        ...item,
+        index: 0,
+        type: 'cell'
+      }];
 
-  function removeAll(tags) {
-    onRemove([tags]);
-  }
+      // add column of clear buttons if removable
+      if (isRemovable) {
+        childNodes.push({
+          key: `remove-${item.key}`,
+          type: 'cell',
+          index: 1,
+          value: null,
+          level: 0,
+          rendered: null,
+          textValue: item.textValue, // TODO localize?
+          hasChildNodes: false,
+          childNodes: []
+        });
+      }
 
+      return {
+        type: 'item',
+        childNodes
+      };
+    })
+  }), [listState.collection, isRemovable]);
+  let state = useGridState({
+    ...props,
+    collection: gridCollection,
+    focusMode: 'cell'
+  });
+  let keyboardDelegate = new TagKeyboardDelegate({
+    collection: state.collection,
+    disabledKeys: state.disabledKeys,
+    ref: domRef,
+    direction,
+    focusMode: 'cell'
+  });
+  let {gridProps} = useGrid({
+    ...props,
+    keyboardDelegate
+  }, state, domRef);
+  const {tagGroupProps} = useTagGroup(props, listState);
+
+  // Don't want the grid to be focusable or accessible via keyboard
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {tabIndex, ...otherGridProps} = gridProps;
   return (
     <div
-      {...styleProps}
+      {...mergeProps(styleProps, tagGroupProps, otherGridProps)}
       className={
         classNames(
           styles,
@@ -64,17 +101,22 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
           styleProps.className
         )
       }
-      {...tagGroupProps}>
-      <TagGroupContext.Provider
-        value={{
-          isRemovable: isReadOnly ? false : isReadOnly,
-          isDisabled,
-          onRemove: isReadOnly ? null : removeAll,
-          validationState,
-          role: 'gridcell'
-        }}>
-        {children}
-      </TagGroupContext.Provider>
+      ref={domRef}>
+      {[...gridCollection].map(item => (
+        <Tag
+          {...item.childNodes[0].props}
+          key={item.key}
+          item={item}
+          state={state}
+          isDisabled={isDisabled || state.disabledKeys.has(item?.childNodes[0]?.key)}
+          isRemovable={isRemovable}
+          onRemove={onRemove}>
+          {item.childNodes[0].rendered}
+        </Tag>
+        ))}
     </div>
   );
-});
+}
+
+const _TagGroup = React.forwardRef(TagGroup) as <T>(props: SpectrumTagGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+export {_TagGroup as TagGroup};

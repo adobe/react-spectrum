@@ -111,6 +111,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   // Handle the escape key
   let onKeyDown = (e) => {
     if (e.key === 'Escape' && !isKeyboardDismissDisabled) {
+      e.stopPropagation();
       e.preventDefault();
       onHide();
     }

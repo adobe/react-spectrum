@@ -13,6 +13,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/menu';
 import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/menu/package.json';
+import {Keyboard} from '@react-spectrum/text';
 
 ```jsx import
 import {ActionButton} from '@react-spectrum/button'
@@ -42,7 +43,7 @@ keywords: [menu, dropdown, action menu]
 ```tsx example
 <MenuTrigger>
   <ActionButton>
-      Edit
+    Edit
   </ActionButton>
   <Menu>
     <Item>Cut</Item>
@@ -80,6 +81,43 @@ function Example() {
     </Flex>
   );
 }
+```
+
+## Long press
+By default, a MenuTrigger's Menu is opened by pressing the trigger element or activating it via the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys. However, there may be cases in which your trigger element
+should perform a separate default action on press such as selection, and should only display the Menu when long pressed. This behavior can be changed by providing `"longPress"` to the `trigger` prop. With this prop, the Menu will only be opened upon
+pressing and holding the trigger element or by using the <Keyboard>Option</Keyboard> (<Keyboard>Alt</Keyboard> on Windows) + <Keyboard>Down Arrow</Keyboard>/<Keyboard>Up Arrow</Keyboard> keys while focusing the trigger element.
+
+The example below illustrates how one would setup a MenuTrigger to have long press behavior.
+
+```tsx example
+import CloneStamp from '@spectrum-icons/workflow/CloneStamp';
+import Crop from '@spectrum-icons/workflow/Crop';
+import CropRotate from '@spectrum-icons/workflow/CropRotate';
+import Slice from '@spectrum-icons/workflow/Slice';
+import {Text} from '@react-spectrum/text';
+
+<MenuTrigger trigger="longPress">
+  <ActionButton
+    aria-label="Crop tool"
+    onPress={() => alert('Cropping!')}>
+    <Crop />
+  </ActionButton>
+  <Menu>
+    <Item textValue="Crop Rotate">
+      <CropRotate />
+      <Text>Crop Rotate</Text>
+    </Item>
+    <Item textValue="Slice">
+      <Slice />
+      <Text>Slice</Text>
+    </Item>
+    <Item textValue="Clone stamp">
+      <CloneStamp />
+      <Text>Clone Stamp</Text>
+    </Item>
+  </Menu>
+</MenuTrigger>
 ```
 
 ## Props

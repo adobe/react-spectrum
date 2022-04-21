@@ -36,7 +36,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
       }
 
       let firstKey = this.getFirstKey();
-      if (!firstKey) {
+      if (firstKey == null) {
         return;
       }
 
@@ -65,7 +65,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     // only return above row key if not header row
     let superKey = super.getKeyAbove(key);
-    if (superKey && this.collection.getItem(superKey).type !== 'headerrow') {
+    if (superKey != null && this.collection.getItem(superKey).type !== 'headerrow') {
       return superKey;
     }
 
@@ -152,7 +152,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     let collection = this.collection;
     let key = fromKey ?? this.getFirstKey();
-    if (!key) {
+    if (key == null) {
       return null;
     }
 
