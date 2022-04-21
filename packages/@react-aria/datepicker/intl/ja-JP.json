@@ -1,9 +1,5 @@
 {
   "calendar": "カレンダー",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} ～ {end, date, long}",
-  "date": "日付",
-  "dateRange": "日付範囲",
   "day": "日",
   "dayPeriod": "午前/午後",
   "endDate": "終了日",
@@ -15,5 +11,7 @@
   "startDate": "開始日",
   "year": "年",
   "weekday": "曜日",
-  "timeZoneName": "タイムゾーン"
+  "timeZoneName": "タイムゾーン",
+  "selectedDateDescription": "日付を選択：{date}",
+  "selectedRangeDescription": "範囲を選択：{startDate} から {endDate}"
 }

@@ -493,13 +493,15 @@ storiesOf('Picker', module)
     () => (
       <>
         <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-          <input placeholder="Shift tab here" />
+          <label htmlFor="focus-before">Focus before</label>
+          <input id="focus-before" />
           <Picker label="Test" defaultSelectedKey="One" onSelectionChange={action('selectionChange')}>
             <Item key="One">One</Item>
             <Item key="Two">Two</Item>
             <Item key="Three">Three</Item>
           </Picker>
-          <input placeholder="Tab here" />
+          <label htmlFor="focus-after">Focus after</label>
+          <input id="focus-after" />
         </div>
       </>
     )
@@ -537,11 +539,13 @@ storiesOf('Picker', module)
     'focus',
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-        <input placeholder="Shift tab here" />
+        <label htmlFor="focus-before">Focus before</label>
+        <input id="focus-before" />
         <Picker label="Focus-Test" items={flatOptions} autoFocus onFocus={action('focus')} onBlur={action('blur')} onKeyDown={action('keydown')} onKeyUp={action('keyup')}>
           {item => <Item>{item.name}</Item>}
         </Picker>
-        <input placeholder="Tab here" />
+        <label htmlFor="focus-after">Focus after</label>
+        <input id="focus-after" />
       </div>
     )
   )

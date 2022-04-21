@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComplexMobile} from './MenuTrigger.chromatic';
 import {Meta} from '@storybook/react';
 import React from 'react';
 
@@ -43,10 +42,3 @@ export {
   DirectionRightEnd,
   ArabicComplex
 } from './MenuTrigger.chromatic';
-
-export const ComplexItemsMobileViewport = ComplexMobile.bind({});
-ComplexItemsMobileViewport.storyName = 'complex items, mobile viewport';
-ComplexItemsMobileViewport.parameters = {
-  chromatic: {viewports: [320]},
-  chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
-};

@@ -16,7 +16,7 @@ import {HelpText} from './HelpText';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, mergeRefs} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
@@ -109,7 +109,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 
   return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
-    ref
+    // @ts-ignore
+    ref: mergeRefs(children.ref, ref)
   }));
 }
 

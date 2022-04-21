@@ -1,9 +1,5 @@
 {
   "calendar": "Calendario",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} a {end, date, long}",
-  "date": "Fecha",
-  "dateRange": "Intervalo de fecha",
   "day": "día",
   "dayPeriod": "a. m./p. m.",
   "endDate": "Fecha final",
@@ -15,5 +11,7 @@
   "startDate": "Fecha de inicio",
   "year": "año",
   "weekday": "día de la semana",
-  "timeZoneName": "zona horaria"
+  "timeZoneName": "zona horaria",
+  "selectedDateDescription": "Fecha seleccionada: {date}",
+  "selectedRangeDescription": "Seleccionar rango: {startDate} a {endDate}"
 }
