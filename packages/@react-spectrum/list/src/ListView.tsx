@@ -74,8 +74,6 @@ const ROW_HEIGHTS = {
   }
 };
 
-const CELL_PREFIX = 'cell-';
-
 export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -144,7 +142,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       ...item,
       hasChildNodes: true,
       childNodes: [{
-        key: `${CELL_PREFIX}${item.key}`,
+        key: `cell-'${item.key}`,
         type: 'cell',
         index: 0,
         value: null,
@@ -336,7 +334,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         transitionDuration={transitionDuration}>
         {(type, item) => {
           if (type === 'item') {
-            let target: Omit<ItemDropTarget, 'dropPosition'> = {type: 'item', key: item.key};
             let isLastItem = state.collection.getKeyAfter(item.key) == null;
             let isFirstItem = state.collection.getKeyBefore(item.key) == null;
             return (
@@ -347,13 +344,13 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                 {isListDroppable &&
                   <InsertionIndicator
                     key={`${item.key}-before`}
-                    target={{...target, dropPosition: 'before'}} />
+                    target={{key: item.key, type: 'item', dropPosition: 'before'}} />
                 }
                 <ListViewItem item={item} isEmphasized dragHooks={dragHooks} dropHooks={dropHooks} dropState={dropState} />
                 {isListDroppable && isLastItem &&
                   <InsertionIndicator
                     key={`${item.key}-after`}
-                    target={{...target, dropPosition: 'after'}} />
+                    target={{key: item.key, type: 'item', dropPosition: 'after'}} />
                 }
               </>
             );
