@@ -307,7 +307,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   if (dropState?.target?.type === 'item') {
     focusedKey = dropState.target.key;
   }
-  console.log(dropState.target);
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate, dragState, dropState, dropHooks, onAction, isListDraggable, isListDroppable}}>
       <Virtualizer

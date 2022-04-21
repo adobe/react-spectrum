@@ -546,7 +546,7 @@ export function DragIntoItemExample() {
 
   let list = useListData({
     initialItems: [
-      {id: '0', type: 'folder', textValue: 'Folder', isFolder: true},
+      {id: '0', type: 'folder', textValue: 'Folder'},
       {id: '1', type: 'item', textValue: 'One'},
       {id: '2', type: 'item', textValue: 'Two'},
       {id: '3', type: 'item', textValue: 'Three'},
@@ -557,20 +557,23 @@ export function DragIntoItemExample() {
   });
 
   let getItems = (keys) => [...keys].map(id => {
-    let item = list.items.find(item => item.id === id);
+    let item = list.getItem(id);
     return {
+      id: item.id,
+      type: item.type,
       'text/plain': item.textValue
     };
   });
 
   let dragHooks = useDragHooks({
-    allowsDraggingItem: (id) => id !== '0',
+    allowsDraggingItem: (id) => list.getItem(id).type === 'item',
     getItems
   });
 
   let dropHooks = useDropHooks({
     onDrop: async e => {
       if (e.target.type === 'item' && e.target.key === '0' && e.target.dropPosition === 'on') {
+        // TODO: Remove dropped items from list
         // list.remove();
         setDroppedItems((prevDropped) => [...prevDropped, e.target]);
       }
@@ -587,9 +590,9 @@ export function DragIntoItemExample() {
       dragHooks={dragHooks}
       dropHooks={dropHooks}>
       {(item: any) => (
-        <Item key={item.id} textValue={item.textValue} hasChildItems={item.isFolder}>
-          <Text>{item.isFolder ? 'Drop items here' : `Item ${item.textValue}`}</Text>
-          {item.isFolder && 
+        <Item key={item.id} textValue={item.textValue} hasChildItems={item.type === 'folder'}>
+          <Text>{item.type === 'folder' ? 'Drop items here' : `Item ${item.textValue}`}</Text>
+          {item.type === 'folder' && 
             <>
               <Folder />
               <Text slot="description">contains {droppedItems.length} dropped item(s)</Text>
