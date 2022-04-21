@@ -406,7 +406,7 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(getRow(tree, 'Foo 49'));
       });
 
-      it('should move focus to a row a page below when focus starts in the row cell', function () {
+      it.skip('should move focus to a row a page below when focus starts in the row cell', function () {
         let tree = renderListWithFocusables({items: manyItems});
         let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
         let start = focusables[0];
