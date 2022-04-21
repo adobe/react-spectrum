@@ -55,17 +55,14 @@ export function ListViewItem(props) {
     shouldSelectOnPressUp: isListDraggable
   }, state, rowRef);
 
-  // We don't want the rowProps.tabIndex or rowProps.onFocus because useGridCell's props
-  // wil handle these for us. Our strategy is to treat the outer div as the "gridcell"
-  // so we can cleanly navigate to the focusable children while skipping the inner "gridcell" div.
-  delete rowProps.tabIndex;
-  delete rowProps.onFocus;
-
   let {gridCellProps} = useGridCell({
     node: cellNode,
     focusMode: 'cell',
     isVirtualized: true
   }, state, rowRef);
+
+  delete gridCellProps.tabIndex;
+
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks

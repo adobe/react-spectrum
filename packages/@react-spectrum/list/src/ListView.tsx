@@ -28,7 +28,6 @@ import {DragHooks} from '@react-spectrum/dnd';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ListGridKeyboardDelegate} from '@react-aria/list';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
@@ -37,13 +36,12 @@ import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
-import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue {
   state: GridState<object, GridCollection<any>>,
-  keyboardDelegate: ListGridKeyboardDelegate<unknown>,
   dragState: DraggableCollectionState,
   onAction:(key: string) => void,
   isListDraggable: boolean
@@ -119,8 +117,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let {direction} = useLocale();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
@@ -135,26 +131,19 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         rendered: null,
         textValue: item.textValue,
         hasChildNodes: false,
-        childNodes: []
+        childNodes: [],
+        nextKey: item.nextKey,
+        prevKey: item.prevKey
       }]
     }))
   }), [collection]);
   let state = useGridState({
     ...props,
     collection: gridCollection,
-    focusMode: 'cell',
+    focusMode: 'row',
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let layout = useListLayout(state, props.density || 'regular');
-  let keyboardDelegate = useMemo(() => new ListGridKeyboardDelegate({
-    collection: state.collection,
-    disabledKeys: state.disabledKeys,
-    ref: domRef,
-    direction,
-    collator,
-    layout
-  }), [state, domRef, direction, collator, layout]);
-
   let provider = useProvider();
   let {checkboxProps} = useGridSelectionCheckbox({key: null}, state);
   let dragState: DraggableCollectionState;
@@ -213,7 +202,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let {gridProps} = useGrid({
     ...props,
     isVirtualized: true,
-    keyboardDelegate
+    keyboardDelegate: layout
   }, state, domRef);
 
   // Sync loading state into the layout.
@@ -226,7 +215,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable}}>
+    <ListViewContext.Provider value={{state, dragState, onAction, isListDraggable}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
