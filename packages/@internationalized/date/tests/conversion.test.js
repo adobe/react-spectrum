@@ -173,6 +173,11 @@ describe('CalendarDate conversion', function () {
         date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 2, 5);
         expect(date.calendar.getDaysInMonth(date)).toBe(29);
       });
+
+      it('constrains dates outside supported eras', function () {
+        let date = new CalendarDate(1700, 4, 30);
+        expect(toCalendar(date, new JapaneseCalendar())).toEqual(new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 30));
+      });
     });
 
     describe('taiwan', function () {

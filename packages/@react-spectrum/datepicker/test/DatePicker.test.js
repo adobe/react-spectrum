@@ -155,6 +155,36 @@ describe('DatePicker', function () {
       expect(segments[6].getAttribute('aria-label')).toBe('AM/PM');
       expect(segments[6].getAttribute('aria-valuetext')).toBe('AM');
     });
+
+    it('should support focusing via a ref', function () {
+      let ref = React.createRef();
+      let {getAllByRole} = render(<DatePicker label="Date" ref={ref} />);
+      expect(ref.current).toHaveProperty('focus');
+
+      act(() => ref.current.focus());
+      expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+    });
+
+    it('should support autoFocus', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" autoFocus />);
+      expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+    });
+
+    it('should pass through data attributes', function () {
+      let {getByTestId} = render(<DatePicker label="Date" data-testid="foo" />);
+      expect(getByTestId('foo')).toHaveAttribute('role', 'group');
+    });
+
+    it('should return the outer most DOM element from the ref', function () {
+      let ref = React.createRef();
+      render(<DatePicker label="Date" ref={ref} />);
+      expect(ref.current).toHaveProperty('UNSAFE_getDOMNode');
+
+      let wrapper = ref.current.UNSAFE_getDOMNode();
+      expect(wrapper).toBeInTheDocument();
+      expect(within(wrapper).getByText('Date')).toBeInTheDocument();
+      expect(within(wrapper).getAllByRole('spinbutton')[0]).toBeInTheDocument();
+    });
   });
 
   describe('calendar popover', function () {

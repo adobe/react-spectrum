@@ -196,7 +196,7 @@ module.exports = new Transformer({
         }, docs));
       }
 
-      if (path.isFunction()) {
+      if (path.isFunction() || path.isTSDeclareFunction()) {
         if (isReactComponent(path)) {
           let props = path.node.params[0];
           let docs = getJSDocs(path);

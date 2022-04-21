@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
-import datepickerStyles from './index.css';
+import datepickerStyles from './styles.css';
 import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
 import React, {useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';

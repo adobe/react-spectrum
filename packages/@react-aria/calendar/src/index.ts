@@ -10,8 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useCalendar';
-export * from './useRangeCalendar';
-export * from './useCalendarGrid';
-export * from './useCalendarCell';
-export * from './types';
+export {useCalendar} from './useCalendar';
+export {useRangeCalendar} from './useRangeCalendar';
+export {useCalendarGrid} from './useCalendarGrid';
+export {useCalendarCell} from './useCalendarCell';
+
+export type {CalendarProps, RangeCalendarProps} from '@react-types/calendar';
+export type {CalendarAria} from './useCalendarBase';
+export type {AriaCalendarGridProps, CalendarGridAria} from './useCalendarGrid';
+export type {AriaCalendarCellProps, CalendarCellAria} from './useCalendarCell';
