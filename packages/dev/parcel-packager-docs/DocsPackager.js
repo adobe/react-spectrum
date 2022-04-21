@@ -91,17 +91,28 @@ module.exports = new Packager({
         }
 
         if (t && t.type === 'application') {
-          application = recurse(t.typeParameters);
+          application = recurse(t.typeParameters, 'typeParameters');
         }
 
         let hasParams = false;
-        if (t && (t.type === 'alias' || t.type === 'interface') && t.typeParameters && application) {
+        if (t && (t.type === 'alias' || t.type === 'interface') && t.typeParameters && application && shouldMerge(t, k, keyStack)) {
           let params = Object.assign({}, paramStack[paramStack.length - 1]);
           t.typeParameters.forEach((p, i) => {
             let v = application[i] || p.default;
             params[p.name] = v;
           });
-
+          paramStack.push(params);
+          hasParams = true;
+        } else if (t && (t.type === 'alias' || t.type === 'interface' || t.type === 'component') && t.typeParameters && keyStack.length === 0) {
+          // If we are at a root export, replace type parameters with constraints if possible.
+          // Seeing `DateValue` (as in `T extends DateValue`) is nicer than just `T`.
+          let typeParameters = recurse(t.typeParameters, 'typeParameters');
+          let params = Object.assign({}, paramStack[paramStack.length - 1]);
+          typeParameters.forEach(p => {
+            if (!params[p.name] && p.constraint) {
+              params[p.name] = p.constraint;
+            }
+          });
           paramStack.push(params);
           hasParams = true;
         }
@@ -117,13 +128,13 @@ module.exports = new Packager({
         let params = paramStack[paramStack.length - 1];
         if (t && t.type === 'application') {
           application = null;
-          if (t.base && t.base.type !== 'identifier' && t.base.type !== 'link') {
+          if (k === 'props') {
             return t.base;
           }
         }
 
         if (t && t.type === 'identifier' && t.name === 'Omit' && application) {
-          return omit(application[0], application[1]);
+          return omit(application[0], application[1], nodes);
         }
 
         if (t && t.type === 'identifier' && params && params[t.name]) {
@@ -136,16 +147,7 @@ module.exports = new Packager({
             nodes[t.id] = merged;
           }
 
-          // Return merged interface if the parent is a component or an interface we're extending.
-          if (!k || k === 'props' || k === 'extends' || k === 'keyof') {
-            return merged;
-          }
-
-          // If the key is "base", then it came from a generic type application, so we need to
-          // check one level above. If that was a component or extended interface, return the
-          // merged interface.
-          let lastKey = keyStack[keyStack.length - 1];
-          if (k === 'base' && (lastKey === 'props' || lastKey === 'extends')) {
+          if (shouldMerge(t, k, keyStack)) {
             return merged;
           }
 
@@ -157,8 +159,7 @@ module.exports = new Packager({
         }
 
         if (t && t.type === 'alias') {
-          let lastKey = keyStack[keyStack.length - 1];
-          if (k === 'base' && (lastKey === 'props' || lastKey === 'extends')) {
+          if (k === 'props') {
             return t.value;
           }
 
@@ -207,6 +208,25 @@ module.exports = new Packager({
   }
 });
 
+function shouldMerge(t, k, keyStack) {
+  if (t && (t.type === 'alias' || t.type === 'interface')) {
+    // Return merged interface if the parent is a component or an interface we're extending.
+    if (t.type === 'interface' && (!k || k === 'props' || k === 'extends' || k === 'keyof')) {
+      return true;
+    }
+
+    // If the key is "base", then it came from a generic type application, so we need to
+    // check one level above. If that was a component or extended interface, return the
+    // merged interface.
+    let lastKey = keyStack[keyStack.length - 1];
+    if (k === 'base' && (lastKey === 'props' || lastKey === 'extends')) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 async function parse(asset) {
   let buffer = await asset.getBuffer();
   return [asset.id, v8.deserialize(buffer)];
@@ -217,7 +237,7 @@ function walk(obj, fn) {
   let circular = new Set();
 
   let visit = (obj, fn, k = null) => {
-    let recurse = (obj) => {
+    let recurse = (obj, key = k) => {
       if (circular.has(obj)) {
         return {
           type: 'link',
@@ -226,7 +246,7 @@ function walk(obj, fn) {
       }
       if (Array.isArray(obj)) {
         let resultArray = [];
-        obj.forEach((item, i) => resultArray[i] = visit(item, fn, k));
+        obj.forEach((item, i) => resultArray[i] = visit(item, fn, key));
         return resultArray;
       } else if (obj && typeof obj === 'object') {
         circular.add(obj);
@@ -253,6 +273,12 @@ function walk(obj, fn) {
 }
 
 function mergeInterface(obj) {
+  if (obj.type === 'application') {
+    obj = obj.base;
+  } else if (obj.type === 'alias') {
+    obj = obj.value;
+  }
+
   let properties = {};
   if (obj.type === 'interface') {
     merge(properties, obj.properties);
@@ -286,7 +312,9 @@ function merge(a, b) {
   }
 }
 
-function omit(obj, toOmit) {
+function omit(obj, toOmit, nodes) {
+  obj = resolveValue(obj, nodes);
+
   if (obj.type === 'interface' || obj.type === 'object') {
     let keys = new Set();
     if (toOmit.type === 'string' && toOmit.value) {
@@ -314,6 +342,22 @@ function omit(obj, toOmit) {
       ...obj,
       properties
     };
+  }
+
+  return obj;
+}
+
+function resolveValue(obj, nodes) {
+  if (obj.type === 'link') {
+    return resolveValue(nodes[obj.id], nodes);
+  }
+
+  if (obj.type === 'application') {
+    return resolveValue(obj.base, nodes);
+  }
+
+  if (obj.type === 'alias') {
+    return resolveValue(obj.value, nodes);
   }
 
   return obj;

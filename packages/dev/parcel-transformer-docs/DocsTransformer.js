@@ -60,9 +60,12 @@ module.exports = new Transformer({
             let name = path.node.declaration.id.name;
             asset.symbols.set(name, name);
             let prev = exports[name];
-            exports[name] = processExport(path.get('declaration'));
-            if (!exports[name].description && prev?.description) {
-              exports[name].description = prev.description;
+            let val = processExport(path.get('declaration'));
+            if (val) {
+              exports[name] = val;
+              if (!exports[name].description && prev?.description) {
+                exports[name].description = prev.description;
+              }
             }
           } else {
             let identifiers = t.getBindingIdentifiers(path.node.declaration);
@@ -204,6 +207,9 @@ module.exports = new Transformer({
             props: props && props.typeAnnotation
               ? processExport(path.get('params.0.typeAnnotation.typeAnnotation'))
               : null,
+            typeParameters: path.node.typeParameters
+              ? path.get('typeParameters.params').map(p => processExport(p))
+              : [],
             description: docs.description || null
           });
         } else {
@@ -424,6 +430,10 @@ module.exports = new Transformer({
         return Object.assign(node, {type: 'unknown'});
       }
 
+      if (path.isTSNeverKeyword()) {
+        return Object.assign(node, {type: 'never'});
+      }
+
       if (path.isTSArrayType()) {
         return Object.assign(node, {
           type: 'array',
@@ -465,6 +475,7 @@ module.exports = new Transformer({
         return Object.assign(node, {
           type: 'typeParameter',
           name: path.node.name,
+          constraint: path.node.constraint ? processExport(path.get('constraint')) : null,
           default: path.node.default ? processExport(path.get('default')) : null
         });
       }
@@ -480,6 +491,16 @@ module.exports = new Transformer({
         return Object.assign(node, {
           type: 'keyof',
           keyof: processExport(path.get('typeAnnotation'))
+        });
+      }
+
+      if (path.isTSConditionalType()) {
+        return Object.assign(node, {
+          type: 'conditional',
+          checkType: processExport(path.get('checkType')),
+          extendsType: processExport(path.get('extendsType')),
+          trueType: processExport(path.get('trueType')),
+          falseType: processExport(path.get('falseType'))
         });
       }
 
