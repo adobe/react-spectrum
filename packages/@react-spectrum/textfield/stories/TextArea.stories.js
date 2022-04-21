@@ -161,7 +161,6 @@ function render(props = {}) {
   return (
     <TextArea
       label="Comments"
-      placeholder="React"
       onChange={action('change')}
       onFocus={action('focus')}
       onBlur={action('blur')}
@@ -187,16 +186,13 @@ function renderInFlexRowAndBlock(props = {}) {
       <Flex gap="size-100">
         <TextArea
           label="Default"
-          placeholder="React"
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
       </Flex>
@@ -204,16 +200,13 @@ function renderInFlexRowAndBlock(props = {}) {
       <Flex gap="size-100" alignItems="end">
         <TextArea
           label="Default"
-          placeholder="React"
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
       </Flex>
@@ -221,16 +214,13 @@ function renderInFlexRowAndBlock(props = {}) {
       <div>
         <TextArea
           label="Default"
-          placeholder="React"
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
       </div>

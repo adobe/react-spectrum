@@ -60,7 +60,7 @@
 .react-spectrum-Datepicker-inputContents {
   display: flex;
   align-items: center;
-  /* width: auto; */
+  height: 100%;
   overflow-x: auto;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* Internet Explorer 10+ */
@@ -134,15 +134,32 @@
   width: auto;
 }
 
+.react-spectrum-Datepicker-dialogContent {
+  display: flex;
+  flex-direction: column;
+
+  .react-spectrum-Datepicker-calendar.is-invalid {
+    /* Only apply display: contents when the calendar is invalid, which allows us to move the
+     * error message below the time fields. Otherwise, don't do this because it breaks dragging
+     * the selected range on Android. */
+    display: contents;
+  }
+
+  /* Push the help text within the calendar down to the bottom of the dialog, below the time fields. */
+  :global(.spectrum-Calendar-helpText) {
+    order: 10;
+    margin: var(--spectrum-global-dimension-size-200) var(--spectrum-calendar-day-padding) 0 var(--spectrum-calendar-day-padding);
+  }
+}
+
 /* when displayed in a tray, reduce the padding of the dialog */
 @media (max-width: 700px) {
   .react-spectrum-Datepicker-dialog {
     --spectrum-dialog-padding-x: 8px;
 
     .react-spectrum-Datepicker-dialogContent {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      margin: 0 auto;
+      max-width: calc((var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12));
     }
   }
 }

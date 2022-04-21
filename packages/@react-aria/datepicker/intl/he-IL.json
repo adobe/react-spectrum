@@ -1,9 +1,5 @@
 {
   "calendar": "לוח שנה",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "מ-{start, date, long} ועד {end, date, long}",
-  "date": "תאריך",
-  "dateRange": "טווח תאריכים",
   "day": "יום",
   "dayPeriod": "לפנה״צ/אחה״צ",
   "endDate": "תאריך סיום",
@@ -15,5 +11,7 @@
   "startDate": "תאריך התחלה",
   "year": "שנה",
   "weekday": "יום בשבוע",
-  "timeZoneName": "אזור זמן"
+  "timeZoneName": "אזור זמן",
+  "selectedDateDescription": "התאריך שנבחר: {date}",
+  "selectedRangeDescription": "הטווח שנבחר: מ-{startDate} ועד {endDate}"
 }

@@ -50,7 +50,6 @@ storiesOf('HelpText', module)
       return (
         <TextField
           label="Empty field"
-          placeholder="Don't type here!"
           errorMessage="Remove input."
           value={value}
           onChange={setValue}

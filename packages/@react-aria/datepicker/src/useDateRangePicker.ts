@@ -15,18 +15,18 @@ import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-t
 import {AriaDialogProps} from '@react-types/dialog';
 import {createFocusManager} from '@react-aria/focus';
 import {DateRangePickerState} from '@react-stately/datepicker';
+import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription, useId} from '@react-aria/utils';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
-interface DateRangePickerAria {
+export interface DateRangePickerAria {
   /** Props for the date range picker's visible label element, if any. */
   labelProps: HTMLAttributes<HTMLElement>,
   /** Props for the grouping element containing the date fields and button. */
@@ -62,7 +62,8 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
 
   let {locale} = useLocale();
-  let description = state.formatValue(locale, {month: 'long'});
+  let range = state.formatValue(locale, {month: 'long'});
+  let description = range ? formatMessage('selectedRangeDescription', {startDate: range.start, endDate: range.end}) : '';
   let descProps = useDescription(description);
 
   let startFieldProps = {
@@ -103,8 +104,10 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     validationState: state.validationState
   };
 
+  let domProps = filterDOMProps(props);
+
   return {
-    groupProps: mergeProps(groupProps, fieldProps, descProps, focusWithinProps, {
+    groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-describedby': ariaDescribedBy
@@ -154,7 +157,9 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       isReadOnly: props.isReadOnly,
       isDateUnavailable: props.isDateUnavailable,
       allowsNonContiguousRanges: props.allowsNonContiguousRanges,
-      defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue
+      defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue,
+      validationState: state.validationState,
+      errorMessage: props.errorMessage
     }
   };
 }

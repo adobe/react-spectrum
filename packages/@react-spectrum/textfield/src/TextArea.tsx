@@ -139,6 +139,10 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     onResize: onHeightChange
   });
 
+  if (props.placeholder) {
+    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextArea.html#help-text');
+  }
+
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
     onChange: chain(onChange, setInputValue),

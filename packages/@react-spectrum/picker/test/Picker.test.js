@@ -25,6 +25,7 @@ import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../../../@react-stately/virtualizer/src/Virtualizer';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -402,6 +403,36 @@ describe('Picker', function () {
       expect(items[2]).toHaveTextContent('Three');
 
       expect(document.activeElement).toBe(listbox);
+    });
+
+    it('scrolls the selected item into view on menu open', function () {
+      let scrollToSpy = jest.fn();
+      let virtualizerMock = jest.spyOn(Virtualizer.prototype, 'scrollToItem').mockImplementationOnce(scrollToSpy);
+      // Mock scroll height so that the picker heights actually have a value
+      let scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 500);
+      let {getByRole, queryByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" selectedKey="four">
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(queryByRole('listbox')).toBeNull();
+      let picker = getByRole('button');
+      triggerPress(picker);
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      act(() => jest.runAllTimers());
+      expect(scrollToSpy.mock.calls[0][0]).toBe('four');
+
+      virtualizerMock.mockReset();
+      scrollHeightSpy.mockReset();
     });
   });
 

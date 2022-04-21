@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionBase, LoadingState, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {AsyncLoadable, CollectionBase, LoadingState, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps, TextInputBase} from '@react-types/shared';
 import {Key} from 'react';
 import {MenuTriggerAction} from '@react-types/combobox';
 import {SearchFieldProps} from '@react-types/searchfield';
-export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit'> {
+export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit'>, TextInputBase {
   /** The list of SearchAutocomplete items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of SearchAutocomplete items (controlled). */
@@ -35,7 +35,7 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Sear
   onSubmit?: (value: string, key: Key | null) => void
 }
 
-export interface SpectrumSearchAutocompleteProps<T> extends Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
    * @default 'input'
