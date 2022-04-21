@@ -26,6 +26,7 @@ import React, {HTMLAttributes, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
   state: T,
@@ -63,6 +64,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
   let titles = [];
   let calendars = [];
   for (let i = 0; i < visibleMonths; i++) {
+    let d = currentMonth.add({months: i});
     titles.push(
       <div key={i} className={classNames(styles, 'spectrum-Calendar-monthHeader')}>
         {i === 0 &&
@@ -74,8 +76,12 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
           </ActionButton>
         }
         <h2
+          // We have a visually hidden heading describing the entire visible range,
+          // and the calendar itself describes the individual month
+          // so we don't need to repeat that here for screen reader users.
+          aria-hidden
           className={classNames(styles, 'spectrum-Calendar-title')}>
-          {monthDateFormatter.format(currentMonth.add({months: i}).toDate(state.timeZone))}
+          {monthDateFormatter.format(d.toDate(state.timeZone))}
         </h2>
         {i === visibleMonths - 1 &&
           <ActionButton
@@ -88,11 +94,10 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
       </div>
     );
 
-    let d = currentMonth.add({months: i});
     calendars.push(
       <CalendarMonth
         {...props}
-        key={`${d.year}-${d.month}-${d.day}`}
+        key={i}
         state={state}
         startDate={d} />
     );
@@ -109,12 +114,30 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
           styleProps.className
         )
       }>
+      {/* Add a screen reader only description of the entire visible range rather than
+        * a separate heading above each month grid. This is placed first in the DOM order
+        * so that it is the first thing a touch screen reader user encounters.
+        * In addition, VoiceOver on iOS does not announce the aria-label of the grid
+        * elements, so the aria-label of the Calendar is included here as well. */}
+      <VisuallyHidden>
+        <h2>{calendarProps['aria-label']}</h2>
+      </VisuallyHidden>
       <div className={classNames(styles, 'spectrum-Calendar-header')}>
         {titles}
       </div>
       <div className={classNames(styles, 'spectrum-Calendar-months')}>
         {calendars}
       </div>
+      {/* For touch screen readers, add a visually hidden next button after the month grid
+        * so it's easy to navigate after reaching the end without going all the way
+        * back to the start of the month. */}
+      <VisuallyHidden>
+        <button
+          aria-label={nextButtonProps['aria-label']}
+          disabled={nextButtonProps.isDisabled}
+          onClick={() => state.focusNextPage()}
+          tabIndex={-1} />
+      </VisuallyHidden>
       {state.validationState === 'invalid' &&
         <HelpText
           showErrorIcon

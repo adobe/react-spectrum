@@ -12,19 +12,18 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {CalendarAria} from './types';
-import {calendarIds, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
+import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription, useId, useSlotId, useUpdateEffect} from '@react-aria/utils';
+import {mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useRef} from 'react';
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarState | RangeCalendarState): CalendarAria {
   let formatMessage = useMessageFormatter(intlMessages);
-  let calendarId = useId(props.id);
 
   let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);
   let visibleRangeDescription = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, true);
@@ -46,12 +45,12 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     // handle an update to the caption that describes the currently selected range, to announce the new value
   }, [selectedDateDescription]);
 
-  let descriptionProps = useDescription(visibleRangeDescription);
   let errorMessageId = useSlotId([Boolean(props.errorMessage), props.validationState]);
 
-  // Label the child grid elements by the group element if it is labelled.
-  calendarIds.set(state, {
-    calendarId: props['aria-label'] || props['aria-labelledby'] ? calendarId : null,
+  // Pass the label to the child grid elements.
+  hookData.set(state, {
+    ariaLabel: props['aria-label'],
+    ariaLabelledBy: props['aria-labelledby'],
     errorMessageId
   });
 
@@ -70,16 +69,16 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     state.setFocused(true);
   }
 
+  let labelProps = useLabels({
+    id: props['id'],
+    'aria-label': [props['aria-label'], visibleRangeDescription].filter(Boolean).join(', '),
+    'aria-labelledby': props['aria-labelledby']
+  });
+
   return {
-    calendarProps: mergeProps({
+    calendarProps: mergeProps(labelProps, {
       role: 'group',
-      id: calendarId,
-      'aria-label': props['aria-label'],
-      'aria-labelledby': props['aria-labelledby'],
-      'aria-describedby': [
-        props['aria-describedby'],
-        descriptionProps['aria-describedby']
-      ].filter(Boolean).join(' ') || undefined
+      'aria-describedby': props['aria-describedby'] || undefined
     }),
     nextButtonProps: {
       onPress: () => state.focusNextPage(),

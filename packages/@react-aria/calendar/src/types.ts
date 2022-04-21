@@ -26,17 +26,11 @@ export interface CalendarAria {
   title: string
 }
 
-
 export interface CalendarGridAria {
   /** Props for the date grid element (e.g. `<table>`). */
   gridProps: HTMLAttributes<HTMLElement>,
-  /** A list of week days formatted for the current locale, typically used in column headers. */
-  weekDays: WeekDay[]
-}
-
-interface WeekDay {
-  /** A short name (e.g. single letter) for the day. */
-  narrow: string,
-  /** The full day name. If not displayed visually, it should be used as the accessiblity name. */
-  long: string
+  /** Props for the grid header element (e.g. `<thead>`). */
+  headerProps: HTMLAttributes<HTMLElement>,
+  /** A list of week day abbreviations formatted for the current locale, typically used in column headers. */
+  weekDays: string[]
 }

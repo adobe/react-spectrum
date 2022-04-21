@@ -17,7 +17,7 @@ import {FormatMessage, useDateFormatter, useMessageFormatter} from '@react-aria/
 import intlMessages from '../intl/*.json';
 import {useMemo} from 'react';
 
-export const calendarIds = new WeakMap<CalendarState | RangeCalendarState, {calendarId: string, errorMessageId: string}>();
+export const hookData = new WeakMap<CalendarState | RangeCalendarState, {ariaLabel: string, ariaLabelledBy: string, errorMessageId: string}>();
 
 export function useSelectedDateDescription(state: CalendarState | RangeCalendarState) {
   let formatMessage = useMessageFormatter(intlMessages);
