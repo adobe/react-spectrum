@@ -327,34 +327,28 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
 
   let isMobile = isIOS() || isAndroid();
 
-  function getAriaLabelForChannel(channel: ColorChannel): string {
-    return isMobile ? state.value.getChannelName(channel, locale) : formatMessage('colorPicker');
-  }
-
   function getAriaValueTextForChannel(channel:ColorChannel) {
     return (
-      isMobile || valueChangedViaKeyboard.current ?
+      valueChangedViaKeyboard.current ?
       formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)})
       :
       [
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(xChannel, locale), value: state.value.formatChannelValue(xChannel, locale)}),
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(yChannel, locale), value: state.value.formatChannelValue(yChannel, locale)})
+        formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)}),
+        formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel === yChannel ? xChannel : yChannel, locale), value: state.value.formatChannelValue(channel === yChannel ? xChannel : yChannel, locale)})
       ].join(', ')
     );
   }
 
   let colorPickerLabel = formatMessage('colorPicker');
-  let xChannelLabel = getAriaLabelForChannel(xChannel);
-  let yChannelLabel = getAriaLabelForChannel(yChannel);
 
   let xInputLabellingProps = useLabels({
     ...props,
-    'aria-label': ariaLabel ? formatMessage('colorInputLabel', {label: ariaLabel, channelLabel: xChannelLabel}) : xChannelLabel
+    'aria-label': ariaLabel ? formatMessage('colorInputLabel', {label: ariaLabel, channelLabel: colorPickerLabel}) : colorPickerLabel
   });
 
   let yInputLabellingProps = useLabels({
     ...props,
-    'aria-label': ariaLabel ? formatMessage('colorInputLabel', {label: ariaLabel, channelLabel: yChannelLabel}) : yChannelLabel
+    'aria-label': ariaLabel ? formatMessage('colorInputLabel', {label: ariaLabel, channelLabel: colorPickerLabel}) : colorPickerLabel
   });
 
   let colorAriaLabellingProps = useLabels(
@@ -365,7 +359,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     isMobile ? colorPickerLabel : undefined
   );
 
-  let ariaRoleDescription = isMobile ? null : formatMessage('twoDimensionalSlider');
+  let ariaRoleDescription = formatMessage('twoDimensionalSlider');
 
   let {visuallyHiddenProps} = useVisuallyHidden({style: {
     opacity: '0.0001',

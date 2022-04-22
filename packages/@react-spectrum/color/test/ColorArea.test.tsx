@@ -62,8 +62,7 @@ describe('ColorArea', () => {
     describe('attributes', () => {
       it('sets input props', () => {
         let {getAllByRole} = render(<Component defaultValue={'#ff00ff'} />);
-        let [xSlider] = getAllByRole('slider');
-        let ySlider = xSlider.nextElementSibling;
+        let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
 
         expect(xSlider).toHaveAttribute('type', 'range');
         expect(xSlider).toHaveAttribute('aria-label', 'Color picker');
@@ -78,7 +77,7 @@ describe('ColorArea', () => {
         expect(ySlider).toHaveAttribute('min', '0');
         expect(ySlider).toHaveAttribute('max', '255');
         expect(ySlider).toHaveAttribute('step', '1');
-        expect(ySlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0');
+        expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255');
         expect(ySlider).toHaveAttribute('tabindex', '-1');
         expect(ySlider).toHaveAttribute('aria-hidden', 'true');
       });
@@ -89,8 +88,7 @@ describe('ColorArea', () => {
           <Component defaultValue={'#ff00ff'} isDisabled />
           <button>B</button>
         </div>);
-        let [xSlider] = getAllByRole('slider');
-        let ySlider = xSlider.nextElementSibling;
+        let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
         let [buttonA, buttonB] = getAllByRole('button');
         expect(xSlider).toHaveAttribute('disabled');
         expect(ySlider).toHaveAttribute('disabled');
@@ -106,8 +104,7 @@ describe('ColorArea', () => {
       describe('labelling', () => {
         it('should support a custom aria-label', () => {
           let {getAllByRole} = render(<Component defaultValue={'#ff00ff'} aria-label="Color hue" />);
-          let [xSlider] = getAllByRole('slider');
-          let ySlider = xSlider.nextElementSibling;
+          let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
 
           expect(xSlider).toHaveAttribute('aria-label', 'Color hue, Color picker');
           expect(ySlider).toHaveAttribute('aria-label', 'Color hue, Color picker');
@@ -117,8 +114,7 @@ describe('ColorArea', () => {
 
         it('should support a custom aria-labelledby', () => {
           let {getAllByRole} = render(<Component defaultValue={'#ff00ff'} aria-labelledby="label-id" />);
-          let [xSlider] = getAllByRole('slider');
-          let ySlider = xSlider.nextElementSibling;
+          let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
 
           expect(xSlider).toHaveAttribute('aria-label', 'Color picker');
           expect(ySlider).toHaveAttribute('aria-label', 'Color picker');
@@ -149,16 +145,15 @@ describe('ColorArea', () => {
               onChange={onChangeSpy}
               onChangeEnd={onChangeEndSpy} />
           );
-          let [xSlider] = getAllByRole('slider');
-          let ySlider = xSlider.nextElementSibling;
+          let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
 
           expect(xSlider.getAttribute('aria-valuetext')).toBe([
             `${props.defaultValue.getChannelName('red', 'en-US')}: ${props.defaultValue.formatChannelValue('red', 'en-US')}`,
             `${props.defaultValue.getChannelName('green', 'en-US')}: ${props.defaultValue.formatChannelValue('green', 'en-US')}`
           ].join(', '));
           expect(ySlider.getAttribute('aria-valuetext')).toBe([
-            `${props.defaultValue.getChannelName('red', 'en-US')}: ${props.defaultValue.formatChannelValue('red', 'en-US')}`,
-            `${props.defaultValue.getChannelName('green', 'en-US')}: ${props.defaultValue.formatChannelValue('green', 'en-US')}`
+            `${props.defaultValue.getChannelName('green', 'en-US')}: ${props.defaultValue.formatChannelValue('green', 'en-US')}`,
+            `${props.defaultValue.getChannelName('red', 'en-US')}: ${props.defaultValue.formatChannelValue('red', 'en-US')}`
           ].join(', '));
 
           expect(xSlider).not.toHaveAttribute('tabindex');
@@ -208,16 +203,15 @@ describe('ColorArea', () => {
                 onChangeEnd={onChangeEndSpy} />
             </Provider>
           );
-          let [xSlider] = getAllByRole('slider');
-          let ySlider = xSlider.nextElementSibling;
+          let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
 
           expect(xSlider.getAttribute('aria-valuetext')).toBe([
             `${props.defaultValue.getChannelName('red', 'ar-AE')}: ${props.defaultValue.formatChannelValue('red', 'ar-AE')}`,
             `${props.defaultValue.getChannelName('green', 'ar-AE')}: ${props.defaultValue.formatChannelValue('green', 'ar-AE')}`
           ].join(', '));
           expect(ySlider.getAttribute('aria-valuetext')).toBe([
-            `${props.defaultValue.getChannelName('red', 'ar-AE')}: ${props.defaultValue.formatChannelValue('red', 'ar-AE')}`,
-            `${props.defaultValue.getChannelName('green', 'ar-AE')}: ${props.defaultValue.formatChannelValue('green', 'ar-AE')}`
+            `${props.defaultValue.getChannelName('green', 'ar-AE')}: ${props.defaultValue.formatChannelValue('green', 'ar-AE')}`,
+            `${props.defaultValue.getChannelName('red', 'ar-AE')}: ${props.defaultValue.formatChannelValue('red', 'ar-AE')}`
           ].join(', '));
 
           expect(xSlider).not.toHaveAttribute('tabindex');
@@ -450,8 +444,7 @@ describe('ColorArea', () => {
     };
     it('sets input props', () => {
       let {getAllByRole} = render(<ColorArea />);
-      let [xSlider] = getAllByRole('slider');
-      let ySlider = xSlider.nextElementSibling;
+      let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
 
       expect(xSlider).toHaveAttribute('type', 'range');
       expect(xSlider).toHaveAttribute('aria-label', 'Color picker');
@@ -467,7 +460,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '255');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 255');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Red: 255');
       expect(ySlider).toHaveAttribute('tabindex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
     });
@@ -478,8 +471,7 @@ describe('ColorArea', () => {
         <ColorArea defaultValue={'#ff00ff'} />
         <button>B</button>
       </div>);
-      let [xSlider] = getAllByRole('slider');
-      let ySlider = xSlider.nextElementSibling;
+      let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
       let [buttonA, buttonB] = getAllByRole('button');
 
       userEvent.tab();
@@ -488,7 +480,7 @@ describe('ColorArea', () => {
       expect(document.activeElement).toBe(xSlider);
       // focusing into ColorArea, value text for each slider will include name and value for each channel
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255');
       pressKey(xSlider, {key: 'ArrowLeft'});
       // following a keyboard event that changes a value, value text for each slider will include only the name and value for that channel.
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254');
@@ -497,12 +489,12 @@ describe('ColorArea', () => {
       expect(document.activeElement).toBe(buttonB);
       // focusing out of ColorArea, value text for each slider will include name and value for each channel
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254');
       userEvent.tab({shift: true});
       expect(document.activeElement).toBe(xSlider);
       // focusing back into ColorArea, value text for each slider will include name and value for each channel
       expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254');
     });
   });
   describe('full implementation controlled', () => {
@@ -511,8 +503,7 @@ describe('ColorArea', () => {
       let sliders = getAllByRole('slider');
 
       expect(sliders.length).toBe(2);
-      let [xSlider, zSlider] = sliders;
-      let ySlider = xSlider.nextElementSibling;
+      let [xSlider, ySlider, zSlider] = getAllByRole('slider', {hidden: true});
 
       expect(xSlider).toHaveAttribute('type', 'range');
       expect(xSlider).toHaveAttribute('aria-label', 'Color picker');
@@ -528,7 +519,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '255');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 255');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Blue: 255');
       expect(ySlider).toHaveAttribute('tabindex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 
@@ -546,8 +537,7 @@ describe('ColorArea', () => {
       let sliders = getAllByRole('slider');
 
       expect(sliders.length).toBe(2);
-      let [xSlider, zSlider] = sliders;
-      let ySlider = xSlider.nextElementSibling;
+      let [xSlider, ySlider, zSlider] = getAllByRole('slider', {hidden: true});
 
       expect(xSlider).toHaveAttribute('type', 'range');
       expect(xSlider).toHaveAttribute('aria-label', 'Color picker');
@@ -563,7 +553,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '100');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Brightness: 100%');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Brightness: 100%, Saturation: 100%');
       expect(ySlider).toHaveAttribute('tabindex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 
@@ -581,8 +571,7 @@ describe('ColorArea', () => {
       let sliders = getAllByRole('slider');
 
       expect(sliders.length).toBe(2);
-      let [xSlider, zSlider] = sliders;
-      let ySlider = xSlider.nextElementSibling;
+      let [xSlider, ySlider, zSlider] = getAllByRole('slider', {hidden: true});
 
       expect(xSlider).toHaveAttribute('type', 'range');
       expect(xSlider).toHaveAttribute('aria-label', 'Color picker');
@@ -598,7 +587,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '100');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Lightness: 50%');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Lightness: 50%, Saturation: 100%');
       expect(ySlider).toHaveAttribute('tabIndex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 
