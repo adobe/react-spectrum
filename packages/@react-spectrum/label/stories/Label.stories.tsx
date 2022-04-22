@@ -59,7 +59,7 @@ function render(props: SpectrumLabelProps = {}) {
   return (
     <div style={{whiteSpace: 'nowrap'}}>
       <Label {...props} for="test">Test</Label>
-      <TextField placeholder="React" id="test" isRequired={props.isRequired} />
+      <TextField id="test" isRequired={props.isRequired} />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Content, View} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/workflow/Folder';
@@ -19,6 +20,24 @@ import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList} from '@react-stately/data';
+import {useDragHooks} from '@react-spectrum/dnd';
+
+const items = [
+  {key: 'a', textValue: 'File a', type: 'file'},
+  {key: 'b', textValue: 'File b', type: 'file'},
+  {key: 'c', textValue: 'Folder c', type: 'folder'},
+  {key: 'd', textValue: 'File d', type: 'file'},
+  {key: 'e', textValue: 'Folder e', type: 'folder'},
+  {key: 'f', textValue: 'File f', type: 'file'},
+  {key: 'g', textValue: 'File g', type: 'file'},
+  {key: 'h', textValue: 'File h', type: 'file'},
+  {key: 'i', textValue: 'File i', type: 'file'},
+  {key: 'j', textValue: 'File j', type: 'file'},
+  {key: 'k', textValue: 'File k', type: 'file'},
+  {key: 'l', textValue: 'File l', type: 'file'},
+  {key: 'm', textValue: 'Folder m', type: 'folder'},
+  {key: 'n', textValue: 'File n', type: 'file'}
+];
 
 function renderEmptyState() {
   return (
@@ -63,51 +82,34 @@ storiesOf('ListView', module)
       </Item>
     </ListView>
   ))
-  .add('dynamic items', () => {
-    const items = [
-      {key: 'a'},
-      {key: 'b'},
-      {key: 'c'},
-      {key: 'd'},
-      {key: 'e'},
-      {key: 'f'},
-      {key: 'g'},
-      {key: 'h'},
-      {key: 'i'},
-      {key: 'j'},
-      {key: 'k'},
-      {key: 'l'},
-      {key: 'm'},
-      {key: 'n'}
-    ];
-    return (
-      <ListView items={items} width="300px" height="250px">
-        {(item) => (
-          <Item key={item.key} textValue={`Item ${item.key}`}>
-            <Content>
-              <Flex alignItems="center" gap="10px">
-                <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
-                <ActionButton><Add /></ActionButton>
-                <MenuTrigger>
-                  <ActionButton><MoreSmall /></ActionButton>
-                  <Menu>
-                    <Item>
-                      <Edit />
-                      <Text>Edit</Text>
-                    </Item>
-                    <Item>
-                      <Delete />
-                      <Text>Delete</Text>
-                    </Item>
-                  </Menu>
-                </MenuTrigger>
-              </Flex>
-            </Content>
-          </Item>
+  .add('dynamic items', () => (
+    <ListView items={items} width="300px" height="250px">
+      {(item) => (
+        <Item key={item.key} textValue={item.textValue}>
+          <Content>
+            <Flex alignItems="center" gap="10px">
+              <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
+              <ActionButton><Add /></ActionButton>
+              <MenuTrigger>
+                <ActionButton><MoreSmall /></ActionButton>
+                <Menu>
+                  <Item>
+                    <Edit />
+                    <Text>Edit</Text>
+                  </Item>
+                  <Item>
+                    <Delete />
+                    <Text>Delete</Text>
+                  </Item>
+                </Menu>
+              </MenuTrigger>
+            </Flex>
+          </Content>
+        </Item>
         )}
-      </ListView>
-    );
-  })
+    </ListView>
+    )
+  )
   .add('falsy ids as keys', () => (
     <FalsyIds />
   ))
@@ -230,7 +232,17 @@ storiesOf('ListView', module)
     <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionMode="none" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
       {item => <Item>{item.name}</Item>}
     </ListView>
-  ));
+  ))
+  .add(
+    'draggable rows',
+    () => (
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExample dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      </Flex>
+    ), {description: {data: 'Folders are non-draggable.'}}
+  );
 
 function Example(props?) {
   return (
@@ -361,6 +373,64 @@ function EmptyTest() {
         </div>
       </Flex>
     </div>
+  );
+}
+
+
+export function DragExample(props?) {
+  let {listViewProps, dragHookOptions} = props;
+  let getItems = (keys) => [...keys].map(key => {
+    let item = items.find(item => item.key === key);
+    return {
+      'text/plain': item.textValue
+    };
+  });
+
+  let allowsDraggingItem = (key) => {
+    let item = items.find(item => item.key === key);
+    return item.type !== 'folder';
+  };
+
+  let dragHooks = useDragHooks({
+    allowsDraggingItem,
+    getItems,
+    ...dragHookOptions
+  });
+
+  return (
+    <ListView
+      aria-label="draggable list view"
+      width="300px"
+      selectionMode="multiple"
+      items={items}
+      disabledKeys={['f']}
+      dragHooks={dragHooks}
+      {...listViewProps}>
+      {(item: any) => (
+        <Item key={item.key} textValue={item.textValue}>
+          <Content>
+            <Flex alignItems="center" gap="10px">
+              {item.type === 'folder' && <Folder size="S" />}
+              <View flexGrow={1}>{item.textValue}</View>
+              <ActionButton><Add /></ActionButton>
+              <MenuTrigger>
+                <ActionButton><MoreSmall /></ActionButton>
+                <Menu>
+                  <Item textValue="Edit">
+                    <Edit />
+                    <Text>Edit</Text>
+                  </Item>
+                  <Item textValue="Delete">
+                    <Delete />
+                    <Text>Delete</Text>
+                  </Item>
+                </Menu>
+              </MenuTrigger>
+            </Flex>
+          </Content>
+        </Item>
+      )}
+    </ListView>
   );
 }
 

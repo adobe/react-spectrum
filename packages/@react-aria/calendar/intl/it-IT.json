@@ -1,11 +1,12 @@
 {
-  "dateSelected": "{date, date, full} selezionato",
+  "dateSelected": "{date} selezionato",
   "finishRangeSelectionPrompt": "Fai clic per completare la selezione dell’intervallo di date",
   "next": "Successivo",
   "previous": "Precedente",
-  "selectedDateDescription": "Data selezionata: {date, date, full}",
-  "selectedRangeDescription": "Intervallo selezionato: da {start, date, long} a {end, date, long}",
+  "selectedDateDescription": "Data selezionata: {date}",
+  "selectedRangeDescription": "Intervallo selezionato: da {dateRange}",
   "startRangeSelectionPrompt": "Fai clic per selezionare l’intervallo di date",
-  "todayDate": "Oggi, {date, date, full}",
-  "todayDateSelected": "Oggi, {date, date, full} selezionato"
+  "todayDate": "Oggi, {date}",
+  "todayDateSelected": "Oggi, {date} selezionato",
+  "dateRange": "{startDate} a {endDate}"
 }

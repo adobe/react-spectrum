@@ -321,7 +321,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on pointer down and handle focusing the pressable element ourselves.
-        if (shouldPreventDefault(e.target as Element)) {
+        if (shouldPreventDefault(e.currentTarget as HTMLElement)) {
           e.preventDefault();
         }
 
@@ -359,7 +359,7 @@ export function usePress(props: PressHookProps): PressResult {
           // Chrome and Firefox on touch Windows devices require mouse down events
           // to be canceled in addition to pointer events, or an extra asynchronous
           // focus event will be fired.
-          if (shouldPreventDefault(e.target as Element)) {
+          if (shouldPreventDefault(e.currentTarget as HTMLElement)) {
             e.preventDefault();
           }
 
@@ -443,7 +443,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on mouse down and handle focusing the pressable element ourselves.
-        if (shouldPreventDefault(e.target as Element)) {
+        if (shouldPreventDefault(e.currentTarget as HTMLElement)) {
           e.preventDefault();
         }
 
@@ -764,16 +764,16 @@ function isOverTarget(point: EventPoint, target: HTMLElement) {
   return areRectanglesOverlapping(rect, pointRect);
 }
 
-function shouldPreventDefault(target: Element) {
-  // We cannot prevent default if the target is inside a draggable element.
-  return !target.closest('[draggable="true"]');
+function shouldPreventDefault(target: HTMLElement) {
+  // We cannot prevent default if the target is a draggable element.
+  return !target.draggable;
 }
 
 function shouldPreventDefaultKeyboard(target: Element) {
   return !((target.tagName === 'INPUT' || target.tagName === 'BUTTON') && (target as HTMLButtonElement | HTMLInputElement).type === 'submit');
 }
 
-function isVirtualPointerEvent(event: PointerEvent) {
+export function isVirtualPointerEvent(event: PointerEvent) {
   // If the pointer size is zero, then we assume it's from a screen reader.
   // Android TalkBack double tap will sometimes return a event with width and height of 1
   // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.

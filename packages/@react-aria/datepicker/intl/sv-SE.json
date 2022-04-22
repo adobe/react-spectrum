@@ -1,9 +1,5 @@
 {
   "calendar": "Kalender",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} till {end, date, long}",
-  "date": "Datum",
-  "dateRange": "Datumintervall",
   "day": "dag",
   "dayPeriod": "fm/em",
   "endDate": "Slutdatum",
@@ -15,5 +11,7 @@
   "startDate": "Startdatum",
   "year": "år",
   "weekday": "veckodag",
-  "timeZoneName": "tidszon"
+  "timeZoneName": "tidszon",
+  "selectedDateDescription": "Valt datum: {date}",
+  "selectedRangeDescription": "Valt intervall: {startDate} till {endDate}"
 }

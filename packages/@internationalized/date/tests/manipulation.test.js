@@ -272,6 +272,14 @@ describe('CalendarDate manipulation', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 5, 1);
         expect(date.subtract({days: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30));
       });
+
+      it('should constrain when reaching the minimum supported era', function () {
+        let date = new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 10);
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 10));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 10);
+        expect(date.subtract({years: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 10));
+      });
     });
 
     describe('Taiwan calendar', function () {

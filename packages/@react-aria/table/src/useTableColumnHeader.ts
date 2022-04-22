@@ -42,12 +42,14 @@ interface ColumnHeaderAria {
  */
 export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>): ColumnHeaderAria {
   let {node} = props;
+  let allowsResizing = node.props.allowsResizing;
   let allowsSorting = node.props.allowsSorting;
   let {gridCellProps} = useGridCell(props, state, ref);
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
   let {pressProps} = usePress({
-    isDisabled: !allowsSorting || isSelectionCellDisabled,
+    // Disabled for allowsResizing because if resizing is allowed, a menu trigger is added to the column header.
+    isDisabled: !allowsSorting || isSelectionCellDisabled || allowsResizing,
     onPress() {
       state.sort(node.key);
     }

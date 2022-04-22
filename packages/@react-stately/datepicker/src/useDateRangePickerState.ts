@@ -11,33 +11,70 @@
  */
 
 import {createPlaceholderDate, FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
-import {DateFormatter, toCalendarDateTime, toDateFields} from '@internationalized/date';
+import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
+import {useOverlayTriggerState} from '@react-stately/overlays';
 import {useRef, useState} from 'react';
+
+export interface DateRangePickerStateOptions extends DateRangePickerProps<DateValue> {
+  /**
+   * Determines whether the date picker popover should close automatically when a date is selected.
+   * @default true
+   */
+  shouldCloseOnSelect?: boolean | (() => boolean)
+}
 
 type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState {
+  /** The currently selected date range. */
   value: DateRange,
-  setValue: (value: DateRange) => void,
-  setDate: (part: keyof DateRange, value: DateValue) => void,
-  setTime: (part: keyof TimeRange, value: TimeValue) => void,
-  setDateTime: (part: keyof DateRange, value: DateValue) => void,
+  /** Sets the selected date range. */
+  setValue(value: DateRange): void,
+  /**
+   * The date portion of the selected range. This may be set prior to `value` if the user has
+   * selected a date range but has not yet selected a time range.
+   */
   dateRange: DateRange,
-  setDateRange: (value: DateRange) => void,
+  /** Sets the date portion of the selected range. */
+  setDateRange(value: DateRange): void,
+  /**
+   * The time portion of the selected range. This may be set prior to `value` if the user has
+   * selected a time range but has not yet selected a date range.
+   */
   timeRange: TimeRange,
-  setTimeRange: (value: TimeRange) => void,
+  /** Sets the time portion of the selected range. */
+  setTimeRange(value: TimeRange): void,
+  /** Sets the date portion of either the start or end of the selected range. */
+  setDate(part: 'start' | 'end', value: DateValue): void,
+  /** Sets the time portion of either the start or end of the selected range. */
+  setTime(part: 'start' | 'end', value: TimeValue): void,
+  /** Sets the date and time of either the start or end of the selected range. */
+  setDateTime(part: 'start' | 'end', value: DateValue): void,
+  /** The granularity for the field, based on the `granularity` prop and current value. */
+  granularity: Granularity,
+  /** Whether the date range picker supports selecting times, according to the `granularity` prop and current value. */
+  hasTime: boolean,
+  /** Whether the calendar popover is currently open. */
   isOpen: boolean,
-  setOpen: (isOpen: boolean) => void,
+  /** Sets whether the calendar popover is open. */
+  setOpen(isOpen: boolean): void,
+  /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
   validationState: ValidationState,
-  formatValue(locale: string, fieldOptions: FieldOptions): string,
-  confirmPlaceholder(): void,
-  granularity: Granularity
+  /** Formats the selected range using the given options. */
+  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string},
+  /** Replaces the start and/or end value of the selected range with the placeholder value if unentered. */
+  confirmPlaceholder(): void
 }
 
-export function useDateRangePickerState<T extends DateValue>(props: DateRangePickerProps<T>): DateRangePickerState {
-  let [isOpen, setOpen] = useState(false);
+/**
+ * Provides state management for a date range picker component.
+ * A date range picker combines two DateFields and a RangeCalendar popover to allow
+ * users to enter or select a date and time range.
+ */
+export function useDateRangePickerState(props: DateRangePickerStateOptions): DateRangePickerState {
+  let overlayState = useOverlayTriggerState(props);
   let [controlledValue, setControlledValue] = useControlledState<DateRange>(props.value, props.defaultValue || null, props.onChange);
   let [placeholderValue, setPlaceholderValue] = useState(() => controlledValue || {start: null, end: null});
 
@@ -64,6 +101,7 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
   let v = (value?.start || value?.end || props.placeholderValue);
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+  let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
   let [dateRange, setSelectedDateRange] = useState<DateRange>(null);
   let [timeRange, setSelectedTimeRange] = useState<TimeRange>(null);
@@ -77,16 +115,20 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
 
   let commitValue = (dateRange: DateRange, timeRange: TimeRange) => {
     setValue({
-      start: 'timeZone' in timeRange.start ? timeRange.start.set(toDateFields(dateRange.start)) : toCalendarDateTime(dateRange.start, timeRange.start),
-      end: 'timeZone' in timeRange.end ? timeRange.end.set(toDateFields(dateRange.end)) : toCalendarDateTime(dateRange.end, timeRange.end)
+      start: 'timeZone' in timeRange.start ? timeRange.start.set(toCalendarDate(dateRange.start)) : toCalendarDateTime(dateRange.start, timeRange.start),
+      end: 'timeZone' in timeRange.end ? timeRange.end.set(toCalendarDate(dateRange.end)) : toCalendarDateTime(dateRange.end, timeRange.end)
     });
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
   let setDateRange = (range: DateRange) => {
+    let shouldClose = typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
     if (hasTime) {
-      if (range.start && range.end && timeRange?.start && timeRange?.end) {
-        commitValue(range, timeRange);
+      if (shouldClose || (range.start && range.end && timeRange?.start && timeRange?.end)) {
+        commitValue(range, {
+          start: timeRange?.start || getPlaceholderTime(props.placeholderValue),
+          end: timeRange?.end || getPlaceholderTime(props.placeholderValue)
+        });
       } else {
         setSelectedDateRange(range);
       }
@@ -96,8 +138,8 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
       setSelectedDateRange(range);
     }
 
-    if (!hasTime) {
-      setOpen(false);
+    if (shouldClose) {
+      overlayState.setOpen(false);
     }
   };
 
@@ -113,7 +155,9 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     || (value != null && (
       isInvalid(value.start, props.minValue, props.maxValue) ||
       isInvalid(value.end, props.minValue, props.maxValue) ||
-      (value.end != null && value.start != null && value.end.compare(value.start) < 0)
+      (value.end != null && value.start != null && value.end.compare(value.start) < 0) ||
+      (value?.start && props.isDateUnavailable?.(value.start)) ||
+      (value?.end && props.isDateUnavailable?.(value.end))
     ) ? 'invalid' : null);
 
   return {
@@ -122,6 +166,7 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     dateRange,
     timeRange,
     granularity,
+    hasTime,
     setDate(part, date) {
       setDateRange({...dateRange, [part]: date});
     },
@@ -133,7 +178,7 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
     },
     setDateRange,
     setTimeRange,
-    isOpen,
+    isOpen: overlayState.isOpen,
     setOpen(isOpen) {
       // Commit the selected date range when the calendar is closed. Use a placeholder time if one wasn't set.
       // If only the time range was set and not the date range, don't commit. The state will be preserved until
@@ -145,12 +190,12 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
         });
       }
 
-      setOpen(isOpen);
+      overlayState.setOpen(isOpen);
     },
     validationState,
     formatValue(locale, fieldOptions) {
       if (!value || !value.start || !value.end) {
-        return '';
+        return null;
       }
 
       let startTimeZone = 'timeZone' in value.start ? value.start.timeZone : undefined;
@@ -165,14 +210,42 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
         hourCycle: props.hourCycle
       });
 
+      let startDate = value.start.toDate(startTimeZone || 'UTC');
+      let endDate = value.end.toDate(endTimeZone || 'UTC');
+
       let startFormatter = new DateFormatter(locale, startOptions);
       let endFormatter: Intl.DateTimeFormat;
-      if (startTimeZone === endTimeZone && startGranularity === endGranularity) {
+      if (startTimeZone === endTimeZone && startGranularity === endGranularity && value.start.compare(value.end) !== 0) {
         // Use formatRange, as it results in shorter output when some of the fields
         // are shared between the start and end dates (e.g. the same month).
         // Formatting will fail if the end date is before the start date. Fall back below when that happens.
         try {
-          return startFormatter.formatRange(value.start.toDate(startTimeZone), value.end.toDate(endTimeZone));
+          let parts = startFormatter.formatRangeToParts(startDate, endDate);
+
+          // Find the separator between the start and end date. This is determined
+          // by finding the last shared literal before the end range.
+          let separatorIndex = -1;
+          for (let i = 0; i < parts.length; i++) {
+            let part = parts[i];
+            if (part.source === 'shared' && part.type === 'literal') {
+              separatorIndex = i;
+            } else if (part.source === 'endRange') {
+              break;
+            }
+          }
+
+          // Now we can combine the parts into start and end strings.
+          let start = '';
+          let end = '';
+          for (let i = 0; i < parts.length; i++) {
+            if (i < separatorIndex) {
+              start += parts[i].value;
+            } else if (i > separatorIndex) {
+              end += parts[i].value;
+            }
+          }
+
+          return {start, end};
         } catch (e) {
           // ignore
         }
@@ -189,7 +262,10 @@ export function useDateRangePickerState<T extends DateValue>(props: DateRangePic
         endFormatter = new DateFormatter(locale, endOptions);
       }
 
-      return `${startFormatter.format(value.start.toDate(startTimeZone))} – ${endFormatter.format(value.end.toDate(endTimeZone))}`;
+      return {
+        start: startFormatter.format(startDate),
+        end: endFormatter.format(endDate)
+      };
     },
     confirmPlaceholder() {
       // Need to use ref value here because the value can be set in the same tick as

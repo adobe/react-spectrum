@@ -14,6 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
+import {isVirtualPointerEvent} from '@react-aria/interactions';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -101,6 +102,16 @@ function endDragging() {
   }
 }
 
+export function isValidDropTarget(element: Element): boolean {
+  for (let target of dropTargets.keys()) {
+    if (target.contains(element)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 const CANCELED_EVENTS = [
   'pointerdown',
   'pointermove',
@@ -146,6 +157,7 @@ class DragSession {
   private mutationImmediate: NodeJS.Immediate;
   private restoreAriaHidden: () => void;
   private formatMessage: (key: string) => string;
+  private isVirtualClick: boolean;
 
   constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
@@ -155,6 +167,7 @@ class DragSession {
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.onClick = this.onClick.bind(this);
+    this.onPointerDown = this.onPointerDown.bind(this);
     this.cancelEvent = this.cancelEvent.bind(this);
   }
 
@@ -163,6 +176,7 @@ class DragSession {
     window.addEventListener('focus', this.onFocus, true);
     window.addEventListener('blur', this.onBlur, true);
     document.addEventListener('click', this.onClick, true);
+    document.addEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
       document.addEventListener(event, this.cancelEvent, true);
@@ -181,6 +195,7 @@ class DragSession {
     window.removeEventListener('focus', this.onFocus, true);
     window.removeEventListener('blur', this.onBlur, true);
     document.removeEventListener('click', this.onClick, true);
+    document.removeEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
       document.removeEventListener(event, this.cancelEvent, true);
@@ -266,25 +281,34 @@ class DragSession {
 
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
+    if (e.detail === 0 || this.isVirtualClick) {
+      if (e.target === this.dragTarget.element) {
+        this.cancel();
+        return;
+      }
 
-    if (e.detail !== 0) {
-      return;
-    }
-
-    if (e.target === this.dragTarget.element) {
-      this.cancel();
-      return;
-    }
-
-    let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
-    if (dropTarget) {
-      let item = dropItems.get(e.target as HTMLElement);
-      this.setCurrentDropTarget(dropTarget, item);
-      this.drop(item);
+      let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+      if (dropTarget) {
+        let item = dropItems.get(e.target as HTMLElement);
+        this.setCurrentDropTarget(dropTarget, item);
+        this.drop(item);
+      }
     }
   }
 
+  onPointerDown(e: PointerEvent) {
+    // Android Talkback double tap has e.detail = 1 for onClick. Detect the virtual click in onPointerDown before onClick fires
+    // so we can properly perform cancel and drop operations.
+    this.cancelEvent(e);
+    this.isVirtualClick = isVirtualPointerEvent(e);
+  }
+
   cancelEvent(e: Event) {
+    // Allow focusin and focusout on the drag target so focus ring works properly.
+    if ((e.type === 'focusin' || e.type === 'focusout') && e.target === this.dragTarget?.element) {
+      return;
+    }
+
     // Allow default for events that might cancel a click event
     if (!CLICK_EVENTS.includes(e.type)) {
       e.preventDefault();
@@ -438,6 +462,12 @@ class DragSession {
         y: rect.y + (rect.height / 2),
         dropOperation: this.dropOperation
       });
+    }
+
+    // Blur and re-focus the drop target so that the focus ring appears.
+    if (this.currentDropTarget) {
+      this.currentDropTarget.element.blur();
+      this.currentDropTarget.element.focus();
     }
 
     this.setCurrentDropTarget(null);

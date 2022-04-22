@@ -126,7 +126,9 @@ function preventScrollMobileSafari() {
 
   let onTouchEnd = (e: TouchEvent) => {
     let target = e.target as HTMLElement;
-    if (target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type)) {
+
+    // Apply this change if we're not already focused on the target element
+    if (willOpenKeyboard(target) && target !== document.activeElement) {
       e.preventDefault();
 
       // Apply a transform to trick Safari into thinking the input is at the top of the page
@@ -142,7 +144,7 @@ function preventScrollMobileSafari() {
 
   let onFocus = (e: FocusEvent) => {
     let target = e.target as HTMLElement;
-    if (target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type)) {
+    if (willOpenKeyboard(target)) {
       // Transform also needs to be applied in the focus event in cases where focus moves
       // other than tapping on an input directly, e.g. the next/previous buttons in the
       // software keyboard. In these cases, it seems applying the transform in the focus event
@@ -229,13 +231,26 @@ function addEvent<K extends keyof GlobalEventHandlersEventMap>(
 }
 
 function scrollIntoView(target: Element) {
-  // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
-  let scrollable = getScrollParent(target);
-  if (scrollable !== document.documentElement && scrollable !== document.body) {
-    let scrollableTop = scrollable.getBoundingClientRect().top;
-    let targetTop = target.getBoundingClientRect().top;
-    if (targetTop > scrollableTop + target.clientHeight) {
-      scrollable.scrollTop += targetTop - scrollableTop;
+  let root = document.scrollingElement || document.documentElement;
+  while (target && target !== root) {
+    // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
+    let scrollable = getScrollParent(target);
+    if (scrollable !== document.documentElement && scrollable !== document.body && scrollable !== target) {
+      let scrollableTop = scrollable.getBoundingClientRect().top;
+      let targetTop = target.getBoundingClientRect().top;
+      if (targetTop > scrollableTop + target.clientHeight) {
+        scrollable.scrollTop += targetTop - scrollableTop;
+      }
     }
+
+    target = scrollable.parentElement;
   }
+}
+
+function willOpenKeyboard(target: Element) {
+  return (
+    (target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type)) ||
+    target instanceof HTMLTextAreaElement ||
+    (target instanceof HTMLElement && target.isContentEditable)
+  );
 }

@@ -1,11 +1,12 @@
 {
-  "dateSelected": "Вибрано: {date, date, full}",
+  "dateSelected": "Вибрано: {date}",
   "finishRangeSelectionPrompt": "Натисніть, щоб завершити вибір діапазону дат",
   "next": "Наступний",
   "previous": "Попередній",
-  "selectedDateDescription": "Вибрана дата: {date, date, full}",
-  "selectedRangeDescription": "Вибраний діапазон: від {start, date, long} до {end, date, long}",
+  "selectedDateDescription": "Вибрана дата: {date}",
+  "selectedRangeDescription": "Вибраний діапазон: від {dateRange}",
   "startRangeSelectionPrompt": "Натисніть, щоб почати вибір діапазону дат",
-  "todayDate": "Сьогодні: {date, date, full}",
-  "todayDateSelected": "Сьогодні вибрано: {date, date, full}"
+  "todayDate": "Сьогодні: {date}",
+  "todayDateSelected": "Сьогодні вибрано: {date}",
+  "dateRange": "{startDate} до {endDate}"
 }

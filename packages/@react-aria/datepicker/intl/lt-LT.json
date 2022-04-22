@@ -1,9 +1,5 @@
 {
   "calendar": "Kalendorius",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "Nuo {start, date, long} iki {end, date, long}",
-  "date": "Data",
-  "dateRange": "Datų intervalas",
   "day": "diena",
   "dayPeriod": "iki pietų / po pietų",
   "endDate": "Pabaigos data",
@@ -15,5 +11,7 @@
   "startDate": "Pradžios data",
   "year": "metai",
   "weekday": "savaitės diena",
-  "timeZoneName": "laiko juosta"
+  "timeZoneName": "laiko juosta",
+  "selectedDateDescription": "Pasirinkta data: {date}",
+  "selectedRangeDescription": "Pasirinktas intervalas: nuo {startDate} iki {endDate}"
 }

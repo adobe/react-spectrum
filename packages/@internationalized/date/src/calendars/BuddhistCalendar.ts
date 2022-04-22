@@ -20,6 +20,11 @@ import {Mutable} from '../utils';
 
 const BUDDHIST_ERA_START = -543;
 
+/**
+ * The Buddhist calendar is the same as the Gregorian calendar, but counts years
+ * starting from the birth of Buddha in 543 BC (Gregorian). It supports only one
+ * era, identified as 'BE'.
+ */
 export class BuddhistCalendar extends GregorianCalendar {
   identifier = 'buddhist';
 
@@ -30,16 +35,22 @@ export class BuddhistCalendar extends GregorianCalendar {
   }
 
   toJulianDay(date: AnyCalendarDate) {
-    return super.toJulianDay(
-      new CalendarDate(
-        date.year + BUDDHIST_ERA_START,
-        date.month,
-        date.day
-      )
-    );
+    return super.toJulianDay(toGregorian(date));
   }
 
   getEras() {
     return ['BE'];
   }
+
+  getDaysInMonth(date: AnyCalendarDate): number {
+    return super.getDaysInMonth(toGregorian(date));
+  }
+}
+
+function toGregorian(date: AnyCalendarDate) {
+  return new CalendarDate(
+    date.year + BUDDHIST_ERA_START,
+    date.month,
+    date.day
+  );
 }

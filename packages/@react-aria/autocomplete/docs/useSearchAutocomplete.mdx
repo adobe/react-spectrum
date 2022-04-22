@@ -428,8 +428,7 @@ function Example() {
       label="To:"
       items={filteredItems}
       inputValue={filterValue}
-      onInputChange={setFilterValue}
-      placeholder="Enter recipient email">
+      onInputChange={setFilterValue}>
       {(item) => <Item>{item.email}</Item>}
     </SearchAutocomplete>
   );
