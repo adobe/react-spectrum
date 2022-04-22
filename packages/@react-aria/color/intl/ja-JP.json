@@ -1,5 +1,6 @@
 {
+  "colorPicker": "カラーピッカー",
   "twoDimensionalSlider": "2D スライダー",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorInputLabel": "{label}, {channelLabel}"
 }
