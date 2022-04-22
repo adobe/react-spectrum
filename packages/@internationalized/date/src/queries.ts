@@ -127,39 +127,39 @@ export function getLocalTimeZone(): string {
   return localTimeZone;
 }
 
+/** Returns the first date of the month for the given date. */
 export function startOfMonth(date: ZonedDateTime): ZonedDateTime;
 export function startOfMonth(date: CalendarDateTime): CalendarDateTime;
 export function startOfMonth(date: CalendarDate): CalendarDate;
 export function startOfMonth(date: DateValue): DateValue;
-/** Returns the first date of the month for the given date. */
 export function startOfMonth(date: DateValue): DateValue {
   // Use `subtract` instead of `set` so we don't get constrained in an era.
   return date.subtract({days: date.day - 1});
 }
 
+/** Returns the last date of the month for the given date. */
 export function endOfMonth(date: ZonedDateTime): ZonedDateTime;
 export function endOfMonth(date: CalendarDateTime): CalendarDateTime;
 export function endOfMonth(date: CalendarDate): CalendarDate;
 export function endOfMonth(date: DateValue): DateValue;
-/** Returns the last date of the month for the given date. */
 export function endOfMonth(date: DateValue): DateValue {
   return date.add({days: date.calendar.getDaysInMonth(date) - date.day});
 }
 
+/** Returns the first day of the year for the given date. */
 export function startOfYear(date: ZonedDateTime): ZonedDateTime;
 export function startOfYear(date: CalendarDateTime): CalendarDateTime;
 export function startOfYear(date: CalendarDate): CalendarDate;
 export function startOfYear(date: DateValue): DateValue;
-/** Returns the first day of the year for the given date. */
 export function startOfYear(date: DateValue): DateValue {
   return startOfMonth(date.subtract({months: date.month - 1}));
 }
 
+/** Returns the last day of the year for the given date. */
 export function endOfYear(date: ZonedDateTime): ZonedDateTime;
 export function endOfYear(date: CalendarDateTime): CalendarDateTime;
 export function endOfYear(date: CalendarDate): CalendarDate;
 export function endOfYear(date: DateValue): DateValue;
-/** Returns the last day of the year for the given date. */
 export function endOfYear(date: DateValue): DateValue {
   return endOfMonth(date.add({months: date.calendar.getMonthsInYear(date) - date.month}));
 }
@@ -180,20 +180,20 @@ export function getMinimumDayInMonth(date: AnyCalendarDate) {
   return 1;
 }
 
+/** Returns the first date of the week for the given date and locale. */
 export function startOfWeek(date: ZonedDateTime, locale: string): ZonedDateTime;
 export function startOfWeek(date: CalendarDateTime, locale: string): CalendarDateTime;
 export function startOfWeek(date: CalendarDate, locale: string): CalendarDate;
 export function startOfWeek(date: DateValue, locale: string): DateValue;
-/** Returns the first date of the week for the given date and locale. */
 export function startOfWeek(date: DateValue, locale: string): DateValue {
   let dayOfWeek = getDayOfWeek(date, locale);
   return date.subtract({days: dayOfWeek});
 }
 
+/** Returns the last date of the week for the given date and locale. */
 export function endOfWeek(date: ZonedDateTime, locale: string): ZonedDateTime;
 export function endOfWeek(date: CalendarDateTime, locale: string): CalendarDateTime;
 export function endOfWeek(date: CalendarDate, locale: string): CalendarDate;
-/** Returns the last date of the week for the given date and locale. */
 export function endOfWeek(date: DateValue, locale: string): DateValue {
   return startOfWeek(date, locale).add({days: 6});
 }

@@ -1,11 +1,12 @@
 {
-  "dateSelected": "{date, date, full} ausgewählt",
+  "dateSelected": "{date} ausgewählt",
   "finishRangeSelectionPrompt": "Klicken, um die Auswahl des Datumsbereichs zu beenden",
   "next": "Weiter",
   "previous": "Zurück",
-  "selectedDateDescription": "Ausgewähltes Datum: {date, date, full}",
-  "selectedRangeDescription": "Bereich auswählen: {start, date, long} bis {end, date, long}",
+  "selectedDateDescription": "Ausgewähltes Datum: {date}",
+  "selectedRangeDescription": "Bereich auswählen: {dateRange}",
   "startRangeSelectionPrompt": "Klicken, um die Auswahl des Datumsbereichs zu beginnen",
-  "todayDate": "Heute, {date, date, full}",
-  "todayDateSelected": "Heute, {date, date, full} ausgewählt"
+  "todayDate": "Heute, {date}",
+  "todayDateSelected": "Heute, {date} ausgewählt",
+  "dateRange": "{startDate} bis {endDate}"
 }

@@ -11,7 +11,8 @@
  */
 
 import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
-import {DOMProps, RangeValue, StyleProps, ValueBase} from '@react-types/shared';
+import {DOMProps, RangeValue, StyleProps, ValidationState, ValueBase} from '@react-types/shared';
+import {ReactNode} from 'react';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 type MappedDateValue<T> =
@@ -47,7 +48,11 @@ export interface CalendarPropsBase {
   /** The date that is focused when the calendar first mounts (uncountrolled). */
   defaultFocusedValue?: DateValue,
   /** Handler that is called when the focused date changes. */
-  onFocusChange?: (date: CalendarDate) => void
+  onFocusChange?: (date: CalendarDate) => void,
+  /** Whether the current selection is valid or invalid according to application logic. */
+  validationState?: ValidationState,
+  /** An error message to display when the selected value is invalid. */
+  errorMessage?: ReactNode
 }
 
 export type DateRange = RangeValue<DateValue>;

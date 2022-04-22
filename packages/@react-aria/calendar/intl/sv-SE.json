@@ -1,11 +1,12 @@
 {
-  "dateSelected": "{date, date, full} har valts",
+  "dateSelected": "{date} har valts",
   "finishRangeSelectionPrompt": "Klicka för att avsluta val av datumintervall",
   "next": "Nästa",
   "previous": "Föregående",
-  "selectedDateDescription": "Valt datum: {date, date, full}",
-  "selectedRangeDescription": "Valt intervall: {start, date, long} till {end, date, long}",
+  "selectedDateDescription": "Valt datum: {date}",
+  "selectedRangeDescription": "Valt intervall: {dateRange}",
   "startRangeSelectionPrompt": "Klicka för att välja datumintervall",
-  "todayDate": "I dag, {date, date, full}",
-  "todayDateSelected": "I dag, {date, date, full} har valts"
+  "todayDate": "I dag, {date}",
+  "todayDateSelected": "I dag, {date} har valts",
+  "dateRange": "{startDate} till {endDate}"
 }

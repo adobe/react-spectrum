@@ -1,11 +1,12 @@
 {
-  "dateSelected": "{date, date, full} valitud",
+  "dateSelected": "{date} valitud",
   "finishRangeSelectionPrompt": "Klõpsake kuupäevavahemiku valimise lõpetamiseks",
   "next": "Järgmine",
   "previous": "Eelmine",
-  "selectedDateDescription": "Valitud kuupäev: {date, date, full}",
-  "selectedRangeDescription": "Valitud vahemik: {start, date, long} kuni {end, date, long}",
+  "selectedDateDescription": "Valitud kuupäev: {date}",
+  "selectedRangeDescription": "Valitud vahemik: {dateRange}",
   "startRangeSelectionPrompt": "Klõpsake kuupäevavahemiku valimiseks",
-  "todayDate": "Täna {date, date, full}",
-  "todayDateSelected": "Täna {date, date, full} valitud"
+  "todayDate": "Täna {date}",
+  "todayDateSelected": "Täna {date} valitud",
+  "dateRange": "{startDate} kuni {endDate}"
 }

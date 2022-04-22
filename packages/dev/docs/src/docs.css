@@ -192,8 +192,8 @@ html, body {
       width: 33.3333%;
     }
 
-    div:first-child:nth-last-child(4),
-    div:first-child:nth-last-child(4) ~ div {
+    div:first-child:nth-last-child(2n),
+    div:first-child:nth-last-child(2n) ~ div {
       width: 50%;
     }
   }

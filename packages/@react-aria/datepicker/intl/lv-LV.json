@@ -1,9 +1,5 @@
 {
   "calendar": "Kalendārs",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} līdz {end, date, long}",
-  "date": "Datums",
-  "dateRange": "Datumu diapazons",
   "day": "diena",
   "dayPeriod": "priekšpusdienā/pēcpusdienā",
   "endDate": "Beigu datums",
@@ -15,5 +11,7 @@
   "startDate": "Sākuma datums",
   "year": "gads",
   "weekday": "nedēļas diena",
-  "timeZoneName": "laika josla"
+  "timeZoneName": "laika josla",
+  "selectedDateDescription": "Atlasītais datums: {date}",
+  "selectedRangeDescription": "Atlasītais diapazons: {startDate} līdz {endDate}"
 }

@@ -1,9 +1,5 @@
 {
   "calendar": "Kalender",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} til {end, date, long}",
-  "date": "Dato",
-  "dateRange": "Datoområde",
   "day": "dag",
   "dayPeriod": "a.m./p.m.",
   "endDate": "Sluttdato",
@@ -15,5 +11,7 @@
   "startDate": "Startdato",
   "year": "år",
   "weekday": "ukedag",
-  "timeZoneName": "tidssone"
+  "timeZoneName": "tidssone",
+  "selectedDateDescription": "Valgt dato: {date}",
+  "selectedRangeDescription": "Valgt område: {startDate} til {endDate}"
 }

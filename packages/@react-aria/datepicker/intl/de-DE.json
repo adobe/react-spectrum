@@ -1,9 +1,5 @@
 {
   "calendar": "Kalender",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} bis {end, date, long}",
-  "date": "Datum",
-  "dateRange": "Datumsbereich",
   "day": "Tag",
   "dayPeriod": "Tageshälfte",
   "endDate": "Enddatum",
@@ -15,5 +11,7 @@
   "startDate": "Anfangsdatum",
   "year": "Jahr",
   "weekday": "Wochentag",
-  "timeZoneName": "Zeitzone"
+  "timeZoneName": "Zeitzone",
+  "selectedDateDescription": "Ausgewähltes Datum: {date}",
+  "selectedRangeDescription": "Bereich auswählen: {startDate} bis {endDate}"
 }
