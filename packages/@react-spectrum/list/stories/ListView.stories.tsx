@@ -501,7 +501,6 @@ export function ReorderExample() {
   let dropHooks = useDropHooks({
     async onDrop(e) {
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
-
         let keys = [];
         for (let item of e.items) {
           if (item.kind === 'text' && item.types.has(dragType)) {
@@ -614,6 +613,7 @@ export function DragIntoItemExample() {
 }
 
 export function DragBetweenListsExample() {
+  let onDropAction = action('onDrop');
 
   let list1 = useListData({
     initialItems: [
@@ -638,32 +638,43 @@ export function DragBetweenListsExample() {
   });
   
   let onMove = (keys: React.Key[], target: ItemDropTarget) => {
-    let targetList = list1;
-    if (target.dropPosition === 'before') {
-      targetList.moveBefore(target.key, keys);
+    let sourceList = list1.getItem(keys[0]) ? list1 : list2;
+    let destinationList = list1.getItem(target.key) ? list1 : list2;
+
+    if (sourceList === destinationList) {
+        // Handle dragging within same list
+      if (target.dropPosition === 'before') {
+        sourceList.moveBefore(target.key, keys);
+      } else {
+        sourceList.moveAfter(target.key, keys);
+      }
     } else {
-      targetList.moveAfter(target.key, keys);
+      // Handle dragging between lists
+      if (target.dropPosition === 'before') {
+        destinationList.insertBefore(target.key, ...keys.map(key => sourceList.getItem(key)));
+      } else {
+        destinationList.insertAfter(target.key, ...keys.map(key => sourceList.getItem(key)));
+      }
+      sourceList.remove(...keys);
     }
   };
 
-  let getItems = (keys) => [...keys].map(id => {
-    let item = list1.items.find(item => item.id === id);
-    return {
-      'text/plain': item.textValue
-    };
-  });
-
   let dragHooks = useDragHooks({
     allowsDraggingItem: () => true,
-    getItems
+    getItems(keys) {
+      return [...keys].map(key => ({
+        [dragType]: JSON.stringify(key)
+      }));
+    },
+    onDragStart: action('dragStart'),
+    onDragEnd: action('dragEnd')
   });
 
-  // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
+  // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
   let dropHooks = useDropHooks({
     onDrop: async e => {
-      console.log('onDrop', e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
         for (let item of e.items) {
@@ -672,9 +683,9 @@ export function DragBetweenListsExample() {
             keys.push(key);
           }
         }
-
+        onDropAction(e);
         onMove(keys, e.target);
-      }
+      } 
     }
   });
 
