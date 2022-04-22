@@ -14,7 +14,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {ItemDropTarget, RootDropTarget} from '@react-types/shared';
+import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
