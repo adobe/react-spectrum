@@ -542,11 +542,11 @@ export function ReorderExample() {
 }
 
 export function DragIntoItemExample() {
-  let [droppedItems, setDroppedItems] = useState([]);
+  let onDropAction = action('onDrop');
 
   let list = useListData({
     initialItems: [
-      {id: '0', type: 'folder', textValue: 'Folder'},
+      {id: '0', type: 'folder', textValue: 'Folder', childNodes: []},
       {id: '1', type: 'item', textValue: 'One'},
       {id: '2', type: 'item', textValue: 'Two'},
       {id: '3', type: 'item', textValue: 'Three'},
@@ -567,16 +567,25 @@ export function DragIntoItemExample() {
 
   let dragHooks = useDragHooks({
     allowsDraggingItem: (id) => list.getItem(id).type === 'item',
-    getItems
+    getItems,
+    onDragStart: action('dragStart'),
+    onDragEnd: action('dragEnd')
   });
 
   let dropHooks = useDropHooks({
     onDrop: async e => {
-      if (e.target.type === 'item' && e.target.key === '0' && e.target.dropPosition === 'on') {
-        // TODO: Remove dropped items from list
-        // list.remove();
-        setDroppedItems((prevDropped) => [...prevDropped, e.target]);
+      onDropAction(e);
+      if (e.target.type === 'item' && e.target.dropPosition === 'on') {
+        let folderItem = list.getItem(e.target.key);
+        list.update(e.target.key, {...folderItem, childNodes: [...folderItem.childNodes, ...e.items]});
       }
+    },
+    getDropOperation(target) {
+      if (target.type === 'root' || target.dropPosition !== 'on') {
+        return 'cancel';
+      }
+
+      return 'move';
     }
   });
 
@@ -595,7 +604,7 @@ export function DragIntoItemExample() {
           {item.type === 'folder' && 
             <>
               <Folder />
-              <Text slot="description">contains {droppedItems.length} dropped item(s)</Text>
+              <Text slot="description">contains {item.childNodes.length} dropped item(s)</Text>
             </>
           }
         </Item>

@@ -16,7 +16,6 @@ import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
-import type {DroppableCollectionState} from '@react-stately/dnd';
 import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -35,8 +34,7 @@ interface ListViewItemProps {
   item: Node<any>,
   isEmphasized: boolean,
   dragHooks: DragHooks,
-  dropHooks: DropHooks,
-  dropState: DroppableCollectionState
+  dropHooks: DropHooks
 }
 
 export function ListViewItem(props: ListViewItemProps) {
@@ -44,11 +42,10 @@ export function ListViewItem(props: ListViewItemProps) {
     item,
     isEmphasized,
     dragHooks,
-    dropHooks,
-    dropState
+    dropHooks
   } = props;
   let cellNode = [...item.childNodes][0];
-  let {state, dragState, onAction, isListDraggable, isListDroppable} = useContext(ListViewContext);
+  let {state, dragState, dropState, onAction, isListDraggable, isListDroppable} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();
@@ -84,7 +81,7 @@ export function ListViewItem(props: ListViewItemProps) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    droppableItem = dropHooks.useDroppableItem({target}, dropState, rowRef);
+    droppableItem = dropHooks.useDroppableItem({target}, dropState, cellRef);
   }
   const mergedProps = mergeProps(
     gridCellProps,

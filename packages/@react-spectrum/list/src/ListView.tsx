@@ -268,10 +268,10 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             }
           }
 
-          // TODO: only for when closest can be dropped on
-          // if (y >= r.y + 10 && y <= r.maxY - 10) {
-          //   closestDir = 'on';
-          // }
+          // TODO: Best way to implement only for when closest can be dropped on
+          if (y >= r.y + 10 && y <= r.maxY - 10 && state.collection.getItem(closest.key).value.type === 'folder') {
+            closestDir = 'on';
+          }
         }
 
         let key = closest?.key;
