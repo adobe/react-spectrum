@@ -81,7 +81,7 @@ export function ListViewItem(props: ListViewItemProps) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    droppableItem = dropHooks.useDroppableItem({target}, dropState, cellRef);
+    droppableItem = dropHooks.useDroppableItem({target}, dropState, rowRef);
   }
   const mergedProps = mergeProps(
     gridCellProps,
