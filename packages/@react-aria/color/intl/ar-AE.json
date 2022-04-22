@@ -1,5 +1,6 @@
 {
+  "colorPicker": "منتقي الألوان",
   "twoDimensionalSlider": "شريط تمرير ثنائي الأبعاد",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorInputLabel": "{label}, {channelLabel}"
 }

@@ -1,5 +1,6 @@
 {
+  "colorPicker": "Színválasztó",
   "twoDimensionalSlider": "2D csúszka",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorInputLabel": "{label}, {channelLabel}"
 }
