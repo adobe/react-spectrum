@@ -15,7 +15,6 @@ import {
   CollectionBase,
   DOMProps,
   DOMRef,
-  ItemDropTarget,
   LoadingState,
   MultipleSelection,
   SpectrumSelectionProps,
