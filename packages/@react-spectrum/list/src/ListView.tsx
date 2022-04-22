@@ -346,7 +346,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                     key={`${item.key}-before`}
                     target={{key: item.key, type: 'item', dropPosition: 'before'}} />
                 }
-                <ListViewItem item={item} isEmphasized dragHooks={dragHooks} dropHooks={dropHooks} dropState={dropState} />
+                <ListViewItem item={item} isEmphasized dragHooks={dragHooks} dropHooks={dropHooks} />
                 {isListDroppable && isLastItem &&
                   <InsertionIndicator
                     key={`${item.key}-after`}
