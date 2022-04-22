@@ -10,24 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
+import {ColumnProps, TableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
-import {TableCollection} from '@react-types/table';
 
+type TableLayoutOptions<T> = ListLayoutOptions<T> & {
+  getDefaultWidth: (props) => string | number,
+  flagResize?: boolean
+}
 
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
   lastCollection: TableCollection<T>;
+  columnWidths: Map<Key, number>;
   getColumnWidth: (key: Key) => number;
+  getDefaultWidth: (props) => string | number;
   stickyColumnIndices: number[];
   wasLoading = false;
   isLoading = false;
+  flagResize = false;
 
-  constructor(options: ListLayoutOptions<T>) {
+  constructor(options: TableLayoutOptions<T>) {
     super(options);
     this.stickyColumnIndices = [];
+    this.getDefaultWidth = options.getDefaultWidth;
+    this.flagResize = options.flagResize;
   }
 
 
@@ -47,6 +56,9 @@ export class TableLayout<T> extends ListLayout<T> {
     this.wasLoading = this.isLoading;
     this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
+    if (!this.flagResize) {
+      this.buildColumnWidths();
+    }
     let header = this.buildHeader();
     let body = this.buildBody(0);
     this.stickyColumnIndices = this.collection.columns.filter(c => c.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(c.key)).map(c => c.index);
@@ -57,6 +69,63 @@ export class TableLayout<T> extends ListLayout<T> {
       header,
       body
     ];
+  }
+
+  buildColumnWidths() {
+    this.columnWidths = new Map();
+    this.stickyColumnIndices = [];
+
+    // Pass 1: set widths for all explicitly defined columns.
+    let remainingColumns = new Set<GridNode<T>>();
+    let remainingSpace = this.virtualizer.visibleRect.width;
+    for (let column of this.collection.columns) {
+      let props = column.props as ColumnProps<T>;
+      let width = props.width ?? this.getDefaultWidth(props);
+      if (width != null) {
+        let w = this.parseWidth(width);
+        this.columnWidths.set(column.key, w);
+        remainingSpace -= w;
+      } else {
+        remainingColumns.add(column);
+      }
+
+      // The selection cell and any other sticky columns always need to be visible.
+      // In addition, row headers need to be in the DOM for accessibility labeling.
+      if (column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
+        this.stickyColumnIndices.push(column.index);
+      }
+    }
+
+    // Pass 2: if there are remaining columns, then distribute the remaining space evenly.
+    if (remainingColumns.size > 0) {
+      let columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
+
+      for (let column of remainingColumns) {
+        let props = column.props as ColumnProps<T>;
+        let minWidth = props.minWidth != null ? this.parseWidth(props.minWidth) : 75;
+        let maxWidth = props.maxWidth != null ? this.parseWidth(props.maxWidth) : Infinity;
+        let width = Math.floor(Math.max(minWidth, Math.min(maxWidth, columnWidth)));
+
+        this.columnWidths.set(column.key, width);
+        remainingSpace -= width;
+        if (width !== columnWidth) {
+          columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
+        }
+      }
+    }
+  }
+
+  parseWidth(width: number | string): number {
+    if (typeof width === 'string') {
+      let match = width.match(/^(\d+)%$/);
+      if (!match) {
+        throw new Error('Only percentages are supported as column widths');
+      }
+
+      return this.virtualizer.visibleRect.width * (parseInt(match[1], 10) / 100);
+    }
+
+    return width;
   }
 
   buildHeader(): LayoutNode {
@@ -128,7 +197,11 @@ export class TableLayout<T> extends ListLayout<T> {
     let width = 0;
     for (let i = node.index; i < node.index + colspan; i++) {
       let column = this.collection.columns[i];
-      width += this.getColumnWidth(column.key);
+      if (this.flagResize) {
+        width += this.getColumnWidth(column.key);
+      } else {
+        width += this.columnWidths.get(column.key);
+      }
     }
 
     return width;
