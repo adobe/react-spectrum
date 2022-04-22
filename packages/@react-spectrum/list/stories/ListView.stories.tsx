@@ -555,29 +555,40 @@ export function DragIntoItemExample() {
     ]
   });
 
-  let getItems = (keys) => [...keys].map(id => {
-    let item = list.getItem(id);
-    return {
-      id: item.id,
-      type: item.type,
-      'text/plain': item.textValue
-    };
-  });
+  // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+
+  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+    let folderItem = list.getItem(target.key);
+    let draggedItems = keys.map((key) => list.getItem(key));
+    list.update(target.key, {...folderItem, childNodes: [...folderItem.childNodes, ...draggedItems]});
+    list.remove(...keys);
+  };
 
   let dragHooks = useDragHooks({
     allowsDraggingItem: (id) => list.getItem(id).type === 'item',
-    getItems,
+    getItems(keys) {
+      return [...keys].map(key => ({
+        [dragType]: JSON.stringify(key)
+      }));
+    },
     onDragStart: action('dragStart'),
     onDragEnd: action('dragEnd')
   });
 
   let dropHooks = useDropHooks({
     onDrop: async e => {
-      onDropAction(e);
-      if (e.target.type === 'item' && e.target.dropPosition === 'on') {
-        let folderItem = list.getItem(e.target.key);
-        list.update(e.target.key, {...folderItem, childNodes: [...folderItem.childNodes, ...e.items]});
-      }
+      if (e.target.type !== 'root' && e.target.dropPosition === 'on') {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text' && item.types.has(dragType)) {
+            let key = JSON.parse(await item.getText(dragType));
+            keys.push(key);
+          }
+        }
+        onDropAction(e);
+        onMove(keys, e.target);
+      } 
     },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition !== 'on') {
