@@ -34,7 +34,7 @@ after_version: 3.0.0
 
 ## Introduction
 
-While the Gregorian calendar is the most commonly used, many other calendar systems are used throughout the world. The `Calendar` interface is used to represent calendar systems in the `@internationalized/date` library. It encapsulates information such as the number of days in a month, the number of months in a year, and the list of eras in a calendar system, as well as methods that handle correct arithmetic of dates in that calendar system, as well as converting dates between calendar systems. Many implementations of this interface are provided in `@internationalized/date` to handle the most commonly used calendar systems.
+While the Gregorian calendar is the most common, many other calendar systems are used throughout the world. The `Calendar` interface represents calendar systems in the `@internationalized/date` library. It encapsulates information such as the number of days in a month, the number of months in a year, and the list of eras in a calendar system, as well as methods that handle correct arithmetic of dates in that calendar system, as well as converting dates between calendar systems. Many implementations of this interface are provided in `@internationalized/date` to handle the most commonly used calendar systems.
 
 As described in the docs for [CalendarDate](CalendarDate.html#calendar-systems) and other date objects, you can pass a `Calendar` instance to a date to represent a date in that calendar. Date manipulation follows the rules defined by that calendar system. You can also convert between calendar systems using the <TypeLink links={docs.links} type={docs.exports.toCalendar} /> function.
 

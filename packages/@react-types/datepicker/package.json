@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@internationalized/date": "3.0.0-alpha.4",
+    "@react-types/overlays": "^3.5.4",
     "@react-types/shared": "^3.11.1"
   },
   "publishConfig": {

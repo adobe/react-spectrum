@@ -1,7 +1,7 @@
 {
   "name": "@internationalized/date",
   "version": "3.0.0-alpha.4",
-  "description": "Internationalized calendar and date manipulation utilities",
+  "description": "Internationalized calendar, date, and time manipulation utilities",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
@@ -14,7 +14,7 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
+    "url": "https://github.com/adobe/react-spectrum/tree/main/packages/@internationalized/date"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2"

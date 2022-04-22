@@ -196,6 +196,10 @@ storiesOf('Date and Time/DateRangePicker/styling', module)
         {render({granularity: 'second'})}
       </div>
     )
+  )
+  .add(
+    'shouldFlip: false',
+    () => render({shouldFlip: false})
   );
 
 function render(props = {}) {

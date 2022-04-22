@@ -148,7 +148,7 @@ describe('RangeCalendar', () => {
         expect(cell).toHaveAttribute('aria-label', juneLabels[i++]);
       }
 
-      let nextButton = getByLabelText('Next');
+      let nextButton = getAllByLabelText('Next')[0];
       userEvent.click(nextButton);
 
       selected = getAllByLabelText('selected', {exact: false}).filter(cell => cell.getAttribute('aria-disabled') !== 'true');
@@ -712,7 +712,7 @@ describe('RangeCalendar', () => {
 
     it('clicking on next/previous buttons does not commit selection', () => {
       let onChange = jest.fn();
-      let {getAllByLabelText, getByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
+      let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
 
       act(() => userEvent.click(getByText('22')));
 
@@ -728,7 +728,7 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('25');
       expect(onChange).toHaveBeenCalledTimes(0);
 
-      let next = getByLabelText('Next');
+      let next = getAllByLabelText('Next')[0];
       act(() => userEvent.click(next));
 
       selectedDates = getAllByLabelText('selected', {exact: false}).filter(d => !d.hasAttribute('aria-disabled'));
@@ -1021,7 +1021,7 @@ describe('RangeCalendar', () => {
         return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
       };
 
-      let {getByRole} = render(
+      let {getByRole, getAllByLabelText} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}
           isDateUnavailable={isDateUnavailable} />
@@ -1045,7 +1045,7 @@ describe('RangeCalendar', () => {
       let prevButton = getByRole('button', {name: 'Previous'});
       expect(prevButton).toHaveAttribute('disabled');
 
-      let nextButton = getByRole('button', {name: 'Next'});
+      let nextButton = getAllByLabelText('Next')[0];
       expect(nextButton).toHaveAttribute('disabled');
 
       cell = getByRole('button', {name: 'Tuesday, December 14, 2021'});
@@ -1077,7 +1077,7 @@ describe('RangeCalendar', () => {
         return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
       };
 
-      let {getByRole} = render(
+      let {getByRole, getAllByLabelText} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 5, 10), end: new CalendarDate(2022, 5, 12)}}
           isDateUnavailable={isDateUnavailable} />
@@ -1089,8 +1089,9 @@ describe('RangeCalendar', () => {
       let prevButton = getByRole('button', {name: 'Previous'});
       expect(prevButton).toHaveAttribute('disabled');
 
-      let nextButton = getByRole('button', {name: 'Next'});
-      expect(nextButton).not.toHaveAttribute('disabled');
+      for (let nextButton of getAllByLabelText('Next')) {
+        expect(nextButton).not.toHaveAttribute('disabled');
+      }
     });
 
     it('disables the next button if the first day of the next month is unavailable', () => {
@@ -1099,7 +1100,7 @@ describe('RangeCalendar', () => {
         return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
       };
 
-      let {getByRole} = render(
+      let {getByRole, getAllByLabelText} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 4, 10), end: new CalendarDate(2022, 4, 12)}}
           isDateUnavailable={isDateUnavailable} />
@@ -1111,7 +1112,7 @@ describe('RangeCalendar', () => {
       let prevButton = getByRole('button', {name: 'Previous'});
       expect(prevButton).not.toHaveAttribute('disabled');
 
-      let nextButton = getByRole('button', {name: 'Next'});
+      let nextButton = getAllByLabelText('Next')[0];
       expect(nextButton).toHaveAttribute('disabled');
     });
 
@@ -1121,7 +1122,7 @@ describe('RangeCalendar', () => {
         return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
       };
 
-      let {getByRole} = render(
+      let {getByRole, getAllByLabelText} = render(
         <RangeCalendar
           defaultValue={{start: new CalendarDate(2022, 4, 10), end: new CalendarDate(2022, 4, 12)}}
           isDateUnavailable={isDateUnavailable} />
@@ -1133,10 +1134,11 @@ describe('RangeCalendar', () => {
       let prevButton = getByRole('button', {name: 'Previous'});
       expect(prevButton).not.toHaveAttribute('disabled');
 
-      let nextButton = getByRole('button', {name: 'Next'});
-      expect(nextButton).not.toHaveAttribute('disabled');
+      for (let nextButton of getAllByLabelText('Next')) {
+        expect(nextButton).not.toHaveAttribute('disabled');
+      }
 
-      act(() => userEvent.click(nextButton));
+      act(() => userEvent.click(getAllByLabelText('Next')[0]));
 
       cell = getByRole('button', {name: 'Sunday, May 1, 2022 selected, Last available date'});
       expect(cell).not.toHaveAttribute('aria-disabled');
@@ -1337,9 +1339,9 @@ describe('RangeCalendar', () => {
   // These tests only work against v3
   describe('announcing', () => {
     it('announces when the current month changes', () => {
-      let {getByLabelText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
+      let {getAllByLabelText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
 
-      let nextButton = getByLabelText('Next');
+      let nextButton = getAllByLabelText('Next')[0];
       userEvent.click(nextButton);
 
       expect(announce).toHaveBeenCalledTimes(1);

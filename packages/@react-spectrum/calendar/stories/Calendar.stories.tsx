@@ -110,6 +110,10 @@ storiesOf('Date and Time/Calendar', module)
       let {locale} = useLocale();
       return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true, defaultValue: new CalendarDate(2021, 10, 3)});
     }
+  )
+  .add(
+    'aria-label',
+    () => render({'aria-label': 'Appointment date'})
   );
 
 function render(props = {}) {
