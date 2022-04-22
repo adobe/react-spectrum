@@ -84,36 +84,6 @@ filtering logic. See the [Custom Filtering](#custom-filtering) section for more 
 To internationalize a SearchAutocomplete, a localized string should be passed to the `children` of each `Item`.
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the SearchAutocomplete is automatically flipped.
 
-### Placeholder
-
-Placeholder text that describes the expected value or formatting for the SearchAutocomplete can be provided using the `placeholder` prop.
-Placeholder text will only appear when the SearchAutocomplete is empty, and should not be used as a substitute for labeling the component with a visible label.
-
-```tsx example
-function Example() {
-  let options = [
-    {id: 1, name: 'Aerospace'},
-    {id: 2, name: 'Mechanical'},
-    {id: 3, name: 'Civil'},
-    {id: 4, name: 'Biomedical'},
-    {id: 5, name: 'Nuclear'},
-    {id: 6, name: 'Industrial'},
-    {id: 7, name: 'Chemical'},
-    {id: 8, name: 'Agricultural'},
-    {id: 9, name: 'Electrical'}
-  ];
-
-  return (
-    <SearchAutocomplete
-      label="Search engineering majors"
-      defaultItems={options}
-      placeholder="Aerospace, Mechanical, etc.">
-      {item => <Item>{item.name}</Item>}
-    </SearchAutocomplete>
-  );
-}
-```
-
 ## Labeling
 SearchAutocomplete can be labeled using the `label` prop. If the SearchAutocomplete is a required field, the `isRequired` and `necessityIndicator` props can be used to show a required state.
 
@@ -304,8 +274,7 @@ function Example() {
       validationState={isValid ? 'valid' : 'invalid'}
       defaultItems={options}
       inputValue={value}
-      onInputChange={setValue}
-      placeholder="Enter email">
+      onInputChange={setValue}>
       {item => <Item>{item.email}</Item>}
     </SearchAutocomplete>
   );
@@ -356,8 +325,7 @@ function Example() {
       onInputChange={(value) => {
         setShowAll(false);
         setFilterValue(value);
-      }}
-      placeholder="Enter email">
+      }}>
       {item => <Item>{item.email}</Item>}
     </SearchAutocomplete>
   );
@@ -443,7 +411,7 @@ For right-to-left (RTL) languages, this is flipped.
 ### Read only
 
 ```tsx example
-<SearchAutocomplete label="Search Animals" placeholder="Red Panda, Cat, etc" isReadOnly>
+<SearchAutocomplete label="Search Animals" isReadOnly>
   <Item>Red Panda</Item>
   <Item>Cat</Item>
   <Item>Dog</Item>

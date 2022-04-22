@@ -1,9 +1,5 @@
 {
   "calendar": "Календар",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "Від {start, date, long} до {end, date, long}",
-  "date": "Дата",
-  "dateRange": "Діапазон дат",
   "day": "день",
   "dayPeriod": "дп/пп",
   "endDate": "Дата завершення",
@@ -15,5 +11,7 @@
   "startDate": "Дата початку",
   "year": "рік",
   "weekday": "день тижня",
-  "timeZoneName": "часовий пояс"
+  "timeZoneName": "часовий пояс",
+  "selectedDateDescription": "Вибрана дата: {date}",
+  "selectedRangeDescription": "Вибраний діапазон: від {startDate} до {endDate}"
 }

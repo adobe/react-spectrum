@@ -50,6 +50,8 @@ export interface DateFieldState {
   validationState: ValidationState,
   /** The granularity for the field, based on the `granularity` prop and current value. */
   granularity: Granularity,
+  /** The maximum date or time unit that is displayed in the field. */
+  maxGranularity: 'year' | 'month' | Granularity,
   /** Whether the field is disabled. */
   isDisabled: boolean,
   /** Whether the field is read only. */
@@ -110,7 +112,7 @@ const TYPE_MAPPING = {
   dayperiod: 'dayPeriod'
 };
 
-interface DatePickerFieldProps extends DatePickerProps<DateValue> {
+export interface DateFieldStateOptions extends DatePickerProps<DateValue> {
   /**
    * The maximum unit to display in the date field.
    * @default 'year'
@@ -132,7 +134,7 @@ interface DatePickerFieldProps extends DatePickerProps<DateValue> {
  * A date field allows users to enter and edit date and time values using a keyboard.
  * Each part of a date value is displayed in an individually editable segment.
  */
-export function useDateFieldState(props: DatePickerFieldProps): DateFieldState {
+export function useDateFieldState(props: DateFieldStateOptions): DateFieldState {
   let {
     locale,
     createCalendar,
@@ -280,6 +282,7 @@ export function useDateFieldState(props: DatePickerFieldProps): DateFieldState {
     dateFormatter,
     validationState,
     granularity,
+    maxGranularity: props.maxGranularity ?? 'year',
     isDisabled,
     isReadOnly,
     isRequired,

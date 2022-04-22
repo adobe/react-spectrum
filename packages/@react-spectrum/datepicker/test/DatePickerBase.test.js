@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_} from '@testing-library/react';
+import {act, fireEvent, render as render_, within} from '@testing-library/react';
 import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DatePicker, DateRangePicker} from '../';
 import {installPointerEvent} from '@react-spectrum/test-utils';
@@ -186,6 +186,29 @@ describe('DatePickerBase', function () {
       expect(grid).toHaveAttribute('aria-label', 'July 2019');
       expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
     });
+
+    it.each`
+      Name                   | Component
+      ${'DatePicker'}        | ${DatePicker}
+      ${'DateRangePicker'}   | ${DateRangePicker}
+    `('$Name should respond to provider props', ({Component}) => {
+      let {getAllByRole} = render(
+        <Provider theme={theme} isDisabled>
+          <Component label="Date" isDisabled />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).toHaveAttribute('aria-disabled', 'true');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-disabled', 'true');
+      }
+
+      let button = getAllByRole('button')[0];
+      expect(button).toHaveAttribute('disabled');
+    });
   });
 
   describe('calendar popover', function () {
@@ -321,6 +344,30 @@ describe('DatePickerBase', function () {
 
       // Focuses the calendar date
       expect(document.activeElement.parentElement).toHaveAttribute('role', 'gridcell');
+    });
+
+    it.each`
+      Name                   | Component
+      ${'DatePicker'}        | ${DatePicker}
+      ${'DateRangePicker'}   | ${DateRangePicker}
+    `('$Name should pass validationState and errorMessage to calendar', ({Component}) => {
+      let {getAllByRole} = render(
+        <Provider theme={theme}>
+          <Component label="Date" errorMessage="Selected dates cannot include weekends." validationState="invalid" />
+        </Provider>
+      );
+
+      let button = getAllByRole('button')[0];
+      expect(button).toHaveAttribute('aria-haspopup', 'dialog');
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+      expect(button).not.toHaveAttribute('aria-controls');
+
+      triggerPress(button);
+
+      let dialog = getAllByRole('dialog')[0];
+      let grid = within(dialog).getByRole('grid');
+      let description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description).toBe('Selected dates cannot include weekends.');
     });
   });
 

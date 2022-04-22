@@ -318,10 +318,12 @@ function Nav({currentPageName, pages}) {
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
   let currentPageIsIndex = INDEX_RE.test(currentPageName);
   let sectionIndex = './index.html';
+  let back = '../index.html';
   if (isBlog) {
     sectionIndex = '/index.html';
   } else if (currentPageName.startsWith('internationalized/')) {
     sectionIndex = '../index.html';
+    back = '../../index.html';
   }
 
   function SideNavItem({name, url, title, preRelease}) {
@@ -343,7 +345,7 @@ function Nav({currentPageName, pages}) {
     <nav className={docStyles.nav} aria-labelledby="nav-title-id">
       <header>
         {currentParts.length > 1 &&
-          <a href="../index.html" className={docStyles.backBtn}>
+          <a href={back} className={docStyles.backBtn}>
             <ChevronLeft aria-label="Back" />
           </a>
         }
