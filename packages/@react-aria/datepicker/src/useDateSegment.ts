@@ -19,7 +19,7 @@ import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from './useDisplayNames';
 import {useSpinButton} from '@react-aria/spinbutton';
 
-interface DateSegmentAria {
+export interface DateSegmentAria {
   /** Props for the segment element. */
   segmentProps: HTMLAttributes<HTMLDivElement>
 }

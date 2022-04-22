@@ -186,6 +186,29 @@ describe('DatePickerBase', function () {
       expect(grid).toHaveAttribute('aria-label', 'July 2019');
       expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
     });
+
+    it.each`
+      Name                   | Component
+      ${'DatePicker'}        | ${DatePicker}
+      ${'DateRangePicker'}   | ${DateRangePicker}
+    `('$Name should respond to provider props', ({Component}) => {
+      let {getAllByRole} = render(
+        <Provider theme={theme} isDisabled>
+          <Component label="Date" isDisabled />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).toHaveAttribute('aria-disabled', 'true');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-disabled', 'true');
+      }
+
+      let button = getAllByRole('button')[0];
+      expect(button).toHaveAttribute('disabled');
+    });
   });
 
   describe('calendar popover', function () {
