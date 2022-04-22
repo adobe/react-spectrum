@@ -91,7 +91,6 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   isQuiet?: boolean,
   loadingState?: LoadingState,
   renderEmptyState?: () => JSX.Element,
-  transitionDuration?: number,
   onAction?: (key: string) => void,
   dragHooks?: DragHooks
 }
@@ -102,7 +101,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     onLoadMore,
     loadingState,
     isQuiet,
-    transitionDuration = 0,
     onAction,
     dragHooks
   } = props;
@@ -246,7 +244,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         }
         layout={layout}
         collection={gridCollection}
-        transitionDuration={transitionDuration}>
+        transitionDuration={isLoading ? 160 : 220}>
         {(type, item) => {
           if (type === 'item') {
             return (
