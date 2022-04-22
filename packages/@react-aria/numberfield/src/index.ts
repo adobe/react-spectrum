@@ -10,6 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="intl-types-extension" />
-
 export * from './useNumberField';
