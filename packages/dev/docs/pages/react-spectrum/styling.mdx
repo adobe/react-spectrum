@@ -46,7 +46,7 @@ Supported styling options are available as props on every React Spectrum compone
 a text field and a button. The text field has a custom width set on it, and the button has a margin before it.
 
 ```tsx example
-<TextField label="Name" labelPosition="side" placeholder="John Smith" width="size-2000" />
+<TextField label="Name" labelPosition="side" width="size-2000" />
 <ActionButton marginStart="size-150">Submit</ActionButton>
 ```
 
@@ -128,7 +128,7 @@ In this example, the TextField has a default width of `size-2000`, which is over
 Resize your browser window to see this in action.
 
 ```tsx example
-<TextField label="Name" placeholder="John Smith" width={{base: 'size-2000', L: 'size-5000'}} />
+<TextField label="Name" width={{base: 'size-2000', L: 'size-5000'}} />
 ```
 
 React Spectrum's breakpoints are mobile first, which means style props apply at that breakpoint and above. For example, the `L`
@@ -157,7 +157,7 @@ and padding. Use the color scheme and scale pickers to see how the view changes 
   borderColor="dark"
   borderRadius="medium"
   padding="size-250">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
 </View>
 ```
 

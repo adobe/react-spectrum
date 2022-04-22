@@ -14,6 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
+import {isVirtualPointerEvent} from '@react-aria/interactions';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -156,6 +157,7 @@ class DragSession {
   private mutationImmediate: NodeJS.Immediate;
   private restoreAriaHidden: () => void;
   private formatMessage: (key: string) => string;
+  private isVirtualClick: boolean;
 
   constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
@@ -165,6 +167,7 @@ class DragSession {
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.onClick = this.onClick.bind(this);
+    this.onPointerDown = this.onPointerDown.bind(this);
     this.cancelEvent = this.cancelEvent.bind(this);
   }
 
@@ -173,6 +176,7 @@ class DragSession {
     window.addEventListener('focus', this.onFocus, true);
     window.addEventListener('blur', this.onBlur, true);
     document.addEventListener('click', this.onClick, true);
+    document.addEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
       document.addEventListener(event, this.cancelEvent, true);
@@ -191,6 +195,7 @@ class DragSession {
     window.removeEventListener('focus', this.onFocus, true);
     window.removeEventListener('blur', this.onBlur, true);
     document.removeEventListener('click', this.onClick, true);
+    document.removeEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
       document.removeEventListener(event, this.cancelEvent, true);
@@ -276,22 +281,26 @@ class DragSession {
 
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
+    if (e.detail === 0 || this.isVirtualClick) {
+      if (e.target === this.dragTarget.element) {
+        this.cancel();
+        return;
+      }
 
-    if (e.detail !== 0) {
-      return;
+      let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+      if (dropTarget) {
+        let item = dropItems.get(e.target as HTMLElement);
+        this.setCurrentDropTarget(dropTarget, item);
+        this.drop(item);
+      }
     }
+  }
 
-    if (e.target === this.dragTarget.element) {
-      this.cancel();
-      return;
-    }
-
-    let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
-    if (dropTarget) {
-      let item = dropItems.get(e.target as HTMLElement);
-      this.setCurrentDropTarget(dropTarget, item);
-      this.drop(item);
-    }
+  onPointerDown(e: PointerEvent) {
+    // Android Talkback double tap has e.detail = 1 for onClick. Detect the virtual click in onPointerDown before onClick fires
+    // so we can properly perform cancel and drop operations.
+    this.cancelEvent(e);
+    this.isVirtualClick = isVirtualPointerEvent(e);
   }
 
   cancelEvent(e: Event) {

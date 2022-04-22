@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Calendar} from '../';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
@@ -95,6 +95,25 @@ storiesOf('Date and Time/Calendar', module)
   .add(
     'focusedValue',
     () => <ControlledFocus />
+  )
+  .add(
+    'validationState: invalid',
+    () => render({validationState: 'invalid', defaultValue: new CalendarDate(2021, 10, 3)})
+  )
+  .add(
+    'validationState: invalid, errorMessage',
+    () => render({validationState: 'invalid', errorMessage: 'Selection may not include weekends.', defaultValue: new CalendarDate(2021, 10, 3)})
+  )
+  .add(
+    'isDateUnavailable, invalid',
+    () => {
+      let {locale} = useLocale();
+      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true, defaultValue: new CalendarDate(2021, 10, 3)});
+    }
+  )
+  .add(
+    'aria-label',
+    () => render({'aria-label': 'Appointment date'})
   );
 
 function render(props = {}) {
@@ -166,7 +185,7 @@ function Example(props) {
         </Picker>
       </Flex>
       <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
-        <View maxWidth="100vw" overflow="auto">
+        <View maxWidth="100vw" padding="size-10" overflow="auto">
           <Calendar {...props} />
         </View>
       </Provider>

@@ -88,16 +88,18 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         listItems.pop();
         newVisibleItems++;
       } else {
-        // Ensure the last breadcrumb isn't truncated when we measure it.
-        let last = listItems.pop();
-        last.style.overflow = 'visible';
+        if (listItems.length > 0) {
+          // Ensure the last breadcrumb isn't truncated when we measure it.
+          let last = listItems.pop();
+          last.style.overflow = 'visible';
 
-        calculatedWidth += last.offsetWidth;
-        if (calculatedWidth < containerWidth) {
-          newVisibleItems++;
+          calculatedWidth += last.offsetWidth;
+          if (calculatedWidth < containerWidth) {
+            newVisibleItems++;
+          }
+
+          last.style.overflow = '';
         }
-
-        last.style.overflow = '';
       }
 
       for (let breadcrumb of listItems.reverse()) {

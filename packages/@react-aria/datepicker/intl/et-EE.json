@@ -1,9 +1,5 @@
 {
   "calendar": "Kalender",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} kuni {end, date, long}",
-  "date": "Kuupäev",
-  "dateRange": "Kuupäevavahemik",
   "day": "päev",
   "dayPeriod": "enne/pärast lõunat",
   "endDate": "Lõppkuupäev",
@@ -15,5 +11,7 @@
   "startDate": "Alguskuupäev",
   "year": "aasta",
   "weekday": "nädalapäev",
-  "timeZoneName": "ajavöönd"
+  "timeZoneName": "ajavöönd",
+  "selectedDateDescription": "Valitud kuupäev: {date}",
+  "selectedRangeDescription": "Valitud vahemik: {startDate} kuni {endDate}"
 }

@@ -122,8 +122,8 @@ function RangeCalendar(props) {
   return (
     <div {...calendarProps} ref={ref} className="calendar">
       <div className="header">
-        <Button {...prevButtonProps}>&lt;</Button>
         <h2>{title}</h2>
+        <Button {...prevButtonProps}>&lt;</Button>
         <Button {...nextButtonProps}>&gt;</Button>
       </div>
       <CalendarGrid state={state} />
@@ -140,35 +140,25 @@ The `CalendarGrid` component will be responsible for rendering an individual mon
 
 ```tsx example render=false export=true
 import {useCalendarGrid} from '@react-aria/calendar';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {startOfWeek, getWeeksInMonth} from '@internationalized/date';
 
 function CalendarGrid({state, ...props}) {
   let {locale} = useLocale();
-  let {gridProps, weekDays} = useCalendarGrid(props, state);
+  let {gridProps, headerProps, weekDays} = useCalendarGrid(props, state);
 
   // Find the start date of the grid, which is the beginning
   // of the week the month starts in. Also get the number of
   // weeks in the month so we can render the proper number of rows.
-  let startDate = startOfWeek(state.visibleRange.start, locale);
+  let monthStart = startOfWeek(state.visibleRange.start, locale);
   let weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale);
 
   return (
     <table {...gridProps}>
-      <thead>
+      <thead {...headerProps}>
         <tr>
-          {weekDays.map((day, index) => {
-            return (
-              <th key={index}>
-                {/* Make sure screen readers read the full day name,
-                  but we show an abbreviation visually. */}
-                <VisuallyHidden>{day.long}</VisuallyHidden>
-                <span aria-hidden="true">
-                  {day.narrow}
-                </span>
-              </th>
-            );
-          })}
+          {weekDays.map((day, index) =>
+            <th key={index}>{day}</th>
+          )}
         </tr>
       </thead>
       <tbody>
@@ -178,7 +168,7 @@ function CalendarGrid({state, ...props}) {
               <CalendarCell
                 key={dayIndex}
                 state={state}
-                date={startDate.add({weeks: weekIndex, days: dayIndex})} />
+                date={monthStart.add({weeks: weekIndex, days: dayIndex})} />
             ))}
           </tr>
         ))}
@@ -240,12 +230,13 @@ That's it! Now we can render an example of our `RangeCalendar` component in acti
 .header {
   display: flex;
   align-items: center;
+  gap: 4px;
+  margin: 0 8px;
 }
 
 .header h2 {
   flex: 1;
   margin: 0;
-  text-align: center;
 }
 
 .calendar table {

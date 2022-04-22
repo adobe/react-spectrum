@@ -377,213 +377,212 @@ describe('ListView', function () {
       </ListView>
     );
 
-    describe('selection', function () {
-      it('should select an item from checkbox', function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+    it('should select an item from checkbox', function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
-        let row = tree.getAllByRole('row')[1];
-        expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(within(row).getByRole('checkbox')));
+      let row = tree.getAllByRole('row')[1];
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      act(() => userEvent.click(within(row).getByRole('checkbox')));
 
-        checkSelection(onSelectionChange, ['bar']);
-        expect(row).toHaveAttribute('aria-selected', 'true');
-      });
-
-      it('should select a row by pressing the Space key on a row', function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
-
-        let row = tree.getAllByRole('row')[1];
-        expect(row).toHaveAttribute('aria-selected', 'false');
-        fireEvent.keyDown(row, {key: ' '});
-        fireEvent.keyUp(row, {key: ' '});
-
-        checkSelection(onSelectionChange, ['bar']);
-        expect(row).toHaveAttribute('aria-selected', 'true');
-      });
-
-      it('should select a row by pressing the Enter key on a row', function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
-
-        let row = tree.getAllByRole('row')[1];
-        expect(row).toHaveAttribute('aria-selected', 'false');
-        fireEvent.keyDown(row, {key: 'Enter'});
-        fireEvent.keyUp(row, {key: 'Enter'});
-
-        checkSelection(onSelectionChange, ['bar']);
-        expect(row).toHaveAttribute('aria-selected', 'true');
-      });
-
-      it('should only allow one item to be selected in single selection', function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'single'});
-
-        let rows = tree.getAllByRole('row');
-        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
-
-        checkSelection(onSelectionChange, ['bar']);
-        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
-
-        onSelectionChange.mockClear();
-        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
-        checkSelection(onSelectionChange, ['baz']);
-        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
-      });
-
-      it('should allow multiple items to be selected in multiple selection', function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
-
-        let rows = tree.getAllByRole('row');
-        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
-
-        checkSelection(onSelectionChange, ['bar']);
-        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
-
-        onSelectionChange.mockClear();
-        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
-        checkSelection(onSelectionChange, ['bar', 'baz']);
-        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
-        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
-      });
-
-      it('should toggle items in selection highlight with ctrl-click on Mac', function () {
-        let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
-
-        let rows = tree.getAllByRole('row');
-        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getCell(tree, 'Bar'), {ctrlKey: true}));
-
-        checkSelection(onSelectionChange, ['bar']);
-        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
-
-        onSelectionChange.mockClear();
-        act(() => userEvent.click(getCell(tree, 'Baz'), {ctrlKey: true}));
-        checkSelection(onSelectionChange, ['baz']);
-        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
-
-        uaMock.mockRestore();
-      });
-
-      it('should allow multiple items to be selected in selection highlight with ctrl-click on Windows', function () {
-        let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
-
-        let rows = tree.getAllByRole('row');
-        expect(rows[0]).toHaveAttribute('aria-selected', 'false');
-        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getCell(tree, 'Foo'), {ctrlKey: true}));
-
-        checkSelection(onSelectionChange, ['foo']);
-        expect(rows[0]).toHaveAttribute('aria-selected', 'true');
-
-        onSelectionChange.mockClear();
-        act(() => userEvent.click(getCell(tree, 'Baz'), {ctrlKey: true}));
-        checkSelection(onSelectionChange, ['foo', 'baz']);
-        expect(rows[0]).toHaveAttribute('aria-selected', 'true');
-        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
-
-        uaMock.mockRestore();
-      });
-
-      it('should toggle items in selection highlight with meta-click on Windows', function () {
-        let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
-
-        let rows = tree.getAllByRole('row');
-        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getCell(tree, 'Bar'), {metaKey: true}));
-
-        checkSelection(onSelectionChange, ['bar']);
-        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
-
-        onSelectionChange.mockClear();
-        act(() => userEvent.click(getCell(tree, 'Baz'), {metaKey: true}));
-        checkSelection(onSelectionChange, ['baz']);
-        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
-
-        uaMock.mockRestore();
-      });
-
-      it('should support single tap to perform row selection with screen reader if onAction isn\'t provided', function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
-
-        let rows = tree.getAllByRole('row');
-        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-
-        act(() => userEvent.click(within(rows[1]).getByText('Bar'), {pointerType: 'touch', width: 0, height: 0}));
-        checkSelection(onSelectionChange, [
-          'bar'
-        ]);
-        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
-        onSelectionChange.mockReset();
-
-        // Android TalkBack double tap test, pointer event sets pointerType and onClick handles the rest
-        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        act(() => {
-          let el = within(rows[2]).getByText('Baz');
-          fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-          fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-          fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
-        });
-        checkSelection(onSelectionChange, [
-          'bar', 'baz'
-        ]);
-        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
-        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
-      });
-
-      it('should support single tap to perform onAction with screen reader', function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight', onAction});
-
-        let rows = tree.getAllByRole('row');
-        act(() => userEvent.click(within(rows[1]).getByText('Bar'), {pointerType: 'touch', width: 0, height: 0}));
-        expect(onSelectionChange).not.toHaveBeenCalled();
-        expect(onAction).toHaveBeenCalledTimes(1);
-        expect(onAction).toHaveBeenCalledWith('bar');
-
-        // Android TalkBack double tap test, pointer event sets pointerType and onClick handles the rest
-        act(() => {
-          let el = within(rows[2]).getByText('Baz');
-          fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-          fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-          fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
-        });
-        expect(onSelectionChange).not.toHaveBeenCalled();
-        expect(onAction).toHaveBeenCalledTimes(2);
-        expect(onAction).toHaveBeenCalledWith('baz');
-      });
-
-      it('should not call onSelectionChange when hitting Space/Enter on the currently selected row', function () {
-        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight', onAction});
-
-        let row = tree.getAllByRole('row')[1];
-        expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getCell(tree, 'Bar'), {ctrlKey: true}));
-
-        checkSelection(onSelectionChange, ['bar']);
-        expect(row).toHaveAttribute('aria-selected', 'true');
-        expect(onAction).toHaveBeenCalledTimes(0);
-
-        fireEvent.keyDown(row, {key: 'Space'});
-        fireEvent.keyUp(row, {key: 'Space'});
-        expect(onSelectionChange).toHaveBeenCalledTimes(1);
-        expect(onAction).toHaveBeenCalledTimes(0);
-
-        fireEvent.keyDown(row, {key: 'Enter'});
-        fireEvent.keyUp(row, {key: 'Enter'});
-        expect(onSelectionChange).toHaveBeenCalledTimes(1);
-        expect(onAction).toHaveBeenCalledTimes(1);
-        expect(onAction).toHaveBeenCalledWith('bar');
-      });
+      checkSelection(onSelectionChange, ['bar']);
+      expect(row).toHaveAttribute('aria-selected', 'true');
     });
+
+    it('should select a row by pressing the Space key on a row', function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+
+      let row = tree.getAllByRole('row')[1];
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      fireEvent.keyDown(row, {key: ' '});
+      fireEvent.keyUp(row, {key: ' '});
+
+      checkSelection(onSelectionChange, ['bar']);
+      expect(row).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('should select a row by pressing the Enter key on a row', function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+
+      let row = tree.getAllByRole('row')[1];
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      fireEvent.keyDown(row, {key: 'Enter'});
+      fireEvent.keyUp(row, {key: 'Enter'});
+
+      checkSelection(onSelectionChange, ['bar']);
+      expect(row).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('should only allow one item to be selected in single selection', function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'single'});
+
+      let rows = tree.getAllByRole('row');
+      expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+      act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+
+      checkSelection(onSelectionChange, ['bar']);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+      onSelectionChange.mockClear();
+      act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+      checkSelection(onSelectionChange, ['baz']);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('should allow multiple items to be selected in multiple selection', function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+
+      let rows = tree.getAllByRole('row');
+      expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+      act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+
+      checkSelection(onSelectionChange, ['bar']);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+      onSelectionChange.mockClear();
+      act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+      checkSelection(onSelectionChange, ['bar', 'baz']);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('should toggle items in selection highlight with ctrl-click on Mac', function () {
+      let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+
+      let rows = tree.getAllByRole('row');
+      expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+      act(() => userEvent.click(getCell(tree, 'Bar'), {ctrlKey: true}));
+
+      checkSelection(onSelectionChange, ['bar']);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+      onSelectionChange.mockClear();
+      act(() => userEvent.click(getCell(tree, 'Baz'), {ctrlKey: true}));
+      checkSelection(onSelectionChange, ['baz']);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+      uaMock.mockRestore();
+    });
+
+    it('should allow multiple items to be selected in selection highlight with ctrl-click on Windows', function () {
+      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+
+      let rows = tree.getAllByRole('row');
+      expect(rows[0]).toHaveAttribute('aria-selected', 'false');
+      expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+      act(() => userEvent.click(getCell(tree, 'Foo'), {ctrlKey: true}));
+
+      checkSelection(onSelectionChange, ['foo']);
+      expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+
+      onSelectionChange.mockClear();
+      act(() => userEvent.click(getCell(tree, 'Baz'), {ctrlKey: true}));
+      checkSelection(onSelectionChange, ['foo', 'baz']);
+      expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+      expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+      uaMock.mockRestore();
+    });
+
+    it('should toggle items in selection highlight with meta-click on Windows', function () {
+      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+
+      let rows = tree.getAllByRole('row');
+      expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+      act(() => userEvent.click(getCell(tree, 'Bar'), {metaKey: true}));
+
+      checkSelection(onSelectionChange, ['bar']);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+      onSelectionChange.mockClear();
+      act(() => userEvent.click(getCell(tree, 'Baz'), {metaKey: true}));
+      checkSelection(onSelectionChange, ['baz']);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+      uaMock.mockRestore();
+    });
+
+    it('should support single tap to perform row selection with screen reader if onAction isn\'t provided', function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
+
+      let rows = tree.getAllByRole('row');
+      expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+
+      act(() => userEvent.click(within(rows[1]).getByText('Bar'), {pointerType: 'touch', width: 0, height: 0}));
+      checkSelection(onSelectionChange, [
+        'bar'
+      ]);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+      onSelectionChange.mockReset();
+
+      // Android TalkBack double tap test, pointer event sets pointerType and onClick handles the rest
+      expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+      act(() => {
+        let el = within(rows[2]).getByText('Baz');
+        fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+      });
+      checkSelection(onSelectionChange, [
+        'bar', 'baz'
+      ]);
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('should support single tap to perform onAction with screen reader', function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight', onAction});
+
+      let rows = tree.getAllByRole('row');
+      act(() => userEvent.click(within(rows[1]).getByText('Bar'), {pointerType: 'touch', width: 0, height: 0}));
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onAction).toHaveBeenCalledWith('bar');
+
+      // Android TalkBack double tap test, pointer event sets pointerType and onClick handles the rest
+      act(() => {
+        let el = within(rows[2]).getByText('Baz');
+        fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+      });
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(onAction).toHaveBeenCalledTimes(2);
+      expect(onAction).toHaveBeenCalledWith('baz');
+    });
+
+    it('should not call onSelectionChange when hitting Space/Enter on the currently selected row', function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight', onAction});
+
+      let row = tree.getAllByRole('row')[1];
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      act(() => userEvent.click(getCell(tree, 'Bar'), {ctrlKey: true}));
+
+      checkSelection(onSelectionChange, ['bar']);
+      expect(row).toHaveAttribute('aria-selected', 'true');
+      expect(onAction).toHaveBeenCalledTimes(0);
+
+      fireEvent.keyDown(row, {key: 'Space'});
+      fireEvent.keyUp(row, {key: 'Space'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onAction).toHaveBeenCalledTimes(0);
+
+      fireEvent.keyDown(row, {key: 'Enter'});
+      fireEvent.keyUp(row, {key: 'Enter'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onAction).toHaveBeenCalledWith('bar');
+    });
+
   });
 
   describe('scrolling', function () {
@@ -711,12 +710,12 @@ describe('ListView', function () {
         let row = getAllByRole('row')[0];
         expect(row).toHaveAttribute('draggable', 'true');
         let cell = within(row).getByRole('gridcell');
-        expect(cell).toHaveTextContent('Item a');
+        expect(cell).toHaveTextContent('File a');
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cell, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'Item a')]);
+        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'File a')]);
 
         act(() => jest.runAllTimers());
 
@@ -756,7 +755,7 @@ describe('ListView', function () {
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
 
         fireEvent.pointerUp(cell, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
@@ -786,29 +785,29 @@ describe('ListView', function () {
         expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['a', 'b', 'c', 'd']));
 
         let cellA = within(rows[0]).getByRole('gridcell');
-        expect(cellA).toHaveTextContent('Item a');
+        expect(cellA).toHaveTextContent('File a');
         expect(rows[0]).toHaveAttribute('draggable', 'true');
 
         let cellB = within(rows[1]).getByRole('gridcell');
-        expect(cellB).toHaveTextContent('Item b');
+        expect(cellB).toHaveTextContent('File b');
         expect(rows[1]).toHaveAttribute('draggable', 'true');
 
         let cellC = within(rows[2]).getByRole('gridcell');
-        expect(cellC).toHaveTextContent('Item c');
+        expect(cellC).toHaveTextContent('Folder c');
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let cellD = within(rows[3]).getByRole('gridcell');
-        expect(cellD).toHaveTextContent('Item d');
+        expect(cellD).toHaveTextContent('File d');
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cellA, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([
-          new DataTransferItem('text/plain', 'Item a\nItem b\nItem d'),
+          new DataTransferItem('text/plain', 'File a\nFile b\nFile d'),
           new DataTransferItem(
             CUSTOM_DRAG_TYPE,
-            JSON.stringify([{'text/plain': 'Item a'}, {'text/plain': 'Item b'}, {'text/plain': 'Item d'}]
+            JSON.stringify([{'text/plain': 'File a'}, {'text/plain': 'File b'}, {'text/plain': 'File d'}]
           ))
         ]);
 
@@ -837,11 +836,11 @@ describe('ListView', function () {
         act(() => jest.runAllTimers());
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // onDrop should only have 3 items, item c shouldn't be included
+        // onDrop should only have 3 items, Folder c shouldn't be included
         expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
-        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Item b');
-        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Item d');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('File b');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('File d');
 
         fireEvent.pointerUp(cellA, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
@@ -862,7 +861,7 @@ describe('ListView', function () {
 
         let row = getAllByRole('row')[0];
         let cell = within(row).getByRole('gridcell');
-        expect(cell).toHaveTextContent('Item a');
+        expect(cell).toHaveTextContent('File a');
         expect(row).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
@@ -891,7 +890,7 @@ describe('ListView', function () {
         expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['c', 'd']));
 
         let cellC = within(rows[2]).getByRole('gridcell');
-        expect(cellC).toHaveTextContent('Item c');
+        expect(cellC).toHaveTextContent('Folder c');
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
@@ -916,7 +915,7 @@ describe('ListView', function () {
         let droppable = getByText('Drop here');
         let row = getAllByRole('row')[0];
         let cell = within(row).getByRole('gridcell');
-        expect(cell).toHaveTextContent('Item a');
+        expect(cell).toHaveTextContent('File a');
         expect(row).toHaveAttribute('draggable', 'true');
 
         act(() => cell.focus());
@@ -941,7 +940,7 @@ describe('ListView', function () {
         fireEvent.keyUp(droppable, {key: 'Enter'});
 
         expect(onDrop).toHaveBeenCalledTimes(1);
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
 
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
@@ -962,19 +961,19 @@ describe('ListView', function () {
         let rows = getAllByRole('row');
 
         let cellA = within(rows[0]).getByRole('gridcell');
-        expect(cellA).toHaveTextContent('Item a');
+        expect(cellA).toHaveTextContent('File a');
         expect(rows[0]).toHaveAttribute('draggable', 'true');
 
         let cellB = within(rows[1]).getByRole('gridcell');
-        expect(cellB).toHaveTextContent('Item b');
+        expect(cellB).toHaveTextContent('File b');
         expect(rows[1]).toHaveAttribute('draggable', 'true');
 
         let cellC = within(rows[2]).getByRole('gridcell');
-        expect(cellC).toHaveTextContent('Item c');
+        expect(cellC).toHaveTextContent('Folder c');
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let cellD = within(rows[3]).getByRole('gridcell');
-        expect(cellD).toHaveTextContent('Item d');
+        expect(cellD).toHaveTextContent('File d');
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
         act(() => cellA.focus());
@@ -999,11 +998,11 @@ describe('ListView', function () {
 
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // onDrop should only have 3 items, item c shouldn't be included
+        // onDrop should only have 3 items, Folder c shouldn't be included
         expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Item a');
-        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Item b');
-        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Item d');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('File b');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('File d');
 
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
@@ -1063,27 +1062,30 @@ describe('ListView', function () {
       checkSelection(onSelectionChange, ['a']);
     });
 
-    it('should open a menu upon click', function () {
-      let {getAllByRole, getByRole} = render(
+    it('should only display the drag handle on keyboard focus for dragggable items', function () {
+      let {getAllByRole} = render(
         <DraggableListView />
       );
 
-      let row = getAllByRole('row')[0];
-      expect(row).toHaveAttribute('aria-selected', 'false');
-      expect(row).toHaveAttribute('draggable', 'true');
+      let rows = getAllByRole('row');
+      let cellA = within(rows[0]).getByRole('gridcell');
+      let dragHandle = within(cellA).getAllByRole('button')[0];
+      // If the dragHandle has a style applied, it is visually hidden
+      expect(dragHandle.style).toBeTruthy();
 
-      let menuButton = within(row).getAllByRole('button')[2];
-      expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+      fireEvent.pointerDown(cellA, {button: 0, pointerId: 1});
+      dragHandle = within(cellA).getAllByRole('button')[0];
+      expect(dragHandle.style).toBeTruthy();
+      fireEvent.pointerUp(cellA, {button: 0, pointerId: 1});
 
-      triggerPress(menuButton);
-      act(() => {jest.runAllTimers();});
+      fireEvent.pointerEnter(cellA);
+      dragHandle = within(cellA).getAllByRole('button')[0];
+      expect(dragHandle.style).toBeTruthy();
 
-      let menu = getByRole('menu');
-      expect(menu).toBeTruthy();
-      expect(menuButton).toHaveAttribute('aria-expanded', 'true');
-      expect(row).toHaveAttribute('aria-selected', 'false');
-      expect(onDragStart).toHaveBeenCalledTimes(0);
-      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+      // If dragHandle doesn't have a position applied, it isn't visually hidden
+      act(() => cellA.focus());
+      dragHandle = within(cellA).getAllByRole('button')[0];
+      expect(dragHandle.style.position).toBe('');
     });
 
     it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
@@ -1107,14 +1109,11 @@ describe('ListView', function () {
       let rows = getAllByRole('row');
       let cellA = within(rows[0]).getByRole('gridcell');
       let cellB = within(rows[1]).getByRole('gridcell');
-      let cellC = within(rows[2]).getByRole('gridcell');
 
       act(() => cellA.focus());
       expect(hasDragHandle(cellA)).toBeFalsy();
       moveFocus('ArrowDown');
       expect(hasDragHandle(cellB)).toBeFalsy();
-      moveFocus('ArrowDown');
-      expect(hasDragHandle(cellC)).toBeTruthy();
 
       fireEvent.pointerDown(cellA, {button: 0, pointerId: 1});
       expect(hasDragHandle(cellA)).toBeFalsy();
@@ -1124,16 +1123,78 @@ describe('ListView', function () {
       expect(hasDragHandle(cellB)).toBeFalsy();
       fireEvent.pointerUp(cellB, {button: 0, pointerId: 1});
 
-      fireEvent.pointerDown(cellC, {button: 0, pointerId: 1});
-      expect(hasDragHandle(cellC)).toBeTruthy();
-      fireEvent.pointerUp(cellC, {button: 0, pointerId: 1});
-
       fireEvent.pointerEnter(cellA);
       expect(hasDragHandle(cellA)).toBeFalsy();
       fireEvent.pointerEnter(cellB);
       expect(hasDragHandle(cellB)).toBeFalsy();
-      fireEvent.pointerEnter(cellC);
-      expect(hasDragHandle(cellC)).toBeTruthy();
+    });
+
+    it('should open a menu upon click', function () {
+      let {getAllByRole, getByRole} = render(
+        <DraggableListView />
+      );
+
+      let row = getAllByRole('row')[0];
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      expect(row).toHaveAttribute('draggable', 'true');
+
+      let menuButton = within(row).getAllByRole('button')[2];
+      expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+
+      triggerPress(menuButton);
+      act(() => {jest.runAllTimers();});
+
+      let menu = getByRole('menu');
+      expect(menu).toBeTruthy();
+      expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      expect(onDragStart).toHaveBeenCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+    });
+
+    describe('accessibility', function () {
+      it('drag handle should reflect the correct number of draggable rows', async function () {
+        let allowsDraggingItem = (key) => {
+          if (key === 'c') {
+            return false;
+          }
+          return true;
+        };
+
+        // Only 2 draggable items are selected since c is non draggable
+        let {getAllByRole} = render(
+          <DraggableListView dragHookOptions={[allowsDraggingItem]} listViewProps={{defaultSelectedKeys: ['a', 'b', 'c']}} />
+        );
+
+        let rows = getAllByRole('row');
+        expect(rows[0]).toHaveAttribute('draggable', 'true');
+        let cellA = within(rows[0]).getByRole('gridcell');
+        let dragButtonA = within(cellA).getAllByRole('button')[0];
+        expect(dragButtonA).toHaveAttribute('aria-label', 'Drag 2 selected items');
+
+        expect(rows[1]).toHaveAttribute('draggable', 'true');
+        let cellB = within(rows[1]).getByRole('gridcell');
+        let dragButtonB = within(cellB).getAllByRole('button')[0];
+        expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 2 selected items');
+
+        expect(rows[2]).not.toHaveAttribute('draggable');
+
+        expect(rows[3]).toHaveAttribute('draggable', 'true');
+        let cellD = within(rows[3]).getByRole('gridcell');
+        let dragButtonD = within(cellD).getAllByRole('button')[0];
+        expect(dragButtonD).toHaveAttribute('aria-label', 'Drag File d');
+
+        // After selecting row 4, the aria-label should reflect 3 selected items rather than just "Drag File D"
+        act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
+        expect(dragButtonA).toHaveAttribute('aria-label', 'Drag 3 selected items');
+        expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 3 selected items');
+        expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 3 selected items');
+
+        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
+        expect(dragButtonA).toHaveAttribute('aria-label', 'Drag File a');
+        expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 2 selected items');
+        expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 2 selected items');
+      });
     });
   });
 });

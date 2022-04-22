@@ -85,7 +85,6 @@ const ComplexItemsTemplate = <T extends object>(): Story<SpectrumPickerProps<T>>
   </Picker>
 );
 
-
 export const Default = Template().bind({});
 Default.args = {label: 'Pick your favorite', isOpen: true};
 

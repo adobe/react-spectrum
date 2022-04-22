@@ -16,15 +16,16 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
+import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription, useId} from '@react-aria/utils';
+import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
-interface DatePickerAria {
+export interface DatePickerAria {
   /** Props for the date picker's visible label element, if any. */
   labelProps: HTMLAttributes<HTMLElement>,
   /** Props for the grouping element containing the date field and button. */
@@ -62,11 +63,14 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
 
   let {locale} = useLocale();
-  let descProps = useDescription(state.formatValue(locale, {month: 'long'}));
+  let date = state.formatValue(locale, {month: 'long'});
+  let description = date ? formatMessage('selectedDateDescription', {date}) : '';
+  let descProps = useDescription(description);
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
+  let domProps = filterDOMProps(props);
 
   return {
-    groupProps: mergeProps(groupProps, descProps, {
+    groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-labelledby': labelledBy,
@@ -81,6 +85,8 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     },
     fieldProps: {
       ...fieldProps,
+      [roleSymbol]: 'presentation',
+      'aria-describedby': ariaDescribedBy,
       value: state.value,
       onChange: state.setValue,
       minValue: props.minValue,
@@ -120,7 +126,9 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       isDisabled: props.isDisabled,
       isReadOnly: props.isReadOnly,
       isDateUnavailable: props.isDateUnavailable,
-      defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue
+      defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue,
+      validationState: state.validationState,
+      errorMessage: props.errorMessage
     }
   };
 }

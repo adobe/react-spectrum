@@ -10,13 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid} from './utils';
+import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {
   Calendar,
   CalendarDate,
   DateDuration,
+  DateFormatter,
+  endOfMonth,
+  endOfWeek,
   GregorianCalendar,
   isSameDay,
+  startOfMonth,
+  startOfWeek,
   toCalendar,
   toCalendarDate,
   today
@@ -24,18 +29,33 @@ import {
 import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
-import {useDateFormatter} from '@react-aria/i18n';
 import {useMemo, useRef, useState} from 'react';
 
-interface CalendarStateOptions<T extends DateValue> extends CalendarProps<T> {
+export interface CalendarStateOptions extends CalendarProps<DateValue> {
+  /** The locale to display and edit the value according to. */
   locale: string,
+  /**
+   * A function that creates a [Calendar](../internationalized/date/Calendar.html)
+   * object for a given calendar identifier. Such a function may be imported from the
+   * `@internationalized/date` package, or manually implemented to include support for
+   * only certain calendars.
+   */
   createCalendar: (name: string) => Calendar,
+  /**
+   * The amount of days that will be displayed at once. This affects how pagination works.
+   * @default {months: 1}
+   */
   visibleDuration?: DateDuration,
+  /** Determines how to align the initial selection relative to the visible date range. */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
 
-export function useCalendarState<T extends DateValue>(props: CalendarStateOptions<T>): CalendarState {
-  let defaultFormatter = useDateFormatter();
+/**
+ * Provides state management for a calendar component.
+ * A calendar displays one or more date grids and allows users to select a single date.
+ */
+export function useCalendarState(props: CalendarStateOptions): CalendarState {
+  let defaultFormatter = useMemo(() => new DateFormatter(props.locale), [props.locale]);
   let resolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
     locale,
@@ -43,7 +63,8 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     visibleDuration = {months: 1},
     minValue,
     maxValue,
-    selectionAlignment
+    selectionAlignment,
+    isDateUnavailable
   } = props;
 
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
@@ -107,6 +128,12 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
 
   function setValue(newValue: CalendarDate) {
     if (!props.isDisabled && !props.isReadOnly) {
+      newValue = constrainValue(newValue, minValue, maxValue);
+      newValue = previousAvailableDate(newValue, startDate, isDateUnavailable);
+      if (!newValue) {
+        return;
+      }
+
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, value?.calendar || new GregorianCalendar());
@@ -120,6 +147,19 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     }
   }
 
+  let isUnavailable = useMemo(() => {
+    if (!calendarDateValue) {
+      return false;
+    }
+
+    if (isDateUnavailable && isDateUnavailable(calendarDateValue)) {
+      return true;
+    }
+
+    return isInvalid(calendarDateValue, minValue, maxValue);
+  }, [calendarDateValue, isDateUnavailable, minValue, maxValue]);
+  let validationState = props.validationState || (isUnavailable ? 'invalid' : null);
+
   return {
     isDisabled: props.isDisabled,
     isReadOnly: props.isReadOnly,
@@ -129,8 +169,11 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
       start: startDate,
       end: endDate
     },
+    minValue,
+    maxValue,
     focusedDate,
     timeZone,
+    validationState,
     setFocusedDate(date) {
       focusCell(date);
       setFocused(true);
@@ -158,20 +201,49 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
     focusNextPage() {
       let start = startDate.add(visibleDuration);
       setFocusedDate(constrainValue(focusedDate.add(visibleDuration), minValue, maxValue));
-      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
+      setStartDate(
+        alignStart(
+          constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue),
+          visibleDuration,
+          locale
+        )
+      );
     },
     focusPreviousPage() {
       let start = startDate.subtract(visibleDuration);
       setFocusedDate(constrainValue(focusedDate.subtract(visibleDuration), minValue, maxValue));
-      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
+      setStartDate(
+        alignStart(
+          constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue),
+          visibleDuration,
+          locale
+        )
+      );
     },
-    focusPageStart() {
-      focusCell(startDate);
+    focusSectionStart() {
+      if (visibleDuration.days) {
+        focusCell(startDate);
+      } else if (visibleDuration.weeks) {
+        focusCell(startOfWeek(focusedDate, locale));
+      } else if (visibleDuration.months || visibleDuration.years) {
+        focusCell(startOfMonth(focusedDate));
+      }
     },
-    focusPageEnd() {
-      focusCell(endDate);
+    focusSectionEnd() {
+      if (visibleDuration.days) {
+        focusCell(endDate);
+      } else if (visibleDuration.weeks) {
+        focusCell(endOfWeek(focusedDate, locale));
+      } else if (visibleDuration.months || visibleDuration.years) {
+        focusCell(endOfMonth(focusedDate));
+      }
     },
-    focusNextSection() {
+    focusNextSection(larger) {
+      if (!larger && !visibleDuration.days) {
+        focusCell(focusedDate.add(unitDuration(visibleDuration)));
+        return;
+      }
+
       if (visibleDuration.days) {
         this.focusNextPage();
       } else if (visibleDuration.weeks) {
@@ -180,7 +252,12 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
         focusCell(focusedDate.add({years: 1}));
       }
     },
-    focusPreviousSection() {
+    focusPreviousSection(larger) {
+      if (!larger && !visibleDuration.days) {
+        focusCell(focusedDate.subtract(unitDuration(visibleDuration)));
+        return;
+      }
+
       if (visibleDuration.days) {
         this.focusPreviousPage();
       } else if (visibleDuration.weeks) {
@@ -219,4 +296,12 @@ export function useCalendarState<T extends DateValue>(props: CalendarStateOption
       return this.isInvalid(endDate.add({days: 1}), minValue, maxValue);
     }
   };
+}
+
+function unitDuration(duration: DateDuration) {
+  let unit = {...duration};
+  for (let key in duration) {
+    unit[key] = 1;
+  }
+  return unit;
 }

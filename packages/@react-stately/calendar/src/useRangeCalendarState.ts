@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter, isInvalid} from './utils';
+import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from './types';
 import {DateRange, DateValue} from '@react-types/calendar';
@@ -20,13 +20,28 @@ import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
 
-interface RangeCalendarStateOptions<T extends DateValue> extends RangeCalendarProps<T> {
+export interface RangeCalendarStateOptions extends RangeCalendarProps<DateValue> {
+  /** The locale to display and edit the value according to. */
   locale: string,
+  /**
+   * A function that creates a [Calendar](../internationalized/date/Calendar.html)
+   * object for a given calendar identifier. Such a function may be imported from the
+   * `@internationalized/date` package, or manually implemented to include support for
+   * only certain calendars.
+   */
   createCalendar: (name: string) => Calendar,
+  /**
+   * The amount of days that will be displayed at once. This affects how pagination works.
+   * @default {months: 1}
+   */
   visibleDuration?: DateDuration
 }
 
-export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState {
+/**
+ * Provides state management for a range calendar component.
+ * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
+ */
+export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCalendarState {
   let {value: valueProp, defaultValue, onChange, createCalendar, locale, visibleDuration = {months: 1}, minValue, maxValue, ...calendarProps} = props;
   let [value, setValue] = useControlledState<DateRange>(
     valueProp,
@@ -98,6 +113,12 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
       return;
     }
 
+    date = constrainValue(date, min, max);
+    date = previousAvailableDate(date, calendar.visibleRange.start, props.isDateUnavailable);
+    if (!date) {
+      return;
+    }
+
     if (!anchorDate) {
       setAnchorDate(date);
     } else {
@@ -112,6 +133,21 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
 
   let [isDragging, setDragging] = useState(false);
 
+  let {isDateUnavailable} = props;
+  let isInvalidSelection = useMemo(() => {
+    if (!value || anchorDate) {
+      return false;
+    }
+
+    if (isDateUnavailable && (isDateUnavailable(value.start) || isDateUnavailable(value.end))) {
+      return true;
+    }
+
+    return isInvalid(value.start, minValue, maxValue) || isInvalid(value.end, minValue, maxValue);
+  }, [isDateUnavailable, value, anchorDate, minValue, maxValue]);
+
+  let validationState = props.validationState || (isInvalidSelection ? 'invalid' : null);
+
   return {
     ...calendar,
     value,
@@ -119,6 +155,7 @@ export function useRangeCalendarState<T extends DateValue>(props: RangeCalendarS
     anchorDate,
     setAnchorDate,
     highlightedRange,
+    validationState,
     selectFocusedDate() {
       selectDate(calendar.focusedDate);
     },

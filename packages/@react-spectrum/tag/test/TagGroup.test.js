@@ -65,32 +65,28 @@ describe('TagGroup', function () {
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
   });
 
-  it.each`
-   Name           | Component     | TagComponent | props
-   ${'TagGroup'}  | ${TagGroup}   | ${Item}       | ${{isDisabled: true, isRemovable: true, onRemove: onRemoveSpy}}
-  `('$Name can be disabled', ({Component, TagComponent, props}) => {
+  it('can be disabled', () => {
     let {getByText} = render(
-      <Component
-        {...props}
-        aria-label="tag group">
-        <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-      </Component>
+      <TagGroup
+        aria-label="Tag Group"
+        isDisabled
+        isRemovable
+        onRemove={onRemoveSpy}>
+        <Item aria-label="Tag 1">Tag 1</Item>
+      </TagGroup>
     );
+
     let tag = getByText('Tag 1');
     fireEvent.keyDown(tag, {key: 'Delete', keyCode: 46});
     expect(onRemoveSpy).not.toHaveBeenCalledWith('Tag 1', expect.anything());
   });
 
-  it.each`
-   Name           | Component         | TagComponent | props
-   ${'TagGroup'}  | ${TagGroup}       | ${Item}      |${{}}
-  `('$Name has correct accessibility roles', ({Component, TagComponent, props}) => {
+  it('has correct accessibility roles', () => {
     let {container} = render(
-      <Component
-        {...props}
+      <TagGroup
         aria-label="tag group">
-        <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-      </Component>
+        <Item aria-label="Tag 1">Tag 1</Item>
+      </TagGroup>
     );
 
     let tagGroup = container.children[0];
@@ -101,32 +97,25 @@ describe('TagGroup', function () {
     expect(tagContent).toHaveAttribute('role', 'gridcell');
   });
 
-  it.each`
-   Name           | Component         | TagComponent | props
-   ${'TagGroup'}  | ${TagGroup}       | ${Item}      |${{}}
-  `('$Name has correct tab index when not disabled', ({Component, TagComponent, props}) => {
+  it('has correct tab index when not disabled', () => {
     let {getAllByRole} = render(
-      <Component
-        {...props}
+      <TagGroup
         aria-label="tag group">
-        <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-      </Component>
+        <Item aria-label="Tag 1">Tag 1</Item>
+      </TagGroup>
     );
 
     let tags = getAllByRole('gridcell');
     expect(tags[0]).toHaveAttribute('tabIndex', '0');
   });
 
-  it.each`
-   Name           | Component         | TagComponent | props
-   ${'TagGroup'}  | ${TagGroup}       | ${Item}      |${{isDisabled: true}}
-  `('$Name has correct tab index when disabled', ({Component, TagComponent, props}) => {
+  it('$Name has correct tab index when disabled', () => {
     let {getAllByRole} = render(
-      <Component
-        {...props}
+      <TagGroup
+        isDisabled
         aria-label="tag group">
-        <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-      </Component>
+        <Item aria-label="Tag 1">Tag 1</Item>
+      </TagGroup>
     );
 
     let tags = getAllByRole('gridcell');
@@ -155,11 +144,11 @@ describe('TagGroup', function () {
   });
 
   it.each`
-    Name                                                   | props                                         | orders
-    ${'(left/right arrows, ltr + horizontal) TagGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 1}, {action: pressArrowLeft, index: 0}, {action: pressArrowLeft, index: 0}]}
-    ${'(left/right arrows, rtl + horizontal) TagGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 0}, {action: pressArrowLeft, index: 1}, {action: pressArrowLeft, index: 2}]}
-    ${'(up/down arrows, ltr + horizontal) TagGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowDown, index: 1}, {action: pressArrowUp, index: 0}, {action: pressArrowUp, index: 0}]}
-    ${'(up/down arrows, rtl + horizontal) TagGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowDown, index: 1}, {action: pressArrowUp, index: 0}, {action: pressArrowUp, index: 0}]}
+    Name                                                | props                                         | orders
+    ${'(left/right arrows, ltr + horizontal) TagGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowRight, index: 1}, {action: pressArrowLeft, index: 0}, {action: pressArrowLeft, index: 2}]}
+    ${'(left/right arrows, rtl + horizontal) TagGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowLeft, index: 1}, {action: pressArrowRight, index: 0}, {action: pressArrowRight, index: 2}]}
+    ${'(up/down arrows, ltr + horizontal) TagGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowDown, index: 1}, {action: pressArrowUp, index: 0}, {action: pressArrowUp, index: 2}]}
+    ${'(up/down arrows, rtl + horizontal) TagGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: () => {userEvent.tab();}, index: 0}, {action: pressArrowUp, index: 2}, {action: pressArrowDown, index: 0}, {action: pressArrowDown, index: 1}]}
   `('$Name shifts button focus in the correct direction on key press', function ({Name, props, orders}) {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
@@ -252,12 +241,12 @@ describe('TagGroup', function () {
 
     let tagGroup = getByRole('grid');
     expect(tagGroup).not.toHaveAttribute('aria-disabled', 'true');
-    let inputs = getAllByRole('gridcell');
+    let tags = getAllByRole('gridcell');
 
     userEvent.tab();
-    expect(document.activeElement).toBe(inputs[0]);
-    pressArrowRight(inputs[0]);
-    expect(document.activeElement).toBe(inputs[1]);
+    expect(document.activeElement).toBe(tags[0]);
+    pressArrowRight(tags[0]);
+    expect(document.activeElement).toBe(tags[1]);
   });
 
   it('should remember last focused item', function () {
@@ -274,20 +263,20 @@ describe('TagGroup', function () {
 
     let buttonBefore = getByLabelText('ButtonBefore');
     let buttonAfter = getByLabelText('ButtonAfter');
-    let inputs = getAllByRole('gridcell');
+    let tags = getAllByRole('gridcell');
     act(() => {buttonBefore.focus();});
 
     userEvent.tab();
-    expect(document.activeElement).toBe(inputs[0]);
+    expect(document.activeElement).toBe(tags[0]);
 
-    pressArrowRight(inputs[0]);
-    expect(document.activeElement).toBe(inputs[1]);
+    pressArrowRight(tags[0]);
+    expect(document.activeElement).toBe(tags[1]);
 
     userEvent.tab();
     expect(document.activeElement).toBe(buttonAfter);
 
     userEvent.tab({shift: true});
-    expect(document.activeElement).toBe(inputs[1]);
+    expect(document.activeElement).toBe(tags[1]);
   });
 
   it('should be focusable from Tab', async function () {
@@ -304,11 +293,11 @@ describe('TagGroup', function () {
 
     let buttonBefore = getByLabelText('ButtonBefore');
     let buttonAfter = getByLabelText('ButtonAfter');
-    let inputs = getAllByRole('gridcell');
+    let tags = getAllByRole('gridcell');
     act(() => {buttonBefore.focus();});
     expect(buttonBefore).toHaveFocus();
     userEvent.tab();
-    expect(inputs[0]).toHaveFocus();
+    expect(tags[0]).toHaveFocus();
     userEvent.tab();
     expect(buttonAfter).toHaveFocus();
   });
@@ -327,10 +316,10 @@ describe('TagGroup', function () {
 
     let buttonBefore = getByLabelText('ButtonBefore');
     let buttonAfter = getByLabelText('ButtonAfter');
-    let inputs = getAllByRole('gridcell');
+    let tags = getAllByRole('gridcell');
     act(() => {buttonAfter.focus();});
     userEvent.tab({shift: true});
-    expect(document.activeElement).toBe(inputs[1]);
+    expect(document.activeElement).toBe(tags[1]);
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(buttonBefore);
     expect(buttonBefore).toHaveFocus();
@@ -378,6 +367,27 @@ describe('TagGroup', function () {
     pressArrowRight(tags[0]);
     expect(tags[0]).toHaveAttribute('tabIndex', '-1');
     expect(tags[1]).toHaveAttribute('tabIndex', '0');
+  });
+
+  it.each`
+    Name                         | props
+    ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
+    ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
+    ${'on `space` keypress'}     | ${{keyPress: ' '}}
+  `('Remove tag $Name', function ({Name, props}) {
+    let {getByText} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" isRemovable onRemove={onRemoveSpy}>
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let tag = getByText('Tag 1');
+    fireEvent.keyDown(tag, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledWith('Tag 1', expect.anything());
   });
 
 

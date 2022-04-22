@@ -15,10 +15,11 @@ import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/d
 import {FieldOptions, getFormatOptions, getPlaceholderTime, useDefaultProps} from './utils';
 import {isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
+import {useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
-export interface DatePickerOptions extends DatePickerProps<DateValue> {
+export interface DatePickerStateOptions extends DatePickerProps<DateValue> {
   /**
    * Determines whether the date picker popover should close automatically when a date is selected.
    * @default true
@@ -27,22 +28,44 @@ export interface DatePickerOptions extends DatePickerProps<DateValue> {
 }
 
 export interface DatePickerState {
+  /** The currently selected date. */
   value: DateValue,
-  setValue: (value: DateValue) => void,
+  /** Sets the selected date. */
+  setValue(value: DateValue): void,
+  /**
+   * The date portion of the value. This may be set prior to `value` if the user has
+   * selected a date but has not yet selected a time.
+   */
   dateValue: DateValue,
-  setDateValue: (value: CalendarDate) => void,
+  /** Sets the date portion of the value. */
+  setDateValue(value: CalendarDate): void,
+  /**
+   * The time portion of the value. This may be set prior to `value` if the user has
+   * selected a time but has not yet selected a date.
+   */
   timeValue: TimeValue,
-  setTimeValue: (value: TimeValue) => void,
+  /** Sets the time portion of the value. */
+  setTimeValue(value: TimeValue): void,
+  /** The granularity for the field, based on the `granularity` prop and current value. */
+  granularity: Granularity,
+  /** Whether the date picker supports selecting a time, according to the `granularity` prop and current value. */
   hasTime: boolean,
+  /** Whether the calendar popover is currently open. */
   isOpen: boolean,
-  setOpen: (isOpen: boolean) => void,
+  /** Sets whether the calendar popover is open. */
+  setOpen(isOpen: boolean): void,
+  /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
   validationState: ValidationState,
-  formatValue(locale: string, fieldOptions: FieldOptions): string,
-  granularity: Granularity
+  /** Formats the selected value using the given options. */
+  formatValue(locale: string, fieldOptions: FieldOptions): string
 }
 
-export function useDatePickerState(props: DatePickerOptions): DatePickerState {
-  let [isOpen, setOpen] = useState(false);
+/**
+ * Provides state management for a date picker component.
+ * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ */
+export function useDatePickerState(props: DatePickerStateOptions): DatePickerState {
+  let overlayState = useOverlayTriggerState(props);
   let [value, setValue] = useControlledState<DateValue>(props.value, props.defaultValue || null, props.onChange);
 
   let v = (value || props.placeholderValue);
@@ -84,7 +107,7 @@ export function useDatePickerState(props: DatePickerOptions): DatePickerState {
     }
 
     if (shouldClose) {
-      setOpen(false);
+      overlayState.setOpen(false);
     }
   };
 
@@ -109,7 +132,7 @@ export function useDatePickerState(props: DatePickerOptions): DatePickerState {
     setTimeValue: selectTime,
     granularity,
     hasTime,
-    isOpen,
+    isOpen: overlayState.isOpen,
     setOpen(isOpen) {
       // Commit the selected date when the calendar is closed. Use a placeholder time if one wasn't set.
       // If only the time was set and not the date, don't commit. The state will be preserved until
@@ -118,7 +141,7 @@ export function useDatePickerState(props: DatePickerOptions): DatePickerState {
         commitValue(selectedDate, selectedTime || getPlaceholderTime(props.placeholderValue));
       }
 
-      setOpen(isOpen);
+      overlayState.setOpen(isOpen);
     },
     validationState,
     formatValue(locale, fieldOptions) {
