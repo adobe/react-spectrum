@@ -158,6 +158,31 @@ left most edge of the ColorField and "end" refers to the right most edge. For ri
 <ColorField label="Primary Color" labelPosition="side" labelAlign="end" />
 ```
 
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/help-text/)
+
+Both a description and an error message can be supplied to a ColorField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(parseColor('#e73623'));
+  let isValid = React.useMemo(() => {
+    return value && value.red && value.red > value.green && value.red > value.blue;
+  }, [value]);
+
+  return (
+    <ColorField
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Red colors"
+      description="Enter a red color."
+      errorMessage={value === null ? 'Empty input not allowed.' : 'Not a red color.'}
+    />
+  );
+}
+```
+
 ### Custom width
 
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Width)

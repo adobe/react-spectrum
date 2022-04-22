@@ -36,6 +36,10 @@ function ColorField(props: SpectrumColorFieldProps, ref: RefObject<TextFieldRef>
     inputProps
   } = useColorField(otherProps, state, inputRef);
 
+  if (props.placeholder) {
+    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
+  }
+
   return (
     <TextFieldBase
       {...otherProps}

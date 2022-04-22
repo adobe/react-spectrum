@@ -144,35 +144,6 @@ function Example() {
 }
 ```
 
-Placeholder text that describes the expected value or formatting for the ComboBox can be provided using the `placeholder` prop.
-Placeholder text will only appear when the ComboBox is empty, and should not be used as a substitute for labeling the component with a visible label.
-
-```tsx example
-function Example() {
-  let options = [
-    {id: 1, name: 'Aerospace'},
-    {id: 2, name: 'Mechanical'},
-    {id: 3, name: 'Civil'},
-    {id: 4, name: 'Biomedical'},
-    {id: 5, name: 'Nuclear'},
-    {id: 6, name: 'Industrial'},
-    {id: 7, name: 'Chemical'},
-    {id: 8, name: 'Agricultural'},
-    {id: 9, name: 'Electrical'}
-  ];
-
-  return (
-    <ComboBox
-      width="size-3000"
-      label="Pick an engineering major"
-      defaultItems={options}
-      placeholder="Search engineering majors">
-      {item => <Item>{item.name}</Item>}
-    </ComboBox>
-  );
-}
-```
-
 ### Custom Value
 By default on blur, a ComboBox will either reset its input value to match the selected option's text or clear its input value if an option has not been selected yet.
 If you would like to allow the end user to provide a custom input value to the ComboBox, the `allowsCustomValue` prop can be used to override the above behavior.
@@ -657,7 +628,6 @@ function Example() {
       defaultItems={options}
       inputValue={value}
       onInputChange={setValue}
-      placeholder="Enter recipient email"
       allowsCustomValue>
       {item => <Item>{item.email}</Item>}
     </ComboBox>
@@ -710,7 +680,6 @@ function Example() {
         setShowAll(false);
         setFilterValue(value);
       }}
-      placeholder="Enter recipient email"
       allowsCustomValue>
       {item => <Item>{item.email}</Item>}
     </ComboBox>
