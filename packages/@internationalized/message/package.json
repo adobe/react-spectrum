@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "intl-messageformat": "^9.6.12"
+    "intl-messageformat": "^9.12.0"
   },
   "publishConfig": {
     "access": "public"

@@ -233,6 +233,36 @@ describe('DateRangePicker', function () {
       expect(segments[13].getAttribute('aria-label')).toBe('End Date AM/PM');
       expect(segments[13].getAttribute('aria-valuetext')).toBe('AM');
     });
+
+    it('should support focusing via a ref', function () {
+      let ref = React.createRef();
+      let {getAllByRole} = render(<DateRangePicker label="Date" ref={ref} />);
+      expect(ref.current).toHaveProperty('focus');
+
+      act(() => ref.current.focus());
+      expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+    });
+
+    it('should support autoFocus', function () {
+      let {getAllByRole} = render(<DateRangePicker label="Date" autoFocus />);
+      expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+    });
+
+    it('should pass through data attributes', function () {
+      let {getByTestId} = render(<DateRangePicker label="Date" data-testid="foo" />);
+      expect(getByTestId('foo')).toHaveAttribute('role', 'group');
+    });
+
+    it('should return the outer most DOM element from the ref', function () {
+      let ref = React.createRef();
+      render(<DateRangePicker label="Date" ref={ref} />);
+      expect(ref.current).toHaveProperty('UNSAFE_getDOMNode');
+
+      let wrapper = ref.current.UNSAFE_getDOMNode();
+      expect(wrapper).toBeInTheDocument();
+      expect(within(wrapper).getByText('Date')).toBeInTheDocument();
+      expect(within(wrapper).getAllByRole('spinbutton')[0]).toBeInTheDocument();
+    });
   });
 
   describe('calendar popover', function () {
@@ -257,7 +287,7 @@ describe('DateRangePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.filter(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected[0].children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected (Click to start selecting date range)');
+      expect(selected[0].children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
 
       triggerPress(getByLabelText('Sunday, February 10, 2019 selected'));
       triggerPress(getByLabelText('Sunday, February 17, 2019'));
@@ -290,7 +320,7 @@ describe('DateRangePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected (Click to start selecting date range)');
+      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
 
       let startTimeField = getAllByLabelText('Start time')[0];
       expect(startTimeField).toHaveTextContent('8:45 AM');
@@ -688,11 +718,11 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3 – 10, 2020 Help text');
+      expect(description).toBe('Selected Range: February 3 to 10, 2020 Help text');
 
       let segments = within(startField).getAllByRole('spinbutton');
       description = segments[0].getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3 – 10, 2020 Help text');
+      expect(description).toBe('Selected Range: February 3 to 10, 2020 Help text');
 
       for (let segment of segments.slice(1)) {
         expect(segment).not.toHaveAttribute('aria-describedby');
@@ -700,7 +730,7 @@ describe('DateRangePicker', function () {
 
       segments = within(endField).getAllByRole('spinbutton');
       description = segments[0].getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3 – 10, 2020 Help text');
+      expect(description).toBe('Selected Range: February 3 to 10, 2020 Help text');
 
       for (let segment of segments.slice(1)) {
         expect(segment).not.toHaveAttribute('aria-describedby');
@@ -718,19 +748,47 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3 – 10, 2020 Error message');
+      expect(description).toBe('Selected Range: February 3 to 10, 2020 Error message');
 
       let segments = within(startField).getAllByRole('spinbutton');
       for (let segment of segments) {
         description = segment.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-        expect(description).toBe('February 3 – 10, 2020 Error message');
+        expect(description).toBe('Selected Range: February 3 to 10, 2020 Error message');
       }
 
       segments = within(endField).getAllByRole('spinbutton');
       for (let segment of segments) {
         description = segment.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-        expect(description).toBe('February 3 – 10, 2020 Error message');
+        expect(description).toBe('Selected Range: February 3 to 10, 2020 Error message');
       }
+    });
+
+    it('should have selected range description with a time', function () {
+      let {getByRole, getByTestId} = render(<DateRangePicker label="Date" value={{start: new CalendarDateTime(2020, 2, 3, 8), end: new CalendarDateTime(2020, 2, 10, 10)}} />);
+
+      let group = getByRole('group');
+      let startField = getByTestId('start-date');
+      let endField = getByTestId('end-date');
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(startField).not.toHaveAttribute('aria-describedby');
+      expect(endField).not.toHaveAttribute('aria-describedby');
+
+      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(description).toBe('Selected Range: February 3, 2020, 8:00 AM to February 10, 2020, 10:00 AM');
+    });
+
+    it('should handle selected range description when start and end dates are the same', function () {
+      let {getByRole, getByTestId} = render(<DateRangePicker label="Date" value={{start: new CalendarDateTime(2020, 2, 3, 8), end: new CalendarDateTime(2020, 2, 3, 8)}} />);
+
+      let group = getByRole('group');
+      let startField = getByTestId('start-date');
+      let endField = getByTestId('end-date');
+      expect(group).toHaveAttribute('aria-describedby');
+      expect(startField).not.toHaveAttribute('aria-describedby');
+      expect(endField).not.toHaveAttribute('aria-describedby');
+
+      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(description).toBe('Selected Range: February 3, 2020, 8:00 AM to February 3, 2020, 8:00 AM');
     });
 
     it('should support format help text', function () {

@@ -166,10 +166,6 @@ governing permissions and limitations under the License.
 
   cursor: default;
 
-  transition: background var(--spectrum-global-animation-duration-100) ease-in-out,
-      color var(--spectrum-global-animation-duration-100) ease-in-out,
-      border-color var(--spectrum-global-animation-duration-100) ease-in-out;
-
   /* compute the "auto" margin to center the date text manually rather than using the keyword to ensure consistent rounding. */
   --margin: calc((100% - var(--spectrum-calendar-day-width)) / 2);
 
@@ -325,8 +321,4 @@ governing permissions and limitations under the License.
       }
     }
   }
-}
-
-.spectrum-Calendar-body.is-range-selecting .spectrum-Calendar-date {
-  transition: none;
 }
