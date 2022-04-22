@@ -14,7 +14,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {ItemDropTarget} from '@react-types/shared';
+import {ItemDropTarget, RootDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
@@ -270,8 +270,15 @@ storiesOf('ListView/Drag and Drop', module)
         <DragBetweenListsExample />
       </Flex>
     )
+  )
+  .add(
+    'Drag between lists (Root only)',
+    () => (
+      <Flex direction="row" wrap alignItems="center">
+        <DragBetweenListsRootOnlyExample />
+      </Flex>
+    )
   );
-
 
 function Example(props?) {
   return (
@@ -739,6 +746,149 @@ export function DragBetweenListsExample() {
     </>
   );
 }
+
+export function DragBetweenListsRootOnlyExample() {
+  let onDropAction = action('onDrop');
+
+  let list1 = useListData({
+    initialItems: [
+      {id: '1', type: 'item', textValue: 'One'},
+      {id: '2', type: 'item', textValue: 'Two'},
+      {id: '3', type: 'item', textValue: 'Three'},
+      {id: '4', type: 'item', textValue: 'Four'},
+      {id: '5', type: 'item', textValue: 'Five'},
+      {id: '6', type: 'item', textValue: 'Six'}
+    ]
+  });
+
+  let list2 = useListData({
+    initialItems: [
+      {id: '7', type: 'item', textValue: 'Seven'},
+      {id: '8', type: 'item', textValue: 'Eight'},
+      {id: '9', type: 'item', textValue: 'Nine'},
+      {id: '10', type: 'item', textValue: 'Ten'},
+      {id: '11', type: 'item', textValue: 'Eleven'},
+      {id: '12', type: 'item', textValue: 'Twelve'}
+    ]
+  });
+  
+  let onMove = (keys: React.Key[]) => {
+    let sourceList = list1.getItem(keys[0]) ? list1 : list2;
+    let destinationList = sourceList === list1 ? list2 : list1;
+
+    destinationList.append(...keys.map(key => sourceList.getItem(key)));
+    sourceList.remove(...keys);
+  };
+
+  let dragHooksFirst = useDragHooks({
+    allowsDraggingItem: () => true,
+    getItems(keys) {
+      return [...keys].map(key => ({
+        'list1': JSON.stringify(key)
+      }));
+    },
+    onDragStart: action('dragStart'),
+    onDragEnd: action('dragEnd')
+  });
+
+  let dragHooksSecond = useDragHooks({
+    allowsDraggingItem: () => true,
+    getItems(keys) {
+      return [...keys].map(key => ({
+        'list2': JSON.stringify(key)
+      }));
+    },
+    onDragStart: action('dragStart'),
+    onDragEnd: action('dragEnd')
+  });
+
+  let dropHooksFirst = useDropHooks({
+    onDrop: async e => {
+      if (e.target.type === 'root') {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text' && item.types.has('list2')) {
+            let key = JSON.parse(await item.getText('list2'));
+            keys.push(key);
+          }
+        }
+        onDropAction(e);
+        onMove(keys);
+      } 
+    },
+    getDropOperation(target, types) {
+      if (target.type === 'root' && types.has('list2')) {
+        return 'move';
+      }
+
+      return 'cancel';
+    }
+  });
+
+
+  let dropHooksSecond = useDropHooks({
+    onDrop: async e => {
+      if (e.target.type === 'root') {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text' && item.types.has('list1')) {
+            let key = JSON.parse(await item.getText('list1'));
+            keys.push(key);
+          }
+        }
+        onDropAction(e);
+        onMove(keys);
+      } 
+    },
+    getDropOperation(target, types) {
+      if (target.type === 'root' && types.has('list1')) {
+        return 'move';
+      }
+
+      return 'cancel';
+    }
+  });
+
+  return (
+    <>
+      <Flex direction="column" margin="size-100">
+        <Text alignSelf="center">List 1</Text>
+        <ListView
+          aria-label="First list view"
+          selectionMode="multiple"
+          width="300px"
+          items={list1.items}
+          disabledKeys={['2']}
+          dragHooks={dragHooksFirst}
+          dropHooks={dropHooksFirst}>
+          {(item: any) => (
+            <Item key={item.id} textValue={item.textValue}>
+              Item {item.textValue}
+            </Item>
+        )}
+        </ListView>
+      </Flex>
+      <Flex direction="column" margin="size-100">
+        <Text alignSelf="center">List 2</Text>
+        <ListView
+          aria-label="Second list view"
+          selectionMode="multiple"
+          width="300px"
+          items={list2.items}
+          disabledKeys={['2']}
+          dragHooks={dragHooksSecond}
+          dropHooks={dropHooksSecond}>
+          {(item: any) => (
+            <Item key={item.id} textValue={item.textValue}>
+              Item {item.textValue}
+            </Item>
+        )}
+        </ListView>
+      </Flex>
+    </>
+  );
+}
+
 
 function AsyncList() {
   interface StarWarsChar {
