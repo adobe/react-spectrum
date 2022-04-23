@@ -23,20 +23,20 @@ import {useAsyncList} from '@react-stately/data';
 import {useDragHooks} from '@react-spectrum/dnd';
 
 const items = [
-  {key: 'a', textValue: 'Item a', isDraggable: true},
-  {key: 'b', textValue: 'Item b', isDraggable: true},
-  {key: 'c', textValue: 'Item c', isDraggable: false},
-  {key: 'd', textValue: 'Item d', isDraggable: true},
-  {key: 'e', textValue: 'Item e', isDraggable: false},
-  {key: 'f', textValue: 'Item f', isDraggable: true},
-  {key: 'g', textValue: 'Item g', isDraggable: true},
-  {key: 'h', textValue: 'Item h', isDraggable: true},
-  {key: 'i', textValue: 'Item i', isDraggable: true},
-  {key: 'j', textValue: 'Item j', isDraggable: true},
-  {key: 'k', textValue: 'Item k', isDraggable: true},
-  {key: 'l', textValue: 'Item l', isDraggable: true},
-  {key: 'm', textValue: 'Item m', isDraggable: false},
-  {key: 'n', textValue: 'Item n', isDraggable: true}
+  {key: 'a', textValue: 'File a', type: 'file'},
+  {key: 'b', textValue: 'File b', type: 'file'},
+  {key: 'c', textValue: 'Folder c', type: 'folder'},
+  {key: 'd', textValue: 'File d', type: 'file'},
+  {key: 'e', textValue: 'Folder e', type: 'folder'},
+  {key: 'f', textValue: 'File f', type: 'file'},
+  {key: 'g', textValue: 'File g', type: 'file'},
+  {key: 'h', textValue: 'File h', type: 'file'},
+  {key: 'i', textValue: 'File i', type: 'file'},
+  {key: 'j', textValue: 'File j', type: 'file'},
+  {key: 'k', textValue: 'File k', type: 'file'},
+  {key: 'l', textValue: 'File l', type: 'file'},
+  {key: 'm', textValue: 'Folder m', type: 'folder'},
+  {key: 'n', textValue: 'File n', type: 'file'}
 ];
 
 function renderEmptyState() {
@@ -241,7 +241,7 @@ storiesOf('ListView', module)
         <Droppable />
         <DragExample dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </Flex>
-    )
+    ), {description: {data: 'Folders are non-draggable.'}}
   );
 
 function Example(props?) {
@@ -388,7 +388,7 @@ export function DragExample(props?) {
 
   let allowsDraggingItem = (key) => {
     let item = items.find(item => item.key === key);
-    return item.isDraggable;
+    return item.type !== 'folder';
   };
 
   let dragHooks = useDragHooks({
@@ -410,7 +410,8 @@ export function DragExample(props?) {
         <Item key={item.key} textValue={item.textValue}>
           <Content>
             <Flex alignItems="center" gap="10px">
-              <View flexGrow={1}>Item {item.key}</View>
+              {item.type === 'folder' && <Folder size="S" />}
+              <View flexGrow={1}>{item.textValue}</View>
               <ActionButton><Add /></ActionButton>
               <MenuTrigger>
                 <ActionButton><MoreSmall /></ActionButton>

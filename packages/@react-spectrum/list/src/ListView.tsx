@@ -29,7 +29,6 @@ import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './listview.css';
@@ -90,11 +89,26 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
+  /** Whether the ListView should be displayed with a quiet style. */
   isQuiet?: boolean,
+  /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
   loadingState?: LoadingState,
+  /** Sets what the ListView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
+  /**
+   * The duration of animated layout changes, in milliseconds. Used by the Virtualizer.
+   * @default 0
+   */
   transitionDuration?: number,
+  /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
   onAction?: (key: string) => void,
+  /**
+   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
+   * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.
+   */
   dragHooks?: DragHooks
 }
 
@@ -175,11 +189,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')}
             UNSAFE_style={{width: itemWidth, paddingInlineStart: 0}}>
             <div className={listStyles['react-spectrum-ListViewItem-grid']}>
-              <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
-                <div className={listStyles['react-spectrum-ListViewItem-draghandle-button']}>
-                  <ListGripper />
-                </div>
-              </div>
+              <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']} />
               {showCheckbox &&
                 <Checkbox
                   isSelected={isSelected}
@@ -286,7 +296,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   );
 }
 
-
 function CenteredWrapper({children}) {
   let {state} = useContext(ListViewContext);
   return (
@@ -308,5 +317,8 @@ function CenteredWrapper({children}) {
   );
 }
 
+/**
+ * Lists display a linear collection of data. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
 const _ListView = React.forwardRef(ListView) as <T>(props: ListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};

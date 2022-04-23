@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useDatePickerState';
-export * from './useDateFieldState';
-export * from './useDateRangePickerState';
-export * from './useTimeFieldState';
+export {useDatePickerState} from './useDatePickerState';
+export {useDateFieldState} from './useDateFieldState';
+export {useDateRangePickerState} from './useDateRangePickerState';
+export {useTimeFieldState} from './useTimeFieldState';
+
+export type {DateFieldStateOptions, DateFieldState, DateSegment, SegmentType} from './useDateFieldState';
+export type {DatePickerStateOptions, DatePickerState} from './useDatePickerState';
+export type {DateRangePickerStateOptions, DateRangePickerState} from './useDateRangePickerState';
+export type {TimeFieldStateOptions} from './useTimeFieldState';

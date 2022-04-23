@@ -36,7 +36,6 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
-  let labelRef = useRef();
   let tagRef = useRef();
   let tagRowRef = useRef();
   let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
@@ -52,10 +51,10 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
 
   return (
     <div
-      {...tagRowProps}>
+      {...tagRowProps}
+      ref={tagRowRef}>
       <div
         {...mergeProps(tagProps, hoverProps, focusProps)}
-        role="gridcell"
         className={classNames(
           styles,
           'spectrum-Tags-item',
@@ -67,14 +66,15 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
             'is-hovered': isHovered
           },
           styleProps.className
-        )}>
+        )}
+        ref={tagRef}>
         <SlotProvider
           slots={{
-            tagLabel: {UNSAFE_className: classNames(styles, 'spectrum-Tag-label')},
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable})}
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable}), ...labelProps}
           }}>
-          {typeof children === 'string' ? <div ref={labelRef} {...labelProps}><Text>{children}</Text></div> : children}
+
+          {typeof children === 'string' ? <Text>{children}</Text> : children}
           {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
         </SlotProvider>
       </div>

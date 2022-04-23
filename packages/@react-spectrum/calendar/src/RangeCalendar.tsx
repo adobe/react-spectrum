@@ -12,16 +12,17 @@
 
 import {CalendarBase} from './CalendarBase';
 import {createCalendar} from '@internationalized/date';
+import {createDOMRef} from '@react-spectrum/utils';
 import {DateValue, SpectrumRangeCalendarProps} from '@react-types/calendar';
-import React, {useMemo, useRef} from 'react';
+import {FocusableRef} from '@react-types/shared';
+import React, {ReactElement, useImperativeHandle, useMemo, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useRangeCalendar} from '@react-aria/calendar';
 import {useRangeCalendarState} from '@react-stately/calendar';
 
-/**
- * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
- */
-export function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>) {
+function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
+  props = useProviderProps(props);
   let {visibleMonths = 1} = props;
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
   let {locale} = useLocale();
@@ -32,17 +33,30 @@ export function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarP
     createCalendar
   });
 
-  let ref = useRef();
-  let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps} = useRangeCalendar(props, state, ref);
+  let domRef = useRef();
+  useImperativeHandle(ref, () => ({
+    ...createDOMRef(domRef),
+    focus() {
+      state.setFocused(true);
+    }
+  }));
+
+  let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps} = useRangeCalendar(props, state, domRef);
 
   return (
     <CalendarBase
       {...props}
       state={state}
-      calendarRef={ref}
+      calendarRef={domRef}
       calendarProps={calendarProps}
       prevButtonProps={prevButtonProps}
       nextButtonProps={nextButtonProps}
       errorMessageProps={errorMessageProps} />
   );
 }
+
+/**
+ * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
+ */
+const _RangeCalendar = React.forwardRef(RangeCalendar) as <T extends DateValue>(props: SpectrumRangeCalendarProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+export {_RangeCalendar as RangeCalendar};

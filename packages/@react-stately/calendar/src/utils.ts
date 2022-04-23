@@ -21,7 +21,7 @@ import {
 } from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
 
-export function isInvalid(date: CalendarDate, minValue: DateValue, maxValue: DateValue) {
+export function isInvalid(date: DateValue, minValue: DateValue, maxValue: DateValue) {
   return (minValue != null && date.compare(minValue) < 0) ||
     (maxValue != null && date.compare(maxValue) > 0);
 }
