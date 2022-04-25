@@ -2,7 +2,6 @@
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
- * of the License at http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
@@ -15,8 +14,7 @@
 
 import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
-import {GregorianCalendar, gregorianToJulianDay, isLeapYear} from './GregorianCalendar';
-import {Mutable} from '../utils';
+import {fromExtendedYear, GregorianCalendar, gregorianToJulianDay, isLeapYear} from './GregorianCalendar';
 
 // Starts in 78 AD,
 const INDIAN_ERA_START = 78;
@@ -34,13 +32,13 @@ export class IndianCalendar extends GregorianCalendar {
 
   fromJulianDay(jd: number): CalendarDate {
     // Gregorian date for Julian day
-    let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
+    let date = super.fromJulianDay(jd);
 
     // Year in Saka era
     let indianYear = date.year - INDIAN_ERA_START;
 
     // Day number in Gregorian year (starting from 0)
-    let yDay = jd - gregorianToJulianDay(date.year, 1, 1);
+    let yDay = jd - gregorianToJulianDay(date.era, date.year, 1, 1);
 
     let leapMonth: number;
     if (yDay < INDIAN_YEAR_START) {
@@ -77,16 +75,17 @@ export class IndianCalendar extends GregorianCalendar {
   }
 
   toJulianDay(date: AnyCalendarDate) {
-    let year = date.year + INDIAN_ERA_START;
+    let extendedYear = date.year + INDIAN_ERA_START;
+    let [era, year] = fromExtendedYear(extendedYear);
 
     let leapMonth: number;
     let jd: number;
     if (isLeapYear(year)) {
       leapMonth = 31;
-      jd = gregorianToJulianDay(year, 3, 21);
+      jd = gregorianToJulianDay(era, year, 3, 21);
     } else {
       leapMonth = 30;
-      jd = gregorianToJulianDay(year, 3, 22);
+      jd = gregorianToJulianDay(era, year, 3, 22);
     }
 
     if (date.month === 1) {
