@@ -8,6 +8,7 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
+import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
@@ -409,6 +410,7 @@ export function DragExample(props?) {
       {(item: any) => (
         <Item key={item.key} textValue={item.textValue}>
           {item.type === 'folder' && <Folder />}
+          {item.key === 'a' && <FileTxt />}
           <Content>
             {item.textValue}
           </Content>
