@@ -151,7 +151,7 @@ storiesOf('Breadcrumbs', module)
     'autoFocusCurrent',
     () => (
       <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderMany({autoFocusCurrent: true})}
+        {renderDynamicBreadcrumbs({autoFocusCurrent: true})}
       </div>
     )
   )
@@ -230,4 +230,8 @@ export function DynamicBreadcrumbs(props = {}) {
       <Button variant="primary" onPress={() => setItems(defaultItems)}>Reset</Button>
     </p>
   </>);
+}
+
+function renderDynamicBreadcrumbs(props = {}) {
+  return <DynamicBreadcrumbs {...props} />;
 }
