@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, PressEvents, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLinkProps} from '@react-types/link';
 import {ItemProps} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 
-export interface BreadcrumbItemProps extends PressEvents {
+export interface BreadcrumbItemProps extends AriaLinkProps {
   /** Whether the breadcrumb item represents the current page. */
   isCurrent?: boolean,
   /**
@@ -58,5 +59,9 @@ export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, St
   /**
    * Whether to place the last Breadcrumb item onto a new line.
    */
-  isMultiline?: boolean
+  isMultiline?: boolean,
+  /**
+   * Whether to autoFocus the last Breadcrumb item when the Breadcrumbs render.
+   */
+   autoFocusCurrent?: boolean
 }
