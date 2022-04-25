@@ -138,6 +138,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     if (onAction) {
       onAction(key);
     }
+    if (autoFocusCurrent) {
+      // We shouldn't need to explicitly set focus when autoFocusCurrent === true.
+      return;
+    }
     requestAnimationFrame(() => currentRef.current && currentRef.current.UNSAFE_getDOMNode().focus());
   }
 
@@ -195,7 +199,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         }>
         <BreadcrumbItem
           key={key}
-          ref={isCurrent ? currentRef : undefined}
+          ref={isCurrent && !autoFocusCurrent ? currentRef : undefined}
           isCurrent={isCurrent}
           isDisabled={isDisabled}
           onPress={onPress}
