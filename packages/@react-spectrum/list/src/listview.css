@@ -1,11 +1,12 @@
 
 :root {
   --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
-  --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-75);
+  --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-85);
   --spectrum-listview-item-spacious-padding-y: var(--spectrum-global-dimension-size-100);
   --spectrum-listview-border-width: var(--spectrum-table-border-size, var(--spectrum-alias-border-size-thin));
   --spectrum-listview-border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
-  --spectrum-listview-item-start-end-border-radius: calc(var(--spectrum-listview-border-radius) - var(--spectrum-listview-border-width));
+  --spectrum-listview-item-border-radius: calc(var(--spectrum-listview-border-radius) - var(--spectrum-listview-border-width));
+  --spectrum-listview-row-sticky-focus-indicator-width: 3px;
 }
 
 .react-spectrum-ListView {
@@ -23,50 +24,127 @@
   padding: 0;
   background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
   outline: 0;
+  user-select: none;
 
-  [role="row"] {
+  .react-spectrum-ListView-row {
     outline: none;
+  }
+
+  &.react-spectrum-ListView--emphasized {
+    .react-spectrum-ListViewItem {
+      /* common pseudoelement for box shadows */
+      &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
+        inset-block-end: 0;
+        inset-block-start: 0;
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      /* Box shadow for bottom border for non-selected rows that is immmediately above a selected row. */
+      &.is-next-selected {
+        &:after {
+          box-shadow: inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+        }
+      }
+
+      &.is-selected {
+        background-color: var(--spectrum-table-row-background-color-selected);
+        &.is-hovered,
+        &.is-active {
+          background-color: var(--spectrum-table-row-background-color-selected-hover);
+        }
+
+        /* Box shadow for left, right, and bottom border for selected rows. */
+        &:after {
+          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+        }
+
+        /* Box shadow for left, right, bottom, and top border for first row when selected (needs 1px top blue border). */
+        &.react-spectrum-ListViewItem--firstRow {
+          &:after {
+            box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
+          }
+        }
+
+        /* Box shadow for left, right, and bottom border for last row when selected (needs 1px bottom blue border). */
+        &.react-spectrum-ListViewItem--lastRow {
+          &:after {
+            box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+          }
+        }
+      }
+    }
+
+    &:not(.react-spectrum-ListView--quiet) {
+      .react-spectrum-ListViewItem {
+        /* Box shadow for bottom border for non-selected rows that aren't immediatly above a selected row (grey border bottom). */
+        /* Also omit bottom border for last row if the total content height of the ListView is equal or greater than the height of the container. This avoids overlapping bottom borders. */
+        &:not(.is-selected):not(.is-next-selected):not(.react-spectrum-ListViewItem--isFlushBottom) {
+          &:after {
+            box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color);
+          }
+        }
+
+        &.react-spectrum-ListViewItem--firstRow.is-selected {
+          &:after {
+            border-start-start-radius: var(--spectrum-listview-item-border-radius);
+            border-start-end-radius: var(--spectrum-listview-item-border-radius);
+          }
+        }
+      }
+
+      &:not(.react-spectrum-ListView--loadingMore) {
+        .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
+          &:after {
+            border-end-start-radius: var(--spectrum-listview-item-border-radius);
+            border-end-end-radius: var(--spectrum-listview-item-border-radius);
+          }
+        }
+      }
+    }
+  }
+}
+
+.react-spectrum-ListView-row {
+  cursor: default;
+  /* Not sticky because listview is a single column. If we want to make sticky, will need a cell wrapper like TableView for display: inline-block */
+  &:focus-ring {
+    &:before {
+      content: '';
+      position: absolute;
+      inset-block-start: 0;
+      inset-block-end: 0;
+      inset-inline-start: 0;
+      width: var(--spectrum-listview-row-sticky-focus-indicator-width);
+      z-index: 4;
+      background: var(--spectrum-selectlist-option-focus-indicator-color);
+    }
   }
 }
 
 .react-spectrum-ListView--quiet {
   background-color: var(--spectrum-alias-background-color-transparent);
   border-width: 0;
+  border-radius: 0;
 }
 
 .react-spectrum-ListViewItem {
   display: grid; /* TODO: define grid areas */
-  border: 1px solid transparent;
-  border-bottom-color: var(--spectrum-table-cell-border-color, var(--spectrum-global-color-gray-300));
   box-sizing: border-box;
   font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
   font-weight: var(--spectrum-table-cell-text-font-weight, var(--spectrum-global-font-weight-regular));
   line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
-  padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-150);
-  transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
+  padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-160);
   position: relative;
   /*background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));*/
   color: var(--spectrum-table-cell-text-color, var(--spectrum-alias-text-color));
   outline: 0;
   min-height: var(--spectrum-global-dimension-size-500);
-
-  .react-spectrum-ListView--emphasized & {
-    &.is-selected {
-      background-color: var(--spectrum-table-row-background-color-selected);
-      border-color: var(--spectrum-global-color-blue-500);
-      &.is-hovered,
-      &.is-active {
-        background-color: var(--spectrum-table-row-background-color-selected);
-      }
-
-      /* avoid double border for adjacent selected items */
-      &.is-previous-selected {
-        &:not(.is-focused) {
-          border-top-color: transparent;
-        }
-      }
-    }
-  }
 
   &.is-hovered,
   &.is-focused {
@@ -75,8 +153,6 @@
 
   &:focus-ring {
     background-color: var(--spectrum-table-row-background-color-hover);
-    box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
-    border-color: var(--spectrum-global-color-blue-500);
   }
 
   &.is-active {
@@ -89,6 +165,10 @@
     &.is-hovered,
     &.is-active {
       background-color: var(--spectrum-table-row-background-color-hover);
+    }
+
+    &:focus-ring {
+      background-color: var(--spectrum-table-row-background-color-selected-key-focus);
     }
   }
 
@@ -122,6 +202,7 @@
     justify-self: stretch;
     justify-content: center;
     padding: var(--spectrum-global-dimension-size-25);
+    padding-inline-start: var(--spectrum-global-dimension-size-40);
 
 
     .react-spectrum-ListViewItem-draghandle-button {
@@ -189,16 +270,6 @@
   .react-spectrum-ListViewItem-parentIndicator {
     grid-area: chevron;
     padding-inline-start: var(--spectrum-global-dimension-size-75);
-  }
-
-  /* give first and last items border-radius to match listview container */
-  div:first-child > div[role="row"] > & {
-    border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
-    border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
-  }
-  div:last-child > div[role="row"] > & {
-    border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
-    border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
 }
 

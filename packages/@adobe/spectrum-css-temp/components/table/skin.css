@@ -119,7 +119,6 @@ tbody.spectrum-Table-body {
 }
 
 .spectrum-Table-row {
-  border-bottom: 1px solid var(--spectrum-table-cell-border-color);
   box-sizing: border-box;
 
   .spectrum-Table-cellWrapper {
@@ -149,6 +148,32 @@ tbody.spectrum-Table-body {
     background-color: var(--spectrum-table-row-background-color-down);
   }
 
+  /* Alternative to border on rows. Using box shadow since they don't take room unlike border which would cause wiggles
+   * in the hightlight case and displace the sticky indicator. Also allows for a nicer bottom curved border to match the container,
+   * the bottom border curved corners were cut off when using borders.
+   */
+
+  /* Box shadow for bottom border for non-selected rows that aren't immediatly above a selected row. */
+  &:after {
+    box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color);
+    content: '';
+    display: block;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    inset-block-end: 0;
+    inset-block-start: 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* Box shadow for bottom border for non-selected row that is immediatly above a selected row. */
+  &.is-next-selected {
+    &:after {
+      box-shadow: inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+    }
+  }
+
   &.is-selected {
     .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected);
@@ -163,10 +188,22 @@ tbody.spectrum-Table-body {
     &.is-focused .spectrum-Table-cell {
       background-color: var(--spectrum-table-row-background-color-selected-key-focus);
     }
+
+    /* Box shadow for bottom, left, and right border for selected rows. */
+    &:after {
+      box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+    }
   }
 
-  &.spectrum-Table-row--highlightSelection {
-    border-bottom-color: var(--spectrum-global-color-blue-500);
+  /* Box shadow for bottom, left, right, and top border for first row when selected. When the row isn't selected, it doesn't need
+   * a top border.
+   */
+   &.spectrum-Table-row--firstRow {
+    &.is-selected {
+      &:after {
+        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+      }
+    }
   }
 
   &.is-drop-target {
