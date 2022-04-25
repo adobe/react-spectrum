@@ -178,8 +178,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       renderPreview(draggingKeys, draggedKey) {
         let item = state.collection.getItem(draggedKey);
         let itemCount = draggingKeys.size;
-
-        return <DragPreview item={item} itemCount={itemCount} provider={provider}  />;
+        return <DragPreview item={item} itemCount={itemCount} provider={provider} direction={direction}  />;
       }
     });
   }

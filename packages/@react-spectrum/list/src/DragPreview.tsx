@@ -11,28 +11,28 @@
  */
 import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
+import {Direction} from '@react-types/shared';
 import {Grid} from '@react-spectrum/layout';
 import {GridNode} from '@react-types/grid';
 import listStyles from './listview.css';
 import {Provider} from '@react-spectrum/provider';
 import {ProviderContext} from '@react-types/provider';
 import React from 'react';
-import {useLocale} from '@react-aria/i18n';
 
 interface DragPreviewProps {
   item: GridNode<any>,
   itemCount: number,
-  provider: ProviderContext
+  provider: ProviderContext,
+  direction: Direction
 }
 
 export function DragPreview(props: DragPreviewProps) {
   let {
     item,
     itemCount,
-    provider
+    provider,
+    direction
   } = props;
-
-  let {direction} = useLocale();
 
   let isDraggingMultiple = itemCount > 1;
 
