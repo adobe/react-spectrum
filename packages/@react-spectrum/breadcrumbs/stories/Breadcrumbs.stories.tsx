@@ -148,6 +148,14 @@ storiesOf('Breadcrumbs', module)
     )
   )
   .add(
+    'autoFocusCurrent',
+    () => (
+      <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderMany({autoFocusCurrent: true})}
+      </div>
+    )
+  )
+  .add(
     'Dynamic breadcrumbs with focus management',
     () => (
       <DynamicBreadcrumbs />

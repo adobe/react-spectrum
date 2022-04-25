@@ -73,13 +73,16 @@ export class JapaneseCalendar extends GregorianCalendar {
   identifier = 'japanese';
 
   fromJulianDay(jd: number): CalendarDate {
-    let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
-
+    let date = super.fromJulianDay(jd);
     let era = findEraFromGregorianDate(date);
-    date.era = ERA_NAMES[era];
-    date.year -= ERA_ADDENDS[era];
-    this.constrainDate(date);
-    return date as CalendarDate;
+
+    return new CalendarDate(
+      this,
+      ERA_NAMES[era],
+      date.year - ERA_ADDENDS[era],
+      date.month,
+      date.day
+    );
   }
 
   toJulianDay(date: AnyCalendarDate) {
