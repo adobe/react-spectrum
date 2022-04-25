@@ -178,11 +178,6 @@
     padding-bottom: 0px;
   }
 
-  &.is-dragging {
-    border: 1px solid var(--spectrum-global-color-blue-500);
-    border-radius: var(--spectrum-global-dimension-size-50);
-  }
-
   .react-spectrum-ListViewItem-grid {
     display: grid;
     grid-template-columns: auto auto auto auto 1fr auto auto;
@@ -270,6 +265,61 @@
   .react-spectrum-ListViewItem-parentIndicator {
     grid-area: chevron;
     padding-inline-start: var(--spectrum-global-dimension-size-75);
+  }
+
+  &.react-spectrum-ListViewItem-dragPreview {
+    width: var(--spectrum-global-dimension-size-2400);
+    border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
+    border-radius: var(--spectrum-alias-border-radius-regular);
+    background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+
+    .react-spectrum-ListViewItem-grid {
+      grid-template-areas:
+        "icon image content     . badge"
+        "icon image description . badge"
+      ;
+      grid-template-columns: auto auto auto 1fr;
+    }
+
+    .react-spectrum-ListViewItem-badge {
+      grid-area: badge;
+      color: white;
+      background: var(--spectrum-global-color-blue-400);
+      padding: 0 8px;
+      border-radius: var(--spectrum-alias-border-radius-regular);
+    }
+
+    &.react-spectrum-ListViewItem-dragPreview--multiple  {
+      position: relative;
+      &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        z-index: -1;
+        top: 4px;
+        inset-inline-start: 4px;
+        width: 100%;
+        height: 100%;
+        border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
+        border-radius: var(--spectrum-alias-border-radius-regular);
+        background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+      }
+    }
+
+    .react-spectrum-ListViewItem-actions,
+    .react-spectrum-ListViewItem-actionmenu {
+      display: none;
+    }
+  }
+
+  /* give first and last items border-radius to match listview container */
+  div:first-child > div[role="row"] > & {
+    border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
+    border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
+  }
+  div:last-child > div[role="row"] > & {
+    border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
+    border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
 }
 

@@ -8,6 +8,7 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
+import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
@@ -408,26 +409,23 @@ export function DragExample(props?) {
       {...listViewProps}>
       {(item: any) => (
         <Item key={item.key} textValue={item.textValue}>
+          {item.type === 'folder' && <Folder />}
+          {item.key === 'a' && <FileTxt />}
           <Content>
-            <Flex alignItems="center" gap="10px">
-              {item.type === 'folder' && <Folder size="S" />}
-              <View flexGrow={1}>{item.textValue}</View>
-              <ActionButton><Add /></ActionButton>
-              <MenuTrigger>
-                <ActionButton><MoreSmall /></ActionButton>
-                <Menu>
-                  <Item textValue="Edit">
-                    <Edit />
-                    <Text>Edit</Text>
-                  </Item>
-                  <Item textValue="Delete">
-                    <Delete />
-                    <Text>Delete</Text>
-                  </Item>
-                </Menu>
-              </MenuTrigger>
-            </Flex>
+            {item.textValue}
           </Content>
+          {item.key === 'b' && <Text slot="description">description for item b</Text>}
+          <ActionMenu
+            onAction={action('onAction')}>
+            <Item key="edit" textValue="Edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionMenu>
         </Item>
       )}
     </ListView>
