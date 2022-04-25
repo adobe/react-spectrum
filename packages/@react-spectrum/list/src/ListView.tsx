@@ -39,15 +39,16 @@ import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {Virtualizer} from '@react-aria/virtualizer';
 
-interface ListViewContextValue {
-  state: GridState<object, GridCollection<any>>,
-  keyboardDelegate: GridKeyboardDelegate<unknown, GridCollection<any>>,
+interface ListViewContextValue<T> {
+  state: GridState<T, GridCollection<any>>,
+  keyboardDelegate: GridKeyboardDelegate<T, GridCollection<any>>,
   dragState: DraggableCollectionState,
   onAction:(key: string) => void,
-  isListDraggable: boolean
+  isListDraggable: boolean,
+  layout: ListLayout<T>
 }
 
-export const ListViewContext = React.createContext<ListViewContextValue>(null);
+export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
 
 const ROW_HEIGHTS = {
   compact: {
@@ -88,10 +89,21 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
+  /** Whether the ListView should be displayed with a quiet style. */
   isQuiet?: boolean,
+  /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
   loadingState?: LoadingState,
+  /** Sets what the ListView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
+  /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
   onAction?: (key: string) => void,
+  /**
+   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
+   * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.
+   */
   dragHooks?: DragHooks
 }
 
@@ -220,7 +232,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable, layout}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -237,7 +249,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             'react-spectrum-ListView--emphasized',
             {
               'react-spectrum-ListView--quiet': isQuiet,
-              'react-spectrum-ListView--draggable': isListDraggable
+              'react-spectrum-ListView--draggable': isListDraggable,
+              'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore'
             },
             styleProps.className
           )
@@ -277,7 +290,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   );
 }
 
-
 function CenteredWrapper({children}) {
   let {state} = useContext(ListViewContext);
   return (
@@ -299,5 +311,8 @@ function CenteredWrapper({children}) {
   );
 }
 
+/**
+ * Lists display a linear collection of data. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
 const _ListView = React.forwardRef(ListView) as <T>(props: ListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};

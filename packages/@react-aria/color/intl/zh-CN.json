@@ -1,5 +1,6 @@
 {
+  "colorPicker": "颜色选取器",
   "twoDimensionalSlider": "2D 滑块",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorInputLabel": "{label}, {channelLabel}"
 }
