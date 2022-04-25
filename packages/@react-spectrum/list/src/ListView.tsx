@@ -20,11 +20,10 @@ import {
   SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
-import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {Content} from '@react-spectrum/view';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DraggableCollectionState} from '@react-stately/dnd';
 import {DragHooks} from '@react-spectrum/dnd';
-import {Grid} from '@react-spectrum/layout';
+import {DragPreview} from './DragPreview';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 // @ts-ignore
@@ -34,9 +33,9 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue {
@@ -178,39 +177,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       selectionManager: state.selectionManager,
       renderPreview(draggingKeys, draggedKey) {
         let item = state.collection.getItem(draggedKey);
-        let isDraggingMultiple = draggingKeys.size > 1;
+        let itemCount = draggingKeys.size;
 
-        return (
-          <Provider
-            {...provider}
-            UNSAFE_style={{width: 194, direction}}>
-            <div className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
-              <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
-                <SlotProvider
-                  slots={{
-                    content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-                    text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-                    description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
-                    icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
-                    image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
-                    link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
-                    actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
-                    actionGroup: {
-                      UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
-                      isQuiet: true,
-                      density: 'compact'
-                    },
-                    actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
-                  }}>
-                  {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
-                  {isDraggingMultiple &&
-                    <div className={classNames(listStyles, 'react-spectrum-ListViewItem-badge')}>{draggingKeys.size}</div>
-                  }
-                </SlotProvider>
-              </Grid>
-            </div>
-          </Provider>
-        );
+        return <DragPreview item={item} itemCount={itemCount} provider={provider}  />;
       }
     });
   }
