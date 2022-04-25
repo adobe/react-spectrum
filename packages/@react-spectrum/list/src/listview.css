@@ -187,6 +187,7 @@
   }
 
     &.react-spectrum-ListViewItem-dragPreview {
+      width: var(--spectrum-global-dimension-size-2400);
       border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
       border-radius: var(--spectrum-alias-border-radius-regular);
       background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
