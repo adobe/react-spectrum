@@ -62,8 +62,8 @@ export function DragPreview(props: DragPreviewProps) {
             }}>
             {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
             {isDraggingMultiple &&
-            <div className={classNames(listStyles, 'react-spectrum-ListViewItem-badge')}>{itemCount}</div>
-              }
+              <div className={classNames(listStyles, 'react-spectrum-ListViewItem-badge')}>{itemCount}</div>
+            }
           </SlotProvider>
         </Grid>
       </div>
