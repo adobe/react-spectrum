@@ -41,7 +41,7 @@ export function DragPreview(props: DragPreviewProps) {
   return (
     <Provider
       {...provider}
-      UNSAFE_style={{direction}}>
+      UNSAFE_style={{direction, background: 'none'}}>
       <div style={{height: itemHeight}} className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           <SlotProvider
