@@ -20,15 +20,13 @@ import {
   SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
-import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {Content} from '@react-spectrum/view';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
 import type {DroppableCollectionResult} from '@react-aria/dnd';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
-import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
+import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 import InsertionIndicator from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -38,11 +36,11 @@ import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {Key, ReactElement, useContext, useMemo, useRef} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue<T> {
