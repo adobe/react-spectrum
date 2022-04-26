@@ -11,7 +11,6 @@
  */
 import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import {Direction} from '@react-types/shared';
 import {Grid} from '@react-spectrum/layout';
 import {GridNode} from '@react-types/grid';
 import listStyles from './listview.css';
@@ -24,7 +23,7 @@ interface DragPreviewProps {
   itemCount: number,
   itemHeight: number,
   provider: ProviderContext,
-  direction: Direction
+  locale: string
 }
 
 export function DragPreview(props: DragPreviewProps) {
@@ -33,42 +32,41 @@ export function DragPreview(props: DragPreviewProps) {
     itemCount,
     itemHeight,
     provider,
-    direction
+    locale
   } = props;
 
   let isDraggingMultiple = itemCount > 1;
 
   return (
-    <div dir={direction}>
-      <Provider
-        {...provider}
-        UNSAFE_style={{direction, background: 'none'}}>
-        <div style={{height: itemHeight}} className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
-          <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
-            <SlotProvider
-              slots={{
-                content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-                text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-                description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
-                icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
-                image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
-                link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
-                actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
-                actionGroup: {
-                  UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
-                  isQuiet: true,
-                  density: 'compact'
-                },
-                actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
-              }}>
-              {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
-              {isDraggingMultiple &&
-                <div className={classNames(listStyles, 'react-spectrum-ListViewItem-badge')}>{itemCount}</div>
+    <Provider
+      {...provider}
+      locale={locale}
+      UNSAFE_style={{background: 'none'}}>
+      <div style={{height: itemHeight}} className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
+        <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
+          <SlotProvider
+            slots={{
+              content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+              text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
+              icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
+              image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
+              link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
+              actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
+              actionGroup: {
+                UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
+                isQuiet: true,
+                density: 'compact'
+              },
+              actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
+            }}>
+            {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
+            {isDraggingMultiple &&
+            <div className={classNames(listStyles, 'react-spectrum-ListViewItem-badge')}>{itemCount}</div>
               }
-            </SlotProvider>
-          </Grid>
-        </div>
-      </Provider>
-    </div>
+          </SlotProvider>
+        </Grid>
+      </div>
+    </Provider>
   );
 }
