@@ -1,5 +1,6 @@
 {
+  "colorPicker": "Výběr barvy",
   "twoDimensionalSlider": "2D posuvník",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorInputLabel": "{label}, {channelLabel}"
 }

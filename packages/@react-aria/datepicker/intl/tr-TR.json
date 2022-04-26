@@ -1,9 +1,5 @@
 {
   "calendar": "Takvim",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} - {end, date, long}",
-  "date": "Tarih",
-  "dateRange": "Tarih Aralığı",
   "day": "gün",
   "dayPeriod": "ÖÖ/ÖS",
   "endDate": "Bitiş Tarihi",
@@ -15,5 +11,7 @@
   "startDate": "Başlangıç Tarihi",
   "year": "yıl",
   "weekday": "haftanın günü",
-  "timeZoneName": "saat dilimi"
+  "timeZoneName": "saat dilimi",
+  "selectedDateDescription": "Seçili Tarih: {date}",
+  "selectedRangeDescription": "Seçili Aralık: {startDate} - {endDate}"
 }

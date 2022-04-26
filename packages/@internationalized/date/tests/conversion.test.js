@@ -173,6 +173,11 @@ describe('CalendarDate conversion', function () {
         date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 2, 5);
         expect(date.calendar.getDaysInMonth(date)).toBe(29);
       });
+
+      it('constrains dates outside supported eras', function () {
+        let date = new CalendarDate(1700, 4, 30);
+        expect(toCalendar(date, new JapaneseCalendar())).toEqual(new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 30));
+      });
     });
 
     describe('taiwan', function () {
@@ -201,6 +206,14 @@ describe('CalendarDate conversion', function () {
         date = new CalendarDate(1911, 1, 1);
         expect(toCalendar(date, new TaiwanCalendar())).toEqual(new CalendarDate(new TaiwanCalendar(), 'before_minguo', 1, 1, 1));
       });
+
+      it('handles BC dates', function () {
+        let date = new CalendarDate('BC', 2, 1, 1);
+        expect(toCalendar(date, new TaiwanCalendar())).toEqual(new CalendarDate(new TaiwanCalendar(), 'before_minguo', 1913, 1, 1));
+
+        date = new CalendarDate(new TaiwanCalendar(), 'before_minguo', 1913, 1, 1);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate('BC', 2, 1, 1));
+      });
     });
 
     describe('buddhist', function () {
@@ -212,6 +225,14 @@ describe('CalendarDate conversion', function () {
       it('gregorian to buddhist', function () {
         let date = new CalendarDate(2020, 4, 30);
         expect(toCalendar(date, new BuddhistCalendar())).toEqual(new CalendarDate(new BuddhistCalendar(), 2563, 4, 30));
+      });
+
+      it('handles BC dates', function () {
+        let date = new CalendarDate('BC', 2, 1, 1);
+        expect(toCalendar(date, new BuddhistCalendar())).toEqual(new CalendarDate(new BuddhistCalendar(), 542, 1, 1));
+
+        date = new CalendarDate(new BuddhistCalendar(), 542, 1, 1);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate('BC', 2, 1, 1));
       });
     });
 

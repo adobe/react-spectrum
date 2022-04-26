@@ -16,6 +16,8 @@ governing permissions and limitations under the License.
   --spectrum-table-cell-compact-padding-y: var(--spectrum-global-dimension-size-75);
   --spectrum-table-cell-regular-padding-y: var(--spectrum-global-dimension-size-125);
   --spectrum-table-cell-spacious-padding-y: var(--spectrum-global-dimension-size-175);
+  --spectrum-table-row-border-radius: calc(var(--spectrum-table-border-radius) - 1px);
+  --spectrum-table-row-sticky-focus-indicator-width: 3px;
 }
 
 .spectrum-Table {
@@ -104,7 +106,7 @@ svg.spectrum-Table-sortedIcon {
   block-size: 100%;
   cursor: col-resize;
   user-select: none;
-  
+
   &::after {
     content: "";
     position: absolute;
@@ -114,7 +116,7 @@ svg.spectrum-Table-sortedIcon {
     block-size: 100%;
     background-color: var(--spectrum-table-divider-border-color);
   }
-  
+
   &:active,
   &:focus {
     &::after {
@@ -291,21 +293,49 @@ svg.spectrum-Table-sortedIcon {
     outline: 0;
   }
 
-  /* The focus ring must be on top of the first cell, so needs to be absolutely positioned. */
+  /* The focus ring should be sticky so it is visible at all horizontal scroll positions. */
   &:focus-ring {
     &:before {
+      display: inline-block;
       content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: var(--spectrum-selectlist-border-size-key-focus);
-      z-index: 3;
+      position: sticky;
+      inset-inline-start: 0;
+      height: 100%;
+      width: var(--spectrum-table-row-sticky-focus-indicator-width);
+      z-index: 4;
+      margin-inline-end: calc(var(--spectrum-table-row-sticky-focus-indicator-width) * -1);
+    }
+
+    .spectrum-Table-cellWrapper:first-of-type {
+      display: inline-block;
+      vertical-align: top;
     }
   }
 
   &.is-drop-target {
     @inherit: %drop-target;
+  }
+}
+
+.spectrum-Table:not(.spectrum-Table--loadingMore):not(.spectrum-Table--quiet) {
+  .spectrum-Table-row {
+    &.spectrum-Table-row--lastRow.spectrum-Table-row--isFlushBottom.is-selected {
+      &:after {
+        border-end-start-radius: var(--spectrum-table-row-border-radius);
+        border-end-end-radius: var(--spectrum-table-row-border-radius);
+      }
+    }
+  }
+}
+
+.spectrum-Table:not(.spectrum-Table--quiet) {
+  .spectrum-Table-row {
+    &.spectrum-Table-row--firstRow.is-selected {
+      &:after {
+        border-start-start-radius: var(--spectrum-table-row-border-radius);
+        border-start-end-radius: var(--spectrum-table-row-border-radius);
+      }
+    }
   }
 }
 

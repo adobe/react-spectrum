@@ -198,6 +198,14 @@ storiesOf('Date and Time/DatePicker/styling', module)
   .add(
     'errorMessage',
     () => render({errorMessage: 'Enter a date after today', validationState: 'invalid'})
+  )
+  .add(
+    'invalid with time',
+    () => render({validationState: 'invalid', granularity: 'minute', defaultValue: parseDateTime('2021-03-14T08:45')})
+  )
+  .add(
+    'shouldFlip: false',
+    () => render({shouldFlip: false})
   );
 
 function render(props = {}) {

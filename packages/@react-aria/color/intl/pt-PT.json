@@ -1,5 +1,6 @@
 {
+  "colorPicker": "Selecionador de cores",
   "twoDimensionalSlider": "Controlo de deslize 2D",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorInputLabel": "{label}, {channelLabel}"
 }
