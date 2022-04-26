@@ -268,11 +268,11 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return key;
   }
 
-  protected getItem(key: Key): HTMLElement {
+  private getItem(key: Key): HTMLElement {
     return this.ref.current.querySelector(`[data-key="${key}"]`);
   }
 
-  protected getItemRect(key: Key): Rect {
+  private getItemRect(key: Key): Rect {
     if (this.layout) {
       return this.layout.getLayoutInfo(key)?.rect;
     }

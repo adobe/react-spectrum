@@ -354,6 +354,15 @@ describe('ListView', function () {
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(end);
       });
+
+      it('should allow focus on disabled rows', function () {
+        let tree = renderListWithFocusables({disabledKeys: ['foo']});
+        let start = getRow(tree, 'Bar');
+        let end = getRow(tree, 'Foo');
+        act(() => start.focus());
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(end);
+      });
     });
 
     describe('ArrowDown', function () {
@@ -367,6 +376,15 @@ describe('ListView', function () {
 
       it('should move focus to below row', function () {
         let tree = renderListWithFocusables();
+        let start = getRow(tree, 'Foo');
+        let end = getRow(tree, 'Bar');
+        act(() => start.focus());
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(end);
+      });
+
+      it('should allow focus on disabled rows', function () {
+        let tree = renderListWithFocusables({disabledKeys: ['bar']});
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Bar');
         act(() => start.focus());
@@ -406,7 +424,7 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(getRow(tree, 'Foo 49'));
       });
 
-      it.skip('should move focus to a row a page below when focus starts in the row cell', function () {
+      it('should move focus to a row a page below when focus starts in the row cell', function () {
         let tree = renderListWithFocusables({items: manyItems});
         let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
         let start = focusables[0];

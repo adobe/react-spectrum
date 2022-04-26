@@ -48,17 +48,20 @@ export class GridCollection<T> implements IGridCollection<T> {
           child.parentKey = node.key;
         }
         childKeys.add(child.key);
-        if (child.nextKey == null && child.prevKey == null) {
-          if (last) {
-            last.nextKey = child.key;
-            child.prevKey = last.key;
-          } else {
-            child.prevKey = null;
-          }
+
+        if (last) {
+          last.nextKey = child.key;
+          child.prevKey = last.key;
+        } else {
+          child.prevKey = null;
         }
 
         visit(child);
         last = child;
+      }
+
+      if (last) {
+        last.nextKey = null;
       }
 
       // Remove deleted nodes and their children from the key map

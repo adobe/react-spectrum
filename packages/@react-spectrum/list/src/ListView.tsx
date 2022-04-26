@@ -73,7 +73,8 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
       estimatedRowHeight: ROW_HEIGHTS[density][scale],
       padding: 0,
       collator,
-      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale]
+      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
+      allowDisabledKeyFocus: true
     })
     , [collator, scale, density, isEmpty]);
 
@@ -131,9 +132,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         rendered: null,
         textValue: item.textValue,
         hasChildNodes: false,
-        childNodes: [],
-        nextKey: item.nextKey,
-        prevKey: item.prevKey
+        childNodes: []
       }]
     }))
   }), [collection]);
@@ -201,19 +200,13 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   let {gridProps} = useGrid({
     ...props,
+    onCellAction: onAction,
     isVirtualized: true,
     keyboardDelegate: layout
   }, state, domRef);
 
   // Sync loading state into the layout.
   layout.isLoading = isLoading;
-
-  let focusedKey = state.selectionManager.focusedKey;
-  let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
-  if (focusedItem?.parentKey != null) {
-    focusedKey = focusedItem.parentKey;
-  }
-
   return (
     <ListViewContext.Provider value={{state, dragState, onAction, isListDraggable}}>
       <Virtualizer
@@ -222,7 +215,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         isLoading={isLoading}
         onLoadMore={onLoadMore}
         ref={domRef}
-        focusedKey={focusedKey}
+        focusedKey={state.selectionManager.focusedKey}
         scrollDirection="vertical"
         className={
           classNames(
