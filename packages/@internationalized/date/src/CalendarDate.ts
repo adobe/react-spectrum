@@ -59,6 +59,7 @@ export class CalendarDate {
   public readonly day: number;
 
   constructor(year: number, month: number, day: number);
+  constructor(era: string, year: number, month: number, day: number);
   constructor(calendar: Calendar, year: number, month: number, day: number);
   constructor(calendar: Calendar, era: string, year: number, month: number, day: number);
   constructor(...args: any[]) {
@@ -213,6 +214,7 @@ export class CalendarDateTime {
   public readonly millisecond: number;
 
   constructor(year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+  constructor(era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
   constructor(calendar: Calendar, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
   constructor(calendar: Calendar, era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
   constructor(...args: any[]) {
@@ -323,6 +325,7 @@ export class ZonedDateTime {
   public readonly offset: number;
 
   constructor(year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+  constructor(era: string, year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number);
   constructor(calendar: Calendar, year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number);
   constructor(calendar: Calendar, era: string, year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number);
   constructor(...args: any[]) {

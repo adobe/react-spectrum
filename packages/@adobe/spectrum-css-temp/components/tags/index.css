@@ -13,7 +13,8 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 .spectrum-Tags {
-  display: inherit;
+  display: inline-flex;
+  flex-wrap: wrap;
 
   margin: 0;
   padding: 0;
@@ -69,10 +70,6 @@ governing permissions and limitations under the License.
 
 .tags-removable {
   margin-inline-end: 0;
-}
-
-.spectrum-Tag-label {
-  grid-area: label;
 }
 
 .spectrum-Tag-action {

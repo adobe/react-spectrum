@@ -11,6 +11,7 @@
  */
 
 import {FocusableDOMProps, FocusableProps} from '@react-types/shared';
+import {focusSafely} from './';
 import {mergeProps, useSyncRef} from '@react-aria/utils';
 import React, {HTMLAttributes, MutableRefObject, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
@@ -73,10 +74,10 @@ export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElem
 
   useEffect(() => {
     if (autoFocusRef.current && domRef.current) {
-      domRef.current.focus();
+      focusSafely(domRef.current);
     }
     autoFocusRef.current = false;
-  }, []);
+  }, [domRef]);
 
   return {
     focusableProps: mergeProps(

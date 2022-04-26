@@ -34,7 +34,7 @@ export function ListViewItem(props) {
     isEmphasized,
     dragHooks
   } = props;
-  let {state, dragState, onAction, isListDraggable} = useContext(ListViewContext);
+  let {state, dragState, onAction, isListDraggable, layout} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let {
@@ -90,7 +90,7 @@ export function ListViewItem(props) {
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
-  let showDragHandle = isDraggable && (isFocusVisibleWithin || isHovered || isPressed);
+  let showDragHandle = isDraggable && isFocusVisibleWithin;
   let {visuallyHiddenProps} = useVisuallyHidden();
   let rowProps = {
     role: 'row',
@@ -108,9 +108,31 @@ export function ListViewItem(props) {
     focusWithinProps,
     focusProps
   );
+
+  let isFirstRow = item.prevKey == null;
+  let isLastRow = item.nextKey == null;
+  // Figure out if the ListView content is equal or greater in height to the container. If so, we'll need to round the bottom
+  // border corners of the last row when selected and we can get rid of the bottom border if it isn't selected to avoid border overlap
+  // with bottom border
+  let isFlushWithContainerBottom = false;
+  if (isLastRow) {
+    if (layout.getContentSize()?.height >= layout.virtualizer?.getVisibleRect().height) {
+      isFlushWithContainerBottom = true;
+    }
+  }
+
   return (
     <div
       {...mergedProps}
+      className={
+        classNames(
+          listStyles,
+          'react-spectrum-ListView-row',
+          {
+            'focus-ring': isFocusVisible
+          }
+        )
+      }
       ref={rowRef}>
       <div
         // TODO: refactor the css here now that we are focusing the row?
@@ -124,9 +146,12 @@ export function ListViewItem(props) {
               'focus-ring': isFocusVisible,
               'is-hovered': isHovered,
               'is-selected': isSelected,
-              'is-previous-selected': state.selectionManager.isSelected(item.prevKey),
+              'is-next-selected': state.selectionManager.isSelected(item.nextKey),
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
-              'react-spectrum-ListViewItem--draggable': isDraggable
+              'react-spectrum-ListViewItem--draggable': isDraggable,
+              'react-spectrum-ListViewItem--firstRow': isFirstRow,
+              'react-spectrum-ListViewItem--lastRow': isLastRow,
+              'react-spectrum-ListViewItem--isFlushBottom': isFlushWithContainerBottom
             }
           )
         }

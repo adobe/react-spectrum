@@ -15,10 +15,11 @@ import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/d
 import {FieldOptions, getFormatOptions, getPlaceholderTime, useDefaultProps} from './utils';
 import {isInvalid} from './utils';
 import {useControlledState} from '@react-stately/utils';
+import {useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
-export interface DatePickerOptions extends DatePickerProps<DateValue> {
+export interface DatePickerStateOptions extends DatePickerProps<DateValue> {
   /**
    * Determines whether the date picker popover should close automatically when a date is selected.
    * @default true
@@ -63,8 +64,8 @@ export interface DatePickerState {
  * Provides state management for a date picker component.
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-export function useDatePickerState(props: DatePickerOptions): DatePickerState {
-  let [isOpen, setOpen] = useState(false);
+export function useDatePickerState(props: DatePickerStateOptions): DatePickerState {
+  let overlayState = useOverlayTriggerState(props);
   let [value, setValue] = useControlledState<DateValue>(props.value, props.defaultValue || null, props.onChange);
 
   let v = (value || props.placeholderValue);
@@ -106,7 +107,7 @@ export function useDatePickerState(props: DatePickerOptions): DatePickerState {
     }
 
     if (shouldClose) {
-      setOpen(false);
+      overlayState.setOpen(false);
     }
   };
 
@@ -131,7 +132,7 @@ export function useDatePickerState(props: DatePickerOptions): DatePickerState {
     setTimeValue: selectTime,
     granularity,
     hasTime,
-    isOpen,
+    isOpen: overlayState.isOpen,
     setOpen(isOpen) {
       // Commit the selected date when the calendar is closed. Use a placeholder time if one wasn't set.
       // If only the time was set and not the date, don't commit. The state will be preserved until
@@ -140,7 +141,7 @@ export function useDatePickerState(props: DatePickerOptions): DatePickerState {
         commitValue(selectedDate, selectedTime || getPlaceholderTime(props.placeholderValue));
       }
 
-      setOpen(isOpen);
+      overlayState.setOpen(isOpen);
     },
     validationState,
     formatValue(locale, fieldOptions) {

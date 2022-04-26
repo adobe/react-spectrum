@@ -20,9 +20,10 @@ import {FocusScope} from '@react-aria/focus';
 import highlightCss from './syntax-highlight.css';
 import {Modal} from '@react-spectrum/overlays';
 import {Pressable} from '@react-aria/interactions';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {ThemeProvider} from './ThemeSwitcher';
+import {useLayoutEffect} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 
 let links = document.querySelectorAll('a[data-link]');
@@ -41,7 +42,7 @@ for (let link of links) {
         <Pressable>
           {/* eslint-disable jsx-a11y/click-events-have-key-events */}
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <a role="link" tabIndex={0} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
+          <a role="button" tabIndex={0} aria-haspopup="dialog" data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
         </Pressable>
         <LinkPopover id={link.dataset.link} />
       </DialogTrigger>
@@ -93,11 +94,17 @@ for (let image of images) {
 
 function LinkPopover({id}) {
   let ref = useRef();
+  let breadcrumbsRef = useRef();
   let [breadcrumbs, setBreadcrumbs] = useState([document.getElementById(id)]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    // Update links within the rendered popover content, so that when clicked
+    // they will open as the new current breadcrumb and popover content.
     let links = ref.current.querySelectorAll('[data-link]');
     for (let link of links) {
+      // Links with [data-link] will open within the LinkPopover, so [aria-haspopup] is not appropriate.
+      link.removeAttribute('aria-haspopup');
+      // Add click event handler so that the link updates the content of the popover.
       link.addEventListener('click', (e) => {
         e.preventDefault();
         setBreadcrumbs([...breadcrumbs, document.getElementById(link.dataset.link)]);
@@ -106,9 +113,12 @@ function LinkPopover({id}) {
   }, [breadcrumbs]);
 
   return (
-    <Dialog UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`} size="L">
+    <Dialog aria-label={breadcrumbs[breadcrumbs.length - 1].dataset.title} UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`} size="L">
       <View slot="heading">
-        <Breadcrumbs onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
+        <Breadcrumbs
+          ref={breadcrumbsRef}
+          onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}
+          autoFocusCurrent>
           {breadcrumbs.map((b, i) => (
             <Item key={i + 1}>
               {b.dataset.title}
