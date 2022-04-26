@@ -22,6 +22,7 @@ import React from 'react';
 interface DragPreviewProps {
   item: GridNode<any>,
   itemCount: number,
+  itemHeight: number,
   provider: ProviderContext,
   direction: Direction
 }
@@ -30,6 +31,7 @@ export function DragPreview(props: DragPreviewProps) {
   let {
     item,
     itemCount,
+    itemHeight,
     provider,
     direction
   } = props;
@@ -40,7 +42,7 @@ export function DragPreview(props: DragPreviewProps) {
     <Provider
       {...provider}
       UNSAFE_style={{direction}}>
-      <div className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
+      <div style={{height: itemHeight}} className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           <SlotProvider
             slots={{
