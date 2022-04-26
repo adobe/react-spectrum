@@ -184,7 +184,7 @@ describe('DatePickerBase', function () {
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-label', 'July 2019');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
+      expect(document.activeElement.getAttribute('aria-label').includes('Friday, July 5, 2019')).toBe(true);
     });
 
     it.each`
