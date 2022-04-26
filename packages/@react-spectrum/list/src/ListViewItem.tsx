@@ -32,9 +32,10 @@ export function ListViewItem(props) {
   let {
     item,
     isEmphasized,
-    dragHooks
+    dragHooks,
+    hasActions
   } = props;
-  let {state, dragState, onAction, isListDraggable, layout} = useContext(ListViewContext);
+  let {state, dragState, isListDraggable, layout} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let {
@@ -42,7 +43,7 @@ export function ListViewItem(props) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isDraggable = dragState?.isDraggable(item.key) && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});

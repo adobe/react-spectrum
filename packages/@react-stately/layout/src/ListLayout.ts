@@ -353,7 +353,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     key = collection.getKeyBefore(key);
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' &&  (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -424,7 +424,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let key = collection.getFirstKey();
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' &&  (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -437,7 +437,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let key = collection.getLastKey();
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' &&  (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 

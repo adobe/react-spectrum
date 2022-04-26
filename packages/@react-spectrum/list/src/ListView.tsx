@@ -38,10 +38,9 @@ import {useGrid} from '@react-aria/grid';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
-interface ListViewContextValue<T>  {
+interface ListViewContextValue<T> {
   state: GridState<T, GridCollection<any>>,
   dragState: DraggableCollectionState,
-  onAction:(key: string) => void,
   isListDraggable: boolean,
   layout: ListLayout<T>
 }
@@ -182,7 +181,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   // Sync loading state into the layout.
   layout.isLoading = isLoading;
   return (
-    <ListViewContext.Provider value={{state, dragState, onAction, isListDraggable, layout}}>
+    <ListViewContext.Provider value={{state, dragState, isListDraggable, layout}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -211,7 +210,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} isEmphasized dragHooks={dragHooks}  />
+              <ListViewItem item={item} isEmphasized dragHooks={dragHooks} hasActions={onAction}  />
             );
           } else if (type === 'loader') {
             return (
