@@ -333,11 +333,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         transitionDuration={transitionDuration}>
         {(type, item) => {
           if (type === 'item') {
-            let isLastItem = state.collection.getKeyAfter(item.key) == null;
-            let isFirstItem = state.collection.getKeyBefore(item.key) == null;
             return (
               <>
-                {isListDroppable && isFirstItem &&
+                {isListDroppable && state.collection.getKeyBefore(item.key) == null &&
                   <RootDropIndicator key="root" dropState={dropState} dropHooks={dropHooks} />
                 }
                 {isListDroppable &&
@@ -346,7 +344,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                     target={{key: item.key, type: 'item', dropPosition: 'before'}} />
                 }
                 <ListViewItem item={item} isEmphasized dragHooks={dragHooks} dropHooks={dropHooks} />
-                {isListDroppable && isLastItem &&
+                {isListDroppable &&
                   <InsertionIndicator
                     key={`${item.key}-after`}
                     target={{key: item.key, type: 'item', dropPosition: 'after'}} />
