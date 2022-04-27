@@ -241,8 +241,21 @@ storiesOf('ListView', module)
         <Droppable />
         <DragExample dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </Flex>
-    )
-  );
+    ))
+  .add('overflowMode="truncate" (default)', () => (
+    <ListView width="250px" overflowMode="truncate">
+      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
+    </ListView>
+  ))
+  .add('overflowMode="wrap"', () => (
+    <ListView width="250px" overflowMode="wrap">
+      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
+      <Item textValue="row 2">row 2</Item>
+      <Item textValue="row 3">row 3</Item>
+    </ListView>
+  ));
 
 function Example(props?) {
   return (

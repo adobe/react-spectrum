@@ -35,7 +35,7 @@ export function ListViewItem(props) {
     dragHooks
   } = props;
   let cellNode = [...item.childNodes][0];
-  let {state, dragState, onAction, isListDraggable} = useContext(ListViewContext);
+  let {state, dragState, isListDraggable, onAction, overflowMode} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();
@@ -150,12 +150,12 @@ export function ListViewItem(props) {
           }
           <SlotProvider
             slots={{
-              content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-              text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
+              content: {UNSAFE_className: classNames(listStyles, 'react-spectrum-ListViewItem-content', {'react-spectrum-ListViewItem--wrap': overflowMode === 'wrap'})},
+              text: {UNSAFE_className: classNames(listStyles, 'react-spectrum-ListViewItem-content', {'react-spectrum-ListViewItem--wrap': overflowMode === 'wrap'})},
+              description: {UNSAFE_className: classNames(listStyles, 'react-spectrum-ListViewItem-description', {'react-spectrum-ListViewItem--wrap': overflowMode === 'wrap'})},
               icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
-              link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
+              link: {UNSAFE_className: classNames(listStyles, 'react-spectrum-ListViewItem-content', {'react-spectrum-ListViewItem--wrap': overflowMode === 'wrap'}), isQuiet: true},
               actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
               actionGroup: {
                 UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],

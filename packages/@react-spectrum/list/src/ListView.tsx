@@ -45,7 +45,8 @@ interface ListViewContextValue {
   keyboardDelegate: GridKeyboardDelegate<unknown, GridCollection<any>>,
   dragState: DraggableCollectionState,
   onAction:(key: string) => void,
-  isListDraggable: boolean
+  isListDraggable: boolean,
+  overflowMode?: 'truncate' | 'wrap'
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue>(null);
@@ -91,6 +92,7 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   density?: 'compact' | 'regular' | 'spacious',
   isQuiet?: boolean,
   loadingState?: LoadingState,
+  overflowMode?: 'truncate' | 'wrap',
   renderEmptyState?: () => JSX.Element,
   transitionDuration?: number,
   onAction?: (key: string) => void,
@@ -103,6 +105,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     onLoadMore,
     loadingState,
     isQuiet,
+    overflowMode = 'truncate',
     transitionDuration = 0,
     onAction,
     dragHooks
@@ -227,7 +230,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable, overflowMode}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}

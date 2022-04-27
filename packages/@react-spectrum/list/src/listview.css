@@ -166,6 +166,11 @@
   .react-spectrum-ListViewItem-content,
   .react-spectrum-ListViewItem-description {
     flex-grow: 1;
+
+    /* truncate text with ellipsis */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .react-spectrum-ListViewItem-content {
@@ -174,6 +179,10 @@
 
   .react-spectrum-ListViewItem-description {
     grid-area: description;
+  }
+
+  .react-spectrum-ListViewItem--wrap {
+    white-space: normal;
   }
 
   .react-spectrum-ListViewItem-actions {
