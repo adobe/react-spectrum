@@ -31,7 +31,7 @@ interface AriaSelectOptions<T> extends AriaSelectProps<T> {
   keyboardDelegate?: KeyboardDelegate
 }
 
-interface SelectAria {
+interface SelectAria<T> {
   /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
 
@@ -42,7 +42,7 @@ interface SelectAria {
   valueProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the popup. */
-  menuProps: AriaListBoxOptions<unknown>,
+  menuProps: AriaListBoxOptions<T>,
 
   /** Props for the select's description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
@@ -57,7 +57,7 @@ interface SelectAria {
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */
-export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria<T> {
   let {
     keyboardDelegate,
     isDisabled
