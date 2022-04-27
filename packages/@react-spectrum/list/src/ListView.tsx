@@ -132,7 +132,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let {direction} = useLocale();
+  let {direction, locale} = useLocale();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
@@ -179,7 +179,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       renderPreview(draggingKeys, draggedKey) {
         let item = state.collection.getItem(draggedKey);
         let itemCount = draggingKeys.size;
-        return <DragPreview item={item} itemCount={itemCount} provider={provider} direction={direction}  />;
+        let itemHeight = layout.getLayoutInfo(draggedKey).rect.height;
+        return <DragPreview item={item} itemCount={itemCount} itemHeight={itemHeight} provider={provider} locale={locale}  />;
       }
     });
   }
