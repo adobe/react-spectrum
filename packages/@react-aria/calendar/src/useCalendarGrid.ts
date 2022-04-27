@@ -12,9 +12,9 @@
 
 import {CalendarDate, startOfWeek} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
+import {hookData, useVisibleRangeDescription} from './utils';
 import {HTMLAttributes, KeyboardEvent, useMemo} from 'react';
-import {mergeProps, useDescription, useLabels} from '@react-aria/utils';
+import {mergeProps, useLabels} from '@react-aria/utils';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 
 export interface AriaCalendarGridProps {
@@ -111,11 +111,9 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
     }
   };
 
-  let selectedDateDescription = useSelectedDateDescription(state);
-  let descriptionProps = useDescription(selectedDateDescription);
   let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
 
-  let {ariaLabel, ariaLabelledBy, errorMessageId} = hookData.get(state);
+  let {ariaLabel, ariaLabelledBy} = hookData.get(state);
   let labelProps = useLabels({
     'aria-label': [ariaLabel, visibleRangeDescription].filter(Boolean).join(', '),
     'aria-labelledby': ariaLabelledBy
@@ -138,10 +136,6 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
       'aria-readonly': state.isReadOnly || null,
       'aria-disabled': state.isDisabled || null,
       'aria-multiselectable': ('highlightedRange' in state) || undefined,
-      'aria-describedby': [
-        descriptionProps['aria-describedby'],
-        state.validationState === 'invalid' ? errorMessageId : null
-      ].filter(Boolean).join(' ') || undefined,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)

@@ -184,7 +184,7 @@ describe('DatePickerBase', function () {
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-label', 'July 2019');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
+      expect(document.activeElement.getAttribute('aria-label').includes('Friday, July 5, 2019')).toBe(true);
     });
 
     it.each`
@@ -347,13 +347,13 @@ describe('DatePickerBase', function () {
     });
 
     it.each`
-      Name                   | Component
-      ${'DatePicker'}        | ${DatePicker}
-      ${'DateRangePicker'}   | ${DateRangePicker}
-    `('$Name should pass validationState and errorMessage to calendar', ({Component}) => {
+      Name                   | Component          | props
+      ${'DatePicker'}        | ${DatePicker}      | ${{defaultValue: new CalendarDate(2021, 10, 3)}}
+      ${'DateRangePicker'}   | ${DateRangePicker} | ${{defaultValue: {start: new CalendarDate(2021, 10, 3), end: new CalendarDate(2021, 10, 4)}}}
+    `('$Name should pass validationState and errorMessage to calendar', ({Component, props}) => {
       let {getAllByRole} = render(
         <Provider theme={theme}>
-          <Component label="Date" errorMessage="Selected dates cannot include weekends." validationState="invalid" />
+          <Component {...props} label="Date" errorMessage="Selected dates cannot include weekends." validationState="invalid" />
         </Provider>
       );
 
@@ -366,8 +366,9 @@ describe('DatePickerBase', function () {
 
       let dialog = getAllByRole('dialog')[0];
       let grid = within(dialog).getByRole('grid');
-      let description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
-      expect(description).toBe('Selected dates cannot include weekends.');
+      let cell = within(grid).getAllByLabelText('selected', {exact: false})[0];
+      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description.startsWith('Selected dates cannot include weekends.')).toBe(true);
     });
   });
 

@@ -65,7 +65,8 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   hookData.set(state, {
     ariaLabel: props['aria-label'],
     ariaLabelledBy: props['aria-labelledby'],
-    errorMessageId
+    errorMessageId,
+    selectedDateDescription
   });
 
   // If the next or previous buttons become disabled while they are focused, move focus to the calendar body.

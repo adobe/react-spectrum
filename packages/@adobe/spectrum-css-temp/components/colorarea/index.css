@@ -26,10 +26,6 @@
     }
   }
 
-  &:focus-within {
-    z-index: 2;
-  }
-
   &.is-disabled {
     pointer-events: none;
   }
@@ -50,6 +46,10 @@
 .spectrum-ColorArea-handle {
   left: 0;
   top: 0;
+
+  &:focus-within {
+    z-index: 2;
+  }
 }
 
 .spectrum-ColorArea-gradient {

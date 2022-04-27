@@ -1,5 +1,6 @@
 {
+  "colorPicker": "Värinvalitsin",
   "twoDimensionalSlider": "2D-liukusäädin",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorInputLabel": "{label}, {channelLabel}"
 }
