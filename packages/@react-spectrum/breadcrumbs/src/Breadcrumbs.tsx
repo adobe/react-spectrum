@@ -190,7 +190,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
     return (
       <li
-        key={isCurrent ? 'current' : index}
+        key={key}
         className={
           classNames(
             styles,
@@ -198,7 +198,6 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
           )
         }>
         <BreadcrumbItem
-          key={key}
           ref={isCurrent && !autoFocusCurrent ? currentRef : undefined}
           isCurrent={isCurrent}
           isDisabled={isDisabled}
