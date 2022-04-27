@@ -209,7 +209,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     });
     droppableCollection = dropHooks.useDroppableCollection({
       keyboardDelegate,
-      // TODO: Should we debounce this for better perf/ux?
       getDropTargetFromPoint(x, y) {
         let closest = null;
         let closestDistance = Infinity;
