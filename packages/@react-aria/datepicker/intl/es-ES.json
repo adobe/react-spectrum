@@ -1,17 +1,18 @@
 {
   "calendar": "Calendario",
   "day": "día",
-  "dayPeriod": "a. m./p. m.",
+  "dayPeriod": "AM/PM",
   "endDate": "Fecha final",
   "era": "era",
   "hour": "hora",
   "minute": "minuto",
   "month": "mes",
   "second": "segundo",
+  "selectedDateDescription": "Selected Date: {date}",
+  "selectedRangeDescription": "Selected Range: {startDate} to {endDate}",
+  "selectedTimeDescription": "Selected Time: {time}",
   "startDate": "Fecha de inicio",
-  "year": "año",
+  "timeZoneName": "huso horario",
   "weekday": "día de la semana",
-  "timeZoneName": "zona horaria",
-  "selectedDateDescription": "Fecha seleccionada: {date}",
-  "selectedRangeDescription": "Seleccionar rango: {startDate} a {endDate}"
+  "year": "año"
 }

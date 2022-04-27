@@ -1,17 +1,18 @@
 {
   "calendar": "日曆",
   "day": "日",
-  "dayPeriod": "上午/下午",
+  "dayPeriod": "AM/PM",
   "endDate": "結束日期",
-  "era": "纪元",
-  "hour": "小时",
-  "minute": "分钟",
+  "era": "年代",
+  "hour": "時",
+  "minute": "分",
   "month": "月",
   "second": "秒",
+  "selectedDateDescription": "選定的日期：{date}",
+  "selectedRangeDescription": "選定的範圍：{startDate} 至 {endDate}",
+  "selectedTimeDescription": "選定的時間：{time}",
   "startDate": "開始日期",
-  "year": "年",
-  "weekday": "工作日",
-  "timeZoneName": "时区",
-  "selectedDateDescription": "選取日期: {date}",
-  "selectedRangeDescription": "選取範圍: {startDate} 至 {endDate}"
+  "timeZoneName": "時區",
+  "weekday": "星期",
+  "year": "年"
 }

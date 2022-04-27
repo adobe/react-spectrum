@@ -1,17 +1,18 @@
 {
   "calendar": "לוח שנה",
   "day": "יום",
-  "dayPeriod": "לפנה״צ/אחה״צ",
+  "dayPeriod": "בוקר/אחה\"צ",
   "endDate": "תאריך סיום",
   "era": "תקופה",
   "hour": "שעה",
   "minute": "דקה",
   "month": "חודש",
   "second": "שנייה",
+  "selectedDateDescription": "Selected Date: {date}",
+  "selectedRangeDescription": "Selected Range: {startDate} to {endDate}",
+  "selectedTimeDescription": "Selected Time: {time}",
   "startDate": "תאריך התחלה",
-  "year": "שנה",
-  "weekday": "יום בשבוע",
   "timeZoneName": "אזור זמן",
-  "selectedDateDescription": "התאריך שנבחר: {date}",
-  "selectedRangeDescription": "הטווח שנבחר: מ-{startDate} ועד {endDate}"
+  "weekday": "יום בשבוע",
+  "year": "שנה"
 }

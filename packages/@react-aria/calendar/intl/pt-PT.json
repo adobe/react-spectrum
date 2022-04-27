@@ -1,12 +1,14 @@
 {
-  "dateSelected": "{data, data, completo} selecionado",
+  "dateRange": "{startDate} to {endDate}",
+  "dateSelected": "{date} selected",
   "finishRangeSelectionPrompt": "Clique para terminar de selecionar o intervalo de datas",
+  "maximumDate": "Last available date",
+  "minimumDate": "First available date",
   "next": "Próximo",
   "previous": "Anterior",
-  "selectedDateDescription": "Data Selecionada: {data, data, completo}",
-  "selectedRangeDescription": "Selecionar Intervalo: {dateRange}",
+  "selectedDateDescription": "Selected Date: {date}",
+  "selectedRangeDescription": "Selected Range: {dateRange}",
   "startRangeSelectionPrompt": "Clique para começar a selecionar o intervalo de datas",
-  "todayDate": "Hoje, {date}",
-  "todayDateSelected": "Hoje, {date} selecionado",
-  "dateRange": "{startDate} a {endDate}"
+  "todayDate": "Today, {date}",
+  "todayDateSelected": "Today, {date} selected"
 }

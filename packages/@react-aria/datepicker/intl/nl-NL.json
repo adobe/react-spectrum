@@ -1,17 +1,18 @@
 {
   "calendar": "Kalender",
   "day": "dag",
-  "dayPeriod": "a.m./p.m.",
+  "dayPeriod": "AM/PM",
   "endDate": "Einddatum",
   "era": "tijdperk",
   "hour": "uur",
   "minute": "minuut",
   "month": "maand",
   "second": "seconde",
+  "selectedDateDescription": "Selected Date: {date}",
+  "selectedRangeDescription": "Selected Range: {startDate} to {endDate}",
+  "selectedTimeDescription": "Selected Time: {time}",
   "startDate": "Startdatum",
-  "year": "jaar",
-  "weekday": "dag van de week",
   "timeZoneName": "tijdzone",
-  "selectedDateDescription": "Geselecteerde datum: {date}",
-  "selectedRangeDescription": "Geselecteerd bereik: {startDate} t/m {endDate}"
+  "weekday": "dag van de week",
+  "year": "jaar"
 }

@@ -1,12 +1,14 @@
 {
-  "dateSelected": "{date} geselecteerd",
+  "dateRange": "{startDate} to {endDate}",
+  "dateSelected": "{date} selected",
   "finishRangeSelectionPrompt": "Klik om de selectie van het datumbereik te voltooien",
+  "maximumDate": "Last available date",
+  "minimumDate": "First available date",
   "next": "Volgende",
   "previous": "Vorige",
-  "selectedDateDescription": "Geselecteerde datum: {date}",
-  "selectedRangeDescription": "Geselecteerd bereik: {dateRange}",
+  "selectedDateDescription": "Selected Date: {date}",
+  "selectedRangeDescription": "Selected Range: {dateRange}",
   "startRangeSelectionPrompt": "Klik om het datumbereik te selecteren",
-  "todayDate": "Vandaag, {date}",
-  "todayDateSelected": "Vandaag, {date} geselecteerd",
-  "dateRange": "{startDate} t/m {endDate}"
+  "todayDate": "Today, {date}",
+  "todayDateSelected": "Today, {date} selected"
 }

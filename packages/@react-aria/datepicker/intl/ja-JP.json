@@ -1,17 +1,18 @@
 {
   "calendar": "カレンダー",
   "day": "日",
-  "dayPeriod": "午前/午後",
+  "dayPeriod": "午前／午後",
   "endDate": "終了日",
-  "era": "時代",
-  "hour": "時",
+  "era": "元号",
+  "hour": "時間",
   "minute": "分",
   "month": "月",
   "second": "秒",
+  "selectedDateDescription": "Selected Date: {date}",
+  "selectedRangeDescription": "Selected Range: {startDate} to {endDate}",
+  "selectedTimeDescription": "Selected Time: {time}",
   "startDate": "開始日",
-  "year": "年",
-  "weekday": "曜日",
   "timeZoneName": "タイムゾーン",
-  "selectedDateDescription": "日付を選択：{date}",
-  "selectedRangeDescription": "範囲を選択：{startDate} から {endDate}"
+  "weekday": "曜日",
+  "year": "年"
 }

@@ -1,17 +1,18 @@
 {
   "calendar": "Kalendar",
   "day": "dan",
-  "dayPeriod": "AM/PM",
+  "dayPeriod": "prijepodne/poslijepodne",
   "endDate": "Datum završetka",
   "era": "era",
   "hour": "sat",
   "minute": "minuta",
   "month": "mjesec",
-  "second": "sekunda",
+  "second": "drugi",
+  "selectedDateDescription": "Selected Date: {date}",
+  "selectedRangeDescription": "Selected Range: {startDate} to {endDate}",
+  "selectedTimeDescription": "Selected Time: {time}",
   "startDate": "Datum početka",
-  "year": "godina",
-  "weekday": "dan u tjednu",
   "timeZoneName": "vremenska zona",
-  "selectedDateDescription": "Odabrani datum: {date}",
-  "selectedRangeDescription": "Odabrani raspon: od {startDate} do {endDate}"
+  "weekday": "dan u tjednu",
+  "year": "godina"
 }

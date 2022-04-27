@@ -5,13 +5,14 @@
   "endDate": "Data finale",
   "era": "era",
   "hour": "ora",
-  "minute": "minuto",
+  "minute": "minuti",
   "month": "mese",
-  "second": "secondo",
+  "second": "secondi",
+  "selectedDateDescription": "Selected Date: {date}",
+  "selectedRangeDescription": "Selected Range: {startDate} to {endDate}",
+  "selectedTimeDescription": "Selected Time: {time}",
   "startDate": "Data iniziale",
-  "year": "anno",
-  "weekday": "giorno della settimana",
   "timeZoneName": "fuso orario",
-  "selectedDateDescription": "Data selezionata: {date}",
-  "selectedRangeDescription": "Intervallo selezionato: da {startDate} a {endDate}"
+  "weekday": "giorno della settimana",
+  "year": "anno"
 }

@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Catador de cores",
-  "twoDimensionalSlider": "Controle deslizante 2D",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Seletor de cores",
+  "twoDimensionalSlider": "Controle deslizante 2D"
 }

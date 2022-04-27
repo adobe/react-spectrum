@@ -1,17 +1,18 @@
 {
   "calendar": "Ημερολόγιο",
   "day": "ημέρα",
-  "dayPeriod": "π.μ./μ.μ.",
+  "dayPeriod": "ΠΜ/ΜΜ",
   "endDate": "Ημερομηνία λήξης",
-  "era": "περίοδος",
+  "era": "χρονική περίοδος",
   "hour": "ώρα",
   "minute": "λεπτό",
   "month": "μήνας",
   "second": "δευτερόλεπτο",
-  "startDate": "Ημερομηνία έναρξης",
-  "year": "έτος",
-  "weekday": "καθημερινή",
-  "timeZoneName": "ζώνη ώρας",
   "selectedDateDescription": "Επιλεγμένη ημερομηνία: {date}",
-  "selectedRangeDescription": "Επιλεγμένο εύρος: {startDate} έως {endDate}"
+  "selectedRangeDescription": "Επιλεγμένο εύρος: {startDate} έως {endDate}",
+  "selectedTimeDescription": "Επιλεγμένη ώρα: {time}",
+  "startDate": "Ημερομηνία έναρξης",
+  "timeZoneName": "χρονική ζώνη",
+  "weekday": "ημέρα της εβδομάδας",
+  "year": "έτος"
 }

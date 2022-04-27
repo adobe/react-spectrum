@@ -3,15 +3,16 @@
   "day": "день",
   "dayPeriod": "AM/PM",
   "endDate": "Дата окончания",
-  "era": "эра",
+  "era": "период",
   "hour": "час",
   "minute": "минута",
   "month": "месяц",
   "second": "секунда",
-  "startDate": "Дата начала",
-  "year": "год",
-  "weekday": "день недели",
-  "timeZoneName": "часовой пояс",
   "selectedDateDescription": "Выбранная дата: {date}",
-  "selectedRangeDescription": "Выбранный диапазон: {startDate} – {endDate}"
+  "selectedRangeDescription": "Выбранный диапазон: с {startDate} по {endDate}",
+  "selectedTimeDescription": "Выбранное время: {time}",
+  "startDate": "Дата начала",
+  "timeZoneName": "часовой пояс",
+  "weekday": "день недели",
+  "year": "год"
 }
