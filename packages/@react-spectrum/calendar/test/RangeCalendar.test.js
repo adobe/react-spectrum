@@ -53,12 +53,12 @@ describe('RangeCalendar', () => {
 
       let selectedDates = getAllByLabelText('Selected', {exact: false});
       let labels = [
-        'Wednesday, June 5, 2019 selected',
+        'Selected Range: Wednesday, June 5 to Monday, June 10, 2019, Wednesday, June 5, 2019 selected',
         'Thursday, June 6, 2019 selected',
         'Friday, June 7, 2019 selected',
         'Saturday, June 8, 2019 selected',
         'Sunday, June 9, 2019 selected',
-        'Monday, June 10, 2019 selected'
+        'Selected Range: Wednesday, June 5 to Monday, June 10, 2019, Monday, June 10, 2019 selected'
       ];
       expect(selectedDates.length).toBe(6);
 
@@ -84,12 +84,12 @@ describe('RangeCalendar', () => {
 
       let selectedDates = getAllByLabelText('Selected', {exact: false});
       let labels = [
-        'Wednesday, June 5, 2019 selected',
+        'Selected Range: Wednesday, June 5 to Monday, June 10, 2019, Wednesday, June 5, 2019 selected',
         'Thursday, June 6, 2019 selected',
         'Friday, June 7, 2019 selected',
         'Saturday, June 8, 2019 selected',
         'Sunday, June 9, 2019 selected',
-        'Monday, June 10, 2019 selected'
+        'Selected Range: Wednesday, June 5 to Monday, June 10, 2019, Monday, June 10, 2019 selected'
       ];
       expect(selectedDates.length).toBe(6);
 
@@ -129,7 +129,7 @@ describe('RangeCalendar', () => {
       let selected = getAllByLabelText('selected', {exact: false}).filter(cell => cell.getAttribute('aria-disabled') !== 'true');
       expect(selected.length).toBe(11);
       let juneLabels = [
-        'Thursday, June 20, 2019 selected',
+        'Selected Range: Thursday, June 20 to Wednesday, July 10, 2019, Thursday, June 20, 2019 selected',
         'Friday, June 21, 2019 selected',
         'Saturday, June 22, 2019 selected',
         'Sunday, June 23, 2019 selected',
@@ -163,7 +163,7 @@ describe('RangeCalendar', () => {
         'Sunday, July 7, 2019 selected',
         'Monday, July 8, 2019 selected',
         'Tuesday, July 9, 2019 selected',
-        'Wednesday, July 10, 2019 selected'
+        'Selected Range: Thursday, June 20 to Wednesday, July 10, 2019, Wednesday, July 10, 2019 selected'
       ];
 
       i = 0;
@@ -1060,7 +1060,7 @@ describe('RangeCalendar', () => {
       expect(nextButton).not.toHaveAttribute('disabled');
 
       // Clicking on one of the selected dates should also disable the dates outside the available range.
-      cell = getByRole('button', {name: 'Sunday, December 12, 2021 selected'});
+      cell = getByRole('button', {name: 'Selected Range: Sunday, December 12 to Tuesday, December 14, 2021, Sunday, December 12, 2021 selected'});
       act(() => userEvent.click(cell));
 
       expect(cellBefore).not.toHaveAttribute('tabIndex');
@@ -1249,10 +1249,6 @@ describe('RangeCalendar', () => {
 
       description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
       expect(description).toBe('Selected dates unavailable. Click to start selecting date range');
-
-      let grid = getByRole('grid');
-      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
-      expect(description).toBe('Selected Range: Thursday, March 10 to Saturday, March 12, 2022 Selected dates unavailable.');
     });
 
     it('should support a custom errorMessage', () => {
@@ -1275,10 +1271,6 @@ describe('RangeCalendar', () => {
 
       description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
       expect(description).toBe('Selection dates cannot include weekends. Click to start selecting date range');
-
-      let grid = getByRole('grid');
-      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
-      expect(description).toBe('Selected Range: Thursday, March 10 to Saturday, March 12, 2022 Selection dates cannot include weekends.');
     });
 
     it('does not show error message without validationState="invalid"', () => {
@@ -1298,10 +1290,6 @@ describe('RangeCalendar', () => {
 
       let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
       expect(description).toBe('Click to start selecting date range');
-
-      let grid = getByRole('grid');
-      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
-      expect(description).toBe('Selected Range: Thursday, March 10 to Saturday, March 12, 2022');
     });
 
     it('automatically marks selection as invalid using isDateUnavailable', () => {
@@ -1329,10 +1317,6 @@ describe('RangeCalendar', () => {
 
       description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
       expect(description).toBe('Selected dates unavailable. Click to start selecting date range');
-
-      let grid = getByRole('grid');
-      description = grid.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
-      expect(description).toBe('Selected Range: Tuesday, March 1 to Saturday, March 5, 2022 Selected dates unavailable.');
     });
   });
 
@@ -1367,25 +1351,6 @@ describe('RangeCalendar', () => {
       type('ArrowRight');
 
       expect(selectedDates[1]).toHaveFocus();
-    });
-
-    it('renders a description with the selected date range', () => {
-      let {getByText, getByRole} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} />);
-
-      let grid = getByRole('grid');
-      let caption = document.getElementById(grid.getAttribute('aria-describedby'));
-      expect(caption).toHaveTextContent('Selected Range: Wednesday, June 5 to Monday, June 10, 2019');
-
-      act(() => userEvent.click(getByText('17')));
-
-      // in selection mode, the caption should be empty
-      expect(grid).not.toHaveAttribute('aria-describedby');
-
-      act(() => userEvent.click(getByText('10')));
-
-      caption = document.getElementById(grid.getAttribute('aria-describedby'));
-      expect(grid).toHaveAttribute('aria-describedby', caption.id);
-      expect(caption).toHaveTextContent('Selected Range: Monday, June 10 to Monday, June 17, 2019');
     });
   });
 });
