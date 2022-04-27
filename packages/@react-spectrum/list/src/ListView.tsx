@@ -155,7 +155,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       ...item,
       hasChildNodes: true,
       childNodes: [{
-        key: `cell-'${item.key}`,
+        key: `cell-${item.key}`,
         type: 'cell',
         index: 0,
         value: null,
@@ -257,6 +257,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     }, dropState, domRef);
 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
+    console.log(dropState.target);
   }
 
   let {gridProps} = useGrid({
