@@ -90,9 +90,8 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     context
   );
   let {disabledKeys, selectionManager} = useGridState({...props, collection});
-    
-  const tableColumnResizeState = useTableColumnResizeState({columns: collection.columns, getDefaultWidth: props.getDefaultWidth, onColumnResize: props.onColumnResize, onColumnResizeEnd: props.onColumnResizeEnd});
 
+  const tableColumnResizeState = useTableColumnResizeState({columns: collection.columns, getDefaultWidth: props.getDefaultWidth, onColumnResize: props.onColumnResize, onColumnResizeEnd: props.onColumnResizeEnd});
 
   return {
     collection,

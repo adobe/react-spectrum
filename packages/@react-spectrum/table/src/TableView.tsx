@@ -373,10 +373,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   }, [bodyRef]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
-    // setting the table width will recalculate column widths which we only want to do once the virtualizer is done initializing
-    if (state.virtualizer.contentSize.height > 0) {
-      setTableWidth(rect.width);
-    }
+    setTableWidth(rect.width);
 
     state.setVisibleRect(rect);
 
@@ -800,17 +797,7 @@ const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<
   When ready to remove this feature flag, you can remove this whole section of code, delete the _DEPRECATED files, and just replace the export with the _TableView above.
 */
 function FeatureFlaggedTableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let state = useTableState({
-    ...props
-  });
-
-  const someColumnsAllowResizing = state.collection.columns.some(c => c.props?.allowsResizing);
-
-  if (someColumnsAllowResizing) {
-    return <_TableView {...props} ref={ref} />;
-  } else {
-    return <TableView_DEPRECATED {...props} ref={ref} />;
-  }
+  return <_TableView {...props} ref={ref} />;
 }
 
 /**
