@@ -49,6 +49,12 @@ export function ListViewItem(props) {
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {pressProps, isPressed} = usePress({isDisabled});
 
+
+  // TODO: Make useListItem hook that returns row and cell props. It will contain stuff ripped out of useGridCell
+  // Will need to keep a isVirtualized option but no need for focusMode. Keep drag stuff out of it for now.
+  // Don't need the usePress and useHover stuff since that is for visual styles
+  // Will need to bring in the rowProps from below and the inline applied grid cell props for the hook to return
+
   // We only make use of useGridCell here to allow for keyboard navigation to the focusable children of the row.
   // The actual grid cell of the ListView is intert since we don't want to ever focus it to decrease screenreader
   // verbosity, so we pretend the row node is the cell for interaction purposes. useGridRow is never used since
@@ -67,6 +73,7 @@ export function ListViewItem(props) {
     draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
   }
 
+  // TODO make a useListItemCheckbox hook to mirror table checkbox hook
   let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({

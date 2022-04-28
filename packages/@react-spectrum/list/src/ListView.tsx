@@ -132,6 +132,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   let {styleProps} = useStyleProps(props);
   let {locale} = useLocale();
+
+  // TODO: remove if possible
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
@@ -150,12 +152,16 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       }]
     }))
   }), [collection]);
+
+  // TODO: Remove if possible
   let state = useGridState({
     ...props,
     collection: gridCollection,
     focusMode: 'row',
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
+
+  // TODO attempt to replace grid state here with useListState, should be able to use useListState's stuff?
   let layout = useListLayout(state, props.density || 'regular');
   let provider = useProvider();
   let dragState: DraggableCollectionState;
@@ -172,6 +178,10 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     });
   }
 
+  // TODO get rid of this if possible. Will need to port some stuff over
+  // Need to do the gridMap stuff? Prob can just tear that stuff out of useGridCell and make our own weak map
+  // make it so that useListItem (maybe name it useListRow?) doesn't accept onAction
+  // Bring in everthing else
   let {gridProps} = useGrid({
     ...props,
     onCellAction: onAction,
