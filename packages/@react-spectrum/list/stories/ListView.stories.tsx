@@ -52,7 +52,23 @@ function renderEmptyState() {
   );
 }
 
+let decorator = (storyFn, context) => {
+  let omittedStories = ['draggable rows', 'dynamic items + renderEmptyState'];
+  return omittedStories.some(omittedName => context.name.includes(omittedName)) ?
+  storyFn() :
+  (
+    <>
+      <label htmlFor="focus-before">Focus before</label>
+      <input id="focus-before" />
+      {storyFn()}
+      <label htmlFor="focus-after">Focus after</label>
+      <input id="focus-after" />
+    </>
+  );
+};
+
 storiesOf('ListView', module)
+  .addDecorator(decorator)
   .add('default', () => (
     <ListView width="250px">
       <Item textValue="row 1">row 1</Item>
