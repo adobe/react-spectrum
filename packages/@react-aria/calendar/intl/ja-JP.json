@@ -1,14 +1,14 @@
 {
-  "dateRange": "{startDate} to {endDate}",
-  "dateSelected": "{date} selected",
+  "dateRange": "{startDate} から {endDate}",
+  "dateSelected": "{date} を選択",
   "finishRangeSelectionPrompt": "クリックして日付範囲の選択を終了",
-  "maximumDate": "Last available date",
-  "minimumDate": "First available date",
+  "maximumDate": "最終利用可能日",
+  "minimumDate": "最初の利用可能日",
   "next": "次へ",
   "previous": "前へ",
-  "selectedDateDescription": "Selected Date: {date}",
-  "selectedRangeDescription": "Selected Range: {dateRange}",
+  "selectedDateDescription": "選択した日付 : {date}",
+  "selectedRangeDescription": "選択範囲 : {dateRange}",
   "startRangeSelectionPrompt": "クリックして日付範囲の選択を開始",
-  "todayDate": "Today, {date}",
-  "todayDateSelected": "Today, {date} selected"
+  "todayDate": "本日、{date}",
+  "todayDateSelected": "本日、{date} を選択"
 }

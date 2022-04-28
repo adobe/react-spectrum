@@ -1,14 +1,14 @@
 {
-  "dateRange": "{startDate} to {endDate}",
-  "dateSelected": "{date} selected",
+  "dateRange": "{startDate} bis {endDate}",
+  "dateSelected": "{date} ausgewählt",
   "finishRangeSelectionPrompt": "Klicken, um die Auswahl des Datumsbereichs zu beenden",
-  "maximumDate": "Last available date",
-  "minimumDate": "First available date",
+  "maximumDate": "Letztes verfügbares Datum",
+  "minimumDate": "Erstes verfügbares Datum",
   "next": "Weiter",
   "previous": "Zurück",
-  "selectedDateDescription": "Selected Date: {date}",
-  "selectedRangeDescription": "Selected Range: {dateRange}",
+  "selectedDateDescription": "Ausgewähltes Datum: {date}",
+  "selectedRangeDescription": "Ausgewählter Bereich: {dateRange}",
   "startRangeSelectionPrompt": "Klicken, um die Auswahl des Datumsbereichs zu beginnen",
-  "todayDate": "Today, {date}",
-  "todayDateSelected": "Today, {date} selected"
+  "todayDate": "Heute, {date}",
+  "todayDateSelected": "Heute, {date} ausgewählt"
 }

@@ -1,14 +1,14 @@
 {
-  "dateRange": "{startDate} to {endDate}",
-  "dateSelected": "{date} selected",
+  "dateRange": "{startDate} do {endDate}",
+  "dateSelected": "{date} odabran",
   "finishRangeSelectionPrompt": "Kliknite da dovršite raspon odabranih datuma",
-  "maximumDate": "Last available date",
-  "minimumDate": "First available date",
+  "maximumDate": "Posljednji raspoloživi datum",
+  "minimumDate": "Prvi raspoloživi datum",
   "next": "Sljedeći",
   "previous": "Prethodni",
-  "selectedDateDescription": "Selected Date: {date}",
-  "selectedRangeDescription": "Selected Range: {dateRange}",
+  "selectedDateDescription": "Odabrani datum: {date}",
+  "selectedRangeDescription": "Odabrani raspon: {dateRange}",
   "startRangeSelectionPrompt": "Kliknite da započnete raspon odabranih datuma",
-  "todayDate": "Today, {date}",
-  "todayDateSelected": "Today, {date} selected"
+  "todayDate": "Danas, {date}",
+  "todayDateSelected": "Danas, odabran {date}"
 }
