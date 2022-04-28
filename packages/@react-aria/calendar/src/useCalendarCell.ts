@@ -74,6 +74,7 @@ export interface CalendarCellAria {
  */
 export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
   let {date, isDisabled} = props;
+  let {errorMessageId, selectedDateDescription} = hookData.get(state);
   let formatMessage = useMessageFormatter(intlMessages);
   let dateFormatter = useDateFormatter({
     weekday: 'long',
@@ -112,7 +113,20 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   // aria-label should be localize Day of week, Month, Day and Year without Time.
   let isDateToday = isToday(date, state.timeZone);
   let label = useMemo(() => {
-    let label = dateFormatter.format(nativeDate);
+    let label = '';
+
+    // If this is a range calendar, add a description of the full selected range
+    // to the first and last selected date.
+    if (
+      'highlightedRange' in state &&
+      state.value &&
+      !state.anchorDate &&
+      (isSameDay(date, state.value.start) || isSameDay(date, state.value.end))
+    ) {
+      label = selectedDateDescription + ', ';
+    }
+
+    label += dateFormatter.format(nativeDate);
     if (isDateToday) {
       // If date is today, set appropriate string depending on selected state:
       label = formatMessage(isSelected ? 'todayDateSelected' : 'todayDate', {
@@ -132,7 +146,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     }
 
     return label;
-  }, [dateFormatter, nativeDate, formatMessage, isSelected, isDateToday, date, state.minValue, state.maxValue]);
+  }, [dateFormatter, nativeDate, formatMessage, isSelected, isDateToday, date, state, selectedDateDescription]);
 
   // When a cell is focused and this is a range calendar, add a prompt to help
   // screenreader users know that they are in a range selection mode.
@@ -286,7 +300,6 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   });
 
   let formattedDate = useMemo(() => cellDateFormatter.format(nativeDate), [cellDateFormatter, nativeDate]);
-  let {errorMessageId} = hookData.get(state);
 
   return {
     cellProps: {
