@@ -44,8 +44,7 @@ interface ListViewContextValue<T> {
   dragState: DraggableCollectionState,
   onAction:(key: string) => void,
   isListDraggable: boolean,
-  layout: ListLayout<T>,
-  overflowMode?: 'truncate' | 'wrap'
+  layout: ListLayout<T>
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
@@ -205,7 +204,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable, layout, overflowMode}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable, layout}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}

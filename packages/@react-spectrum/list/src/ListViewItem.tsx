@@ -35,7 +35,7 @@ export function ListViewItem(props) {
     dragHooks
   } = props;
   let cellNode = [...item.childNodes][0];
-  let {state, dragState, onAction, isListDraggable, layout, overflowMode} = useContext(ListViewContext);
+  let {state, dragState, onAction, isListDraggable, layout} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let cellRef =  useRef<HTMLDivElement>();
