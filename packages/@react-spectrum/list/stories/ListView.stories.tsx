@@ -2,9 +2,9 @@ import {action} from '@storybook/addon-actions';
 import {ActionBar, ActionBarContainer} from '../../actionbar';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
-import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
+import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
-import {Content, View} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
@@ -17,7 +17,6 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {Link} from '@react-spectrum/link';
-import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -395,7 +394,7 @@ export function DragExample(props?) {
       dragHooks={dragHooks}
       {...listViewProps}>
       {(item: any) => (
-        <Item key={item.key} textValue={item.textValue}>
+        <Item key={item.key} textValue={item.name}>
           {item.type === 'folder' && <Folder />}
           {item.key === 'a' && <FileTxt />}
           <Content>
