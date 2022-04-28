@@ -1,4 +1,5 @@
 import {action} from '@storybook/addon-actions';
+import {ActionBar, ActionBarContainer} from '../../actionbar';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -20,7 +21,7 @@ import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragHooks} from '@react-spectrum/dnd';
 
 const items = [
@@ -234,6 +235,8 @@ storiesOf('ListView', module)
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))
+  .add('with ActionBar', () => <ActionBarExample />)
+  .add('with emphasized ActionBar', () => <ActionBarExample isEmphasized />)
   .add(
     'draggable rows',
     () => (
@@ -480,5 +483,41 @@ function FalsyIds() {
     <ListView width="250px" height={400} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={items} onAction={action('onAction')}>
       {item => <Item>{item.name}</Item>}
     </ListView>
+  );
+}
+
+function ActionBarExample(props?) {
+  let list = useListData({
+    initialItems: [
+      {key: 0, name: 'Aardvark'},
+      {key: 1, name: 'Kangaroo'},
+      {key: 2, name: 'Snake'}
+    ],
+    initialSelectedKeys: [0]
+  });
+  return (
+    <ActionBarContainer height={300}>
+      <ListView selectionMode="multiple" selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} items={list.items} width="250px">
+        {item => <Item>{item.name}</Item>}
+      </ListView>
+      <ActionBar
+        selectedItemCount={list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size}
+        onAction={action('onAction')}
+        onClearSelection={() => list.setSelectedKeys(new Set([]))}
+        {...props}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
   );
 }
