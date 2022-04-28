@@ -59,6 +59,10 @@
           background-color: var(--spectrum-table-row-background-color-selected-hover);
         }
 
+        &:focus-ring {
+          background-color: var(--spectrum-table-row-background-color-selected-key-focus);
+        }
+
         /* Box shadow for left, right, and bottom border for selected rows. */
         &:after {
           box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);

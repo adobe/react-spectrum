@@ -11,7 +11,6 @@
  */
 import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import {Direction} from '@react-types/shared';
 import {Grid} from '@react-spectrum/layout';
 import {GridNode} from '@react-types/grid';
 import listStyles from './listview.css';
@@ -22,16 +21,18 @@ import React from 'react';
 interface DragPreviewProps {
   item: GridNode<any>,
   itemCount: number,
+  itemHeight: number,
   provider: ProviderContext,
-  direction: Direction
+  locale: string
 }
 
 export function DragPreview(props: DragPreviewProps) {
   let {
     item,
     itemCount,
+    itemHeight,
     provider,
-    direction
+    locale
   } = props;
 
   let isDraggingMultiple = itemCount > 1;
@@ -39,8 +40,9 @@ export function DragPreview(props: DragPreviewProps) {
   return (
     <Provider
       {...provider}
-      UNSAFE_style={{direction}}>
-      <div className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
+      locale={locale}
+      UNSAFE_style={{background: 'none'}}>
+      <div style={{height: itemHeight}} className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           <SlotProvider
             slots={{
