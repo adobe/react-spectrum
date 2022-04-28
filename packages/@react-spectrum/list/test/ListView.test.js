@@ -360,6 +360,17 @@ describe('ListView', function () {
     expect(getByText('No results')).toBeTruthy();
   });
 
+  it('supports custom data attributes', () => {
+    let {getByRole} = render(
+      <ListView aria-label="List" data-testid="test">
+        <Item>Foo</Item>
+        <Item>Bar</Item>
+      </ListView>
+    );
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-testid', 'test');
+  });
+
   describe('selection', function () {
     installPointerEvent();
     let items = [
