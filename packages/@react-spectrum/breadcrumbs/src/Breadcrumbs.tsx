@@ -134,26 +134,20 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   useLayoutEffect(updateOverflow, [children, updateOverflow]);
 
-  function triggerOnAction(key: Key) {
-    if (onAction) {
-      onAction(key);
-    }
-    if (autoFocusCurrent) {
-      // We shouldn't need to explicitly set focus when autoFocusCurrent === true.
-      return;
-    }
-    requestAnimationFrame(() => currentRef.current && currentRef.current.UNSAFE_getDOMNode().focus());
-  }
-
   let contents = childArray;
   if (childArray.length > visibleItems) {
     let selectedItem = childArray[childArray.length - 1];
     let selectedKey = selectedItem.key ?? childArray.length - 1;
     let onMenuAction = (key: Key) => {
       // Don't fire onAction when clicking on the last item
-      if (key !== selectedKey) {
-        triggerOnAction(key);
+      if (key !== selectedKey && onAction) {
+        onAction(key);
       }
+      if (autoFocusCurrent) {
+        // We shouldn't need to explicitly set focus when autoFocusCurrent === true.
+        return;
+      }
+      requestAnimationFrame(() => currentRef.current && currentRef.current.UNSAFE_getDOMNode().focus());
     };
 
     let menuItem = (
@@ -186,7 +180,11 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   let breadcrumbItems = contents.map((child, index) => {
     let isCurrent = index === lastIndex;
     let key = child.key ?? index;
-    let onPress = () => triggerOnAction(key);
+    let onPress = () => {
+      if (onAction) {
+        onAction(key);
+      }
+    };
 
     return (
       <li
