@@ -200,6 +200,11 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     focusedKey = focusedItem.parentKey;
   }
 
+  let isVerticalScrollbarVisible = false;
+  if (domRef.current) {
+    isVerticalScrollbarVisible = domRef.current.scrollHeight > domRef.current.clientHeight;
+  }
+
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable, layout}}>
       <Virtualizer
@@ -219,7 +224,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             {
               'react-spectrum-ListView--quiet': isQuiet,
               'react-spectrum-ListView--draggable': isListDraggable,
-              'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore'
+              'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore',
+              'react-spectrum-ListView--isScrolling': isVerticalScrollbarVisible
             },
             styleProps.className
           )

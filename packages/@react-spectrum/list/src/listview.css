@@ -110,6 +110,24 @@
           }
         }
       }
+
+      &.react-spectrum-ListView--isScrolling {
+        .react-spectrum-ListViewItem {
+          &.react-spectrum-ListViewItem--firstRow.is-selected {
+            &:after {
+              border-start-end-radius: 0;
+            }
+          }
+        }
+
+        &:not(.react-spectrum-ListView--loadingMore) {
+          .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
+            &:after {
+              border-end-end-radius: 0;
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -238,9 +256,17 @@
   }
 
   .react-spectrum-ListViewItem-image {
+    display: flex;
     border-radius: var(--spectrum-global-dimension-size-25);
     width: var(--spectrum-global-dimension-size-400);
     height: var(--spectrum-global-dimension-size-400);
+    align-items: center;
+    justify-content: center;
+    > img {
+      width: unset;
+      height: unset;
+      max-height: 100%;
+    }
   }
 
   .react-spectrum-ListViewItem-content,
@@ -315,15 +341,28 @@
       display: none;
     }
   }
-
+}
+.react-spectrum-ListView {
   /* give first and last items border-radius to match listview container */
-  div:first-child > div[role="row"] > & {
+
+  .react-spectrum-ListViewItem--firstRow.react-spectrum-ListViewItem {
     border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
-  div:last-child > div[role="row"] > & {
+
+  .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem {
     border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
+  }
+
+  &.react-spectrum-ListView--isScrolling {
+    .react-spectrum-ListViewItem--firstRow.react-spectrum-ListViewItem {
+      border-start-end-radius: 0;
+    }
+
+    .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem {
+      border-end-end-radius: 0;
+    }
   }
 }
 

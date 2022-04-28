@@ -22,6 +22,7 @@ import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList} from '@react-stately/data';
 import {useDragHooks} from '@react-spectrum/dnd';
+import {Image} from '@react-spectrum/image';
 
 const items = [
   {key: 'a', textValue: 'File a', type: 'file'},
@@ -38,6 +39,18 @@ const items = [
   {key: 'l', textValue: 'File l', type: 'file'},
   {key: 'm', textValue: 'Folder m', type: 'folder'},
   {key: 'n', textValue: 'File n', type: 'file'}
+];
+
+// taken from https://random.dog/
+const itemsWithThumbs = [
+  {key: '1', title: 'swimmer', url: 'https://random.dog/b2fe2172-cf11-43f4-9c7f-29bd19601712.jpg'},
+  {key: '2', title: 'chocolate', url: 'https://random.dog/2032518a-eec8-4102-9d48-3dca5a26eb23.png'},
+  {key: '3', title: 'good boi', url: 'https://random.dog/191091b2-7d69-47af-9f52-6605063f1a47.jpg'},
+  {key: '4', title: 'polar bear', url: 'https://random.dog/c22c077e-a009-486f-834c-a19edcc36a17.jpg'},
+  {key: '5', title: 'cold boi', url: 'https://random.dog/093a41da-e2c0-4535-a366-9ef3f2013f73.jpg'},
+  {key: '6', title: 'pilot', url: 'https://random.dog/09f8ecf4-c22b-49f4-af24-29fb5c8dbb2d.jpg'},
+  {key: '7', title: 'nerd', url: 'https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg'},
+  {key: '8', title: 'audiophile', url: 'https://random.dog/32367-2062-4347.jpg'}
 ];
 
 function renderEmptyState() {
@@ -243,6 +256,16 @@ storiesOf('ListView', module)
         <DragExample dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </Flex>
     ), {description: {data: 'Folders are non-draggable.'}}
+  )
+  .add(
+    'thumbnails',
+    () => (
+      <ListView width="250px" items={itemsWithThumbs}>
+        {
+          (item) => <Item textValue={item.title}><Image src={item.url} /><Content>{item.title}</Content><Text slot="description">JPG</Text></Item>
+        }
+      </ListView>
+    )
   );
 
 function Example(props?) {
