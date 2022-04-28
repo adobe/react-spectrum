@@ -246,15 +246,31 @@ storiesOf('ListView', module)
   .add('overflowMode="truncate" (default)', () => (
     <ListView width="250px" overflowMode="truncate">
       <Item textValue="row 1">row 1 with a very very very very very long title</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+      <Item textValue="row 2">
+        <Text>Text slot with a really really really long name</Text>
+        <Text slot="description">Description slot with a really really long name</Text>
+      </Item>
+      <Item textValue="row 3">
+        <Content>Content slot with really really long name</Content>
+      </Item>
+      <Item textValue="row 4">
+        <Link >Link slot with a very very very very long name</Link>
+      </Item>
     </ListView>
   ))
   .add('overflowMode="wrap"', () => (
     <ListView width="250px" overflowMode="wrap">
       <Item textValue="row 1">row 1 with a very very very very very long title</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+      <Item textValue="row 2">
+        <Text>Text slot with a really really really long name</Text>
+        <Text slot="description">Description slot with a really really long name</Text>
+      </Item>
+      <Item textValue="row 3">
+        <Content>Content slot with really really long name</Content>
+      </Item>
+      <Item textValue="row 4">
+        <Link >Link slot with a very very very very long name</Link>
+      </Item>
     </ListView>
   ));
 

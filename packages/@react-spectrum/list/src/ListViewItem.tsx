@@ -174,12 +174,12 @@ export function ListViewItem(props) {
           }
           <SlotProvider
             slots={{
-              content: {UNSAFE_className: classNames(listStyles, 'react-spectrum-ListViewItem-content', {'react-spectrum-ListViewItem--wrap': overflowMode === 'wrap'})},
-              text: {UNSAFE_className: classNames(listStyles, 'react-spectrum-ListViewItem-content', {'react-spectrum-ListViewItem--wrap': overflowMode === 'wrap'})},
-              description: {UNSAFE_className: classNames(listStyles, 'react-spectrum-ListViewItem-description', {'react-spectrum-ListViewItem--wrap': overflowMode === 'wrap'})},
+              content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+              text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
+              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
               icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
-              link: {UNSAFE_className: classNames(listStyles, 'react-spectrum-ListViewItem-content', {'react-spectrum-ListViewItem--wrap': overflowMode === 'wrap'}), isQuiet: true},
+              link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
               actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
               actionGroup: {
                 UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],

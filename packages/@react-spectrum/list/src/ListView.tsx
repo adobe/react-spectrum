@@ -223,7 +223,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             {
               'react-spectrum-ListView--quiet': isQuiet,
               'react-spectrum-ListView--draggable': isListDraggable,
-              'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore'
+              'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore',
+              'react-spectrum-ListView--wrap': overflowMode === 'wrap'
             },
             styleProps.className
           )

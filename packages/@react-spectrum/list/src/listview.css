@@ -112,6 +112,12 @@
       }
     }
   }
+  &.react-spectrum-ListView--wrap .react-spectrum-ListViewItem {
+    & .react-spectrum-ListViewItem-content,
+    & .react-spectrum-ListViewItem-description {
+      white-space: normal;
+    }
+  }
 }
 
 .react-spectrum-ListView-row {
@@ -259,10 +265,6 @@
 
   .react-spectrum-ListViewItem-description {
     grid-area: description;
-  }
-
-  .react-spectrum-ListViewItem--wrap {
-    white-space: normal;
   }
 
   .react-spectrum-ListViewItem-actions {

@@ -1197,32 +1197,4 @@ describe('ListView', function () {
       });
     });
   });
-  it('should wrap overflow text', () => {
-    let {getAllByRole} = render(
-      <ListView aria-label="list" width="250px" overflowMode="wrap">
-        <Item textValue="row 1">row 1 with a very very very very very long title</Item>
-        <Item textValue="row 2">row 2</Item>
-        <Item textValue="row 3">row 3</Item>
-      </ListView>
-    );
-
-    const items = getAllByRole('gridcell');
-    items.forEach((item) => {
-      expect(item.children[0].children[0]).toHaveClass('react-spectrum-ListViewItem--wrap');
-    });
-  });
-  it('should truncate overflow text', () => {
-    let {getAllByRole} = render(
-      <ListView aria-label="list" width="250px" overflowMode="truncate">
-        <Item textValue="row 1">row 1 with a very very very very very long title</Item>
-        <Item textValue="row 2">row 2</Item>
-        <Item textValue="row 3">row 3</Item>
-      </ListView>
-    );
-
-    const items = getAllByRole('gridcell');
-    items.forEach((item) => {
-      expect(item.children[0].children[0]).not.toHaveClass('react-spectrum-ListViewItem--wrap');
-    });
-  });
 });
