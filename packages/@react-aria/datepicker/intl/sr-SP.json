@@ -10,7 +10,7 @@
   "second": "секунд",
   "selectedDateDescription": "Izabrani datum: {date}",
   "selectedRangeDescription": "Izabrani opseg: od {startDate} do {endDate}",
-  "selectedTimeDescription": "Selected Time: {time}",
+  "selectedTimeDescription": "Izabrano vreme: {time}",
   "startDate": "Datum početka",
   "timeZoneName": "временска зона",
   "weekday": "дан у недељи",
