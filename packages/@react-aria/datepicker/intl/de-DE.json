@@ -1,7 +1,7 @@
 {
   "calendar": "Kalender",
   "day": "Tag",
-  "dayPeriod": "Vormittag/Nachmittag",
+  "dayPeriod": "Tageshälfte",
   "endDate": "Enddatum",
   "era": "Epoche",
   "hour": "Stunde",

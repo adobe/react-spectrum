@@ -1,7 +1,7 @@
 {
   "calendar": "Calendar",
   "day": "zi",
-  "dayPeriod": "AM/PM",
+  "dayPeriod": "a.m/p.m.",
   "endDate": "Dată final",
   "era": "eră",
   "hour": "oră",
@@ -13,6 +13,6 @@
   "selectedTimeDescription": "Ora selectată: {time}",
   "startDate": "Dată început",
   "timeZoneName": "fus orar",
-  "weekday": "zi a săptămânii",
+  "weekday": "ziua din săptămână",
   "year": "an"
 }

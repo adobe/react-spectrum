@@ -1,7 +1,7 @@
 {
   "calendar": "Calendario",
   "day": "día",
-  "dayPeriod": "AM/PM",
+  "dayPeriod": "a. m./p. m.",
   "endDate": "Fecha final",
   "era": "era",
   "hour": "hora",
@@ -12,7 +12,7 @@
   "selectedRangeDescription": "Rango seleccionado: {startDate} a {endDate}",
   "selectedTimeDescription": "Hora seleccionada: {time}",
   "startDate": "Fecha de inicio",
-  "timeZoneName": "huso horario",
+  "timeZoneName": "zona horaria",
   "weekday": "día de la semana",
   "year": "año"
 }

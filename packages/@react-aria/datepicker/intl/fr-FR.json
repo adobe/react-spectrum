@@ -1,7 +1,7 @@
 {
   "calendar": "Calendrier",
   "day": "jour",
-  "dayPeriod": "matin/après-midi",
+  "dayPeriod": "cadran",
   "endDate": "Date de fin",
   "era": "ère",
   "hour": "heure",

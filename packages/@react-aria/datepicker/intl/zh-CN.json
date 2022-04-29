@@ -1,6 +1,6 @@
 {
   "calendar": "日历",
-  "day": "天",
+  "day": "日",
   "dayPeriod": "上午/下午",
   "endDate": "结束日期",
   "era": "纪元",
@@ -13,6 +13,6 @@
   "selectedTimeDescription": "选定的时间：{time}",
   "startDate": "开始日期",
   "timeZoneName": "时区",
-  "weekday": "星期几",
+  "weekday": "工作日",
   "year": "年"
 }

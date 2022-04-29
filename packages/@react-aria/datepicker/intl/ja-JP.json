@@ -1,10 +1,10 @@
 {
   "calendar": "カレンダー",
   "day": "日",
-  "dayPeriod": "午前／午後",
+  "dayPeriod": "午前/午後",
   "endDate": "終了日",
-  "era": "元号",
-  "hour": "時間",
+  "era": "時代",
+  "hour": "時",
   "minute": "分",
   "month": "月",
   "second": "秒",

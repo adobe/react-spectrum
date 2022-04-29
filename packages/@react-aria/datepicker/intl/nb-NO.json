@@ -1,9 +1,9 @@
 {
   "calendar": "Kalender",
   "day": "dag",
-  "dayPeriod": "AM/PM",
+  "dayPeriod": "a.m./p.m.",
   "endDate": "Sluttdato",
-  "era": "æra",
+  "era": "tidsalder",
   "hour": "time",
   "minute": "minutt",
   "month": "måned",

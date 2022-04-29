@@ -1,7 +1,7 @@
 {
   "calendar": "Naptár",
   "day": "nap",
-  "dayPeriod": "délelőtt/délután",
+  "dayPeriod": "napszak",
   "endDate": "Befejező dátum",
   "era": "éra",
   "hour": "óra",
@@ -13,6 +13,6 @@
   "selectedTimeDescription": "Kijelölt idő: {time}",
   "startDate": "Kezdő dátum",
   "timeZoneName": "időzóna",
-  "weekday": "a hét napja",
+  "weekday": "hét napja",
   "year": "év"
 }

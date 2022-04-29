@@ -1,18 +1,18 @@
 {
   "calendar": "التقويم",
-  "day": "اليوم",
-  "dayPeriod": "صباحًا/مساءً",
+  "day": "يوم",
+  "dayPeriod": "ص/م",
   "endDate": "تاريخ الانتهاء",
-  "era": "الفترة",
-  "hour": "الساعة",
-  "minute": "الدقيقة",
+  "era": "العصر",
+  "hour": "الساعات",
+  "minute": "الدقائق",
   "month": "الشهر",
-  "second": "الثانية",
+  "second": "الثواني",
   "selectedDateDescription": "تاريخ محدد: {date}",
   "selectedRangeDescription": "المدى الزمني المحدد: {startDate} إلى {endDate}",
   "selectedTimeDescription": "الوقت المحدد: {time}",
   "startDate": "تاريخ البدء",
-  "timeZoneName": "المنطقة الزمنية",
-  "weekday": "اليوم من الأسبوع",
-  "year": "العام"
+  "timeZoneName": "التوقيت",
+  "weekday": "اليوم",
+  "year": "السنة"
 }

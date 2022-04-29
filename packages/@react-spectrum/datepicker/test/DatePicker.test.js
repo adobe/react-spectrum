@@ -1147,7 +1147,7 @@ describe('DatePicker', function () {
             <DatePicker label="Date" defaultValue={new CalendarDate(2019, 2, 3)} onChange={onChange} />
           </Provider>
         );
-        let segment = getByLabelText('العام');
+        let segment = getByLabelText('السنة');
         expect(segment).toHaveTextContent('٢٠١٩');
         act(() => {segment.focus();});
 

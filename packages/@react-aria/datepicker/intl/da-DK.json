@@ -13,6 +13,6 @@
   "selectedTimeDescription": "Valgt tidspunkt: {time}",
   "startDate": "Startdato",
   "timeZoneName": "tidszone",
-  "weekday": "dag på ugen",
+  "weekday": "ugedag",
   "year": "år"
 }
