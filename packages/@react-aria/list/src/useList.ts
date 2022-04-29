@@ -91,8 +91,6 @@ export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: 
     scrollRef
   });
 
-  // TODO: confirm if this weak map is the prefered way of sending id and onAction to useListItem
-  // I figure it is because we don't want to have onAction in the useListItem props if people accidentatly don't include it?
   let id = useId();
   listMap.set(state, {id, onAction});
 

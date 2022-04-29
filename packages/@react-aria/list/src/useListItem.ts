@@ -11,7 +11,7 @@
  */
 
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {getRowId, listMap, normalizeKey} from './utils';
+import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
@@ -56,8 +56,14 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
   } = props;
 
   let {direction} = useLocale();
-  // TODO: keyboardelegate unused? Revert the additional changes made in ListLayout if so
-  let {id: listId, onAction} = listMap.get(state);
+  let {onAction} = listMap.get(state);
+  let focus = () => {
+    // Don't shift focus to the row if the active element is a element within the row already
+    // (e.g. clicking on a row button)
+    if (!ref.current.contains(document.activeElement)) {
+      focusSafely(ref.current);
+    }
+  };
 
   let {itemProps, isPressed} = useSelectableItem({
     selectionManager: state.selectionManager,
@@ -65,9 +71,9 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     ref,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction: () => onAction(node.key),
-    // TODO: double check if isDisabled is appropriate here or if user should handle isPressed state externally
-    isDisabled
+    onAction: onAction ? () => onAction(node.key) : undefined,
+    isDisabled,
+    focus
   });
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
@@ -102,7 +108,6 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
               focusSafely(lastElement);
             }
           }
-          // todo may have to handle wrapping, check code path
         }
         break;
       }
@@ -146,8 +151,6 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     }
   };
 
-  // List rows can have focusable elements inside them. In this case, focus should
-  // be marshalled to that element rather than focusing the row itself.
   let onFocus = (e) => {
     if (e.target !== ref.current) {
       // useSelectableItem only handles setting the focused key when
@@ -173,7 +176,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
   });
 
   if (isVirtualized) {
-    rowProps['aria-colindex'] = node.index + 1;
+    rowProps['aria-rowindex'] = node.index + 1;
   }
 
   let gridCellProps = {

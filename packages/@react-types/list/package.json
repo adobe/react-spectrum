@@ -9,9 +9,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@react-spectrum/dnd": "3.0.0-alpha.1",
     "@react-types/shared": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

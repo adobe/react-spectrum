@@ -13,9 +13,7 @@
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import type {DraggableCollectionState} from '@react-stately/dnd';
-import {DragHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
-import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from '@react-stately/layout';
@@ -26,12 +24,12 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {SpectrumListProps} from '@react-types/list';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useGrid} from '@react-aria/grid';
+import {useList} from '@react-aria/list';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue<T> {
-  state: GridState<T, GridCollection<any>>,
+  state: ListState<T>,
   dragState: DraggableCollectionState,
   isListDraggable: boolean,
   layout: ListLayout<T>
@@ -54,7 +52,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
+export function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
@@ -73,15 +71,7 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
   return layout;
 }
 
-interface SpectrumListViewProps<T> extends SpectrumListProps<T> {
-  /**
-   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
-   * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.
-   */
-  dragHooks?: DragHooks
-}
-
-function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
     onLoadMore,
@@ -96,46 +86,19 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
     console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
   }
   let domRef = useDOMRef(ref);
-  let {collection} = useListState(props);
+  let state = useListState({
+    ...props,
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  });
   let formatMessage = useMessageFormatter(intlMessages);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
   let {locale} = useLocale();
 
-  // TODO: remove if possible
-  let gridCollection = useMemo(() => new GridCollection({
-    columnCount: 1,
-    items: [...collection].map(item => ({
-      ...item,
-      hasChildNodes: true,
-      childNodes: [{
-        key: `cell-${item.key}`,
-        type: 'cell',
-        index: 0,
-        value: null,
-        level: 0,
-        rendered: null,
-        textValue: item.textValue,
-        hasChildNodes: false,
-        childNodes: []
-      }]
-    }))
-  }), [collection]);
-
-  // TODO: Remove if possible
-  let state = useGridState({
-    ...props,
-    collection: gridCollection,
-    focusMode: 'row',
-    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
-  });
-
-  // TODO attempt to replace grid state here with useListState, should be able to use useListState's stuff?
   let layout = useListLayout(state, props.density || 'regular');
   let provider = useProvider();
   let dragState: DraggableCollectionState;
-  // TODO replace state here with liststate
   if (isListDraggable) {
     dragState = dragHooks.useDraggableCollectionState({
       collection: state.collection,
@@ -149,15 +112,11 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
     });
   }
 
-  // TODO get rid of this if possible. Will need to port some stuff over
-  // Need to do the gridMap stuff? Prob can just tear that stuff out of useGridCell and make our own weak map
-  // make it so that useListItem (maybe name it useListRow?) doesn't accept onAction
-  // Bring in everthing else
-  let {gridProps} = useGrid({
+  let {gridProps} = useList({
     ...props,
-    onCellAction: onAction,
     isVirtualized: true,
-    keyboardDelegate: layout
+    keyboardDelegate: layout,
+    onAction
   }, state, domRef);
 
   // Sync loading state into the layout.
@@ -187,13 +146,12 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
           )
         }
         layout={layout}
-        // TODO change back to list collection
-        collection={gridCollection}
+        collection={state.collection}
         transitionDuration={isLoading ? 160 : 220}>
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} isEmphasized dragHooks={dragHooks} hasActions={onAction}  />
+              <ListViewItem item={item} isEmphasized dragHooks={dragHooks} hasActions={!!onAction}  />
             );
           } else if (type === 'loader') {
             return (
@@ -246,5 +204,5 @@ function CenteredWrapper({children}) {
 /**
  * Lists display a linear collection of data. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
-const _ListView = React.forwardRef(ListView) as <T>(props: ListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const _ListView = React.forwardRef(ListView) as <T>(props: SpectrumListProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};

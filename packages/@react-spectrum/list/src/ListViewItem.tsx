@@ -15,20 +15,29 @@ import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import type {DraggableItemResult} from '@react-aria/dnd';
+import type {DragHooks} from '@react-spectrum/dnd';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './listview.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
+import {Node} from '@react-types/shared';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
-import {useGridCell, useGridSelectionCheckbox} from '@react-aria/grid';
-import {useHover, usePress} from '@react-aria/interactions';
+import {useHover} from '@react-aria/interactions';
+import {useListItem, useListSelectionCheckbox} from '@react-aria/list';
 import {useLocale} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-export function ListViewItem(props) {
+interface ListViewItemProps<T> {
+  item: Node<T>,
+  isEmphasized: boolean,
+  dragHooks: DragHooks,
+  hasActions: boolean
+}
+
+export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let {
     item,
     isEmphasized,
@@ -48,47 +57,13 @@ export function ListViewItem(props) {
   let isSelected = state.selectionManager.isSelected(item.key);
   let isDraggable = dragState?.isDraggable(item.key) && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});
-  let {pressProps, isPressed} = usePress({isDisabled});
-
-
-  // TODO: Make useListItem hook that returns row and cell props. It will contain stuff ripped out of useGridCell
-  // Will need to keep a isVirtualized option but no need for focusMode. Keep drag stuff out of it for now.
-  // Don't need the usePress and useHover stuff since that is for visual styles
-  // Will need to bring in the rowProps from below and the inline applied grid cell props for the hook to return
-
-  // We only make use of useGridCell here to allow for keyboard navigation to the focusable children of the row.
-  // The actual grid cell of the ListView is intert since we don't want to ever focus it to decrease screenreader
-  // verbosity, so we pretend the row node is the cell for interaction purposes. useGridRow is never used since
-  // it would conflict with useGridCell if applied to the same node.
-  let {gridCellProps: rowProps} = useGridCell({
+  let {rowProps, gridCellProps, isPressed} = useListItem({
     node: item,
-    focusMode: 'cell',
     isVirtualized: true,
-    shouldSelectOnPressUp: isListDraggable
+    shouldSelectOnPressUp: isListDraggable,
+    isDisabled
   }, state, rowRef);
-  delete rowProps['aria-colindex'];
-
-  rowProps = {
-    ...rowProps,
-    role: 'row',
-    'aria-label': item.textValue,
-    'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
-    'aria-rowindex': item.index + 1
-  };
-
-  let gridCellProps = {
-    role: 'gridcell',
-    'aria-colindex': 1
-  };
-
-
-  // TODO make a useListItemCheckbox hook to mirror table checkbox hook. Will need to access the id of the row for aria-labelledby
-  let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
-
-
-
-
-
+  let {checkboxProps} = useListSelectionCheckbox({key: item.key}, state);
 
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
@@ -123,7 +98,6 @@ export function ListViewItem(props) {
 
   const mergedProps = mergeProps(
     rowProps,
-    pressProps,
     isDraggable && draggableItem?.dragProps,
     hoverProps,
     focusWithinProps,

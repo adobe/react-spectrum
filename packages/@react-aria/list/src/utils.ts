@@ -19,7 +19,7 @@ interface ListMapShared {
 }
 
 // Used to share:
-// id of the list and onAction between useList and useListItem
+// id of the list and onAction between useList, useListItem, and useListSelectionCheckbox
 export const listMap = new WeakMap<ListState<unknown>, ListMapShared>();
 
 export function getRowId<T>(state: ListState<T>, key: Key) {

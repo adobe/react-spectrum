@@ -20,6 +20,7 @@ import {
   SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
+import {DragHooks} from '@react-spectrum/dnd';
 
 export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {
   /**
@@ -29,9 +30,7 @@ export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {
   onAction?: (key: string) => void
 }
 
-export interface AriaListProps<T> extends ListProps<T>, DOMProps, AriaLabelingProps {
-
-}
+export interface AriaListProps<T> extends ListProps<T>, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumListProps<T> extends AriaListProps<T>, StyleProps, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
@@ -44,5 +43,10 @@ export interface SpectrumListProps<T> extends AriaListProps<T>, StyleProps, Spec
   /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
   loadingState?: LoadingState,
   /** Sets what the ListView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element
+  renderEmptyState?: () => JSX.Element,
+  /**
+   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
+   * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.
+   */
+  dragHooks?: DragHooks
 }
