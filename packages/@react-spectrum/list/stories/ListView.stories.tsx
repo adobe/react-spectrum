@@ -572,7 +572,7 @@ export function DragIntoItemExample() {
   };
 
   let dragHooks = useDragHooks({
-    allowsDraggingItem: (id) => list.getItem(id).type === 'item',
+    allowsDraggingItem: (id) => list.getItem(id)?.type === 'item',
     getItems(keys) {
       return [...keys].map(key => ({
         [dragType]: JSON.stringify(key)
