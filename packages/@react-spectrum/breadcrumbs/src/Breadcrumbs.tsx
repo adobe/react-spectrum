@@ -52,7 +52,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   let [visibleItems, setVisibleItems] = useValueEffect(childArray.length);
 
-  let [isFocusWithinMenu, setIsFocusWithinMenu] = useState(false);
+  let [isKeySelectedFromMenu, setIsKeySelectedFromMenu] = useState(false);
+  let keySelectedFromMenu = useRef<string | number>(null);
 
   let {navProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
@@ -130,8 +131,18 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       }
     });
 
-    // When the visible items update, reset isFocusWithinMenu
-    setIsFocusWithinMenu(false);
+    if (keySelectedFromMenu.current) {
+      // If the key selected from the menu is the new current item,
+      // flag that the key was selected from the menu so that the
+      // current item will focus itself.
+      let selectedKey = childArray[childArray.length - 1].key ?? childArray.length - 1;
+      setIsKeySelectedFromMenu(keySelectedFromMenu.current === selectedKey);
+      keySelectedFromMenu.current = null;
+    } else {
+      // When the visible items update without a keySelectedFromMenu, reset isKeySelectedFromMenu.
+      setIsKeySelectedFromMenu(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [childArray.length, setVisibleItems, showRoot, isMultiline]);
 
   useResizeObserver({ref: domRef, onResize: updateOverflow});
@@ -147,9 +158,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       if (key !== selectedKey && onAction) {
         onAction(key);
       }
-      // Flag that the focus was within the menu,
-      // so that useBreadcrumbItem restores focus to the current item.
-      setIsFocusWithinMenu(true);
+      keySelectedFromMenu.current = key;
     };
 
     let menuItem = (
@@ -201,8 +210,9 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
           isCurrent={isCurrent}
           isDisabled={isDisabled}
           onPress={onPress}
-          isFocusWithinBreadcrumbs={isCurrent && isFocusWithinMenu}
-          onFocusChange={() => setIsFocusWithinMenu(false)}
+          isFocusWithinBreadcrumbs={isCurrent && isKeySelectedFromMenu}
+          // Reset isKeySelectedFromMenu whenever the current item focus changes.
+          onFocusChange={isCurrent ? () => setIsKeySelectedFromMenu(false) : undefined}
           autoFocus={isCurrent && autoFocusCurrent}>
           {child.props.children}
         </BreadcrumbItem>
