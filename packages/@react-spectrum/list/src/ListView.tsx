@@ -26,7 +26,6 @@ import {DragHooks, DropHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
 import type {DroppableCollectionResult} from '@react-aria/dnd';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
-import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 import InsertionIndicator from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -40,12 +39,12 @@ import React, {Key, ReactElement, useContext, useMemo, useRef} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useGrid} from '@react-aria/grid';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue<T> {
   state: GridState<T, GridCollection<any>>,
-  keyboardDelegate: GridKeyboardDelegate<T, GridCollection<any>>,
   dragState: DraggableCollectionState,
   dropState: DroppableCollectionState,
   dropHooks: DropHooks,
@@ -81,7 +80,8 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
       estimatedRowHeight: ROW_HEIGHTS[density][scale],
       padding: 0,
       collator,
-      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale]
+      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
+      allowDisabledKeyFocus: true
     })
     , [collator, scale, density, isEmpty]);
 
@@ -147,8 +147,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let {direction, locale} = useLocale();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let {locale} = useLocale();
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
@@ -170,21 +169,10 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let state = useGridState({
     ...props,
     collection: gridCollection,
-    focusMode: 'cell',
+    focusMode: 'row',
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let layout = useListLayout(state, props.density || 'regular');
-  let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({
-    collection: state.collection,
-    disabledKeys: state.disabledKeys,
-    ref: domRef,
-    direction,
-    collator,
-    // Focus the ListView cell instead of the row so that focus doesn't change with left/right arrow keys when there aren't any
-    // focusable children in the cell.
-    focusMode: 'cell'
-  }), [state, domRef, direction, collator]);
-
   let provider = useProvider();
   let dragState: DraggableCollectionState;
   if (isListDraggable) {
@@ -209,7 +197,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
       selectionManager: state.selectionManager
     });
     droppableCollection = dropHooks.useDroppableCollection({
-      keyboardDelegate,
+      keyboardDelegate: layout,
       getDropTargetFromPoint(x, y) {
         let closest = null;
         let closestDistance = Infinity;
@@ -263,8 +251,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   let {gridProps} = useGrid({
     ...props,
+    onCellAction: onAction,
     isVirtualized: true,
-    keyboardDelegate
+    keyboardDelegate: layout
   }, state, domRef);
 
   // Sync loading state into the layout.
@@ -279,7 +268,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     focusedKey = dropState.target.key;
   }
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, dropState, dropHooks, onAction, isListDraggable, isListDroppable, layout}}>
+    <ListViewContext.Provider value={{state, dragState, dropState, dropHooks, onAction, isListDraggable, isListDroppable, layout}}>
       <Virtualizer
         {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
         {...styleProps}
@@ -318,7 +307,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                     key={`${item.key}-before`}
                     target={{key: item.key, type: 'item', dropPosition: 'before'}} />
                 }
-                <ListViewItem item={item} isEmphasized dragHooks={dragHooks} dropHooks={dropHooks} />
+                <ListViewItem item={item} isEmphasized dragHooks={dragHooks} dropHooks={dropHooks} hasActions={onAction} />
                 {isListDroppable &&
                   <InsertionIndicator
                     key={`${item.key}-after`}
