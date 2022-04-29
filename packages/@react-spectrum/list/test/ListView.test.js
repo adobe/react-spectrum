@@ -1138,7 +1138,7 @@ describe('ListView', function () {
       expect(row).toHaveAttribute('aria-selected', 'false');
       expect(row).toHaveAttribute('draggable', 'true');
 
-      let menuButton = within(row).getAllByRole('button')[2];
+      let menuButton = within(row).getAllByRole('button')[1];
       expect(menuButton).toHaveAttribute('aria-expanded', 'false');
 
       triggerPress(menuButton);
