@@ -8,10 +8,11 @@
   "minute": "분",
   "month": "월",
   "second": "초",
+  "selectedDateDescription": "선택 일자: {date}",
+  "selectedRangeDescription": "선택 범위: {startDate} ~ {endDate}",
+  "selectedTimeDescription": "선택 시간: {time}",
   "startDate": "시작 날짜",
-  "year": "년",
-  "weekday": "요일",
   "timeZoneName": "시간대",
-  "selectedDateDescription": "선택한 날짜: {date}",
-  "selectedRangeDescription": "선택한 범위: {startDate} ~ {endDate}"
+  "weekday": "요일",
+  "year": "년"
 }

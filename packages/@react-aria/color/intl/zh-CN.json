@@ -1,6 +1,6 @@
 {
-  "colorPicker": "颜色选取器",
-  "twoDimensionalSlider": "2D 滑块",
-  "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorInputLabel": "{label}、{channelLabel}",
+  "colorNameAndValue": "{name}：{value}",
+  "colorPicker": "拾色器",
+  "twoDimensionalSlider": "2D 滑块"
 }
