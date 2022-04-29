@@ -12,10 +12,10 @@
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {Key, ReactElement, useCallback, useRef} from 'react';
+import React, {Key, ReactElement, useCallback, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
@@ -49,9 +49,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   let domRef = useDOMRef(ref);
   let listRef = useRef<HTMLUListElement>(null);
-  let currentRef = useRef<DOMRefValue<HTMLAnchorElement | HTMLSpanElement>>(null);
 
   let [visibleItems, setVisibleItems] = useValueEffect(childArray.length);
+
+  let [isFocusWithinMenu, setIsFocusWithinMenu] = useState(false);
 
   let {navProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
@@ -128,7 +129,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         yield computeVisibleItems(newVisibleItems);
       }
     });
-  }, [listRef, setVisibleItems, showRoot, isMultiline, childArray.length]);
+
+    // When the visible items update, reset isFocusWithinMenu
+    setIsFocusWithinMenu(false);
+  }, [childArray.length, setVisibleItems, showRoot, isMultiline]);
 
   useResizeObserver({ref: domRef, onResize: updateOverflow});
 
@@ -143,11 +147,9 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       if (key !== selectedKey && onAction) {
         onAction(key);
       }
-      if (autoFocusCurrent) {
-        // We shouldn't need to explicitly set focus when autoFocusCurrent === true.
-        return;
-      }
-      requestAnimationFrame(() => currentRef.current && currentRef.current.UNSAFE_getDOMNode().focus());
+      // Flag that the focus was within the menu,
+      // so that useBreadcrumbItem restores focus to the current item.
+      setIsFocusWithinMenu(true);
     };
 
     let menuItem = (
@@ -196,10 +198,11 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
           )
         }>
         <BreadcrumbItem
-          ref={isCurrent && !autoFocusCurrent ? currentRef : undefined}
           isCurrent={isCurrent}
           isDisabled={isDisabled}
           onPress={onPress}
+          isFocusWithinBreadcrumbs={isCurrent && isFocusWithinMenu}
+          onFocusChange={() => setIsFocusWithinMenu(false)}
           autoFocus={isCurrent && autoFocusCurrent}>
           {child.props.children}
         </BreadcrumbItem>

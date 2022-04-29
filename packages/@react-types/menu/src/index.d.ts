@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, FocusStrategy, MultipleSelection, StyleProps} from '@react-types/shared';
+import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, FocusEvents, FocusStrategy, MultipleSelection, StyleProps} from '@react-types/shared';
 import {Key, ReactElement} from 'react';
 import {OverlayTriggerProps} from '@react-types/overlays';
 
@@ -51,7 +51,7 @@ export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
   children: ReactElement[]
 }
 
-export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
+export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection, FocusEvents {
   /** Where the focus should be set. */
   autoFocus?: boolean | FocusStrategy,
   /** Whether keyboard navigation is circular. */

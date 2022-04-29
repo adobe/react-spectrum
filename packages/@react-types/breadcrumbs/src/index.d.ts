@@ -25,6 +25,8 @@ export interface BreadcrumbItemProps extends AriaLinkProps {
   'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false',
   /** Whether the breadcrumb item is disabled. */
   isDisabled?: boolean,
+  /** Whether the focus is currently within the breadcrumbs when the current page updates. */
+  isFocusWithinBreadcrumbs?: boolean,
   /** The contents of the breadcrumb item. */
   children: ReactNode
 }

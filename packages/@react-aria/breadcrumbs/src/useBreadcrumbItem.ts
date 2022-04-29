@@ -11,7 +11,8 @@
  */
 
 import {AriaBreadcrumbItemProps} from '@react-types/breadcrumbs';
-import {HTMLAttributes, RefObject} from 'react';
+import {focusSafely} from '@react-aria/focus';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useLink} from '@react-aria/link';
 
 interface BreadcrumbItemAria {
@@ -27,6 +28,7 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject
   let {
     isCurrent,
     isDisabled,
+    isFocusWithinBreadcrumbs,
     'aria-current': ariaCurrent,
     elementType = 'a',
     ...otherProps
@@ -44,6 +46,12 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject
     itemProps['aria-current'] = ariaCurrent || 'page';
     itemProps.tabIndex = -1;
   }
+
+  useEffect(() => {
+    if (ref && ref.current && isCurrent && isFocusWithinBreadcrumbs) {
+      focusSafely(ref.current);
+    }
+  }, [ref, isCurrent, isFocusWithinBreadcrumbs]);
 
   return {
     itemProps: {
