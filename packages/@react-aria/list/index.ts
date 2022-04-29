@@ -11,4 +11,3 @@
  */
 
 export * from './src';
-// TODO: export useList, useListItem, and types for each

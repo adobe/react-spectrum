@@ -64,8 +64,7 @@
     "@react-types/listbox": "^3.2.4",
     "@react-types/provider": "^3.4.2",
     "@react-types/shared": "^3.11.2",
-    "@spectrum-icons/ui": "^3.2.4",
-    "@spectrum-icons/workflow": "^3.2.4"
+    "@spectrum-icons/ui": "^3.2.4"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
