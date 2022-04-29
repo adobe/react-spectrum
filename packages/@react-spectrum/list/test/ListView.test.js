@@ -163,10 +163,14 @@ describe('ListView', function () {
 
     let rows = getAllByRole('row');
     expect(rows).toHaveLength(3);
+    expect(rows[0]).toHaveAttribute('aria-rowindex', '1');
+    expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+    expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
     let gridCells = within(rows[0]).getAllByRole('gridcell');
     expect(gridCells).toHaveLength(1);
     expect(gridCells[0]).toHaveTextContent('Foo');
+    expect(gridCells[0]).toHaveAttribute('aria-colindex', '1');
   });
 
   it('renders a dynamic listview', function () {
@@ -191,10 +195,14 @@ describe('ListView', function () {
 
     let rows = getAllByRole('row');
     expect(rows).toHaveLength(3);
+    expect(rows[0]).toHaveAttribute('aria-rowindex', '1');
+    expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+    expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
     let gridCells = within(rows[0]).getAllByRole('gridcell');
     expect(gridCells).toHaveLength(1);
     expect(gridCells[0]).toHaveTextContent('Foo');
+    expect(gridCells[0]).toHaveAttribute('aria-colindex', '1');
   });
 
   it('renders a falsy ids', function () {
