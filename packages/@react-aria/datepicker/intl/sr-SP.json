@@ -12,7 +12,7 @@
   "selectedRangeDescription": "Izabrani opseg: od {startDate} do {endDate}",
   "selectedTimeDescription": "Selected Time: {time}",
   "startDate": "Datum početka",
-  "timeZoneName": "vremenska zona",
+  "timeZoneName": "временска зона",
   "weekday": "дан у недељи",
   "year": "година"
 }
