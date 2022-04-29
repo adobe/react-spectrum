@@ -45,6 +45,7 @@ export function ListViewItem(props) {
   let {isFocusVisible, focusProps} = useFocusRing();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
   let isDraggable = dragState?.isDraggable(item.key) && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {pressProps, isPressed} = usePress({isDisabled});
@@ -59,13 +60,35 @@ export function ListViewItem(props) {
   // The actual grid cell of the ListView is intert since we don't want to ever focus it to decrease screenreader
   // verbosity, so we pretend the row node is the cell for interaction purposes. useGridRow is never used since
   // it would conflict with useGridCell if applied to the same node.
-  let {gridCellProps} = useGridCell({
+  let {gridCellProps: rowProps} = useGridCell({
     node: item,
     focusMode: 'cell',
     isVirtualized: true,
     shouldSelectOnPressUp: isListDraggable
   }, state, rowRef);
-  delete gridCellProps['aria-colindex'];
+  delete rowProps['aria-colindex'];
+
+  rowProps = {
+    ...rowProps,
+    role: 'row',
+    'aria-label': item.textValue,
+    'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
+    'aria-rowindex': item.index + 1
+  };
+
+  let gridCellProps = {
+    role: 'gridcell',
+    'aria-colindex': 1
+  };
+
+
+  // TODO make a useListItemCheckbox hook to mirror table checkbox hook. Will need to access the id of the row for aria-labelledby
+  let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
+
+
+
+
+
 
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
@@ -73,8 +96,6 @@ export function ListViewItem(props) {
     draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
   }
 
-  // TODO make a useListItemCheckbox hook to mirror table checkbox hook
-  let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({
     ...draggableItem?.dragButtonProps,
@@ -97,18 +118,10 @@ export function ListViewItem(props) {
   }
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
-  let isSelected = state.selectionManager.isSelected(item.key);
   let showDragHandle = isDraggable && isFocusVisibleWithin;
   let {visuallyHiddenProps} = useVisuallyHidden();
-  let rowProps = {
-    role: 'row',
-    'aria-label': item.textValue,
-    'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
-    'aria-rowindex': item.index + 1
-  };
 
   const mergedProps = mergeProps(
-    gridCellProps,
     rowProps,
     pressProps,
     isDraggable && draggableItem?.dragProps,
@@ -163,8 +176,7 @@ export function ListViewItem(props) {
             }
           )
         }
-        role="gridcell"
-        aria-colindex={1}>
+        {...gridCellProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           {isListDraggable &&
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>

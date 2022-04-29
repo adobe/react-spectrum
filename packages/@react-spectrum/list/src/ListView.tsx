@@ -9,18 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {
-  AriaLabelingProps,
-  AsyncLoadable,
-  CollectionBase,
-  DOMProps,
-  DOMRef,
-  LoadingState,
-  MultipleSelection,
-  SpectrumSelectionProps,
-  StyleProps
-} from '@react-types/shared';
+
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import type {DraggableCollectionState} from '@react-stately/dnd';
 import {DragHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
@@ -33,6 +24,7 @@ import listStyles from './listview.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
+import {SpectrumListProps} from '@react-types/list';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid} from '@react-aria/grid';
 import {useProvider} from '@react-spectrum/provider';
@@ -81,28 +73,7 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
-  /**
-   * Sets the amount of vertical padding within each cell.
-   * @default 'regular'
-   */
-  density?: 'compact' | 'regular' | 'spacious',
-  /** Whether the ListView should be displayed with a quiet style. */
-  isQuiet?: boolean,
-  /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
-  loadingState?: LoadingState,
-  /** Sets what the ListView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element,
-  /**
-   * The duration of animated layout changes, in milliseconds. Used by the Virtualizer.
-   * @default 0
-   */
-  transitionDuration?: number,
-  /**
-   * Handler that is called when a user performs an action on an item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
-   */
-  onAction?: (key: string) => void,
+interface SpectrumListViewProps<T> extends SpectrumListProps<T> {
   /**
    * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
    * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.
@@ -110,13 +81,12 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   dragHooks?: DragHooks
 }
 
-function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
     onLoadMore,
     loadingState,
     isQuiet,
-    transitionDuration = 0,
     onAction,
     dragHooks
   } = props;
@@ -165,6 +135,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let layout = useListLayout(state, props.density || 'regular');
   let provider = useProvider();
   let dragState: DraggableCollectionState;
+  // TODO replace state here with liststate
   if (isListDraggable) {
     dragState = dragHooks.useDraggableCollectionState({
       collection: state.collection,
@@ -216,8 +187,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           )
         }
         layout={layout}
+        // TODO change back to list collection
         collection={gridCollection}
-        transitionDuration={transitionDuration}>
+        transitionDuration={isLoading ? 160 : 220}>
         {(type, item) => {
           if (type === 'item') {
             return (
