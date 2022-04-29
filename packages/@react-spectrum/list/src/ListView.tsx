@@ -258,7 +258,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     }, dropState, domRef);
 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
-    console.log(dropState.target);
   }
 
   let {gridProps} = useGrid({
