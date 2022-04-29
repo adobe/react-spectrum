@@ -17,12 +17,12 @@ import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {KeyboardDelegate, Selection} from '@react-types/shared';
-import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
-import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useDescription} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
+import {useMessageFormatter} from '@react-aria/i18n';
+import {useSelectableList} from '@react-aria/selection';
 
 export interface AriaListOptions<T> extends Omit<AriaListProps<T>, 'children'> {
   /** Whether the list uses virtual scrolling. */
@@ -36,14 +36,9 @@ export interface AriaListOptions<T> extends Omit<AriaListProps<T>, 'children'> {
    * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
    * @default (key) => state.collection.getItem(key)?.textValue
    */
-  getRowText?: (key: Key) => string,
-  /**
-   * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
-   */
-  scrollRef?: RefObject<HTMLElement>
+  getRowText?: (key: Key) => string
 }
 
-// TODO: maybe name it listProps instead of gridProps?
 export interface ListViewAria {
   /** Props for the grid element. */
   gridProps: HTMLAttributes<HTMLElement>
@@ -62,7 +57,6 @@ export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: 
     isVirtualized,
     keyboardDelegate,
     getRowText = (key) => state.collection.getItem(key)?.textValue,
-    scrollRef,
     onAction
   } = props;
   let formatMessage = useMessageFormatter(intlMessages);
@@ -71,24 +65,14 @@ export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: 
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
   }
 
-  // TODO: perhaps refactor further and try to use useSelectableList? That will handle the ListKeyboardDelegate stuff, just need
-  // to make sure we only pass certain props to the hook
-  // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
-  // When virtualized, the layout object will be passed in as a prop and override this.
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(
-    state.collection,
-    state.disabledKeys,
-    ref,
-    collator
-  ), [keyboardDelegate, state.collection, state.disabledKeys, ref, collator]);
-
-  let {collectionProps} = useSelectableCollection({
-    ref,
+  let {listProps} = useSelectableList({
     selectionManager: state.selectionManager,
-    keyboardDelegate: delegate,
+    collection: state.collection,
+    disabledKeys: state.disabledKeys,
+    ref,
+    keyboardDelegate: keyboardDelegate,
     isVirtualized,
-    scrollRef
+    selectOnFocus: state.selectionManager.selectionBehavior === 'replace'
   });
 
   let id = useId();
@@ -122,7 +106,7 @@ export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: 
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    collectionProps,
+    listProps,
     descriptionProps
   );
 

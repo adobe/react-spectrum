@@ -253,6 +253,15 @@ describe('ListView', function () {
     expect(getRow(tree, 'Baz')).toHaveAttribute('aria-label', 'Baz');
   });
 
+  it('should label the checkboxes with the row label', function () {
+    let tree = renderList({selectionMode: 'single'});
+    let rows = tree.getAllByRole('row');
+    for (let row of rows) {
+      let checkbox = within(row).getByRole('checkbox');
+      expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${row.id}`);
+    }
+  });
+
   describe('keyboard focus', function () {
     describe('Type to select', function () {
       it('focuses the correct cell when typing', function () {
