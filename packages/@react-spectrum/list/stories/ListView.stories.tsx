@@ -1,9 +1,9 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
-import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
+import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
-import {Content, View} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
@@ -13,32 +13,31 @@ import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {Link} from '@react-spectrum/link';
-import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList} from '@react-stately/data';
 import {useDragHooks} from '@react-spectrum/dnd';
-import {Image} from '@react-spectrum/image';
 
 const items = [
-  {key: 'a', textValue: 'File a', type: 'file'},
-  {key: 'b', textValue: 'File b', type: 'file'},
-  {key: 'c', textValue: 'Folder c', type: 'folder'},
-  {key: 'd', textValue: 'File d', type: 'file'},
-  {key: 'e', textValue: 'Folder e', type: 'folder'},
-  {key: 'f', textValue: 'File f', type: 'file'},
-  {key: 'g', textValue: 'File g', type: 'file'},
-  {key: 'h', textValue: 'File h', type: 'file'},
-  {key: 'i', textValue: 'File i', type: 'file'},
-  {key: 'j', textValue: 'File j', type: 'file'},
-  {key: 'k', textValue: 'File k', type: 'file'},
-  {key: 'l', textValue: 'File l', type: 'file'},
-  {key: 'm', textValue: 'Folder m', type: 'folder'},
-  {key: 'n', textValue: 'File n', type: 'file'}
+  {key: 'a', name: 'Adobe Photoshop', type: 'file'},
+  {key: 'b', name: 'Adobe XD', type: 'file'},
+  {key: 'c', name: 'Documents', type: 'folder'},
+  {key: 'd', name: 'Adobe InDesign', type: 'file'},
+  {key: 'e', name: 'Utilities', type: 'folder'},
+  {key: 'f', name: 'Adobe AfterEffects', type: 'file'},
+  {key: 'g', name: 'Adobe Illustrator', type: 'file'},
+  {key: 'h', name: 'Adobe Lightroom', type: 'file'},
+  {key: 'i', name: 'Adobe Premiere Pro', type: 'file'},
+  {key: 'j', name: 'Adobe Fresco', type: 'file'},
+  {key: 'k', name: 'Adobe Dreamweaver', type: 'file'},
+  {key: 'l', name: 'Adobe Connect', type: 'file'},
+  {key: 'm', name: 'Pictures', type: 'folder'},
+  {key: 'n', name: 'Adobe Acrobat', type: 'file'}
 ];
 
 // taken from https://random.dog/
@@ -99,28 +98,44 @@ storiesOf('ListView', module)
   .add('dynamic items', () => (
     <ListView items={items} width="300px" height="250px">
       {(item) => (
-        <Item key={item.key} textValue={item.textValue}>
+        <Item key={item.key} textValue={item.name}>
           <Content>
-            <Flex alignItems="center" gap="10px">
-              <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
-              <ActionButton><Add /></ActionButton>
-              <MenuTrigger>
-                <ActionButton><MoreSmall /></ActionButton>
-                <Menu>
-                  <Item>
-                    <Edit />
-                    <Text>Edit</Text>
-                  </Item>
-                  <Item>
-                    <Delete />
-                    <Text>Delete</Text>
-                  </Item>
-                </Menu>
-              </MenuTrigger>
-            </Flex>
+            {item.name}
           </Content>
+          <ActionGroup buttonLabelBehavior="hide">
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
         </Item>
         )}
+    </ListView>
+    )
+  )
+  .add('dynamic items - small viewport', () => (
+    <ListView items={items} width="100px" height="250px">
+      {(item) => (
+        <Item key={item.key} textValue={item.name}>
+          <Content>
+            {item.name}
+          </Content>
+          <ActionGroup buttonLabelBehavior="hide">
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </Item>
+      )}
     </ListView>
     )
   )
@@ -146,6 +161,9 @@ storiesOf('ListView', module)
   ))
   .add('async listview loading', () => (
     <AsyncList />
+  ))
+  .add('async listview loading with actions', () => (
+    <AsyncList withActions />
   ))
   .add('density: compact', () => (
     <ListView width="250px" density="compact">
@@ -406,7 +424,7 @@ export function DragExample(props?) {
   let getItems = (keys) => [...keys].map(key => {
     let item = items.find(item => item.key === key);
     return {
-      'text/plain': item.textValue
+      'text/plain': item.name
     };
   });
 
@@ -455,7 +473,7 @@ export function DragExample(props?) {
   );
 }
 
-function AsyncList() {
+function AsyncList(props) {
   interface StarWarsChar {
     name: string,
     url: string
@@ -486,9 +504,12 @@ function AsyncList() {
       items={list.items}
       loadingState={list.loadingState}
       onLoadMore={list.loadMore}>
-      {(item) => (
-        <Item key={item.name} textValue={item.name}>{item.name}</Item>
-      )}
+      {(item) => {
+        if (props.withActions) {
+          return <Item key={item.name} textValue={item.name}><Content>{item.name}</Content><ActionButton>Edit</ActionButton></Item>;
+        }
+        return <Item key={item.name} textValue={item.name}>{item.name}</Item>;
+      }}
     </ListView>
   );
 }

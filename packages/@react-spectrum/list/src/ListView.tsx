@@ -95,11 +95,6 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   /** Sets what the ListView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
   /**
-   * The duration of animated layout changes, in milliseconds. Used by the Virtualizer.
-   * @default 0
-   */
-  transitionDuration?: number,
-  /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
@@ -117,7 +112,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     onLoadMore,
     loadingState,
     isQuiet,
-    transitionDuration = 0,
     onAction,
     dragHooks
   } = props;
@@ -201,9 +195,13 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   let isVerticalScrollbarVisible = false;
+  let isHorizontalScrollbarVisible = false; // do we need this one? can listviews horizontally scroll?
   if (domRef.current) {
     isVerticalScrollbarVisible = domRef.current.scrollHeight > domRef.current.clientHeight;
+    isHorizontalScrollbarVisible = domRef.current.scrollWidth > domRef.current.clientWidth;
   }
+
+  let hasAnyChildren = [...collection].some(item => item.hasChildNodes);
 
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable, layout}}>
@@ -225,14 +223,16 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
               'react-spectrum-ListView--quiet': isQuiet,
               'react-spectrum-ListView--draggable': isListDraggable,
               'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore',
-              'react-spectrum-ListView--isScrolling': isVerticalScrollbarVisible
+              'react-spectrum-ListView--isScrollingVertically': isVerticalScrollbarVisible,
+              'react-spectrum-ListView--isScrollingHorizontally': isHorizontalScrollbarVisible,
+              'react-spectrum-ListView--hasAnyChildren': hasAnyChildren
             },
             styleProps.className
           )
         }
         layout={layout}
         collection={gridCollection}
-        transitionDuration={transitionDuration}>
+        transitionDuration={isLoading ? 160 : 220}>
         {(type, item) => {
           if (type === 'item') {
             return (

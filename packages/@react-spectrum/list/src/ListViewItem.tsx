@@ -14,6 +14,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
+import {CSSTransition} from 'react-transition-group';
 import type {DraggableItemResult} from '@react-aria/dnd';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -79,20 +80,29 @@ export function ListViewItem(props) {
     elementType: 'div'
   }, dragButtonRef);
 
-  let chevron = null;
-  if (item.props.hasChildItems) {
-    chevron = direction === 'ltr'
-      ? (
-        <ChevronRightMedium
-          aria-hidden="true"
-          UNSAFE_className={listStyles['react-spectrum-ListViewItem-parentIndicator']} />
-      )
-      : (
-        <ChevronLeftMedium
-          aria-hidden="true"
-          UNSAFE_className={listStyles['react-spectrum-ListViewItem-parentIndicator']} />
-      );
-  }
+  let chevron = direction === 'ltr'
+    ? (
+      <ChevronRightMedium
+        aria-hidden="true"
+        UNSAFE_className={
+          classNames(
+            listStyles,
+            'react-spectrum-ListViewItem-parentIndicator',
+            {'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems}
+          )
+        } />
+    )
+    : (
+      <ChevronLeftMedium
+        aria-hidden="true"
+        UNSAFE_className={
+          classNames(
+            listStyles,
+            'react-spectrum-ListViewItem-parentIndicator',
+            {'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems}
+          )
+        } />
+    );
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
@@ -167,12 +177,25 @@ export function ListViewItem(props) {
               }
             </div>
           }
-          {showCheckbox &&
-            <Checkbox
-              UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
-              {...checkboxProps}
-              isEmphasized={isEmphasized} />
-          }
+          <CSSTransition
+            in={showCheckbox}
+            unmountOnExit
+            classNames={{
+              enter: listStyles['react-spectrum-ListViewItem-checkbox--enter'],
+              enterActive: listStyles['react-spectrum-ListViewItem-checkbox--enterActive'],
+              exit: listStyles['react-spectrum-ListViewItem-checkbox--exit'],
+              exitActive: listStyles['react-spectrum-ListViewItem-checkbox--exitActive'],
+              appear: listStyles['react-spectrum-ListViewItem-checkbox--appear'],
+              appearActive: listStyles['react-spectrum-ListViewItem-checkbox--appearActive']
+            }}
+            timeout={1600} >
+            <div className={listStyles['react-spectrum-ListViewItem-checkboxWrapper']}>
+              <Checkbox
+                {...checkboxProps}
+                UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
+                isEmphasized={isEmphasized} />
+            </div>
+          </CSSTransition>
           <SlotProvider
             slots={{
               content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
