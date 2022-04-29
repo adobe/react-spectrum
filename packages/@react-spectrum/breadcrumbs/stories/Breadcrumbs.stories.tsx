@@ -13,10 +13,11 @@
 import {action} from '@storybook/addon-actions';
 import {Breadcrumbs} from '../';
 import {Button} from '@react-spectrum/button';
-import {DOMRefValue} from '@react-types/shared';
+import {DOMRefValue, FocusableRefValue} from '@react-types/shared';
 // import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
 import React, {useRef, useState} from 'react';
+import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import {storiesOf} from '@storybook/react';
 
 let styles = {
@@ -160,6 +161,12 @@ storiesOf('Breadcrumbs', module)
     () => (
       renderDynamicBreadcrumbs({showRoot: true})
     )
+  )
+  .add(
+    'Set focus to something else after action',
+    () => (
+      renderDynamicBreadcrumbs({showRoot: true, setFocusToButtonAfterAction: true})
+    )
   );
 
 function render(props = {}) {
@@ -204,7 +211,12 @@ function renderMany(props = {}) {
   );
 }
 
-export function DynamicBreadcrumbs(props = {}) {
+interface DynamicBreadcrumbsProps<T> extends Omit<SpectrumBreadcrumbsProps<T>, 'children'>  {
+  setFocusToButtonAfterAction?: boolean
+}
+
+export function DynamicBreadcrumbs(props:DynamicBreadcrumbsProps<object> = {}) {
+  let {setFocusToButtonAfterAction = false, ...otherProps} = props;
   const defaultItems = [
     {key: 'Folder 1', children: 'The quick brown fox jumps over'},
     {key: 'Folder 2', children: 'My Documents'},
@@ -216,22 +228,28 @@ export function DynamicBreadcrumbs(props = {}) {
   ];
   let [items, setItems] = useState(defaultItems);
   let domRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let focusableRef = useRef<FocusableRefValue<HTMLButtonElement>>();
+
   return (<>
     <Breadcrumbs
       ref={domRef}
-      {...props}
+      {...otherProps}
       onAction={key => {
         // Update breadcrumbs based on activated item.
         setItems(items.slice(0, items.findIndex(item => key === item.key) + 1));
+        if (setFocusToButtonAfterAction && focusableRef.current) {
+          focusableRef.current.focus();
+        }
       }}>
       {items.map((item) => <Item {...item} />)}
     </Breadcrumbs>
     <p>
-      <Button variant="primary" onPress={() => setItems(defaultItems)}>Reset</Button>
+      <Button ref={focusableRef} variant="primary" onPress={() => setItems(defaultItems)}>Reset</Button>
     </p>
   </>);
 }
 
-function renderDynamicBreadcrumbs(props = {}) {
-  return <DynamicBreadcrumbs {...props} />;
+
+function renderDynamicBreadcrumbs(props:DynamicBreadcrumbsProps<object> = {}) {
+  return <DynamicBreadcrumbs {...props}  />;
 }

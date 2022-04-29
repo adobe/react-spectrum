@@ -12,7 +12,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
 import React, {Key, ReactElement, useCallback, useRef, useState} from 'react';
@@ -49,6 +49,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   let domRef = useDOMRef(ref);
   let listRef = useRef<HTMLUListElement>(null);
+  let menuRef = useRef<DOMRefValue<HTMLUListElement>>(null);
 
   let [visibleItems, setVisibleItems] = useValueEffect(childArray.length);
 
@@ -131,8 +132,30 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       }
     });
 
-    if (keySelectedFromMenu.current) {
-      // If the key selected from the menu is the new current item,
+    // Utility to evaluate whether focus has been lost to the document.body
+    // or is within the menu or Breadcrumbs list,
+    let isFocusWithinOrLost = () => {
+      if (document.activeElement === document.body) {
+        return true;
+      }
+
+      let currListRef: HTMLUListElement | null = listRef.current;
+      if (currListRef && currListRef.contains(document.activeElement)) {
+        return true;
+      }
+
+      let currMenuRef: DOMRefValue<HTMLUListElement> | null = menuRef.current;
+      if (currMenuRef && currMenuRef.UNSAFE_getDOMNode().contains(document.activeElement)) {
+        return true;
+      }
+
+      return false;
+    };
+
+    // If the key selected from the menu is the new current item,
+    // and the current focus has been lost to the document.body
+    // or is within the menu or Breadcrumbs list,
+    if (keySelectedFromMenu.current && isFocusWithinOrLost()) {
       // flag that the key was selected from the menu so that the
       // current item will focus itself.
       let selectedKey = childArray[childArray.length - 1].key ?? childArray.length - 1;
@@ -170,7 +193,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
             isDisabled={isDisabled}>
             <FolderBreadcrumb />
           </ActionButton>
-          <Menu selectionMode="single" selectedKeys={[selectedKey]} onAction={onMenuAction}>
+          <Menu selectionMode="single" selectedKeys={[selectedKey]} onAction={onMenuAction} ref={menuRef}>
             {childArray}
           </Menu>
         </MenuTrigger>
