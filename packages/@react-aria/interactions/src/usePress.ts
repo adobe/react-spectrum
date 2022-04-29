@@ -773,7 +773,7 @@ function shouldPreventDefaultKeyboard(target: Element) {
   return !((target.tagName === 'INPUT' || target.tagName === 'BUTTON') && (target as HTMLButtonElement | HTMLInputElement).type === 'submit');
 }
 
-export function isVirtualPointerEvent(event: PointerEvent) {
+function isVirtualPointerEvent(event: PointerEvent) {
   // If the pointer size is zero, then we assume it's from a screen reader.
   // Android TalkBack double tap will sometimes return a event with width and height of 1
   // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
