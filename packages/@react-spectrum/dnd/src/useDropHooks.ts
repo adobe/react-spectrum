@@ -1,4 +1,5 @@
 import {DropIndicatorAria, DropIndicatorProps, DroppableCollectionOptions, DroppableCollectionResult, DroppableItemOptions, DroppableItemResult, useDropIndicator, useDroppableCollection, useDroppableItem} from '@react-aria/dnd';
+import {DroppableCollectionProps} from '@react-types/shared';
 import {DroppableCollectionState, DroppableCollectionStateOptions, useDroppableCollectionState} from '@react-stately/dnd';
 import {RefObject, useMemo} from 'react';
 
@@ -9,9 +10,7 @@ export interface DropHooks {
     useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria
 }
 
-export type DropHookOptions = Omit<DroppableCollectionOptions, 'collection' | 'selectionManager' | 'keyboardDelegate' | 'getDropTargetFromPoint'>
-
-export function useDropHooks(options: DropHookOptions): DropHooks {
+export function useDropHooks(options: DroppableCollectionProps): DropHooks {
   return useMemo(() => ({
     useDroppableCollectionState(props: DroppableCollectionStateOptions) {
       let {
