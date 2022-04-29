@@ -10,6 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useList';
-// TODO: export useList, useListItem, and types for each
-// specifically the props passed in and the aria props returned
+export {useList} from './useList';
+export {useListItem} from './useListItem';
+export {useListSelectionCheckbox} from './useListSelectionCheckbox';
+
+export type {AriaListOptions, ListViewAria} from './useList';
+export type {AriaListItemOptions, ListItemAria} from './useListItem';
+export type {SelectionCheckboxProps, SelectionCheckboxAria} from './useListSelectionCheckbox';

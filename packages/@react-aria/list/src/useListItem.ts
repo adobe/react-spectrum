@@ -10,19 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-// import {AriaListViewProps} from '@react-types/list';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {getRowId, listMap, normalizeKey} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
-import {listMap, normalizeKey} from './utils';
 import type {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {Node as RSNode} from '@react-types/shared';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
-// TODO move to react-types?
-interface AriaListItemOptions {
+export interface AriaListItemOptions {
   /** An object representing the list item. Contains all the relevant information that makes up the list row. */
   node: RSNode<unknown>,
   /** Whether the list row is contained in a virtual scroller. */
@@ -33,9 +31,12 @@ interface AriaListItemOptions {
   isDisabled?: boolean
 }
 
-interface ListItemAria {
+export interface ListItemAria {
+  /** Props for the list row element. */
   rowProps: HTMLAttributes<HTMLElement>,
+  /** Props for the grid cell element within the list row. */
   gridCellProps: HTMLAttributes<HTMLElement>,
+  /** Whether the row is currently pressed. */
   isPressed: boolean
 }
 
@@ -55,7 +56,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
   } = props;
 
   let {direction} = useLocale();
-  // TODO: keyboardelegate unused?
+  // TODO: keyboardelegate unused? Revert the additional changes made in ListLayout if so
   let {id: listId, onAction} = listMap.get(state);
 
   let {itemProps, isPressed} = useSelectableItem({
@@ -94,7 +95,14 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
           e.stopPropagation();
           if (direction === 'rtl') {
             focusSafely(ref.current);
+          } else {
+            walker.currentNode = ref.current;
+            let lastElement = last(walker);
+            if (lastElement) {
+              focusSafely(lastElement);
+            }
           }
+          // todo may have to handle wrapping, check code path
         }
         break;
       }
@@ -112,6 +120,12 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
           e.stopPropagation();
           if (direction === 'ltr') {
             focusSafely(ref.current);
+          } else {
+            walker.currentNode = ref.current;
+            let lastElement = last(walker);
+            if (lastElement) {
+              focusSafely(lastElement);
+            }
           }
         }
         break;
@@ -155,7 +169,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     onFocus,
     'aria-label': node.textValue,
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? state.selectionManager.isSelected(node.key) : undefined,
-    id: `${listId}-${normalizeKey(node.key)}`
+    id: getRowId(state, node.key)
   });
 
   if (isVirtualized) {
@@ -172,4 +186,16 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     gridCellProps,
     isPressed
   };
+}
+
+function last(walker: TreeWalker) {
+  let next: HTMLElement;
+  let last: HTMLElement;
+  do {
+    last = walker.lastChild() as HTMLElement;
+    if (last) {
+      next = last;
+    }
+  } while (last);
+  return next;
 }

@@ -24,7 +24,7 @@ import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useDescription} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 
-interface AriaListOptions<T> extends Omit<AriaListProps<T>, 'children'> {
+export interface AriaListOptions<T> extends Omit<AriaListProps<T>, 'children'> {
   /** Whether the list uses virtual scrolling. */
   isVirtualized?: boolean,
   /**
@@ -44,7 +44,7 @@ interface AriaListOptions<T> extends Omit<AriaListProps<T>, 'children'> {
 }
 
 // TODO: maybe name it listProps instead of gridProps?
-interface ListViewAria {
+export interface ListViewAria {
   /** Props for the grid element. */
   gridProps: HTMLAttributes<HTMLElement>
 }
