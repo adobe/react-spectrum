@@ -21,7 +21,11 @@ interface GlobalListeners {
 }
 
 export function useGlobalListeners(): GlobalListeners {
-  let globalListeners = useRef(new Map());
+  let globalListeners = useRef<Map<any, any>>();
+  if (!globalListeners.current) {
+    globalListeners.current = new Map();
+  }
+
   let addGlobalListener = useCallback((eventTarget, type, listener, options) => {
     // Make sure we remove the listener after it is called with the `once` option.
     let fn = options?.once ? (...args) => {
