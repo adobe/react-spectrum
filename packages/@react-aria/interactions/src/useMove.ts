@@ -12,12 +12,17 @@
 
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
 import {MoveEvents, PointerType} from '@react-types/shared';
-import React, {HTMLAttributes, useMemo, useRef} from 'react';
+import React, {useMemo, useRef} from 'react';
 import {useGlobalListeners} from '@react-aria/utils';
 
 interface MoveResult {
   /** Props to spread on the target element. */
-  moveProps: HTMLAttributes<HTMLElement>
+  moveProps: {
+    onMouseDown?: React.MouseEventHandler<HTMLElement>,
+    onPointerDown?:React.PointerEventHandler<HTMLElement>,
+    onTouchStart: React.TouchEventHandler<HTMLElement>,
+    onKeyDown: React.KeyboardEventHandler<HTMLElement>
+  }
 }
 
 interface EventBase {
@@ -44,7 +49,7 @@ export function useMove(props: MoveEvents): MoveResult {
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let moveProps = useMemo(() => {
-    let moveProps: HTMLAttributes<HTMLElement> = {};
+    let moveProps = {} as MoveResult['moveProps'];
 
     let start = () => {
       disableTextSelection();
@@ -66,7 +71,7 @@ export function useMove(props: MoveEvents): MoveResult {
           altKey: originalEvent.altKey
         });
       }
-      onMove({
+      onMove?.({
         type: 'move',
         pointerType,
         deltaX: deltaX,
@@ -223,7 +228,7 @@ export function useMove(props: MoveEvents): MoveResult {
     };
 
     return moveProps;
-  }, [state, onMoveStart, onMove, onMoveEnd, addGlobalListener, removeGlobalListener]);
+  }, [onMoveStart, onMove, onMoveEnd, addGlobalListener, removeGlobalListener]);
 
   return {moveProps};
 }
