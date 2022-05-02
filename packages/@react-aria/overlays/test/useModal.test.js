@@ -21,7 +21,7 @@ function ModalDOM(props) {
 
 function Modal(props) {
   return (
-    <OverlayContainer portalContainer={props.container} data-testid={props.providerId || 'modal-provider'}>
+    <OverlayContainer portalContainer={props.container} data-testid={props.providerId || 'modal-provider'} isOpen={props.isOpen}>
       <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
     </OverlayContainer>
   );
@@ -32,7 +32,7 @@ function Example(props) {
     <OverlayProvider data-testid="root-provider">
       This is the root provider.
       {props.showModal &&
-        <Modal container={props.container}>{props.children}</Modal>
+        <Modal container={props.container} isOpen={props.isOpen}>{props.children}</Modal>
       }
     </OverlayProvider>
   );
@@ -88,6 +88,17 @@ describe('useModal', function () {
     res.rerender(<Example />);
     expect(rootProvider).not.toHaveAttribute('aria-hidden');
   });
+
+  it('will render when document.body is not available and is open by default', () => {
+    let res = render(
+      <div id="defaultContainer" data-testid="default-container">
+        <Example isOpen={true} />
+      </div>
+    )
+    let rootProvider = res.getByTestId('root-provider')
+
+    expect(rootProvider).to.haveAttribute('aria-hidden')
+  })
 
   it('can specify a different container from the default document.body', function () {
     let res = render(
