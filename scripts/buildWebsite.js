@@ -47,7 +47,9 @@ async function build() {
           name.startsWith('@adobe')
         )
     ),
-    dependencies: {},
+    dependencies: {
+      '@adobe/react-spectrum': 'latest'
+    },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
