@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Výber farby",
-  "twoDimensionalSlider": "2D jazdec",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Výber farieb",
+  "twoDimensionalSlider": "2D jazdec"
 }
