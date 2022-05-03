@@ -20,7 +20,7 @@ describe('ListView SSR', function () {
       import {ListView, Item} from '../';
 
       <Provider theme={theme}>
-        <ListView>
+        <ListView aria-label="List view">
           <Item>One</Item>
           <Item>Two</Item>
           <Item>Three</Item>
