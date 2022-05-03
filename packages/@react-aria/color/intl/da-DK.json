@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Farvevælger",
-  "twoDimensionalSlider": "2D-skyder",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Farvevælger",
+  "twoDimensionalSlider": "2D-skyder"
 }

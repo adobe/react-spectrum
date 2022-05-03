@@ -8,10 +8,11 @@
   "minute": "dakika",
   "month": "ay",
   "second": "saniye",
+  "selectedDateDescription": "Seçilen Tarih: {date}",
+  "selectedRangeDescription": "Seçilen Aralık: {startDate} - {endDate}",
+  "selectedTimeDescription": "Seçilen Zaman: {time}",
   "startDate": "Başlangıç Tarihi",
-  "year": "yıl",
-  "weekday": "haftanın günü",
   "timeZoneName": "saat dilimi",
-  "selectedDateDescription": "Seçili Tarih: {date}",
-  "selectedRangeDescription": "Seçili Aralık: {startDate} - {endDate}"
+  "weekday": "haftanın günü",
+  "year": "yıl"
 }

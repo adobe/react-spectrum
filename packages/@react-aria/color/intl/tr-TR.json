@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Renk seçici",
-  "twoDimensionalSlider": "2B slayt gösterisi",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Renk Seçici",
+  "twoDimensionalSlider": "2D sürgü"
 }
