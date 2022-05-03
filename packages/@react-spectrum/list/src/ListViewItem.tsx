@@ -46,7 +46,6 @@ export function ListViewItem(props: ListViewItemProps) {
     dropHooks,
     hasActions
   } = props;
-  let cellNode = [...item.childNodes][0];
   let {state, dragState, dropState, isListDraggable, isListDroppable, layout} = useContext(ListViewContext);
 
   let {direction} = useLocale();

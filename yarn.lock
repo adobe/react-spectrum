@@ -3301,6 +3301,33 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
+"@react-aria/dnd@3.0.0-alpha.7":
+  version "3.0.0-alpha.7"
+  resolved "https://registry.yarnpkg.com/@react-aria/dnd/-/dnd-3.0.0-alpha.7.tgz#fcd7b367a70351bd8cf4a5f6f76faa69acf8cf19"
+  integrity sha512-Aq0tCtzTqg/kZnfUQtl6ZpYtY3/7zEUlEu0EamFHZhtPkbQk3idZX5k9Ve+X8JSiiliXW8H9DntuBeFqCj+ifw==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
+    "@react-aria/i18n" "^3.3.8"
+    "@react-aria/interactions" "^3.8.3"
+    "@react-aria/live-announcer" "^3.0.5"
+    "@react-aria/overlays" "^3.8.1"
+    "@react-aria/utils" "^3.11.3"
+    "@react-aria/visually-hidden" "^3.2.7"
+    "@react-stately/dnd" "3.0.0-alpha.5"
+    "@react-stately/selection" "^3.9.3"
+    "@react-types/button" "^3.4.4"
+    "@react-types/shared" "^3.11.2"
+
+"@react-stately/dnd@3.0.0-alpha.5":
+  version "3.0.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/@react-stately/dnd/-/dnd-3.0.0-alpha.5.tgz#ffbb3ff7b40f3e7f8be7ee2b689e8ad37509a9ea"
+  integrity sha512-4KrKigoQwjscogS2k7F9z0lVF+OWKx4ANH/zUE0i3DMvNooSILM9vaZMvpp6CKM7HFmDJgZ1lfxdlk0Au/K5uQ==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
+    "@react-stately/selection" "^3.9.3"
+    "@react-stately/utils" "^3.4.1"
+    "@react-types/shared" "^3.11.2"
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"
