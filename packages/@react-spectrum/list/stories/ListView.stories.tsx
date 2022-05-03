@@ -55,7 +55,7 @@ function renderEmptyState() {
 
 let decorator = (storyFn, context) => {
   let omittedStories = ['draggable rows', 'dynamic items + renderEmptyState'];
-  return omittedStories.some(omittedName => context.name.includes(omittedName)) ?
+  return  window.screen.width <= 700 || omittedStories.some(omittedName => context.name.includes(omittedName)) ?
   storyFn() :
   (
     <>

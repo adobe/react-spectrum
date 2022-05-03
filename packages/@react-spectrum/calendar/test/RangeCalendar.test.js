@@ -1083,7 +1083,7 @@ describe('RangeCalendar', () => {
           isDateUnavailable={isDateUnavailable} />
       );
 
-      let cell = getByRole('button', {name: 'Wednesday, May 4, 2022'});
+      let cell = getByRole('button', {name: /Wednesday, May 4, 2022/});
       act(() => userEvent.click(cell));
 
       let prevButton = getByRole('button', {name: 'Previous'});
@@ -1106,7 +1106,7 @@ describe('RangeCalendar', () => {
           isDateUnavailable={isDateUnavailable} />
       );
 
-      let cell = getByRole('button', {name: 'Thursday, April 28, 2022'});
+      let cell = getByRole('button', {name: /Thursday, April 28, 2022/});
       act(() => userEvent.click(cell));
 
       let prevButton = getByRole('button', {name: 'Previous'});
@@ -1128,7 +1128,7 @@ describe('RangeCalendar', () => {
           isDateUnavailable={isDateUnavailable} />
       );
 
-      let cell = getByRole('button', {name: 'Thursday, April 28, 2022'});
+      let cell = getByRole('button', {name: /Thursday, April 28, 2022/});
       act(() => userEvent.click(cell));
 
       let prevButton = getByRole('button', {name: 'Previous'});
@@ -1144,7 +1144,7 @@ describe('RangeCalendar', () => {
       expect(cell).not.toHaveAttribute('aria-disabled');
       expect(cell).toHaveAttribute('tabindex', '0');
 
-      cell = getByRole('button', {name: 'Monday, May 2, 2022'});
+      cell = getByRole('button', {name: /Monday, May 2, 2022/});
       expect(cell).toHaveAttribute('aria-disabled', 'true');
     });
 

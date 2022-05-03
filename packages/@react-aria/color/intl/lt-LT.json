@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Spalvos parinkiklis",
-  "twoDimensionalSlider": "2D slankiklis",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Spalvų parinkiklis",
+  "twoDimensionalSlider": "2D slankiklis"
 }
