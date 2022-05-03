@@ -8,10 +8,11 @@
   "minute": "minuta",
   "month": "mjesec",
   "second": "sekunda",
-  "startDate": "Datum početka",
-  "year": "godina",
-  "weekday": "dan u tjednu",
-  "timeZoneName": "vremenska zona",
   "selectedDateDescription": "Odabrani datum: {date}",
-  "selectedRangeDescription": "Odabrani raspon: od {startDate} do {endDate}"
+  "selectedRangeDescription": "Odabrani raspon: {startDate} do {endDate}",
+  "selectedTimeDescription": "Odabrano vrijeme: {time}",
+  "startDate": "Datum početka",
+  "timeZoneName": "vremenska zona",
+  "weekday": "dan u tjednu",
+  "year": "godina"
 }
