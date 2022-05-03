@@ -91,9 +91,7 @@ describe('useModal', function () {
 
   it('will render when document.body is not available and is open by default', () => {
     let res = render(
-      <div id="defaultContainer" data-testid="default-container">
-        <Example isOpen={true} />
-      </div>
+      <Example isOpen={true} />
     )
     let rootProvider = res.getByTestId('root-provider')
 
