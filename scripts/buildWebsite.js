@@ -44,7 +44,8 @@ async function build() {
           name === 'patch-package' ||
           name.startsWith('@spectrum-css') ||
           name.startsWith('postcss') ||
-          name.startsWith('@adobe')
+          name.startsWith('@adobe') ||
+          name === 'sharp'
         )
     ),
     dependencies: {
