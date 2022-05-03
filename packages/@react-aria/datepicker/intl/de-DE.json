@@ -8,10 +8,11 @@
   "minute": "Minute",
   "month": "Monat",
   "second": "Sekunde",
-  "startDate": "Anfangsdatum",
-  "year": "Jahr",
-  "weekday": "Wochentag",
-  "timeZoneName": "Zeitzone",
   "selectedDateDescription": "Ausgewähltes Datum: {date}",
-  "selectedRangeDescription": "Bereich auswählen: {startDate} bis {endDate}"
+  "selectedRangeDescription": "Ausgewählter Bereich: {startDate} bis {endDate}",
+  "selectedTimeDescription": "Ausgewählte Zeit: {time}",
+  "startDate": "Anfangsdatum",
+  "timeZoneName": "Zeitzone",
+  "weekday": "Wochentag",
+  "year": "Jahr"
 }

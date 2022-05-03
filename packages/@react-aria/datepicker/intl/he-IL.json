@@ -8,10 +8,11 @@
   "minute": "דקה",
   "month": "חודש",
   "second": "שנייה",
+  "selectedDateDescription": "תאריך נבחר: {date}",
+  "selectedRangeDescription": "טווח נבחר: {startDate} עד {endDate}",
+  "selectedTimeDescription": "זמן נבחר: {time}",
   "startDate": "תאריך התחלה",
-  "year": "שנה",
-  "weekday": "יום בשבוע",
   "timeZoneName": "אזור זמן",
-  "selectedDateDescription": "התאריך שנבחר: {date}",
-  "selectedRangeDescription": "הטווח שנבחר: מ-{startDate} ועד {endDate}"
+  "weekday": "יום בשבוע",
+  "year": "שנה"
 }

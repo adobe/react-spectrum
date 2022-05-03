@@ -13,19 +13,19 @@
 import {AriaDatePickerProps, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState} from '@react-stately/datepicker';
+import {filterDOMProps, mergeProps, useDescription} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription} from '@react-aria/utils';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 // Allows this hook to also be used with TimeField
-interface DateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
+export interface AriaDateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
 
-interface DateFieldAria {
+export interface DateFieldAria {
    /** Props for the field's visible label element, if any. */
   labelProps: HTMLAttributes<HTMLElement>,
    /** Props for the field grouping element. */
@@ -56,7 +56,7 @@ export const focusManagerSymbol = '__focusManager_' + Date.now();
  * A date field allows users to enter and edit date and time values using a keyboard.
  * Each part of a date value is displayed in an individually editable segment.
  */
-export function useDateField<T extends DateValue>(props: DateFieldProps<T>, state: DateFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
+export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, state: DateFieldState, ref: RefObject<HTMLElement>): DateFieldAria {
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
@@ -118,6 +118,7 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
     autoFocusRef.current = false;
   }, [focusManager]);
 
+  let domProps = filterDOMProps(props);
   return {
     labelProps: {
       ...labelProps,
@@ -125,7 +126,7 @@ export function useDateField<T extends DateValue>(props: DateFieldProps<T>, stat
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(fieldDOMProps, groupProps, focusWithinProps),
+    fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps),
     descriptionProps,
     errorMessageProps
   };

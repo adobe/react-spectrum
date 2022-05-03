@@ -233,6 +233,36 @@ describe('DateRangePicker', function () {
       expect(segments[13].getAttribute('aria-label')).toBe('End Date AM/PM');
       expect(segments[13].getAttribute('aria-valuetext')).toBe('AM');
     });
+
+    it('should support focusing via a ref', function () {
+      let ref = React.createRef();
+      let {getAllByRole} = render(<DateRangePicker label="Date" ref={ref} />);
+      expect(ref.current).toHaveProperty('focus');
+
+      act(() => ref.current.focus());
+      expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+    });
+
+    it('should support autoFocus', function () {
+      let {getAllByRole} = render(<DateRangePicker label="Date" autoFocus />);
+      expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+    });
+
+    it('should pass through data attributes', function () {
+      let {getByTestId} = render(<DateRangePicker label="Date" data-testid="foo" />);
+      expect(getByTestId('foo')).toHaveAttribute('role', 'group');
+    });
+
+    it('should return the outer most DOM element from the ref', function () {
+      let ref = React.createRef();
+      render(<DateRangePicker label="Date" ref={ref} />);
+      expect(ref.current).toHaveProperty('UNSAFE_getDOMNode');
+
+      let wrapper = ref.current.UNSAFE_getDOMNode();
+      expect(wrapper).toBeInTheDocument();
+      expect(within(wrapper).getByText('Date')).toBeInTheDocument();
+      expect(within(wrapper).getAllByRole('spinbutton')[0]).toBeInTheDocument();
+    });
   });
 
   describe('calendar popover', function () {
@@ -257,7 +287,7 @@ describe('DateRangePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.filter(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected[0].children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+      expect(selected[0].children[0]).toHaveAttribute('aria-label', 'Selected Range: Sunday, February 3 to Monday, May 6, 2019, Sunday, February 3, 2019 selected');
 
       triggerPress(getByLabelText('Sunday, February 10, 2019 selected'));
       triggerPress(getByLabelText('Sunday, February 17, 2019'));
@@ -290,7 +320,7 @@ describe('DateRangePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+      expect(selected.children[0]).toHaveAttribute('aria-label', 'Selected Range: Sunday, February 3 to Monday, May 6, 2019, Sunday, February 3, 2019 selected');
 
       let startTimeField = getAllByLabelText('Start time')[0];
       expect(startTimeField).toHaveTextContent('8:45 AM');

@@ -13,6 +13,7 @@
 export * from './useId';
 export * from './chain';
 export * from './mergeProps';
+export * from './mergeRefs';
 export * from './filterDOMProps';
 export * from './focusWithoutScrolling';
 export * from './getOffset';

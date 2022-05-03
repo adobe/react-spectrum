@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarAria} from './types';
+import {CalendarAria, useCalendarBase} from './useCalendarBase';
 import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from '@react-stately/calendar';
-import {useCalendarBase} from './useCalendarBase';
 
 /**
  * Provides the behavior and accessibility implementation for a calendar component.
