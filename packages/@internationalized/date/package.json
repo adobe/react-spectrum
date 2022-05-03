@@ -1,6 +1,6 @@
 {
   "name": "@internationalized/date",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-rc.0",
   "description": "Internationalized calendar, date, and time manipulation utilities",
   "license": "Apache-2.0",
   "main": "dist/main.js",
