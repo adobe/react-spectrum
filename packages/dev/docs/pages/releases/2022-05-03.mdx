@@ -1,0 +1,41 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: 
+date: 2022-05-03
+---
+
+# May 3, 2022 Release
+
+## Fixes
+- Fix `useNumberField` to propagate name/placeholder props - [@MeowIng44](https://github.com/MeowIng44) - [PR](https://github.com/adobe/react-spectrum/pull/2884)
+- `useSelect` should call `onFocusChange` when focus is changed - [@lishichengyan](https://github.com/lishichengyan) - [PR](https://github.com/adobe/react-spectrum/pull/2970)
+- Adjust `Dialog` to better position footers, buttons, and headers - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/2820)
+- Prevent `focusedKey` from scrolling into view on click/press - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2725)
+- Deprecate `placeholder` prop on most form components - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/2966)
+- Manage focus when content changes using `Breadcrumbs`  - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/2749)
+- Add try-catch to `isRTL` and fallback to en-US - [@BartoszGamza](https://github.com/BartoszGamza) - [PR](https://github.com/adobe/react-spectrum/pull/3030)
+- Fix ts missing generic arg with `SelectAria`  in `useSelect` - [@fitiskin](https://github.com/fitiskin) - [PR](https://github.com/adobe/react-spectrum/pull/3069)
+
+## Documentation
+- Add Spectrum docs link for `ContextualHelp` - [@matthewdeutsch](https://github.com/matthewdeutsch) - [PR](https://github.com/adobe/react-spectrum/pull/2979)
+- Add `DatePicker` and `Calendar` docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2873)
+
+
+## Released packages
+
+```
+- @adobe/react-spectrum@3.17.0
+
+```
+
