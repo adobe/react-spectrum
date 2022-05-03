@@ -8,10 +8,11 @@
   "minute": "minutė",
   "month": "mėnuo",
   "second": "sekundė",
-  "startDate": "Pradžios data",
-  "year": "metai",
-  "weekday": "savaitės diena",
-  "timeZoneName": "laiko juosta",
   "selectedDateDescription": "Pasirinkta data: {date}",
-  "selectedRangeDescription": "Pasirinktas intervalas: nuo {startDate} iki {endDate}"
+  "selectedRangeDescription": "Pasirinktas intervalas: nuo {startDate} iki {endDate}",
+  "selectedTimeDescription": "Pasirinktas laikas: {time}",
+  "startDate": "Pradžios data",
+  "timeZoneName": "laiko juosta",
+  "weekday": "savaitės diena",
+  "year": "metai"
 }

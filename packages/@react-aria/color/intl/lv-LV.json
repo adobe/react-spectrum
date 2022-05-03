@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Krāsu izvēle",
-  "twoDimensionalSlider": "Plaknes slīdnis",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Krāsu atlasītājs",
+  "twoDimensionalSlider": "2D slīdnis"
 }
