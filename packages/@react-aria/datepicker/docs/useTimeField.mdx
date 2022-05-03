@@ -23,7 +23,6 @@ import tailwindExample from 'url:./TimeField-tailwind.png';
 ---
 category: Date and Time
 keywords: [input, form, field, date, time]
-after_version: 3.0.0
 ---
 
 # useTimeField
@@ -253,7 +252,7 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 
 ```tsx example
 import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@adobe/react-spectrum';
+import {useDateFormatter} from '@react-aria/i18n';
 
 function Example() {
   let [date, setDate] = React.useState(parseAbsoluteToLocal('2021-04-07T18:45:22Z'));
