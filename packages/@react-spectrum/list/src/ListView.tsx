@@ -95,11 +95,6 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   /** Sets what the ListView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
   /**
-   * The duration of animated layout changes, in milliseconds. Used by the Virtualizer.
-   * @default 0
-   */
-  transitionDuration?: number,
-  /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
@@ -117,7 +112,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     onLoadMore,
     loadingState,
     isQuiet,
-    transitionDuration = 0,
     onAction,
     dragHooks
   } = props;
@@ -226,7 +220,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         }
         layout={layout}
         collection={gridCollection}
-        transitionDuration={transitionDuration}>
+        transitionDuration={isLoading ? 160 : 220}>
         {(type, item) => {
           if (type === 'item') {
             return (
