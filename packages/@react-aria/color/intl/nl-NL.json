@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Kleurkiezer",
-  "twoDimensionalSlider": "2D-schuifregelaar",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Kleurkiezer",
+  "twoDimensionalSlider": "2D-schuifregelaar"
 }

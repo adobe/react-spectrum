@@ -8,10 +8,11 @@
   "minute": "minuut",
   "month": "maand",
   "second": "seconde",
-  "startDate": "Startdatum",
-  "year": "jaar",
-  "weekday": "dag van de week",
-  "timeZoneName": "tijdzone",
   "selectedDateDescription": "Geselecteerde datum: {date}",
-  "selectedRangeDescription": "Geselecteerd bereik: {startDate} t/m {endDate}"
+  "selectedRangeDescription": "Geselecteerd bereik: {startDate} tot {endDate}",
+  "selectedTimeDescription": "Geselecteerde tijd: {time}",
+  "startDate": "Startdatum",
+  "timeZoneName": "tijdzone",
+  "weekday": "dag van de week",
+  "year": "jaar"
 }

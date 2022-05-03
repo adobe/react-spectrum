@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Birač boja",
-  "twoDimensionalSlider": "2D клизач",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Birač boja",
+  "twoDimensionalSlider": "2D klizač"
 }

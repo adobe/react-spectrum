@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/calendar",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-rc.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,15 +18,15 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@internationalized/date": "3.0.0-alpha.4",
-    "@react-aria/i18n": "^3.3.8",
-    "@react-aria/interactions": "^3.8.3",
-    "@react-aria/live-announcer": "^3.0.5",
-    "@react-aria/utils": "^3.11.2",
-    "@react-stately/calendar": "3.0.0-alpha.4",
-    "@react-types/button": "^3.4.3",
-    "@react-types/calendar": "3.0.0-alpha.4",
-    "@react-types/shared": "^3.11.1"
+    "@internationalized/date": "3.0.0-rc.0",
+    "@react-aria/i18n": "^3.3.9",
+    "@react-aria/interactions": "^3.8.4",
+    "@react-aria/live-announcer": "^3.0.6",
+    "@react-aria/utils": "^3.12.0",
+    "@react-stately/calendar": "3.0.0-rc.0",
+    "@react-types/button": "^3.4.5",
+    "@react-types/calendar": "3.0.0-rc.0",
+    "@react-types/shared": "^3.12.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1",

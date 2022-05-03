@@ -8,10 +8,11 @@
   "minute": "minuta",
   "month": "měsíc",
   "second": "sekunda",
+  "selectedDateDescription": "Vybrané datum: {date}",
+  "selectedRangeDescription": "Vybrané období: {startDate} až {endDate}",
+  "selectedTimeDescription": "Vybraný čas: {time}",
   "startDate": "Počáteční datum",
-  "year": "rok",
-  "weekday": "den v týdnu",
   "timeZoneName": "časové pásmo",
-  "selectedDateDescription": "Zvolené datum: {date}",
-  "selectedRangeDescription": "Zvolený rozsah: {startDate} až {endDate}"
+  "weekday": "den v týdnu",
+  "year": "rok"
 }
