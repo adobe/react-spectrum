@@ -18,7 +18,7 @@ import type {DraggableItemResult} from '@react-aria/dnd';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
-import listStyles from './listview.css';
+import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
