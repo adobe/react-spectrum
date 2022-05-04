@@ -587,30 +587,30 @@ describe('ListView', function () {
     it('should select a row by pressing the Space key on a row', function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
-      let row = tree.getAllByRole('row')[1];
-      act(() => {row.focus();});
+      let row = tree.getAllByRole('row')[0];
+      userEvent.tab();
       expect(row).toHaveAttribute('aria-selected', 'false');
       fireEvent.keyDown(row, {key: ' '});
       fireEvent.keyUp(row, {key: ' '});
 
-      checkSelection(onSelectionChange, ['bar']);
+      checkSelection(onSelectionChange, ['foo']);
       expect(row).toHaveAttribute('aria-selected', 'true');
-      expect(announce).toHaveBeenLastCalledWith('Bar selected.');
+      expect(announce).toHaveBeenLastCalledWith('Foo selected.');
       expect(announce).toHaveBeenCalledTimes(1);
     });
 
     it('should select a row by pressing the Enter key on a row', function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
-      let row = tree.getAllByRole('row')[1];
-      act(() => {row.focus();});
+      let row = tree.getAllByRole('row')[0];
+      userEvent.tab();
       expect(row).toHaveAttribute('aria-selected', 'false');
       fireEvent.keyDown(row, {key: 'Enter'});
       fireEvent.keyUp(row, {key: 'Enter'});
 
-      checkSelection(onSelectionChange, ['bar']);
+      checkSelection(onSelectionChange, ['foo']);
       expect(row).toHaveAttribute('aria-selected', 'true');
-      expect(announce).toHaveBeenLastCalledWith('Bar selected.');
+      expect(announce).toHaveBeenLastCalledWith('Foo selected.');
       expect(announce).toHaveBeenCalledTimes(1);
     });
 

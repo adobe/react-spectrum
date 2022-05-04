@@ -97,7 +97,6 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
 
   let {styleProps} = useStyleProps(props);
   let {locale} = useLocale();
-
   let layout = useListLayout(state, props.density || 'regular');
   let provider = useProvider();
   let dragState: DraggableCollectionState;
