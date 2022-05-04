@@ -11,22 +11,7 @@ export interface DragHooks {
 export function useDragHooks(options: DraggableCollectionProps): DragHooks {
   return useMemo(() => ({
     useDraggableCollectionState(props: DraggableCollectionOptions) {
-      let {
-        collection,
-        selectionManager,
-        allowsDraggingItem,
-        getItems,
-        renderPreview
-      } = props;
-      
-      return useDraggableCollectionState({
-        collection,
-        selectionManager,
-        allowsDraggingItem,
-        getItems,
-        renderPreview,
-        ...options
-      });
+      return useDraggableCollectionState({...props, ...options});
     },
     useDraggableItem
   }), [options]);
