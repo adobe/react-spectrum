@@ -1341,20 +1341,20 @@ describe('ListView', function () {
 
       let rows = getAllByRole('row');
       let cellA = within(rows[0]).getByRole('gridcell');
-      triggerPress(cellA);
+      userEvent.click(cellA, {pointerType: 'mouse'});
       expect(document.activeElement).toBe(rows[0]);
       let dragHandle = within(cellA).getAllByRole('button')[0];
       // If the dragHandle has a style applied, it is visually hidden
       expect(dragHandle.style).toBeTruthy();
       expect(dragHandle.style.position).toBe('absolute');
 
-      fireEvent.pointerDown(rows[0], {button: 0, pointerId: 1});
+      fireEvent.pointerDown(rows[0], {pointerType: 'mouse', button: 0, pointerId: 1});
       dragHandle = within(cellA).getAllByRole('button')[0];
       expect(dragHandle.style).toBeTruthy();
       expect(dragHandle.style.position).toBe('absolute');
       fireEvent.pointerUp(rows[0], {button: 0, pointerId: 1});
 
-      fireEvent.pointerEnter(rows[0]);
+      fireEvent.pointerEnter(rows[0], {pointerType: 'mouse'});
       dragHandle = within(cellA).getAllByRole('button')[0];
       expect(dragHandle.style).toBeTruthy();
       expect(dragHandle.style.position).toBe('absolute');
