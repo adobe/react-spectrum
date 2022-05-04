@@ -248,7 +248,7 @@ describe('ListView', function () {
         let tree = renderList();
         let target = getRow(tree, 'Baz');
         let grid = tree.getByRole('grid');
-        act(() => grid.focus());
+        userEvent.tab();
         fireEvent.keyDown(grid, {key: 'B'});
         fireEvent.keyUp(grid, {key: 'Enter'});
         fireEvent.keyDown(grid, {key: 'A'});
@@ -263,7 +263,7 @@ describe('ListView', function () {
       it('should not move focus if no focusables present', function () {
         let tree = renderList();
         let start = getRow(tree, 'Foo');
-        act(() => start.focus());
+        userEvent.tab();
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(start);
       });
@@ -273,7 +273,7 @@ describe('ListView', function () {
           let tree = renderListWithFocusables();
           let start = getRow(tree, 'Foo');
           let focusables = within(start).getAllByRole('button');
-          act(() => start.focus());
+          userEvent.tab();
           moveFocus('ArrowRight');
           expect(document.activeElement).toBe(focusables[0]);
           moveFocus('ArrowRight');
@@ -302,7 +302,7 @@ describe('ListView', function () {
       it('should not move focus if no focusables present', function () {
         let tree = renderList();
         let start = getRow(tree, 'Foo');
-        act(() => start.focus());
+        userEvent.tab();
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(start);
       });
@@ -312,7 +312,7 @@ describe('ListView', function () {
           let tree = renderListWithFocusables();
           let focusables = within(getRow(tree, 'Foo')).getAllByRole('button');
           let start = getRow(tree, 'Foo');
-          act(() => start.focus());
+          userEvent.tab();
           moveFocus('ArrowLeft');
           expect(document.activeElement).toBe(focusables[1]);
           moveFocus('ArrowLeft');
@@ -341,25 +341,25 @@ describe('ListView', function () {
       it('should not wrap focus', function () {
         let tree = renderListWithFocusables();
         let start = getRow(tree, 'Foo');
-        act(() => start.focus());
+        userEvent.tab();
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(start);
       });
 
       it('should move focus to above row', function () {
-        let tree = renderListWithFocusables();
+        let tree = renderListWithFocusables({selectionMode: 'single'});
         let start = getRow(tree, 'Bar');
         let end = getRow(tree, 'Foo');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(end);
       });
 
       it('should allow focus on disabled rows', function () {
-        let tree = renderListWithFocusables({disabledKeys: ['foo']});
+        let tree = renderListWithFocusables({disabledKeys: ['foo'], selectionMode: 'single'});
         let start = getRow(tree, 'Bar');
         let end = getRow(tree, 'Foo');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(end);
       });
@@ -367,27 +367,27 @@ describe('ListView', function () {
 
     describe('ArrowDown', function () {
       it('should not wrap focus', function () {
-        let tree = renderListWithFocusables();
+        let tree = renderListWithFocusables({selectionMode: 'single'});
         let start = getRow(tree, 'Baz');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(start);
       });
 
       it('should move focus to below row', function () {
-        let tree = renderListWithFocusables();
+        let tree = renderListWithFocusables({selectionMode: 'single'});
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Bar');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(end);
       });
 
       it('should allow focus on disabled rows', function () {
-        let tree = renderListWithFocusables({disabledKeys: ['bar']});
+        let tree = renderListWithFocusables({disabledKeys: ['bar'], selectionMode: 'single'});
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Bar');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(end);
       });
@@ -395,9 +395,9 @@ describe('ListView', function () {
 
     describe('PageUp', function () {
       it('should move focus to a row a page above when focus starts on a row', function () {
-        let tree = renderListWithFocusables({items: manyItems});
+        let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
         let start = getRow(tree, 'Foo 25');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('PageUp');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
       });
@@ -415,9 +415,8 @@ describe('ListView', function () {
 
     describe('PageDown', function () {
       it('should move focus to a row a page below when focus starts on a row', function () {
-        let tree = renderListWithFocusables({items: manyItems});
-        let start = getRow(tree, 'Foo 1');
-        act(() => start.focus());
+        let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
+        userEvent.tab();
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 25'));
         moveFocus('PageDown');
@@ -439,9 +438,9 @@ describe('ListView', function () {
 
     describe('Home', function () {
       it('should move focus to the first row when focus starts on a row', function () {
-        let tree = renderListWithFocusables({items: manyItems});
+        let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
         let start = getRow(tree, 'Foo 15');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('Home');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
       });
@@ -460,8 +459,7 @@ describe('ListView', function () {
     describe('End', function () {
       it('should move focus to the last row when focus starts on a row', function () {
         let tree = renderListWithFocusables({items: manyItems});
-        let start = getRow(tree, 'Foo 1');
-        act(() => start.focus());
+        userEvent.tab();
         moveFocus('End');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 100'));
       });
@@ -1063,7 +1061,7 @@ describe('ListView', function () {
         expect(cell).toHaveTextContent('File a');
         expect(row).toHaveAttribute('draggable', 'true');
 
-        act(() => cell.focus());
+        userEvent.tab();
         let draghandle = within(cell).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
         expect(draghandle).toHaveAttribute('draggable', 'true');
@@ -1121,7 +1119,7 @@ describe('ListView', function () {
         expect(cellD).toHaveTextContent('File d');
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
-        act(() => cellA.focus());
+        userEvent.tab();
         let draghandle = within(cellA).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
 
@@ -1209,26 +1207,32 @@ describe('ListView', function () {
 
     it('should only display the drag handle on keyboard focus for dragggable items', function () {
       let {getAllByRole} = render(
-        <DraggableListView />
+        <DraggableListView listViewProps={{selectionMode: 'single'}} />
       );
 
       let rows = getAllByRole('row');
       let cellA = within(rows[0]).getByRole('gridcell');
+      triggerPress(cellA);
+      expect(document.activeElement).toBe(rows[0]);
       let dragHandle = within(cellA).getAllByRole('button')[0];
       // If the dragHandle has a style applied, it is visually hidden
       expect(dragHandle.style).toBeTruthy();
+      expect(dragHandle.style.position).toBe('absolute');
 
       fireEvent.pointerDown(rows[0], {button: 0, pointerId: 1});
       dragHandle = within(cellA).getAllByRole('button')[0];
       expect(dragHandle.style).toBeTruthy();
+      expect(dragHandle.style.position).toBe('absolute');
       fireEvent.pointerUp(rows[0], {button: 0, pointerId: 1});
 
       fireEvent.pointerEnter(rows[0]);
       dragHandle = within(cellA).getAllByRole('button')[0];
       expect(dragHandle.style).toBeTruthy();
+      expect(dragHandle.style.position).toBe('absolute');
 
       // If dragHandle doesn't have a position applied, it isn't visually hidden
-      act(() => rows[0].focus());
+      fireEvent.keyDown(rows[0], {key: 'Enter'});
+      fireEvent.keyUp(rows[0], {key: 'Enter'});
       dragHandle = within(cellA).getAllByRole('button')[0];
       expect(dragHandle.style.position).toBe('');
     });
@@ -1255,7 +1259,7 @@ describe('ListView', function () {
       let cellA = within(rows[0]).getByRole('gridcell');
       let cellB = within(rows[1]).getByRole('gridcell');
 
-      act(() => cellA.focus());
+      userEvent.tab();
       expect(hasDragHandle(cellA)).toBeFalsy();
       moveFocus('ArrowDown');
       expect(hasDragHandle(cellB)).toBeFalsy();

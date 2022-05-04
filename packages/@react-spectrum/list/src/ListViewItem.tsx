@@ -50,7 +50,7 @@ export function ListViewItem(props) {
   let {pressProps, isPressed} = usePress({isDisabled});
 
   // We only make use of useGridCell here to allow for keyboard navigation to the focusable children of the row.
-  // The actual grid cell of the ListView is intert since we don't want to ever focus it to decrease screenreader
+  // The actual grid cell of the ListView is inert since we don't want to ever focus it to decrease screenreader
   // verbosity, so we pretend the row node is the cell for interaction purposes. useGridRow is never used since
   // it would conflict with useGridCell if applied to the same node.
   let {gridCellProps} = useGridCell({
