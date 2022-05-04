@@ -31,7 +31,7 @@ import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 import intlMessages from '../intl/*.json';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
-import listStyles from './listview.css';
+import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
