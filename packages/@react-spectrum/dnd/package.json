@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/dnd",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/dnd": "3.0.0-alpha.7",
-    "@react-stately/dnd": "3.0.0-alpha.5"
+    "@react-aria/dnd": "3.0.0-alpha.8",
+    "@react-stately/dnd": "3.0.0-alpha.6"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
