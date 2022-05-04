@@ -14,10 +14,10 @@ import {DroppableCollectionState, DroppableCollectionStateOptions, useDroppableC
 import {RefObject, useMemo} from 'react';
 
 export interface DropHooks {
-    useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState,
-    useDroppableCollection(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableCollectionResult,
-    useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult,
-    useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria
+  useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState,
+  useDroppableCollection(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableCollectionResult,
+  useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult,
+  useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria
 }
 
 export function useDropHooks(options: DroppableCollectionProps): DropHooks {
