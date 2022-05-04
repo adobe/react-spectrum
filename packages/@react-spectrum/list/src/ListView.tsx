@@ -14,6 +14,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import type {DraggableCollectionState} from '@react-stately/dnd';
 import {DragPreview} from './DragPreview';
+import {filterDOMProps} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from '@react-stately/layout';
@@ -78,7 +79,8 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
     loadingState,
     isQuiet,
     onAction,
-    dragHooks
+    dragHooks,
+    ...otherProps
   } = props;
   let isListDraggable = !!dragHooks;
   let dragHooksProvided = useRef(isListDraggable);
@@ -124,6 +126,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
   return (
     <ListViewContext.Provider value={{state, dragState, isListDraggable, layout}}>
       <Virtualizer
+        {...filterDOMProps(otherProps)}
         {...gridProps}
         {...styleProps}
         isLoading={isLoading}

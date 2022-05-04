@@ -268,7 +268,7 @@ describe('ListView', function () {
         let tree = renderList();
         let target = getRow(tree, 'Baz');
         let grid = tree.getByRole('grid');
-        act(() => grid.focus());
+        userEvent.tab();
         fireEvent.keyDown(grid, {key: 'B'});
         fireEvent.keyUp(grid, {key: 'Enter'});
         fireEvent.keyDown(grid, {key: 'A'});
@@ -283,7 +283,7 @@ describe('ListView', function () {
       it('should not move focus if no focusables present', function () {
         let tree = renderList();
         let start = getRow(tree, 'Foo');
-        act(() => start.focus());
+        userEvent.tab();
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(start);
       });
@@ -293,7 +293,7 @@ describe('ListView', function () {
           let tree = renderListWithFocusables();
           let start = getRow(tree, 'Foo');
           let focusables = within(start).getAllByRole('button');
-          act(() => start.focus());
+          userEvent.tab();
           moveFocus('ArrowRight');
           expect(document.activeElement).toBe(focusables[0]);
           moveFocus('ArrowRight');
@@ -322,7 +322,7 @@ describe('ListView', function () {
       it('should not move focus if no focusables present', function () {
         let tree = renderList();
         let start = getRow(tree, 'Foo');
-        act(() => start.focus());
+        userEvent.tab();
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(start);
       });
@@ -332,7 +332,7 @@ describe('ListView', function () {
           let tree = renderListWithFocusables();
           let focusables = within(getRow(tree, 'Foo')).getAllByRole('button');
           let start = getRow(tree, 'Foo');
-          act(() => start.focus());
+          userEvent.tab();
           moveFocus('ArrowLeft');
           expect(document.activeElement).toBe(focusables[1]);
           moveFocus('ArrowLeft');
@@ -361,25 +361,25 @@ describe('ListView', function () {
       it('should not wrap focus', function () {
         let tree = renderListWithFocusables();
         let start = getRow(tree, 'Foo');
-        act(() => start.focus());
+        userEvent.tab();
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(start);
       });
 
       it('should move focus to above row', function () {
-        let tree = renderListWithFocusables();
+        let tree = renderListWithFocusables({selectionMode: 'single'});
         let start = getRow(tree, 'Bar');
         let end = getRow(tree, 'Foo');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(end);
       });
 
       it('should allow focus on disabled rows', function () {
-        let tree = renderListWithFocusables({disabledKeys: ['foo']});
+        let tree = renderListWithFocusables({disabledKeys: ['foo'], selectionMode: 'single'});
         let start = getRow(tree, 'Bar');
         let end = getRow(tree, 'Foo');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(end);
       });
@@ -387,27 +387,27 @@ describe('ListView', function () {
 
     describe('ArrowDown', function () {
       it('should not wrap focus', function () {
-        let tree = renderListWithFocusables();
+        let tree = renderListWithFocusables({selectionMode: 'single'});
         let start = getRow(tree, 'Baz');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(start);
       });
 
       it('should move focus to below row', function () {
-        let tree = renderListWithFocusables();
+        let tree = renderListWithFocusables({selectionMode: 'single'});
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Bar');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(end);
       });
 
       it('should allow focus on disabled rows', function () {
-        let tree = renderListWithFocusables({disabledKeys: ['bar']});
+        let tree = renderListWithFocusables({disabledKeys: ['bar'], selectionMode: 'single'});
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Bar');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(end);
       });
@@ -415,9 +415,9 @@ describe('ListView', function () {
 
     describe('PageUp', function () {
       it('should move focus to a row a page above when focus starts on a row', function () {
-        let tree = renderListWithFocusables({items: manyItems});
+        let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
         let start = getRow(tree, 'Foo 25');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('PageUp');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
       });
@@ -435,9 +435,8 @@ describe('ListView', function () {
 
     describe('PageDown', function () {
       it('should move focus to a row a page below when focus starts on a row', function () {
-        let tree = renderListWithFocusables({items: manyItems});
-        let start = getRow(tree, 'Foo 1');
-        act(() => start.focus());
+        let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
+        userEvent.tab();
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 25'));
         moveFocus('PageDown');
@@ -459,9 +458,9 @@ describe('ListView', function () {
 
     describe('Home', function () {
       it('should move focus to the first row when focus starts on a row', function () {
-        let tree = renderListWithFocusables({items: manyItems});
+        let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
         let start = getRow(tree, 'Foo 15');
-        act(() => start.focus());
+        triggerPress(start);
         moveFocus('Home');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
       });
@@ -480,8 +479,7 @@ describe('ListView', function () {
     describe('End', function () {
       it('should move focus to the last row when focus starts on a row', function () {
         let tree = renderListWithFocusables({items: manyItems});
-        let start = getRow(tree, 'Foo 1');
-        act(() => start.focus());
+        userEvent.tab();
         moveFocus('End');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 100'));
       });
@@ -530,6 +528,17 @@ describe('ListView', function () {
     }
     let {getByText} = render(<ListView aria-label="List" renderEmptyState={renderEmptyState} />);
     expect(getByText('No results')).toBeTruthy();
+  });
+
+  it('supports custom data attributes', () => {
+    let {getByRole} = render(
+      <ListView aria-label="List" data-testid="test">
+        <Item>Foo</Item>
+        <Item>Bar</Item>
+      </ListView>
+    );
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-testid', 'test');
   });
 
   describe('selection', function () {
@@ -1155,12 +1164,12 @@ describe('ListView', function () {
         let row = getAllByRole('row')[0];
         expect(row).toHaveAttribute('draggable', 'true');
         let cell = within(row).getByRole('gridcell');
-        expect(cell).toHaveTextContent('File a');
+        expect(cell).toHaveTextContent('Adobe Photoshop');
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cell, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'File a')]);
+        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'Adobe Photoshop')]);
 
         act(() => jest.runAllTimers());
 
@@ -1200,7 +1209,7 @@ describe('ListView', function () {
           ]
         });
 
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
 
         fireEvent.pointerUp(cell, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
@@ -1230,29 +1239,29 @@ describe('ListView', function () {
         expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['a', 'b', 'c', 'd']));
 
         let cellA = within(rows[0]).getByRole('gridcell');
-        expect(cellA).toHaveTextContent('File a');
+        expect(cellA).toHaveTextContent('Adobe Photoshop');
         expect(rows[0]).toHaveAttribute('draggable', 'true');
 
         let cellB = within(rows[1]).getByRole('gridcell');
-        expect(cellB).toHaveTextContent('File b');
+        expect(cellB).toHaveTextContent('Adobe XD');
         expect(rows[1]).toHaveAttribute('draggable', 'true');
 
         let cellC = within(rows[2]).getByRole('gridcell');
-        expect(cellC).toHaveTextContent('Folder c');
+        expect(cellC).toHaveTextContent('Documents');
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let cellD = within(rows[3]).getByRole('gridcell');
-        expect(cellD).toHaveTextContent('File d');
+        expect(cellD).toHaveTextContent('Adobe InDesign');
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cellA, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([
-          new DataTransferItem('text/plain', 'File a\nFile b\nFile d'),
+          new DataTransferItem('text/plain', 'Adobe Photoshop\nAdobe XD\nAdobe InDesign'),
           new DataTransferItem(
             CUSTOM_DRAG_TYPE,
-            JSON.stringify([{'text/plain': 'File a'}, {'text/plain': 'File b'}, {'text/plain': 'File d'}]
+            JSON.stringify([{'text/plain': 'Adobe Photoshop'}, {'text/plain': 'Adobe XD'}, {'text/plain': 'Adobe InDesign'}]
           ))
         ]);
 
@@ -1281,11 +1290,11 @@ describe('ListView', function () {
         act(() => jest.runAllTimers());
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // onDrop should only have 3 items, Folder c shouldn't be included
+        // onDrop should only have 3 items, Documents shouldn't be included
         expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
-        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('File b');
-        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('File d');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Adobe XD');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Adobe InDesign');
 
         fireEvent.pointerUp(cellA, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
@@ -1306,7 +1315,7 @@ describe('ListView', function () {
 
         let row = getAllByRole('row')[0];
         let cell = within(row).getByRole('gridcell');
-        expect(cell).toHaveTextContent('File a');
+        expect(cell).toHaveTextContent('Adobe Photoshop');
         expect(row).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
@@ -1335,7 +1344,7 @@ describe('ListView', function () {
         expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['c', 'd']));
 
         let cellC = within(rows[2]).getByRole('gridcell');
-        expect(cellC).toHaveTextContent('Folder c');
+        expect(cellC).toHaveTextContent('Documents');
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
@@ -1360,10 +1369,10 @@ describe('ListView', function () {
         let droppable = getByText('Drop here');
         let row = getAllByRole('row')[0];
         let cell = within(row).getByRole('gridcell');
-        expect(cell).toHaveTextContent('File a');
+        expect(cell).toHaveTextContent('Adobe Photoshop');
         expect(row).toHaveAttribute('draggable', 'true');
 
-        act(() => cell.focus());
+        userEvent.tab();
         let draghandle = within(cell).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
         expect(draghandle).toHaveAttribute('draggable', 'true');
@@ -1385,7 +1394,7 @@ describe('ListView', function () {
         fireEvent.keyUp(droppable, {key: 'Enter'});
 
         expect(onDrop).toHaveBeenCalledTimes(1);
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
 
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
@@ -1406,22 +1415,22 @@ describe('ListView', function () {
         let rows = getAllByRole('row');
 
         let cellA = within(rows[0]).getByRole('gridcell');
-        expect(cellA).toHaveTextContent('File a');
+        expect(cellA).toHaveTextContent('Adobe Photoshop');
         expect(rows[0]).toHaveAttribute('draggable', 'true');
 
         let cellB = within(rows[1]).getByRole('gridcell');
-        expect(cellB).toHaveTextContent('File b');
+        expect(cellB).toHaveTextContent('Adobe XD');
         expect(rows[1]).toHaveAttribute('draggable', 'true');
 
         let cellC = within(rows[2]).getByRole('gridcell');
-        expect(cellC).toHaveTextContent('Folder c');
+        expect(cellC).toHaveTextContent('Documents');
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let cellD = within(rows[3]).getByRole('gridcell');
-        expect(cellD).toHaveTextContent('File d');
+        expect(cellD).toHaveTextContent('Adobe InDesign');
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
-        act(() => cellA.focus());
+        userEvent.tab();
         let draghandle = within(cellA).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
 
@@ -1443,11 +1452,11 @@ describe('ListView', function () {
 
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // onDrop should only have 3 items, Folder c shouldn't be included
+        // onDrop should only have 3 items, Documents shouldn't be included
         expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('File a');
-        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('File b');
-        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('File d');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Adobe XD');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Adobe InDesign');
 
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
@@ -1509,26 +1518,32 @@ describe('ListView', function () {
 
     it('should only display the drag handle on keyboard focus for dragggable items', function () {
       let {getAllByRole} = render(
-        <DraggableListView />
+        <DraggableListView listViewProps={{selectionMode: 'single'}} />
       );
 
       let rows = getAllByRole('row');
       let cellA = within(rows[0]).getByRole('gridcell');
+      triggerPress(cellA);
+      expect(document.activeElement).toBe(rows[0]);
       let dragHandle = within(cellA).getAllByRole('button')[0];
       // If the dragHandle has a style applied, it is visually hidden
       expect(dragHandle.style).toBeTruthy();
+      expect(dragHandle.style.position).toBe('absolute');
 
       fireEvent.pointerDown(rows[0], {button: 0, pointerId: 1});
       dragHandle = within(cellA).getAllByRole('button')[0];
       expect(dragHandle.style).toBeTruthy();
+      expect(dragHandle.style.position).toBe('absolute');
       fireEvent.pointerUp(rows[0], {button: 0, pointerId: 1});
 
       fireEvent.pointerEnter(rows[0]);
       dragHandle = within(cellA).getAllByRole('button')[0];
       expect(dragHandle.style).toBeTruthy();
+      expect(dragHandle.style.position).toBe('absolute');
 
       // If dragHandle doesn't have a position applied, it isn't visually hidden
-      act(() => rows[0].focus());
+      fireEvent.keyDown(rows[0], {key: 'Enter'});
+      fireEvent.keyUp(rows[0], {key: 'Enter'});
       dragHandle = within(cellA).getAllByRole('button')[0];
       expect(dragHandle.style.position).toBe('');
     });
@@ -1555,7 +1570,7 @@ describe('ListView', function () {
       let cellA = within(rows[0]).getByRole('gridcell');
       let cellB = within(rows[1]).getByRole('gridcell');
 
-      act(() => cellA.focus());
+      userEvent.tab();
       expect(hasDragHandle(cellA)).toBeFalsy();
       moveFocus('ArrowDown');
       expect(hasDragHandle(cellB)).toBeFalsy();
@@ -1627,16 +1642,16 @@ describe('ListView', function () {
         expect(rows[3]).toHaveAttribute('draggable', 'true');
         let cellD = within(rows[3]).getByRole('gridcell');
         let dragButtonD = within(cellD).getAllByRole('button')[0];
-        expect(dragButtonD).toHaveAttribute('aria-label', 'Drag File d');
+        expect(dragButtonD).toHaveAttribute('aria-label', 'Drag Adobe InDesign');
 
-        // After selecting row 4, the aria-label should reflect 3 selected items rather than just "Drag File D"
+        // After selecting row 4, the aria-label should reflect 3 selected items rather than just "Drag Adobe InDesign"
         act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
         expect(dragButtonA).toHaveAttribute('aria-label', 'Drag 3 selected items');
         expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 3 selected items');
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 3 selected items');
 
         act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
-        expect(dragButtonA).toHaveAttribute('aria-label', 'Drag File a');
+        expect(dragButtonA).toHaveAttribute('aria-label', 'Drag Adobe Photoshop');
         expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 2 selected items');
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 2 selected items');
       });

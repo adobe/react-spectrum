@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Värinvalitsin",
-  "twoDimensionalSlider": "2D-liukusäädin",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Värimuokkain",
+  "twoDimensionalSlider": "2D-liukusäädin"
 }

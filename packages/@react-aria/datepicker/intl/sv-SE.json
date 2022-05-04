@@ -8,10 +8,11 @@
   "minute": "minut",
   "month": "månad",
   "second": "sekund",
-  "startDate": "Startdatum",
-  "year": "år",
-  "weekday": "veckodag",
-  "timeZoneName": "tidszon",
   "selectedDateDescription": "Valt datum: {date}",
-  "selectedRangeDescription": "Valt intervall: {startDate} till {endDate}"
+  "selectedRangeDescription": "Valt intervall: {startDate} till {endDate}",
+  "selectedTimeDescription": "Vald tid: {time}",
+  "startDate": "Startdatum",
+  "timeZoneName": "tidszon",
+  "weekday": "veckodag",
+  "year": "år"
 }
