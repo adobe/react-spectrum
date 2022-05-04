@@ -48,6 +48,7 @@ interface ListViewContextValue<T> {
   keyboardDelegate: GridKeyboardDelegate<T, GridCollection<any>>,
   dragState: DraggableCollectionState,
   dropState: DroppableCollectionState,
+  dragHooks: DragHooks,
   dropHooks: DropHooks,
   onAction:(key: Key) => void,
   isListDroppable: boolean,
@@ -278,7 +279,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     focusedKey = dropState.target.key;
   }
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, dropState, dropHooks, onAction, isListDraggable, isListDroppable, layout}}>
+    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout}}>
       <Virtualizer
         {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
         {...styleProps}
@@ -310,14 +311,14 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             return (
               <>
                 {isListDroppable && state.collection.getKeyBefore(item.key) == null &&
-                  <RootDropIndicator key="root" dropState={dropState} dropHooks={dropHooks} />
+                  <RootDropIndicator key="root" />
                 }
                 {isListDroppable &&
                   <InsertionIndicator
                     key={`${item.key}-before`}
                     target={{key: item.key, type: 'item', dropPosition: 'before'}} />
                 }
-                <ListViewItem item={item} isEmphasized dragHooks={dragHooks} dropHooks={dropHooks} />
+                <ListViewItem item={item} isEmphasized />
                 {isListDroppable &&
                   <InsertionIndicator
                     key={`${item.key}-after`}
