@@ -1,16 +1,9 @@
-
-import {DropHooks} from '@react-spectrum/dnd';
-import type {DroppableCollectionState} from '@react-stately/dnd';
-import React, {useRef} from 'react';
+import {ListViewContext} from './ListView';
+import React, {useContext, useRef} from 'react';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-interface RootDropIndicatorProps {
-  dropState: DroppableCollectionState,
-  dropHooks: DropHooks
-}
-
-export default function RootDropIndicator(props: RootDropIndicatorProps) {
-  let {dropState, dropHooks} = props;
+export default function RootDropIndicator() {
+  let {dropState, dropHooks} = useContext(ListViewContext);
   let dropRef = useRef();
   let {dropIndicatorProps} = dropHooks.useDropIndicator({
     target: {type: 'root'}

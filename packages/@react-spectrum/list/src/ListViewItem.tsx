@@ -15,7 +15,6 @@ import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
-import {DragHooks, DropHooks} from '@react-spectrum/dnd';
 import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -33,8 +32,6 @@ import {useVisuallyHidden} from '@react-aria/visually-hidden';
 interface ListViewItemProps {
   item: Node<any>,
   isEmphasized: boolean,
-  dragHooks: DragHooks,
-  dropHooks: DropHooks,
   hasActions: boolean
 }
 
@@ -42,11 +39,9 @@ export function ListViewItem(props: ListViewItemProps) {
   let {
     item,
     isEmphasized,
-    dragHooks,
-    dropHooks,
     hasActions
   } = props;
-  let {state, dragState, dropState, isListDraggable, isListDroppable, layout} = useContext(ListViewContext);
+  let {state, dragState, dropState, isListDraggable, isListDroppable, layout, dragHooks, dropHooks} = useContext(ListViewContext);
 
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
