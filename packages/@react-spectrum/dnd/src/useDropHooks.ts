@@ -22,29 +22,8 @@ export interface DropHooks {
 
 export function useDropHooks(options: DroppableCollectionProps): DropHooks {
   return useMemo(() => ({
-    useDroppableCollectionState(props: DroppableCollectionStateOptions) {
-      let {
-        collection,
-        selectionManager,
-        getDropOperation,
-        onDropEnter,
-        onDropMove,
-        onDropActivate,
-        onDropExit,
-        onDrop
-      } = props;
-      
-      return useDroppableCollectionState({
-        collection,
-        selectionManager,
-        getDropOperation,
-        onDropEnter,
-        onDropMove,
-        onDropActivate,
-        onDropExit,
-        onDrop,
-        ...options
-      });
+    useDroppableCollectionState(props) {
+      return useDroppableCollectionState({...props, ...options});
     },
     useDroppableItem,
     useDroppableCollection(props, state, ref) {
