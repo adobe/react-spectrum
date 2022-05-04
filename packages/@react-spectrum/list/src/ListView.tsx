@@ -26,7 +26,6 @@ import {DragHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
 import {filterDOMProps} from '@react-aria/utils';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
-import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from '@react-stately/layout';
@@ -36,14 +35,13 @@ import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useGrid} from '@react-aria/grid';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue<T> {
   state: GridState<T, GridCollection<any>>,
-  keyboardDelegate: GridKeyboardDelegate<T, GridCollection<any>>,
   dragState: DraggableCollectionState,
-  onAction:(key: string) => void,
   isListDraggable: boolean,
   layout: ListLayout<T>
 }
@@ -74,7 +72,8 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
       estimatedRowHeight: ROW_HEIGHTS[density][scale],
       padding: 0,
       collator,
-      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale]
+      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
+      allowDisabledKeyFocus: true
     })
     , [collator, scale, density, isEmpty]);
 
@@ -128,8 +127,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let {direction, locale} = useLocale();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let {locale} = useLocale();
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
@@ -151,21 +149,10 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let state = useGridState({
     ...props,
     collection: gridCollection,
-    focusMode: 'cell',
+    focusMode: 'row',
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let layout = useListLayout(state, props.density || 'regular');
-  let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({
-    collection: state.collection,
-    disabledKeys: state.disabledKeys,
-    ref: domRef,
-    direction,
-    collator,
-    // Focus the ListView cell instead of the row so that focus doesn't change with left/right arrow keys when there aren't any
-    // focusable children in the cell.
-    focusMode: 'cell'
-  }), [state, domRef, direction, collator]);
-
   let provider = useProvider();
   let dragState: DraggableCollectionState;
   if (isListDraggable) {
@@ -183,21 +170,15 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   let {gridProps} = useGrid({
     ...props,
+    onCellAction: onAction,
     isVirtualized: true,
-    keyboardDelegate
+    keyboardDelegate: layout
   }, state, domRef);
 
   // Sync loading state into the layout.
   layout.isLoading = isLoading;
-
-  let focusedKey = state.selectionManager.focusedKey;
-  let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
-  if (focusedItem?.parentKey != null) {
-    focusedKey = focusedItem.parentKey;
-  }
-
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable, layout}}>
+    <ListViewContext.Provider value={{state, dragState, isListDraggable, layout}}>
       <Virtualizer
         {...filterDOMProps(otherProps)}
         {...gridProps}
@@ -205,7 +186,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         isLoading={isLoading}
         onLoadMore={onLoadMore}
         ref={domRef}
-        focusedKey={focusedKey}
+        focusedKey={state.selectionManager.focusedKey}
         scrollDirection="vertical"
         className={
           classNames(
@@ -227,7 +208,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} isEmphasized dragHooks={dragHooks}  />
+              <ListViewItem item={item} isEmphasized dragHooks={dragHooks} hasActions={onAction}  />
             );
           } else if (type === 'loader') {
             return (
