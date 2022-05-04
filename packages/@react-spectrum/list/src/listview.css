@@ -131,10 +131,37 @@
   }
 }
 
-.react-spectrum-ListView--quiet {
+.react-spectrum-ListView.react-spectrum-ListView--quiet {
   background-color: var(--spectrum-alias-background-color-transparent);
   border-width: 0;
   border-radius: 0;
+  &:not(.react-spectrum-ListView--multipleSelection) {
+    .react-spectrum-ListView-row {
+      .react-spectrum-ListViewItem {
+        &.is-next-selected {
+          &:after {
+            box-shadow: none;
+          }
+        }
+      }
+
+      &:focus-ring {
+        &:before {
+          border-start-start-radius: var(--spectrum-listview-item-border-radius);
+          border-end-start-radius: var(--spectrum-listview-item-border-radius);
+        }
+      }
+
+      & > .react-spectrum-ListViewItem.is-selected {
+        border-radius: var(--spectrum-listview-item-border-radius);
+
+        &:after {
+          border-radius: var(--spectrum-listview-item-border-radius);
+          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
+        }
+      }
+    }
+  }
 }
 
 .react-spectrum-ListViewItem {
@@ -188,8 +215,7 @@
     grid-template-rows: 1fr auto;
     grid-template-areas:
       "draghandle checkbox icon image content actions actionmenu chevron"
-      "draghandle checkbox icon image description actions actionmenu chevron"
-    ;
+      "draghandle checkbox icon image description actions actionmenu chevron";
     align-items: center;
   }
 
@@ -224,6 +250,7 @@
     justify-items: center;
     min-height: 0;
     height: 100%;
+
     > span {
       margin: 0;
     }
@@ -280,8 +307,7 @@
     .react-spectrum-ListViewItem-grid {
       grid-template-areas:
         "icon image content     . badge"
-        "icon image description . badge"
-      ;
+        "icon image description . badge";
       grid-template-columns: auto auto auto 1fr;
     }
 
@@ -293,8 +319,9 @@
       border-radius: var(--spectrum-alias-border-radius-regular);
     }
 
-    &.react-spectrum-ListViewItem-dragPreview--multiple  {
+    &.react-spectrum-ListViewItem-dragPreview--multiple {
       position: relative;
+
       &:after {
         content: '';
         display: block;
@@ -315,13 +342,14 @@
       display: none;
     }
   }
-
+}
+.react-spectrum-ListView:not(.react-spectrum-ListView--quiet) {
   /* give first and last items border-radius to match listview container */
-  div:first-child > div[role="row"] > & {
+  .react-spectrum-ListViewItem--firstRow.react-spectrum-ListViewItem {
     border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
-  div:last-child > div[role="row"] > & {
+  .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem {
     border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
