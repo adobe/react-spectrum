@@ -1,9 +1,10 @@
 import {action} from '@storybook/addon-actions';
+import {ActionBar, ActionBarContainer} from '../../actionbar';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
-import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
+import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
-import {Content, View} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
@@ -16,28 +17,27 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {Link} from '@react-spectrum/link';
-import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragHooks} from '@react-spectrum/dnd';
 
 const items = [
-  {key: 'a', textValue: 'File a', type: 'file'},
-  {key: 'b', textValue: 'File b', type: 'file'},
-  {key: 'c', textValue: 'Folder c', type: 'folder'},
-  {key: 'd', textValue: 'File d', type: 'file'},
-  {key: 'e', textValue: 'Folder e', type: 'folder'},
-  {key: 'f', textValue: 'File f', type: 'file'},
-  {key: 'g', textValue: 'File g', type: 'file'},
-  {key: 'h', textValue: 'File h', type: 'file'},
-  {key: 'i', textValue: 'File i', type: 'file'},
-  {key: 'j', textValue: 'File j', type: 'file'},
-  {key: 'k', textValue: 'File k', type: 'file'},
-  {key: 'l', textValue: 'File l', type: 'file'},
-  {key: 'm', textValue: 'Folder m', type: 'folder'},
-  {key: 'n', textValue: 'File n', type: 'file'}
+  {key: 'a', name: 'Adobe Photoshop', type: 'file'},
+  {key: 'b', name: 'Adobe XD', type: 'file'},
+  {key: 'c', name: 'Documents', type: 'folder'},
+  {key: 'd', name: 'Adobe InDesign', type: 'file'},
+  {key: 'e', name: 'Utilities', type: 'folder'},
+  {key: 'f', name: 'Adobe AfterEffects', type: 'file'},
+  {key: 'g', name: 'Adobe Illustrator', type: 'file'},
+  {key: 'h', name: 'Adobe Lightroom', type: 'file'},
+  {key: 'i', name: 'Adobe Premiere Pro', type: 'file'},
+  {key: 'j', name: 'Adobe Fresco', type: 'file'},
+  {key: 'k', name: 'Adobe Dreamweaver', type: 'file'},
+  {key: 'l', name: 'Adobe Connect', type: 'file'},
+  {key: 'm', name: 'Pictures', type: 'folder'},
+  {key: 'n', name: 'Adobe Acrobat', type: 'file'}
 ];
 
 function renderEmptyState() {
@@ -55,57 +55,51 @@ function renderEmptyState() {
 storiesOf('ListView', module)
   .add('default', () => (
     <ListView width="250px">
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   ))
   .add('isQuiet', () => (
     <ListView width="250px" isQuiet>
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   ))
   .add('with buttons', () => (
     <ListView width="300px">
-      <Item textValue="row 1">
-        <Content>row 1</Content>
-        <ActionButton>Button 1</ActionButton>
+      <Item textValue="Adobe Photoshop">
+        <Content>Adobe Photoshop</Content>
+        <ActionButton>Edit</ActionButton>
       </Item>
-      <Item textValue="row 2">
-        <Content>row 2</Content>
-        <ActionButton>Button 1</ActionButton>
+      <Item textValue="Adobe Illustrator">
+        <Content>Adobe Illustrator</Content>
+        <ActionButton>Edit</ActionButton>
       </Item>
-      <Item textValue="row 3">
-        <Content>row 3</Content>
-        <ActionButton>Button 1</ActionButton>
+      <Item textValue="Adobe XD">
+        <Content>Adobe XD</Content>
+        <ActionButton>Edit</ActionButton>
       </Item>
     </ListView>
   ))
   .add('dynamic items', () => (
     <ListView items={items} width="300px" height="250px">
       {(item) => (
-        <Item key={item.key} textValue={item.textValue}>
+        <Item key={item.key} textValue={item.name}>
           <Content>
-            <Flex alignItems="center" gap="10px">
-              <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
-              <ActionButton><Add /></ActionButton>
-              <MenuTrigger>
-                <ActionButton><MoreSmall /></ActionButton>
-                <Menu>
-                  <Item>
-                    <Edit />
-                    <Text>Edit</Text>
-                  </Item>
-                  <Item>
-                    <Delete />
-                    <Text>Delete</Text>
-                  </Item>
-                </Menu>
-              </MenuTrigger>
-            </Flex>
+            {item.name}
           </Content>
+          <ActionGroup buttonLabelBehavior="hide">
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
         </Item>
         )}
     </ListView>
@@ -126,9 +120,9 @@ storiesOf('ListView', module)
   ))
   .add('loadingMore', () => (
     <ListView width="300px" height="300px" loadingState="loadingMore">
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   ))
   .add('async listview loading', () => (
@@ -136,16 +130,16 @@ storiesOf('ListView', module)
   ))
   .add('density: compact', () => (
     <ListView width="250px" density="compact">
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   ))
   .add('density: spacious', () => (
     <ListView width="250px" density="spacious">
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   ))
   .add('selection: none', () => (
@@ -220,20 +214,22 @@ storiesOf('ListView', module)
     )))
   .add('dynamic items + renderEmptyState', () => (<EmptyTest />))
   .add('selectionStyle: highlight', () => (
-    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={items}>
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))
   .add('selectionStyle: highlight, onAction', () => (
-    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={items} onAction={action('onAction')}>
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))
   .add('selectionMode: none, onAction', () => (
-    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionMode="none" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionMode="none" items={items} onAction={action('onAction')}>
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))
+  .add('with ActionBar', () => <ActionBarExample />)
+  .add('with emphasized ActionBar', () => <ActionBarExample isEmphasized />)
   .add(
     'draggable rows',
     () => (
@@ -248,18 +244,12 @@ storiesOf('ListView', module)
 function Example(props?) {
   return (
     <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
-      <Item key="folder1" hasChildItems>
-        <Content>folder 1</Content>
+      <Item key="Utilities" hasChildItems>
+        <Content>Utilities</Content>
       </Item>
-      <Item key="row1" textValue="row 1">
-        <Content>row 1</Content>
-      </Item>
-      <Item key="row2" textValue="row 2">
-        <Content>row 2</Content>
-      </Item>
-      <Item key="row3" textValue="row 3">
-        <Content>row 3</Content>
-      </Item>
+      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   );
 }
@@ -267,18 +257,12 @@ function Example(props?) {
 function Example2(props?) {
   return (
     <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
-      <Item key="folder1" hasChildItems>
-        <Link>folder 1</Link>
+      <Item key="Utilities" hasChildItems>
+        <Link>Utilities</Link>
       </Item>
-      <Item textValue="row 1">
-        <Content>row 1</Content>
-      </Item>
-      <Item textValue="row 2">
-        <Content>row 2</Content>
-      </Item>
-      <Item textValue="row 3">
-        <Content>row 3</Content>
-      </Item>
+      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   );
 }
@@ -286,25 +270,27 @@ function Example2(props?) {
 function renderActionsExample(renderActions, props?) {
   return (
     <ListView width="300px" selectionMode="single" {...props} onSelectionChange={keys => console.log('sel', keys)}>
-      <Item key="a" textValue="folder 1" hasChildItems>
+      <Item key="a" textValue="Utilities" hasChildItems>
         <Folder />
-        <Link>folder 1</Link>
-        <Text slot="description">description for folder 1</Text>
+        <Content>
+          <Link>Utilities</Link>
+        </Content>
+        <Text slot="description">16 items</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
-      <Item key="b" textValue="row 1">
-        <Text>row 1</Text>
-        <Text slot="description">description for row 1</Text>
+      <Item key="b" textValue="Adobe Photoshop">
+        <Content>Adobe Photoshop</Content>
+        <Text slot="description">Application</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
-      <Item key="c" textValue="row 2">
-        <Text>row 2</Text>
-        <Text slot="description">description for row 2</Text>
+      <Item key="c" textValue="Adobe Illustrator">
+        <Content>Adobe Illustrator</Content>
+        <Text slot="description">Application</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
-      <Item key="d" textValue="row 3">
-        <Text>row 3</Text>
-        <Text slot="description">description for row 3</Text>
+      <Item key="d" textValue="Adobe XD">
+        <Content>Adobe XD</Content>
+        <Text slot="description">Application</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
     </ListView>
@@ -383,7 +369,7 @@ export function DragExample(props?) {
   let getItems = (keys) => [...keys].map(key => {
     let item = items.find(item => item.key === key);
     return {
-      'text/plain': item.textValue
+      'text/plain': item.name
     };
   });
 
@@ -408,13 +394,13 @@ export function DragExample(props?) {
       dragHooks={dragHooks}
       {...listViewProps}>
       {(item: any) => (
-        <Item key={item.key} textValue={item.textValue}>
+        <Item key={item.key} textValue={item.name}>
           {item.type === 'folder' && <Folder />}
           {item.key === 'a' && <FileTxt />}
           <Content>
-            {item.textValue}
+            {item.name}
           </Content>
-          {item.key === 'b' && <Text slot="description">description for item b</Text>}
+          {item.key === 'b' && <Text slot="description">Beta</Text>}
           <ActionMenu
             onAction={action('onAction')}>
             <Item key="edit" textValue="Edit">
@@ -480,5 +466,41 @@ function FalsyIds() {
     <ListView width="250px" height={400} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={items} onAction={action('onAction')}>
       {item => <Item>{item.name}</Item>}
     </ListView>
+  );
+}
+
+function ActionBarExample(props?) {
+  let list = useListData({
+    initialItems: [
+      {key: 0, name: 'Adobe Photoshop'},
+      {key: 1, name: 'Adobe Illustrator'},
+      {key: 2, name: 'Adobe XD'}
+    ],
+    initialSelectedKeys: [0]
+  });
+  return (
+    <ActionBarContainer height={300}>
+      <ListView selectionMode="multiple" selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} items={list.items} width="250px">
+        {item => <Item>{item.name}</Item>}
+      </ListView>
+      <ActionBar
+        selectedItemCount={list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size}
+        onAction={action('onAction')}
+        onClearSelection={() => list.setSelectedKeys(new Set([]))}
+        {...props}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
   );
 }
