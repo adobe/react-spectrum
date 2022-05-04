@@ -24,6 +24,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DraggableCollectionState} from '@react-stately/dnd';
 import {DragHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
+import {filterDOMProps} from '@react-aria/utils';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 import {GridKeyboardDelegate, useGrid} from '@react-aria/grid';
 // @ts-ignore
@@ -113,7 +114,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     loadingState,
     isQuiet,
     onAction,
-    dragHooks
+    dragHooks,
+    ...otherProps
   } = props;
   let isListDraggable = !!dragHooks;
   let dragHooksProvided = useRef(isListDraggable);
@@ -197,6 +199,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable, layout}}>
       <Virtualizer
+        {...filterDOMProps(otherProps)}
         {...gridProps}
         {...styleProps}
         isLoading={isLoading}
