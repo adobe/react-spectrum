@@ -23,7 +23,7 @@ import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
-import {useGridCell, useGridRow, useGridSelectionCheckbox} from '@react-aria/grid';
+import {useGridCell, useGridSelectionCheckbox} from '@react-aria/grid';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
@@ -32,47 +32,42 @@ export function ListViewItem(props) {
   let {
     item,
     isEmphasized,
-    dragHooks
+    dragHooks,
+    hasActions
   } = props;
-  let cellNode = [...item.childNodes][0];
-  let {state, dragState, onAction, isListDraggable, layout} = useContext(ListViewContext);
-
+  let {state, dragState, isListDraggable, layout} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
-  let cellRef =  useRef<HTMLDivElement>();
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || onAction;
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isDraggable = dragState?.isDraggable(item.key) && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {pressProps, isPressed} = usePress({isDisabled});
-  let {rowProps} = useGridRow({
+
+  // We only make use of useGridCell here to allow for keyboard navigation to the focusable children of the row.
+  // The actual grid cell of the ListView is inert since we don't want to ever focus it to decrease screenreader
+  // verbosity, so we pretend the row node is the cell for interaction purposes. useGridRow is never used since
+  // it would conflict with useGridCell if applied to the same node.
+  let {gridCellProps} = useGridCell({
     node: item,
+    focusMode: 'cell',
     isVirtualized: true,
-    onAction: onAction ? () => onAction(item.key) : undefined,
     shouldSelectOnPressUp: isListDraggable
   }, state, rowRef);
-  let {gridCellProps} = useGridCell({
-    node: cellNode,
-    focusMode: 'cell'
-  }, state, cellRef);
+  delete gridCellProps['aria-colindex'];
+
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
   }
-  const mergedProps = mergeProps(
-    gridCellProps,
-    hoverProps,
-    focusWithinProps,
-    focusProps
-  );
-  let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
 
+  let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({
     ...draggableItem?.dragButtonProps,
@@ -98,6 +93,23 @@ export function ListViewItem(props) {
   let isSelected = state.selectionManager.isSelected(item.key);
   let showDragHandle = isDraggable && isFocusVisibleWithin;
   let {visuallyHiddenProps} = useVisuallyHidden();
+  let rowProps = {
+    role: 'row',
+    'aria-label': item.textValue,
+    'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
+    'aria-rowindex': item.index + 1
+  };
+
+  const mergedProps = mergeProps(
+    gridCellProps,
+    rowProps,
+    pressProps,
+    isDraggable && draggableItem?.dragProps,
+    hoverProps,
+    focusWithinProps,
+    focusProps
+  );
+
   let isFirstRow = item.prevKey == null;
   let isLastRow = item.nextKey == null;
   // Figure out if the ListView content is equal or greater in height to the container. If so, we'll need to round the bottom
@@ -112,7 +124,7 @@ export function ListViewItem(props) {
 
   return (
     <div
-      {...mergeProps(rowProps, pressProps, isDraggable && draggableItem?.dragProps)}
+      {...mergedProps}
       className={
         classNames(
           listStyles,
@@ -124,6 +136,7 @@ export function ListViewItem(props) {
       }
       ref={rowRef}>
       <div
+        // TODO: refactor the css here now that we are focusing the row?
         className={
           classNames(
             listStyles,
@@ -143,8 +156,8 @@ export function ListViewItem(props) {
             }
           )
         }
-        ref={cellRef}
-        {...mergedProps}>
+        role="gridcell"
+        aria-colindex={1}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           {isListDraggable &&
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
