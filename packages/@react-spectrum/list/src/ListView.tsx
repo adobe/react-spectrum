@@ -203,7 +203,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     isHorizontalScrollbarVisible = domRef.current.scrollWidth > domRef.current.clientWidth;
   }
 
-  let hasAnyChildren = [...collection].some(item => item.hasChildNodes);
+  let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
   return (
     <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable, layout}}>

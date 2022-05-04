@@ -184,9 +184,7 @@ export function ListViewItem(props) {
               enter: listStyles['react-spectrum-ListViewItem-checkbox--enter'],
               enterActive: listStyles['react-spectrum-ListViewItem-checkbox--enterActive'],
               exit: listStyles['react-spectrum-ListViewItem-checkbox--exit'],
-              exitActive: listStyles['react-spectrum-ListViewItem-checkbox--exitActive'],
-              appear: listStyles['react-spectrum-ListViewItem-checkbox--appear'],
-              appearActive: listStyles['react-spectrum-ListViewItem-checkbox--appearActive']
+              exitActive: listStyles['react-spectrum-ListViewItem-checkbox--exitActive']
             }}
             timeout={1600} >
             <div className={listStyles['react-spectrum-ListViewItem-checkboxWrapper']}>
