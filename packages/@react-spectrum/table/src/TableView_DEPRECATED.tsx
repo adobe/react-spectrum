@@ -104,6 +104,7 @@ function TableView_DEPRECATED<T extends object>(props: SpectrumTableProps<T>, re
   }
 
   let domRef = useDOMRef(ref);
+  let bodyRef = useRef<HTMLDivElement>();
   let formatMessage = useMessageFormatter(intlMessages);
 
   let {scale} = useProvider();
@@ -273,6 +274,13 @@ function TableView_DEPRECATED<T extends object>(props: SpectrumTableProps<T>, re
     }
   };
 
+  let isVerticalScrollbarVisible = false;
+  let isHorizontalScrollbarVisible = false; // do we need this one? can listviews horizontally scroll?
+  if (bodyRef.current) {
+    isVerticalScrollbarVisible = bodyRef.current.scrollHeight > bodyRef.current.clientHeight;
+    isHorizontalScrollbarVisible = bodyRef.current.scrollWidth > bodyRef.current.clientWidth;
+  }
+
   return (
     <TableContext.Provider value={{state, layout}}>
       <TableVirtualizer
@@ -286,7 +294,9 @@ function TableView_DEPRECATED<T extends object>(props: SpectrumTableProps<T>, re
             {
               'spectrum-Table--quiet': isQuiet,
               'spectrum-Table--wrap': props.overflowMode === 'wrap',
-              'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore'
+              'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
+              'spectrum-Table--isScrollingVertically': isVerticalScrollbarVisible,
+              'spectrum-Table--isScrollingHorizontally': isHorizontalScrollbarVisible
             },
             classNames(
               stylesOverrides,
@@ -299,16 +309,16 @@ function TableView_DEPRECATED<T extends object>(props: SpectrumTableProps<T>, re
         focusedKey={state.selectionManager.focusedKey}
         renderView={renderView}
         renderWrapper={renderWrapper}
-        domRef={domRef} />
+        domRef={domRef}
+        bodyRef={bodyRef} />
     </TableContext.Provider>
   );
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, ...otherProps}) {
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
-  let bodyRef = useRef<HTMLDivElement>();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let onLoadMore = collection.body.props.onLoadMore;
