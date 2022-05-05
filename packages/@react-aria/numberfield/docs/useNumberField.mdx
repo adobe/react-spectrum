@@ -127,9 +127,9 @@ function NumberField(props) {
     <div>
       <label {...labelProps}>{props.label}</label>
       <div {...groupProps}>
-        <button {...decrementProps} ref={incrRef}>-</button>
+        <button {...decrementProps} ref={decRef}>-</button>
         <input {...inputProps} ref={inputRef} />
-        <button {...incrementProps} ref={decRef}>+</button>
+        <button {...incrementProps} ref={incrRef}>+</button>
       </div>
     </div>
   );

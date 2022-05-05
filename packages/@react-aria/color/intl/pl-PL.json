@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "Suwak 2D",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Próbnik kolorów",
+  "twoDimensionalSlider": "Suwak 2D"
 }
