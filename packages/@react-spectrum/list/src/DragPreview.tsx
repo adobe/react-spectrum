@@ -13,7 +13,7 @@ import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Grid} from '@react-spectrum/layout';
 import {GridNode} from '@react-types/grid';
-import listStyles from './listview.css';
+import listStyles from './styles.css';
 import {Provider} from '@react-spectrum/provider';
 import {ProviderContext} from '@react-types/provider';
 import React from 'react';
