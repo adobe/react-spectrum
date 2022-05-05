@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "Ρυθμιστικό 2D",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Επιλογέας χρωμάτων",
+  "twoDimensionalSlider": "Ρυθμιστικό 2D"
 }

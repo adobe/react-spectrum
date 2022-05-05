@@ -1359,6 +1359,13 @@ describe('TableView', function () {
         </>
       );
 
+      it('should retain focus on the pressed child', function () {
+        let tree = renderFocusable();
+        let switchToPress = tree.getAllByRole('switch')[2];
+        act(() => triggerPress(switchToPress));
+        expect(document.activeElement).toBe(switchToPress);
+      });
+
       it('should marshall focus to the focusable element inside a cell', function () {
         let tree = renderFocusable();
         focusCell(tree, 'Baz 1');
