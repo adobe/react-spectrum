@@ -51,6 +51,7 @@ export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<
     let target = e.target as HTMLElement;
     let body = document.getElementById(res.calendarProps.id);
     if (
+      body &&
       body.contains(document.activeElement) &&
       (!body.contains(target) || !target.closest('button, [role="button"]'))
     ) {

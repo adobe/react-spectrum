@@ -8,10 +8,11 @@
   "minute": "الدقائق",
   "month": "الشهر",
   "second": "الثواني",
+  "selectedDateDescription": "تاريخ محدد: {date}",
+  "selectedRangeDescription": "المدى الزمني المحدد: {startDate} إلى {endDate}",
+  "selectedTimeDescription": "الوقت المحدد: {time}",
   "startDate": "تاريخ البدء",
-  "year": "السنة",
-  "weekday": "اليوم",
   "timeZoneName": "التوقيت",
-  "selectedDateDescription": "التاريخ المحدد: {date}",
-  "selectedRangeDescription": "النطاق المحدد: {startDate} إلى {endDate}"
+  "weekday": "اليوم",
+  "year": "السنة"
 }

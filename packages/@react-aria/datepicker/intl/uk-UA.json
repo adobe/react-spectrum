@@ -8,10 +8,11 @@
   "minute": "хвилина",
   "month": "місяць",
   "second": "секунда",
-  "startDate": "Дата початку",
-  "year": "рік",
-  "weekday": "день тижня",
-  "timeZoneName": "часовий пояс",
   "selectedDateDescription": "Вибрана дата: {date}",
-  "selectedRangeDescription": "Вибраний діапазон: від {startDate} до {endDate}"
+  "selectedRangeDescription": "Вибраний діапазон: {startDate} — {endDate}",
+  "selectedTimeDescription": "Вибраний час: {time}",
+  "startDate": "Дата початку",
+  "timeZoneName": "часовий пояс",
+  "weekday": "день тижня",
+  "year": "рік"
 }

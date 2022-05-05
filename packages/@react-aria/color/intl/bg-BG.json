@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "2D плъзгач",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Средство за избиране на цвят",
+  "twoDimensionalSlider": "2D плъзгач"
 }

@@ -9,7 +9,7 @@ import {useTableContext} from './TableView';
 
 function Resizer(props, ref) {
   const {item} = props;
-  let state = useTableContext();
+  let {state} = useTableContext();
   let {resizerProps} = useTableColumnResize(state, item, ref);
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
