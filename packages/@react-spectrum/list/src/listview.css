@@ -162,6 +162,75 @@
       }
     }
   }
+  &.react-spectrum-ListView--multipleSelection {
+    .react-spectrum-ListView-row {
+      .react-spectrum-ListViewItem {
+        &.is-next-selected:not(.is-selected) {
+          &:after {
+            box-shadow: none;
+          }
+        }
+      }
+
+      &:focus-ring {
+        &:before {
+          border-start-start-radius: var(--spectrum-listview-item-border-radius);
+          border-end-start-radius: var(--spectrum-listview-item-border-radius);
+        }
+      }
+
+      & > .react-spectrum-ListViewItem.is-selected:not(.is-prev-selected):not(.is-next-selected) {
+        border-radius: var(--spectrum-listview-item-border-radius);
+
+        &:after {
+          border-radius: var(--spectrum-listview-item-border-radius);
+          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
+        }
+      }
+      & > .react-spectrum-ListViewItem.is-selected:not(.is-prev-selected).is-next-selected {
+        border-start-start-radius: var(--spectrum-listview-item-border-radius);
+        border-start-end-radius: var(--spectrum-listview-item-border-radius);
+        border-end-start-radius: 0;
+        border-end-end-radius: 0;
+
+        &:after {
+          border-start-start-radius: var(--spectrum-listview-item-border-radius);
+          border-start-end-radius: var(--spectrum-listview-item-border-radius);
+          border-end-start-radius: 0;
+          border-end-end-radius: 0;
+          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
+        }
+      }
+      & > .react-spectrum-ListViewItem.is-selected.is-prev-selected:not(.is-next-selected) {
+        border-start-start-radius: 0;
+        border-start-end-radius: 0;
+        border-end-start-radius: var(--spectrum-listview-item-border-radius);
+        border-end-end-radius: var(--spectrum-listview-item-border-radius);
+
+        &:after {
+          border-start-start-radius: 0;
+          border-start-end-radius: 0;
+          border-end-start-radius: var(--spectrum-listview-item-border-radius);
+          border-end-end-radius: var(--spectrum-listview-item-border-radius);
+          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+        }
+      }
+      & > .react-spectrum-ListViewItem.is-selected.is-prev-selected.is-next-selected {
+        border-start-start-radius: 0;
+        border-start-end-radius: 0;
+        border-end-start-radius: 0;
+        border-end-end-radius: 0;
+
+        &:after {
+          border-start-start-radius: 0;
+          border-start-end-radius: 0;
+          border-end-start-radius: 0;
+          border-end-end-radius: 0;
+          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+        }
+      }
+    }
+  }
 }
 
 .react-spectrum-ListViewItem {
