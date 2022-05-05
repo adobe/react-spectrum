@@ -8,10 +8,11 @@
   "minute": "minutt",
   "month": "måned",
   "second": "sekund",
-  "startDate": "Startdato",
-  "year": "år",
-  "weekday": "ukedag",
-  "timeZoneName": "tidssone",
   "selectedDateDescription": "Valgt dato: {date}",
-  "selectedRangeDescription": "Valgt område: {startDate} til {endDate}"
+  "selectedRangeDescription": "Valgt område: {startDate} til {endDate}",
+  "selectedTimeDescription": "Valgt tid: {time}",
+  "startDate": "Startdato",
+  "timeZoneName": "tidssone",
+  "weekday": "ukedag",
+  "year": "år"
 }

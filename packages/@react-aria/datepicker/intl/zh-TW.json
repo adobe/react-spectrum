@@ -8,10 +8,11 @@
   "minute": "分钟",
   "month": "月",
   "second": "秒",
+  "selectedDateDescription": "選定的日期：{date}",
+  "selectedRangeDescription": "選定的範圍：{startDate} 至 {endDate}",
+  "selectedTimeDescription": "選定的時間：{time}",
   "startDate": "開始日期",
-  "year": "年",
-  "weekday": "工作日",
   "timeZoneName": "时区",
-  "selectedDateDescription": "選取日期: {date}",
-  "selectedRangeDescription": "選取範圍: {startDate} 至 {endDate}"
+  "weekday": "工作日",
+  "year": "年"
 }

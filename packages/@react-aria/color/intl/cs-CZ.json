@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Výběr barvy",
-  "twoDimensionalSlider": "2D posuvník",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Výběr barvy",
+  "twoDimensionalSlider": "2D posuvník"
 }
