@@ -32,7 +32,9 @@ if (!process.env.LISTENING_TO_UNHANDLED_REJECTION) {
   // Avoid memory leak by adding too many listeners
   process.env.LISTENING_TO_UNHANDLED_REJECTION = true;
 }
-const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [];
+const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
+  'ReactDOM.render is no longer supported in React 18'
+];
 
 const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [];
 
