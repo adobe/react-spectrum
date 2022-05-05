@@ -32,7 +32,7 @@ import InsertionIndicator from './InsertionIndicator';
 import intlMessages from '../intl/*.json';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
-import listStyles from './listview.css';
+import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -73,7 +73,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
+function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
