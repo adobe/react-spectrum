@@ -8,10 +8,11 @@
   "minute": "分",
   "month": "月",
   "second": "秒",
+  "selectedDateDescription": "選択した日付 : {date}",
+  "selectedRangeDescription": "選択範囲 : {startDate} から {endDate}",
+  "selectedTimeDescription": "選択した時間 : {time}",
   "startDate": "開始日",
-  "year": "年",
-  "weekday": "曜日",
   "timeZoneName": "タイムゾーン",
-  "selectedDateDescription": "日付を選択：{date}",
-  "selectedRangeDescription": "範囲を選択：{startDate} から {endDate}"
+  "weekday": "曜日",
+  "year": "年"
 }

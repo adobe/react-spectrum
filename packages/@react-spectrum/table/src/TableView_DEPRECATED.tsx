@@ -75,7 +75,12 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
   large: 48
 };
 
-const TableContext = React.createContext<TableState<unknown>>(null);
+interface TableContextValue<T> {
+  state: TableState<T>,
+  layout: TableLayout_DEPRECATED<T>
+}
+
+const TableContext = React.createContext<TableContextValue<unknown>>(null);
 function useTableContext() {
   return useContext(TableContext);
 }
@@ -269,7 +274,7 @@ function TableView_DEPRECATED<T extends object>(props: SpectrumTableProps<T>, re
   };
 
   return (
-    <TableContext.Provider value={state}>
+    <TableContext.Provider value={{state, layout}}>
       <TableVirtualizer
         {...gridProps}
         {...styleProps}
@@ -280,7 +285,8 @@ function TableView_DEPRECATED<T extends object>(props: SpectrumTableProps<T>, re
             `spectrum-Table--${density}`,
             {
               'spectrum-Table--quiet': isQuiet,
-              'spectrum-Table--wrap': props.overflowMode === 'wrap'
+              'spectrum-Table--wrap': props.overflowMode === 'wrap',
+              'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore'
             },
             classNames(
               stylesOverrides,
@@ -410,7 +416,7 @@ function TableHeader({children, ...otherProps}) {
 
 function TableColumnHeader({column}) {
   let ref = useRef();
-  let state = useTableContext();
+  let {state} = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true
@@ -460,7 +466,7 @@ function TableColumnHeader({column}) {
 
 function TableSelectAllCell({column}) {
   let ref = useRef();
-  let state = useTableContext();
+  let {state} = useTableContext();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -518,7 +524,7 @@ function TableRowGroup({children, ...otherProps}) {
 
 function TableRow({item, children, hasActions, ...otherProps}) {
   let ref = useRef();
-  let state = useTableContext();
+  let {state, layout} = useTableContext();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
@@ -545,6 +551,16 @@ function TableRow({item, children, hasActions, ...otherProps}) {
     hoverProps,
     pressProps
   );
+  let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
+  let isLastRow = item.nextKey == null;
+  // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
+  // border corners of the last row when selected.
+  let isFlushWithContainerBottom = false;
+  if (isLastRow) {
+    if (layout.getContentSize()?.height >= layout.virtualizer?.getVisibleRect().height) {
+      isFlushWithContainerBottom = true;
+    }
+  }
 
   return (
     <div
@@ -557,11 +573,15 @@ function TableRow({item, children, hasActions, ...otherProps}) {
           {
             'is-active': isPressed,
             'is-selected': isSelected,
-            'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
+            'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace',
+            'is-next-selected': state.selectionManager.isSelected(item.nextKey),
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
             'is-hovered': isHovered,
-            'is-disabled': isDisabled
+            'is-disabled': isDisabled,
+            'spectrum-Table-row--firstRow': isFirstRow,
+            'spectrum-Table-row--lastRow': isLastRow,
+            'spectrum-Table-row--isFlushBottom': isFlushWithContainerBottom
           }
         )
       }>
@@ -571,7 +591,7 @@ function TableRow({item, children, hasActions, ...otherProps}) {
 }
 
 function TableHeaderRow({item, children, style}) {
-  let state = useTableContext();
+  let {state} = useTableContext();
   let ref = useRef();
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
 
@@ -584,7 +604,7 @@ function TableHeaderRow({item, children, style}) {
 
 function TableCheckboxCell({cell}) {
   let ref = useRef();
-  let state = useTableContext();
+  let {state} = useTableContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
@@ -624,7 +644,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
-  let state = useTableContext();
+  let {state} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
@@ -673,7 +693,7 @@ function TableCell({cell}) {
 }
 
 function CenteredWrapper({children}) {
-  let state = useTableContext();
+  let {state} = useTableContext();
   return (
     <div
       role="row"
