@@ -21,6 +21,7 @@ interface DisplayNames {
   of(field: Field): string
 }
 
+/** @private */
 export function useDisplayNames(): DisplayNames {
   let {locale} = useLocale();
   return useMemo(() => {

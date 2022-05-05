@@ -8,10 +8,11 @@
   "minute": "minuta",
   "month": "mesec",
   "second": "sekunda",
-  "startDate": "Datum začetka",
-  "year": "leto",
-  "weekday": "dan v tednu",
-  "timeZoneName": "časovni pas",
   "selectedDateDescription": "Izbrani datum: {date}",
-  "selectedRangeDescription": "Izbrani razpon: {startDate} do {endDate}"
+  "selectedRangeDescription": "Izbrano območje: {startDate} do {endDate}",
+  "selectedTimeDescription": "Izbrani čas: {time}",
+  "startDate": "Datum začetka",
+  "timeZoneName": "časovni pas",
+  "weekday": "dan v tednu",
+  "year": "leto"
 }

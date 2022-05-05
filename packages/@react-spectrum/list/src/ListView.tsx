@@ -20,35 +20,33 @@ import {
   SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
-import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {Content} from '@react-spectrum/view';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DraggableCollectionState} from '@react-stately/dnd';
 import {DragHooks} from '@react-spectrum/dnd';
+import {DragPreview} from './DragPreview';
+import {filterDOMProps} from '@react-aria/utils';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
-import {GridKeyboardDelegate, useGrid, useGridSelectionCheckbox} from '@react-aria/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
-import listStyles from './listview.css';
+import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useGrid} from '@react-aria/grid';
+import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
-interface ListViewContextValue {
-  state: GridState<object, GridCollection<any>>,
-  keyboardDelegate: GridKeyboardDelegate<unknown, GridCollection<any>>,
+interface ListViewContextValue<T> {
+  state: GridState<T, GridCollection<any>>,
   dragState: DraggableCollectionState,
-  onAction:(key: string) => void,
-  isListDraggable: boolean
+  isListDraggable: boolean,
+  layout: ListLayout<T>
 }
 
-export const ListViewContext = React.createContext<ListViewContextValue>(null);
+export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
 
 const ROW_HEIGHTS = {
   compact: {
@@ -65,7 +63,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
+function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
@@ -74,7 +72,8 @@ export function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>[
       estimatedRowHeight: ROW_HEIGHTS[density][scale],
       padding: 0,
       collator,
-      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale]
+      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
+      allowDisabledKeyFocus: true
     })
     , [collator, scale, density, isEmpty]);
 
@@ -89,11 +88,21 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious',
+  /** Whether the ListView should be displayed with a quiet style. */
   isQuiet?: boolean,
+  /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
   loadingState?: LoadingState,
+  /** Sets what the ListView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
-  transitionDuration?: number,
+  /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
   onAction?: (key: string) => void,
+  /**
+   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
+   * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.
+   */
   dragHooks?: DragHooks
 }
 
@@ -103,9 +112,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     onLoadMore,
     loadingState,
     isQuiet,
-    transitionDuration = 0,
     onAction,
-    dragHooks
+    dragHooks,
+    ...otherProps
   } = props;
   let isListDraggable = !!dragHooks;
   let dragHooksProvided = useRef(isListDraggable);
@@ -118,8 +127,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let {direction} = useLocale();
-  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let {locale} = useLocale();
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
@@ -141,100 +149,44 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let state = useGridState({
     ...props,
     collection: gridCollection,
-    focusMode: 'cell',
+    focusMode: 'row',
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let layout = useListLayout(state, props.density || 'regular');
-  let keyboardDelegate = useMemo(() => new GridKeyboardDelegate({
-    collection: state.collection,
-    disabledKeys: state.disabledKeys,
-    ref: domRef,
-    direction,
-    collator,
-    // Focus the ListView cell instead of the row so that focus doesn't change with left/right arrow keys when there aren't any
-    // focusable children in the cell.
-    focusMode: 'cell'
-  }), [state, domRef, direction, collator]);
-
   let provider = useProvider();
-  let {checkboxProps} = useGridSelectionCheckbox({key: null}, state);
   let dragState: DraggableCollectionState;
   if (isListDraggable) {
     dragState = dragHooks.useDraggableCollectionState({
       collection: state.collection,
       selectionManager: state.selectionManager,
-      renderPreview(selectedKeys, draggedKey) {
+      renderPreview(draggingKeys, draggedKey) {
         let item = state.collection.getItem(draggedKey);
-        let itemWidth = domRef.current.offsetWidth;
-        let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
-        let isSelected = state.selectionManager.isSelected(item.key);
-        return (
-          <Provider
-            {...provider}
-            UNSAFE_className={classNames(listStyles, 'react-spectrum-ListViewItem', 'is-dragging')}
-            UNSAFE_style={{width: itemWidth, paddingInlineStart: 0}}>
-            <div className={listStyles['react-spectrum-ListViewItem-grid']}>
-              <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
-                <div className={listStyles['react-spectrum-ListViewItem-draghandle-button']}>
-                  <ListGripper />
-                </div>
-              </div>
-              {showCheckbox &&
-                <Checkbox
-                  isSelected={isSelected}
-                  UNSAFE_className={listStyles['react-spectrum-ListViewItem-checkbox']}
-                  isEmphasized
-                  aria-label={checkboxProps['aria-label']} />
-              }
-              <SlotProvider
-                slots={{
-                  content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-                  text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-                  description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
-                  icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
-                  image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
-                  link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
-                  actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
-                  actionGroup: {
-                    UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
-                    isQuiet: true,
-                    density: 'compact'
-                  },
-                  actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
-                }}>
-                {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
-              </SlotProvider>
-            </div>
-          </Provider>
-        );
+        let itemCount = draggingKeys.size;
+        let itemHeight = layout.getLayoutInfo(draggedKey).rect.height;
+        return <DragPreview item={item} itemCount={itemCount} itemHeight={itemHeight} provider={provider} locale={locale}  />;
       }
     });
   }
 
   let {gridProps} = useGrid({
     ...props,
+    onCellAction: onAction,
     isVirtualized: true,
-    keyboardDelegate
+    keyboardDelegate: layout
   }, state, domRef);
 
   // Sync loading state into the layout.
   layout.isLoading = isLoading;
-
-  let focusedKey = state.selectionManager.focusedKey;
-  let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
-  if (focusedItem?.parentKey != null) {
-    focusedKey = focusedItem.parentKey;
-  }
-
   return (
-    <ListViewContext.Provider value={{state, keyboardDelegate, dragState, onAction, isListDraggable}}>
+    <ListViewContext.Provider value={{state, dragState, isListDraggable, layout}}>
       <Virtualizer
+        {...filterDOMProps(otherProps)}
         {...gridProps}
         {...styleProps}
         isLoading={isLoading}
         onLoadMore={onLoadMore}
         ref={domRef}
-        focusedKey={focusedKey}
+        focusedKey={state.selectionManager.focusedKey}
         scrollDirection="vertical"
         className={
           classNames(
@@ -244,18 +196,19 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             'react-spectrum-ListView--emphasized',
             {
               'react-spectrum-ListView--quiet': isQuiet,
-              'react-spectrum-ListView--draggable': isListDraggable
+              'react-spectrum-ListView--draggable': isListDraggable,
+              'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore'
             },
             styleProps.className
           )
         }
         layout={layout}
         collection={gridCollection}
-        transitionDuration={transitionDuration}>
+        transitionDuration={isLoading ? 160 : 220}>
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} isEmphasized dragHooks={dragHooks}  />
+              <ListViewItem item={item} isEmphasized dragHooks={dragHooks} hasActions={onAction}  />
             );
           } else if (type === 'loader') {
             return (
@@ -284,7 +237,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   );
 }
 
-
 function CenteredWrapper({children}) {
   let {state} = useContext(ListViewContext);
   return (
@@ -306,5 +258,8 @@ function CenteredWrapper({children}) {
   );
 }
 
+/**
+ * Lists display a linear collection of data. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
 const _ListView = React.forwardRef(ListView) as <T>(props: ListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};

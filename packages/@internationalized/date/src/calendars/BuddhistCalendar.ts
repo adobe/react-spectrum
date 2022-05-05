@@ -15,8 +15,7 @@
 
 import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
-import {GregorianCalendar} from './GregorianCalendar';
-import {Mutable} from '../utils';
+import {fromExtendedYear, getExtendedYear, GregorianCalendar} from './GregorianCalendar';
 
 const BUDDHIST_ERA_START = -543;
 
@@ -29,9 +28,14 @@ export class BuddhistCalendar extends GregorianCalendar {
   identifier = 'buddhist';
 
   fromJulianDay(jd: number): CalendarDate {
-    let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
-    date.year -= BUDDHIST_ERA_START;
-    return date as CalendarDate;
+    let gregorianDate = super.fromJulianDay(jd);
+    let year = getExtendedYear(gregorianDate.era, gregorianDate.year);
+    return new CalendarDate(
+      this,
+      year - BUDDHIST_ERA_START,
+      gregorianDate.month,
+      gregorianDate.day
+    );
   }
 
   toJulianDay(date: AnyCalendarDate) {
@@ -48,8 +52,10 @@ export class BuddhistCalendar extends GregorianCalendar {
 }
 
 function toGregorian(date: AnyCalendarDate) {
+  let [era, year] = fromExtendedYear(date.year + BUDDHIST_ERA_START);
   return new CalendarDate(
-    date.year + BUDDHIST_ERA_START,
+    era,
+    year,
     date.month,
     date.day
   );
