@@ -21,7 +21,7 @@ import {
 } from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
 
-export function isInvalid(date: CalendarDate, minValue: DateValue, maxValue: DateValue) {
+export function isInvalid(date: DateValue, minValue: DateValue, maxValue: DateValue) {
   return (minValue != null && date.compare(minValue) < 0) ||
     (maxValue != null && date.compare(maxValue) > 0);
 }
@@ -104,4 +104,18 @@ export function constrainValue(date: CalendarDate, minValue: DateValue, maxValue
   }
 
   return date;
+}
+
+export function previousAvailableDate(date: CalendarDate, minValue: DateValue, isDateUnavailable: (date: CalendarDate) => boolean) {
+  if (!isDateUnavailable) {
+    return date;
+  }
+
+  while (date.compare(minValue) >= 0 && isDateUnavailable(date)) {
+    date = date.subtract({days: 1});
+  }
+
+  if (date.compare(minValue) >= 0) {
+    return date;
+  }
 }

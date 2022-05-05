@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "2D-drsnik",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Izbirnik barv",
+  "twoDimensionalSlider": "2D drsnik"
 }

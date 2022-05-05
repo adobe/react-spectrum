@@ -433,7 +433,7 @@ governing permissions and limitations under the License.
   }
 }
 
-/* additional a11y support by moveing scrolling from content to dialog */
+/* additional a11y support by moving scrolling from content to dialog */
 @media screen and (max-height: 400px) {
   .spectrum-Dialog .spectrum-Dialog-grid {
     border-top-left-radius: var(--spectrum-dialog-border-radius);
@@ -453,6 +453,7 @@ governing permissions and limitations under the License.
       ".    buttonGroup buttonGroup buttonGroup buttonGroup ."
       ".    .           .           .           .           .";
   }
+
   .spectrum-Dialog-heading {
     &.spectrum-Dialog-heading--noHeader {
       grid-area: heading;
@@ -460,11 +461,13 @@ governing permissions and limitations under the License.
     }
 
     /* match specificity from above where it had noHeader, but here header won't prevent heading from expanding */
+
     &.spectrum-Dialog-heading--noTypeIcon.spectrum-Dialog-heading--noTypeIcon {
       grid-area: heading-start / heading-start / typeIcon-end / typeIcon-end;
       padding-inline-end: 0;
     }
   }
+
   .spectrum-Dialog-header {
     &.spectrum-Dialog-header--noTypeIcon {
       grid-area: header;
@@ -480,5 +483,48 @@ governing permissions and limitations under the License.
 
   .spectrum-Dialog-footer + .spectrum-Dialog-buttonGroup {
     padding-block-start: calc(var(--spectrum-global-dimension-size-25) * 2);
+  }
+}
+@media screen and (max-height: 400px) and (max-width: 700px) {
+  .spectrum-Dialog--fullscreen,
+  .spectrum-Dialog--fullscreenTakeover {
+
+    &.spectrum-Dialog .spectrum-Dialog-grid {
+      display: grid;
+      grid-template-columns: var(--spectrum-dialog-padding-x) 1fr var(--spectrum-dialog-padding-x);
+      grid-template-rows: var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(--spectrum-dialog-padding-y);
+      grid-template-areas:
+         ".    .            ."
+         ".    heading      ."
+         ".    header       ."
+         ".    divider      ."
+         ".    content      ."
+         ".    buttonGroup  ."
+         ".    .            .";
+    }
+    .spectrum-Dialog-heading {
+      &.spectrum-Dialog-heading--noHeader,
+      &.spectrum-Dialog-heading--noTypeIcon {
+        grid-area: heading;
+      }
+
+      /* there will never be a typeIcon here */
+      &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+        grid-area: heading;
+      }
+    }
+    .spectrum-Dialog-header {
+      &.spectrum-Dialog-header--noTypeIcon {
+        grid-area: header;
+      }
+    }
+
+    .spectrum-Dialog-buttonGroup {
+      padding-block-start: var(--spectrum-global-dimension-static-size-500);
+    }
+
+    .spectrum-Dialog-heading {
+      font-size: var(--spectrum-dialog-title-text-size);
+    }
   }
 }

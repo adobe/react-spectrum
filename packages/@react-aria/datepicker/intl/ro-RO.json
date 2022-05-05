@@ -1,9 +1,5 @@
 {
   "calendar": "Calendar",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} - {end, date, long}",
-  "date": "Dată",
-  "dateRange": "Raza datei",
   "day": "zi",
   "dayPeriod": "a.m/p.m.",
   "endDate": "Dată final",
@@ -12,8 +8,11 @@
   "minute": "minut",
   "month": "lună",
   "second": "secundă",
+  "selectedDateDescription": "Dată selectată: {date}",
+  "selectedRangeDescription": "Interval selectat: de la {startDate} până la {endDate}",
+  "selectedTimeDescription": "Ora selectată: {time}",
   "startDate": "Dată început",
-  "year": "an",
+  "timeZoneName": "fus orar",
   "weekday": "ziua din săptămână",
-  "timeZoneName": "fus orar"
+  "year": "an"
 }

@@ -136,12 +136,21 @@ storiesOf('Breadcrumbs', module)
         <Item>Root</Item>
       </Breadcrumbs>
     )
-  ).add(
+  )
+  .add(
     'Only one item, showRoot',
     () => (
       <Breadcrumbs showRoot>
         <Item key="Root-1">Root</Item>
       </Breadcrumbs>
+    )
+  )
+  .add(
+    'autoFocusCurrent',
+    () => (
+      <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+        {renderMany({autoFocusCurrent: true})}
+      </div>
     )
   );
 
