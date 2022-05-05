@@ -46,6 +46,22 @@ softAssert.equal = function (val, val2, message) {
   }
 };
 
+// Checks if a dependency is actually being imported somewhere
+function isDepUsed(dep, src) {
+  let depRegex = new RegExp(`import .* from '${dep}'`);
+  let files = glob.sync(src, {
+    ignore: ['**/node_modules/**', '**/dist/**']
+  });
+
+  for (let file of files) {
+    let contents = fs.readFileSync(file, 'utf8');
+    if (depRegex.test(contents)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 let pkgNames = {};
 for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
@@ -106,29 +122,27 @@ for (let pkg of packages) {
 
 
 for (let pkg of packages) {
+  let globSrc = pkg.replace('package.json', '**/*.{js,ts,tsx}');
   let json = JSON.parse(fs.readFileSync(pkg));
   let [scope, basename] = json.name.split('/');
 
   if (basename.includes('utils') || basename.includes('layout')) {
     continue;
   }
-  if (scope === '@react-spectrum') {
-    let aria = `@react-aria/${basename}`;
-    let stately = `@react-stately/${basename}`;
-    let types = `@react-types/${basename}`;
 
+  let aria = `@react-aria/${basename}`;
+  let stately = `@react-stately/${basename}`;
+  let types = `@react-types/${basename}`;
+
+  if (scope === '@react-spectrum' && isDepUsed(aria, globSrc)) {
     softAssert(!pkgNames[aria] || json.dependencies[aria], `${pkg} is missing a dependency on ${aria}`);
-    softAssert(!pkgNames[stately] || json.dependencies[stately], `${pkg} is missing a dependency on ${stately}`);
-    softAssert(!pkgNames[types] || json.dependencies[types], `${pkg} is missing a dependency on ${types}`);
-  } else if (scope === '@react-aria') {
-    let stately = `@react-stately/${basename}`;
-    let types = `@react-types/${basename}`;
+  }
 
+  if ((scope === '@react-aria' || scope === '@react-spectrum') && isDepUsed(stately, globSrc)) {
     softAssert(!pkgNames[stately] || json.dependencies[stately], `${pkg} is missing a dependency on ${stately}`);
-    softAssert(!pkgNames[types] || json.dependencies[types], `${pkg} is missing a dependency on ${types}`);
-  } else if (scope === '@react-stately') {
-    let types = `@react-types/${basename}`;
+  }
 
+  if ((scope === '@react-aria' || scope === '@react-spectrum' || scope === '@react-stately') && isDepUsed(types, globSrc)) {
     softAssert(!pkgNames[types] || json.dependencies[types], `${pkg} is missing a dependency on ${types}`);
   }
 }
