@@ -8,10 +8,11 @@
   "minute": "minuutti",
   "month": "kuukausi",
   "second": "sekunti",
-  "startDate": "Alkamispäivä",
-  "year": "vuosi",
-  "weekday": "viikonpäivä",
-  "timeZoneName": "aikavyöhyke",
   "selectedDateDescription": "Valittu päivämäärä: {date}",
-  "selectedRangeDescription": "Valittu alue: {startDate} - {endDate}"
+  "selectedRangeDescription": "Valittu aikaväli: {startDate} – {endDate}",
+  "selectedTimeDescription": "Valittu aika: {time}",
+  "startDate": "Alkamispäivä",
+  "timeZoneName": "aikavyöhyke",
+  "weekday": "viikonpäivä",
+  "year": "vuosi"
 }

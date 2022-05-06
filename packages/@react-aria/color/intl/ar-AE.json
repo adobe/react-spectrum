@@ -1,6 +1,6 @@
 {
-  "colorPicker": "منتقي الألوان",
-  "twoDimensionalSlider": "شريط تمرير ثنائي الأبعاد",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "أداة انتقاء اللون",
+  "twoDimensionalSlider": "مُنزلق 2D"
 }

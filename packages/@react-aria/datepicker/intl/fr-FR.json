@@ -8,10 +8,11 @@
   "minute": "minute",
   "month": "mois",
   "second": "seconde",
-  "startDate": "Date de début",
-  "year": "année",
-  "weekday": "jour de la semaine",
-  "timeZoneName": "fuseau horaire",
   "selectedDateDescription": "Date sélectionnée : {date}",
-  "selectedRangeDescription": "Plage sélectionnée : {startDate} à {endDate}"
+  "selectedRangeDescription": "Plage sélectionnée : {startDate} au {endDate}",
+  "selectedTimeDescription": "Heure choisie : {time}",
+  "startDate": "Date de début",
+  "timeZoneName": "fuseau horaire",
+  "weekday": "jour de la semaine",
+  "year": "année"
 }

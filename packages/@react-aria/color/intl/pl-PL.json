@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Próbnik kolorów",
-  "twoDimensionalSlider": "Suwak 2D",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Próbnik kolorów",
+  "twoDimensionalSlider": "Suwak 2D"
 }
