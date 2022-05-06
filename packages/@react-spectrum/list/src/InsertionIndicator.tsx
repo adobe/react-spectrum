@@ -1,6 +1,6 @@
 import {classNames} from '@react-spectrum/utils';
 import {ItemDropTarget} from '@react-types/shared';
-import listStyles from './listview.css';
+import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import React, {useContext, useRef} from 'react';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
