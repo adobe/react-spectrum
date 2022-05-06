@@ -63,13 +63,13 @@ const ROW_HEIGHTS = {
   }
 };
 
-function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
+function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density'], overflowMode: ListViewProps<T>['overflowMode']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
   let layout = useMemo(() =>
     new ListLayout<T>({
-      estimatedRowHeight: ROW_HEIGHTS[density][scale],
+      estimatedRowHeight: overflowMode === 'wrap' ? null : ROW_HEIGHTS[density][scale],
       padding: 0,
       collator,
       loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
@@ -155,7 +155,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     focusMode: 'row',
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
-  let layout = useListLayout(state, props.density || 'regular');
+  let layout = useListLayout(state, props.density || 'regular', overflowMode);
   let provider = useProvider();
   let dragState: DraggableCollectionState;
   if (isListDraggable) {
