@@ -76,7 +76,7 @@ function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['densit
       loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
       allowDisabledKeyFocus: true
     })
-    , [collator, scale, density, isEmpty]);
+    , [collator, scale, density, isEmpty, overflowMode]);
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
