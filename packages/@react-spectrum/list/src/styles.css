@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+*/
 
 :root {
   --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
@@ -110,6 +121,35 @@
           }
         }
       }
+
+      &.react-spectrum-ListView--isScrollingVertically {
+        .react-spectrum-ListViewItem {
+          &.react-spectrum-ListViewItem--firstRow.is-selected {
+            &:after {
+              border-start-end-radius: 0;
+            }
+          }
+        }
+
+        &:not(.react-spectrum-ListView--loadingMore) {
+          .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
+            &:after {
+              border-end-end-radius: 0;
+            }
+          }
+        }
+      }
+
+      &.react-spectrum-ListView--isScrollingHorizontally {
+        &:not(.react-spectrum-ListView--loadingMore) {
+          .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
+            &:after {
+              border-end-start-radius: 0;
+              border-end-end-radius: 0;
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -218,10 +258,15 @@
     }
   }
 
-  .react-spectrum-ListViewItem-checkbox {
+  .react-spectrum-ListViewItem-checkboxWrapper {
     grid-area: checkbox;
     align-items: center;
     justify-items: center;
+    transition-duration: 160ms;
+    display: flex;
+  }
+
+  .react-spectrum-ListViewItem-checkbox {
     min-height: 0;
     height: 100%;
     > span {
@@ -238,9 +283,17 @@
   }
 
   .react-spectrum-ListViewItem-image {
+    display: flex;
     border-radius: var(--spectrum-global-dimension-size-25);
     width: var(--spectrum-global-dimension-size-400);
     height: var(--spectrum-global-dimension-size-400);
+    align-items: center;
+    justify-content: center;
+    > img {
+      width: unset;
+      height: unset;
+      max-height: 100%;
+    }
   }
 
   .react-spectrum-ListViewItem-content,
@@ -269,6 +322,7 @@
   .react-spectrum-ListViewItem-parentIndicator {
     grid-area: chevron;
     padding-inline-start: var(--spectrum-global-dimension-size-75);
+    display: none;
   }
 
   &.react-spectrum-ListViewItem-dragPreview {
@@ -315,15 +369,46 @@
       display: none;
     }
   }
-
+}
+.react-spectrum-ListView {
   /* give first and last items border-radius to match listview container */
-  div:first-child > div[role="row"] > & {
+
+  .react-spectrum-ListViewItem--firstRow.react-spectrum-ListViewItem {
     border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
-  div:last-child > div[role="row"] > & {
+
+  .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem {
     border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
+  }
+
+  &.react-spectrum-ListView--isScrollingVertically {
+    .react-spectrum-ListViewItem--firstRow.react-spectrum-ListViewItem {
+      border-start-end-radius: 0;
+    }
+
+    .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem {
+      border-end-end-radius: 0;
+    }
+  }
+
+  &.react-spectrum-ListView--isScrollingHorizontally {
+    .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+    }
+  }
+
+  /* When we can use subgrid, get rid of this. */
+  &.react-spectrum-ListView--hasAnyChildren {
+    .react-spectrum-ListViewItem-parentIndicator {
+      display: inline-block;
+      visibility: hidden;
+    }
+    .react-spectrum-ListViewItem-parentIndicator--hasChildItems {
+      visibility: visible;
+    }
   }
 }
 
@@ -358,4 +443,21 @@
   &.react-spectrum-ListView-centeredWrapper--loadingMore {
     padding-top: var(--spectrum-global-dimension-size-50);
   }
+}
+
+.react-spectrum-ListViewItem-checkbox--enter {
+  opacity: 0.01;
+  max-width: 0px;
+}
+.react-spectrum-ListViewItem-checkbox--enterActive {
+  opacity: 1;
+  max-width: 80px;
+}
+.react-spectrum-ListViewItem-checkbox--exit {
+  opacity: 1;
+  max-width: 80px;
+}
+.react-spectrum-ListViewItem-checkbox--exitActive {
+  opacity: 0.01;
+  max-width: 0px;
 }
