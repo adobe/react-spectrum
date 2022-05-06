@@ -1,10 +1,11 @@
 import {DraggableCollectionOptions, DraggableCollectionState, useDraggableCollectionState} from '@react-stately/dnd';
-import {DraggableItemProps, DraggableItemResult, useDraggableItem} from '@react-aria/dnd';
+import {DraggableItemProps, DraggableItemResult, DragPreview, useDraggableItem} from '@react-aria/dnd';
 import {useMemo} from 'react';
 
 export interface DragHooks {
-    useDraggableCollectionState(props: Omit<DraggableCollectionOptions, 'getItems'>): DraggableCollectionState,
-    useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult
+  useDraggableCollectionState(props: Omit<DraggableCollectionOptions, 'getItems'>): DraggableCollectionState,
+  useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult,
+  DragPreview: typeof DragPreview
 }
 
 export type DragHookOptions = Omit<DraggableCollectionOptions, 'collection' | 'selectionManager' | 'isDragging' | 'getKeysForDrag'>
@@ -17,18 +18,19 @@ export function useDragHooks(options: DragHookOptions): DragHooks {
         selectionManager,
         allowsDraggingItem,
         getItems,
-        renderPreview
+        preview
       } = props;
-      
+
       return useDraggableCollectionState({
         collection,
         selectionManager,
         allowsDraggingItem,
         getItems,
-        renderPreview,
+        preview,
         ...options
       });
     },
-    useDraggableItem
+    useDraggableItem,
+    DragPreview
   }), [options]);
 }

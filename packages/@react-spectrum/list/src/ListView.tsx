@@ -23,7 +23,6 @@ import {
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DraggableCollectionState} from '@react-stately/dnd';
 import {DragHooks} from '@react-spectrum/dnd';
-import {DragPreview} from './DragPreview';
 import {filterDOMProps} from '@react-aria/utils';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 // @ts-ignore
@@ -34,7 +33,8 @@ import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useContext, useMemo, useRef} from 'react';
-import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {DragPreview as SpectrumDragPreview} from './DragPreview';
+import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid} from '@react-aria/grid';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -127,7 +127,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let {locale} = useLocale();
   let gridCollection = useMemo(() => new GridCollection({
     columnCount: 1,
     items: [...collection].map(item => ({
@@ -153,20 +152,17 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let layout = useListLayout(state, props.density || 'regular');
-  let provider = useProvider();
   let dragState: DraggableCollectionState;
+  let preview = useRef(null);
   if (isListDraggable) {
     dragState = dragHooks.useDraggableCollectionState({
       collection: state.collection,
       selectionManager: state.selectionManager,
-      renderPreview(draggingKeys, draggedKey) {
-        let item = state.collection.getItem(draggedKey);
-        let itemCount = draggingKeys.size;
-        let itemHeight = layout.getLayoutInfo(draggedKey).rect.height;
-        return <DragPreview item={item} itemCount={itemCount} itemHeight={itemHeight} provider={provider} locale={locale}  />;
-      }
+      preview
     });
   }
+
+  let DragPreview = dragHooks?.DragPreview;
 
   let {gridProps} = useGrid({
     ...props,
@@ -233,6 +229,16 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
         }}
       </Virtualizer>
+      {DragPreview && isListDraggable &&
+        <DragPreview ref={preview}>
+          {() => {
+            let item = state.collection.getItem(dragState.draggedKey);
+            let itemCount = dragState.draggingKeys.size;
+            let itemHeight = layout.getLayoutInfo(dragState.draggedKey).rect.height;
+            return <SpectrumDragPreview item={item} itemCount={itemCount} itemHeight={itemHeight}  />;
+          }}
+        </DragPreview>
+      }
     </ListViewContext.Provider>
   );
 }
