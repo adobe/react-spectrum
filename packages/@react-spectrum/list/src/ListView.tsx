@@ -93,7 +93,10 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   isQuiet?: boolean,
   /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
   loadingState?: LoadingState,
-  /** Sets how the text overflow will behave. */
+  /**
+   * Sets the text behavior for the row contents.
+   * @default 'truncate'
+   */
   overflowMode?: 'truncate' | 'wrap',
   /** Sets what the ListView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
