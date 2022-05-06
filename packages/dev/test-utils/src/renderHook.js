@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2022 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
-
-export * from './events';
-export * from './testSSR';
-export * from './renderHook';
+let reactTestingLibrary = require('@testing-library/react');
+export let renderHook = reactTestingLibrary.renderHook;
+export let actHook = reactTestingLibrary.act;
+if (!renderHook) {
+  let rhtl = require('@testing-library/react-hooks');
+  renderHook = rhtl.renderHook;
+  actHook = rhtl.act;
+}

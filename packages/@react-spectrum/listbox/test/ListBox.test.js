@@ -14,7 +14,7 @@ import {act, fireEvent, render, within} from '@testing-library/react';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, { version } from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -851,7 +851,8 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
       // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
+      // onLoadMore called twice from useLayoutEffect in React < 18
+      expect(onLoadMore).toHaveBeenCalledTimes(parseInt(React.version, 10) >= 18 ? 3 : 4);
     });
   });
 });

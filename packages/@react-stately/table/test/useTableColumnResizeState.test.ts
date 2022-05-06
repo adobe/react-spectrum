@@ -11,7 +11,7 @@
  */
 
 import {getContentWidth, useTableColumnResizeState} from '../';
-import {renderHook} from '@testing-library/react';
+import {renderHook} from '@react-spectrum/test-utils';
 
 const createColumn = (key, columnProps) => ({
   type: 'column',
