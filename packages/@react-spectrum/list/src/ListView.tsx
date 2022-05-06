@@ -69,8 +69,8 @@ function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['densit
   let isEmpty = state.collection.size === 0;
   let layout = useMemo(() =>
     new ListLayout<T>({
-      estimatedRowHeight: overflowMode === 'wrap' ? ROW_HEIGHTS[density][scale] : null,
-      rowHeight: overflowMode === 'wrap' ? null : ROW_HEIGHTS[density][scale],
+      estimatedRowHeight: overflowMode === 'wrap' ? ROW_HEIGHTS[density][scale] : undefined,
+      rowHeight: overflowMode === 'wrap' ? undefined : ROW_HEIGHTS[density][scale],
       padding: 0,
       collator,
       loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
