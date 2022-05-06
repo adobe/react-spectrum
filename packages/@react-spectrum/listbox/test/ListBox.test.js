@@ -851,8 +851,7 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
       // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
-      // onLoadMore called twice from useLayoutEffect
-      expect(onLoadMore).toHaveBeenCalledTimes(4);
+      expect(onLoadMore).toHaveBeenCalledTimes(3);
     });
   });
 });

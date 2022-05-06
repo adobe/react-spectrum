@@ -828,7 +828,7 @@ describe('Picker', function () {
       );
 
       let label = getAllByText('Test')[0];
-      label.click();
+      act(() => label.click());
 
       let picker = getByRole('button');
       expect(document.activeElement).toBe(picker);

@@ -233,8 +233,7 @@ describe('MenuTrigger', function () {
   });
 
   describe('default focus behavior', function () {
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
     `('$Name autofocuses the selected item on menu open', function ({Component, props}) {
@@ -252,6 +251,7 @@ describe('MenuTrigger', function () {
       act(() => {jest.runAllTimers();});
 
       expect(menu).not.toBeInTheDocument();
+      act(() => {jest.runAllTimers();});
 
       // Opening menu via down arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -369,11 +369,11 @@ describe('MenuTrigger', function () {
       act(() => {
         triggerEvent(itemToAction);
       });
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
     }
 
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
     `('$Name closes the menu upon trigger body scroll', function ({Component, props}) {
@@ -387,14 +387,14 @@ describe('MenuTrigger', function () {
 
       let scrollable = tree.getByTestId('scrollable');
       fireEvent.scroll(scrollable);
-      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
     });
 
     // Can't figure out why this isn't working for the v2 component
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
     `('$Name closes the menu upon clicking escape key', function ({Component, props}) {
@@ -406,14 +406,14 @@ describe('MenuTrigger', function () {
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
-      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
     });
 
     // Can't figure out why this isn't working for the v2 component
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
     `('$Name closes the menu upon clicking outside the menu', function ({Component, props}) {
@@ -426,7 +426,8 @@ describe('MenuTrigger', function () {
       expect(menu).toBeTruthy();
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
-      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
     });
@@ -512,8 +513,7 @@ describe('MenuTrigger', function () {
       expect(menu).toBeTruthy();
     });
 
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name                      | Component      | props | menuProps
       ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
       ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{closeOnSelect: true}} | ${{selectionMode: 'multiple'}}
@@ -527,8 +527,7 @@ describe('MenuTrigger', function () {
       expect(document.activeElement).toBe(tree.getByRole('button'));
     });
 
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name                      | Component      | props | menuProps
       ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
       ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
@@ -554,8 +553,7 @@ describe('MenuTrigger', function () {
       expect(menu).toBeTruthy();
     });
 
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name                  | Component      | props | menuProps
       ${'MenuTrigger none'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
     `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', function ({Component, props, menuProps}) {
@@ -641,8 +639,7 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(2);
     });
 
-    // FIXME(react18)
-    it.skip('should have a hidden dismiss button for screen readers', function () {
+    it('should have a hidden dismiss button for screen readers', function () {
       let {getByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
           <MenuTrigger onOpenChange={onOpenChange}>
@@ -677,7 +674,8 @@ describe('MenuTrigger', function () {
       act(() => {
         fireEvent.click(buttons[0]);
       });
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
       expect(onOpenChange).toHaveBeenCalledTimes(2);
 
       expect(menu).not.toBeInTheDocument();
@@ -744,8 +742,7 @@ describe('MenuTrigger', function () {
     expect(checkmark).toBeNull();
   });
 
-  // FIXME(react18)
-  it.skip('two menus can not be open at the same time', function () {
+  it('two menus can not be open at the same time', function () {
     let {getAllByRole, getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <MenuTrigger>
@@ -778,7 +775,8 @@ describe('MenuTrigger', function () {
 
     // pressing once on button 2 should close menu1, but not open menu2 yet
     triggerPress(button2);
-    act(() => jest.runAllTimers());
+    act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+    act(() => {jest.runAllTimers();}); // FocusScope raf
     expect(queryByRole('menu')).toBeNull();
 
     // second press of button2 should open menu2

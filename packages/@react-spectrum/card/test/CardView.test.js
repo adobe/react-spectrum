@@ -771,12 +771,10 @@ describe('CardView', function () {
     });
 
     describe('keyboard nav', function () {
-      // FIXME(react18)
-      it.skip('should move focus via Arrow Down', function () {
+      it('should move focus via Arrow Down', function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
-        act(() => {
-          jest.runAllTimers();
-        });
+        act(() => jest.runAllTimers()); // relayout raf
+        act(() => jest.runAllTimers()); // update size
 
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[0]);
@@ -799,12 +797,10 @@ describe('CardView', function () {
         expect(within(document.activeElement).getByText('Title 3')).toBeTruthy();
       });
 
-      // FIXME(react18)
-      it.skip('should move focus via Arrow Up', function () {
+      it('should move focus via Arrow Up', function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
-        act(() => {
-          jest.runAllTimers();
-        });
+        act(() => jest.runAllTimers()); // relayout raf
+        act(() => jest.runAllTimers()); // update size
 
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[2]);
@@ -1002,8 +998,7 @@ describe('CardView', function () {
       expect(document.activeElement).toBe(cards[cards.length - 1]);
     });
 
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name                  | layout
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
@@ -1029,8 +1024,7 @@ describe('CardView', function () {
 
   describe('selection', function () {
     // TODO: Add range selection test via shift click and shift + arrow keys when that functionality is fixed
-    // FIXME(react18)
-    it.skip('CardView should support selectedKeys', function () {
+    it('CardView should support selectedKeys', function () {
       let tree = render(<DynamicCardView selectedKeys={['Title 1', 'Title 2']} />);
       act(() => {
         jest.runAllTimers();
@@ -1043,8 +1037,7 @@ describe('CardView', function () {
       expect(within(cards[1]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
     });
 
-    // FIXME(react18)
-    it.skip('CardView should support disabledKeys', function () {
+    it('CardView should support disabledKeys', function () {
       let tree = render(<DynamicCardView disabledKeys={['Title 1']} />);
       act(() => {
         jest.runAllTimers();
@@ -1059,8 +1052,7 @@ describe('CardView', function () {
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
-    // FIXME(react18)
-    it.skip('CardView should support multiple selection', function () {
+    it('CardView should support multiple selection', function () {
       let tree = render(<DynamicCardView />);
       act(() => {
         jest.runAllTimers();
@@ -1090,8 +1082,7 @@ describe('CardView', function () {
       expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
     });
 
-    // FIXME(react18)
-    it.skip('CardView should support single selection', function () {
+    it('CardView should support single selection', function () {
       let tree = render(<DynamicCardView selectionMode="single" />);
       act(() => {
         jest.runAllTimers();
@@ -1121,8 +1112,7 @@ describe('CardView', function () {
       expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'false');
     });
 
-    // FIXME(react18)
-    it.skip('CardView should support no selection', function () {
+    it('CardView should support no selection', function () {
       let tree = render(<DynamicCardView selectionMode="none" />);
       act(() => {
         jest.runAllTimers();
@@ -1142,8 +1132,7 @@ describe('CardView', function () {
   });
 
   describe('loading', function () {
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name                  | layout
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
@@ -1175,8 +1164,7 @@ describe('CardView', function () {
       expect(within(grid).getByText('Title 1')).toBeTruthy();
     });
 
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name                  | layout
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
@@ -1195,9 +1183,9 @@ describe('CardView', function () {
       expect(cards).toBeTruthy();
       triggerPress(cards[1]);
 
+      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
       act(() => {
-        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
         jest.runAllTimers();
       });
 
@@ -1206,8 +1194,7 @@ describe('CardView', function () {
       expect(getCardStyles(spinner.parentNode).height).toBe('60px');
     });
 
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name                  | layout
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
@@ -1237,8 +1224,7 @@ describe('CardView', function () {
       expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
 
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name                  | layout
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
@@ -1264,8 +1250,7 @@ describe('CardView', function () {
   });
 
   describe('emptyState', function () {
-    // FIXME(react18)
-    it.skip.each`
+    it.each`
       Name                  | layout
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}

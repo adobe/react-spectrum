@@ -1,6 +1,6 @@
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@testing-library/react';
 import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '../';
 import {useNumberFieldState} from '@react-stately/numberfield';

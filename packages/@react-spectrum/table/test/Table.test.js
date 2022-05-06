@@ -2366,10 +2366,10 @@ describe('TableView', function () {
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
 
-      act(() => {
-        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
-        jest.runAllTimers();
-      });
+      // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+      act(() => jest.runAllTimers());
+      // Animation.
+      act(() => jest.runAllTimers());
       let row = tree.getAllByRole('row')[1];
       triggerPress(row);
       expect(announce).toHaveBeenLastCalledWith('File C selected.');
@@ -2389,10 +2389,10 @@ describe('TableView', function () {
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
 
-      act(() => {
-        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
-        jest.runAllTimers();
-      });
+      // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+      act(() => jest.runAllTimers());
+      // Animation.
+      act(() => jest.runAllTimers());
       let row = tree.getAllByRole('row')[1];
       triggerPress(row);
       expect(announce).toHaveBeenLastCalledWith('File C selected.');
@@ -4453,9 +4453,9 @@ describe('TableView', function () {
               </TableBody>
             </TableView>
           );
-  
+
           let rows = tree.getAllByRole('row');
-  
+
           for (let row of rows) {
             expect(row.childNodes[0].style.width).toBe('600px');
             expect(row.childNodes[1].style.width).toBe('200px');
@@ -4482,9 +4482,9 @@ describe('TableView', function () {
               </TableBody>
             </TableView>
           );
-  
+
           let rows = tree.getAllByRole('row');
-  
+
           for (let row of rows) {
             expect(row.childNodes[0].style.width).toBe('300px');
             expect(row.childNodes[1].style.width).toBe('500px');

@@ -170,7 +170,7 @@ describe('SearchAutocomplete', function () {
   it('renders with placeholder text and shows warning', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByPlaceholderText, getByRole} = renderSearchAutocomplete({placeholder: 'Test placeholder'});
-    
+
     let searchAutocomplete = getByRole('combobox');
 
     expect(getByPlaceholderText('Test placeholder')).toBeTruthy();
@@ -1408,7 +1408,7 @@ describe('SearchAutocomplete', function () {
     });
 
     afterEach(() => {
-      jest.runAllTimers();
+      act(() => jest.runAllTimers());
       jest.clearAllMocks();
     });
 

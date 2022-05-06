@@ -289,7 +289,7 @@ describe('ComboBox', function () {
   it('renders with placeholder text and shows warning', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByPlaceholderText, getByRole} = renderComboBox({placeholder: 'Test placeholder'});
-    
+
     let searchAutocomplete = getByRole('combobox');
 
     expect(getByPlaceholderText('Test placeholder')).toBeTruthy();
@@ -3512,8 +3512,8 @@ describe('ComboBox', function () {
       // validation icon should not be present
       expect(within(combobox).queryByRole('img', {hidden: true})).toBeNull();
 
+      triggerPress(button);
       act(() => {
-        triggerPress(button);
         jest.runAllTimers();
       });
 
@@ -3578,7 +3578,7 @@ describe('ComboBox', function () {
     });
 
     afterEach(() => {
-      jest.runAllTimers();
+      act(() => jest.runAllTimers());
       jest.clearAllMocks();
     });
 
