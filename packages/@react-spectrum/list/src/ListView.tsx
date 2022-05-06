@@ -180,8 +180,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let isVerticalScrollbarVisible = false;
   let isHorizontalScrollbarVisible = false; // do we need this one? can listviews horizontally scroll?
   if (domRef.current) {
-    isVerticalScrollbarVisible = domRef.current.scrollHeight > domRef.current.clientHeight;
-    isHorizontalScrollbarVisible = domRef.current.scrollWidth > domRef.current.clientWidth;
+    // 2 is the width of the border which is not part of the box size
+    isVerticalScrollbarVisible = domRef.current.getBoundingClientRect().width > domRef.current.children[0]?.getBoundingClientRect().width + 2;
+    isHorizontalScrollbarVisible = domRef.current.getBoundingClientRect().height > domRef.current.children[0]?.getBoundingClientRect().height + 2;
   }
 
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);

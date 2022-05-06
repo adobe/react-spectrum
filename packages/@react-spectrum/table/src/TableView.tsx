@@ -289,10 +289,11 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   };
 
   let isVerticalScrollbarVisible = false;
-  let isHorizontalScrollbarVisible = false; // do we need this one? can listviews horizontally scroll?
-  if (bodyRef.current) {
-    isVerticalScrollbarVisible = bodyRef.current.scrollHeight > bodyRef.current.clientHeight;
-    isHorizontalScrollbarVisible = bodyRef.current.scrollWidth > bodyRef.current.clientWidth;
+  let isHorizontalScrollbarVisible = false;
+  if (bodyRef.current && domRef.current) {
+    // 2 is the width of the border which is not part of the box size
+    isVerticalScrollbarVisible = domRef.current.getBoundingClientRect().width > bodyRef.current.children[0]?.getBoundingClientRect().width + 2;
+    isHorizontalScrollbarVisible = domRef.current.getBoundingClientRect().height > bodyRef.current.children[0]?.getBoundingClientRect().height + 2;
   }
 
   return (
