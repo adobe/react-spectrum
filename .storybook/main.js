@@ -11,7 +11,7 @@ module.exports = {
     'storybook-dark-mode',
     './custom-addons/provider/register',
     './custom-addons/descriptions/register',
-    './theme.register'
+    './custom-addons/theme/register'
   ],
   typescript: {
     check: false,
