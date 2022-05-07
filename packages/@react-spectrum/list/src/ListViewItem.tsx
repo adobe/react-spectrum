@@ -18,6 +18,7 @@ import {CSSTransition} from 'react-transition-group';
 import type {DraggableItemResult} from '@react-aria/dnd';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+import {isFocusVisible as isFocusVisibleFn, useHover, usePress} from '@react-aria/interactions';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
@@ -25,7 +26,6 @@ import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
 import {useGridCell, useGridSelectionCheckbox} from '@react-aria/grid';
-import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -36,7 +36,7 @@ export function ListViewItem(props) {
     dragHooks,
     hasActions
   } = props;
-  let {state, dragState, isListDraggable, layout} = useContext(ListViewContext);
+  let {state, dragState, isListDraggable, layout, hoverState} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let {
@@ -47,7 +47,9 @@ export function ListViewItem(props) {
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isDraggable = dragState?.isDraggable(item.key) && !isDisabled;
-  let {hoverProps, isHovered} = useHover({isDisabled});
+  let {hoverProps, isHovered} = useHover({isDisabled, onHoverStart: () => {
+    hoverState.setHoveredKey(item.key);
+  }});
   let {pressProps, isPressed} = usePress({isDisabled});
 
   // We only make use of useGridCell here to allow for keyboard navigation to the focusable children of the row.
@@ -131,7 +133,6 @@ export function ListViewItem(props) {
       isFlushWithContainerBottom = true;
     }
   }
-
   return (
     <div
       {...mergedProps}
@@ -140,7 +141,9 @@ export function ListViewItem(props) {
           listStyles,
           'react-spectrum-ListView-row',
           {
-            'focus-ring': isFocusVisible
+            'focus-ring': isFocusVisible,
+            'round-tops': !state.selectionManager.isSelected(item.prevKey) && (state.selectionManager.focusedKey !== item.prevKey || !isFocusVisibleFn()) && hoverState.hoveredKey !== item.prevKey,
+            'round-bottoms': !state.selectionManager.isSelected(item.nextKey) && (state.selectionManager.focusedKey !== item.nextKey || !isFocusVisibleFn()) && hoverState.hoveredKey !== item.nextKey
           }
         )
       }

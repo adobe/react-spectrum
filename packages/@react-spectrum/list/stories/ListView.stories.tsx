@@ -71,11 +71,15 @@ let decorator = (storyFn, context) => {
   storyFn() :
   (
     <>
-      <label htmlFor="focus-before">Focus before</label>
-      <input id="focus-before" />
+      <span style={{paddingInline: '10px'}}>
+        <label htmlFor="focus-before">Focus before</label>
+        <input id="focus-before" />
+      </span>
       {storyFn()}
-      <label htmlFor="focus-after">Focus after</label>
-      <input id="focus-after" />
+      <span style={{paddingInline: '10px'}}>
+        <label htmlFor="focus-after">Focus after</label>
+        <input id="focus-after" />
+      </span>
     </>
   );
 };
