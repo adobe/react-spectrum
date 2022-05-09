@@ -2780,7 +2780,7 @@ describe('TableView', function () {
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionMode: 'none', onAction});
 
-        userEvent.click(getCell(tree, 'Baz 10'));
+        userEvent.click(getCell(tree, 'Baz 10'), {pointerType: 'mouse'});
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);

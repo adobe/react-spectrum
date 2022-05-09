@@ -204,7 +204,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       // and the Enter key performs onAction on key up.
       if (
         (e.pointerType === 'mouse' && !hasPrimaryAction) ||
-        (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey()))
+        (e.pointerType === 'keyboard' && (!onAction || isSelectionKey()))
       ) {
         onSelect(e);
       }
@@ -216,9 +216,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       // is secondary actions, which occur on double click with a mouse.
       if (
         e.pointerType === 'touch' ||
+        e.pointerType === 'pen' ||
         e.pointerType === 'virtual' ||
         (e.pointerType === 'keyboard' && hasAction && isActionKey()) ||
-        hasPrimaryAction
+        (e.pointerType === 'mouse' && hasPrimaryAction)
       ) {
         if (hasAction) {
           onAction();
