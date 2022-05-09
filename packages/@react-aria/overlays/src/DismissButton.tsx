@@ -41,7 +41,7 @@ export function DismissButton(props: DismissButtonProps) {
   };
 
   return (
-    <VisuallyHidden>
+    <VisuallyHidden style={{marginBlockStart: '-10px'}}>
       <button
         {...labels}
         tabIndex={-1}
