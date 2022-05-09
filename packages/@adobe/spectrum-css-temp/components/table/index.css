@@ -196,6 +196,7 @@ svg.spectrum-Table-sortedIcon {
   line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
   padding: var(--spectrum-table-cell-regular-padding-y) var(--spectrum-table-cell-padding-x);
 }
+.spectrum-Table--regular {}
 
 .spectrum-Table--compact .spectrum-Table-cell {
   padding-top: var(--spectrum-table-cell-compact-padding-y);
@@ -334,6 +335,32 @@ svg.spectrum-Table-sortedIcon {
       &:after {
         border-start-start-radius: var(--spectrum-table-row-border-radius);
         border-start-end-radius: var(--spectrum-table-row-border-radius);
+      }
+    }
+  }
+  &.spectrum-Table--isScrollingVertically {
+    .spectrum-Table-row {
+      &.spectrum-Table-row--firstRow.is-selected {
+        &:after {
+          border-start-end-radius: 0;
+        }
+      }
+      /* beat specificity of isFlushBottom */
+      &.spectrum-Table-row--lastRow.is-selected.is-selected {
+        &:after {
+          border-end-end-radius: 0;
+        }
+      }
+    }
+  }
+  &.spectrum-Table--isScrollingHorizontally {
+    .spectrum-Table-row {
+      /* beat specificity of isFlushBottom */
+      &.spectrum-Table-row--lastRow.is-selected.is-selected {
+        &:after {
+          border-end-start-radius: 0;
+          border-end-end-radius: 0;
+        }
       }
     }
   }
