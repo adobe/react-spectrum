@@ -703,6 +703,7 @@ describe('ListView', function () {
     });
 
     describe('onAction', function () {
+      installPointerEvent();
       it('should trigger onAction when clicking items with the mouse', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
@@ -843,7 +844,7 @@ describe('ListView', function () {
         expect(announce).toHaveBeenCalledTimes(1);
 
         onSelectionChange.mockClear();
-        act(() => userEvent.click(getRow(tree, 'Foo'), {pointerType: 'mouse', ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Baz'), {pointerType: 'mouse', ctrlKey: true}));
         checkSelection(onSelectionChange, ['foo', 'baz']);
         expect(rows[0]).toHaveAttribute('aria-selected', 'true');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -869,7 +870,7 @@ describe('ListView', function () {
         expect(announce).toHaveBeenCalledTimes(1);
 
         onSelectionChange.mockClear();
-        act(() => userEvent.click(getRow(tree, 'Bar'), {pointerType: 'mouse', metaKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Baz'), {pointerType: 'mouse', metaKey: true}));
         checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
@@ -964,7 +965,7 @@ describe('ListView', function () {
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'none', selectionStyle: 'highlight', onAction});
 
         let rows = tree.getAllByRole('row');
-        userEvent.click(rows[0]);
+        userEvent.click(rows[0], {pointerType: 'mouse'});
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -975,7 +976,7 @@ describe('ListView', function () {
         let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', selectionMode: 'multiple'});
 
         let rows = tree.getAllByRole('row');
-        userEvent.click(rows[0]);
+        userEvent.click(rows[0], {pointerType: 'mouse'});
         expect(announce).toHaveBeenLastCalledWith('Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['foo']);
@@ -1006,7 +1007,7 @@ describe('ListView', function () {
         let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', selectionMode: 'multiple'});
 
         let rows = tree.getAllByRole('row');
-        userEvent.click(rows[0]);
+        userEvent.click(rows[0], {pointerType: 'mouse'});
         expect(announce).toHaveBeenLastCalledWith('Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['foo']);
@@ -1029,7 +1030,7 @@ describe('ListView', function () {
         let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', selectionMode: 'multiple'});
 
         let rows = tree.getAllByRole('row');
-        userEvent.click(rows[0]);
+        userEvent.click(rows[0], {pointerType: 'mouse'});
         expect(announce).toHaveBeenLastCalledWith('Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['foo']);
@@ -1065,7 +1066,7 @@ describe('ListView', function () {
         let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', onAction, selectionMode: 'multiple'});
 
         let rows = tree.getAllByRole('row');
-        userEvent.click(rows[0]);
+        userEvent.click(rows[0], {pointerType: 'mouse'});
         checkSelection(onSelectionChange, ['foo']);
         onSelectionChange.mockClear();
         expect(announce).toHaveBeenLastCalledWith('Foo selected.');
