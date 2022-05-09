@@ -17,7 +17,6 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -214,7 +213,7 @@ storiesOf('ListView', module)
   .add('selection: multiple, checkbox, isQuiet', () => (
     <Example selectionMode="multiple" isQuiet />
   ))
-  .add('parent link example', () => (
+  .add('parent folder example', () => (
     <Example2 selectionMode="multiple" />
   ))
   .add('actions: ActionButton', () =>
@@ -282,8 +281,23 @@ storiesOf('ListView', module)
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))
+  .add('selectionStyle: checkbox, onAction', () => (
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionMode="multiple" selectionStyle="checkbox" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+      {item => <Item>{item.name}</Item>}
+    </ListView>
+  ))
   .add('with ActionBar', () => <ActionBarExample />)
   .add('with emphasized ActionBar', () => <ActionBarExample isEmphasized />)
+  .add(
+    'thumbnails',
+    () => (
+      <ListView width="250px" items={itemsWithThumbs}>
+        {
+          (item) => <Item textValue={item.title}><Image src={item.url} /><Content>{item.title}</Content><Text slot="description">JPG</Text></Item>
+        }
+      </ListView>
+    )
+  )
   .add(
     'draggable rows',
     () => (
@@ -295,14 +309,24 @@ storiesOf('ListView', module)
     ), {description: {data: 'Folders are non-draggable.'}}
   )
   .add(
-    'thumbnails',
+    'draggable rows, onAction',
     () => (
-      <ListView width="250px" items={itemsWithThumbs}>
-        {
-          (item) => <Item textValue={item.title}><Image src={item.url} /><Content>{item.title}</Content><Text slot="description">JPG</Text></Item>
-        }
-      </ListView>
-    )
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExample listViewProps={{onAction: action('onAction')}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      </Flex>
+    ), {description: {data: 'Folders are non-draggable.'}}
+  )
+  .add(
+    'draggable rows, selectionStyle: highlight, onAction',
+    () => (
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExample listViewProps={{selectionStyle: 'highlight', onAction: action('onAction')}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      </Flex>
+    ), {description: {data: 'Folders are non-draggable.'}}
   );
 
 function Example(props?) {
@@ -320,10 +344,8 @@ function Example(props?) {
 
 function Example2(props?) {
   return (
-    <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
-      <Item key="Utilities" hasChildItems>
-        <Link>Utilities</Link>
-      </Item>
+    <ListView width="250px" onSelectionChange={action('onSelectionChange')} onAction={action('onAction')} {...props}>
+      <Item key="Utilities" hasChildItems>Utilities</Item>
       <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
       <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
       <Item textValue="Adobe XD">Adobe XD</Item>
@@ -333,12 +355,10 @@ function Example2(props?) {
 
 function renderActionsExample(renderActions, props?) {
   return (
-    <ListView width="300px" selectionMode="single" {...props} onSelectionChange={keys => console.log('sel', keys)}>
+    <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={keys => console.log('sel', keys)}>
       <Item key="a" textValue="Utilities" hasChildItems>
         <Folder />
-        <Content>
-          <Link>Utilities</Link>
-        </Content>
+        <Content>Utilities</Content>
         <Text slot="description">16 items</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
@@ -458,7 +478,7 @@ export function DragExample(props?) {
       dragHooks={dragHooks}
       {...listViewProps}>
       {(item: any) => (
-        <Item key={item.key} textValue={item.name}>
+        <Item key={item.key} textValue={item.name} hasChildItems={item.type === 'folder'}>
           {item.type === 'folder' && <Folder />}
           {item.key === 'a' && <FileTxt />}
           <Content>

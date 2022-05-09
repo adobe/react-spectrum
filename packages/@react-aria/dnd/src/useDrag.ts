@@ -65,6 +65,10 @@ export function useDrag(options: DragOptions): DragResult {
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   let onDragStart = (e: DragEvent) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+
     let items = options.getItems();
     writeToDataTransfer(e.dataTransfer, items);
 
@@ -109,7 +113,7 @@ export function useDrag(options: DragOptions): DragResult {
         // Rounding height to an even number prevents blurry preview seen on some screens
         let height = 2 * Math.round(rect.height / 2);
         node.style.height = `${height}px`;
-        
+
         e.dataTransfer.setDragImage(node, x, y);
 
         // Remove the preview from the DOM after a frame so the browser has time to paint.

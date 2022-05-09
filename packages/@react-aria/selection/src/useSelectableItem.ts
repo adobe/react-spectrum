@@ -140,10 +140,19 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   }
 
-  let modality = useRef(null);
-  let hasPrimaryAction = onAction && manager.selectionMode === 'none';
+
+  // With checkbox selection, onAction (i.e. navigation) becomes primary, and occurs on a single click of the row.
+  // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
+  // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
+  // With touch, onAction occurs on single tap, and long press enters selection mode.
+  let hasPrimaryAction = onAction && (manager.selectionMode === 'none' || (manager.selectionBehavior !== 'replace' && manager.isEmpty));
   let hasSecondaryAction = onAction && manager.selectionMode !== 'none' && manager.selectionBehavior === 'replace';
+  let hasAction = hasPrimaryAction || hasSecondaryAction;
   let allowsSelection = !isDisabled && manager.canSelectItem(key);
+  let modality = useRef(null);
+
+  let longPressEnabled = hasAction && allowsSelection;
+  let longPressEnabledOnPressStart = useRef(false);
 
   // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
@@ -156,7 +165,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   if (shouldSelectOnPressUp) {
     itemPressProps.onPressStart = (e) => {
       modality.current = e.pointerType;
-      if (e.pointerType === 'keyboard') {
+      longPressEnabledOnPressStart.current = longPressEnabled;
+      if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey())) {
         onSelect(e);
       }
     };
@@ -165,12 +175,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     // Otherwise, have selection happen onPress (prevents listview row selection when clicking on interactable elements in the row)
     if (!allowsDifferentPressOrigin) {
       itemPressProps.onPress = (e) => {
-        if (e.pointerType !== 'keyboard') {
-          onSelect(e);
-        }
+        if (hasPrimaryAction || (hasSecondaryAction && e.pointerType !== 'mouse')) {
+          if (e.pointerType === 'keyboard' && !isActionKey()) {
+            return;
+          }
 
-        if (hasPrimaryAction) {
           onAction();
+        } else if (e.pointerType !== 'keyboard') {
+          onSelect(e);
         }
       };
     } else {
@@ -183,19 +195,33 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       itemPressProps.onPress = hasPrimaryAction ? () => onAction() : null;
     }
   } else {
-    // On touch, it feels strange to select on touch down, so we special case this.
     itemPressProps.onPressStart = (e) => {
       modality.current = e.pointerType;
-      if (e.pointerType !== 'touch' && e.pointerType !== 'virtual') {
+      longPressEnabledOnPressStart.current = longPressEnabled;
+
+      // Select on mouse down unless there is a primary action which will occur on mouse up.
+      // For keyboard, select on key down. If there is an action, the Space key selects on key down,
+      // and the Enter key performs onAction on key up.
+      if (
+        (e.pointerType === 'mouse' && !hasPrimaryAction) ||
+        (e.pointerType === 'keyboard' && (!onAction || isSelectionKey()))
+      ) {
         onSelect(e);
       }
     };
 
     itemPressProps.onPress = (e) => {
-      if (e.pointerType === 'touch' || e.pointerType === 'virtual' || hasPrimaryAction) {
-        // Single tap on touch with selectionBehavior = 'replace' performs an action, i.e. navigation.
-        // Also perform action on press up when selectionMode = 'none'.
-        if (hasPrimaryAction || hasSecondaryAction) {
+      // Selection occurs on touch up. Primary actions always occur on pointer up.
+      // Both primary and secondary actions occur on Enter key up. The only exception
+      // is secondary actions, which occur on double click with a mouse.
+      if (
+        e.pointerType === 'touch' ||
+        e.pointerType === 'pen' ||
+        e.pointerType === 'virtual' ||
+        (e.pointerType === 'keyboard' && hasAction && isActionKey()) ||
+        (e.pointerType === 'mouse' && hasPrimaryAction)
+      ) {
+        if (hasAction) {
           onAction();
         } else {
           onSelect(e);
@@ -223,9 +249,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Long pressing an item with touch when selectionBehavior = 'replace' switches the selection behavior
   // to 'toggle'. This changes the single tap behavior from performing an action (i.e. navigating) to
   // selecting, and may toggle the appearance of a UI affordance like checkboxes on each item.
-  // TODO: what about when drag and drop is also enabled??
   let {longPressProps} = useLongPress({
-    isDisabled: !hasSecondaryAction,
+    isDisabled: !longPressEnabled,
     onLongPress(e) {
       if (e.pointerType === 'touch') {
         onSelect(e);
@@ -234,20 +259,31 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   });
 
-  // Pressing the Enter key with selectionBehavior = 'replace' performs an action (i.e. navigation).
-  let onKeyUp = hasSecondaryAction ? (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      onAction();
+  // Prevent native drag and drop on long press if we also select on long press.
+  // Once the user is in selection mode, they can long press again to drag.
+  let onDragStart = e => {
+    if (modality.current === 'touch' && longPressEnabledOnPressStart.current) {
+      e.preventDefault();
     }
-  } : undefined;
+  };
 
   return {
     itemProps: mergeProps(
       itemProps,
       allowsSelection || hasPrimaryAction ? pressProps : {},
-      hasSecondaryAction ? longPressProps : {},
-      {onKeyUp, onDoubleClick}
+      longPressEnabled ? longPressProps : {},
+      {onDoubleClick, onDragStart}
     ),
     isPressed
   };
+}
+
+function isActionKey() {
+  let event = window.event as KeyboardEvent;
+  return event?.key === 'Enter';
+}
+
+function isSelectionKey() {
+  let event = window.event as KeyboardEvent;
+  return event?.key === ' ' || event?.code === 'Space';
 }
