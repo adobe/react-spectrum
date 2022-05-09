@@ -16,7 +16,7 @@ const meta: Meta = {
   title: 'ListViewRTL',
   parameters: {
     chromaticProvider: {colorSchemes: ['light', 'dark'], locales: ['ar-AE'], scales: ['medium', 'large'], disableAnimations: true},
-    chromatic: {delay: 600}
+    chromatic: {delay: 5000}
   }
 };
 

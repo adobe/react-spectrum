@@ -20,6 +20,7 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {Link} from '@react-spectrum/link';
@@ -62,7 +63,7 @@ const meta: Meta = {
   parameters: {
     chromaticProvider: {colorSchemes: ['light', 'dark'], locales: ['en-US'], scales: ['medium', 'large'], disableAnimations: true},
     // noticed a small shifting before final layout, delaying so chromatic doesn't hit that
-    chromatic: {delay: 600}
+    chromatic: {delay: 5000}
   }
 };
 
@@ -108,6 +109,7 @@ const Template = (): Story => ({combos, ...args}) => (
               {renderActions}
             </Item>
             <Item key="b" textValue="Adobe Photoshop">
+              <Image src="https://random.dog/191091b2-7d69-47af-9f52-6605063f1a47.jpg" />
               <Content>Adobe Photoshop</Content>
               <Text slot="description">Application</Text>
               {renderActions}
