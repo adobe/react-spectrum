@@ -190,7 +190,6 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
   let [isFocusWithin, setIsFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setIsFocusWithin});
-  console.log('isFocusWithin', isFocusWithin);
 
   return (
     <ListViewContext.Provider value={{state, dragState, isListDraggable, layout, isFocusWithin}}>
