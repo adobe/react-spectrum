@@ -92,6 +92,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
     ...props,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
+  let {collection, selectionManager} = state;
   let formatMessage = useMessageFormatter(intlMessages);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
@@ -102,10 +103,10 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
   let dragState: DraggableCollectionState;
   if (isListDraggable) {
     dragState = dragHooks.useDraggableCollectionState({
-      collection: state.collection,
-      selectionManager: state.selectionManager,
+      collection,
+      selectionManager,
       renderPreview(draggingKeys, draggedKey) {
-        let item = state.collection.getItem(draggedKey);
+        let item = collection.getItem(draggedKey);
         let itemCount = draggingKeys.size;
         let itemHeight = layout.getLayoutInfo(draggedKey).rect.height;
         return <DragPreview item={item} itemCount={itemCount} itemHeight={itemHeight} provider={provider} locale={locale}  />;
@@ -122,6 +123,16 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
 
   // Sync loading state into the layout.
   layout.isLoading = isLoading;
+  let isVerticalScrollbarVisible = false;
+  let isHorizontalScrollbarVisible = false; // do we need this one? can listviews horizontally scroll?
+  if (domRef.current) {
+    // 2 is the width of the border which is not part of the box size
+    isVerticalScrollbarVisible = domRef.current.getBoundingClientRect().width > domRef.current.children[0]?.getBoundingClientRect().width + 2;
+    isHorizontalScrollbarVisible = domRef.current.getBoundingClientRect().height > domRef.current.children[0]?.getBoundingClientRect().height + 2;
+  }
+
+  let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
+
   return (
     <ListViewContext.Provider value={{state, dragState, isListDraggable, layout}}>
       <Virtualizer
@@ -131,7 +142,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
         isLoading={isLoading}
         onLoadMore={onLoadMore}
         ref={domRef}
-        focusedKey={state.selectionManager.focusedKey}
+        focusedKey={selectionManager.focusedKey}
         scrollDirection="vertical"
         className={
           classNames(
@@ -142,13 +153,16 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
             {
               'react-spectrum-ListView--quiet': isQuiet,
               'react-spectrum-ListView--draggable': isListDraggable,
-              'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore'
+              'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore',
+              'react-spectrum-ListView--isScrollingVertically': isVerticalScrollbarVisible,
+              'react-spectrum-ListView--isScrollingHorizontally': isHorizontalScrollbarVisible,
+              'react-spectrum-ListView--hasAnyChildren': hasAnyChildren
             },
             styleProps.className
           )
         }
         layout={layout}
-        collection={state.collection}
+        collection={collection}
         transitionDuration={isLoading ? 160 : 220}>
         {(type, item) => {
           if (type === 'item') {
@@ -160,7 +174,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
               <CenteredWrapper>
                 <ProgressCircle
                   isIndeterminate
-                  aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+                  aria-label={collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
               </CenteredWrapper>
             );
           } else if (type === 'placeholder') {

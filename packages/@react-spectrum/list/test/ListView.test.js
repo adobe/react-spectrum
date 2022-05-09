@@ -702,6 +702,104 @@ describe('ListView', function () {
       expect(announce).toHaveBeenCalledTimes(3);
     });
 
+    describe('onAction', function () {
+      it('should trigger onAction when clicking items with the mouse', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
+
+        let rows = tree.getAllByRole('row');
+        userEvent.click(rows[1], {pointerType: 'mouse'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('bar');
+
+        let checkbox = within(rows[1]).getByRole('checkbox');
+        userEvent.click(checkbox);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['bar']);
+
+        onSelectionChange.mockReset();
+        userEvent.click(rows[2], {pointerType: 'mouse'});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['bar', 'baz']);
+      });
+
+      it('should trigger onAction when clicking items with touch', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
+
+        let rows = tree.getAllByRole('row');
+        userEvent.click(rows[1], {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('bar');
+
+        let checkbox = within(rows[1]).getByRole('checkbox');
+        userEvent.click(checkbox);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['bar']);
+
+        onSelectionChange.mockReset();
+        userEvent.click(rows[2], {pointerType: 'touch'});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['bar', 'baz']);
+      });
+
+      it('should support long press to enter selection mode on touch', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
+        userEvent.click(document.body);
+
+        let rows = tree.getAllByRole('row');
+        fireEvent.pointerDown(rows[1], {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).not.toHaveBeenCalled();
+
+        act(() => jest.advanceTimersByTime(800));
+
+        checkSelection(onSelectionChange, ['bar']);
+        expect(onAction).not.toHaveBeenCalled();
+
+        fireEvent.pointerUp(rows[1], {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+
+        userEvent.click(rows[2], {pointerType: 'touch'});
+        checkSelection(onSelectionChange, ['bar', 'baz']);
+
+        // Deselect all to exit selection mode
+        userEvent.click(rows[2], {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+        userEvent.click(rows[1], {pointerType: 'touch'});
+
+        act(() => jest.runAllTimers());
+        checkSelection(onSelectionChange, []);
+        expect(onAction).not.toHaveBeenCalled();
+      });
+
+      it('should trigger onAction when pressing Enter', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
+        let rows = tree.getAllByRole('row');
+
+        fireEvent.keyDown(rows[1], {key: 'Enter'});
+        fireEvent.keyUp(rows[1], {key: 'Enter'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('bar');
+
+        onAction.mockReset();
+        fireEvent.keyDown(rows[2], {key: ' '});
+        fireEvent.keyUp(rows[2], {key: ' '});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onAction).not.toHaveBeenCalled();
+        checkSelection(onSelectionChange, ['baz']);
+      });
+    });
+
     describe('selectionStyle highlight', function () {
       installPointerEvent();
       it('should toggle items in selection highlight with ctrl-click on Mac', function () {
@@ -711,7 +809,7 @@ describe('ListView', function () {
         let rows = tree.getAllByRole('row');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getRow(tree, 'Bar'), {ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Bar'), {pointerType: 'mouse', ctrlKey: true}));
 
         checkSelection(onSelectionChange, ['bar']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -719,7 +817,7 @@ describe('ListView', function () {
         expect(announce).toHaveBeenCalledTimes(1);
 
         onSelectionChange.mockClear();
-        act(() => userEvent.click(getRow(tree, 'Baz'), {ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Baz'), {pointerType: 'mouse', ctrlKey: true}));
         checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
@@ -737,7 +835,7 @@ describe('ListView', function () {
         expect(rows[0]).toHaveAttribute('aria-selected', 'false');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getRow(tree, 'Foo'), {ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Foo'), {pointerType: 'mouse', ctrlKey: true}));
 
         checkSelection(onSelectionChange, ['foo']);
         expect(rows[0]).toHaveAttribute('aria-selected', 'true');
@@ -745,7 +843,7 @@ describe('ListView', function () {
         expect(announce).toHaveBeenCalledTimes(1);
 
         onSelectionChange.mockClear();
-        act(() => userEvent.click(getRow(tree, 'Baz'), {ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Foo'), {pointerType: 'mouse', ctrlKey: true}));
         checkSelection(onSelectionChange, ['foo', 'baz']);
         expect(rows[0]).toHaveAttribute('aria-selected', 'true');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -763,7 +861,7 @@ describe('ListView', function () {
         let rows = tree.getAllByRole('row');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getRow(tree, 'Bar'), {metaKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Bar'), {pointerType: 'mouse', metaKey: true}));
 
         checkSelection(onSelectionChange, ['bar']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -771,7 +869,7 @@ describe('ListView', function () {
         expect(announce).toHaveBeenCalledTimes(1);
 
         onSelectionChange.mockClear();
-        act(() => userEvent.click(getRow(tree, 'Baz'), {metaKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Bar'), {pointerType: 'mouse', metaKey: true}));
         checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
@@ -800,8 +898,8 @@ describe('ListView', function () {
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
         act(() => {
           let el = within(rows[2]).getByText('Baz');
-          fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-          fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent(el, pointerEvent('pointerdown', {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent(el, pointerEvent('pointerup', {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
           fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
         });
         checkSelection(onSelectionChange, [
@@ -825,8 +923,8 @@ describe('ListView', function () {
         // Android TalkBack double tap test, pointer event sets pointerType and onClick handles the rest
         act(() => {
           let el = within(rows[2]).getByText('Baz');
-          fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-          fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent(el, pointerEvent('pointerdown', {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+          fireEvent(el, pointerEvent('pointerup', {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
           fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
         });
         expect(onSelectionChange).not.toHaveBeenCalled();
@@ -840,7 +938,7 @@ describe('ListView', function () {
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(getRow(tree, 'Bar'), {ctrlKey: true}));
+        act(() => userEvent.click(getRow(tree, 'Bar'), {pointerType: 'mouse', ctrlKey: true}));
 
         checkSelection(onSelectionChange, ['bar']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -1098,6 +1196,8 @@ describe('ListView', function () {
   });
 
   describe('drag and drop', function () {
+    installPointerEvent();
+
     function DraggableListView(props) {
       let {dragHookOptions, listViewProps} = props;
       return (
@@ -1138,7 +1238,7 @@ describe('ListView', function () {
         jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
         let dataTransfer = new DataTransfer();
 
-        fireEvent.pointerDown(cell, {button: 0, pointerId: 1, clientX: 5, clientY: 5});
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 5, clientY: 5});
         // TODO: fireEvent.dragStart(cell, {dataTransfer, clientX: 5, clientY: 5}) doesn't propagate the clientX and Y values,
         // test if upgrading testing library/jsdom fixes issue
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
@@ -1167,7 +1267,7 @@ describe('ListView', function () {
         expect(cell).toHaveTextContent('Adobe Photoshop');
 
         let dataTransfer = new DataTransfer();
-        fireEvent.pointerDown(cell, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'Adobe Photoshop')]);
 
@@ -1181,7 +1281,7 @@ describe('ListView', function () {
           y: 0
         });
 
-        fireEvent.pointerMove(cell, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDragMove).toHaveBeenCalledTimes(1);
         expect(onDragMove).toHaveBeenCalledWith({
@@ -1211,7 +1311,7 @@ describe('ListView', function () {
 
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
 
-        fireEvent.pointerUp(cell, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
@@ -1255,7 +1355,7 @@ describe('ListView', function () {
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
-        fireEvent.pointerDown(cellA, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent.pointerDown(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([
           new DataTransferItem('text/plain', 'Adobe Photoshop\nAdobe XD\nAdobe InDesign'),
@@ -1275,7 +1375,7 @@ describe('ListView', function () {
           y: 0
         });
 
-        fireEvent.pointerMove(cellA, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent.pointerMove(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDragMove).toHaveBeenCalledTimes(1);
         expect(onDragMove).toHaveBeenCalledWith({
@@ -1296,7 +1396,7 @@ describe('ListView', function () {
         expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Adobe XD');
         expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Adobe InDesign');
 
-        fireEvent.pointerUp(cellA, {button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent.pointerUp(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
@@ -1319,7 +1419,7 @@ describe('ListView', function () {
         expect(row).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
-        fireEvent.pointerDown(cell, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([]);
         expect(onDragStart).toHaveBeenCalledTimes(0);
@@ -1348,10 +1448,28 @@ describe('ListView', function () {
         expect(rows[2]).not.toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
-        fireEvent.pointerDown(cellC, {button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent.pointerDown(cellC, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cellC, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([]);
         expect(onDragStart).toHaveBeenCalledTimes(0);
+      });
+
+      it('should not allow dragging when not selected when it conflicts with onAction', function () {
+        let onAction = jest.fn();
+        let {getAllByRole} = render(
+          <DraggableListView listViewProps={{onAction}} />
+        );
+
+        let rows = getAllByRole('row');
+        let cell = within(rows[2]).getByRole('gridcell');
+        let dataTransfer = new DataTransfer();
+        let event = new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5});
+
+        fireEvent.pointerDown(cell, {pointerType: 'touch', button: 0, pointerId: 1, clientX: 5, clientY: 5});
+        fireEvent(cell, event);
+
+        expect(event.defaultPrevented).toBe(true);
+        expect(dataTransfer.items._items).toHaveLength(0);
       });
     });
 
@@ -1485,19 +1603,19 @@ describe('ListView', function () {
       let draggableRow = rows[0];
       let nonDraggableRow = rows[1];
       expect(draggableRow).toHaveAttribute('aria-selected', 'false');
-      fireEvent.mouseDown(draggableRow);
+      fireEvent.pointerDown(draggableRow, {pointerType: 'mouse'});
       expect(draggableRow).toHaveAttribute('aria-selected', 'false');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
-      fireEvent.mouseUp(draggableRow);
+      fireEvent.pointerUp(draggableRow, {pointerType: 'mouse'});
       expect(draggableRow).toHaveAttribute('aria-selected', 'true');
       checkSelection(onSelectionChange, ['a']);
 
       onSelectionChange.mockClear();
       expect(nonDraggableRow).toHaveAttribute('aria-selected', 'false');
-      fireEvent.mouseDown(nonDraggableRow);
+      fireEvent.pointerDown(nonDraggableRow, {pointerType: 'mouse'});
       expect(nonDraggableRow).toHaveAttribute('aria-selected', 'false');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
-      fireEvent.mouseUp(nonDraggableRow);
+      fireEvent.pointerUp(nonDraggableRow, {pointerType: 'mouse'});
       expect(nonDraggableRow).toHaveAttribute('aria-selected', 'true');
       checkSelection(onSelectionChange, ['a', 'b']);
     });
@@ -1523,20 +1641,20 @@ describe('ListView', function () {
 
       let rows = getAllByRole('row');
       let cellA = within(rows[0]).getByRole('gridcell');
-      triggerPress(cellA);
+      userEvent.click(cellA, {pointerType: 'mouse'});
       expect(document.activeElement).toBe(rows[0]);
       let dragHandle = within(cellA).getAllByRole('button')[0];
       // If the dragHandle has a style applied, it is visually hidden
       expect(dragHandle.style).toBeTruthy();
       expect(dragHandle.style.position).toBe('absolute');
 
-      fireEvent.pointerDown(rows[0], {button: 0, pointerId: 1});
+      fireEvent.pointerDown(rows[0], {pointerType: 'mouse', button: 0, pointerId: 1});
       dragHandle = within(cellA).getAllByRole('button')[0];
       expect(dragHandle.style).toBeTruthy();
       expect(dragHandle.style.position).toBe('absolute');
       fireEvent.pointerUp(rows[0], {button: 0, pointerId: 1});
 
-      fireEvent.pointerEnter(rows[0]);
+      fireEvent.pointerEnter(rows[0], {pointerType: 'mouse'});
       dragHandle = within(cellA).getAllByRole('button')[0];
       expect(dragHandle.style).toBeTruthy();
       expect(dragHandle.style.position).toBe('absolute');
@@ -1601,7 +1719,7 @@ describe('ListView', function () {
       let menuButton = within(row).getAllByRole('button')[1];
       expect(menuButton).toHaveAttribute('aria-expanded', 'false');
 
-      triggerPress(menuButton);
+      userEvent.click(menuButton, {pointerType: 'mouse'});
       act(() => {jest.runAllTimers();});
 
       let menu = getByRole('menu');
