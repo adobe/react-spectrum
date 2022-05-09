@@ -29,8 +29,7 @@ import React from 'react';
 // TODO: add overflow mode and thumbnails when those PRs are merged
 let states = [
   {isQuiet: true},
-  // No visual difference between single and multiple
-  {selectionMode: 'single'},
+  {selectionMode: 'multiple'},
   {density: ['compact', 'spacious']},
   {selectionStyle: 'highlight'}
 ];
