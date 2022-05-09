@@ -2463,7 +2463,7 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(1), false);
 
         let checkbox = within(rows[1]).getByRole('checkbox');
-        userEvent.click(checkbox);
+        userEvent.click(checkbox, {pointerType: 'touch'});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkRowSelection([rows[1]], true);
 

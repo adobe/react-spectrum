@@ -787,9 +787,9 @@ describe('ListView', function () {
       expect(rows[2]).toHaveAttribute('aria-selected', 'false');
       act(() => {
         let el = within(rows[2]).getByText('Baz');
-        fireEvent(el, pointerEvent('pointerdown', {pointerType: 'touch', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-        fireEvent(el, pointerEvent('pointerup', {pointerType: 'touch', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-        fireEvent.click(el, {pointerType: 'touch', width: 1, height: 1, detail: 1});
+        fireEvent(el, pointerEvent('pointerdown', {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(el, pointerEvent('pointerup', {pointerType: 'mouse', pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
       });
       checkSelection(onSelectionChange, [
         'bar', 'baz'
