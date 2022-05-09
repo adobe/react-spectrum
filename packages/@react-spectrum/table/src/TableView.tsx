@@ -120,6 +120,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }
 
   let domRef = useDOMRef(ref);
+  let bodyRef = useRef<HTMLDivElement>();
   let formatMessage = useMessageFormatter(intlMessages);
 
   let density = props.density || 'regular';
@@ -287,6 +288,14 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   };
 
+  let isVerticalScrollbarVisible = false;
+  let isHorizontalScrollbarVisible = false;
+  if (bodyRef.current && domRef.current) {
+    // 2 is the width of the border which is not part of the box size
+    isVerticalScrollbarVisible = domRef.current.getBoundingClientRect().width > bodyRef.current.children[0]?.getBoundingClientRect().width + 2;
+    isHorizontalScrollbarVisible = domRef.current.getBoundingClientRect().height > bodyRef.current.children[0]?.getBoundingClientRect().height + 2;
+  }
+
   return (
     <TableContext.Provider value={{state, layout}}>
       <TableVirtualizer
@@ -301,7 +310,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
               'spectrum-Table--quiet': isQuiet,
               'spectrum-Table--wrap': props.overflowMode === 'wrap',
               'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
-              'spectrum-Table--resizingColumn': state.isResizingColumn
+              'spectrum-Table--resizingColumn': state.isResizingColumn,
+              'spectrum-Table--isScrollingVertically': isVerticalScrollbarVisible,
+              'spectrum-Table--isScrollingHorizontally': isHorizontalScrollbarVisible
             },
             classNames(
               stylesOverrides,
@@ -316,16 +327,16 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         renderWrapper={renderWrapper}
         setTableWidth={state.setTableWidth}
         domRef={domRef}
+        bodyRef={bodyRef}
         getColumnWidth={state.getColumnWidth} />
     </TableContext.Provider>
   );
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, setTableWidth, getColumnWidth, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, ...otherProps}) {
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
-  let bodyRef = useRef<HTMLDivElement>();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let onLoadMore = collection.body.props.onLoadMore;
