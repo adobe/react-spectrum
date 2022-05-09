@@ -177,6 +177,16 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   // Sync loading state into the layout.
   layout.isLoading = isLoading;
+  let isVerticalScrollbarVisible = false;
+  let isHorizontalScrollbarVisible = false; // do we need this one? can listviews horizontally scroll?
+  if (domRef.current) {
+    // 2 is the width of the border which is not part of the box size
+    isVerticalScrollbarVisible = domRef.current.getBoundingClientRect().width > domRef.current.children[0]?.getBoundingClientRect().width + 2;
+    isHorizontalScrollbarVisible = domRef.current.getBoundingClientRect().height > domRef.current.children[0]?.getBoundingClientRect().height + 2;
+  }
+
+  let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
+
   return (
     <ListViewContext.Provider value={{state, dragState, isListDraggable, layout}}>
       <Virtualizer
@@ -197,7 +207,10 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
             {
               'react-spectrum-ListView--quiet': isQuiet,
               'react-spectrum-ListView--draggable': isListDraggable,
-              'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore'
+              'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore',
+              'react-spectrum-ListView--isScrollingVertically': isVerticalScrollbarVisible,
+              'react-spectrum-ListView--isScrollingHorizontally': isHorizontalScrollbarVisible,
+              'react-spectrum-ListView--hasAnyChildren': hasAnyChildren
             },
             styleProps.className
           )
