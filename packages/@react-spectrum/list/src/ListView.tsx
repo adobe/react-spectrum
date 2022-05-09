@@ -33,7 +33,7 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
+import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid} from '@react-aria/grid';
 import {useProvider} from '@react-spectrum/provider';
@@ -43,11 +43,7 @@ interface ListViewContextValue<T> {
   state: GridState<T, GridCollection<any>>,
   dragState: DraggableCollectionState,
   isListDraggable: boolean,
-  layout: ListLayout<T>,
-  hoverState: {
-    hoveredKey: Key,
-    setHoveredKey: (key: Key) => void
-  }
+  layout: ListLayout<T>
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
@@ -190,11 +186,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
-  let [hoveredKey, setHoveredKey] = useState<Key>();
-  let hoverState = {hoveredKey, setHoveredKey};
 
   return (
-    <ListViewContext.Provider value={{state, dragState, isListDraggable, layout, hoverState}}>
+    <ListViewContext.Provider value={{state, dragState, isListDraggable, layout}}>
       <Virtualizer
         {...filterDOMProps(otherProps)}
         {...gridProps}
