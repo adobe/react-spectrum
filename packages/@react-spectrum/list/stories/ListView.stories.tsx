@@ -18,7 +18,6 @@ import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
-import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -290,7 +289,7 @@ storiesOf('ListView', module)
   ))
   .add('with ActionBar', () => <ActionBarExample />)
   .add('with emphasized ActionBar', () => <ActionBarExample isEmphasized />)
-  .add('thumbnails',     () => (
+  .add('thumbnails', () => (
     <ListView width="250px" items={itemsWithThumbs}>
       {
           (item) => <Item textValue={item.title}><Image src={item.url} /><Content>{item.title}</Content><Text slot="description">JPG</Text></Item>
