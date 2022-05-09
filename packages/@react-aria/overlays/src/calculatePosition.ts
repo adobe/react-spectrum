@@ -11,11 +11,11 @@
  */
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
-import getCss from 'dom-helpers/style';
-import getOffset from 'dom-helpers/query/offset';
-import getPosition from 'dom-helpers/query/position';
-import getScrollLeft from 'dom-helpers/query/scrollLeft';
-import getScrollTop from 'dom-helpers/query/scrollTop';
+import getCss from 'dom-helpers/css';
+import getOffset from 'dom-helpers/offset';
+import getPosition from 'dom-helpers/position';
+import getScrollLeft from 'dom-helpers/scrollLeft';
+import getScrollTop from 'dom-helpers/scrollTop';
 import ownerDocument from 'dom-helpers/ownerDocument';
 
 interface Position {
@@ -99,7 +99,7 @@ const PARSED_PLACEMENT_CACHE = {};
 // @ts-ignore
 let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
-function getContainerDimensions(containerNode: Element): Dimensions {
+function getContainerDimensions(containerNode: HTMLElement): Dimensions {
   let width = 0, height = 0, top = 0, left = 0;
   let scroll: Position = {};
 
@@ -373,15 +373,17 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     maxHeight
   } = opts;
 
-  let container = overlayNode.offsetParent || document.body;
+  let container = (overlayNode.offsetParent || document.body) as HTMLElement;
   let isBodyContainer = container.tagName === 'BODY';
   const containerPositionStyle = window.getComputedStyle(container).position;
   let isContainerPositioned = !!containerPositionStyle && containerPositionStyle !== 'static';
   let childOffset: Offset = isBodyContainer ? getOffset(targetNode) : getPosition(targetNode, container);
 
   if (!isBodyContainer) {
-    childOffset.top += parseInt(getCss(targetNode, 'marginTop'), 10) || 0;
-    childOffset.left += parseInt(getCss(targetNode, 'marginLeft'), 10) || 0;
+    let marginTop = String(getCss(targetNode, 'marginTop'));
+    let marginLeft = String(getCss(targetNode, 'marginLeft'));
+    childOffset.top += parseInt(marginTop, 10) || 0;
+    childOffset.left += parseInt(marginLeft, 10) || 0;
   }
 
   let overlaySize: Offset = getOffset(overlayNode);
