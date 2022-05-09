@@ -389,6 +389,24 @@ storiesOf('TableView', module)
       </TableView>
      )
    )
+
+  .add(
+    'selectionStyle: checkbox, onAction',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" width={400} height={300} selectionMode="multiple" selectionStyle="checkbox" onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+        <TableHeader columns={columns}>
+          {column => <Column minWidth={200}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
   .add(
     // For testing https://github.com/adobe/react-spectrum/issues/1885
     'swap selection mode',
