@@ -53,7 +53,6 @@ export function ListViewItem(props: ListViewItemProps) {
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isDraggable = dragState?.isDraggable(item.key);
-  let isDroppable = isListDroppable && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {pressProps, isPressed} = usePress({isDisabled});
 
@@ -130,7 +129,7 @@ export function ListViewItem(props: ListViewItemProps) {
     rowProps,
     pressProps,
     isDraggable && draggableItem?.dragProps,
-    isDroppable && droppableItem?.dropProps,
+    isListDroppable && droppableItem?.dropProps,
     hoverProps,
     focusWithinProps,
     focusProps
