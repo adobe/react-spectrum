@@ -56,13 +56,6 @@
         pointer-events: none;
       }
 
-      /* Box shadow for bottom border for non-selected rows that is immmediately above a selected row. */
-      &.is-next-selected {
-        &:after {
-          box-shadow: inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
-        }
-      }
-
       &.is-selected {
         background-color: var(--spectrum-table-row-background-color-selected);
         &.is-hovered,
@@ -76,18 +69,10 @@
 
         /* Box shadow for left, right, and bottom border for selected rows. */
         &:after {
-          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
         }
 
-        /* Box shadow for left, right, bottom, and top border for first row when selected (needs 1px top blue border). */
-        &.react-spectrum-ListViewItem--firstRow {
-          &:after {
-            box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
-          }
-        }
-
-        /* Box shadow for left, right, and bottom border for last row when selected (needs 1px bottom blue border). */
-        &.react-spectrum-ListViewItem--lastRow {
+        &.is-prev-selected {
           &:after {
             box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
           }
@@ -97,7 +82,7 @@
 
     &:not(.react-spectrum-ListView--quiet) {
       .react-spectrum-ListViewItem {
-        /* Box shadow for bottom border for non-selected rows that aren't immediatly above a selected row (grey border bottom). */
+        /* Box shadow for bottom border for non-selected rows that aren't immediately above a selected row (grey border bottom). */
         /* Also omit bottom border for last row if the total content height of the ListView is equal or greater than the height of the container. This avoids overlapping bottom borders. */
         &:not(.is-selected):not(.is-next-selected):not(.react-spectrum-ListViewItem--isFlushBottom) {
           &:after {
@@ -177,10 +162,46 @@
   }
 }
 
-.react-spectrum-ListView--quiet {
+.react-spectrum-ListView.react-spectrum-ListView--quiet {
   background-color: var(--spectrum-alias-background-color-transparent);
   border-width: 0;
   border-radius: 0;
+
+  .react-spectrum-ListView-row {
+    &.round-tops {
+      &:focus-ring {
+        &:before {
+          border-start-start-radius: var(--spectrum-listview-item-border-radius);
+        }
+      }
+      & > .react-spectrum-ListViewItem {
+        border-start-start-radius: var(--spectrum-listview-item-border-radius);
+        border-start-end-radius: var(--spectrum-listview-item-border-radius);
+
+        &:after {
+          border-start-start-radius: var(--spectrum-listview-item-border-radius);
+          border-start-end-radius: var(--spectrum-listview-item-border-radius);
+        }
+      }
+    }
+
+    &.round-bottoms {
+      &:focus-ring {
+        &:before {
+          border-end-start-radius: var(--spectrum-listview-item-border-radius);
+        }
+      }
+      & > .react-spectrum-ListViewItem {
+        border-end-start-radius: var(--spectrum-listview-item-border-radius);
+        border-end-end-radius: var(--spectrum-listview-item-border-radius);
+
+        &:after {
+          border-end-start-radius: var(--spectrum-listview-item-border-radius);
+          border-end-end-radius: var(--spectrum-listview-item-border-radius);
+        }
+      }
+    }
+  }
 }
 
 .react-spectrum-ListViewItem {
@@ -234,8 +255,7 @@
     grid-template-rows: 1fr auto;
     grid-template-areas:
       "draghandle checkbox icon image content actions actionmenu chevron"
-      "draghandle checkbox icon image description actions actionmenu chevron"
-    ;
+      "draghandle checkbox icon image description actions actionmenu chevron";
     align-items: center;
   }
 
@@ -275,6 +295,7 @@
   .react-spectrum-ListViewItem-checkbox {
     min-height: 0;
     height: 100%;
+
     > span {
       margin: 0;
     }
@@ -345,8 +366,7 @@
     .react-spectrum-ListViewItem-grid {
       grid-template-areas:
         "icon image content     . badge"
-        "icon image description . badge"
-      ;
+        "icon image description . badge";
       grid-template-columns: auto auto auto 1fr;
     }
 
@@ -358,8 +378,9 @@
       border-radius: var(--spectrum-alias-border-radius-regular);
     }
 
-    &.react-spectrum-ListViewItem-dragPreview--multiple  {
+    &.react-spectrum-ListViewItem-dragPreview--multiple {
       position: relative;
+
       &:after {
         content: '';
         display: block;
@@ -381,9 +402,8 @@
     }
   }
 }
-.react-spectrum-ListView {
+.react-spectrum-ListView:not(.react-spectrum-ListView--quiet) {
   /* give first and last items border-radius to match listview container */
-
   .react-spectrum-ListViewItem--firstRow.react-spectrum-ListViewItem {
     border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
