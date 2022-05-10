@@ -218,8 +218,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
               'react-spectrum-ListView--quiet': isQuiet,
               'react-spectrum-ListView--draggable': isListDraggable,
               'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore',
-              'react-spectrum-ListView--isScrollingVertically': isVerticalScrollbarVisible,
-              'react-spectrum-ListView--isScrollingHorizontally': isHorizontalScrollbarVisible,
+              'react-spectrum-ListView--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
+              'react-spectrum-ListView--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible,
               'react-spectrum-ListView--hasAnyChildren': hasAnyChildren,
               'react-spectrum-ListView--wrap': overflowMode === 'wrap'
             },
