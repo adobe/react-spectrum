@@ -201,7 +201,7 @@ storiesOf('ListView', module)
   .add('selection: single, checkbox', () => (
     <Example selectionMode="single" />
   ))
-  .add('selection: single, checkbox, disabled', () => (
+  .add('selection: single, checkbox, first row disabled', () => (
     <Example selectionMode="single" disabledKeys={['Utilities']} />
   ))
   .add('selection: single, checkbox, isQuiet', () => (
