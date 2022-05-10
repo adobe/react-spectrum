@@ -358,7 +358,6 @@ storiesOf('ListView', module)
       </Item>
     </ListView>
   ));
-;
 
 function Example(props?) {
   return (
