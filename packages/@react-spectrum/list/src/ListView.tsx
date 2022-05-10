@@ -102,6 +102,11 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
   isQuiet?: boolean,
   /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
   loadingState?: LoadingState,
+  /**
+   * Sets the text behavior for the row contents.
+   * @default 'truncate'
+   */
+  overflowMode?: 'truncate' | 'wrap',
   /** Sets what the ListView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
   /**
@@ -123,6 +128,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     onLoadMore,
     loadingState,
     isQuiet,
+    overflowMode = 'truncate',
     onAction,
     dragHooks,
     dropHooks,
@@ -298,7 +304,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
               'react-spectrum-ListView--dropTarget': !!isRootDropTarget,
               'react-spectrum-ListView--isScrollingVertically': isVerticalScrollbarVisible,
               'react-spectrum-ListView--isScrollingHorizontally': isHorizontalScrollbarVisible,
-              'react-spectrum-ListView--hasAnyChildren': hasAnyChildren
+              'react-spectrum-ListView--hasAnyChildren': hasAnyChildren,
+              'react-spectrum-ListView--wrap': overflowMode === 'wrap'
             },
             styleProps.className
           )

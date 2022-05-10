@@ -703,6 +703,42 @@ describe('ListView', function () {
         expect(onAction).not.toHaveBeenCalled();
         checkSelection(onSelectionChange, ['baz']);
       });
+
+      it('should not trigger action when deselecting with mouse', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction, defaultSelectedKeys: ['foo']});
+        let rows = tree.getAllByRole('row');
+
+        userEvent.click(rows[0], {pointerType: 'mouse'});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onAction).not.toHaveBeenCalled();
+      });
+
+      it('should not trigger action when deselecting with keyboard', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction, defaultSelectedKeys: ['foo']});
+        let rows = tree.getAllByRole('row');
+
+        fireEvent.keyDown(rows[0], {key: ' '});
+        fireEvent.keyUp(rows[0], {key: ' '});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onAction).not.toHaveBeenCalled();
+      });
+
+      it('should not trigger action or selection when pressing Enter while in selection mode', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        onSelectionChange.mockReset();
+        let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction, defaultSelectedKeys: ['foo']});
+        let rows = tree.getAllByRole('row');
+
+        fireEvent.keyDown(rows[0], {key: 'Enter'});
+        fireEvent.keyUp(rows[0], {key: 'Enter'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).not.toHaveBeenCalled();
+      });
     });
 
     it('should toggle items in selection highlight with ctrl-click on Mac', function () {
