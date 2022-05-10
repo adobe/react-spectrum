@@ -63,20 +63,19 @@ const ROW_HEIGHTS = {
   }
 };
 
-function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density'], overflowMode: ListViewProps<T>['overflowMode']) {
+function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
   let layout = useMemo(() =>
     new ListLayout<T>({
-      estimatedRowHeight: overflowMode === 'wrap' ? ROW_HEIGHTS[density][scale] : undefined,
-      rowHeight: overflowMode === 'wrap' ? undefined : ROW_HEIGHTS[density][scale],
+      estimatedRowHeight: ROW_HEIGHTS[density][scale],
       padding: 0,
       collator,
       loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
       allowDisabledKeyFocus: true
     })
-    , [collator, scale, density, isEmpty, overflowMode]);
+    , [collator, scale, density, isEmpty]);
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
@@ -159,7 +158,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     focusMode: 'row',
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
-  let layout = useListLayout(state, props.density || 'regular', overflowMode);
+  let layout = useListLayout(state, props.density || 'regular');
   let provider = useProvider();
   let dragState: DraggableCollectionState;
   if (isListDraggable) {
