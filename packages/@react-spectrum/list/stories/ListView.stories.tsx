@@ -652,11 +652,13 @@ export function DragIntoItemExample() {
           }
         }
         onDropAction(e);
-        onMove(keys, e.target);
+        if (!keys.includes(e.target.key)) {
+          onMove(keys, e.target);
+        }
       } 
     },
     getDropOperation(target) {
-      if (target.type === 'root' || target.dropPosition !== 'on') {
+      if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes) {
         return 'cancel';
       }
 
