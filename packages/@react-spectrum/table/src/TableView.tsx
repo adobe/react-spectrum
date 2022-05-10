@@ -11,6 +11,7 @@
  */
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
+import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
@@ -20,7 +21,6 @@ import {GridNode} from '@react-types/grid';
 import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
-import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';

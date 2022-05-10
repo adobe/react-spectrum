@@ -33,7 +33,7 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {ReactElement, useContext, useMemo, useRef, useState} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid} from '@react-aria/grid';
 import {useProvider} from '@react-spectrum/provider';
