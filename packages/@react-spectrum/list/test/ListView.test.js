@@ -1032,7 +1032,6 @@ describe('ListView', function () {
         let rows = getAllByRole('row');
         act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
         act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
-        // This row should be non-draggable
         act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
         act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
 
@@ -1048,7 +1047,7 @@ describe('ListView', function () {
 
         let cellC = within(rows[2]).getByRole('gridcell');
         expect(cellC).toHaveTextContent('Documents');
-        expect(rows[2]).not.toHaveAttribute('draggable', 'true');
+        expect(rows[2]).toHaveAttribute('draggable', 'true');
 
         let cellD = within(rows[3]).getByRole('gridcell');
         expect(cellD).toHaveTextContent('Adobe InDesign');
@@ -1058,10 +1057,10 @@ describe('ListView', function () {
         fireEvent.pointerDown(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([
-          new DataTransferItem('text/plain', 'Adobe Photoshop\nAdobe XD\nAdobe InDesign'),
+          new DataTransferItem('text/plain', 'Adobe Photoshop\nAdobe XD\nDocuments\nAdobe InDesign'),
           new DataTransferItem(
             CUSTOM_DRAG_TYPE,
-            JSON.stringify([{'text/plain': 'Adobe Photoshop'}, {'text/plain': 'Adobe XD'}, {'text/plain': 'Adobe InDesign'}]
+            JSON.stringify([{'text/plain': 'Adobe Photoshop'}, {'text/plain': 'Adobe XD'}, {'text/plain': 'Documents'}, {'text/plain': 'Adobe InDesign'}]
           ))
         ]);
 
@@ -1070,7 +1069,7 @@ describe('ListView', function () {
         expect(onDragStart).toHaveBeenCalledTimes(1);
         expect(onDragStart).toHaveBeenCalledWith({
           type: 'dragstart',
-          keys: new Set(['a', 'b', 'd']),
+          keys: new Set(['a', 'b', 'c', 'd']),
           x: 0,
           y: 0
         });
@@ -1080,7 +1079,7 @@ describe('ListView', function () {
         expect(onDragMove).toHaveBeenCalledTimes(1);
         expect(onDragMove).toHaveBeenCalledWith({
           type: 'dragmove',
-          keys: new Set(['a', 'b', 'd']),
+          keys: new Set(['a', 'b', 'c', 'd']),
           x: 1,
           y: 1
         });
@@ -1090,25 +1089,25 @@ describe('ListView', function () {
         act(() => jest.runAllTimers());
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // onDrop should only have 3 items, Documents shouldn't be included
-        expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
+        expect(await onDrop.mock.calls[0][0].items.length).toBe(4);
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
         expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Adobe XD');
-        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Adobe InDesign');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Documents');
+        expect(await onDrop.mock.calls[0][0].items[3].getText('text/plain')).toBe('Adobe InDesign');
 
         fireEvent.pointerUp(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
           type: 'dragend',
-          keys: new Set(['a', 'b', 'd']),
+          keys: new Set(['a', 'b', 'c', 'd']),
           x: 1,
           y: 1,
           dropOperation: 'move'
         });
       });
 
-      it('should not allow drag operations on a disabled row', function () {
+      it('should allow drag operations on a disabled row', function () {
         let {getAllByRole} = render(
           <DraggableListView listViewProps={{disabledKeys: ['a']}} />
         );
@@ -1116,42 +1115,13 @@ describe('ListView', function () {
         let row = getAllByRole('row')[0];
         let cell = within(row).getByRole('gridcell');
         expect(cell).toHaveTextContent('Adobe Photoshop');
-        expect(row).not.toHaveAttribute('draggable', 'true');
+        expect(row).toHaveAttribute('draggable', 'true');
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-        expect([...dataTransfer.items]).toEqual([]);
-        expect(onDragStart).toHaveBeenCalledTimes(0);
-      });
-
-      it('should not allow drag operations on a non draggable row', function () {
-        let allowsDraggingItem = (key) => {
-          if (key === 'c') {
-            return false;
-          }
-          return true;
-        };
-
-        let {getAllByRole} = render(
-          <DraggableListView dragHookOptions={{allowsDraggingItem}} />
-        );
-
-        let rows = getAllByRole('row');
-        // This row should be non-draggable
-        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
-        act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
-        expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['c', 'd']));
-
-        let cellC = within(rows[2]).getByRole('gridcell');
-        expect(cellC).toHaveTextContent('Documents');
-        expect(rows[2]).not.toHaveAttribute('draggable', 'true');
-
-        let dataTransfer = new DataTransfer();
-        fireEvent.pointerDown(cellC, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent(cellC, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-        expect([...dataTransfer.items]).toEqual([]);
-        expect(onDragStart).toHaveBeenCalledTimes(0);
+        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'Adobe Photoshop')]);
+        expect(onDragStart).toHaveBeenCalledTimes(1);
       });
 
       it('should not allow dragging when not selected when it conflicts with onAction', function () {
@@ -1242,7 +1212,7 @@ describe('ListView', function () {
 
         let cellC = within(rows[2]).getByRole('gridcell');
         expect(cellC).toHaveTextContent('Documents');
-        expect(rows[2]).not.toHaveAttribute('draggable', 'true');
+        expect(rows[2]).toHaveAttribute('draggable', 'true');
 
         let cellD = within(rows[3]).getByRole('gridcell');
         expect(cellD).toHaveTextContent('Adobe InDesign');
@@ -1258,7 +1228,7 @@ describe('ListView', function () {
         expect(onDragStart).toHaveBeenCalledTimes(1);
         expect(onDragStart).toHaveBeenCalledWith({
           type: 'dragstart',
-          keys: new Set(['a', 'b', 'd']),
+          keys: new Set(['a', 'b', 'c', 'd']),
           x: 50,
           y: 25
         });
@@ -1270,16 +1240,16 @@ describe('ListView', function () {
 
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // onDrop should only have 3 items, Documents shouldn't be included
-        expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
+        expect(await onDrop.mock.calls[0][0].items.length).toBe(4);
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
         expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Adobe XD');
-        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Adobe InDesign');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Documents');
+        expect(await onDrop.mock.calls[0][0].items[3].getText('text/plain')).toBe('Adobe InDesign');
 
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
           type: 'dragend',
-          keys: new Set(['a', 'b', 'd']),
+          keys: new Set(['a', 'b', 'c', 'd']),
           x: 50,
           y: 25,
           dropOperation: 'move'
@@ -1288,20 +1258,13 @@ describe('ListView', function () {
     });
 
     it('should make row selection happen on pressUp if list is draggable', function () {
-      let allowsDraggingItem = (key) => {
-        if (key === 'b') {
-          return false;
-        }
-        return true;
-      };
 
       let {getAllByRole} = render(
-        <DraggableListView dragHookOptions={{allowsDraggingItem}} />
+        <DraggableListView />
       );
 
       let rows = getAllByRole('row');
       let draggableRow = rows[0];
-      let nonDraggableRow = rows[1];
       expect(draggableRow).toHaveAttribute('aria-selected', 'false');
       fireEvent.pointerDown(draggableRow, {pointerType: 'mouse'});
       expect(draggableRow).toHaveAttribute('aria-selected', 'false');
@@ -1309,15 +1272,6 @@ describe('ListView', function () {
       fireEvent.pointerUp(draggableRow, {pointerType: 'mouse'});
       expect(draggableRow).toHaveAttribute('aria-selected', 'true');
       checkSelection(onSelectionChange, ['a']);
-
-      onSelectionChange.mockReset();
-      expect(nonDraggableRow).toHaveAttribute('aria-selected', 'false');
-      fireEvent.pointerDown(nonDraggableRow, {pointerType: 'mouse'});
-      expect(nonDraggableRow).toHaveAttribute('aria-selected', 'false');
-      expect(onSelectionChange).toHaveBeenCalledTimes(0);
-      fireEvent.pointerUp(nonDraggableRow, {pointerType: 'mouse'});
-      expect(nonDraggableRow).toHaveAttribute('aria-selected', 'true');
-      checkSelection(onSelectionChange, ['a', 'b']);
     });
 
     it('should toggle selection upon clicking the row checkbox', function () {
@@ -1366,22 +1320,14 @@ describe('ListView', function () {
       expect(dragHandle.style.position).toBe('');
     });
 
-    it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
-      let allowsDraggingItem = (key) => {
-        if (key === 'b') {
-          return false;
-        }
-        return true;
-      };
-
+    it('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
       function hasDragHandle(el) {
         let buttons = within(el).getAllByRole('button');
         return buttons[0].getAttribute('draggable');
       }
 
-      // This makes cell A disabled and cell B non-draggable. Cell C becomes draggable.
       let {getAllByRole} = render(
-        <DraggableListView dragHookOptions={{allowsDraggingItem}} listViewProps={{disabledKeys: ['a']}} />
+        <DraggableListView listViewProps={{disabledKeys: ['a']}} />
       );
 
       let rows = getAllByRole('row');
@@ -1389,22 +1335,22 @@ describe('ListView', function () {
       let cellB = within(rows[1]).getByRole('gridcell');
 
       userEvent.tab();
-      expect(hasDragHandle(cellA)).toBeFalsy();
+      expect(hasDragHandle(cellA)).toBeTruthy();
       moveFocus('ArrowDown');
-      expect(hasDragHandle(cellB)).toBeFalsy();
+      expect(hasDragHandle(cellB)).toBeTruthy();
 
       fireEvent.pointerDown(cellA, {button: 0, pointerId: 1});
-      expect(hasDragHandle(cellA)).toBeFalsy();
+      expect(hasDragHandle(cellA)).toBeTruthy();
       fireEvent.pointerUp(cellA, {button: 0, pointerId: 1});
 
       fireEvent.pointerDown(cellB, {button: 0, pointerId: 1});
-      expect(hasDragHandle(cellB)).toBeFalsy();
+      expect(hasDragHandle(cellB)).toBeTruthy();
       fireEvent.pointerUp(cellB, {button: 0, pointerId: 1});
 
       fireEvent.pointerEnter(cellA);
-      expect(hasDragHandle(cellA)).toBeFalsy();
+      expect(hasDragHandle(cellA)).toBeTruthy();
       fireEvent.pointerEnter(cellB);
-      expect(hasDragHandle(cellB)).toBeFalsy();
+      expect(hasDragHandle(cellB)).toBeTruthy();
     });
 
     it('should open a menu upon click', function () {
@@ -1432,46 +1378,39 @@ describe('ListView', function () {
 
     describe('accessibility', function () {
       it('drag handle should reflect the correct number of draggable rows', async function () {
-        let allowsDraggingItem = (key) => {
-          if (key === 'c') {
-            return false;
-          }
-          return true;
-        };
 
-        // Only 2 draggable items are selected since c is non draggable
         let {getAllByRole} = render(
-          <DraggableListView dragHookOptions={[allowsDraggingItem]} listViewProps={{defaultSelectedKeys: ['a', 'b', 'c']}} />
+          <DraggableListView listViewProps={{defaultSelectedKeys: ['a', 'b', 'c']}} />
         );
 
         let rows = getAllByRole('row');
         expect(rows[0]).toHaveAttribute('draggable', 'true');
         let cellA = within(rows[0]).getByRole('gridcell');
         let dragButtonA = within(cellA).getAllByRole('button')[0];
-        expect(dragButtonA).toHaveAttribute('aria-label', 'Drag 2 selected items');
+        expect(dragButtonA).toHaveAttribute('aria-label', 'Drag 3 selected items');
 
         expect(rows[1]).toHaveAttribute('draggable', 'true');
         let cellB = within(rows[1]).getByRole('gridcell');
         let dragButtonB = within(cellB).getAllByRole('button')[0];
-        expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 2 selected items');
+        expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 3 selected items');
 
-        expect(rows[2]).not.toHaveAttribute('draggable');
+        expect(rows[2]).toHaveAttribute('draggable');
 
         expect(rows[3]).toHaveAttribute('draggable', 'true');
         let cellD = within(rows[3]).getByRole('gridcell');
         let dragButtonD = within(cellD).getAllByRole('button')[0];
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag Adobe InDesign');
 
-        // After selecting row 4, the aria-label should reflect 3 selected items rather than just "Drag Adobe InDesign"
+        // After selecting row 4, the aria-label should reflect 4 selected items rather than just "Drag Adobe InDesign"
         act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
-        expect(dragButtonA).toHaveAttribute('aria-label', 'Drag 3 selected items');
-        expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 3 selected items');
-        expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 3 selected items');
+        expect(dragButtonA).toHaveAttribute('aria-label', 'Drag 4 selected items');
+        expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 4 selected items');
+        expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 4 selected items');
 
         act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
         expect(dragButtonA).toHaveAttribute('aria-label', 'Drag Adobe Photoshop');
-        expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 2 selected items');
-        expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 2 selected items');
+        expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 3 selected items');
+        expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 3 selected items');
       });
     });
   });

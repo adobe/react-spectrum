@@ -52,7 +52,7 @@ export function ListViewItem(props: ListViewItemProps) {
   let {isFocusVisible, focusProps} = useFocusRing();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
-  let isDraggable = dragState?.isDraggable(item.key);
+  let isDroppable = isListDroppable && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {pressProps, isPressed} = usePress({isDisabled});
 
@@ -115,7 +115,6 @@ export function ListViewItem(props: ListViewItemProps) {
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
-  let showDragHandle = isDraggable && isFocusVisibleWithin;
   let {visuallyHiddenProps} = useVisuallyHidden();
   let rowProps = {
     role: 'row',
@@ -128,8 +127,8 @@ export function ListViewItem(props: ListViewItemProps) {
     gridCellProps,
     rowProps,
     pressProps,
-    isDraggable && draggableItem?.dragProps,
-    isListDroppable && droppableItem?.dropProps,
+    draggableItem?.dragProps,
+    isDroppable && droppableItem?.dropProps,
     hoverProps,
     focusWithinProps,
     focusProps
@@ -174,7 +173,6 @@ export function ListViewItem(props: ListViewItemProps) {
               'is-selected': isSelected,
               'is-next-selected': state.selectionManager.isSelected(item.nextKey),
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
-              'react-spectrum-ListViewItem--draggable': isDraggable,
               'react-spectrum-ListViewItem--dropTarget': !!isDropTarget,
               'react-spectrum-ListViewItem--firstRow': isFirstRow,
               'react-spectrum-ListViewItem--lastRow': isLastRow,
@@ -187,23 +185,21 @@ export function ListViewItem(props: ListViewItemProps) {
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           {isListDraggable &&
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
-              {isDraggable &&
-                <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
-                  <div
-                    {...buttonProps as React.HTMLAttributes<HTMLElement>}
-                    className={
-                      classNames(
-                        listStyles,
-                        'react-spectrum-ListViewItem-draghandle-button'
-                      )
-                    }
-                    style={!showDragHandle ? {...visuallyHiddenProps.style} : {}}
-                    ref={dragButtonRef}
-                    draggable="true">
-                    <ListGripper />
-                  </div>
-                </FocusRing>
-              }
+              <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
+                <div
+                  {...buttonProps as React.HTMLAttributes<HTMLElement>}
+                  className={
+                    classNames(
+                      listStyles,
+                      'react-spectrum-ListViewItem-draghandle-button'
+                    )
+                  }
+                  style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
+                  ref={dragButtonRef}
+                  draggable="true">
+                  <ListGripper />
+                </div>
+              </FocusRing>
             </div>
           }
           <CSSTransition

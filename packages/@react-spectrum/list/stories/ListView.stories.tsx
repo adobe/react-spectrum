@@ -490,13 +490,7 @@ export function DragExample(props?) {
     };
   });
 
-  let allowsDraggingItem = (key) => {
-    let item = items.find(item => item.key === key);
-    return item.type !== 'folder';
-  };
-
   let dragHooks = useDragHooks({
-    allowsDraggingItem,
     getItems,
     ...dragHookOptions
   });
@@ -561,7 +555,6 @@ export function ReorderExample() {
   };
 
   let dragHooks = useDragHooks({
-    allowsDraggingItem: () => true,
     getItems(keys) {
       return [...keys].map(key => ({
         [dragType]: JSON.stringify(key)
@@ -639,7 +632,6 @@ export function DragIntoItemExample() {
   };
 
   let dragHooks = useDragHooks({
-    allowsDraggingItem: (id) => list.getItem(id)?.type === 'item',
     getItems(keys) {
       return [...keys].map(key => ({
         [dragType]: JSON.stringify(key)
@@ -744,7 +736,6 @@ export function DragBetweenListsExample() {
   };
 
   let dragHooks = useDragHooks({
-    allowsDraggingItem: () => true,
     getItems(keys) {
       return [...keys].map(key => ({
         [dragType]: JSON.stringify(key)
@@ -847,7 +838,6 @@ export function DragBetweenListsRootOnlyExample() {
   };
 
   let dragHooksFirst = useDragHooks({
-    allowsDraggingItem: () => true,
     getItems(keys) {
       return [...keys].map(key => ({
         'list1': JSON.stringify(key)
@@ -858,7 +848,6 @@ export function DragBetweenListsRootOnlyExample() {
   });
 
   let dragHooksSecond = useDragHooks({
-    allowsDraggingItem: () => true,
     getItems(keys) {
       return [...keys].map(key => ({
         'list2': JSON.stringify(key)

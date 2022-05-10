@@ -426,11 +426,11 @@
 
 .react-spectrum-ListView--draggable .react-spectrum-ListViewItem {
   padding-inline-start: 0;
-}
 
-.react-spectrum-ListViewItem--draggable {
-  .react-spectrum-ListViewItem-checkbox input {
-    inset-inline-start: 0;
+  .react-spectrum-ListViewItem-checkbox {
+    input {
+      inset-inline-start: 0;
+    }
   }
 }
 
