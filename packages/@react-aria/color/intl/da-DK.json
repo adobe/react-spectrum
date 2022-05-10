@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "2D-skyder",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Farvevælger",
+  "twoDimensionalSlider": "2D-skyder"
 }

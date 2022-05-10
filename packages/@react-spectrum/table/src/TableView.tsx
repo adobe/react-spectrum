@@ -79,7 +79,12 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
   large: 48
 };
 
-const TableContext = React.createContext<TableState<unknown>>(null);
+interface TableContextValue<T> {
+  state: TableState<T>,
+  layout: TableLayout<T>
+}
+
+const TableContext = React.createContext<TableContextValue<unknown>>(null);
 export function useTableContext() {
   return useContext(TableContext);
 }
@@ -115,6 +120,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }
 
   let domRef = useDOMRef(ref);
+  let bodyRef = useRef<HTMLDivElement>();
   let formatMessage = useMessageFormatter(intlMessages);
 
   let density = props.density || 'regular';
@@ -282,8 +288,16 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   };
 
+  let isVerticalScrollbarVisible = false;
+  let isHorizontalScrollbarVisible = false;
+  if (bodyRef.current && domRef.current) {
+    // 2 is the width of the border which is not part of the box size
+    isVerticalScrollbarVisible = domRef.current.getBoundingClientRect().width > bodyRef.current.children[0]?.getBoundingClientRect().width + 2;
+    isHorizontalScrollbarVisible = domRef.current.getBoundingClientRect().height > bodyRef.current.children[0]?.getBoundingClientRect().height + 2;
+  }
+
   return (
-    <TableContext.Provider value={state}>
+    <TableContext.Provider value={{state, layout}}>
       <TableVirtualizer
         {...gridProps}
         {...styleProps}
@@ -295,7 +309,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
             {
               'spectrum-Table--quiet': isQuiet,
               'spectrum-Table--wrap': props.overflowMode === 'wrap',
-              'spectrum-Table--resizingColumn': state.isResizingColumn
+              'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
+              'spectrum-Table--resizingColumn': state.isResizingColumn,
+              'spectrum-Table--isScrollingVertically': isVerticalScrollbarVisible,
+              'spectrum-Table--isScrollingHorizontally': isHorizontalScrollbarVisible
             },
             classNames(
               stylesOverrides,
@@ -310,16 +327,16 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         renderWrapper={renderWrapper}
         setTableWidth={state.setTableWidth}
         domRef={domRef}
+        bodyRef={bodyRef}
         getColumnWidth={state.getColumnWidth} />
     </TableContext.Provider>
   );
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, setTableWidth, getColumnWidth, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, ...otherProps}) {
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
-  let bodyRef = useRef<HTMLDivElement>();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let onLoadMore = collection.body.props.onLoadMore;
@@ -371,7 +388,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     if (state.virtualizer.contentSize.height > 0) {
       setTableWidth(rect.width);
     }
-      
+
     state.setVisibleRect(rect);
 
     if (!isLoading && onLoadMore) {
@@ -438,7 +455,7 @@ function TableHeader({children, ...otherProps}) {
 function TableColumnHeader(props) {
   let {column} = props;
   let ref = useRef();
-  let state = useTableContext();
+  let {state} = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true
@@ -545,7 +562,7 @@ function ResizableTableColumnHeader({item, state}) {
 
 function TableSelectAllCell({column}) {
   let ref = useRef();
-  let state = useTableContext();
+  let {state} = useTableContext();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -603,7 +620,7 @@ function TableRowGroup({children, ...otherProps}) {
 
 function TableRow({item, children, hasActions, ...otherProps}) {
   let ref = useRef();
-  let state = useTableContext();
+  let {state, layout} = useTableContext();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
@@ -630,6 +647,16 @@ function TableRow({item, children, hasActions, ...otherProps}) {
     hoverProps,
     pressProps
   );
+  let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
+  let isLastRow = item.nextKey == null;
+  // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
+  // border corners of the last row when selected.
+  let isFlushWithContainerBottom = false;
+  if (isLastRow) {
+    if (layout.getContentSize()?.height >= layout.virtualizer?.getVisibleRect().height) {
+      isFlushWithContainerBottom = true;
+    }
+  }
 
   return (
     <div
@@ -642,11 +669,15 @@ function TableRow({item, children, hasActions, ...otherProps}) {
           {
             'is-active': isPressed,
             'is-selected': isSelected,
-            'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
+            'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace',
+            'is-next-selected': state.selectionManager.isSelected(item.nextKey),
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
             'is-hovered': isHovered,
-            'is-disabled': isDisabled
+            'is-disabled': isDisabled,
+            'spectrum-Table-row--firstRow': isFirstRow,
+            'spectrum-Table-row--lastRow': isLastRow,
+            'spectrum-Table-row--isFlushBottom': isFlushWithContainerBottom
           }
         )
       }>
@@ -656,7 +687,7 @@ function TableRow({item, children, hasActions, ...otherProps}) {
 }
 
 function TableHeaderRow({item, children, style}) {
-  let state = useTableContext();
+  let {state} = useTableContext();
   let ref = useRef();
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
 
@@ -669,7 +700,7 @@ function TableHeaderRow({item, children, style}) {
 
 function TableCheckboxCell({cell}) {
   let ref = useRef();
-  let state = useTableContext();
+  let {state} = useTableContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
@@ -709,7 +740,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
-  let state = useTableContext();
+  let {state} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
@@ -758,7 +789,7 @@ function TableCell({cell}) {
 }
 
 function CenteredWrapper({children}) {
-  let state = useTableContext();
+  let {state} = useTableContext();
   return (
     <div
       role="row"
@@ -776,7 +807,7 @@ function CenteredWrapper({children}) {
  */
 const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
-/* 
+/*
   When ready to remove this feature flag, you can remove this whole section of code, delete the _DEPRECATED files, and just replace the export with the _TableView above.
 */
 function FeatureFlaggedTableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {

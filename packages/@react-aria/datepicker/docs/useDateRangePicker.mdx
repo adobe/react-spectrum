@@ -24,7 +24,6 @@ import chakraExample from 'url:./DateRangePicker-chakra.png';
 ---
 category: Date and Time
 keywords: [input, form, field, date, time]
-after_version: 3.0.0
 ---
 
 # useDateRangePicker
@@ -648,7 +647,7 @@ This example includes multiple unavailable date ranges, e.g. dates when a rental
 
 ```tsx example
 import {today} from '@internationalized/date';
-import {useLocale} from '@adobe/react-spectrum';
+import {useLocale} from '@react-aria/i18n';
 
 function Example() {
   let now = today(getLocalTimeZone());

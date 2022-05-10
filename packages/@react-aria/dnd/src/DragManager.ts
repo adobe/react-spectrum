@@ -156,6 +156,7 @@ class DragSession {
   private mutationImmediate: NodeJS.Immediate;
   private restoreAriaHidden: () => void;
   private formatMessage: (key: string) => string;
+  private isVirtualClick: boolean;
 
   constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
@@ -165,6 +166,7 @@ class DragSession {
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.onClick = this.onClick.bind(this);
+    this.onPointerDown = this.onPointerDown.bind(this);
     this.cancelEvent = this.cancelEvent.bind(this);
   }
 
@@ -173,6 +175,7 @@ class DragSession {
     window.addEventListener('focus', this.onFocus, true);
     window.addEventListener('blur', this.onBlur, true);
     document.addEventListener('click', this.onClick, true);
+    document.addEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
       document.addEventListener(event, this.cancelEvent, true);
@@ -191,6 +194,7 @@ class DragSession {
     window.removeEventListener('focus', this.onFocus, true);
     window.removeEventListener('blur', this.onBlur, true);
     document.removeEventListener('click', this.onClick, true);
+    document.removeEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
       document.removeEventListener(event, this.cancelEvent, true);
@@ -276,22 +280,26 @@ class DragSession {
 
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
+    if (e.detail === 0 || this.isVirtualClick) {
+      if (e.target === this.dragTarget.element) {
+        this.cancel();
+        return;
+      }
 
-    if (e.detail !== 0) {
-      return;
+      let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+      if (dropTarget) {
+        let item = dropItems.get(e.target as HTMLElement);
+        this.setCurrentDropTarget(dropTarget, item);
+        this.drop(item);
+      }
     }
+  }
 
-    if (e.target === this.dragTarget.element) {
-      this.cancel();
-      return;
-    }
-
-    let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
-    if (dropTarget) {
-      let item = dropItems.get(e.target as HTMLElement);
-      this.setCurrentDropTarget(dropTarget, item);
-      this.drop(item);
-    }
+  onPointerDown(e: PointerEvent) {
+    // Android Talkback double tap has e.detail = 1 for onClick. Detect the virtual click in onPointerDown before onClick fires
+    // so we can properly perform cancel and drop operations.
+    this.cancelEvent(e);
+    this.isVirtualClick = isVirtualPointerEvent(e);
   }
 
   cancelEvent(e: Event) {
@@ -537,4 +545,20 @@ function findValidDropTargets(options: DragTarget) {
 
     return true;
   });
+}
+
+function isVirtualPointerEvent(event: PointerEvent) {
+  // If the pointer size is zero, then we assume it's from a screen reader.
+  // Android TalkBack double tap will sometimes return a event with width and height of 1
+  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
+  // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
+  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
+  return (
+    (event.width === 0 && event.height === 0) ||
+    (event.width === 1 &&
+      event.height === 1 &&
+      event.pressure === 0 &&
+      event.detail === 0
+    )
+  );
 }
