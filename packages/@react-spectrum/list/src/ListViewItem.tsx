@@ -36,7 +36,7 @@ export function ListViewItem(props) {
     dragHooks,
     hasActions
   } = props;
-  let {state, dragState, isListDraggable, layout, isFocusWithin} = useContext(ListViewContext);
+  let {state, dragState, isListDraggable, layout} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let {
@@ -134,9 +134,9 @@ export function ListViewItem(props) {
   // previous item isn't selected
   // and the previous item isn't focused or, if it is focused, then if focus globally isn't visible or just focus isn't in the listview
   let roundTops = (!state.selectionManager.isSelected(item.prevKey)
-    && (state.selectionManager.focusedKey !== item.prevKey || !(isGlobalFocusVisible() && isFocusWithin)));
+    && (state.selectionManager.focusedKey !== item.prevKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
   let roundBottoms = (!state.selectionManager.isSelected(item.nextKey)
-    && (state.selectionManager.focusedKey !== item.nextKey || !(isGlobalFocusVisible() && isFocusWithin)));
+    && (state.selectionManager.focusedKey !== item.nextKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
 
   return (
     <div

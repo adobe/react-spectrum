@@ -24,7 +24,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DraggableCollectionState} from '@react-stately/dnd';
 import {DragHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -33,9 +33,8 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useContext, useMemo, useRef, useState} from 'react';
+import React, {ReactElement, useContext, useMemo, useRef} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useFocusWithin} from '@react-aria/interactions';
 import {useGrid} from '@react-aria/grid';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -44,8 +43,7 @@ interface ListViewContextValue<T> {
   state: GridState<T, GridCollection<any>>,
   dragState: DraggableCollectionState,
   isListDraggable: boolean,
-  layout: ListLayout<T>,
-  isFocusWithin: boolean
+  layout: ListLayout<T>
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
@@ -188,14 +186,12 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   }
 
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
-  let [isFocusWithin, setIsFocusWithin] = useState(false);
-  let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setIsFocusWithin});
 
   return (
-    <ListViewContext.Provider value={{state, dragState, isListDraggable, layout, isFocusWithin}}>
+    <ListViewContext.Provider value={{state, dragState, isListDraggable, layout}}>
       <Virtualizer
         {...filterDOMProps(otherProps)}
-        {...mergeProps(gridProps, focusWithinProps)}
+        {...gridProps}
         {...styleProps}
         isLoading={isLoading}
         onLoadMore={onLoadMore}
