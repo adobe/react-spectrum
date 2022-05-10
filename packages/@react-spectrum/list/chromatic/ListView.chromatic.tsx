@@ -27,12 +27,12 @@ import {Link} from '@react-spectrum/link';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 
-// TODO: add overflow mode and thumbnails when those PRs are merged
 let states = [
   {isQuiet: true},
   {selectionMode: 'multiple'},
   {density: ['compact', 'spacious']},
-  {selectionStyle: 'highlight'}
+  {selectionStyle: 'highlight'},
+  {overflowMode: 'wrap'}
 ];
 
 let combinations = generatePowerset(states);
@@ -108,20 +108,20 @@ const Template = (): Story => ({combos, ...args}) => (
               <Text slot="description">16 items</Text>
               {renderActions}
             </Item>
-            <Item key="b" textValue="Adobe Photoshop">
+            <Item key="b" textValue="long example 1">
               <Image src="https://random.dog/191091b2-7d69-47af-9f52-6605063f1a47.jpg" />
-              <Content>Adobe Photoshop</Content>
-              <Text slot="description">Application</Text>
+              <Text>multi word content that is very long</Text>
+              <Text slot="description">long description that is multiple words</Text>
               {renderActions}
             </Item>
-            <Item key="c" textValue="Adobe Illustrator">
-              <Content>Adobe Illustrator</Content>
-              <Text slot="description">Application</Text>
+            <Item key="c" textValue="long example 2">
+              <Text>multi word content that is very very long </Text>
+              <Text slot="description">singledescriptionthatisonewordblah</Text>
               {renderActions}
             </Item>
-            <Item key="d" textValue="Adobe XD">
-              <Content>Adobe XD</Content>
-              <Text slot="description">Application</Text>
+            <Item key="d" textValue="long example 3">
+              <Text>supercalifragilisticexpialidocious</Text>
+              <Text slot="description">long description that is multiple words</Text>
               {renderActions}
             </Item>
           </ListView>
