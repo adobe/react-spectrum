@@ -17,6 +17,7 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
+import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -326,8 +327,37 @@ storiesOf('ListView', module)
         <Droppable />
         <DragExample listViewProps={{selectionStyle: 'highlight', onAction: action('onAction')}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </Flex>
-    ), {description: {data: 'Folders are non-draggable.'}}
-  );
+    ), {description: {data: 'Folders are non-draggable.'}})
+  .add('overflowMode="truncate" (default)', () => (
+    <ListView width="250px" overflowMode="truncate">
+      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
+      <Item textValue="row 2">
+        <Text>Text slot with a really really really long name</Text>
+        <Text slot="description">Description slot with a really really long name</Text>
+      </Item>
+      <Item textValue="row 3">
+        <Content>Content slot with really really long name</Content>
+      </Item>
+      <Item textValue="row 4">
+        <Link >Link slot with a very very very very long name</Link>
+      </Item>
+    </ListView>
+  ))
+  .add('overflowMode="wrap"', () => (
+    <ListView width="250px" overflowMode="wrap">
+      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
+      <Item textValue="row 2">
+        <Text>Text slot with a really really really long name</Text>
+        <Text slot="description">Description slot with a really really long name</Text>
+      </Item>
+      <Item textValue="row 3">
+        <Content>Content slot with really really long name</Content>
+      </Item>
+      <Item textValue="row 4">
+        <Link >Link slot with a very very very very long name</Link>
+      </Item>
+    </ListView>
+  ));
 
 function Example(props?) {
   return (

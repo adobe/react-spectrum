@@ -42,6 +42,11 @@ export interface SpectrumListProps<T> extends AriaListProps<T>, StyleProps, Spec
   isQuiet?: boolean,
   /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
   loadingState?: LoadingState,
+  /**
+   * Sets the text behavior for the row contents.
+   * @default 'truncate'
+   */
+  overflowMode?: 'truncate' | 'wrap',
   /** Sets what the ListView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
   /**

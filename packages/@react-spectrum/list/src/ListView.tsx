@@ -78,6 +78,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
     onLoadMore,
     loadingState,
     isQuiet,
+    overflowMode = 'truncate',
     onAction,
     dragHooks,
     ...otherProps
@@ -156,7 +157,8 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
               'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore',
               'react-spectrum-ListView--isScrollingVertically': isVerticalScrollbarVisible,
               'react-spectrum-ListView--isScrollingHorizontally': isHorizontalScrollbarVisible,
-              'react-spectrum-ListView--hasAnyChildren': hasAnyChildren
+              'react-spectrum-ListView--hasAnyChildren': hasAnyChildren,
+              'react-spectrum-ListView--wrap': overflowMode === 'wrap'
             },
             styleProps.className
           )
