@@ -14,6 +14,7 @@ import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {Link} from '@react-spectrum/link';
@@ -38,6 +39,18 @@ const items = [
   {key: 'l', name: 'Adobe Connect', type: 'file'},
   {key: 'm', name: 'Pictures', type: 'folder'},
   {key: 'n', name: 'Adobe Acrobat', type: 'file'}
+];
+
+// taken from https://random.dog/
+const itemsWithThumbs = [
+  {key: '1', title: 'swimmer', url: 'https://random.dog/b2fe2172-cf11-43f4-9c7f-29bd19601712.jpg'},
+  {key: '2', title: 'chocolate', url: 'https://random.dog/2032518a-eec8-4102-9d48-3dca5a26eb23.png'},
+  {key: '3', title: 'good boi', url: 'https://random.dog/191091b2-7d69-47af-9f52-6605063f1a47.jpg'},
+  {key: '4', title: 'polar bear', url: 'https://random.dog/c22c077e-a009-486f-834c-a19edcc36a17.jpg'},
+  {key: '5', title: 'cold boi', url: 'https://random.dog/093a41da-e2c0-4535-a366-9ef3f2013f73.jpg'},
+  {key: '6', title: 'pilot', url: 'https://random.dog/09f8ecf4-c22b-49f4-af24-29fb5c8dbb2d.jpg'},
+  {key: '7', title: 'nerd', url: 'https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg'},
+  {key: '8', title: 'audiophile', url: 'https://random.dog/32367-2062-4347.jpg'}
 ];
 
 function renderEmptyState() {
@@ -121,6 +134,28 @@ storiesOf('ListView', module)
     </ListView>
     )
   )
+  .add('dynamic items - small viewport', () => (
+    <ListView items={items} width="100px" height="250px">
+      {(item) => (
+        <Item key={item.key} textValue={item.name}>
+          <Content>
+            {item.name}
+          </Content>
+          <ActionGroup buttonLabelBehavior="hide">
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </Item>
+      )}
+    </ListView>
+    )
+  )
   .add('falsy ids as keys', () => (
     <FalsyIds />
   ))
@@ -143,6 +178,9 @@ storiesOf('ListView', module)
   ))
   .add('async listview loading', () => (
     <AsyncList />
+  ))
+  .add('async listview loading with actions', () => (
+    <AsyncList withActions />
   ))
   .add('density: compact', () => (
     <ListView width="250px" density="compact">
@@ -176,7 +214,7 @@ storiesOf('ListView', module)
   .add('selection: multiple, checkbox, isQuiet', () => (
     <Example selectionMode="multiple" isQuiet />
   ))
-  .add('parent link example', () => (
+  .add('parent folder example', () => (
     <Example2 selectionMode="multiple" />
   ))
   .add('actions: ActionButton', () =>
@@ -244,8 +282,23 @@ storiesOf('ListView', module)
       {item => <Item>{item.name}</Item>}
     </ListView>
   ))
+  .add('selectionStyle: checkbox, onAction', () => (
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionMode="multiple" selectionStyle="checkbox" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
+      {item => <Item>{item.name}</Item>}
+    </ListView>
+  ))
   .add('with ActionBar', () => <ActionBarExample />)
   .add('with emphasized ActionBar', () => <ActionBarExample isEmphasized />)
+  .add(
+    'thumbnails',
+    () => (
+      <ListView width="250px" items={itemsWithThumbs}>
+        {
+          (item) => <Item textValue={item.title}><Image src={item.url} /><Content>{item.title}</Content><Text slot="description">JPG</Text></Item>
+        }
+      </ListView>
+    )
+  )
   .add(
     'draggable rows',
     () => (
@@ -253,6 +306,26 @@ storiesOf('ListView', module)
         <input />
         <Droppable />
         <DragExample dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      </Flex>
+    ), {description: {data: 'Folders are non-draggable.'}}
+  )
+  .add(
+    'draggable rows, onAction',
+    () => (
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExample listViewProps={{onAction: action('onAction')}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      </Flex>
+    ), {description: {data: 'Folders are non-draggable.'}}
+  )
+  .add(
+    'draggable rows, selectionStyle: highlight, onAction',
+    () => (
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExample listViewProps={{selectionStyle: 'highlight', onAction: action('onAction')}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </Flex>
     ), {description: {data: 'Folders are non-draggable.'}})
   .add('overflowMode="truncate" (default)', () => (
@@ -285,6 +358,7 @@ storiesOf('ListView', module)
       </Item>
     </ListView>
   ));
+;
 
 function Example(props?) {
   return (
@@ -301,10 +375,8 @@ function Example(props?) {
 
 function Example2(props?) {
   return (
-    <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
-      <Item key="Utilities" hasChildItems>
-        <Link>Utilities</Link>
-      </Item>
+    <ListView width="250px" onSelectionChange={action('onSelectionChange')} onAction={action('onAction')} {...props}>
+      <Item key="Utilities" hasChildItems>Utilities</Item>
       <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
       <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
       <Item textValue="Adobe XD">Adobe XD</Item>
@@ -314,12 +386,10 @@ function Example2(props?) {
 
 function renderActionsExample(renderActions, props?) {
   return (
-    <ListView width="300px" selectionMode="single" {...props} onSelectionChange={keys => console.log('sel', keys)}>
+    <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={keys => console.log('sel', keys)}>
       <Item key="a" textValue="Utilities" hasChildItems>
         <Folder />
-        <Content>
-          <Link>Utilities</Link>
-        </Content>
+        <Content>Utilities</Content>
         <Text slot="description">16 items</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
@@ -439,7 +509,7 @@ export function DragExample(props?) {
       dragHooks={dragHooks}
       {...listViewProps}>
       {(item: any) => (
-        <Item key={item.key} textValue={item.name}>
+        <Item key={item.key} textValue={item.name} hasChildItems={item.type === 'folder'}>
           {item.type === 'folder' && <Folder />}
           {item.key === 'a' && <FileTxt />}
           <Content>
@@ -463,7 +533,7 @@ export function DragExample(props?) {
   );
 }
 
-function AsyncList() {
+function AsyncList(props) {
   interface StarWarsChar {
     name: string,
     url: string
@@ -494,9 +564,12 @@ function AsyncList() {
       items={list.items}
       loadingState={list.loadingState}
       onLoadMore={list.loadMore}>
-      {(item) => (
-        <Item key={item.name} textValue={item.name}>{item.name}</Item>
-      )}
+      {(item) => {
+        if (props.withActions) {
+          return <Item key={item.name} textValue={item.name}><Content>{item.name}</Content><ActionButton>Edit</ActionButton></Item>;
+        }
+        return <Item key={item.name} textValue={item.name}>{item.name}</Item>;
+      }}
     </ListView>
   );
 }
