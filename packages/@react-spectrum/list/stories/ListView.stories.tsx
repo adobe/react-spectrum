@@ -761,6 +761,13 @@ export function DragBetweenListsExample() {
         onDropAction(e);
         onMove(keys, e.target);
       } 
+    },
+    getDropOperation(target) {
+      if (target.type === 'root' || target.dropPosition === 'on') {
+        return 'cancel';
+      }
+
+      return 'move';
     }
   });
 
