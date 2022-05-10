@@ -152,6 +152,12 @@
       }
     }
   }
+  &.react-spectrum-ListView--wrap .react-spectrum-ListViewItem {
+    & .react-spectrum-ListViewItem-content,
+    & .react-spectrum-ListViewItem-description {
+      white-space: normal;
+    }
+  }
 }
 
 .react-spectrum-ListView-row {
@@ -299,6 +305,11 @@
   .react-spectrum-ListViewItem-content,
   .react-spectrum-ListViewItem-description {
     flex-grow: 1;
+
+    /* truncate text with ellipsis */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .react-spectrum-ListViewItem-content {
