@@ -68,11 +68,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         return 'cancel';
       }
 
-      if (state.isDropTarget(target)) {
-        localState.nextTarget = target;
-        return localState.dropOperation;
-      }
-
       localState.dropOperation = state.getDropOperation(target, types, allowedOperations);
 
       // If the target doesn't accept the drop, see if the root accepts it instead.
