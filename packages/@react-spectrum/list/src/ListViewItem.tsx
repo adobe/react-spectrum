@@ -131,6 +131,12 @@ export function ListViewItem(props) {
       isFlushWithContainerBottom = true;
     }
   }
+  // previous item isn't selected
+  // and the previous item isn't focused or, if it is focused, then if focus globally isn't visible or just focus isn't in the listview
+  let roundTops = (!state.selectionManager.isSelected(item.prevKey)
+    && (state.selectionManager.focusedKey !== item.prevKey || !(isGlobalFocusVisible() && isFocusWithin)));
+  let roundBottoms = (!state.selectionManager.isSelected(item.nextKey)
+    && (state.selectionManager.focusedKey !== item.nextKey || !(isGlobalFocusVisible() && isFocusWithin)));
 
   return (
     <div
@@ -141,14 +147,10 @@ export function ListViewItem(props) {
           'react-spectrum-ListView-row',
           {
             'focus-ring': isFocusVisible,
-            // previous item isn't select
-            // and the previous item isn't focused or, if it is focused, then if focus globally isn't visible or just focus isn't in the listview
             'round-tops':
-              !state.selectionManager.isSelected(item.prevKey)
-              && (state.selectionManager.focusedKey !== item.prevKey || !(isGlobalFocusVisible() && isFocusWithin)),
+              roundTops || (isHovered && !state.selectionManager.isSelected(item.key) && state.selectionManager.focusedKey !== item.key),
             'round-bottoms':
-              !state.selectionManager.isSelected(item.nextKey)
-              && (state.selectionManager.focusedKey !== item.nextKey || !(isGlobalFocusVisible() && isFocusWithin))
+              roundBottoms || (isHovered && !state.selectionManager.isSelected(item.key) && state.selectionManager.focusedKey !== item.key)
           }
         )
       }
