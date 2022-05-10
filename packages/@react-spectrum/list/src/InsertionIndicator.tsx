@@ -6,24 +6,19 @@ import React, {useContext, useRef} from 'react';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 interface InsertionIndicatorProps {
-  target: ItemDropTarget
+  target: ItemDropTarget,
+  isPresentationOnly?: boolean
 }
 
 export default function InsertionIndicator(props: InsertionIndicatorProps) {
   let {dropState, dropHooks} = useContext(ListViewContext);
-  const {target} = props;
+  const {target, isPresentationOnly} = props;
+
   let ref = useRef();
   let {dropIndicatorProps} = dropHooks.useDropIndicator(props, dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let isDropTarget = dropState.isDropTarget(target);
-
-  // If aria-hidden, we are either not in a drag session or the drop target is invalid.
-  // In that case, there's no need to render anything at all unless we need to show the indicator visually.
-  // This can happen when dragging using the native DnD API as opposed to keyboard dragging.
-  if (!isDropTarget && dropIndicatorProps['aria-hidden']) {
-    return null;
-  }
 
   return (
     <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
@@ -38,7 +33,9 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
               'react-spectrum-ListViewInsertionIndicator--dropTarget': isDropTarget
             }
           )}>
-        <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
+        {!isPresentationOnly && 
+          <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
+        }
       </div>
     </div>
   );

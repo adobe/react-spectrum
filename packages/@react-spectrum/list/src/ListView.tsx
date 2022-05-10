@@ -322,8 +322,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                 {isListDroppable &&
                   <InsertionIndicator
                     key={`${item.key}-after`}
-                    target={{key: item.key, type: 'item', dropPosition: 'after'}} />
-                }
+                    target={{key: item.key, type: 'item', dropPosition: 'after'}}
+                    isPresentationOnly={state.collection.getKeyAfter(item.key) !== null} />
+                  }
               </>
             );
           } else if (type === 'loader') {

@@ -461,8 +461,9 @@
 }
 
 .react-spectrum-ListViewInsertionIndicator {
-  margin: 0 var(--spectrum-dropindicator-circle-size) calc(-1 * var(--spectrum-dropindicator-border-size));
-  position: relative;
+  width: calc(100% - (2 * var(--spectrum-dropindicator-circle-size)));
+  inset-inline-start: var(--spectrum-dropindicator-circle-size);
+  position: absolute;
   outline: none;
 
   &.react-spectrum-ListViewInsertionIndicator--dropTarget {
