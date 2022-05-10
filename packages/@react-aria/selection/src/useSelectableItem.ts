@@ -153,6 +153,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   let longPressEnabled = hasAction && allowsSelection;
   let longPressEnabledOnPressStart = useRef(false);
+  let hadPrimaryActionOnPressStart = useRef(false);
 
   // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
@@ -198,6 +199,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     itemPressProps.onPressStart = (e) => {
       modality.current = e.pointerType;
       longPressEnabledOnPressStart.current = longPressEnabled;
+      hadPrimaryActionOnPressStart.current = hasPrimaryAction;
 
       // Select on mouse down unless there is a primary action which will occur on mouse up.
       // For keyboard, select on key down. If there is an action, the Space key selects on key down,
@@ -219,7 +221,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         e.pointerType === 'pen' ||
         e.pointerType === 'virtual' ||
         (e.pointerType === 'keyboard' && hasAction && isActionKey()) ||
-        (e.pointerType === 'mouse' && hasPrimaryAction)
+        (e.pointerType === 'mouse' && hadPrimaryActionOnPressStart.current)
       ) {
         if (hasAction) {
           onAction();
