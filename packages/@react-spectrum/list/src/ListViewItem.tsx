@@ -151,7 +151,6 @@ export function ListViewItem(props: ListViewItemProps) {
     && (state.selectionManager.focusedKey !== item.prevKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
   let roundBottoms = (!state.selectionManager.isSelected(item.nextKey)
     && (state.selectionManager.focusedKey !== item.nextKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
-  console.log(isLastRow)
 
   return (
     <div
