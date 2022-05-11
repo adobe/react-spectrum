@@ -71,11 +71,15 @@ let decorator = (storyFn, context) => {
   storyFn() :
   (
     <>
-      <label htmlFor="focus-before">Focus before</label>
-      <input id="focus-before" />
+      <span style={{paddingInline: '10px'}}>
+        <label htmlFor="focus-before">Focus before</label>
+        <input id="focus-before" />
+      </span>
       {storyFn()}
-      <label htmlFor="focus-after">Focus after</label>
-      <input id="focus-after" />
+      <span style={{paddingInline: '10px'}}>
+        <label htmlFor="focus-after">Focus after</label>
+        <input id="focus-after" />
+      </span>
     </>
   );
 };
@@ -270,6 +274,26 @@ storiesOf('ListView', module)
   .add('selectionStyle: highlight', () => (
     <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={items}>
       {item => <Item>{item.name}</Item>}
+    </ListView>
+  ))
+  .add('isQuiet, selectionStyle: highlight', () => (
+    <ListView width="250px" isQuiet selectionMode="single" selectionStyle="highlight">
+      <Item textValue="Home">Home</Item>
+      <Item textValue="Apps">Apps</Item>
+      <Item textValue="Document Cloud">Document Cloud</Item>
+      <Item textValue="Creative Cloud">Creative Cloud</Item>
+      <Item textValue="Send & Track">Send & Track</Item>
+      <Item textValue="Reviews">Reviews</Item>
+    </ListView>
+  ))
+  .add('isQuiet, selectionStyle: highlight, multiple', () => (
+    <ListView width="250px" isQuiet selectionMode="multiple" selectionStyle="highlight">
+      <Item textValue="Home">Home</Item>
+      <Item textValue="Apps">Apps</Item>
+      <Item textValue="Document Cloud">Document Cloud</Item>
+      <Item textValue="Creative Cloud">Creative Cloud</Item>
+      <Item textValue="Send & Track">Send & Track</Item>
+      <Item textValue="Reviews">Reviews</Item>
     </ListView>
   ))
   .add('selectionStyle: highlight, onAction', () => (
