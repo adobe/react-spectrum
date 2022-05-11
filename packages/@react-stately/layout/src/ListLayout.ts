@@ -293,6 +293,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     let rect = new Rect(x, y, width - x, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+    layoutInfo.allowOverflow = true;
     layoutInfo.estimatedSize = isEstimated;
     return {
       layoutInfo
