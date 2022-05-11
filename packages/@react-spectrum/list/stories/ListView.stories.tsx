@@ -252,13 +252,13 @@ storiesOf('ListView', module)
   .add('actions: ActionGroup + ActionMenu', () =>
     renderActionsExample(props => (
       <>
-        <ActionGroup buttonLabelBehavior="hide" {...props} slot="actionGroup">
+        <ActionGroup buttonLabelBehavior="hide" {...props}>
           <Item key="info">
             <Info />
             <Text>Info</Text>
           </Item>
         </ActionGroup>
-        <ActionMenu {...props} slot="actionMenu">
+        <ActionMenu {...props}>
           <Item key="add">
             <Add />
             <Text>Add</Text>
