@@ -86,10 +86,5 @@ export interface SpectrumActionMenuProps<T> extends CollectionBase<T>, MenuTrigg
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean,
   /** Handler that is called when an item is selected. */
-  onAction?: (key: Key) => void,
-  /**
-   * A slot to place the action menu in.
-   * @default 'actionMenu'
-   */
-  slot?: string
+  onAction?: (key: Key) => void
 }

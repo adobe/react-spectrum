@@ -70,10 +70,5 @@ export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, St
    */
   buttonLabelBehavior?: 'show' | 'collapse' | 'hide',
   /** The icon displayed in the dropdown menu button when a selectable ActionGroup is collapsed. */
-  summaryIcon?: ReactElement,
-  /**
-   * A slot to place the ActionGroup in.
-   * @default 'actionGroup'
-   */
-  slot?: string
+  summaryIcon?: ReactElement
 }
