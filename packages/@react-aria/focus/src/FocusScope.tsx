@@ -383,14 +383,15 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
       }
     }
     autoFocusRef.current = false;
-  }, [scopeRef]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 }
 
 // An array to create a stack of nodeToRestore elements.
 let nodeToRestoreArray: HTMLElement[] = [];
 
 function addToNodeToRestoreArray(node: HTMLElement) {
-  if (nodeToRestoreArray.indexOf(node) === -1) {
+  if (nodeToRestoreArray.indexOf(node) === -1 && node !== document.body) {
     nodeToRestoreArray.push(node);
   }
 }
@@ -399,6 +400,17 @@ function removeFromNodeToRestoreArray(node: HTMLElement) {
   let index = nodeToRestoreArray.indexOf(node);
   if (index > -1) {
     nodeToRestoreArray.splice(index, 1);
+  }
+}
+
+function cleanupNodeToRestoreArray() {
+  let index = nodeToRestoreArray.length;
+  while (index >= 0) {
+    index--;
+    let node = nodeToRestoreArray[index];
+    if (node && !document.body.contains(node)) {
+      nodeToRestoreArray.splice(index, 1);
+    }
   }
 }
 
@@ -483,27 +495,38 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
         // eslint-disable-next-line react-hooks/exhaustive-deps
         if (restoreFocus && isElementInScope(document.activeElement, scopeRef.current)) {
           requestAnimationFrame(() => {
-            if (document.body.contains(nodeToRestore) && nodeToRestore !== document.body) {
+            // If the nodeToRestore is in the document.body focus the element and remove it from the nodeToRestoreArray
+            if (document.body.contains(nodeToRestore)) {
               focusElement(nodeToRestore);
+              if (index === nodeToRestoreArray.length - 1) {
+                nodeToRestoreArray.pop();
+              }
+            // Otherwise, if the nodeToRestore is no longer in the document,
             } else {
-              while (index > 0) {
-                index--;
+              // Iterate backward through nodeToRestoreArray,
+              // starting from the nodeToRestore,
+              // until you find a node that's in the DOM to focus.
+              while (index >= 0) {
                 let node = nodeToRestoreArray[index];
-                if (!document.body.contains(node) || node === document.body) {
-                  removeFromNodeToRestoreArray(node);
-                } else {
+                if (document.body.contains(node)) {
                   focusElement(node);
+                  if (index === nodeToRestoreArray.length - 1) {
+                    nodeToRestoreArray.pop();
+                  }
                   break;
                 }
+                index--;
               }
+              // Clean up any nodes in the array that are no longer in the DOM.
+              cleanupNodeToRestoreArray();
             }
           });
-        } else if (!document.body.contains(nodeToRestore)) {
-          removeFromNodeToRestoreArray(nodeToRestore);
+        } else {
+          cleanupNodeToRestoreArray();
         }
       }
     };
-  }, [scopeRef, restoreFocus, contain]);
+  }, [contain, restoreFocus, scopeRef]);
 }
 
 /**
