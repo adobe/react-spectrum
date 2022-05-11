@@ -109,33 +109,15 @@ governing permissions and limitations under the License.
   }
 }
 
-/* picker doesn't support emphasized */
-.spectrum-Tabs--isCollapsed {
-  &.spectrum-Tabs--emphasized {
-    & button {
-      color: var(--spectrum-tabs-emphasized-text-color);
-
-      .spectrum-Icon {
-        fill: var(--spectrum-tabs-emphasized-icon-color);
-      }
-
-      &:hover {
-        color: var(--spectrum-tabs-emphasized-text-color-hover);
-
-        .spectrum-Icon {
-          fill: var(--spectrum-tabs-emphasized-icon-color-hover);
-        }
-      }
-    }
-  }
-}
-/* end emphasized picker */
-
 .spectrum-Tabs--quiet {
   border-block-end-color: var(--spectrum-tabs-quiet-rule-color);
 
   .spectrum-Tabs-selectionIndicator {
     background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
+
+    &.spectrum-Tabs--emphasized {
+      background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
+    }
   }
 }
 
@@ -146,6 +128,10 @@ governing permissions and limitations under the License.
 
     .spectrum-Tabs-selectionIndicator {
       background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
+
+      &.spectrum-Tabs--emphasized {
+        background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
+      }
     }
   }
 }

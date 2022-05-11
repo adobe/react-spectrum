@@ -77,8 +77,8 @@ storiesOf('Tabs', module)
     () => render({isEmphasized: true})
   )
   .add(
-    'isEmphasized: true, icons',
-    () => renderWithIcons({isEmphasized: true})
+    'isEmphasized: true, icons, isQuiet: true',
+    () => renderWithIcons({isEmphasized: true, isQuiet: true})
   )
   .add(
     'isEmphasized: true, orientation: vertical',
