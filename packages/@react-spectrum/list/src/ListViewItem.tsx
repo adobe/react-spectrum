@@ -20,10 +20,10 @@ import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {isFocusVisible as isGlobalFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {isMac, isWebKit, mergeProps, useSlotId} from '@react-aria/utils';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
-import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
 import {useGridCell, useGridSelectionCheckbox} from '@react-aria/grid';
@@ -116,11 +116,13 @@ export function ListViewItem(props: ListViewItemProps) {
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let isSelected = state.selectionManager.isSelected(item.key);
   let {visuallyHiddenProps} = useVisuallyHidden();
+  let descriptionId = useSlotId();
   let rowProps = {
     role: 'row',
     'aria-label': item.textValue,
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
-    'aria-rowindex': item.index + 1
+    'aria-rowindex': item.index + 1,
+    'aria-describedby': descriptionId
   };
 
   const mergedProps = mergeProps(
@@ -234,7 +236,7 @@ export function ListViewItem(props: ListViewItemProps) {
             slots={{
               content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
               text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
+              description: {id: descriptionId, UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
               icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
               link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
