@@ -19,20 +19,15 @@ import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('DialogContainer', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
     jest.useRealTimers();
   });
 
-  beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-  });
-
   afterEach(() => {
     jest.runAllTimers();
-    window.requestAnimationFrame.mockRestore();
   });
 
   it('should open and close a dialog based on controlled state', function () {
@@ -43,7 +38,6 @@ describe('DialogContainer', function () {
     );
 
     let button = getByRole('button');
-    act(() => button.focus());
     expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
@@ -67,7 +61,6 @@ describe('DialogContainer', function () {
     );
 
     let button = getByRole('button');
-    act(() => button.focus());
     expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
@@ -136,7 +129,6 @@ describe('DialogContainer', function () {
     );
 
     let button = getByRole('button');
-    act(() => button.focus());
     expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
@@ -159,7 +151,6 @@ describe('DialogContainer', function () {
     );
 
     let button = getByRole('button');
-    act(() => button.focus());
     expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
@@ -195,7 +186,6 @@ describe('DialogContainer', function () {
 
     // 1. Focus and press menu button
     let button = getByRole('button');
-    act(() => button.focus());
     expect(queryByRole('dialog')).toBeNull();
 
     triggerPress(button);
