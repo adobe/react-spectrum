@@ -173,6 +173,8 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
           }
 
           // TODO: Best way to implement only for when closest can be dropped on
+          // TODO: Figure out the typescript for this
+          // @ts-ignore
           if (y >= r.y + 10 && y <= r.maxY - 10 && collection.getItem(closest.key).value.type === 'folder') {
             closestDir = 'on';
           }
