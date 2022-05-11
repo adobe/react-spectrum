@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useMemo, useRef, useState} from 'react';
+import {Key, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
@@ -44,7 +44,8 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   let {
     selectionMode = 'none' as SelectionMode,
     disallowEmptySelection,
-    allowDuplicateSelectionEvents
+    allowDuplicateSelectionEvents,
+    selectionBehavior: selectionBehaviorProp = 'toggle'
   } = props;
 
   // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.
@@ -64,13 +65,22 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   let disabledKeysProp = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
-  let [selectionBehavior, setSelectionBehavior] = useState(props.selectionBehavior || 'toggle');
+  let [selectionBehavior, setSelectionBehavior] = useState(selectionBehaviorProp);
 
   // If the selectionBehavior prop is set to replace, but the current state is toggle (e.g. due to long press
   // to enter selection mode on touch), and the selection becomes empty, reset the selection behavior.
-  if (props.selectionBehavior === 'replace' && selectionBehavior === 'toggle' && typeof selectedKeys === 'object' && selectedKeys.size === 0) {
+  if (selectionBehaviorProp === 'replace' && selectionBehavior === 'toggle' && typeof selectedKeys === 'object' && selectedKeys.size === 0) {
     setSelectionBehavior('replace');
   }
+
+  // If the selectionBehavior prop changes, update the state as well.
+  let lastSelectionBehavior = useRef(selectionBehaviorProp);
+  useEffect(() => {
+    if (selectionBehaviorProp !== lastSelectionBehavior.current) {
+      setSelectionBehavior(selectionBehaviorProp);
+      lastSelectionBehavior.current = selectionBehaviorProp;
+    }
+  }, [selectionBehaviorProp]);
 
   return {
     selectionMode,
