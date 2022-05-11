@@ -145,10 +145,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
   // With touch, onAction occurs on single tap, and long press enters selection mode.
-  let hasPrimaryAction = onAction && (manager.selectionMode === 'none' || (manager.selectionBehavior !== 'replace' && manager.isEmpty));
-  let hasSecondaryAction = onAction && manager.selectionMode !== 'none' && manager.selectionBehavior === 'replace';
-  let hasAction = hasPrimaryAction || hasSecondaryAction;
   let allowsSelection = !isDisabled && manager.canSelectItem(key);
+  let hasPrimaryAction = onAction && (!allowsSelection || (manager.selectionBehavior !== 'replace' && manager.isEmpty));
+  let hasSecondaryAction = onAction && allowsSelection && manager.selectionBehavior === 'replace';
+  let hasAction = hasPrimaryAction || hasSecondaryAction;
   let modality = useRef(null);
 
   let longPressEnabled = hasAction && allowsSelection;
