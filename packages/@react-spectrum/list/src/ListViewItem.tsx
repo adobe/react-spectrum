@@ -19,6 +19,7 @@ import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
 import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+import {isFocusVisible as isGlobalFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
@@ -26,7 +27,6 @@ import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
 import {useGridCell, useGridSelectionCheckbox} from '@react-aria/grid';
-import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -145,6 +145,12 @@ export function ListViewItem(props: ListViewItemProps) {
       isFlushWithContainerBottom = true;
     }
   }
+  // previous item isn't selected
+  // and the previous item isn't focused or, if it is focused, then if focus globally isn't visible or just focus isn't in the listview
+  let roundTops = (!state.selectionManager.isSelected(item.prevKey)
+    && (state.selectionManager.focusedKey !== item.prevKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
+  let roundBottoms = (!state.selectionManager.isSelected(item.nextKey)
+    && (state.selectionManager.focusedKey !== item.nextKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
 
   return (
     <div
@@ -154,7 +160,11 @@ export function ListViewItem(props: ListViewItemProps) {
           listStyles,
           'react-spectrum-ListView-row',
           {
-            'focus-ring': isFocusVisible
+            'focus-ring': isFocusVisible,
+            'round-tops':
+              roundTops || (isHovered && !state.selectionManager.isSelected(item.key) && state.selectionManager.focusedKey !== item.key),
+            'round-bottoms':
+              roundBottoms || (isHovered && !state.selectionManager.isSelected(item.key) && state.selectionManager.focusedKey !== item.key)
           }
         )
       }
@@ -171,6 +181,7 @@ export function ListViewItem(props: ListViewItemProps) {
               'focus-ring': isFocusVisible,
               'is-hovered': isHovered,
               'is-selected': isSelected,
+              'is-prev-selected': state.selectionManager.isSelected(item.prevKey),
               'is-next-selected': state.selectionManager.isSelected(item.nextKey),
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
               'react-spectrum-ListViewItem--dropTarget': !!isDropTarget,
