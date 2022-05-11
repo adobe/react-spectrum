@@ -20,7 +20,7 @@ import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
@@ -630,7 +630,7 @@ export function ReorderExample() {
         }
         onDropAction(e);
         onMove(keys, e.target);
-      } 
+      }
     },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
@@ -640,7 +640,7 @@ export function ReorderExample() {
       return 'move';
     }
   });
-  
+
 
   return (
     <ListView
@@ -709,7 +709,7 @@ export function DragIntoItemExample() {
         if (!keys.includes(e.target.key)) {
           onMove(keys, e.target);
         }
-      } 
+      }
     },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes) {
@@ -732,7 +732,7 @@ export function DragIntoItemExample() {
       {(item: any) => (
         <Item key={item.id} textValue={item.textValue} hasChildItems={item.type === 'folder'}>
           <Text>{item.type === 'folder' ? 'Drop items here' : `Item ${item.textValue}`}</Text>
-          {item.type === 'folder' && 
+          {item.type === 'folder' &&
             <>
               <Folder />
               <Text slot="description">contains {item.childNodes.length} dropped item(s)</Text>
@@ -768,7 +768,7 @@ export function DragBetweenListsExample() {
       {id: '12', type: 'item', textValue: 'Twelve'}
     ]
   });
-  
+
   let onMove = (keys: React.Key[], target: ItemDropTarget) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
     let destinationList = list1.getItem(target.key) ? list1 : list2;
@@ -816,7 +816,7 @@ export function DragBetweenListsExample() {
         }
         onDropAction(e);
         onMove(keys, e.target);
-      } 
+      }
     },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
@@ -891,7 +891,7 @@ export function DragBetweenListsRootOnlyExample() {
       {id: '12', type: 'item', textValue: 'Twelve'}
     ]
   });
-  
+
   let onMove = (keys: React.Key[]) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
     let destinationList = sourceList === list1 ? list2 : list1;
@@ -932,7 +932,7 @@ export function DragBetweenListsRootOnlyExample() {
         }
         onDropAction(e);
         onMove(keys);
-      } 
+      }
     },
     getDropOperation(target, types) {
       if (target.type === 'root' && types.has('list2')) {
@@ -956,7 +956,7 @@ export function DragBetweenListsRootOnlyExample() {
         }
         onDropAction(e);
         onMove(keys);
-      } 
+      }
     },
     getDropOperation(target, types) {
       if (target.type === 'root' && types.has('list1')) {
@@ -1013,6 +1013,7 @@ function AsyncList(props) {
     name: string,
     url: string
   }
+  let first = useRef(true);
 
   let list = useAsyncList<StarWarsChar>({
     async load({signal, cursor}) {
@@ -1021,7 +1022,12 @@ function AsyncList(props) {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      if (first.current) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        first.current = false;
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 150000));
+      }
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -1030,6 +1036,7 @@ function AsyncList(props) {
       };
     }
   });
+
   return (
     <ListView
       selectionMode="multiple"

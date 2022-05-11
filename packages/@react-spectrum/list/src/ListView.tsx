@@ -53,7 +53,8 @@ interface ListViewContextValue<T> {
   onAction:(key: Key) => void,
   isListDraggable: boolean,
   isListDroppable: boolean,
-  layout: ListLayout<T>
+  layout: ListLayout<T>,
+  loadingState: LoadingState
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
@@ -280,7 +281,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
   return (
-    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout}}>
+    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
       <Virtualizer
         {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
         {...filterDOMProps(otherProps)}
