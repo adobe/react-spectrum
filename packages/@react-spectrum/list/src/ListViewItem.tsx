@@ -50,8 +50,8 @@ export function ListViewItem(props: ListViewItemProps) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
-  let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
+  let allowsInteraction = state.selectionManager.canSelectItem(item.key) || hasActions;
+  let isDisabled = !allowsInteraction;
   let isDroppable = isListDroppable && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {pressProps, isPressed} = usePress({isDisabled});
