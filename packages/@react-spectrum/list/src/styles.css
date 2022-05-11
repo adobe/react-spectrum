@@ -457,12 +457,27 @@
 
 .react-spectrum-ListView--draggable .react-spectrum-ListViewItem {
   padding-inline-start: 0;
+
+  .react-spectrum-ListViewItem-checkbox {
+    input {
+      inset-inline-start: 0;
+    }
+  }
 }
 
-.react-spectrum-ListViewItem--draggable {
-  .react-spectrum-ListViewItem-checkbox input {
-    inset-inline-start: 0;
-  }
+.react-spectrum-ListViewItem--dropTarget {
+  background-color: var(--spectrum-alias-highlight-selected);
+  box-shadow:
+    inset 2px 0 0 0 var(--spectrum-table-cell-border-color-key-focus),
+    inset -2px 0 0 0 var(--spectrum-table-cell-border-color-key-focus),
+    inset 0 -3px 0 0 var(--spectrum-table-cell-border-color-key-focus),
+    inset 0 2px 0 0 var(--spectrum-table-cell-border-color-key-focus);
+}
+
+.react-spectrum-ListView--dropTarget {
+  border-color: var(--spectrum-global-color-blue-500);
+  background-color: var(--spectrum-alias-highlight-selected);
+  box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
 }
 
 .react-spectrum-ListView-centeredWrapper {
@@ -473,6 +488,41 @@
   height: 100%;
   &.react-spectrum-ListView-centeredWrapper--loadingMore {
     padding-top: var(--spectrum-global-dimension-size-50);
+  }
+}
+
+.react-spectrum-ListViewInsertionIndicator {
+  width: calc(100% - (2 * var(--spectrum-dropindicator-circle-size)));
+  inset-inline-start: var(--spectrum-dropindicator-circle-size);
+  position: absolute;
+  outline: none;
+
+  &.react-spectrum-ListViewInsertionIndicator--dropTarget {
+    background: var(--spectrum-dropindicator-border-color);
+    border-bottom: 2px solid var(--spectrum-dropindicator-border-color);
+
+    &:before {
+      left: calc(var(--spectrum-dropindicator-circle-size) * -1);
+    }
+
+    &:after {
+      right: calc(var(--spectrum-dropindicator-circle-size) * -1);
+    }
+
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      top: calc(var(--spectrum-dropindicator-circle-size) * -1 / 2 + var(--spectrum-dropindicator-border-size) / 2);
+      width: var(--spectrum-dropindicator-circle-size);
+      height: var(--spectrum-dropindicator-circle-size);
+      border-radius: 50%;
+      border: var(--spectrum-dropindicator-border-size) solid;
+      box-sizing: border-box;
+      border-color: var(--spectrum-dropindicator-circle-border-color);
+      background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+      z-index: 3;
+    }
   }
 }
 

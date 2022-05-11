@@ -20,7 +20,7 @@ import {
   SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
-import {DragHooks} from '@react-spectrum/dnd';
+import {DragHooks, DropHooks} from '@react-spectrum/dnd';
 
 export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {
   /**
@@ -50,8 +50,17 @@ export interface SpectrumListProps<T> extends AriaListProps<T>, StyleProps, Spec
   /** Sets what the ListView should render when there is no content to display. */
   renderEmptyState?: () => JSX.Element,
   /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: (key: string) => void,
+  /**
    * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
    * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.
    */
-  dragHooks?: DragHooks
+  dragHooks?: DragHooks,
+  /**
+   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView.
+   */
+  dropHooks?: DropHooks
 }

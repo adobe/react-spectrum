@@ -12,17 +12,23 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import type {DraggableCollectionState} from '@react-stately/dnd';
+import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
+import {DragHooks, DropHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
+import type {DroppableCollectionResult} from '@react-aria/dnd';
 import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
+import InsertionIndicator from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
+import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useContext, useMemo, useRef, useState} from 'react';
+import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
+import {Rect} from '@react-stately/virtualizer';
+import RootDropIndicator from './RootDropIndicator';
 import {SpectrumListProps} from '@react-types/list';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useList} from '@react-aria/list';
@@ -32,7 +38,12 @@ import {Virtualizer} from '@react-aria/virtualizer';
 interface ListViewContextValue<T> {
   state: ListState<T>,
   dragState: DraggableCollectionState,
+  dropState: DroppableCollectionState,
+  dragHooks: DragHooks,
+  dropHooks: DropHooks,
+  onAction:(key: Key) => void,
   isListDraggable: boolean,
+  isListDroppable: boolean,
   layout: ListLayout<T>
 }
 
@@ -81,12 +92,18 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
     overflowMode = 'truncate',
     onAction,
     dragHooks,
+    dropHooks,
     ...otherProps
   } = props;
   let isListDraggable = !!dragHooks;
+  let isListDroppable = !!dropHooks;
   let dragHooksProvided = useRef(isListDraggable);
+  let dropHooksProvided = useRef(isListDroppable);
   if (dragHooksProvided.current !== isListDraggable) {
     console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+  }
+  if (dropHooksProvided.current !== isListDroppable) {
+    console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
   }
   let domRef = useDOMRef(ref);
   let state = useListState({
@@ -115,6 +132,66 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
     });
   }
 
+  let dropState: DroppableCollectionState;
+  let droppableCollection: DroppableCollectionResult;
+  let isRootDropTarget: boolean;
+  if (isListDroppable) {
+    dropState = dropHooks.useDroppableCollectionState({
+      collection,
+      selectionManager
+    });
+    droppableCollection = dropHooks.useDroppableCollection({
+      keyboardDelegate: layout,
+      getDropTargetFromPoint(x, y) {
+        let closest = null;
+        let closestDistance = Infinity;
+        let closestDir = null;
+
+        x += domRef.current.scrollLeft;
+        y += domRef.current.scrollTop;
+
+        let visible = layout.getVisibleLayoutInfos(new Rect(x - 50, y - 50, x + 50, y + 50));
+
+        for (let layoutInfo of visible) {
+          let r = layoutInfo.rect;
+          let points: [number, number, string][] = [
+            [r.x, r.y + 4, 'before'],
+            [r.maxX, r.y + 4, 'before'],
+            [r.x, r.maxY - 8, 'after'],
+            [r.maxX, r.maxY - 8, 'after']
+          ];
+
+          for (let [px, py, dir] of points) {
+            let dx = px - x;
+            let dy = py - y;
+            let d = dx * dx + dy * dy;
+            if (d < closestDistance) {
+              closestDistance = d;
+              closest = layoutInfo;
+              closestDir = dir;
+            }
+          }
+
+          // TODO: Best way to implement only for when closest can be dropped on
+          if (y >= r.y + 10 && y <= r.maxY - 10 && collection.getItem(closest.key).value.type === 'folder') {
+            closestDir = 'on';
+          }
+        }
+
+        let key = closest?.key;
+        if (key) {
+          return {
+            type: 'item',
+            key,
+            dropPosition: closestDir
+          };
+        }
+      }
+    }, dropState, domRef);
+
+    isRootDropTarget = dropState.isDropTarget({type: 'root'});
+  }
+
   let {gridProps} = useList({
     ...props,
     isVirtualized: true,
@@ -124,6 +201,11 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
 
   // Sync loading state into the layout.
   layout.isLoading = isLoading;
+
+  let focusedKey = selectionManager.focusedKey;
+  if (dropState?.target?.type === 'item') {
+    focusedKey = dropState.target.key;
+  }
 
   // wait for layout to get accurate measurements
   let [isVerticalScrollbarVisible, setVerticalScollbarVisible] = useState(false);
@@ -139,15 +221,16 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
   return (
-    <ListViewContext.Provider value={{state, dragState, isListDraggable, layout}}>
+    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout}}>
       <Virtualizer
+        {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
         {...filterDOMProps(otherProps)}
         {...gridProps}
         {...styleProps}
         isLoading={isLoading}
         onLoadMore={onLoadMore}
         ref={domRef}
-        focusedKey={selectionManager.focusedKey}
+        focusedKey={focusedKey}
         scrollDirection="vertical"
         className={
           classNames(
@@ -157,8 +240,9 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
             'react-spectrum-ListView--emphasized',
             {
               'react-spectrum-ListView--quiet': isQuiet,
-              'react-spectrum-ListView--draggable': isListDraggable,
               'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore',
+              'react-spectrum-ListView--draggable': !!isListDraggable,
+              'react-spectrum-ListView--dropTarget': !!isRootDropTarget,
               'react-spectrum-ListView--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
               'react-spectrum-ListView--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible,
               'react-spectrum-ListView--hasAnyChildren': hasAnyChildren,
@@ -173,7 +257,23 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
         {(type, item) => {
           if (type === 'item') {
             return (
-              <ListViewItem item={item} isEmphasized dragHooks={dragHooks} hasActions={!!onAction}  />
+              <>
+                {isListDroppable && collection.getKeyBefore(item.key) == null &&
+                  <RootDropIndicator key="root" />
+                }
+                {isListDroppable &&
+                  <InsertionIndicator
+                    key={`${item.key}-before`}
+                    target={{key: item.key, type: 'item', dropPosition: 'before'}} />
+                }
+                <ListViewItem item={item} isEmphasized hasActions={!!onAction} />
+                {isListDroppable &&
+                  <InsertionIndicator
+                    key={`${item.key}-after`}
+                    target={{key: item.key, type: 'item', dropPosition: 'after'}}
+                    isPresentationOnly={collection.getKeyAfter(item.key) !== null} />
+                  }
+              </>
             );
           } else if (type === 'loader') {
             return (
