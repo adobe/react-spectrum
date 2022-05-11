@@ -307,7 +307,7 @@ export class SelectionManager implements MultipleSelectionManager {
       keys.delete(key);
       // TODO: move anchor to last selected key...
       // Does `current` need to move here too?
-    } else {
+    } else if (!this.state.disabledKeys.has(key)) {
       keys.add(key);
       keys.anchorKey = key;
       keys.currentKey = key;
@@ -333,7 +333,11 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    this.state.setSelectedKeys(new Selection([key], key, key));
+    let selection = this.state.disabledKeys.has(key)
+      ? new Selection()
+      : new Selection([key], key, key);
+
+    this.state.setSelectedKeys(selection);
   }
 
   /**
