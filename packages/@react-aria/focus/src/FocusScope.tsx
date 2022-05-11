@@ -383,7 +383,7 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
       }
     }
     autoFocusRef.current = false;
-  });
+  }, [scopeRef]);
 }
 
 // An array to create a stack of nodeToRestore elements.
