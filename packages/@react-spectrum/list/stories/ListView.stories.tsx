@@ -20,7 +20,7 @@ import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
@@ -1013,7 +1013,6 @@ function AsyncList(props) {
     name: string,
     url: string
   }
-  let first = useRef(true);
 
   let list = useAsyncList<StarWarsChar>({
     async load({signal, cursor}) {
@@ -1022,12 +1021,7 @@ function AsyncList(props) {
       }
 
       // Slow down load so progress circle can appear
-      if (first.current) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        first.current = false;
-      } else {
-        await new Promise(resolve => setTimeout(resolve, 150000));
-      }
+      await new Promise(resolve => setTimeout(resolve, 1500));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
