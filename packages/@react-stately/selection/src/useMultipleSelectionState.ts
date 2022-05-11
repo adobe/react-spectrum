@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import {Key, useEffect, useMemo, useRef, useState} from 'react';
 import {MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
