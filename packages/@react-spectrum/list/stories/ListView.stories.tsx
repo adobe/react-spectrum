@@ -320,6 +320,36 @@ storiesOf('ListView', module)
           (item) => <Item textValue={item.title}><Image src={item.url} /><Content>{item.title}</Content><Text slot="description">JPG</Text></Item>
         }
     </ListView>
+  ))
+  .add('overflowMode="truncate" (default)', () => (
+    <ListView width="250px" overflowMode="truncate">
+      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
+      <Item textValue="row 2">
+        <Text>Text slot with a really really really long name</Text>
+        <Text slot="description">Description slot with a really really long name</Text>
+      </Item>
+      <Item textValue="row 3">
+        <Content>Content slot with really really long name</Content>
+      </Item>
+      <Item textValue="row 4">
+        <Link >Link slot with a very very very very long name</Link>
+      </Item>
+    </ListView>
+  ))
+  .add('overflowMode="wrap"', () => (
+    <ListView width="250px" overflowMode="wrap">
+      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
+      <Item textValue="row 2">
+        <Text>Text slot with a really really really long name</Text>
+        <Text slot="description">Description slot with a really really long name</Text>
+      </Item>
+      <Item textValue="row 3">
+        <Content>Content slot with really really long name</Content>
+      </Item>
+      <Item textValue="row 4">
+        <Link >Link slot with a very very very very long name</Link>
+      </Item>
+    </ListView>
   ));
 
 storiesOf('ListView/Drag and Drop', module)
@@ -384,37 +414,7 @@ storiesOf('ListView/Drag and Drop', module)
         <Droppable />
         <DragExample listViewProps={{selectionStyle: 'highlight', onAction: action('onAction')}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </Flex>
-    ), {description: {data: 'Folders are non-draggable.'}})
-  .add('overflowMode="truncate" (default)', () => (
-    <ListView width="250px" overflowMode="truncate">
-      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
-      <Item textValue="row 2">
-        <Text>Text slot with a really really really long name</Text>
-        <Text slot="description">Description slot with a really really long name</Text>
-      </Item>
-      <Item textValue="row 3">
-        <Content>Content slot with really really long name</Content>
-      </Item>
-      <Item textValue="row 4">
-        <Link >Link slot with a very very very very long name</Link>
-      </Item>
-    </ListView>
-  ))
-  .add('overflowMode="wrap"', () => (
-    <ListView width="250px" overflowMode="wrap">
-      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
-      <Item textValue="row 2">
-        <Text>Text slot with a really really really long name</Text>
-        <Text slot="description">Description slot with a really really long name</Text>
-      </Item>
-      <Item textValue="row 3">
-        <Content>Content slot with really really long name</Content>
-      </Item>
-      <Item textValue="row 4">
-        <Link >Link slot with a very very very very long name</Link>
-      </Item>
-    </ListView>
-  ));
+    ), {description: {data: 'Folders are non-draggable.'}});
 
 function Example(props?) {
   return (
@@ -630,7 +630,7 @@ export function ReorderExample() {
         }
         onDropAction(e);
         onMove(keys, e.target);
-      } 
+      }
     },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
@@ -640,7 +640,7 @@ export function ReorderExample() {
       return 'move';
     }
   });
-  
+
 
   return (
     <ListView
@@ -709,7 +709,7 @@ export function DragIntoItemExample() {
         if (!keys.includes(e.target.key)) {
           onMove(keys, e.target);
         }
-      } 
+      }
     },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes) {
@@ -732,7 +732,7 @@ export function DragIntoItemExample() {
       {(item: any) => (
         <Item key={item.id} textValue={item.textValue} hasChildItems={item.type === 'folder'}>
           <Text>{item.type === 'folder' ? 'Drop items here' : `Item ${item.textValue}`}</Text>
-          {item.type === 'folder' && 
+          {item.type === 'folder' &&
             <>
               <Folder />
               <Text slot="description">contains {item.childNodes.length} dropped item(s)</Text>
@@ -768,7 +768,7 @@ export function DragBetweenListsExample() {
       {id: '12', type: 'item', textValue: 'Twelve'}
     ]
   });
-  
+
   let onMove = (keys: React.Key[], target: ItemDropTarget) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
     let destinationList = list1.getItem(target.key) ? list1 : list2;
@@ -816,7 +816,7 @@ export function DragBetweenListsExample() {
         }
         onDropAction(e);
         onMove(keys, e.target);
-      } 
+      }
     },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
@@ -891,7 +891,7 @@ export function DragBetweenListsRootOnlyExample() {
       {id: '12', type: 'item', textValue: 'Twelve'}
     ]
   });
-  
+
   let onMove = (keys: React.Key[]) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
     let destinationList = sourceList === list1 ? list2 : list1;
@@ -932,7 +932,7 @@ export function DragBetweenListsRootOnlyExample() {
         }
         onDropAction(e);
         onMove(keys);
-      } 
+      }
     },
     getDropOperation(target, types) {
       if (target.type === 'root' && types.has('list2')) {
@@ -956,7 +956,7 @@ export function DragBetweenListsRootOnlyExample() {
         }
         onDropAction(e);
         onMove(keys);
-      } 
+      }
     },
     getDropOperation(target, types) {
       if (target.type === 'root' && types.has('list1')) {
