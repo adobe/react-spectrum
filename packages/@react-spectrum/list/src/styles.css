@@ -107,7 +107,7 @@
         }
       }
 
-      &.react-spectrum-ListView--isScrollingVertically {
+      &.react-spectrum-ListView--isVerticalScrollbarVisible {
         .react-spectrum-ListViewItem {
           &.react-spectrum-ListViewItem--firstRow.is-selected {
             &:after {
@@ -125,7 +125,7 @@
         }
       }
 
-      &.react-spectrum-ListView--isScrollingHorizontally {
+      &.react-spectrum-ListView--isHorizontalScrollbarVisible {
         &:not(.react-spectrum-ListView--loadingMore) {
           .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
             &:after {
@@ -414,7 +414,7 @@
     border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
   }
 
-  &.react-spectrum-ListView--isScrollingVertically {
+  &.react-spectrum-ListView--isVerticalScrollbarVisible {
     .react-spectrum-ListViewItem--firstRow.react-spectrum-ListViewItem {
       border-start-end-radius: 0;
     }
@@ -424,7 +424,7 @@
     }
   }
 
-  &.react-spectrum-ListView--isScrollingHorizontally {
+  &.react-spectrum-ListView--isHorizontalScrollbarVisible {
     .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
