@@ -66,7 +66,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
 
   let rowProps: HTMLAttributes<HTMLElement> = {
     role: 'row',
-    'aria-selected': state.selectionManager.canSelectItem(node.key) ? isSelected : undefined,
+    'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
     ...itemProps
   };
 
