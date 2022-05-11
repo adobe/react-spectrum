@@ -24,7 +24,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DraggableCollectionState} from '@react-stately/dnd';
 import {DragHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -33,7 +33,7 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useContext, useMemo, useRef} from 'react';
+import React, {ReactElement, useContext, useMemo, useRef, useState} from 'react';
 import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useGrid} from '@react-aria/grid';
 import {useProvider} from '@react-spectrum/provider';
@@ -183,13 +183,17 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
   // Sync loading state into the layout.
   layout.isLoading = isLoading;
-  let isVerticalScrollbarVisible = false;
-  let isHorizontalScrollbarVisible = false; // do we need this one? can listviews horizontally scroll?
-  if (domRef.current) {
-    // 2 is the width of the border which is not part of the box size
-    isVerticalScrollbarVisible = domRef.current.getBoundingClientRect().width > domRef.current.children[0]?.getBoundingClientRect().width + 2;
-    isHorizontalScrollbarVisible = domRef.current.getBoundingClientRect().height > domRef.current.children[0]?.getBoundingClientRect().height + 2;
-  }
+
+  // wait for layout to get accurate measurements
+  let [isVerticalScrollbarVisible, setVerticalScollbarVisible] = useState(false);
+  let [isHorizontalScrollbarVisible, setHorizontalScollbarVisible] = useState(false);
+  useLayoutEffect(() => {
+    if (domRef.current) {
+      // 2 is the width of the border which is not part of the box size
+      setVerticalScollbarVisible(domRef.current.clientWidth + 2 < domRef.current.offsetWidth);
+      setHorizontalScollbarVisible(domRef.current.clientHeight + 2 < domRef.current.offsetHeight);
+    }
+  });
 
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
@@ -214,8 +218,8 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
               'react-spectrum-ListView--quiet': isQuiet,
               'react-spectrum-ListView--draggable': isListDraggable,
               'react-spectrum-ListView--loadingMore': loadingState === 'loadingMore',
-              'react-spectrum-ListView--isScrollingVertically': isVerticalScrollbarVisible,
-              'react-spectrum-ListView--isScrollingHorizontally': isHorizontalScrollbarVisible,
+              'react-spectrum-ListView--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
+              'react-spectrum-ListView--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible,
               'react-spectrum-ListView--hasAnyChildren': hasAnyChildren,
               'react-spectrum-ListView--wrap': overflowMode === 'wrap'
             },
