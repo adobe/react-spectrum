@@ -404,6 +404,7 @@
 }
 .react-spectrum-ListView:not(.react-spectrum-ListView--quiet) {
   /* give first and last items border-radius to match listview container */
+
   .react-spectrum-ListViewItem--firstRow.react-spectrum-ListViewItem {
     border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
     border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
@@ -430,7 +431,9 @@
       border-end-end-radius: 0;
     }
   }
+}
 
+.react-spectrum-ListView {
   /* When we can use subgrid, get rid of this. */
   &.react-spectrum-ListView--hasAnyChildren {
     .react-spectrum-ListViewItem-parentIndicator {
