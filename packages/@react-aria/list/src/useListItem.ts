@@ -15,7 +15,7 @@ import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 import {Node as RSNode} from '@react-types/shared';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
@@ -166,12 +166,15 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     }
   };
 
+  let descriptionId = useSlotId();
+
   let rowProps: HTMLAttributes<HTMLElement> = mergeProps(itemProps, {
     role: 'row',
     onKeyDownCapture: onKeyDown,
     onFocus,
     'aria-label': node.textValue,
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? state.selectionManager.isSelected(node.key) : undefined,
+    'aria-describedby': descriptionId,
     id: getRowId(state, node.key)
   });
 

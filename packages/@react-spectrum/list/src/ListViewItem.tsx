@@ -23,7 +23,7 @@ import {isFocusVisible as isGlobalFocusVisible, useHover} from '@react-aria/inte
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
-import {mergeProps, useSlotId} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
 import {useListItem, useListSelectionCheckbox} from '@react-aria/list';
@@ -109,12 +109,6 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let {visuallyHiddenProps} = useVisuallyHidden();
-  let descriptionId = useSlotId();
-  rowProps['role'] = 'row';
-  rowProps['aria-label'] = item.textValue,
-  rowProps['aria-selected'] = state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
-  rowProps['aria-rowindex'] = item.index + 1,
-  rowProps['aria-describedby'] = descriptionId;
 
   const mergedProps = mergeProps(
     rowProps,
