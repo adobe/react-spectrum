@@ -5,6 +5,7 @@ import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs} from '@react-spectrum/breadcrumbs';
+import {chain} from '@react-aria/utils';
 import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
@@ -423,6 +424,7 @@ function renderActionsExample(renderActions, props?) {
 }
 
 function NavigationExample(props) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
   let [breadcrumbs, setBreadcrumbs] = useState([
     {
       key: 'root',
@@ -438,12 +440,14 @@ function NavigationExample(props) {
     let item = children.find(item => item.key === key);
     if (item.type === 'folder') {
       setBreadcrumbs([...breadcrumbs, item]);
+      setSelectedKeys(new Set());
     }
   };
 
   let onBreadcrumbAction = key => {
     let index = breadcrumbs.findIndex(item => item.key === key);
     setBreadcrumbs(breadcrumbs.slice(0, index + 1));
+    setSelectedKeys(new Set());
   };
 
   return (
@@ -455,15 +459,16 @@ function NavigationExample(props) {
         aria-label={name}
         width="250px"
         height={400}
-        onSelectionChange={action('onSelectionChange')}
+        onSelectionChange={chain(setSelectedKeys, action('onSelectionChange'))}
         selectionMode="multiple"
         selectionStyle="checkbox"
+        selectedKeys={selectedKeys}
         items={children}
         disabledKeys={props.disableFolders ? children.filter(item => item.type === 'folder').map(item => item.key) : null}
         onAction={onAction}
         {...props}>
         {(item: any) => (
-          <Item hasChildItems={item.type === 'folder'}>
+          <Item hasChildItems={item.type === 'folder'} textValue={item.name}>
             {item.type === 'folder' ? <Folder /> : null}
             <Text>{item.name}</Text>
           </Item>
