@@ -38,6 +38,13 @@ function renderGrid(props = {}) {
 }
 
 describe('useGrid', () => {
+  beforeAll(() => {
+    jest.useFakeTimers('modern');
+  });
+  afterEach(() => {
+    // run out notifications
+    act(() => {jest.runAllTimers();});
+  });
   it('gridFocusMode = row, cellFocusMode = cell', () => {
     let tree = renderGrid({gridFocusMode: 'row', cellFocusMode: 'cell'});
 

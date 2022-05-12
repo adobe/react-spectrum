@@ -37,7 +37,7 @@ function getItemsEnd() {
 
 describe('useAsyncList', () => {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   it('should call load function on init', async () => {
@@ -959,7 +959,7 @@ describe('useAsyncList', () => {
     }
 
     beforeAll(() => {
-      jest.useFakeTimers();
+      jest.useFakeTimers('legacy');
     });
 
     it('should accept initial filter text', async () => {

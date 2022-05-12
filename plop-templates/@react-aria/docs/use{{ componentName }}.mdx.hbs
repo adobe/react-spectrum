@@ -1,24 +1,20 @@
-<!-- Copyright {{currentYear}} Adobe. All rights reserved.
+{/* Copyright {{currentYear}} Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 *Additional types can be imported via a direct path to the *.d.ts file if need be. See the useComboBox.mdx for an example.*
 import docs from 'docs:@react-aria/{{packageName}}';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/{{packageName}}/package.json';
 import Anatomy from './{{packageName}}Anatomy.svg'
-
-```jsx import
-import {use{{componentName~}}} from '@react-aria/{{packageName}}';
-```
 
 *Include after_version if the docs shouldn't be published to the website until reaching a specific package version.*
 ---
@@ -29,7 +25,7 @@ after_version: 3.0.0-alpha.0
 
 # use{{componentName}}
 
-<p>{docs.exports.use{{componentName}}.description}</p>
+<PageDescription>{docs.exports.use{{componentName}}.description}</PageDescription>
 
 *Be sure to update the W3C url below if applicable to your hook, otherwise omit the sourceData prop.*
 <HeaderInfo
@@ -75,6 +71,8 @@ after_version: 3.0.0-alpha.0
 *If you create an example component that will be reused else where in this doc, include export=true so that you can directly reuse the component and avoid copy pasting the same code.*
 *See useComboBox.mdx for an example.*
 ```tsx example export=true
+import {use{{componentName~}}} from '@react-aria/{{packageName}}';
+
 function Example(props) {
   return (
     <div>test</div>

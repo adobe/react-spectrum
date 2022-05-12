@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {announce} from '@react-aria/live-announcer';
 import {CUSTOM_DRAG_TYPE} from '../src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from './mocks';
@@ -19,6 +19,20 @@ import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../src/utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    altKey: false,
+    button: opts.button || 0,
+    width: 1,
+    height: 1
+  }, opts);
+  return evt;
+}
 
 describe('useDrag and useDrop', function () {
   beforeEach(() => {
@@ -31,7 +45,7 @@ describe('useDrag and useDrop', function () {
       height: 50
     }));
 
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -1121,6 +1135,7 @@ describe('useDrag and useDrop', function () {
     afterEach(() => {
       fireEvent.keyDown(document.body, {key: 'Escape'});
       fireEvent.keyUp(document.body, {key: 'Escape'});
+      act(() => jest.runAllTimers());
     });
 
     it('should perform basic drag and drop', async () => {
@@ -1414,25 +1429,22 @@ describe('useDrag and useDrop', function () {
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
         fireEvent.keyUp(draggable, {key: 'Enter'});
-        act(() => jest.runAllTimers());
+        act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(droppable2);
       });
 
       it('should handle when a drop target is hidden with aria-hidden', async () => {
-        let setShowTarget2;
-        let Test = () => {
-          let [showTarget2, _setShowTarget2] = React.useState(true);
-          setShowTarget2 = _setShowTarget2;
-          return (<>
+        let Test = (props) => (
+          <>
             <Draggable />
             <Droppable />
-            <div aria-hidden={!showTarget2 || undefined}>
+            <div aria-hidden={!props.showTarget || undefined}>
               <Droppable>Drop here 2</Droppable>
             </div>
-          </>);
-        };
+          </>
+        );
 
-        let tree = render(<Test />);
+        let tree = render(<Test showTarget />);
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1448,10 +1460,12 @@ describe('useDrag and useDrop', function () {
 
         userEvent.tab();
         expect(document.activeElement).toBe(droppable2);
-
-        act(() => setShowTarget2(false));
+        // wait for the mutation observer I believe
+        await act(async () =>
+          tree.rerender(<Test />)
+        );
         expect(tree.getAllByRole('button')).toHaveLength(2);
-        await waitFor(() => expect(document.activeElement).toBe(droppable));
+        expect(document.activeElement).toBe(droppable);
 
         userEvent.tab();
         expect(document.activeElement).toBe(draggable);
@@ -2041,6 +2055,65 @@ describe('useDrag and useDrop', function () {
       expect(announce).toHaveBeenCalledWith('Drop canceled.');
     });
 
+    it('should support clicking the original drag target to cancel drag (virtual pointer event)', () => {
+      let tree = render(<>
+        <Draggable />
+        <Droppable />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+
+      fireEvent.focus(draggable);
+      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent.click(draggable);
+      act(() => jest.runAllTimers());
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+      expect(draggable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Click to cancel drag.');
+
+      // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
+      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent.click(draggable, {detail: 1});
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      expect(draggable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
+
+      expect(announce).toHaveBeenCalledWith('Drop canceled.');
+    });
+
+    it('should support double tapping the drop target to complete drag (virtual pointer event)', () => {
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable />
+        <Droppable onDrop={onDrop} />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let droppable = tree.getByText('Drop here');
+
+      fireEvent.focus(draggable);
+      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent.click(draggable);
+      act(() => jest.runAllTimers());
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+
+
+      // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
+      fireEvent.focus(droppable);
+      fireEvent(droppable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(droppable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent.click(droppable, {detail: 1});
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      expect(draggable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
+
+      expect(announce).toHaveBeenCalledWith('Drop complete.');
+      expect(onDrop).toHaveBeenCalledTimes(1);
+    });
+
     it('should handle when a drop target is added', () => {
       let setShowTarget2;
       let Test = () => {
@@ -2070,19 +2143,16 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should handle when a non drop target element is added', async () => {
-      let setShowInput2;
-      let Test = () => {
-        let [showInput2, _setShowInput2] = React.useState(false);
-        setShowInput2 = _setShowInput2;
-        return (<>
+      let Test = (props) => (
+        <>
           <Draggable />
           <input />
           <Droppable />
-          {showInput2 &&
+          {props.showInput2 &&
             <input />
           }
-        </>);
-      };
+        </>
+      );
 
       let tree = render(<Test />);
 
@@ -2096,9 +2166,10 @@ describe('useDrag and useDrop', function () {
 
       expect(() => tree.getAllByRole('textbox')).toThrow();
 
-      act(() => setShowInput2(true));
-      // MutationObserver is async
-      await waitFor(() => expect(() => tree.getAllByRole('textbox')).toThrow());
+      await act(async () => {
+        await tree.rerender(<Test showInput2 />);
+      });
+      expect(() => tree.getAllByRole('textbox')).toThrow();
 
       fireEvent.click(draggable);
       expect(tree.getAllByRole('textbox')).toHaveLength(2);
@@ -2132,21 +2203,18 @@ describe('useDrag and useDrop', function () {
       expect(tree.getAllByRole('button')).toHaveLength(2);
     });
 
-    it('should handle when a drop target is hidden with aria-hidden', () => {
-      let setShowTarget2;
-      let Test = () => {
-        let [showTarget2, _setShowTarget2] = React.useState(true);
-        setShowTarget2 = _setShowTarget2;
-        return (<>
+    it('should handle when a drop target is hidden with aria-hidden', async () => {
+      let Test = (props) => (
+        <>
           <Draggable />
           <Droppable />
-          <div aria-hidden={!showTarget2 || undefined}>
+          <div aria-hidden={!props.showTarget2 || undefined}>
             <Droppable>Drop here 2</Droppable>
           </div>
-        </>);
-      };
+        </>
+      );
 
-      let tree = render(<Test />);
+      let tree = render(<Test showTarget2 />);
 
       let draggable = tree.getByText('Drag me');
 
@@ -2156,7 +2224,9 @@ describe('useDrag and useDrop', function () {
 
       expect(tree.getAllByRole('button')).toHaveLength(3);
 
-      act(() => setShowTarget2(false));
+      await act(async () => {
+        await tree.rerender(<Test />);
+      });
       expect(tree.getAllByRole('button')).toHaveLength(2);
     });
 

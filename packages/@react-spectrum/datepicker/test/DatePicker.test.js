@@ -21,8 +21,7 @@ import userEvent from '@testing-library/user-event';
 
 function beforeInput(target, key) {
   // JSDOM doesn't support the beforeinput event
-  let e = new InputEvent('beforeinput', {cancelable: true, data: key});
-  e.inputType = 'insertText';
+  let e = new InputEvent('beforeinput', {cancelable: true, data: key, inputType: 'insertText'});
   fireEvent(target, e);
 }
 
@@ -58,7 +57,7 @@ function render(el) {
 
 describe('DatePicker', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
   afterEach(() => {
     act(() => {
@@ -80,7 +79,7 @@ describe('DatePicker', function () {
       expect(segments[0].textContent).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
-      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 − February');
+      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 – February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
@@ -113,7 +112,7 @@ describe('DatePicker', function () {
       expect(segments[0].textContent).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
-      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 − February');
+      expect(segments[0].getAttribute('aria-valuetext')).toBe('2 – February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
@@ -154,7 +153,37 @@ describe('DatePicker', function () {
 
       expect(segments[6].textContent).toBe('AM');
       expect(segments[6].getAttribute('aria-label')).toBe('AM/PM');
-      expect(segments[6].getAttribute('aria-valuetext')).toBe('12 AM');
+      expect(segments[6].getAttribute('aria-valuetext')).toBe('AM');
+    });
+
+    it('should support focusing via a ref', function () {
+      let ref = React.createRef();
+      let {getAllByRole} = render(<DatePicker label="Date" ref={ref} />);
+      expect(ref.current).toHaveProperty('focus');
+
+      act(() => ref.current.focus());
+      expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+    });
+
+    it('should support autoFocus', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" autoFocus />);
+      expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+    });
+
+    it('should pass through data attributes', function () {
+      let {getByTestId} = render(<DatePicker label="Date" data-testid="foo" />);
+      expect(getByTestId('foo')).toHaveAttribute('role', 'group');
+    });
+
+    it('should return the outer most DOM element from the ref', function () {
+      let ref = React.createRef();
+      render(<DatePicker label="Date" ref={ref} />);
+      expect(ref.current).toHaveProperty('UNSAFE_getDOMNode');
+
+      let wrapper = ref.current.UNSAFE_getDOMNode();
+      expect(wrapper).toBeInTheDocument();
+      expect(within(wrapper).getByText('Date')).toBeInTheDocument();
+      expect(within(wrapper).getAllByRole('spinbutton')[0]).toBeInTheDocument();
     });
   });
 
@@ -333,7 +362,7 @@ describe('DatePicker', function () {
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM');
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', '1 AM');
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
@@ -447,15 +476,16 @@ describe('DatePicker', function () {
     });
 
     it('should support labeling with aria-label', function () {
-      let {getByRole, getAllByRole} = render(<DatePicker aria-label="Birth date" />);
+      let {getByRole, getAllByRole, getByTestId} = render(<DatePicker aria-label="Birth date" />);
 
-      let field = getAllByRole('group')[1];
-      expect(field).toHaveAttribute('aria-label', 'Birth date');
-      expect(field).toHaveAttribute('id');
-      let comboboxId = field.getAttribute('id');
+      let group = getByRole('group');
+      expect(group).toHaveAttribute('id');
+      expect(group).toHaveAttribute('aria-label', 'Birth date');
+      let comboboxId = group.getAttribute('id');
 
-      let combobox = getAllByRole('group')[0];
-      expect(combobox).toHaveAttribute('aria-labelledby', comboboxId);
+      let field = getByTestId('date-field');
+      expect(field).toHaveAttribute('role', 'presentation');
+      expect(field).not.toHaveAttribute('aria-label');
 
       let button = getByRole('button');
       expect(button).toHaveAttribute('aria-label', 'Calendar');
@@ -466,20 +496,21 @@ describe('DatePicker', function () {
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
-        let segmentId = segment.getAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `${comboboxId} ${segmentId}`);
+        expect(segment.getAttribute('aria-label').startsWith('Birth date ')).toBe(true);
+        expect(segment).not.toHaveAttribute('aria-labelledby');
       }
     });
 
     it('should support labeling with aria-labelledby', function () {
-      let {getByRole, getAllByRole} = render(<DatePicker aria-labelledby="foo" />);
+      let {getByRole, getAllByRole, getByTestId} = render(<DatePicker aria-labelledby="foo" />);
 
-      let combobox = getAllByRole('group')[0];
+      let combobox = getByRole('group');
       expect(combobox).not.toHaveAttribute('aria-label');
       expect(combobox).toHaveAttribute('aria-labelledby', 'foo');
 
-      let field = getAllByRole('group')[1];
-      expect(field).toHaveAttribute('aria-labelledby', 'foo');
+      let field = getByTestId('date-field');
+      expect(field).toHaveAttribute('role', 'presentation');
+      expect(field).not.toHaveAttribute('aria-labelledby');
 
       let button = getByRole('button');
       expect(button).toHaveAttribute('aria-label', 'Calendar');
@@ -496,73 +527,113 @@ describe('DatePicker', function () {
     });
 
     it('should support help text description', function () {
-      let {getAllByRole} = render(<DatePicker label="Date" description="Help text" />);
+      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" description="Help text" />);
 
-      let [group, field] = getAllByRole('group');
+      let group = getByRole('group');
+      let field = getByTestId('date-field');
       expect(group).toHaveAttribute('aria-describedby');
-      expect(field).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      expect(field).not.toHaveAttribute('aria-describedby');
 
       let description = document.getElementById(group.getAttribute('aria-describedby'));
       expect(description).toHaveTextContent('Help text');
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments[0]).toHaveAttribute('aria-describedby', description.id);
+
+      for (let segment of segments.slice(1)) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
 
     it('should support error message', function () {
-      let {getAllByRole} = render(<DatePicker label="Date" errorMessage="Error message" validationState="invalid" />);
+      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" errorMessage="Error message" validationState="invalid" />);
 
-      let [group, field] = getAllByRole('group');
+      let group = getByRole('group');
+      let field = getByTestId('date-field');
       expect(group).toHaveAttribute('aria-describedby');
-      expect(field).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      expect(field).not.toHaveAttribute('aria-describedby');
 
       let description = document.getElementById(group.getAttribute('aria-describedby'));
       expect(description).toHaveTextContent('Error message');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      }
     });
 
     it('should not display error message if not invalid', function () {
-      let {getAllByRole} = render(<DatePicker label="Date" errorMessage="Error message" />);
+      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" errorMessage="Error message" />);
 
-      let [group, field] = getAllByRole('group');
+      let group = getByRole('group');
+      let field = getByTestId('date-field');
       expect(group).not.toHaveAttribute('aria-describedby');
       expect(field).not.toHaveAttribute('aria-describedby');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
 
     it('should support help text with a value', function () {
-      let {getAllByRole} = render(<DatePicker label="Date" description="Help text" value={new CalendarDate(2020, 2, 3)} />);
+      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" description="Help text" value={new CalendarDate(2020, 2, 3)} />);
 
-      let [group, field] = getAllByRole('group');
+      let group = getByRole('group');
+      let field = getByTestId('date-field');
       expect(group).toHaveAttribute('aria-describedby');
-      expect(field).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      expect(field).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3, 2020 Help text');
+      expect(description).toBe('Selected Date: February 3, 2020 Help text');
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments[0]).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+
+      for (let segment of segments.slice(1)) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
 
     it('should support error message with a value', function () {
-      let {getAllByRole} = render(<DatePicker label="Date" errorMessage="Error message" validationState="invalid" value={new CalendarDate(2020, 2, 3)} />);
+      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" errorMessage="Error message" validationState="invalid" value={new CalendarDate(2020, 2, 3)} />);
 
-      let [group, field] = getAllByRole('group');
+      let group = getByRole('group');
+      let field = getByTestId('date-field');
       expect(group).toHaveAttribute('aria-describedby');
-      expect(field).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      expect(field).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3, 2020 Error message');
+      expect(description).toBe('Selected Date: February 3, 2020 Error message');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      }
     });
 
     it('should support format help text', function () {
-      let {getAllByRole, getByText} = render(<DatePicker label="Date" showFormatHelpText />);
+      let {getAllByRole, getByText, getByRole, getByTestId} = render(<DatePicker label="Date" showFormatHelpText />);
 
       // Not needed in aria-described by because each segment has a label already, so this would be duplicative.
-      let [group, field] = getAllByRole('group');
+      let group = getByRole('group');
+      let field = getByTestId('date-field');
       expect(group).not.toHaveAttribute('aria-describedby');
       expect(field).not.toHaveAttribute('aria-describedby');
 
       expect(getByText('month / day / year')).toBeVisible();
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).not.toHaveAttribute('aria-describedby');
+      }
     });
   });
 
   describe('focus management', function () {
     it('should focus the first segment on mouse down in the field', function () {
-      let {getAllByRole} = render(<DatePicker label="Date" />);
-      let field = getAllByRole('group')[1];
+      let {getAllByRole, getByTestId} = render(<DatePicker label="Date" />);
+      let field = getByTestId('date-field');
       let segments = getAllByRole('spinbutton');
 
       triggerPress(field);
@@ -570,8 +641,8 @@ describe('DatePicker', function () {
     });
 
     it('should focus the first unfilled segment on mouse down in the field', function () {
-      let {getAllByRole} = render(<DatePicker label="Date" />);
-      let field = getAllByRole('group')[1];
+      let {getAllByRole, getByTestId} = render(<DatePicker label="Date" />);
+      let field = getByTestId('date-field');
       let segments = getAllByRole('spinbutton');
 
       act(() => segments[0].focus());
@@ -584,8 +655,8 @@ describe('DatePicker', function () {
     });
 
     it('should focus the last segment on mouse down in the field with a value', function () {
-      let {getAllByRole} = render(<DatePicker label="Date" value={new CalendarDate(2020, 2, 3)} />);
-      let field = getAllByRole('group')[1];
+      let {getAllByRole, getByTestId} = render(<DatePicker label="Date" value={new CalendarDate(2020, 2, 3)} />);
+      let field = getByTestId('date-field');
       let segments = getAllByRole('spinbutton');
 
       triggerPress(field);

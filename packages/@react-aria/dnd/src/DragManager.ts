@@ -101,6 +101,16 @@ function endDragging() {
   }
 }
 
+export function isValidDropTarget(element: Element): boolean {
+  for (let target of dropTargets.keys()) {
+    if (target.contains(element)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 const CANCELED_EVENTS = [
   'pointerdown',
   'pointermove',
@@ -146,6 +156,7 @@ class DragSession {
   private mutationImmediate: NodeJS.Immediate;
   private restoreAriaHidden: () => void;
   private formatMessage: (key: string) => string;
+  private isVirtualClick: boolean;
 
   constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
@@ -155,6 +166,7 @@ class DragSession {
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.onClick = this.onClick.bind(this);
+    this.onPointerDown = this.onPointerDown.bind(this);
     this.cancelEvent = this.cancelEvent.bind(this);
   }
 
@@ -163,22 +175,15 @@ class DragSession {
     window.addEventListener('focus', this.onFocus, true);
     window.addEventListener('blur', this.onBlur, true);
     document.addEventListener('click', this.onClick, true);
+    document.addEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
       document.addEventListener(event, this.cancelEvent, true);
     }
 
-    this.mutationObserver = new MutationObserver(() => {
-      // JSDOM has a bug where MutationObserver enters an infinite loop if mutations
-      // occur inside a MutationObserver callback. If running in Node, wait until
-      // the next tick to update valid drop targets.
-      // See https://github.com/jsdom/jsdom/issues/3096
-      if (typeof setImmediate === 'function') {
-        this.mutationImmediate = setImmediate(() => this.updateValidDropTargets());
-      } else {
-        this.updateValidDropTargets();
-      }
-    });
+    this.mutationObserver = new MutationObserver(() =>
+      this.updateValidDropTargets()
+    );
     this.updateValidDropTargets();
 
     announce(this.formatMessage(MESSAGES[getDragModality()]));
@@ -189,6 +194,7 @@ class DragSession {
     window.removeEventListener('focus', this.onFocus, true);
     window.removeEventListener('blur', this.onBlur, true);
     document.removeEventListener('click', this.onClick, true);
+    document.removeEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
       document.removeEventListener(event, this.cancelEvent, true);
@@ -274,25 +280,34 @@ class DragSession {
 
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
+    if (e.detail === 0 || this.isVirtualClick) {
+      if (e.target === this.dragTarget.element) {
+        this.cancel();
+        return;
+      }
 
-    if (e.detail !== 0) {
-      return;
-    }
-
-    if (e.target === this.dragTarget.element) {
-      this.cancel();
-      return;
-    }
-
-    let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
-    if (dropTarget) {
-      let item = dropItems.get(e.target as HTMLElement);
-      this.setCurrentDropTarget(dropTarget, item);
-      this.drop(item);
+      let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+      if (dropTarget) {
+        let item = dropItems.get(e.target as HTMLElement);
+        this.setCurrentDropTarget(dropTarget, item);
+        this.drop(item);
+      }
     }
   }
 
+  onPointerDown(e: PointerEvent) {
+    // Android Talkback double tap has e.detail = 1 for onClick. Detect the virtual click in onPointerDown before onClick fires
+    // so we can properly perform cancel and drop operations.
+    this.cancelEvent(e);
+    this.isVirtualClick = isVirtualPointerEvent(e);
+  }
+
   cancelEvent(e: Event) {
+    // Allow focusin and focusout on the drag target so focus ring works properly.
+    if ((e.type === 'focusin' || e.type === 'focusout') && e.target === this.dragTarget?.element) {
+      return;
+    }
+
     // Allow default for events that might cancel a click event
     if (!CLICK_EVENTS.includes(e.type)) {
       e.preventDefault();
@@ -448,6 +463,12 @@ class DragSession {
       });
     }
 
+    // Blur and re-focus the drop target so that the focus ring appears.
+    if (this.currentDropTarget) {
+      this.currentDropTarget.element.blur();
+      this.currentDropTarget.element.focus();
+    }
+
     this.setCurrentDropTarget(null);
     endDragging();
   }
@@ -524,4 +545,20 @@ function findValidDropTargets(options: DragTarget) {
 
     return true;
   });
+}
+
+function isVirtualPointerEvent(event: PointerEvent) {
+  // If the pointer size is zero, then we assume it's from a screen reader.
+  // Android TalkBack double tap will sometimes return a event with width and height of 1
+  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
+  // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
+  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
+  return (
+    (event.width === 0 && event.height === 0) ||
+    (event.width === 1 &&
+      event.height === 1 &&
+      event.pressure === 0 &&
+      event.detail === 0
+    )
+  );
 }

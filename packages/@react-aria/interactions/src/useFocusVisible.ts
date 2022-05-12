@@ -231,6 +231,8 @@ export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyA
       fn(isFocusVisible());
     };
     changeHandlers.add(handler);
-    return () => changeHandlers.delete(handler);
+    return () => {
+      changeHandlers.delete(handler);
+    };
   }, deps);
 }

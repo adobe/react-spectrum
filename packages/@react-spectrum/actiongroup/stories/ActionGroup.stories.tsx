@@ -158,7 +158,7 @@ storiesOf('ActionGroup', module)
   )
   .add(
     'isQuiet, isEmphasized',
-    () => render({isEmphasized: true, isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)
+    () => render({isEmphasized: true, isQuiet: true, defaultSelectedKeys: ['1', '2'], disabledKeys: ['2']}, viewItems)
   )
   .add(
     'staticColor=white',

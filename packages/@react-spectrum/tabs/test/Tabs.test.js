@@ -24,13 +24,13 @@ let items = [
   {name: 'Tab 3', children: 'Tab 3 body'}
 ];
 
-function renderComponent(props) {
+function renderComponent(props, itemProps) {
   return render(
     <Provider theme={theme}>
       <Tabs {...props} items={items}>
         <TabList>
           {item => (
-            <Item key={item.name} title={item.name || item.children} />
+            <Item {...itemProps} key={item.name} title={item.name || item.children} />
           )}
         </TabList>
         <TabPanels>
@@ -53,7 +53,7 @@ describe('Tabs', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterEach(() => {
@@ -637,10 +637,70 @@ describe('Tabs', function () {
     tabPanelInput = getByTestId('panel2_input');
     expect(tabPanelInput.value).toBe('');
   });
-  
-  it('supports custom props', function () {
+
+  it('supports custom props for parent tabs element', function () {
     let {getByTestId} = renderComponent({'data-testid': 'tabs1'});
     let tabs = getByTestId('tabs1');
     expect(tabs).toBeInTheDocument();
+  });
+
+  it('supports custom props for tab items', function () {
+    let {getAllByTestId} = renderComponent({}, {
+      'data-testid': 'tabItems',
+      'data-instance-id': 'instance-id',
+      'id': 'id-1'
+    });
+    let tabItems = getAllByTestId('tabItems');
+    expect(tabItems).toHaveLength(3);
+    for (let tabItem of tabItems) {
+      expect(tabItem).toHaveAttribute('data-instance-id', 'instance-id');
+      expect(tabItem).not.toHaveAttribute('id', 'id-1');
+      expect(tabItem).toBeInTheDocument();
+    }
+  });
+
+  it('fires onSelectionChange when clicking on the current tab', function () {
+    let container = renderComponent({defaultSelectedKey: items[0].name, onSelectionChange});
+    let tablist = container.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let firstItem = tabs[0];
+    expect(firstItem).toHaveAttribute('aria-selected', 'true');
+
+    triggerPress(firstItem);
+    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledWith(items[0].name);
+  });
+
+  it('updates the tab index of the selected tab if programatically changed', function () {
+    let Example = (props) => (
+      <Provider theme={theme}>
+        <Tabs aria-label="Test Tabs" items={items} selectedKey={props.selectedKey}>
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+    let {getAllByRole, rerender} = render(<Example selectedKey="Tab 3" />);
+
+    let tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('tabindex', '-1');
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1');
+    expect(tabs[2]).toHaveAttribute('tabindex', '0');
+
+    rerender(<Example selectedKey="Tab 1" />);
+    tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('tabindex', '0');
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1');
+    expect(tabs[2]).toHaveAttribute('tabindex', '-1');
   });
 });

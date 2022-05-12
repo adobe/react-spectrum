@@ -331,7 +331,134 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(outside);
     });
 
-    it('should move focus to the next element after the previously focused node on Tab', function () {
+    it('should restore focus to the previously focused node after a child with autoFocus unmounts', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            {show &&
+              <FocusScope restoreFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" autoFocus />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let outside = getByTestId('outside');
+      act(() => {outside.focus();});
+
+      rerender(<Test show />);
+
+      let input2 = getByTestId('input2');
+      expect(document.activeElement).toBe(input2);
+
+      rerender(<Test />);
+
+      expect(document.activeElement).toBe(outside);
+    });
+
+    it('should move focus after the previously focused node when tabbing away from a scope with autoFocus', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="before" />
+            <input data-testid="outside" />
+            <input data-testid="after" />
+            {show &&
+              <FocusScope restoreFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" />
+                <input data-testid="input3" autoFocus />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let outside = getByTestId('outside');
+      act(() => {outside.focus();});
+
+      rerender(<Test show />);
+
+      let input3 = getByTestId('input3');
+      expect(document.activeElement).toBe(input3);
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(getByTestId('after'));
+    });
+
+    it('should move focus before the previously focused node when tabbing away from a scope with Shift+Tab', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="before" />
+            <input data-testid="outside" />
+            <input data-testid="after" />
+            {show &&
+              <FocusScope restoreFocus>
+                <input data-testid="input1" autoFocus />
+                <input data-testid="input2" />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let outside = getByTestId('outside');
+      act(() => {outside.focus();});
+
+      rerender(<Test show />);
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(getByTestId('before'));
+    });
+
+    it('should restore focus to the previously focused node after children change', function () {
+      function Test({show, showChild}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            {show &&
+              <FocusScope restoreFocus autoFocus>
+                <input data-testid="input1" />
+                {showChild && <input data-testid="dynamic" />}
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let outside = getByTestId('outside');
+      act(() => {outside.focus();});
+
+      rerender(<Test show />);
+      rerender(<Test show showChild />);
+
+      let dynamic = getByTestId('dynamic');
+      act(() => {dynamic.focus();});
+      expect(document.activeElement).toBe(dynamic);
+
+      rerender(<Test />);
+
+      expect(document.activeElement).toBe(outside);
+    });
+
+    it('should move focus to the element after the previously focused node on Tab', function () {
       function Test({show}) {
         return (
           <div>

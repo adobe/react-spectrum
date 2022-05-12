@@ -79,6 +79,9 @@ const Template = <T extends object>(): Story<SpectrumTabsProps<T>> => (args) => 
 export const Default = Template().bind({});
 Default.args = {};
 
+export const DefaultMobileViewport = Template().bind({});
+DefaultMobileViewport.parameters = {chromatic: {viewports: [320]}};
+
 export const Quiet = Template().bind({});
 Quiet.args = {...Default.args, isQuiet: true};
 

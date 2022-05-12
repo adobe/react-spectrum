@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
@@ -35,13 +35,14 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     align = 'start',
     shouldFlip = true,
     direction = 'bottom',
-    closeOnSelect
+    closeOnSelect,
+    trigger = 'press'
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
   let state = useMenuTriggerState(props);
 
-  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, menuTriggerRef);
+  let {menuTriggerProps, menuProps} = useMenuTrigger({trigger}, state, menuTriggerRef);
 
   let initialPlacement: Placement;
   switch (direction) {
@@ -114,9 +115,11 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
 
   return (
     <Fragment>
-      <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={state.isOpen}>
-        {menuTrigger}
-      </PressResponder>
+      <SlotProvider slots={{actionButton: {holdAffordance: trigger === 'longPress'}}}>
+        <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={state.isOpen}>
+          {menuTrigger}
+        </PressResponder>
+      </SlotProvider>
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>

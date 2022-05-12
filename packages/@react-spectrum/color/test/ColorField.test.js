@@ -44,6 +44,7 @@ describe('ColorField', function () {
     expect(colorField).toHaveAttribute('type', 'text');
     expect(colorField).toHaveAttribute('autocomplete', 'off');
     expect(colorField).toHaveAttribute('autocorrect', 'off');
+    expect(colorField).toHaveAttribute('spellcheck', 'false');
     expect(colorField).not.toHaveAttribute('readonly');
     expect(colorField).not.toBeInvalid();
     expect(colorField).not.toBeDisabled();
@@ -62,9 +63,11 @@ describe('ColorField', function () {
     expect(colorField).not.toHaveAttribute('aria-labelledby');
   });
 
-  it('should allow placeholder', function () {
+  it('should allow placeholder and show warning', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
     expect(getByRole('textbox')).toBe(getByPlaceholderText('Enter a color'));
+    expect(spyWarn).toHaveBeenCalledWith('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
   });
 
   it('should show valid validation state', function () {
@@ -282,14 +285,13 @@ describe('ColorField', function () {
 
   it.each`
     Name                                | expected                 | key
-    ${'increment with arrow up key'}    | ${parseColor('#AAAAAE')}  | ${'ArrowUp'}
-    ${'decrement with arrow down key'}  | ${parseColor('#AAAAA6')}  | ${'ArrowDown'}
+    ${'increment with arrow up key'}    | ${parseColor('#AAAAAB')}  | ${'ArrowUp'}
+    ${'decrement with arrow down key'}  | ${parseColor('#AAAAA9')}  | ${'ArrowDown'}
   `('should handle $Name event', function ({expected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
       defaultValue: '#aaa',
-      onChange: onChangeSpy,
-      step: 4
+      onChange: onChangeSpy
     });
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AAAAAA');
@@ -302,14 +304,13 @@ describe('ColorField', function () {
 
   it.each`
     Name                                | expected                        | deltaY
-    ${'increment with mouse wheel'}     | ${parseColor('#AAAAAE')}  | ${10}
-    ${'decrement with mouse wheel'}     | ${parseColor('#AAAAA6')}  | ${-10}
+    ${'increment with mouse wheel'}     | ${parseColor('#AAAAAB')}  | ${10}
+    ${'decrement with mouse wheel'}     | ${parseColor('#AAAAA9')}  | ${-10}
   `('should handle $Name event', function ({expected, deltaY}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
       defaultValue: '#aaa',
-      onChange: onChangeSpy,
-      step: 4
+      onChange: onChangeSpy
     });
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AAAAAA');

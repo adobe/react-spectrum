@@ -13,6 +13,7 @@
 export * from './useId';
 export * from './chain';
 export * from './mergeProps';
+export * from './mergeRefs';
 export * from './filterDOMProps';
 export * from './focusWithoutScrolling';
 export * from './getOffset';
@@ -32,3 +33,4 @@ export * from './useDescription';
 export * from './platform';
 export * from './useEvent';
 export * from './useValueEffect';
+export * from './scrollIntoView';

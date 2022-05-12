@@ -61,3 +61,11 @@ governing permissions and limitations under the License.
 .spectrum-BarLoader-percentage {
   color: var(--spectrum-fieldlabel-text-color);
 }
+@media (forced-colors: active) {
+  .spectrum-BarLoader-track {
+    forced-color-adjust: none;
+    --spectrum-barloader-large-track-fill-color: ButtonText;
+    --spectrum-barloader-large-track-color: ButtonFace;
+    border: 1px solid ButtonText;
+  }
+}

@@ -31,7 +31,7 @@ const initial = [
 ];
 
 let getKey = (item) => item.name;
-let getChildren = (item) => item.children || [];
+let getChildren = (item) => item.children;
 
 describe('useTreeData', function () {
   it('should construct a tree using initial data', function () {

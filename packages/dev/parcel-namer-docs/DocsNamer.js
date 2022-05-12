@@ -22,11 +22,21 @@ module.exports = new Namer({
       let entryFilePath = path.relative(options.projectRoot, main.filePath);
       let parts = entryFilePath.split(path.sep);
 
-      let basename = path.basename(entryFilePath, path.extname(entryFilePath)) + '.' + bundle.type;
+      let basename = path.basename(entryFilePath, path.extname(entryFilePath)) + '.html';
 
       // For dev files, simply /PageName.html or /dir/PageName.html
       if (parts[1] === 'dev') {
         return path.join(...parts.slice(4, -1), basename);
+      }
+
+      // For @internationalized, group by package name.
+      if (parts[1] === '@internationalized') {
+        return path.join(
+          parts[1].replace(/^@/, ''),
+          parts[2],
+          ...parts.slice(4, -1),
+          basename
+        );
       }
 
       // For @namespace package files, urls will be /${namespace}/PageName.html

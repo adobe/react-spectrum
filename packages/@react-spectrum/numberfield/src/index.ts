@@ -11,6 +11,5 @@
  */
 
 /// <reference types="css-module-types" />
-/// <reference types="intl-types-extension" />
 
 export * from './NumberField';

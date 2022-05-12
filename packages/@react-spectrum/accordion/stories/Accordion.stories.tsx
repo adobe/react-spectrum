@@ -12,7 +12,7 @@
 
 import {Story as _Story, Meta} from '@storybook/react';
 import {Accordion, Item} from '../src';
-import React from 'react';
+import React, {useState} from 'react';
 import {SpectrumAccordionProps} from '@react-types/accordion';
 
 type ItemType = {
@@ -62,9 +62,31 @@ const AccordionTemplate: Story<SpectrumAccordionProps<ItemType>> = (args) => (
   </Accordion>
 );
 
+
+const ControlledAccordionTemplate: Story<SpectrumAccordionProps<ItemType>> = (args) => {
+  let [openKeys, setOpenKeys] = useState<Set<React.Key>>(new Set(['files']));
+  return (
+    <Accordion {...args} expandedKeys={openKeys} onExpandedChange={setOpenKeys} >
+      <Item key="files" title="Your files">
+        files
+      </Item>
+      <Item key="shared" title="Shared with you">
+        shared
+      </Item>
+      <Item key="last" title="Last item">
+        last
+      </Item>
+    </Accordion>
+  );
+};
+
 export const DefaultExpandedKeys = AccordionTemplate.bind({});
 DefaultExpandedKeys.storyName = 'defaultExpandedKeys: files';
 DefaultExpandedKeys.args = {defaultExpandedKeys: ['files']};
+
+export const ControlledExpandedKeys = ControlledAccordionTemplate.bind({});
+ControlledExpandedKeys.storyName = 'controlled ExpandedKeys';
+ControlledExpandedKeys.args = {};
 
 export const DisabledKeys = AccordionTemplate.bind({});
 DisabledKeys.storyName = 'disabledKeys: files, shared';

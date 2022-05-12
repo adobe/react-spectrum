@@ -39,10 +39,10 @@ let outerBlur = jest.fn();
 let onFocus = jest.fn();
 let onBlur = jest.fn();
 let onLoadMore = jest.fn();
+let onKeyDown = jest.fn();
 
 let defaultProps = {
   label: 'Test',
-  placeholder: 'Select a topic...',
   onSelectionChange,
   onOpenChange,
   onInputChange,
@@ -251,7 +251,7 @@ describe('ComboBox', function () {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   beforeEach(() => {
@@ -275,7 +275,6 @@ describe('ComboBox', function () {
     let {getAllByText, getByRole} = renderComboBox();
 
     let combobox = getByRole('combobox');
-    expect(combobox).toHaveAttribute('placeholder', 'Select a topic...');
     expect(combobox).toHaveAttribute('autoCorrect', 'off');
     expect(combobox).toHaveAttribute('spellCheck', 'false');
     expect(combobox).toHaveAttribute('autoComplete', 'off');
@@ -285,6 +284,24 @@ describe('ComboBox', function () {
 
     let label = getAllByText('Test')[0];
     expect(label).toBeVisible();
+  });
+
+  it('renders with placeholder text and shows warning', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByPlaceholderText, getByRole} = renderComboBox({placeholder: 'Test placeholder'});
+    
+    let searchAutocomplete = getByRole('combobox');
+
+    expect(getByPlaceholderText('Test placeholder')).toBeTruthy();
+    expect(searchAutocomplete.placeholder).toBe('Test placeholder');
+    expect(spyWarn).toHaveBeenCalledWith('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ComboBox.html#help-text');
+  });
+
+  it('propagates the name attribute', function () {
+    let {getByRole} = renderComboBox({name: 'test name'});
+
+    let combobox = getByRole('combobox');
+    expect(combobox).toHaveAttribute('name', 'test name');
   });
 
   it('can be disabled', function () {
@@ -937,7 +954,7 @@ describe('ComboBox', function () {
     });
 
     it('closes menu and resets selected key if allowsCustomValue=true and no item is focused', function () {
-      let {getByRole, queryByRole} = render(<ExampleComboBox allowsCustomValue selectedKey="2" />);
+      let {getByRole, queryByRole} = render(<ExampleComboBox allowsCustomValue selectedKey="2" onKeyDown={onKeyDown} />);
 
       let combobox = getByRole('combobox');
       act(() => combobox.focus());
@@ -959,6 +976,7 @@ describe('ComboBox', function () {
       });
 
       expect(queryByRole('listbox')).toBeNull();
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith(null);
       expect(onOpenChange).toHaveBeenCalledTimes(2);
@@ -3558,7 +3576,7 @@ describe('ComboBox', function () {
 
       expect(button).toHaveAttribute('aria-haspopup', 'dialog');
       expect(button).toHaveAttribute('aria-expanded', 'false');
-      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText(defaultProps.placeholder).id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${button.getElementsByTagName('span')[0].id}`);
     });
 
     it('button should be labelled by external label', function () {

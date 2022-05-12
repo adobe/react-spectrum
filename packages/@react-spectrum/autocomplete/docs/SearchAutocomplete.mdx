@@ -1,17 +1,17 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/autocomplete';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/autocomplete/package.json';
 
 ```jsx import
@@ -27,7 +27,7 @@ after_version: 3.0.0
 
 # SearchAutocomplete
 
-<p>{docs.exports.SearchAutocomplete.description}</p>
+<PageDescription>{docs.exports.SearchAutocomplete.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -51,7 +51,7 @@ Static collections, as in this example, can be used when the full list of option
 Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 Providing the data in this way allows SearchAutocomplete to automatically cache the rendering of each item, which dramatically improves performance.
 
-As seen below, an iterable list of options is passed to the SearchAutocomplete using the `defaultItems` prop. 
+As seen below, an iterable list of options is passed to the SearchAutocomplete using the `defaultItems` prop.
 
 ```tsx example
 function Example() {
@@ -83,36 +83,6 @@ filtering logic. See the [Custom Filtering](#custom-filtering) section for more 
 ### Internationalization
 To internationalize a SearchAutocomplete, a localized string should be passed to the `children` of each `Item`.
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the SearchAutocomplete is automatically flipped.
-
-### Placeholder
-
-Placeholder text that describes the expected value or formatting for the SearchAutocomplete can be provided using the `placeholder` prop.
-Placeholder text will only appear when the SearchAutocomplete is empty, and should not be used as a substitute for labeling the component with a visible label.
-
-```tsx example
-function Example() {
-  let options = [
-    {id: 1, name: 'Aerospace'},
-    {id: 2, name: 'Mechanical'},
-    {id: 3, name: 'Civil'},
-    {id: 4, name: 'Biomedical'},
-    {id: 5, name: 'Nuclear'},
-    {id: 6, name: 'Industrial'},
-    {id: 7, name: 'Chemical'},
-    {id: 8, name: 'Agricultural'},
-    {id: 9, name: 'Electrical'}
-  ];
-
-  return (
-    <SearchAutocomplete
-      label="Search engineering majors"
-      defaultItems={options}
-      placeholder="Aerospace, Mechanical, etc.">
-      {item => <Item>{item.name}</Item>}
-    </SearchAutocomplete>
-  );
-}
-```
 
 ## Labeling
 SearchAutocomplete can be labeled using the `label` prop. If the SearchAutocomplete is a required field, the `isRequired` and `necessityIndicator` props can be used to show a required state.
@@ -251,7 +221,7 @@ function AsyncLoadingExample() {
       // mirrors the SearchAutocomplete input text.
       // Otherwise, the cursor is the next URL to load,
       // as returned from the previous page.
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
       return {
@@ -304,8 +274,7 @@ function Example() {
       validationState={isValid ? 'valid' : 'invalid'}
       defaultItems={options}
       inputValue={value}
-      onInputChange={setValue}
-      placeholder="Enter email">
+      onInputChange={setValue}>
       {item => <Item>{item.email}</Item>}
     </SearchAutocomplete>
   );
@@ -356,8 +325,7 @@ function Example() {
       onInputChange={(value) => {
         setShowAll(false);
         setFilterValue(value);
-      }}
-      placeholder="Enter email">
+      }}>
       {item => <Item>{item.email}</Item>}
     </SearchAutocomplete>
   );
@@ -443,7 +411,7 @@ For right-to-left (RTL) languages, this is flipped.
 ### Read only
 
 ```tsx example
-<SearchAutocomplete label="Search Animals" placeholder="Red Panda, Cat, etc" isReadOnly>
+<SearchAutocomplete label="Search Animals" isReadOnly>
   <Item>Red Panda</Item>
   <Item>Cat</Item>
   <Item>Dog</Item>

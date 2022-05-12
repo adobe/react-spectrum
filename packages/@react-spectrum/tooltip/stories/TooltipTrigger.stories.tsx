@@ -332,10 +332,10 @@ function LinkWithTooltip(props = {}) {
           href="https://react-spectrum.adobe.com/"
           target="_blank"
           rel="noreferrer">
-          Link with tooltip
+          Why did dinosaurs have feathers?
         </a>
       </Link>
-      <Tooltip>This is a link</Tooltip>
+      <Tooltip>Dinosaurs had feathers, find out more.</Tooltip>
     </TooltipTrigger>
   );
 }

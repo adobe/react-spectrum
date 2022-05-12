@@ -14,19 +14,19 @@ import {Collection, DropEvent, DropOperation, DroppableCollectionProps, DropPosi
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getTypes} from './utils';
-import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useLayoutEffect, useRef} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useRef} from 'react';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 import {useDroppableCollectionId} from './utils';
 
-interface DroppableCollectionOptions extends DroppableCollectionProps {
+export interface DroppableCollectionOptions extends DroppableCollectionProps {
   keyboardDelegate: KeyboardDelegate,
   getDropTargetFromPoint: (x: number, y: number) => DropTarget | null
 }
 
-interface DroppableCollectionResult {
+export interface DroppableCollectionResult {
   collectionProps: HTMLAttributes<HTMLElement>
 }
 
@@ -66,11 +66,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         localState.dropOperation = 'cancel';
         localState.nextTarget = null;
         return 'cancel';
-      }
-
-      if (state.isDropTarget(target)) {
-        localState.nextTarget = target;
-        return localState.dropOperation;
       }
 
       localState.dropOperation = state.getDropOperation(target, types, allowedOperations);

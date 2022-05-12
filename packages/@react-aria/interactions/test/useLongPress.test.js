@@ -31,13 +31,8 @@ function ExampleWithPress(props) {
 
 describe('useLongPress', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-    window.requestAnimationFrame.mockRestore();
   });
 
   afterEach(() => {
@@ -422,5 +417,24 @@ describe('useLongPress', function () {
     expect(performDefault).toBe(false);
 
     fireEvent.pointerUp(el, {pointerType: 'touch'});
+  });
+
+  it('should not fire any events for keyboard interactions', function () {
+    let events = [];
+    let addEvent = (e) => events.push(e);
+    let res = render(
+      <Example
+        onLongPressStart={addEvent}
+        onLongPressEnd={addEvent}
+        onLongPress={addEvent}
+        threshold={800} />
+    );
+
+    let el = res.getByText('test');
+    fireEvent.keyDown(el, {key: ' '});
+    act(() => jest.advanceTimersByTime(600));
+    fireEvent.keyUp(el, {key: ' '});
+
+    expect(events).toHaveLength(0);
   });
 });

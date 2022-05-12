@@ -52,7 +52,7 @@ function render(props) {
         </ButtonGroup>
       </View>
       <View borderColor="static-blue-400" borderWidth="thin">
-        <ButtonGroup width="size-2000" {...props}>
+        <ButtonGroup width="size-1700" {...props}>
           <Button variant="primary">Button 1</Button>
           <Button variant="primary">Button 2</Button>
         </ButtonGroup>

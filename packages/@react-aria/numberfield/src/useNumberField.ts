@@ -76,7 +76,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onKeyDown,
     onKeyUp,
     description,
-    errorMessage
+    errorMessage,
+    ...otherProps
   } = props;
 
   let {
@@ -175,6 +176,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let domProps = filterDOMProps(props);
 
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
+    ...otherProps,
     ...domProps,
     label,
     autoFocus,
@@ -183,6 +185,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     isRequired,
     validationState,
     value: state.inputValue,
+    defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
     'aria-label': props['aria-label'] || null,
     'aria-labelledby': props['aria-labelledby'] || null,
@@ -260,6 +263,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     preventFocusOnPress: true,
+    allowFocusWhenDisabled: true,
     isDisabled: !state.canIncrement,
     onPressStart: onButtonPressStart
   });
@@ -271,6 +275,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     preventFocusOnPress: true,
+    allowFocusWhenDisabled: true,
     isDisabled: !state.canDecrement,
     onPressStart: onButtonPressStart
   });

@@ -24,7 +24,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
-  props = useSlotProps(props, 'actionmenu');
+  props = useSlotProps(props, 'actionMenu');
   let formatMessage = useMessageFormatter(intlMessages);
   let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
@@ -34,6 +34,8 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
   return (
     <MenuTrigger
       isOpen={props.isOpen}
+      defaultOpen={props.defaultOpen}
+      onOpenChange={props.onOpenChange}
       align={props.align}
       direction={props.direction}
       shouldFlip={props.shouldFlip}>
@@ -53,7 +55,7 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
 }
 
 /**
- * Convenience component to display an ActionButton with a Menu.
+ * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
  */
 let _ActionMenu = React.forwardRef(ActionMenu);
 export {_ActionMenu as ActionMenu};

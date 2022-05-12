@@ -10,7 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
-
-export * from './Tag';
-export * from './TagGroup';
+export {TagGroup} from './TagGroup';
+export {Item} from '@react-stately/collections';

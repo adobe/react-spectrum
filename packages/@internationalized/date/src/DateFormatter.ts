@@ -20,6 +20,7 @@ interface DateRangeFormatPart extends Intl.DateTimeFormatPart {
   source: 'startRange' | 'endRange' | 'shared'
 }
 
+/** A wrapper around Intl.DateTimeFormat that fixes various browser bugs, and polyfills new features. */
 export class DateFormatter implements Intl.DateTimeFormat {
   private formatter: Intl.DateTimeFormat;
   private options: Intl.DateTimeFormatOptions;
@@ -30,14 +31,17 @@ export class DateFormatter implements Intl.DateTimeFormat {
     this.options = options;
   }
 
+  /** Formats a date as a string according to the locale and format options passed to the constructor. */
   format(value: Date): string {
     return this.formatter.format(value);
   }
 
+  /** Formats a date to an array of parts such as separators, numbers, punctuation, and more. */
   formatToParts(value: Date): Intl.DateTimeFormatPart[] {
     return this.formatter.formatToParts(value);
   }
 
+  /** Formats a date range as a string. */
   formatRange(start: Date, end: Date): string {
     // @ts-ignore
     if (typeof this.formatter.formatRange === 'function') {
@@ -53,6 +57,7 @@ export class DateFormatter implements Intl.DateTimeFormat {
     return `${this.formatter.format(start)} – ${this.formatter.format(end)}`;
   }
 
+  /** Formats a date range as an array of parts. */
   formatRangeToParts(start: Date, end: Date): DateRangeFormatPart[] {
     // @ts-ignore
     if (typeof this.formatter.formatRangeToParts === 'function') {
@@ -73,6 +78,7 @@ export class DateFormatter implements Intl.DateTimeFormat {
     ];
   }
 
+  /** Returns the resolved formatting options based on the values passed to the constructor. */
   resolvedOptions(): ResolvedDateTimeFormatOptions {
     let resolvedOptions = this.formatter.resolvedOptions() as ResolvedDateTimeFormatOptions;
     if (hasBuggyResolvedHourCycle()) {

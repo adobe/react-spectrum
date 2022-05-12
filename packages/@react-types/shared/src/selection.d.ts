@@ -16,7 +16,7 @@ export interface SingleSelection {
   /** Whether the collection allows empty selection. */
   disallowEmptySelection?: boolean,
   /** The currently selected key in the collection (controlled). */
-  selectedKey?: Key,
+  selectedKey?: Key | null,
   /** The initial selected key in the collection (uncontrolled). */
   defaultSelectedKey?: Key,
   /** Handler that is called when the selection changes. */
