@@ -114,3 +114,9 @@ EmphasizedVertical.args = {...Emphasized.args, ...Vertical.args};
 
 export const EmphasizedVerticalQuiet = Template().bind({});
 EmphasizedVerticalQuiet.args = {...Emphasized.args, ...Vertical.args, ...Quiet.args};
+
+export const EmphasizedCompact = Template().bind({});
+EmphasizedCompact.args = {...Emphasized.args, ...Compact.args};
+
+export const EmphasizedCompactVertical = Template().bind({});
+EmphasizedCompactVertical.args = {...Emphasized.args, ...Compact.args, ...Vertical.args};
