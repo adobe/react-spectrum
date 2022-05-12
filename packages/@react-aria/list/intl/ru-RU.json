@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} не выбрано.",
+  "longPressToSelect": "Нажмите и удерживайте для входа в режим выбора.",
+  "select": "Выбрать",
+  "selectedAll": "Выбраны все элементы.",
+  "selectedCount": "{count, plural, =0 {Нет выбранных элементов} one {# элемент выбран} other {# элементов выбрано}}.",
+  "selectedItem": "{item} выбрано."
+}
