@@ -419,7 +419,7 @@ storiesOf('ListView/Drag and Drop', module)
 function Example(props?) {
   return (
     <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
-      <Item key="Utilities" hasChildItems>
+      <Item key="Utilities" textValue="Utilities" hasChildItems>
         <Content>Utilities</Content>
       </Item>
       <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
@@ -630,7 +630,7 @@ export function ReorderExample() {
         }
         onDropAction(e);
         onMove(keys, e.target);
-      } 
+      }
     },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
@@ -640,7 +640,7 @@ export function ReorderExample() {
       return 'move';
     }
   });
-  
+
 
   return (
     <ListView
@@ -709,7 +709,7 @@ export function DragIntoItemExample() {
         if (!keys.includes(e.target.key)) {
           onMove(keys, e.target);
         }
-      } 
+      }
     },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes) {
@@ -732,7 +732,7 @@ export function DragIntoItemExample() {
       {(item: any) => (
         <Item key={item.id} textValue={item.textValue} hasChildItems={item.type === 'folder'}>
           <Text>{item.type === 'folder' ? 'Drop items here' : `Item ${item.textValue}`}</Text>
-          {item.type === 'folder' && 
+          {item.type === 'folder' &&
             <>
               <Folder />
               <Text slot="description">contains {item.childNodes.length} dropped item(s)</Text>
@@ -768,7 +768,7 @@ export function DragBetweenListsExample() {
       {id: '12', type: 'item', textValue: 'Twelve'}
     ]
   });
-  
+
   let onMove = (keys: React.Key[], target: ItemDropTarget) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
     let destinationList = list1.getItem(target.key) ? list1 : list2;
@@ -816,7 +816,7 @@ export function DragBetweenListsExample() {
         }
         onDropAction(e);
         onMove(keys, e.target);
-      } 
+      }
     },
     getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
@@ -891,7 +891,7 @@ export function DragBetweenListsRootOnlyExample() {
       {id: '12', type: 'item', textValue: 'Twelve'}
     ]
   });
-  
+
   let onMove = (keys: React.Key[]) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
     let destinationList = sourceList === list1 ? list2 : list1;
@@ -932,7 +932,7 @@ export function DragBetweenListsRootOnlyExample() {
         }
         onDropAction(e);
         onMove(keys);
-      } 
+      }
     },
     getDropOperation(target, types) {
       if (target.type === 'root' && types.has('list2')) {
@@ -956,7 +956,7 @@ export function DragBetweenListsRootOnlyExample() {
         }
         onDropAction(e);
         onMove(keys);
-      } 
+      }
     },
     getDropOperation(target, types) {
       if (target.type === 'root' && types.has('list1')) {
