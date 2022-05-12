@@ -149,13 +149,12 @@ interface TabProps<T> extends DOMProps {
   item: Node<T>,
   state: SingleSelectListState<T>,
   isDisabled?: boolean,
-  isEmphasized?: boolean,
   orientation?: Orientation
 }
 
 // @private
 function Tab<T>(props: TabProps<T>) {
-  let {item, state, isEmphasized, isDisabled: propsDisabled} = props;
+  let {item, state, isDisabled: propsDisabled} = props;
   let {key, rendered} = item;
   let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
@@ -180,8 +179,7 @@ function Tab<T>(props: TabProps<T>) {
           {
             'is-selected': isSelected,
             'is-disabled': isDisabled,
-            'is-hovered': isHovered,
-            'spectrum-Tabs--emphasized': isEmphasized
+            'is-hovered': isHovered
           }
         )}>
         <SlotProvider
@@ -204,7 +202,6 @@ function Tab<T>(props: TabProps<T>) {
 }
 
 interface TabLineProps {
-  isEmphasized?: boolean,
   orientation?: Orientation,
   selectedTab?: HTMLElement,
   selectedKey?: Key
@@ -213,7 +210,6 @@ interface TabLineProps {
 // @private
 function TabLine(props: TabLineProps) {
   let {
-    isEmphasized,
     orientation,
     // Is either the tab node (non-collapsed) or the picker node (collapsed)
     selectedTab,
@@ -248,7 +244,7 @@ function TabLine(props: TabLineProps) {
 
   }, [direction, setStyle, selectedTab, orientation, scale, selectedKey]);
 
-  return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator', {'spectrum-Tabs--emphasized': isEmphasized})} role="presentation" style={style} />;
+  return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }
 
 /**
@@ -287,15 +283,16 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
         tabListclassName,
         {
           'spectrum-Tabs--quiet': isQuiet,
+          'spectrum-Tabs--emphasized': isEmphasized,
           ['spectrum-Tabs--compact']: density === 'compact'
         },
         orientation === 'vertical' && styleProps.className
       )
       }>
       {[...state.collection].map((item) => (
-        <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} isEmphasized={isEmphasized} orientation={orientation} />
+        <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
-      <TabLine orientation={orientation} selectedTab={selectedTab} isEmphasized={isEmphasized} />
+      <TabLine orientation={orientation} selectedTab={selectedTab} />
     </div>
   );
 
@@ -434,7 +431,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
           onSelectionChange={state.setSelectedKey}>
           {item => <Item textValue={item.textValue}>{item.rendered}</Item>}
         </Picker>
-        {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} isEmphasized={isEmphasized} />}
+        {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} />}
       </SlotProvider>
     </div>
   );

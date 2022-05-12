@@ -29,12 +29,14 @@ governing permissions and limitations under the License.
   border-inline-start-color: var(--spectrum-tabs-vertical-rule-color);
 }
 
-.spectrum-Tabs-selectionIndicator {
-  background-color: var(--spectrum-tabs-selection-indicator-color);
-
-  &.spectrum-Tabs--emphasized {
+.spectrum-Tabs--emphasized {
+  .spectrum-Tabs-selectionIndicator {
     background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
   }
+}
+
+.spectrum-Tabs-selectionIndicator {
+  background-color: var(--spectrum-tabs-selection-indicator-color);
 }
 
 .spectrum-Tabs-item {
@@ -58,8 +60,32 @@ governing permissions and limitations under the License.
     .spectrum-Icon {
       fill: var(--spectrum-tabs-icon-color-selected)
     }
+  }
 
-    &.spectrum-Tabs--emphasized {
+  &:focus-ring {
+    color: var(--spectrum-tabs-text-color-key-focus);
+
+    &::before {
+      border-color: var(--spectrum-tabs-focus-ring-color);
+    }
+
+    .spectrum-Icon {
+      fill: var(--spectrum-tabs-icon-color-key-focus)
+    }
+  }
+
+  &.is-disabled {
+    color: var(--spectrum-tabs-text-color-disabled);
+
+    .spectrum-Icon {
+      fill: var(--spectrum-tabs-icon-color-disabled)
+    }
+  }
+}
+
+.spectrum-Tabs--emphasized {
+  .spectrum-Tabs-item {
+    &.is-selected {
       color: var(--spectrum-tabs-emphasized-text-color);
 
       .spectrum-Icon {
@@ -87,26 +113,6 @@ governing permissions and limitations under the License.
       }
     }
   }
-
-  &:focus-ring {
-    color: var(--spectrum-tabs-text-color-key-focus);
-
-    &::before {
-      border-color: var(--spectrum-tabs-focus-ring-color);
-    }
-
-    .spectrum-Icon {
-      fill: var(--spectrum-tabs-icon-color-key-focus)
-    }
-  }
-
-  &.is-disabled {
-    color: var(--spectrum-tabs-text-color-disabled);
-
-    .spectrum-Icon {
-      fill: var(--spectrum-tabs-icon-color-disabled)
-    }
-  }
 }
 
 .spectrum-Tabs--quiet {
@@ -114,8 +120,10 @@ governing permissions and limitations under the License.
 
   .spectrum-Tabs-selectionIndicator {
     background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
+  }
 
-    &.spectrum-Tabs--emphasized {
+  &.spectrum-Tabs--emphasized {
+    .spectrum-Tabs-selectionIndicator {
       background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
     }
   }
@@ -128,10 +136,12 @@ governing permissions and limitations under the License.
 
     .spectrum-Tabs-selectionIndicator {
       background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
+    }
+  }
 
-      &.spectrum-Tabs--emphasized {
-        background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
-      }
+  &.spectrum-Tabs--emphasized {
+    .spectrum-Tabs-selectionIndicator {
+      background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
     }
   }
 }
