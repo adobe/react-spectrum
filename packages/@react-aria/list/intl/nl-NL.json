@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} niet geselecteerd.",
+  "longPressToSelect": "Druk lang om de selectiemodus te openen.",
+  "select": "Selecteren",
+  "selectedAll": "Alle items geselecteerd.",
+  "selectedCount": "{count, plural, =0 {Geen items geselecteerd} one {# item geselecteerd} other {# items geselecteerd}}.",
+  "selectedItem": "{item} geselecteerd."
+}
