@@ -329,7 +329,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     key = this.getKey(key);
-    if (key == null) {
+    if (key == null || !this.canSelectItem(key)) {
       return;
     }
 
@@ -347,7 +347,7 @@ export class SelectionManager implements MultipleSelectionManager {
     let selection = new Selection();
     for (let key of keys) {
       key = this.getKey(key);
-      if (key != null) {
+      if (key != null && this.canSelectItem(key)) {
         selection.add(key);
         if (this.selectionMode === 'single') {
           break;
