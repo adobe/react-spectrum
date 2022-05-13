@@ -12,7 +12,7 @@
 
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Content, Footer} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
