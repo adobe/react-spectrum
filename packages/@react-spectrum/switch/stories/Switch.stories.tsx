@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import { action } from '@storybook/addon-actions';
-import React, {useState} from 'react';
-import { Switch } from '../';
 import {chain} from '@react-aria/utils';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import React, {useState} from 'react';
+import {Switch} from '../';
 
 export default {
   title: 'Switch',
@@ -22,6 +21,12 @@ export default {
   argTypes: {
     onChange: {
       action: 'change'
+    },
+    onFocus: {
+      action: 'focus'
+    },
+    onBlur: {
+      action: 'blur'
     }
   }
 } as ComponentMeta<typeof Switch>;
