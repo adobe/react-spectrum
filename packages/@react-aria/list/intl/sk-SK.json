@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "Nevybraté položky: {item}.",
+  "longPressToSelect": "Dlhším stlačením prejdite do režimu výberu.",
+  "select": "Vybrať",
+  "selectedAll": "Všetky vybraté položky.",
+  "selectedCount": "{count, plural, =0 {Žiadne vybraté položky} one {# vybratá položka} other {Počet vybratých položiek:#}}.",
+  "selectedItem": "Vybraté položky: {item}."
+}

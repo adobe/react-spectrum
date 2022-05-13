@@ -419,7 +419,7 @@ storiesOf('ListView/Drag and Drop', module)
 function Example(props?) {
   return (
     <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
-      <Item key="Utilities" hasChildItems>
+      <Item key="Utilities" textValue="Utilities" hasChildItems>
         <Content>Utilities</Content>
       </Item>
       <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>

@@ -19,24 +19,24 @@ import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
 import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import {isFocusVisible as isGlobalFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {isFocusVisible as isGlobalFocusVisible, useHover} from '@react-aria/interactions';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {useButton} from '@react-aria/button';
-import {useGridCell, useGridSelectionCheckbox} from '@react-aria/grid';
+import {useListItem, useListSelectionCheckbox} from '@react-aria/list';
 import {useLocale} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-interface ListViewItemProps {
-  item: Node<any>,
+interface ListViewItemProps<T> {
+  item: Node<T>,
   isEmphasized: boolean,
   hasActions: boolean
 }
 
-export function ListViewItem(props: ListViewItemProps) {
+export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let {
     item,
     isEmphasized,
@@ -52,21 +52,16 @@ export function ListViewItem(props: ListViewItemProps) {
   let {isFocusVisible, focusProps} = useFocusRing();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
   let isDroppable = isListDroppable && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});
-  let {pressProps, isPressed} = usePress({isDisabled});
-
-  // We only make use of useGridCell here to allow for keyboard navigation to the focusable children of the row.
-  // The actual grid cell of the ListView is inert since we don't want to ever focus it to decrease screenreader
-  // verbosity, so we pretend the row node is the cell for interaction purposes. useGridRow is never used since
-  // it would conflict with useGridCell if applied to the same node.
-  let {gridCellProps} = useGridCell({
+  let {rowProps, gridCellProps, isPressed} = useListItem({
     node: item,
-    focusMode: 'cell',
     isVirtualized: true,
-    shouldSelectOnPressUp: isListDraggable
+    shouldSelectOnPressUp: isListDraggable,
+    isDisabled
   }, state, rowRef);
-  delete gridCellProps['aria-colindex'];
+  let {checkboxProps} = useListSelectionCheckbox({key: item.key}, state);
 
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
@@ -82,7 +77,6 @@ export function ListViewItem(props: ListViewItemProps) {
     droppableItem = dropHooks.useDroppableItem({target}, dropState, rowRef);
   }
 
-  let {checkboxProps} = useGridSelectionCheckbox({...props, key: item.key}, state);
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({
     ...draggableItem?.dragButtonProps,
@@ -114,19 +108,10 @@ export function ListViewItem(props: ListViewItemProps) {
     );
 
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
-  let isSelected = state.selectionManager.isSelected(item.key);
   let {visuallyHiddenProps} = useVisuallyHidden();
-  let rowProps = {
-    role: 'row',
-    'aria-label': item.textValue,
-    'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
-    'aria-rowindex': item.index + 1
-  };
 
   const mergedProps = mergeProps(
-    gridCellProps,
     rowProps,
-    pressProps,
     draggableItem?.dragProps,
     isDroppable && droppableItem?.dropProps,
     hoverProps,
@@ -191,8 +176,7 @@ export function ListViewItem(props: ListViewItemProps) {
             }
           )
         }
-        role="gridcell"
-        aria-colindex={1}>
+        {...gridCellProps}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           {isListDraggable &&
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
