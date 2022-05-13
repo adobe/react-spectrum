@@ -58,8 +58,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let {rowProps, gridCellProps, isPressed} = useListItem({
     node: item,
     isVirtualized: true,
-    shouldSelectOnPressUp: isListDraggable,
-    isDisabled
+    shouldSelectOnPressUp: isListDraggable
   }, state, rowRef);
   let {checkboxProps} = useListSelectionCheckbox({key: item.key}, state);
 
