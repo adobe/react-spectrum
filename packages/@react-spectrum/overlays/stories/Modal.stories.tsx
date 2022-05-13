@@ -55,7 +55,9 @@ function UnmountingTrigger() {
 
   let openModal = () => {
     setPopoverOpen(false);
-    setModalOpen(true);
+    // Wait for Transition timeout to finish closing the popover before opening the modal,
+    // so that the focus does not get restored to an element behind the overlay after the overlay has opened.
+    setTimeout(() => setModalOpen(true), 350);
   };
 
   // Ideally this would be a menu, but we don't have those implemented yet...

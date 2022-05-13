@@ -390,30 +390,6 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
 // An array to create a stack of nodeToRestore elements.
 let nodeToRestoreArray: HTMLElement[] = [];
 
-function addToNodeToRestoreArray(node: HTMLElement) {
-  if (nodeToRestoreArray.indexOf(node) === -1 && node !== document.body) {
-    nodeToRestoreArray.push(node);
-  }
-}
-
-function removeFromNodeToRestoreArray(node: HTMLElement) {
-  let index = nodeToRestoreArray.indexOf(node);
-  if (index > -1) {
-    nodeToRestoreArray.splice(index, 1);
-  }
-}
-
-function cleanupNodeToRestoreArray() {
-  let index = nodeToRestoreArray.length;
-  while (index >= 0) {
-    index--;
-    let node = nodeToRestoreArray[index];
-    if (node && !document.body.contains(node)) {
-      nodeToRestoreArray.splice(index, 1);
-    }
-  }
-}
-
 function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
   const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? document.activeElement as HTMLElement : null);
@@ -425,7 +401,9 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       return;
     }
 
-    addToNodeToRestoreArray(nodeToRestore);
+    if (nodeToRestoreArray.indexOf(nodeToRestore) === -1 && nodeToRestore !== document.body) {
+      nodeToRestoreArray.push(nodeToRestore);
+    }
 
     // Handle the Tab key so that tabbing out of the scope goes to the next element
     // after the node that had focus when the scope mounted. This is important when
@@ -449,7 +427,6 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
 
       if (!document.body.contains(nodeToRestore) || nodeToRestore === document.body) {
-        removeFromNodeToRestoreArray(nodeToRestore);
         nodeToRestore = null;
       }
 
@@ -490,43 +467,28 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
 
       if (nodeToRestore) {
-        let index = nodeToRestoreArray.indexOf(nodeToRestore);
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
         if (restoreFocus && isElementInScope(document.activeElement, scopeRef.current)) {
           requestAnimationFrame(() => {
-            // If the nodeToRestore is in the document.body focus the element and remove it from the nodeToRestoreArray
-            if (document.body.contains(nodeToRestore)) {
-              focusElement(nodeToRestore);
-              if (index === nodeToRestoreArray.length - 1) {
-                nodeToRestoreArray.pop();
+            // If the nodeToRestore is not the last in the nodeToRestoreArray,
+            // do nothing because a later focusScope is open and should take precedence.
+            if (nodeToRestoreArray.indexOf(nodeToRestore) !== nodeToRestoreArray.length - 1) {
+              return;
+            }
+            // Iterate backwards through the nodeToRestoreArray until you find a valid node to restore.
+            while (nodeToRestoreArray.length > 0) {
+              let node = nodeToRestoreArray.pop();
+              if (document.body.contains(node)) {
+                focusElement(node);
+                break;
               }
-            // Otherwise, if the nodeToRestore is no longer in the document,
-            } else {
-              // Iterate backward through nodeToRestoreArray,
-              // starting from the nodeToRestore,
-              // until you find a node that's in the DOM to focus.
-              while (index >= 0) {
-                let node = nodeToRestoreArray[index];
-                if (document.body.contains(node)) {
-                  focusElement(node);
-                  if (index === nodeToRestoreArray.length - 1) {
-                    nodeToRestoreArray.pop();
-                  }
-                  break;
-                }
-                index--;
-              }
-              // Clean up any nodes in the array that are no longer in the DOM.
-              cleanupNodeToRestoreArray();
             }
           });
-        } else {
-          cleanupNodeToRestoreArray();
         }
       }
     };
-  }, [contain, restoreFocus, scopeRef]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scopeRef]);
 }
 
 /**
