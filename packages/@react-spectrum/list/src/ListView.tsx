@@ -11,7 +11,7 @@
  */
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, LoadingState} from '@react-types/shared';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
