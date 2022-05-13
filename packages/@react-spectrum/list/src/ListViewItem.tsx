@@ -55,7 +55,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let isSelected = state.selectionManager.isSelected(item.key);
   let isDroppable = isListDroppable && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled});
-  let {rowProps, gridCellProps, isPressed} = useListItem({
+  let {rowProps, gridCellProps, isPressed, descriptionProps} = useListItem({
     node: item,
     isVirtualized: true,
     shouldSelectOnPressUp: isListDraggable,
@@ -218,7 +218,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
             slots={{
               content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
               text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-              description: {id: descriptionId, UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
+              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description'], ...descriptionProps},
               icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
               link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},

@@ -36,6 +36,8 @@ export interface ListItemAria {
   rowProps: HTMLAttributes<HTMLElement>,
   /** Props for the grid cell element within the list row. */
   gridCellProps: HTMLAttributes<HTMLElement>,
+  /** Props for the list item description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
   /** Whether the row is currently pressed. */
   isPressed: boolean
 }
@@ -57,6 +59,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
 
   let {direction} = useLocale();
   let {onAction} = listMap.get(state);
+  let descriptionId = useSlotId();
   let focus = () => {
     // Don't shift focus to the row if the active element is a element within the row already
     // (e.g. clicking on a row button)
@@ -166,8 +169,6 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     }
   };
 
-  let descriptionId = useSlotId();
-
   let rowProps: HTMLAttributes<HTMLElement> = mergeProps(itemProps, {
     role: 'row',
     onKeyDownCapture: onKeyDown,
@@ -190,6 +191,9 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
   return {
     rowProps,
     gridCellProps,
+    descriptionProps: {
+      id: descriptionId
+    },
     isPressed
   };
 }
