@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {ComponentMeta} from '@storybook/react';
 import React from 'react';
 import {Well} from '../';
 
@@ -21,7 +21,6 @@ let meta = {
 
 export default meta;
 
-let Template: ComponentStory<typeof Well> = (args) => <Well {...args}>This is a React Spectrum Well</Well>;
-
-export let Default = Template.bind({});
-Default.args = {foo: 'label'};
+export let Default = {
+  args: {children: <>This is a React Spectrum Well</>}
+};
