@@ -12,7 +12,7 @@
 
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Content} from '@react-spectrum/view';
+import {Content, Footer} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
@@ -55,9 +55,7 @@ function UnmountingTrigger() {
 
   let openModal = () => {
     setPopoverOpen(false);
-    // Wait for Transition timeout to finish closing the popover before opening the modal,
-    // so that the focus does not get restored to an element behind the overlay after the overlay has opened.
-    setTimeout(() => setModalOpen(true), 350);
+    setModalOpen(true);
   };
 
   // Ideally this would be a menu, but we don't have those implemented yet...
@@ -65,7 +63,7 @@ function UnmountingTrigger() {
     <Fragment>
       <DialogTrigger type="popover" isOpen={isPopoverOpen} onOpenChange={setPopoverOpen}>
         <ActionButton>Open popover</ActionButton>
-        <Dialog>
+        <Dialog isDismissable={false}>
           <Heading>Title</Heading>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
@@ -73,7 +71,7 @@ function UnmountingTrigger() {
         </Dialog>
       </DialogTrigger>
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
-        <Dialog>
+        <Dialog isDismissable={false}>
           <Heading>Title</Heading>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
