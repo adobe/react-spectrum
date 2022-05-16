@@ -1033,6 +1033,7 @@ function AsyncList(props) {
       };
     }
   });
+
   return (
     <ListView
       selectionMode="multiple"

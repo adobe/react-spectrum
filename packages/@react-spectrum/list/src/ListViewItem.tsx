@@ -42,7 +42,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     isEmphasized,
     hasActions
   } = props;
-  let {state, dragState, dropState, isListDraggable, isListDroppable, layout, dragHooks, dropHooks} = useContext(ListViewContext);
+  let {state, dragState, dropState, isListDraggable, isListDroppable, layout, dragHooks, dropHooks, loadingState} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let {
@@ -125,7 +125,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   // border corners of the last row when selected and we can get rid of the bottom border if it isn't selected to avoid border overlap
   // with bottom border
   let isFlushWithContainerBottom = false;
-  if (isLastRow) {
+  if (isLastRow && loadingState !== 'loadingMore') {
     if (layout.getContentSize()?.height >= layout.virtualizer?.getVisibleRect().height) {
       isFlushWithContainerBottom = true;
     }
