@@ -8,10 +8,11 @@
   "minute": "minuto",
   "month": "mês",
   "second": "segundo",
+  "selectedDateDescription": "Data selecionada: {date}",
+  "selectedRangeDescription": "Intervalo selecionado: {startDate} a {endDate}",
+  "selectedTimeDescription": "Hora selecionada: {time}",
   "startDate": "Data de Início",
-  "year": "ano",
-  "weekday": "dia da semana",
   "timeZoneName": "fuso horário",
-  "selectedDateDescription": "Data Selecionada: {data, data, completo}",
-  "selectedRangeDescription": "Selecionar Intervalo: {início, data, longo} a {término, data, longo}"
+  "weekday": "dia da semana",
+  "year": "ano"
 }

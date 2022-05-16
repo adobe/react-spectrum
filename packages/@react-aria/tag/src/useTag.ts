@@ -56,7 +56,7 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
   }, state, tagRef);
 
   function onKeyDown(e: KeyboardEvent<HTMLElement>) {
-    if (e.key === 'Delete' || e.key === 'Backspace') {
+    if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
       onRemove(children, e);
       e.preventDefault();
     }
@@ -83,11 +83,7 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
       'aria-errormessage': props['aria-errormessage'],
       'aria-label': props['aria-label'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
-      tabIndex: (isFocused || state.selectionManager.focusedKey == null) && !isDisabled ? 0 : -1,
-      onFocus() {
-        state.selectionManager.setFocusedKey(item.childNodes[0].key);
-      },
-      ref: tagRef
+      tabIndex: (isFocused || state.selectionManager.focusedKey == null) && !isDisabled ? 0 : -1
     })
   };
 }

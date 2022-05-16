@@ -20,6 +20,20 @@ import {DragTypes} from '../src/utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    altKey: false,
+    button: opts.button || 0,
+    width: 1,
+    height: 1
+  }, opts);
+  return evt;
+}
+
 describe('useDrag and useDrop', function () {
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({
@@ -2039,6 +2053,65 @@ describe('useDrag and useDrop', function () {
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
 
       expect(announce).toHaveBeenCalledWith('Drop canceled.');
+    });
+
+    it('should support clicking the original drag target to cancel drag (virtual pointer event)', () => {
+      let tree = render(<>
+        <Draggable />
+        <Droppable />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+
+      fireEvent.focus(draggable);
+      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent.click(draggable);
+      act(() => jest.runAllTimers());
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+      expect(draggable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Click to cancel drag.');
+
+      // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
+      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent.click(draggable, {detail: 1});
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      expect(draggable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
+
+      expect(announce).toHaveBeenCalledWith('Drop canceled.');
+    });
+
+    it('should support double tapping the drop target to complete drag (virtual pointer event)', () => {
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable />
+        <Droppable onDrop={onDrop} />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let droppable = tree.getByText('Drop here');
+
+      fireEvent.focus(draggable);
+      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent.click(draggable);
+      act(() => jest.runAllTimers());
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+
+
+      // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
+      fireEvent.focus(droppable);
+      fireEvent(droppable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(droppable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent.click(droppable, {detail: 1});
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      expect(draggable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
+
+      expect(announce).toHaveBeenCalledWith('Drop complete.');
+      expect(onDrop).toHaveBeenCalledTimes(1);
     });
 
     it('should handle when a drop target is added', () => {

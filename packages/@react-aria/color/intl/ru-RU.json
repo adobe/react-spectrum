@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "Двумерный ползунок",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Палитра цветов",
+  "twoDimensionalSlider": "Ползунок 2D"
 }

@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "2D-liugur",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Värvivalija",
+  "twoDimensionalSlider": "2D-liugur"
 }
