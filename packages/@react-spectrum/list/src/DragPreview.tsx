@@ -51,7 +51,6 @@ export function DragPreview(props: DragPreviewProps) {
               description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
               icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
-              link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
               actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
               actionGroup: {
                 UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],

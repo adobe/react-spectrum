@@ -18,7 +18,6 @@ import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
-import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -395,9 +394,6 @@ storiesOf('ListView/Drag and Drop', module)
       <Item textValue="row 3">
         <Content>Content slot with really really long name</Content>
       </Item>
-      <Item textValue="row 4">
-        <Link >Link slot with a very very very very long name</Link>
-      </Item>
     </ListView>
   ))
   .add('overflowMode="wrap"', () => (
@@ -409,9 +405,6 @@ storiesOf('ListView/Drag and Drop', module)
       </Item>
       <Item textValue="row 3">
         <Content>Content slot with really really long name</Content>
-      </Item>
-      <Item textValue="row 4">
-        <Link >Link slot with a very very very very long name</Link>
       </Item>
     </ListView>
   ));
