@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComponentMeta} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
 import {Well} from '../';
+
+type WellStory = ComponentStoryObj<typeof Well>;
 
 let meta = {
   title: 'Well',
@@ -21,6 +23,6 @@ let meta = {
 
 export default meta;
 
-export let Default = {
+export let Default: WellStory = {
   args: {children: <>This is a React Spectrum Well</>}
 };

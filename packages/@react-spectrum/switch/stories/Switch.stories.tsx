@@ -15,6 +15,8 @@ import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import {Switch} from '../';
 
+type SwitchStory = ComponentStoryObj<typeof Switch>;
+
 export default {
   title: 'Switch',
   component: Switch,
@@ -31,47 +33,47 @@ export default {
   }
 } as ComponentMeta<typeof Switch>;
 
-export const Default: ComponentStoryObj<typeof Switch> = {
+export const Default: SwitchStory = {
   args: {children: <>Switch Label</>}
 };
 
-export const DefaultSelectedTrue: ComponentStoryObj<typeof Switch> = {
+export const DefaultSelectedTrue: SwitchStory = {
   ...Default,
   args: {...Default.args, defaultSelected: true},
   name: 'defaultSelected: true'
 };
 
-export const IsSelectedTrue: ComponentStoryObj<typeof Switch> = {
+export const IsSelectedTrue: SwitchStory = {
   ...Default,
   args: {...Default.args, isSelected: true},
   name: 'isSelected: true'
 };
 
-export const IsSelectedFalse: ComponentStoryObj<typeof Switch> = {
+export const IsSelectedFalse: SwitchStory = {
   ...Default,
   args: {...Default.args, isSelected: false},
   name: 'isSelected: false'
 };
 
-export const IsDisabledTrue: ComponentStoryObj<typeof Switch> = {
+export const IsDisabledTrue: SwitchStory = {
   ...Default,
   args: {...Default.args, isDisabled: true},
   name: 'isDisabled: true'
 };
 
-export const IsReadOnlyTrueIsSelectedTrue: ComponentStoryObj<typeof Switch> = {
+export const IsReadOnlyTrueIsSelectedTrue: SwitchStory = {
   ...Default,
   args: {...Default.args, isReadOnly: true, isSelected: true},
   name: 'isReadOnly: true, isSelected: true'
 };
 
-export const AutoFocus: ComponentStoryObj<typeof Switch> = {
+export const AutoFocus: SwitchStory = {
   ...Default,
   args: {...Default.args, autoFocus: true},
   name: 'autoFocus'
 };
 
-export const CustomLabel: ComponentStoryObj<typeof Switch> = {
+export const CustomLabel: SwitchStory = {
   ...Default,
   args: {children: (
     <span>
@@ -81,7 +83,7 @@ export const CustomLabel: ComponentStoryObj<typeof Switch> = {
   name: 'custom label'
 };
 
-export const LongLabel: ComponentStoryObj<typeof Switch> = {
+export const LongLabel: SwitchStory = {
   ...Default,
   args: {children: (
     <>
@@ -92,14 +94,14 @@ export const LongLabel: ComponentStoryObj<typeof Switch> = {
   name: 'long label'
 };
 
-export const NoLabel: ComponentStoryObj<typeof Switch> = {
+export const NoLabel: SwitchStory = {
   ...Default,
   args: {'aria-label': 'This switch has no visible label'},
   name: 'no label',
   parameters: {description: {data: 'Try me with a screen reader.'}}
 };
 
-export const ControlledImplementation: ComponentStoryObj<typeof Switch> = {
+export const ControlledImplementation: SwitchStory = {
   ...Default,
   render: (args) => <ControlledSwitch {...args} />
 };
