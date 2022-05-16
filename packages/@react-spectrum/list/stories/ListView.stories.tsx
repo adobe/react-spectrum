@@ -20,7 +20,6 @@ import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
-import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -227,9 +226,6 @@ storiesOf('ListView', module)
       <Item textValue="row 3">
         <Content>Content slot with really really long name</Content>
       </Item>
-      <Item textValue="row 4">
-        <Link >Link slot with a very very very very long name</Link>
-      </Item>
     </ListView>
   ))
   .add('overflowMode="wrap"', args => (
@@ -241,9 +237,6 @@ storiesOf('ListView', module)
       </Item>
       <Item textValue="row 3">
         <Content>Content slot with really really long name</Content>
-      </Item>
-      <Item textValue="row 4">
-        <Link >Link slot with a very very very very long name</Link>
       </Item>
     </ListView>
   ));
@@ -312,7 +305,7 @@ storiesOf('ListView/Selection', module)
       )}
     </ListView>
   ))
-  .add('disable folder selection', args => (
+  .add('disable folders', args => (
     <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} disabledKeys={['c', 'e', 'm']} {...args}>
       {(item: any) => (
         <Item>
@@ -322,11 +315,40 @@ storiesOf('ListView/Selection', module)
       )}
     </ListView>
   ))
+  .add('disable folder selection', args => (
+    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} disabledKeys={['c', 'e', 'm']} disabledBehavior="selection" {...args}>
+      {(item: any) => (
+        <Item textValue={item.name}>
+          {item.type === 'folder' ? <Folder /> : null}
+          <Text>{item.name}</Text>
+          <ActionMenu>
+            <Item key="add">
+              <Add />
+              <Text>Add</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionMenu>
+        </Item>
+      )}
+    </ListView>
+  ))
   .add('onAction', args => (
     <NavigationExample {...args} />
   ))
   .add('onAction, disable folder selection', args => (
-    <NavigationExample disableFolders {...args} />
+    <NavigationExample disabledType="folder" disabledBehavior="selection" {...args} />
+  ))
+  .add('onAction, disable folder selection, with row actions', args => (
+    <NavigationExample disabledType="folder" disabledBehavior="selection" showActions {...args} />
+  ))
+  .add('onAction, disable files', args => (
+    <NavigationExample disabledType="file" {...args} />
+  ))
+  .add('onAction, disable files, with row actions', args => (
+    <NavigationExample disabledType="file" showActions {...args} />
   ));
 
 storiesOf('ListView/Drag and Drop', module)
@@ -339,7 +361,7 @@ storiesOf('ListView/Drag and Drop', module)
         <Droppable />
         <DragExample
           dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
-          listViewProps={args} />
+          listViewProps={{args}} />
       </Flex>
     )
   )
@@ -464,13 +486,25 @@ function NavigationExample(props) {
         selectionStyle="checkbox"
         selectedKeys={selectedKeys}
         items={children}
-        disabledKeys={props.disableFolders ? children.filter(item => item.type === 'folder').map(item => item.key) : null}
+        disabledKeys={props.disabledType ? children.filter(item => item.type === props.disabledType).map(item => item.key) : null}
         onAction={onAction}
         {...props}>
         {(item: any) => (
           <Item hasChildItems={item.type === 'folder'} textValue={item.name}>
             {item.type === 'folder' ? <Folder /> : null}
             <Text>{item.name}</Text>
+            {props.showActions &&
+              <ActionMenu>
+                <Item key="add">
+                  <Add />
+                  <Text>Add</Text>
+                </Item>
+                <Item key="delete">
+                  <Delete />
+                  <Text>Delete</Text>
+                </Item>
+              </ActionMenu>
+            }
           </Item>
         )}
       </ListView>

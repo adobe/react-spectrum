@@ -12,6 +12,7 @@
 
 import {
   Collection,
+  DisabledBehavior,
   FocusStrategy,
   Selection as ISelection,
   LongPressEvent,
@@ -187,6 +188,14 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     return last?.key;
+  }
+
+  get disabledKeys(): Set<Key> {
+    return this.state.disabledKeys;
+  }
+
+  get disabledBehavior(): DisabledBehavior {
+    return this.state.disabledBehavior;
   }
 
   /**
@@ -463,8 +472,12 @@ export class SelectionManager implements MultipleSelectionManager {
     return true;
   }
 
+  allowsActions(key: Key) {
+    return !this.state.disabledKeys.has(key) || this.state.disabledBehavior === 'selection';
+  }
+
   canSelectItem(key: Key) {
-    if (this.state.selectionMode === 'none' || this.state.disabledKeys.has(key)) {
+    if (this.state.selectionMode === 'none' || (this.state.disabledKeys.has(key) && this.state.disabledBehavior !== 'action')) {
       return false;
     }
 

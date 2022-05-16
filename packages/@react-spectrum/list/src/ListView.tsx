@@ -13,6 +13,7 @@ import {
   AriaLabelingProps,
   AsyncLoadable,
   CollectionBase,
+  DisabledBehavior,
   DOMProps,
   DOMRef,
   LoadingState,
@@ -73,7 +74,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
+function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density'], allowDisabledKeyFocus) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
@@ -83,7 +84,7 @@ function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['densit
       padding: 0,
       collator,
       loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
-      allowDisabledKeyFocus: true
+      allowDisabledKeyFocus
     })
     , [collator, scale, density, isEmpty]);
 
@@ -114,6 +115,8 @@ interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProp
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: (key: string) => void,
+  /** Whether `disabledKeys` applies to selection, actions, or both. */
+  disabledBehavior?: DisabledBehavior,
   /**
    * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
    * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.
@@ -132,6 +135,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     onAction,
     dragHooks,
     dropHooks,
+    disabledBehavior,
     ...otherProps
   } = props;
   let isListDraggable = !!dragHooks;
@@ -175,7 +179,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     focusMode: 'row',
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
-  let layout = useListLayout(state, props.density || 'regular');
+  let layout = useListLayout(state, props.density || 'regular', disabledBehavior === 'selection');
   let provider = useProvider();
   let dragState: DraggableCollectionState;
   if (isListDraggable) {

@@ -243,6 +243,10 @@
     }
   }
 
+  &.is-disabled {
+    color: var(--spectrum-alias-text-color-disabled);
+  }
+
   &.has-checkbox {
     /* have to eliminate vertical padding to allow proper vertical alignment */
     padding-top: 0px;

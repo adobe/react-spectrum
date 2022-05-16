@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {DisabledBehavior, MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {Key, useEffect, useMemo, useRef, useState} from 'react';
-import {MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
@@ -34,7 +34,9 @@ export interface MultipleSelectionStateProps extends MultipleSelection {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** Whether onSelectionChange should fire even if the new set of keys is the same as the last. */
-  allowDuplicateSelectionEvents?: boolean
+  allowDuplicateSelectionEvents?: boolean,
+  /** Whether the `disabledKeys` prop applies to selection, actions, or both. */
+  disabledBehavior?: DisabledBehavior
 }
 
 /**
@@ -45,7 +47,8 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
     selectionMode = 'none' as SelectionMode,
     disallowEmptySelection,
     allowDuplicateSelectionEvents,
-    selectionBehavior: selectionBehaviorProp = 'toggle'
+    selectionBehavior: selectionBehaviorProp = 'toggle',
+    disabledBehavior = 'both'
   } = props;
 
   // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.
@@ -111,7 +114,8 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
         setSelectedKeys(keys);
       }
     },
-    disabledKeys: disabledKeysProp
+    disabledKeys: disabledKeysProp,
+    disabledBehavior
   };
 }
 

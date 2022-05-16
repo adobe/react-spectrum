@@ -146,8 +146,13 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
   // With touch, onAction occurs on single tap, and long press enters selection mode.
   let allowsSelection = !isDisabled && manager.canSelectItem(key);
-  let hasPrimaryAction = onAction && (!allowsSelection || (manager.selectionBehavior !== 'replace' && manager.isEmpty));
-  let hasSecondaryAction = onAction && allowsSelection && manager.selectionBehavior === 'replace';
+  let allowsActions = onAction && (!isDisabled && manager.allowsActions(key));
+  let hasPrimaryAction = allowsActions && (
+    manager.selectionBehavior === 'replace'
+      ? !allowsSelection
+      : manager.isEmpty
+  );
+  let hasSecondaryAction = allowsActions && allowsSelection && manager.selectionBehavior === 'replace';
   let hasAction = hasPrimaryAction || hasSecondaryAction;
   let modality = useRef(null);
 
