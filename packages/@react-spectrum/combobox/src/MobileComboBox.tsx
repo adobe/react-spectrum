@@ -437,7 +437,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
             'tray-dialog'
           )
         }>
-        <DismissButton onDismiss={onClose} />
+        <DismissButton onDismiss={onClose} style={{transform: 'translate(0, -100%)'}} />
         <TextFieldBase
           label={label}
           labelProps={labelProps}
@@ -509,7 +509,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           onScroll={onScroll}
           onLoadMore={onLoadMore}
           isLoading={loadingState === 'loading' || loadingState === 'loadingMore'} />
-        <DismissButton onDismiss={onClose} />
+        <DismissButton onDismiss={onClose} style={{top: '100%'}} />
       </div>
     </FocusScope>
   );

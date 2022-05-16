@@ -201,7 +201,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
               {loadingState === 'loading' ? formatMessage('loading') :  formatMessage('noResults')}
             </span>
           )} />
-        <DismissButton onDismiss={() => state.close()} />
+        <DismissButton onDismiss={() => state.close()} style={{transform: 'translate(0, -100%)'}} />
       </Popover>
     </>
   );

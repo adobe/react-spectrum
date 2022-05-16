@@ -13,14 +13,15 @@
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React from 'react';
+import React, {CSSProperties} from 'react';
 import {useLabels} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface DismissButtonProps extends AriaLabelingProps, DOMProps {
   /** Called when the dismiss button is activated. */
-  onDismiss?: () => void
+  onDismiss?: () => void,
+  style?: CSSProperties | undefined
 }
 
 /**
@@ -29,7 +30,7 @@ interface DismissButtonProps extends AriaLabelingProps, DOMProps {
  * affordance to do so.
  */
 export function DismissButton(props: DismissButtonProps) {
-  let {onDismiss, ...otherProps} = props;
+  let {onDismiss, style, ...otherProps} = props;
   let formatMessage = useMessageFormatter(intlMessages);
 
   let labels = useLabels(otherProps, formatMessage('dismiss'));
@@ -41,7 +42,7 @@ export function DismissButton(props: DismissButtonProps) {
   };
 
   return (
-    <VisuallyHidden style={{marginBlockStart: '-10px'}}>
+    <VisuallyHidden style={style}>
       <button
         {...labels}
         tabIndex={-1}

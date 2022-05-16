@@ -70,7 +70,7 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
     selectedKey: undefined,
     defaultSelectedKey: undefined
   });
-  
+
   let buttonRef = useRef<HTMLElement>();
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
@@ -473,7 +473,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
             'tray-dialog'
           )
         }>
-        <DismissButton onDismiss={onClose} />
+        <DismissButton onDismiss={onClose} style={{transform: 'translate(0, -100%)'}} />
         <TextFieldBase
           label={label}
           labelProps={labelProps}
@@ -540,7 +540,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
           onScroll={onScroll}
           onLoadMore={onLoadMore}
           isLoading={loadingState === 'loading' || loadingState === 'loadingMore'} />
-        <DismissButton onDismiss={onClose} />
+        <DismissButton onDismiss={onClose} style={{top: '100%'}} />
       </div>
     </FocusScope>
   );

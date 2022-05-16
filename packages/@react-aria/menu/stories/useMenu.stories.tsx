@@ -105,7 +105,7 @@ function MenuPopup(props) {
   return (
     <FocusScope restoreFocus>
       <div {...overlayProps} ref={overlayRef}>
-        <DismissButton onDismiss={props.onClose} />
+        <DismissButton onDismiss={props.onClose} style={{transform: 'translate(0, -100%)'}} />
         <ul
           {...mergeProps(menuProps, props.domProps)}
           ref={ref}
@@ -127,7 +127,7 @@ function MenuPopup(props) {
               onClose={props.onClose} />
           ))}
         </ul>
-        <DismissButton onDismiss={props.onClose} />
+        <DismissButton onDismiss={props.onClose} style={{transform: 'translate(0, -100%)'}} />
       </div>
     </FocusScope>
   );

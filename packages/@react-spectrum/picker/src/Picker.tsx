@@ -111,7 +111,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   // On small screen devices, the listbox is rendered in a tray, otherwise a popover.
   let listbox = (
     <FocusScope restoreFocus contain={isMobile}>
-      <DismissButton onDismiss={() => state.close()} />
+      <DismissButton onDismiss={() => state.close()} style={{transform: 'translate(0, -100%)'}} />
       <ListBoxBase
         {...menuProps}
         ref={listboxRef}
@@ -126,7 +126,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         UNSAFE_style={{maxHeight: 'inherit'}}
         isLoading={isLoadingMore}
         onLoadMore={props.onLoadMore} />
-      <DismissButton onDismiss={() => state.close()} />
+      <DismissButton onDismiss={() => state.close()} style={{top: '100%'}} />
     </FocusScope>
   );
 

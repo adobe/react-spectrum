@@ -165,7 +165,7 @@ const Popover = React.forwardRef(({
           {title}
         </h3>
         {children}
-        <DismissButton onDismiss={onClose} />
+        <DismissButton onDismiss={onClose} style={{top: 0, transform: 'translate(0, -100%)'}} />
       </div>
     </FocusScope>
   );

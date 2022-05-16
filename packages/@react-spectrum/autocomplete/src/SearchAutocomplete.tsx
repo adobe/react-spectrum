@@ -87,7 +87,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
     }
   );
   let layout = useListBoxLayout(state);
-  
+
   let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
     {
       ...props,
@@ -182,7 +182,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
               {formatMessage('noResults')}
             </span>
           )} />
-        <DismissButton onDismiss={() => state.close()} />
+        <DismissButton onDismiss={() => state.close()} style={{transform: 'translate(0, -100%)'}} />
       </Popover>
     </>
   );

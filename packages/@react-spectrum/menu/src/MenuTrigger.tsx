@@ -84,9 +84,9 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
 
   let contents = (
     <FocusScope restoreFocus contain={isMobile}>
-      <DismissButton onDismiss={state.close} />
+      <DismissButton onDismiss={state.close} style={{transform: 'translate(0, -100%)'}} />
       {menu}
-      <DismissButton onDismiss={state.close} />
+      <DismissButton onDismiss={state.close} style={{top: '100%'}} />
     </FocusScope>
   );
 

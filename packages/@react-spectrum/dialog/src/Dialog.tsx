@@ -77,7 +77,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   // so we render a hidden one for screen readers.
   let dismissButton: JSX.Element;
   if (type === 'popover' || type === 'tray') {
-    dismissButton = <DismissButton onDismiss={onDismiss} />;
+    dismissButton = <DismissButton onDismiss={onDismiss} style={{transform: 'translate(0, -100%)'}} />;
   }
 
   return (
