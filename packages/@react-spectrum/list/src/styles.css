@@ -18,6 +18,7 @@
   --spectrum-listview-border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
   --spectrum-listview-item-border-radius: calc(var(--spectrum-listview-border-radius) - var(--spectrum-listview-border-width));
   --spectrum-listview-row-sticky-focus-indicator-width: 3px;
+  --spectrum-listview-item-line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
 }
 
 .react-spectrum-ListView {
@@ -141,6 +142,7 @@
     & .react-spectrum-ListViewItem-content,
     & .react-spectrum-ListViewItem-description {
       white-space: normal;
+      height: auto;
     }
   }
 }
@@ -209,7 +211,7 @@
   box-sizing: border-box;
   font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
   font-weight: var(--spectrum-table-cell-text-font-weight, var(--spectrum-global-font-weight-regular));
-  line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
+  line-height: var(--spectrum-listview-item-line-height);
   padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-160);
   position: relative;
   /*background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));*/
@@ -331,6 +333,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    height: var(--spectrum-listview-item-line-height);
   }
 
   .react-spectrum-ListViewItem-content {
