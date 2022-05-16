@@ -467,7 +467,6 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
 
       if (nodeToRestore) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         if (restoreFocus && isElementInScope(document.activeElement, scopeRef.current)) {
           requestAnimationFrame(() => {
             // If the nodeToRestore is not the last in the nodeToRestoreArray,
