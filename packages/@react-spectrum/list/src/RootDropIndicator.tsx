@@ -8,9 +8,10 @@ export default function RootDropIndicator() {
   let {dropIndicatorProps} = dropHooks.useDropIndicator({
     target: {type: 'root'}
   }, dropState, ref);
-
+  let isDropTarget = dropState.isDropTarget({type: 'root'});
   let {visuallyHiddenProps} = useVisuallyHidden();
-  if (dropIndicatorProps['aria-hidden']) {
+  
+  if (!isDropTarget && dropIndicatorProps['aria-hidden']) {
     return null;
   }
 
