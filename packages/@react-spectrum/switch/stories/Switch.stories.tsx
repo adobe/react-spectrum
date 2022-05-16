@@ -32,9 +32,6 @@ export default {
 } as ComponentMeta<typeof Switch>;
 
 export const Default: ComponentStoryObj<typeof Switch> = {
-  render: (args) => (
-    <Switch {...args} />
-  ),
   args: {children: <>Switch Label</>}
 };
 
