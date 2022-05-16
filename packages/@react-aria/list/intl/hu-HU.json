@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} nincs kijelölve.",
+  "longPressToSelect": "Nyomja hosszan a kijelöléshez.",
+  "select": "Kijelölés",
+  "selectedAll": "Az összes elem kijelölve.",
+  "selectedCount": "{count, plural, =0 {Egy elem sincs kijelölve} one {# elem kijelölve} other {# elem kijelölve}}.",
+  "selectedItem": "{item} kijelölve."
+}
