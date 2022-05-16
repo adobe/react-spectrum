@@ -12,14 +12,12 @@
 
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
-import {ActionButton} from '@react-spectrum/button';
 import {addons, mockChannel} from '@storybook/addons';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {DragBetweenListsExample, DragExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {installPointerEvent} from '@react-spectrum/test-utils';
-import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -27,24 +25,10 @@ import userEvent from '@testing-library/user-event';
 
 addons.setChannel(mockChannel());
 
-function pointerEvent(type, opts) {
-  let evt = new Event(type, {bubbles: true, cancelable: true});
-  Object.assign(evt, {
-    ctrlKey: false,
-    metaKey: false,
-    shiftKey: false,
-    altKey: false,
-    button: opts.button || 0,
-    width: 1,
-    height: 1
-  }, opts);
-  return evt;
-}
 
 describe('ListView', function () {
   let offsetWidth, offsetHeight, scrollHeight;
   let onSelectionChange = jest.fn();
-  let onAction = jest.fn();
   let onDragStart = jest.fn();
   let onDragMove = jest.fn();
   let onDragEnd = jest.fn();
@@ -53,11 +37,6 @@ describe('ListView', function () {
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
   };
-  let items = [
-    {key: 'foo', label: 'Foo'},
-    {key: 'bar', label: 'Bar'},
-    {key: 'baz', label: 'Baz'}
-  ];
 
   let manyItems = [];
   for (let i = 1; i <= 100; i++) {
@@ -81,7 +60,7 @@ describe('ListView', function () {
     scrollHeight.mockReset();
   });
 
-  let render = (children, locale = 'en-US', scale = 'medium') => {
+  let render = (children, locale = 'en-US', scale: 'medium' | 'large' = 'medium') => {
     let tree = renderComponent(
       <Provider theme={theme} scale={scale} locale={locale}>
         {children}
@@ -90,56 +69,6 @@ describe('ListView', function () {
     // Allow for Virtualizer layout to update
     act(() => {jest.runAllTimers();});
     return tree;
-  };
-
-  let renderList = (props = {}) => {
-    let {
-      locale,
-      scale,
-      ...otherProps
-    } = props;
-    return render(
-      <ListView items={items} aria-label="List" {...otherProps}>
-        {item => (
-          <Item textValue={item.label}>
-            {item.label}
-          </Item>
-        )}
-      </ListView>,
-      locale,
-      scale
-    );
-  };
-
-  let renderListWithFocusables = (props = {}) => {
-    let {
-      locale,
-      scale,
-      ...otherProps
-    } = props;
-    return render(
-      <ListView items={items} aria-label="List" {...otherProps}>
-        {item => (
-          <Item textValue={item.label}>
-            {item.label}
-            <ActionButton>button1 {item.label}</ActionButton>
-            <ActionButton>button2 {item.label}</ActionButton>
-          </Item>
-        )}
-      </ListView>,
-      locale,
-      scale
-    );
-  };
-
-  let getRow = (tree, text) => {
-    // Find by text, then go up to the element with the row role.
-    let el = tree.getByText(text);
-    while (el && !/row/.test(el.getAttribute('role'))) {
-      el = el.parentElement;
-    }
-
-    return el;
   };
 
   let moveFocus = (key, opts = {}) => {
@@ -167,7 +96,10 @@ describe('ListView', function () {
         x: 0,
         y: 0,
         width: 100,
-        height: 50
+        height: 50,
+        bottom: 0,
+        right: 0,
+        toJSON() {}
       }));
     });
 
@@ -188,7 +120,6 @@ describe('ListView', function () {
         expect(cellText).toHaveLength(1);
 
         // Need raf to be async so the drag preview shows up properly
-        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
         let dataTransfer = new DataTransfer();
 
         fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 5, clientY: 5});
@@ -224,7 +155,7 @@ describe('ListView', function () {
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'Adobe Photoshop')]);
 
-        act(() => jest.runAllTimers());
+        act(() => {jest.runAllTimers();});
 
         expect(onDragStart).toHaveBeenCalledTimes(1);
         expect(onDragStart).toHaveBeenCalledWith({
@@ -246,7 +177,7 @@ describe('ListView', function () {
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
         fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-        act(() => jest.runAllTimers());
+        act(() => {jest.runAllTimers();});
         expect(onDrop).toHaveBeenCalledTimes(1);
         expect(onDrop).toHaveBeenCalledWith({
           type: 'drop',
@@ -317,7 +248,7 @@ describe('ListView', function () {
             ))
         ]);
 
-        act(() => jest.runAllTimers());
+        act(() => {jest.runAllTimers();});
 
         expect(onDragStart).toHaveBeenCalledTimes(1);
         expect(onDragStart).toHaveBeenCalledWith({
@@ -339,7 +270,7 @@ describe('ListView', function () {
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
         fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-        act(() => jest.runAllTimers());
+        act(() => {jest.runAllTimers();});
         expect(onDrop).toHaveBeenCalledTimes(1);
 
         expect(await onDrop.mock.calls[0][0].items.length).toBe(4);
@@ -429,7 +360,7 @@ describe('ListView', function () {
           y: 25
         });
 
-        act(() => jest.runAllTimers());
+        act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(droppable);
         fireEvent.keyDown(droppable, {key: 'Enter'});
         fireEvent.keyUp(droppable, {key: 'Enter'});
@@ -486,7 +417,7 @@ describe('ListView', function () {
           y: 25
         });
 
-        act(() => jest.runAllTimers());
+        act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(droppable);
         fireEvent.keyDown(droppable, {key: 'Enter'});
         fireEvent.keyUp(droppable, {key: 'Enter'});
@@ -517,8 +448,6 @@ describe('ListView', function () {
         );
 
         let [list1, list2] = getAllByRole('grid');
-        let rowItem2 = within(list1).getAllByRole('row')[1];
-        let cellItem2 = within(rowItem2).getByRole('gridcell');
         expect(within(list1).getAllByRole('row').length).toBe(6);
         expect(within(list2).getAllByRole('row').length).toBe(6);
 
@@ -545,9 +474,7 @@ describe('ListView', function () {
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
         // wait for async task of dropping
-        await act(async () => {
-          return Promise.resolve();
-        });
+        await act(async () => Promise.resolve());
         // wait for collection to update after drop
         act(() => {jest.runAllTimers();});
 
@@ -597,7 +524,8 @@ describe('ListView', function () {
 
       let rows = getAllByRole('row');
       let cellA = within(rows[0]).getByRole('gridcell');
-      userEvent.click(cellA, {pointerType: 'mouse'});
+      // can remove cast when we upgrade userEvent with pointer support
+      userEvent.click(cellA, {pointerType: 'mouse'} as MouseEventInit);
       expect(document.activeElement).toBe(rows[0]);
       let dragHandle = within(cellA).getAllByRole('button')[0];
       // If the dragHandle has a style applied, it is visually hidden
@@ -667,7 +595,7 @@ describe('ListView', function () {
       let menuButton = within(row).getAllByRole('button')[1];
       expect(menuButton).toHaveAttribute('aria-expanded', 'false');
 
-      userEvent.click(menuButton, {pointerType: 'mouse'});
+      userEvent.click(menuButton, {pointerType: 'mouse'} as MouseEventInit);
       act(() => {jest.runAllTimers();});
 
       let menu = getByRole('menu');
