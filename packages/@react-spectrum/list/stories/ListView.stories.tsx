@@ -744,7 +744,8 @@ export function DragIntoItemExample() {
   );
 }
 
-export function DragBetweenListsExample() {
+export function DragBetweenListsExample(props) {
+  let {list1Props, list2Props} = props;
   let onDropAction = action('onDrop');
 
   let list1 = useListData({
@@ -832,6 +833,7 @@ export function DragBetweenListsExample() {
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">List 1</Text>
         <ListView
+          {...list1Props}
           aria-label="First list view"
           selectionMode="multiple"
           width="300px"
@@ -849,6 +851,7 @@ export function DragBetweenListsExample() {
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">List 2</Text>
         <ListView
+          {...list2Props}
           aria-label="Second list view"
           selectionMode="multiple"
           width="300px"
