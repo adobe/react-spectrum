@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} pole valitud.",
+  "longPressToSelect": "Valikurežiimi sisenemiseks vajutage pikalt.",
+  "select": "Vali",
+  "selectedAll": "Kõik üksused valitud.",
+  "selectedCount": "{count, plural, =0 {Üksusi pole valitud} one {# üksus valitud} other {# üksust valitud}}.",
+  "selectedItem": "{item} valitud."
+}
