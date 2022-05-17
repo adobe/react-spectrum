@@ -142,9 +142,9 @@ storiesOf('ListView', module)
     <ListView aria-label="Dynamic items" items={items} width="300px" height="250px" {...args}>
       {(item: any) => (
         <Item key={item.key} textValue={item.name}>
-          <Content>
+          <Text>
             {item.name}
-          </Content>
+          </Text>
           <ActionGroup buttonLabelBehavior="hide">
             <Item key="edit">
               <Edit />
@@ -164,9 +164,9 @@ storiesOf('ListView', module)
     <ListView items={items} width="100px" height="250px" {...args}>
       {(item: any) => (
         <Item key={item.key} textValue={item.name}>
-          <Content>
+          <Text>
             {item.name}
-          </Content>
+          </Text>
           <ActionGroup buttonLabelBehavior="hide">
             <Item key="edit">
               <Edit />
@@ -213,7 +213,7 @@ storiesOf('ListView', module)
   .add('with emphasized ActionBar', args => <ActionBarExample isEmphasized {...args} />)
   .add('thumbnails', args => (
     <ListView width="250px" items={itemsWithThumbs} {...args}>
-      {(item: any) => <Item textValue={item.title}><Image src={item.url} /><Content>{item.title}</Content><Text slot="description">JPG</Text></Item>}
+      {(item: any) => <Item textValue={item.title}><Image src={item.url} /><Text>{item.title}</Text><Text slot="description">JPG</Text></Item>}
     </ListView>
   ))
   .add('overflowMode="truncate" (default)', args => (
@@ -223,9 +223,6 @@ storiesOf('ListView', module)
         <Text>Text slot with a really really really long name</Text>
         <Text slot="description">Description slot with a really really long name</Text>
       </Item>
-      <Item textValue="row 3">
-        <Content>Content slot with really really long name</Content>
-      </Item>
     </ListView>
   ))
   .add('overflowMode="wrap"', args => (
@@ -234,9 +231,6 @@ storiesOf('ListView', module)
       <Item textValue="row 2">
         <Text>Text slot with a really really really long name</Text>
         <Text slot="description">Description slot with a really really long name</Text>
-      </Item>
-      <Item textValue="row 3">
-        <Content>Content slot with really really long name</Content>
       </Item>
     </ListView>
   ));
@@ -425,22 +419,22 @@ function renderActionsExample(renderActions, props?) {
     <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={keys => console.log('sel', keys)}>
       <Item key="a" textValue="Utilities" hasChildItems>
         <Folder />
-        <Content>Utilities</Content>
+        <Text>Utilities</Text>
         <Text slot="description">16 items</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
       <Item key="b" textValue="Adobe Photoshop">
-        <Content>Adobe Photoshop</Content>
+        <Text>Adobe Photoshop</Text>
         <Text slot="description">Application</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
       <Item key="c" textValue="Adobe Illustrator">
-        <Content>Adobe Illustrator</Content>
+        <Text>Adobe Illustrator</Text>
         <Text slot="description">Application</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
       <Item key="d" textValue="Adobe XD">
-        <Content>Adobe XD</Content>
+        <Text>Adobe XD</Text>
         <Text slot="description">Application</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
@@ -543,7 +537,7 @@ function EmptyTest() {
             {
               item => (
                 <Item key={item.key}>
-                  <Content>{item.name}</Content>
+                  {item.name}
                 </Item>
               )
             }
@@ -609,9 +603,9 @@ export function DragExample(props?) {
         <Item key={item.key} textValue={item.name} hasChildItems={item.type === 'folder'}>
           {item.type === 'folder' && <Folder />}
           {item.key === 'a' && <FileTxt />}
-          <Content>
+          <Text>
             {item.name}
-          </Content>
+          </Text>
           {item.key === 'b' && <Text slot="description">Beta</Text>}
           <ActionMenu
             onAction={action('onAction')}>
@@ -1083,6 +1077,7 @@ function AsyncList(props) {
       };
     }
   });
+
   return (
     <ListView
       selectionMode="multiple"
@@ -1094,7 +1089,7 @@ function AsyncList(props) {
       onLoadMore={list.loadMore}>
       {(item) => {
         if (props.withActions) {
-          return <Item key={item.name} textValue={item.name}><Content>{item.name}</Content><ActionButton>Edit</ActionButton></Item>;
+          return <Item key={item.name} textValue={item.name}><Text>{item.name}</Text><ActionButton>Edit</ActionButton></Item>;
         }
         return <Item key={item.name} textValue={item.name}>{item.name}</Item>;
       }}
