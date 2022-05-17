@@ -1,11 +1,14 @@
 {
-  "dateSelected": "התאריך {date, date, full} שנבחר",
+  "dateRange": "{startDate} עד {endDate}",
+  "dateSelected": "{date} נבחר",
   "finishRangeSelectionPrompt": "חץ כדי לסיים את בחירת טווח התאריכים",
+  "maximumDate": "תאריך פנוי אחרון",
+  "minimumDate": "תאריך פנוי ראשון",
   "next": "הבא",
   "previous": "הקודם",
-  "selectedDateDescription": "התאריך שנבחר: {date, date, full}",
-  "selectedRangeDescription": "הטווח שנבחר: מ-{start, date, long} ועד {end, date, long}",
+  "selectedDateDescription": "תאריך נבחר: {date}",
+  "selectedRangeDescription": "טווח נבחר: {dateRange}",
   "startRangeSelectionPrompt": "לחץ כדי להתחיל בבחירת טווח התאריכים",
-  "todayDate": "היום, {date, date, full}",
-  "todayDateSelected": "היום, התאריך {date, date, full} שנבחר"
+  "todayDate": "היום, {date}",
+  "todayDateSelected": "היום, {date} נבחר"
 }

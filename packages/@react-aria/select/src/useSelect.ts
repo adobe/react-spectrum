@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
-import {chain, filterDOMProps, mergeProps} from '@react-aria/utils';
+import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {FocusEvent, HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
@@ -31,7 +31,7 @@ interface AriaSelectOptions<T> extends AriaSelectProps<T> {
   keyboardDelegate?: KeyboardDelegate
 }
 
-interface SelectAria {
+interface SelectAria<T> {
   /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
 
@@ -42,7 +42,7 @@ interface SelectAria {
   valueProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the popup. */
-  menuProps: AriaListBoxOptions<unknown>,
+  menuProps: AriaListBoxOptions<T>,
 
   /** Props for the select's description element, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
@@ -57,7 +57,7 @@ interface SelectAria {
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */
-export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria<T> {
   let {
     keyboardDelegate,
     isDisabled
@@ -121,8 +121,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let domProps = filterDOMProps(props, {labelable: true});
   let triggerProps = mergeProps(typeSelectProps, menuTriggerProps, fieldProps);
 
-  // used to make predictable id's based on the trigger which is already generated, this aids us in testing
-  let valueId = `${triggerProps.id}-value`;
+  let valueId = useId();
 
   return {
     labelProps: {
@@ -154,6 +153,10 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
           props.onFocus(e);
         }
 
+        if (props.onFocusChange) {
+          props.onFocusChange(true);
+        }
+
         state.setFocused(true);
       },
       onBlur(e: FocusEvent) {
@@ -163,6 +166,10 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
 
         if (props.onBlur) {
           props.onBlur(e);
+        }
+
+        if (props.onFocusChange) {
+          props.onFocusChange(false);
         }
 
         state.setFocused(false);
@@ -185,6 +192,11 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         if (props.onBlur) {
           props.onBlur(e);
         }
+
+        if (props.onFocusChange) {
+          props.onFocusChange(false);
+        }
+        
         state.setFocused(false);
       },
       'aria-labelledby': [

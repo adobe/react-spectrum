@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {fireEvent, render, waitFor} from '@testing-library/react';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';
@@ -85,11 +85,13 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name renders with placeholder text', ({Name, Component}) => {
+  `('$Name renders with placeholder text and shows warning', ({Name, Component}) => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let tree = renderComponent(Component, {placeholder: inputText, 'aria-label': 'mandatory label'});
     expect(tree.getByPlaceholderText(inputText)).toBeTruthy();
     let input = tree.getByTestId(testId);
     expect(input.placeholder).toBe(inputText);
+    expect(spyWarn).toHaveBeenCalledWith(`Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/${Name.replace('v3 ', '')}.html#help-text`);
   });
 
   it.each`
@@ -126,9 +128,9 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
   `('$Name calls onBlur when the input field loses focus', ({Name, Component}) => {
-    let tree = renderComponent(Component, {onBlur, 'aria-label': 'mandatory label'});
+    let tree = renderComponent(Component, {onBlur, autoFocus: true, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
-    fireEvent.blur(input);
+    act(() => input.blur());
     expect(onBlur).toHaveBeenCalledTimes(1);
   });
 

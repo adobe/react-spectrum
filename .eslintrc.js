@@ -28,7 +28,7 @@ module.exports = {
       sourceType: 'module'
     },
     rules: {
-      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc']}],
+      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc', 'i.e']}],
       'jsdoc/check-alignment': ERROR,
       'jsdoc/check-indentation': ERROR,
       'jsdoc/check-tag-names': ERROR,
