@@ -254,7 +254,7 @@ function TabLine(props: TabLineProps) {
 export function TabList<T>(props: SpectrumTabListProps<T>) {
   const tabContext = useContext(TabContext);
   const {refs, tabState, tabProps, tabPanelProps} = tabContext;
-  const {isQuiet, density, isDisabled, orientation} = tabProps;
+  const {isQuiet, density, isDisabled, isEmphasized, orientation} = tabProps;
   const {selectedTab, collapse, setTabListState} = tabState;
   const {tablistRef, wrapperRef} = refs;
   // Pass original Tab props but override children to create the collection.
@@ -283,6 +283,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
         tabListclassName,
         {
           'spectrum-Tabs--quiet': isQuiet,
+          'spectrum-Tabs--emphasized': isEmphasized,
           ['spectrum-Tabs--compact']: density === 'compact'
         },
         orientation === 'vertical' && styleProps.className
@@ -356,6 +357,7 @@ function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
 
 interface TabPickerProps<T> extends Omit<SpectrumPickerProps<T>, 'children'> {
   density?: 'compact' | 'regular',
+  isEmphasized?: boolean,
   state: SingleSelectListState<T>,
   className?: string
 }
@@ -363,6 +365,7 @@ interface TabPickerProps<T> extends Omit<SpectrumPickerProps<T>, 'children'> {
 function TabPicker<T>(props: TabPickerProps<T>) {
   let {
     isDisabled,
+    isEmphasized,
     isQuiet,
     state,
     'aria-labelledby': ariaLabeledBy,
@@ -401,7 +404,8 @@ function TabPicker<T>(props: TabPickerProps<T>) {
         'spectrum-Tabs--isCollapsed',
         {
           'spectrum-Tabs--quiet': isQuiet,
-          ['spectrum-Tabs--compact']: density === 'compact'
+          ['spectrum-Tabs--compact']: density === 'compact',
+          'spectrum-Tabs--emphasized': isEmphasized
         },
         className
       )}>
