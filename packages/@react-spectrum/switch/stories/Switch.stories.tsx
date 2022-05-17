@@ -10,91 +10,103 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import React from 'react';
-import {storiesOf} from '@storybook/react';
+import {chain} from '@react-aria/utils';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import React, {useState} from 'react';
 import {Switch} from '../';
 
-storiesOf('Switch', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'Default',
-    () => render()
-  )
-  .add(
-    'defaultSelected: true',
-    () => render({defaultSelected: true})
-  )
-  .add(
-    'isSelected: true',
-    () => render({isSelected: true})
-  )
-  .add(
-    'isSelected: false',
-    () => render({isSelected: false})
-  )
-  .add(
-    'isDisabled: true',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isEmphasized: true',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'isEmphasized: true, isDisabled: true',
-    () => render({isEmphasized: true, isDisabled: true})
-  )
-  .add(
-    'isReadOnly: true, isSelected: true',
-    () => render({isReadOnly: true, isSelected: true})
-  )
-  .add(
-    'autoFocus: true',
-    () => render({autoFocus: true})
-  )
-  .add(
-    'custom label',
-    () => renderCustomLabel()
-  )
-  .add(
-    'long label',
-    () => (
-      <Switch
-        onChange={action('change')}>
-        Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam, fato profugus, Laviniaque venit.
-      </Switch>
-    )
-  )
-  .add(
-    'no label',
-    () => renderNoLabel({'aria-label': 'This switch has no visible label'})
-  );
+type SwitchStory = ComponentStoryObj<typeof Switch>;
 
-function render(props = {}) {
-  return (
-    <Switch
-      onChange={action('change')}
-      {...props}>
-      Switch Label
-    </Switch>
-  );
-}
+export default {
+  title: 'Switch',
+  component: Switch,
+  argTypes: {
+    onChange: {
+      action: 'change'
+    },
+    onFocus: {
+      action: 'focus'
+    },
+    onBlur: {
+      action: 'blur'
+    }
+  }
+} as ComponentMeta<typeof Switch>;
 
-function renderCustomLabel(props = {}) {
-  return (
-    <Switch
-      onChange={action('change')}
-      {...props}>
-      <span><i>Italicized</i> Switch Label</span>
-    </Switch>
-  );
-}
+export const Default: SwitchStory = {
+  args: {children: <>Switch Label</>}
+};
 
-function renderNoLabel(props = {}) {
-  return (
-    <Switch
-      onChange={action('change')}
-      {...props} />
-  );
+export const DefaultSelectedTrue: SwitchStory = {
+  ...Default,
+  args: {...Default.args, defaultSelected: true},
+  name: 'defaultSelected: true'
+};
+
+export const IsSelectedTrue: SwitchStory = {
+  ...Default,
+  args: {...Default.args, isSelected: true},
+  name: 'isSelected: true'
+};
+
+export const IsSelectedFalse: SwitchStory = {
+  ...Default,
+  args: {...Default.args, isSelected: false},
+  name: 'isSelected: false'
+};
+
+export const IsDisabledTrue: SwitchStory = {
+  ...Default,
+  args: {...Default.args, isDisabled: true},
+  name: 'isDisabled: true'
+};
+
+export const IsReadOnlyTrueIsSelectedTrue: SwitchStory = {
+  ...Default,
+  args: {...Default.args, isReadOnly: true, isSelected: true},
+  name: 'isReadOnly: true, isSelected: true'
+};
+
+export const AutoFocus: SwitchStory = {
+  ...Default,
+  args: {...Default.args, autoFocus: true},
+  name: 'autoFocus'
+};
+
+export const CustomLabel: SwitchStory = {
+  ...Default,
+  args: {children: (
+    <span>
+      <i>Italicized</i> Switch Label
+    </span>
+  )},
+  name: 'custom label'
+};
+
+export const LongLabel: SwitchStory = {
+  ...Default,
+  args: {children: (
+    <>
+      Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam,
+      fato profugus, Laviniaque venit.
+    </>
+  )},
+  name: 'long label'
+};
+
+export const NoLabel: SwitchStory = {
+  ...Default,
+  args: {'aria-label': 'This switch has no visible label'},
+  name: 'no label',
+  parameters: {description: {data: 'Try me with a screen reader.'}}
+};
+
+export const ControlledImplementation: SwitchStory = {
+  ...Default,
+  render: (args) => <ControlledSwitch {...args} />
+};
+
+function ControlledSwitch(props) {
+  let [checked, setChecked] = useState(false);
+  return <Switch {...props} onChange={chain(setChecked, props.onChange)} isSelected={checked} />;
 }
