@@ -340,6 +340,12 @@
     grid-area: content;
   }
 
+  &.react-spectrum-ListView--hasDescription {
+    .react-spectrum-ListViewItem-content {
+      grid-area: content / description;
+    }
+  }
+
   .react-spectrum-ListViewItem-description {
     grid-area: description;
   }
