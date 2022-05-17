@@ -21,11 +21,11 @@ import {useDroppableItem} from './useDroppableItem';
 import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-interface DropIndicatorProps {
+export interface DropIndicatorProps {
   target: DropTarget
 }
 
-interface DropIndicatorAria {
+export interface DropIndicatorAria {
   dropIndicatorProps: HTMLAttributes<HTMLElement>
 }
 
