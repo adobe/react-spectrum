@@ -13,7 +13,6 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
-import {Content} from '@react-spectrum/view';
 import {CSSTransition} from 'react-transition-group';
 import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
 import {DropTarget, Node} from '@react-types/shared';
@@ -25,6 +24,7 @@ import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
+import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useListItem, useListSelectionCheckbox} from '@react-aria/list';
 import {useLocale} from '@react-aria/i18n';
@@ -215,7 +215,6 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
           </CSSTransition>
           <SlotProvider
             slots={{
-              content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
               text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
               description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
               icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
@@ -228,7 +227,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               },
               actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
             }}>
-            {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
+            {typeof item.rendered === 'string' ? <Text>{item.rendered}</Text> : item.rendered}
             <ClearSlots>
               {chevron}
             </ClearSlots>
