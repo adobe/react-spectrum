@@ -4802,9 +4802,9 @@ describe('TableView', function () {
       expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
       expect(headers[0]).toHaveTextContent('Foo');
       // visually hidden syle
-      expect(headers[1].childNodes[0].style.clipPath).toBe('inset(40%)');
-      expect(headers[1].childNodes[0].style.width).toBe('10px');
-      expect(headers[1].childNodes[0].style.height).toBe('10px');
+      expect(headers[1].childNodes[0].style.clipPath).toBe('inset(50%)');
+      expect(headers[1].childNodes[0].style.width).toBe('1px');
+      expect(headers[1].childNodes[0].style.height).toBe('1px');
       expect(headers[1]).not.toBeEmptyDOMElement();
 
 

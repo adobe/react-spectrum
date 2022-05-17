@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps} from '@react-aria/utils';
+import {isAndroid, mergeProps} from '@react-aria/utils';
 import React, {CSSProperties, HTMLAttributes, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
 import {useFocus} from '@react-aria/interactions';
 
@@ -30,16 +30,16 @@ interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
 
 const styles: CSSProperties = {
   border: 0,
-  clip: 'rect(0 10px 10px 0)',
-  clipPath: 'inset(40%)',
-  height: 10,
+  clip: `rect(0 ${isAndroid() ? '10px 10px' : '0 0'} 0)`,
+  clipPath: `inset(${isAndroid() ? 40 : 50}%)`,
+  height: (isAndroid() ? 10 : 1),
   lineHeight: 0,
-  margin: '0 -10px -10px 0',
+  margin: `0 ${isAndroid() ? '-10px -10px' : '-1px -1px'} 0`,
   opacity: 0.0001,
   overflow: 'hidden',
   padding: 0,
   position: 'absolute',
-  width: 10,
+  width: (isAndroid() ? 10 : 1),
   whiteSpace: 'nowrap'
 };
 
@@ -72,7 +72,7 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
     } else {
       return styles;
     }
-  }, [isFocused]);
+  }, [isFocused, style]);
 
   return {
     visuallyHiddenProps: {
