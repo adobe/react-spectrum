@@ -11,7 +11,7 @@
  */
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, LoadingState} from '@react-types/shared';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
 import {DragPreview} from './DragPreview';
@@ -44,7 +44,8 @@ interface ListViewContextValue<T> {
   onAction:(key: Key) => void,
   isListDraggable: boolean,
   isListDroppable: boolean,
-  layout: ListLayout<T>
+  layout: ListLayout<T>,
+  loadingState: LoadingState
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
@@ -223,7 +224,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
   return (
-    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout}}>
+    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
       <Virtualizer
         {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
         {...filterDOMProps(otherProps)}
