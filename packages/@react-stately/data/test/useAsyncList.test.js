@@ -37,7 +37,7 @@ function getItemsEnd() {
 
 describe('useAsyncList', () => {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   it('should call load function on init', async () => {
@@ -195,8 +195,7 @@ describe('useAsyncList', () => {
 
     expect(result.current.loadingState).toBe('loading');
 
-    await act(async () => {
-    });
+    await act(async () => Promise.resolve());
 
     expect(result.current.loadingState).toBe('error');
     expect(loadSpyThatThrows).toHaveBeenCalled();
