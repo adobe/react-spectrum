@@ -48,7 +48,7 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
     disallowEmptySelection,
     allowDuplicateSelectionEvents,
     selectionBehavior: selectionBehaviorProp = 'toggle',
-    disabledBehavior = 'both'
+    disabledBehavior = 'all'
   } = props;
 
   // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.

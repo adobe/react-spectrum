@@ -28,7 +28,7 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(props: 
 
   let manager = state.selectionManager;
   let checkboxId = useId();
-  let isDisabled = state.disabledKeys.has(key);
+  let isDisabled = !state.selectionManager.canSelectItem(key);
   let isSelected = state.selectionManager.isSelected(key);
 
   let onChange = () => manager.select(key);
@@ -40,7 +40,7 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(props: 
       id: checkboxId,
       'aria-label': formatMessage('select'),
       isSelected,
-      isDisabled: isDisabled || manager.selectionMode === 'none',
+      isDisabled,
       onChange
     }
   };

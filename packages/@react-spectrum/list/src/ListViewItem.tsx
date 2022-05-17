@@ -51,9 +51,11 @@ export function ListViewItem(props: ListViewItemProps) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let allowsInteraction = state.selectionManager.canSelectItem(item.key) || (hasActions && state.selectionManager.allowsActions(item.key));
-  let isDisabled = state.disabledKeys.has(item.key) && state.selectionManager.disabledBehavior !== 'selection';
-  let isDroppable = isListDroppable && !isDisabled;
+  let allowsSelection = state.selectionManager.canSelectItem(item.key);
+  let allowsActions = state.selectionManager.allowsActions(item.key);
+  let isDisabled = state.disabledKeys.has(item.key) && state.selectionManager.disabledBehavior === 'all';
+  let isDroppable = isListDroppable && !allowsActions;
+  let allowsInteraction = allowsSelection || (hasActions && allowsActions);
   let {hoverProps, isHovered} = useHover({isDisabled: !allowsInteraction});
   let {pressProps, isPressed} = usePress({isDisabled: !allowsInteraction});
 
@@ -73,7 +75,7 @@ export function ListViewItem(props: ListViewItemProps) {
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
-    if (isDisabled) {
+    if (!allowsActions) {
       draggableItem = null;
     }
   }
@@ -101,7 +103,10 @@ export function ListViewItem(props: ListViewItemProps) {
           classNames(
             listStyles,
             'react-spectrum-ListViewItem-parentIndicator',
-            {'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems}
+            {
+              'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems,
+              'is-disabled': !allowsActions
+            }
           )
         } />
     )
@@ -112,7 +117,10 @@ export function ListViewItem(props: ListViewItemProps) {
           classNames(
             listStyles,
             'react-spectrum-ListViewItem-parentIndicator',
-            {'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems}
+            {
+              'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems,
+              'is-disabled': !allowsActions
+            }
           )
         } />
     );
@@ -157,7 +165,7 @@ export function ListViewItem(props: ListViewItemProps) {
     && (state.selectionManager.focusedKey !== item.nextKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
 
   let content = typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered;
-  if (isDisabled) {
+  if (!allowsActions) {
     content = <Provider isDisabled>{content}</Provider>;
   }
 

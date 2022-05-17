@@ -349,6 +349,9 @@ storiesOf('ListView/Selection', module)
   ))
   .add('onAction, disable files, with row actions', args => (
     <NavigationExample disabledType="file" showActions {...args} />
+  ))
+  .add('disable folder actions', args => (
+    <NavigationExample disabledType="folder" disabledBehavior="action" showActions {...args} />
   ));
 
 storiesOf('ListView/Drag and Drop', module)
