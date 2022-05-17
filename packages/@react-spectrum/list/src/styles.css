@@ -340,7 +340,7 @@
     grid-area: content;
   }
 
-  &.react-spectrum-ListView--hasDescription {
+  &:not(.react-spectrum-ListView--hasDescription) {
     .react-spectrum-ListViewItem-content {
       grid-area: content / description;
     }
