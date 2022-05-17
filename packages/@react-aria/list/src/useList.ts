@@ -10,18 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
 import {AriaListProps} from '@react-types/list';
-import {filterDOMProps, mergeProps, useId, useUpdateEffect} from '@react-aria/utils';
-import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {KeyboardDelegate, Selection} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {HTMLAttributes, Key, RefObject} from 'react';
+import {KeyboardDelegate} from '@react-types/shared';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
-import {useDescription} from '@react-aria/utils';
-import {useInteractionModality} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface AriaListOptions<T> extends Omit<AriaListProps<T>, 'children'> {
@@ -52,14 +47,12 @@ export interface ListViewAria {
  * @param ref - The ref attached to the list element.
  */
 export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ListViewAria {
-  // Rough copy of useGrid, but modifications + things removed for ListView specific case
   let {
     isVirtualized,
     keyboardDelegate,
-    getRowText = (key) => state.collection.getItem(key)?.textValue,
+    getRowText,
     onAction
   } = props;
-  let formatMessage = useMessageFormatter(intlMessages);
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
@@ -78,25 +71,10 @@ export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: 
   let id = useId();
   listMap.set(state, {id, onAction});
 
-  // This is useHighlightSelectionDescription copy pasted, it isn't exposed by react-aria/grid.
-  let modality = useInteractionModality();
-  // null is the default if the user hasn't interacted with the list at all yet or the rest of the page
-  let shouldLongPress = (modality === 'pointer' || modality === 'virtual' || modality == null)
-    && typeof window !== 'undefined' && 'ontouchstart' in window;
-
-  let interactionDescription = useMemo(() => {
-    let selectionMode = state.selectionManager.selectionMode;
-    let selectionBehavior = state.selectionManager.selectionBehavior;
-
-    let message = undefined;
-    if (shouldLongPress) {
-      message = formatMessage('longPressToSelect');
-    }
-
-    return selectionBehavior === 'replace' && selectionMode !== 'none' && onAction ? message : undefined;
-  }, [state.selectionManager.selectionMode, state.selectionManager.selectionBehavior, onAction, formatMessage, shouldLongPress]);
-
-  let descriptionProps = useDescription(interactionDescription);
+  let descriptionProps = useHighlightSelectionDescription({
+    selectionManager: state.selectionManager,
+    hasItemActions: !!onAction
+  });
 
   let domProps = filterDOMProps(props, {labelable: true});
   let gridProps: HTMLAttributes<HTMLElement> = mergeProps(
@@ -115,78 +93,9 @@ export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: 
     gridProps['aria-colcount'] = 1;
   }
 
-  // Many screen readers do not announce when items in a grid are selected/deselected.
-  // We do this using an ARIA live region.
-  let selection = state.selectionManager.rawSelection;
-  let lastSelection = useRef(selection);
-  useUpdateEffect(() => {
-    if (!state.selectionManager.isFocused) {
-      lastSelection.current = selection;
-
-      return;
-    }
-
-    let addedKeys = diffSelection(selection, lastSelection.current);
-    let removedKeys = diffSelection(lastSelection.current, selection);
-
-    // If adding or removing a single row from the selection, announce the name of that item.
-    let isReplace = state.selectionManager.selectionBehavior === 'replace';
-    let messages = [];
-
-    if ((state.selectionManager.selectedKeys.size === 1 && isReplace)) {
-      if (state.collection.getItem(state.selectionManager.selectedKeys.keys().next().value)) {
-        let currentSelectionText = getRowText(state.selectionManager.selectedKeys.keys().next().value);
-        if (currentSelectionText) {
-          messages.push(formatMessage('selectedItem', {item: currentSelectionText}));
-        }
-      }
-    } else if (addedKeys.size === 1 && removedKeys.size === 0) {
-      let addedText = getRowText(addedKeys.keys().next().value);
-      if (addedText) {
-        messages.push(formatMessage('selectedItem', {item: addedText}));
-      }
-    } else if (removedKeys.size === 1 && addedKeys.size === 0) {
-      if (state.collection.getItem(removedKeys.keys().next().value)) {
-        let removedText = getRowText(removedKeys.keys().next().value);
-        if (removedText) {
-          messages.push(formatMessage('deselectedItem', {item: removedText}));
-        }
-      }
-    }
-
-    // Announce how many items are selected, except when selecting the first item.
-    if (state.selectionManager.selectionMode === 'multiple') {
-      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current?.size > 1) {
-        messages.push(selection === 'all'
-          ? formatMessage('selectedAll')
-          : formatMessage('selectedCount', {count: selection.size})
-        );
-      }
-    }
-
-    if (messages.length > 0) {
-      announce(messages.join(' '));
-    }
-
-    lastSelection.current = selection;
-  }, [selection]);
+  useGridSelectionAnnouncement({getRowText}, state);
 
   return {
     gridProps
   };
-}
-
-function diffSelection(a: Selection, b: Selection): Set<Key> {
-  let res = new Set<Key>();
-  if (a === 'all' || b === 'all') {
-    return res;
-  }
-
-  for (let key of a.keys()) {
-    if (!b.has(key)) {
-      res.add(key);
-    }
-  }
-
-  return res;
 }
