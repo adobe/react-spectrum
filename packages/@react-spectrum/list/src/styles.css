@@ -18,6 +18,10 @@
   --spectrum-listview-border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
   --spectrum-listview-item-border-radius: calc(var(--spectrum-listview-border-radius) - var(--spectrum-listview-border-width));
   --spectrum-listview-row-sticky-focus-indicator-width: 3px;
+  --spectrum-listview-item-title-text-color: var(--spectrum-global-color-gray-800);
+  --spectrum-listview-item-title-text-size: var(--spectrum-global-dimension-font-size-100);
+  --spectrum-listview-item-description-text-color: var(--spectrum-global-color-gray-700);
+  --spectrum-listview-item-description-text-size: var(--spectrum-global-dimension-font-size-75);
 }
 
 .react-spectrum-ListView {
@@ -335,10 +339,14 @@
 
   .react-spectrum-ListViewItem-content {
     grid-area: content;
+    color: var(--spectrum-listview-item-title-text-color);
+    font-size: var(--spectrum-listview-item-title-text-size);
   }
 
   .react-spectrum-ListViewItem-description {
     grid-area: description;
+    color: var(--spectrum-listview-item-description-text-color);
+    font-size: var(--spectrum-listview-item-description-text-size);
   }
 
   .react-spectrum-ListViewItem-actions {
