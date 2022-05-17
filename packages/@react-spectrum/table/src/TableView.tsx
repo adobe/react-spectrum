@@ -11,6 +11,7 @@
  */
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
+import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
@@ -20,7 +21,6 @@ import {GridNode} from '@react-types/grid';
 import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
@@ -120,6 +120,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }
 
   let domRef = useDOMRef(ref);
+  let bodyRef = useRef<HTMLDivElement>();
   let formatMessage = useMessageFormatter(intlMessages);
 
   let density = props.density || 'regular';
@@ -287,6 +288,20 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   };
 
+  let [isVerticalScrollbarVisible, setVerticalScollbarVisible] = useState(false);
+  let [isHorizontalScrollbarVisible, setHorizontalScollbarVisible] = useState(false);
+  let viewport = useRef({x: 0, y: 0, width: 0, height: 0});
+  let onVisibleRectChange = useCallback((e) => {
+    if (viewport.current.width === e.width && viewport.current.height === e.height) {
+      return;
+    }
+    viewport.current = e;
+    if (bodyRef.current) {
+      setVerticalScollbarVisible(bodyRef.current.clientWidth + 2 < bodyRef.current.offsetWidth);
+      setHorizontalScollbarVisible(bodyRef.current.clientHeight + 2 < bodyRef.current.offsetHeight);
+    }
+  }, []);
+
   return (
     <TableContext.Provider value={{state, layout}}>
       <TableVirtualizer
@@ -301,7 +316,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
               'spectrum-Table--quiet': isQuiet,
               'spectrum-Table--wrap': props.overflowMode === 'wrap',
               'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
-              'spectrum-Table--resizingColumn': state.isResizingColumn
+              'spectrum-Table--resizingColumn': state.isResizingColumn,
+              'spectrum-Table--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
+              'spectrum-Table--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible
             },
             classNames(
               stylesOverrides,
@@ -315,17 +332,18 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         renderView={renderView}
         renderWrapper={renderWrapper}
         setTableWidth={state.setTableWidth}
+        onVisibleRectChange={onVisibleRectChange}
         domRef={domRef}
+        bodyRef={bodyRef}
         getColumnWidth={state.getColumnWidth} />
     </TableContext.Provider>
   );
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, setTableWidth, getColumnWidth, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, ...otherProps}) {
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
-  let bodyRef = useRef<HTMLDivElement>();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let onLoadMore = collection.body.props.onLoadMore;
@@ -421,7 +439,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
         ref={bodyRef}
         contentSize={state.contentSize}
-        onVisibleRectChange={onVisibleRectChange}
+        onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
         onScrollStart={state.startScrolling}
         onScrollEnd={state.endScrolling}
         onScroll={onScroll}>

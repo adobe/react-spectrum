@@ -10,17 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
-import {AriaLabelingProps, DOMProps, KeyboardDelegate, Selection} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId, useUpdateEffect} from '@react-aria/utils';
+import {AriaLabelingProps, DOMProps, KeyboardDelegate} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
+import {useCollator, useLocale} from '@react-aria/i18n';
+import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
 import {useSelectableCollection} from '@react-aria/selection';
 
@@ -69,12 +67,11 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     isVirtualized,
     keyboardDelegate,
     focusMode,
-    getRowText = (key) => state.collection.getItem(key)?.textValue,
     scrollRef,
+    getRowText,
     onRowAction,
     onCellAction
   } = props;
-  let formatMessage = useMessageFormatter(intlMessages);
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
@@ -126,78 +123,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     gridProps['aria-colcount'] = state.collection.columnCount;
   }
 
-  // Many screen readers do not announce when items in a grid are selected/deselected.
-  // We do this using an ARIA live region.
-  let selection = state.selectionManager.rawSelection;
-  let lastSelection = useRef(selection);
-  useUpdateEffect(() => {
-    if (!state.selectionManager.isFocused) {
-      lastSelection.current = selection;
-
-      return;
-    }
-
-    let addedKeys = diffSelection(selection, lastSelection.current);
-    let removedKeys = diffSelection(lastSelection.current, selection);
-
-    // If adding or removing a single row from the selection, announce the name of that item.
-    let isReplace = state.selectionManager.selectionBehavior === 'replace';
-    let messages = [];
-
-    if ((state.selectionManager.selectedKeys.size === 1 && isReplace)) {
-      if (state.collection.getItem(state.selectionManager.selectedKeys.keys().next().value)) {
-        let currentSelectionText = getRowText(state.selectionManager.selectedKeys.keys().next().value);
-        if (currentSelectionText) {
-          messages.push(formatMessage('selectedItem', {item: currentSelectionText}));
-        }
-      }
-    } else if (addedKeys.size === 1 && removedKeys.size === 0) {
-      let addedText = getRowText(addedKeys.keys().next().value);
-      if (addedText) {
-        messages.push(formatMessage('selectedItem', {item: addedText}));
-      }
-    } else if (removedKeys.size === 1 && addedKeys.size === 0) {
-      if (state.collection.getItem(removedKeys.keys().next().value)) {
-        let removedText = getRowText(removedKeys.keys().next().value);
-        if (removedText) {
-          messages.push(formatMessage('deselectedItem', {item: removedText}));
-        }
-      }
-    }
-
-    // Announce how many items are selected, except when selecting the first item.
-    if (state.selectionManager.selectionMode === 'multiple') {
-      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current?.size > 1) {
-        messages.push(selection === 'all'
-          ? formatMessage('selectedAll')
-          : formatMessage('selectedCount', {count: selection.size})
-        );
-      }
-    }
-
-    if (messages.length > 0) {
-      announce(messages.join(' '));
-    }
-
-    lastSelection.current = selection;
-  }, [selection]);
-
+  useGridSelectionAnnouncement({getRowText}, state);
   return {
     gridProps
   };
-}
-
-function diffSelection(a: Selection, b: Selection): Set<Key> {
-  let res = new Set<Key>();
-  if (a === 'all' || b === 'all') {
-    return res;
-  }
-
-  for (let key of a.keys()) {
-    if (!b.has(key)) {
-      res.add(key);
-    }
-  }
-
-  return res;
 }

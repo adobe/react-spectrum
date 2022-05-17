@@ -24,7 +24,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
-  props = useSlotProps(props, 'actionmenu');
+  props = useSlotProps(props, 'actionMenu');
   let formatMessage = useMessageFormatter(intlMessages);
   let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
