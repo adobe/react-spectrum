@@ -62,7 +62,7 @@ const meta: Meta = {
   parameters: {
     chromaticProvider: {colorSchemes: ['light', 'dark'], locales: ['en-US'], scales: ['medium', 'large'], disableAnimations: true},
     // noticed a small shifting before final layout, delaying so chromatic doesn't hit that
-    chromatic: {delay: 5000}
+    chromatic: {delay: 10000}
   }
 };
 
