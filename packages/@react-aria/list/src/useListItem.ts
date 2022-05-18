@@ -17,8 +17,8 @@ import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {Node as RSNode} from '@react-types/shared';
+import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import {useLocale} from '@react-aria/i18n';
-import {useSelectableItem} from '@react-aria/selection';
 
 export interface AriaListItemOptions {
   /** An object representing the list item. Contains all the relevant information that makes up the list row. */
@@ -29,13 +29,11 @@ export interface AriaListItemOptions {
   shouldSelectOnPressUp?: boolean
 }
 
-export interface ListItemAria {
+export interface ListItemAria extends SelectableItemStates {
   /** Props for the list row element. */
   rowProps: HTMLAttributes<HTMLElement>,
   /** Props for the grid cell element within the list row. */
-  gridCellProps: HTMLAttributes<HTMLElement>,
-  /** Whether the row is currently pressed. */
-  isPressed: boolean
+  gridCellProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -62,7 +60,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     }
   };
 
-  let {itemProps, isPressed} = useSelectableItem({
+  let {itemProps, ...itemStates} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
@@ -183,7 +181,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
   return {
     rowProps,
     gridCellProps,
-    isPressed
+    ...itemStates
   };
 }
 

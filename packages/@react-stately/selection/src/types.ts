@@ -100,8 +100,8 @@ export interface MultipleSelectionManager extends FocusState {
   select(key: Key, e?: PressEvent | LongPressEvent | PointerEvent): void,
   /** Returns whether the given key can be selected. */
   canSelectItem(key: Key): boolean,
-  /** Returns whether the given key allows row actions. */
-  allowsActions(key: Key): boolean,
+  /** Returns whether the given key is non-interactive, i.e. both selection and actions are disabled. */
+  isDisabled(key: Key): boolean,
   /** Sets the selection behavior for the collection. */
   setSelectionBehavior(selectionBehavior: SelectionBehavior): void
 }

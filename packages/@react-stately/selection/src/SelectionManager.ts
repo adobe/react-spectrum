@@ -472,12 +472,8 @@ export class SelectionManager implements MultipleSelectionManager {
     return true;
   }
 
-  allowsActions(key: Key) {
-    return !this.state.disabledKeys.has(key) || this.state.disabledBehavior === 'selection';
-  }
-
   canSelectItem(key: Key) {
-    if (this.state.selectionMode === 'none' || (this.state.disabledKeys.has(key) && this.state.disabledBehavior !== 'action')) {
+    if (this.state.selectionMode === 'none' || this.state.disabledKeys.has(key)) {
       return false;
     }
 
@@ -487,5 +483,9 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     return true;
+  }
+
+  isDisabled(key: Key) {
+    return this.state.disabledKeys.has(key) && this.state.disabledBehavior === 'all';
   }
 }

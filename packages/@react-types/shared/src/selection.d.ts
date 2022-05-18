@@ -47,4 +47,4 @@ export interface SpectrumSelectionProps {
 }
 
 export type FocusStrategy = 'first' | 'last';
-export type DisabledBehavior = 'selection' | 'action' | 'all';
+export type DisabledBehavior = 'selection' | 'all';

@@ -40,8 +40,7 @@ interface ListViewItemProps<T> {
 export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let {
     item,
-    isEmphasized,
-    hasActions
+    isEmphasized
   } = props;
   let {state, dragState, dropState, isListDraggable, isListDroppable, layout, dragHooks, dropHooks, loadingState} = useContext(ListViewContext);
   let {direction} = useLocale();
@@ -51,30 +50,34 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let allowsSelection = state.selectionManager.canSelectItem(item.key);
-  let allowsActions = state.selectionManager.allowsActions(item.key);
-  let isDisabled = state.disabledKeys.has(item.key) && state.selectionManager.disabledBehavior === 'all';
-  let isDroppable = isListDroppable && !allowsActions;
-  let allowsInteraction = allowsSelection || (hasActions && allowsActions);
-  let {hoverProps, isHovered} = useHover({isDisabled: !allowsInteraction});
-  let isSelected = state.selectionManager.isSelected(item.key);
 
   // We only make use of useGridCell here to allow for keyboard navigation to the focusable children of the row.
   // The actual grid cell of the ListView is inert since we don't want to ever focus it to decrease screenreader
   // verbosity, so we pretend the row node is the cell for interaction purposes. useGridRow is never used since
   // it would conflict with useGridCell if applied to the same node.
-  let {rowProps, gridCellProps, isPressed} = useListItem({
+  let {
+    rowProps,
+    gridCellProps,
+    isPressed,
+    isSelected,
+    isDisabled,
+    allowsSelection,
+    hasAction
+  } = useListItem({
     node: item,
     isVirtualized: true,
     shouldSelectOnPressUp: isListDraggable
   }, state, rowRef);
+  let isDroppable = isListDroppable && !isDisabled;
+  let {hoverProps, isHovered} = useHover({isDisabled: !allowsSelection && !hasAction});
+
   let {checkboxProps} = useListSelectionCheckbox({key: item.key}, state);
 
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
-    if (!allowsActions) {
+    if (isDisabled) {
       draggableItem = null;
     }
   }
@@ -103,7 +106,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
             'react-spectrum-ListViewItem-parentIndicator',
             {
               'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems,
-              'is-disabled': !allowsActions
+              'is-disabled': !hasAction
             }
           )
         } />
@@ -117,7 +120,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
             'react-spectrum-ListViewItem-parentIndicator',
             {
               'react-spectrum-ListViewItem-parentIndicator--hasChildItems': item.props.hasChildItems,
-              'is-disabled': !allowsActions
+              'is-disabled': !hasAction
             }
           )
         } />
@@ -154,7 +157,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     && (state.selectionManager.focusedKey !== item.nextKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
 
   let content = typeof item.rendered === 'string' ? <Text>{item.rendered}</Text> : item.rendered;
-  if (!allowsActions) {
+  if (isDisabled) {
     content = <Provider isDisabled>{content}</Provider>;
   }
 
@@ -168,9 +171,9 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
           {
             'focus-ring': isFocusVisible,
             'round-tops':
-              roundTops || (isHovered && !state.selectionManager.isSelected(item.key) && state.selectionManager.focusedKey !== item.key),
+              roundTops || (isHovered && !isSelected && state.selectionManager.focusedKey !== item.key),
             'round-bottoms':
-              roundBottoms || (isHovered && !state.selectionManager.isSelected(item.key) && state.selectionManager.focusedKey !== item.key)
+              roundBottoms || (isHovered && !isSelected && state.selectionManager.focusedKey !== item.key)
           }
         )
       }
