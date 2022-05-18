@@ -14,8 +14,6 @@ import Icon3DMaterials from '../3DMaterials';
 import Add from '../Add';
 import Alert from '../Alert';
 import Bell from '../Bell';
-import SelectSubtract from '../SelectSubtract';
-import SelectSubstract from '../SelectSubstract';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -48,15 +46,6 @@ storiesOf('Icons/Workflow', module)
   .add(
     'icon: Alert notice',
     () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'})
-  )
-  .add(
-    'supports renamed icons',
-    () => (
-      <>
-        <SelectSubtract />
-        <SelectSubstract />
-      </>
-    )
   );
 
 function renderIconSizes(Component, props) {
