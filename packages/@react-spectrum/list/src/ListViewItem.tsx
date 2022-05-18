@@ -12,7 +12,7 @@
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider, useHasChild} from '@react-spectrum/utils';
 import {CSSTransition} from 'react-transition-group';
 import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
 import {DropTarget, Node} from '@react-types/shared';
@@ -61,6 +61,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     shouldSelectOnPressUp: isListDraggable
   }, state, rowRef);
   let {checkboxProps} = useListSelectionCheckbox({key: item.key}, state);
+  let hasDescription = useHasChild(`.${listStyles['react-spectrum-ListViewItem-description']}`, rowRef);
 
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
@@ -171,7 +172,8 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               'react-spectrum-ListViewItem--dropTarget': !!isDropTarget,
               'react-spectrum-ListViewItem--firstRow': isFirstRow,
               'react-spectrum-ListViewItem--lastRow': isLastRow,
-              'react-spectrum-ListViewItem--isFlushBottom': isFlushWithContainerBottom
+              'react-spectrum-ListViewItem--isFlushBottom': isFlushWithContainerBottom,
+              'react-spectrum-ListViewItem--hasDescription': hasDescription
             }
           )
         }
