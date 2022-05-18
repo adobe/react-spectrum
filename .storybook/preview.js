@@ -6,7 +6,7 @@ import {withProviderSwitcher} from './custom-addons/provider';
 // decorator order matters, the last one will be the outer most
 
 configureActions({
-  depth: 1
+  depth: 10
 });
 
 export const parameters = {
