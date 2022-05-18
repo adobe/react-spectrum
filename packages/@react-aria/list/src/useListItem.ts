@@ -26,9 +26,7 @@ export interface AriaListItemOptions {
   /** Whether the list row is contained in a virtual scroller. */
   isVirtualized?: boolean,
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean,
-  /** Whether the list item is disabled. */
-  isDisabled?: boolean
+  shouldSelectOnPressUp?: boolean
 }
 
 export interface ListItemAria {
@@ -53,8 +51,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
   let {
     node,
     isVirtualized,
-    shouldSelectOnPressUp,
-    isDisabled
+    shouldSelectOnPressUp
   } = props;
 
   let {direction} = useLocale();
@@ -75,7 +72,6 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     isVirtualized,
     shouldSelectOnPressUp,
     onAction: onAction ? () => onAction(node.key) : undefined,
-    isDisabled,
     focus
   });
 
