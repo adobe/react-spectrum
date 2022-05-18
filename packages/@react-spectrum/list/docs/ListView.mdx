@@ -368,7 +368,6 @@ function DragAndDropExample() {
         // Only add the dropped item to the list of keys to move
         // if the dropped item has the expected types and fields
         for (let item of e.items) {
-
           if (item.kind === 'text' && item.types.has('text/plain')) {
             if (item.types.has('folder') || item.types.has('file')) {
               let key = await item.getText('id');
