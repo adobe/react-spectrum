@@ -18,6 +18,7 @@
   --spectrum-listview-border-radius: var(--spectrum-table-border-radius, var(--spectrum-alias-border-radius-regular));
   --spectrum-listview-item-border-radius: calc(var(--spectrum-listview-border-radius) - var(--spectrum-listview-border-width));
   --spectrum-listview-row-sticky-focus-indicator-width: 3px;
+  --spectrum-listview-item-line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
   --spectrum-listview-item-title-text-color: var(--spectrum-global-color-gray-800);
   --spectrum-listview-item-title-text-size: var(--spectrum-global-dimension-font-size-100);
   --spectrum-listview-item-description-text-color: var(--spectrum-global-color-gray-700);
@@ -145,6 +146,7 @@
     & .react-spectrum-ListViewItem-content,
     & .react-spectrum-ListViewItem-description {
       white-space: normal;
+      height: auto;
     }
   }
 }
@@ -213,7 +215,7 @@
   box-sizing: border-box;
   font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
   font-weight: var(--spectrum-table-cell-text-font-weight, var(--spectrum-global-font-weight-regular));
-  line-height: calc(var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default)) * var(--spectrum-table-cell-text-line-height, var(--spectrum-alias-body-text-line-height)) - 1px);
+  line-height: var(--spectrum-listview-item-line-height);
   padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-160);
   position: relative;
   /*background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));*/
@@ -335,12 +337,19 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    height: var(--spectrum-listview-item-line-height);
   }
 
   .react-spectrum-ListViewItem-content {
     grid-area: content;
     color: var(--spectrum-listview-item-title-text-color);
     font-size: var(--spectrum-listview-item-title-text-size);
+  }
+
+  &:not(.react-spectrum-ListView--hasDescription) {
+    .react-spectrum-ListViewItem-content {
+      grid-area: content / description;
+    }
   }
 
   .react-spectrum-ListViewItem-description {
