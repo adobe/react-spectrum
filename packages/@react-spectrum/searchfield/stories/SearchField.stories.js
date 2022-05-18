@@ -144,7 +144,6 @@ function render(props = {}) {
     <SearchField
       UNSAFE_className="custom_classname"
       label="Search"
-      placeholder="Enter text"
       {...props}
       onChange={action('change')}
       onSubmit={action('submit')} />

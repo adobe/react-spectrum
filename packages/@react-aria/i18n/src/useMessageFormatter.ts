@@ -14,7 +14,7 @@ import {LocalizedStrings, MessageDictionary, MessageFormatter} from '@internatio
 import {useCallback, useMemo} from 'react';
 import {useLocale} from './context';
 
-type FormatMessage = (key: string, variables?: {[key: string]: any}) => string;
+export type FormatMessage = (key: string, variables?: {[key: string]: any}) => string;
 
 const cache = new WeakMap();
 function getCachedDictionary(strings: LocalizedStrings) {

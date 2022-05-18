@@ -1,0 +1,5 @@
+name: 'Check permissions'
+description: 'Checks if commentor has write access or above'
+runs:
+  using: 'node16'
+  main: 'index.js'

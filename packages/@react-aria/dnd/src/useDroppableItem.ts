@@ -17,11 +17,11 @@ import {getTypes} from './utils';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
-interface DroppableItemOptions {
+export interface DroppableItemOptions {
   target: DropTarget
 }
 
-interface DroppableItemResult {
+export interface DroppableItemResult {
   dropProps: HTMLAttributes<HTMLElement>
 }
 

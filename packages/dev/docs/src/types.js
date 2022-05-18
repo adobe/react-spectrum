@@ -57,6 +57,7 @@ export function Type({type}) {
     case 'undefined':
     case 'void':
     case 'unknown':
+    case 'never':
       return <Keyword {...type} />;
     case 'identifier':
       return <Identifier {...type} />;
@@ -116,6 +117,8 @@ export function Type({type}) {
       }
       return <Type type={{...props, description: type.description}} />;
     }
+    case 'conditional':
+      return <ConditionalType {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
@@ -276,10 +279,18 @@ export function TypeParameters({typeParameters}) {
   );
 }
 
-function TypeParameter({name, default: defaultType}) {
+function TypeParameter({name, constraint, default: defaultType}) {
   return (
     <>
       <span className="token hljs-name">{name}</span>
+      {constraint &&
+        <>
+          {' '}
+          <span className="token hljs-keyword">extends</span>
+          {' '}
+          <Type type={constraint} />
+        </>
+      }
       {defaultType &&
         <>
           <span className="token punctuation">{' = '}</span>
@@ -381,7 +392,7 @@ export function renderHTMLfromMarkdown(description, opts) {
   return '';
 }
 
-export function InterfaceType({description, properties: props, showRequired, showDefault, isComponent}) {
+export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent}) {
   let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected');
   let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
 
@@ -554,6 +565,22 @@ function TupleType({elements}) {
       <Indent params={elements} alwaysIndent open="[" close="]">
         <JoinList elements={elements} joiner=", " alwaysIndent />
       </Indent>
+    </>
+  );
+}
+
+function ConditionalType({checkType, extendsType, trueType, falseType}) {
+  return (
+    <>
+      <Type type={checkType} />
+      {' '}
+      <span className="token hljs-keyword">extends</span>
+      {' '}
+      <Type type={extendsType} />
+      <span className="token punctuation">{' ? '}</span>
+      <Type type={trueType} />
+      <span className="token punctuation">{' :' + (falseType.type === 'conditional' ? '\n' : ' ')}</span>
+      <Type type={falseType} />
     </>
   );
 }

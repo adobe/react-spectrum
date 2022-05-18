@@ -12,6 +12,7 @@
 
 import {Collection} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
@@ -124,12 +125,16 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   // is up to the implementation using Virtualizer since we don't have refs
   // to all of the item DOM nodes.
   let lastFocusedKey = useRef(null);
+  let isFocusWithin = useRef(false);
   useEffect(() => {
     if (virtualizer.visibleRect.height === 0) {
       return;
     }
 
-    if (focusedKey !== lastFocusedKey.current) {
+    // Only scroll the focusedKey into view if the modality is not pointer to avoid jumps in position when clicking/pressing tall items.
+    // Exception made if focus isn't within the virtualizer (e.g. opening a picker via click should scroll the selected item into view)
+    let modality = getInteractionModality();
+    if (focusedKey !== lastFocusedKey.current && (modality !== 'pointer' || !isFocusWithin.current)) {
       if (scrollToItem) {
         scrollToItem(focusedKey);
       } else {
@@ -140,12 +145,13 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     lastFocusedKey.current = focusedKey;
   }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
 
-  let isFocusWithin = useRef(false);
   let onFocus = useCallback((e: FocusEvent) => {
     // If the focused item is scrolled out of view and is not in the DOM, the collection
     // will have tabIndex={0}. When tabbing in from outside, scroll the focused item into view.
     // Ignore focus events that bubble through portals (e.g. focus that happens on a menu popover child of the virtualizer)
-    if (!isFocusWithin.current && ref.current.contains(e.target)) {
+    // Don't scroll focused key into view if modality is pointer to prevent sudden jump in position (e.g. CardView).
+    let modality = getInteractionModality();
+    if (!isFocusWithin.current && ref.current.contains(e.target) && modality !== 'pointer') {
       if (scrollToItem) {
         scrollToItem(focusedKey);
       } else {

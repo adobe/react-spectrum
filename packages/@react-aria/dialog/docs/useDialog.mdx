@@ -194,12 +194,10 @@ function Example() {
           onClose={state.close}
           isDismissable>
           <form style={{display: 'flex', flexDirection: 'column'}}>
-            <label>
-              First Name: <input placeholder="John" />
-            </label>
-            <label>
-              Last Name: <input placeholder="Smith" />
-            </label>
+            <label htmlFor="first-name">First Name:</label>
+            <input id="first-name" />
+            <label htmlFor="last-name">Last Name:</label>
+            <input id="last-name" />
             <button
               {...closeButtonProps}
               ref={closeButtonRef}
