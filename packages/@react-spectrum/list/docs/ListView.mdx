@@ -46,20 +46,23 @@ keywords: [listview, collections]
 ## Example
 ```tsx example
 <ListView selectionMode="multiple" aria-label="List example" maxWidth="size-6000">
-  <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
-  <Item textValue="Adobe InDesign">Adobe InDesign</Item>
-  <Item textValue="Adobe AfterEffects">Adobe AfterEffects</Item>
-  <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
-  <Item textValue="Adobe Lightroom">Adobe Lightroom</Item>
+  <Item>Adobe Photoshop</Item>
+  <Item>Adobe InDesign</Item>
+  <Item>Adobe AfterEffects</Item>
+  <Item>Adobe Illustrator</Item>
+  <Item>Adobe Lightroom</Item>
 </ListView>
 ```
 
 ## Content
 ListView is a [collection component](../react-stately/collections.html) that provides users with a way to view, select, navigate, or drag and drop items in a list.
 
-Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView is hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data dynamically allows ListView to automatically cache the rendering of each item, which dramatically improves performance.
+Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView is hard coded.
+Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data dynamically allows ListView
+to automatically cache the rendering of each item, which dramatically improves performance.
 
-Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
+Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object.
+See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
 
 
 ```tsx example
@@ -77,7 +80,7 @@ const items = [
 
 <ListView items={items} selectionMode="multiple" maxWidth="size-6000" height="250px" aria-label="List example">
   {(item) => (
-    <Item key={item.key} textValue={item.name}>
+    <Item key={item.key}>
       {item.name}
     </Item>
   )}
@@ -130,7 +133,7 @@ function AsyncList() {
       loadingState={list.loadingState}
       onLoadMore={list.loadMore}>
       {(item) => (
-        <Item key={item.name} textValue={item.name}>{item.name}</Item>
+        <Item key={item.name}>{item.name}</Item>
       )}
     </ListView>
   );
@@ -139,23 +142,31 @@ function AsyncList() {
 
 ## Complex items
 
-Items within a ListView also allow for additional content used to add context or provide additional actions to items. Icons, links, and descriptions can be added to the children of `<Item>` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements. Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<ActionMenu>` will be styled appropriately if included within an item.
+Items within a ListView also allow for additional content used to add context or provide additional actions to items. Descriptions, icons, and thumbnails can be added to
+the children of `<Item>` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<ActionMenu>` will be styled appropriately if included within an item. Providing the `hasChildItems` prop
+to an `<Item>` will add a chevron icon to the end of the row to visually indicate that the row has children.
 
 ```tsx example
 <ListView selectionMode="multiple" maxWidth="size-6000" aria-label="List example with complex items">
-  <Item textValue="Row with link, icon, and description">
+  <Item textValue="Utilities" hasChildItems>
     <Folder />
-    <Link>Row with link, icon, and description</Link>
-    <Text slot="description">Description of row</Text>
+    <Text>Utilities</Text>
+    <Text slot="description">16 items</Text>
   </Item>
-  <Item textValue="Row with action button">
-    Row with action button
+  <Item textValue="Glasses Dog">
+    <Image
+      src="https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg"
+      alt="Shiba Inu with glasses" />
+    <Text>Glasses Dog</Text>
+    <Text slot="description">JPG</Text>
     <ActionButton aria-label="Info">
       <Info />
     </ActionButton>
   </Item>
-  <Item textValue="Row with action group">
-    Row with action group
+  <Item textValue="readme">
+    <Text>readme.txt</Text>
+    <Text slot="description">TXT</Text>
     <ActionGroup buttonLabelBehavior="hide">
       <Item key="edit">
         <Edit />
@@ -167,8 +178,9 @@ Items within a ListView also allow for additional content used to add context or
       </Item>
     </ActionGroup>
   </Item>
-  <Item textValue="Row with action menu">
-    Row with action menu
+  <Item textValue="Onboarding">
+    <Text>Onboarding</Text>
+    <Text slot="description">PDF</Text>
     <ActionMenu>
       <Item key="edit" textValue="Edit">
         <Edit />
@@ -192,17 +204,17 @@ The example below enables multiple selection mode, and uses `defaultSelectedKeys
 
 ```tsx example
 <ListView maxWidth="size-6000" selectionMode="multiple" defaultSelectedKeys={["Charizard", "Venusaur"]} aria-label="List selection example">
-  <Item key="Charizard" textValue="Charizard">
-    <Content>Charizard</Content>
+  <Item key="Charizard">
+    Charizard
   </Item>
-  <Item key="Blastoise" textValue="Blastoise">
-    <Content>Blastoise</Content>
+  <Item key="Blastoise">
+    Blastoise
   </Item>
-  <Item key="Venusaur" textValue="Venusaur">
-    <Content>Venusaur</Content>
+  <Item key="Venusaur">
+    Venusaur
   </Item>
-  <Item key="Pikachu" textValue="Pikachu">
-    <Content>Pikachu</Content>
+  <Item key="Pikachu">
+    Pikachu
   </Item>
 </ListView>
 ```
@@ -228,7 +240,7 @@ function PokemonList(props) {
   return (
     <ListView items={rows} maxWidth="size-6000" aria-label="List with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
       {(item) => (
-        <Item textValue={item.name}>
+        <Item>
           {item.name}
         </Item>
       )}
@@ -243,7 +255,7 @@ To limit users to selecting only a single item at a time, `selectionMode` can be
 
 ```tsx example
 // Using the same list as above
-<PokemonList selectionMode="single" />
+<PokemonList selectionMode="single" aria-label="List with single selection" />
 ```
 
 ### Disallow empty selection
@@ -253,7 +265,7 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 ```tsx example
 // Using the same list as above
-<PokemonList disallowEmptySelection />
+<PokemonList disallowEmptySelection aria-label="List with empty selection disallowed" />
 ```
 
 ### Disabled rows
@@ -262,29 +274,140 @@ You can disable specific rows by providing an array of keys to ListView via the 
 
 ```tsx example
 // Using the same list as above
-<PokemonList selectionMode="multiple" disabledKeys={[3]} />
+<PokemonList disabledKeys={[3]} aria-label="List with disabled rows" />
 ```
 
 ### Highlight selection
 
-By default, ListView uses the checkbox selection style, which includes a checkbox in each row for selection. When the `selectionStyle` prop is set to `"highlight"`, the checkboxes are hidden, and the selected rows are displayed with a highlighted background instead.
+By default, ListView uses the checkbox selection style, which includes a checkbox in each row for selection. When the `selectionStyle` prop is set to `"highlight"`, the checkboxes are hidden,
+and the selected rows are displayed with a highlighted background instead.
 
-In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
+In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping,
+or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
 
-In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used.  To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows.
+In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection.
+To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used.  To move focus without moving
+selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing
+the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle
+since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows.
 
 ```tsx example
-<PokemonList selectionMode="multiple" selectionStyle="highlight" />
+// Using the same list as above
+<PokemonList selectionStyle="highlight" aria-label="Highlight selection list" />
 ```
 
 ### Row actions
 
-ListView may be used in use cases where users can perform actions on rows, such as navigating into items to open them or get more details. In the default checkbox selection style, it is recommended to use a [Link](Link.html) component for navigation.
+ListView may be used in use cases where users can perform actions on rows, such as navigating into items to open them or get more details. The `onAction` prop can be used to enable
+these row actions, but the interaction to trigger the row action depends on the selection style and current selection state of the ListView. When `onAction` is provided to a checkbox selection style ListView,
+clicking the row with a mouse or pressing the <Keyboard>Enter</Keyboard> key will trigger onAction. Row selection is performed by pressing on the row's checkbox itself or by pressing <Keyboard>Space</Keyboard>.
+While any number of rows are selected, subsequent clicks on a row will toggle selection instead. During this state `onAction` can only be triggered via the <Keyboard>Enter</Keyboard> key, but deselecting all selected
+rows will restore the original "click for onAction" behavior. If `onAction` is provided to a highlight selection ListView, double clicking the row triggers `onAction` and a single click selects the row instead.
 
-In the highlight selection style, the `onAction` prop can be used to enable row actions, which differ depending on the interaction method. When provided, double clicking with a mouse or pressing the <Keyboard>Enter</Keyboard> key triggers `onAction`, while single click and the <Keyboard>Space</Keyboard> key are reserved for selection. On touch devices, `onAction` becomes the primary tap interaction, and a long press enters into selection mode, which displays checkboxes to perform selection. Deselecting all items exits selection mode and hides the checkboxes. Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
+On touch devices, `onAction` is always the primary tap interaction, and tapping on the row's checkbox or long pressing the row will select the row. In highlight selection, a long press will also shift the ListView into selection mode,
+which displays checkboxes to perform selection. While the ListView is in this state, tapping the row will toggle selection instead of triggering `onAction`. Deselecting all items exits selection mode and hides the checkboxes.
+Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
 
 ```tsx example
-<PokemonList selectionMode="multiple" selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} />
+// Checkbox selection with onAction
+<Flex direction="column" gap="size-300">
+  <PokemonList onAction={key => alert(`Opening item ${key}...`)} aria-label="Checkbox selection list with row actions" />
+  <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection list with row actions" />
+</Flex>
+```
+
+## Drag and drop
+
+To enable drag and drop in a ListView, you must provide the respective drag and drop hooks sourced from `useDragHooks` and `useDropHooks` to the ListView's `dragHooks` and `dropHooks` props respectively.
+The example below demonstrates how to create a ListView that supports reordering its rows via drag and drop. For more information on the hooks themselves and the various supported ways to perform a drag and drop interaction,
+please see the [following page](dragAndDrop.html).
+
+```tsx example
+import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useListData} from '@react-stately/data';
+
+function DragAndDropExample() {
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'folder', name: 'Documents'},
+      {id: '4', type: 'file', name: 'Adobe InDesign'},
+      {id: '5', type: 'folder', name: 'Utilities'},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  // Update the list order based on the position of the drop and the set of rows that were dropped
+  let onMove = (keys, target) => {
+    if (target.dropPosition === 'before') {
+      list.moveBefore(target.key, keys);
+    } else {
+      list.moveAfter(target.key, keys);
+    }
+  };
+
+  let dragHooks = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        // Setup the info for each item that will be propagated upon drag
+        return {
+          'text/plain': item.name,
+          [item.type]: item.name,
+          'id': item.id
+        };
+      });
+    }
+  });
+
+  let dropHooks = useDropHooks({
+    async onDrop(e) {
+      if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
+        let keysToMove = [];
+        // Only add the dropped item to the list of keys to move
+        // if the dropped item has the expected types and fields
+        for (let item of e.items) {
+
+          if (item.kind === 'text' && item.types.has('text/plain')) {
+            if (item.types.has('folder') || item.types.has('file')) {
+              let key = await item.getText('id');
+              keysToMove.push(key);
+            }
+          }
+        }
+        onMove(keysToMove, e.target);
+      }
+    },
+    getDropOperation(target) {
+      // Cancel the drop operations if done on the root of the ListView or on the ListView items themselves
+      if (target.type === 'root' || target.dropPosition === 'on') {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+  return (
+    <ListView
+      aria-label="Reorderable list"
+      selectionMode="multiple"
+      maxWidth="size-4600"
+      items={list.items}
+      dragHooks={dragHooks}
+      dropHooks={dropHooks}>
+      {item => (
+        <Item key={item.id} textValue={item.name}>
+          {item.type === 'folder' && <Folder />}
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+<DragAndDropExample />
 ```
 
 ## Props
@@ -294,12 +417,18 @@ In the highlight selection style, the `onAction` prop can be used to enable row 
 ## Visual options
 ### Quiet
 
-```tsx example
-<ListView isQuiet selectionMode="multiple" aria-label="Quiet list example" maxWidth="size-6000">
-  <Item textValue="row 1">row 1</Item>
-  <Item textValue="row 2">row 2</Item>
-  <Item textValue="row 3">row 3</Item>
-</ListView>
+```tsx example export=true
+function ListExample(props) {
+  return (
+    <ListView selectionMode="multiple" aria-label="Quiet list example" maxWidth="size-6000" {...props}>
+      <Item>Adobe AfterEffects</Item>
+      <Item>Adobe Dreamweaver</Item>
+      <Item>Adobe Acrobat</Item>
+    </ListView>
+  );
+}
+
+<ListExample isQuiet />
 ```
 
 ### Density
@@ -307,19 +436,17 @@ The amount of vertical padding that each row contains can be modified by providi
 
 ```tsx example
 <Flex direction="column" gap="size-300">
-    <Text>Compact:</Text>
-    <ListView density="compact" selectionMode="multiple" aria-label="Compact list example" maxWidth="size-6000">
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
-    </ListView>
-    <Text>Spacious:</Text>
-    <ListView density="spacious" selectionMode="multiple" aria-label="Spacious list example" maxWidth="size-6000">
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
-    </ListView>
+  <ListExample density="compact" aria-label="Compact list example" />
+  <ListExample density="spacious" aria-label="Spacious list example" />
 </Flex>
+```
+
+### Overflow mode
+By default, text content that overflows its row will be truncated. You can have it wrap instead by passing `overflowMode="wrap"`
+to the ListView.
+
+```tsx example
+<ListExample overflowMode="wrap" aria-label="Text wrapping list example" maxWidth="size-2000" />
 ```
 
 ### Empty state
@@ -345,7 +472,7 @@ function renderEmptyState() {
   selectionMode="multiple"
   aria-label="Example list for empty state"
   maxWidth="size-6000"
-  height="size-3000" 
+  height="size-3000"
   renderEmptyState={renderEmptyState}>
   {[]}
 </ListView>
