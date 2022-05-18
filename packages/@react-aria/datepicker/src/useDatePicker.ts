@@ -17,10 +17,11 @@ import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
-import {HTMLAttributes, RefObject} from 'react';
+import {focusManagerSymbol, roleSymbol} from './useDateField';
+import {HTMLAttributes, RefObject, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {roleSymbol} from './useDateField';
+import {KeyboardEvent} from '@react-types/shared';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
@@ -62,12 +63,39 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
 
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
 
-  let {locale} = useLocale();
+  let {locale, direction} = useLocale();
   let date = state.formatValue(locale, {month: 'long'});
   let description = date ? formatMessage('selectedDateDescription', {date}) : '';
   let descProps = useDescription(description);
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
   let domProps = filterDOMProps(props);
+  let focusManager = useMemo(() => createFocusManager(ref), [ref]);
+  let onKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowLeft':
+        e.preventDefault();
+        if (direction === 'rtl') {
+          focusManager.focusNext({tabbable: true});
+        } else {
+          focusManager.focusPrevious({tabbable: true});
+        }
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        if (direction === 'rtl') {
+          focusManager.focusPrevious({tabbable: true});
+        } else {
+          focusManager.focusNext({tabbable: true});
+        }
+        break;
+      case 'ArrowDown':
+      case 'ArrowUp':
+        if (e.altKey) {
+          e.continuePropagation();
+        }
+        break;
+    }
+  };
 
   return {
     groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, {
@@ -79,12 +107,12 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     labelProps: {
       ...labelProps,
       onClick: () => {
-        let focusManager = createFocusManager(ref);
         focusManager.focusFirst();
       }
     },
     fieldProps: {
       ...fieldProps,
+      [focusManagerSymbol]: focusManager,
       [roleSymbol]: 'presentation',
       'aria-describedby': ariaDescribedBy,
       value: state.value,
@@ -106,12 +134,12 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     buttonProps: {
       ...descProps,
       id: buttonId,
-      excludeFromTabOrder: true,
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,
       'aria-describedby': ariaDescribedBy,
-      onPress: () => state.setOpen(true)
+      onPress: () => state.setOpen(true),
+      onKeyDown
     },
     dialogProps: {
       id: dialogId,
