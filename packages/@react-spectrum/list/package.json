@@ -52,7 +52,6 @@
     "@react-spectrum/text": "^3.1.8",
     "@react-spectrum/textfield": "^3.4.0",
     "@react-spectrum/utils": "^3.6.8",
-    "@react-spectrum/view": "^3.1.8",
     "@react-stately/collections": "^3.3.8",
     "@react-stately/grid": "^3.1.4",
     "@react-stately/layout": "^3.4.5",

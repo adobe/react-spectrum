@@ -23,7 +23,6 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {Link} from '@react-spectrum/link';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 
@@ -63,7 +62,7 @@ const meta: Meta = {
   parameters: {
     chromaticProvider: {colorSchemes: ['light', 'dark'], locales: ['en-US'], scales: ['medium', 'large'], disableAnimations: true},
     // noticed a small shifting before final layout, delaying so chromatic doesn't hit that
-    chromatic: {delay: 5000}
+    chromatic: {delay: 10000}
   }
 };
 
@@ -102,9 +101,7 @@ const Template = (): Story => ({combos, ...args}) => (
           <ListView aria-label={key} width="size-3600" height="100%" selectedKeys={['a', 'd']} disabledKeys={['c']} {...args} {...c}>
             <Item key="a" textValue="Utilities" hasChildItems>
               <Folder />
-              <Content>
-                <Link>Utilities</Link>
-              </Content>
+              <Text>Utilities</Text>
               <Text slot="description">16 items</Text>
               {renderActions}
             </Item>
