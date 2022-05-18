@@ -489,6 +489,19 @@
   border-color: var(--spectrum-global-color-blue-500);
   background-color: var(--spectrum-alias-highlight-selected);
   box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
+  &::after {
+    border-radius: inherit;
+    border-color: var(--spectrum-global-color-blue-500);
+    background-color: var(--spectrum-alias-highlight-selected);
+    box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .react-spectrum-ListView-centeredWrapper {
