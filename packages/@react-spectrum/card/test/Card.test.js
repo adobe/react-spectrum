@@ -11,8 +11,8 @@
  */
 
 import {Card} from '../src';
-import {Default, DefaultPreviewAlt, NoDescription} from '../stories/Card.stories';
-import {Quiet} from '../stories/QuietCard.stories';
+import {Default, DefaultPreviewAlt, NoDescription} from '../chromatic/Card.chromatic';
+import {Quiet} from '../chromatic/QuietCard.chromatic';
 import React from 'react';
 import {render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

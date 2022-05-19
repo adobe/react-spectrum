@@ -10,70 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {Card} from '..';
+import {Card} from '../index';
+import {ComponentMeta} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
-import {
-  Default,
-  DefaultSquare,
-  DefaultTall,
-  LongContent,
-  LongDetail,
-  LongTitle,
-  NoDescription,
-  NoDescriptionSquare,
-  WithIllustration
-} from './Card.stories';
-import {getImage} from './utils';
+import {getImage} from '../stories/utils';
 import {Heading, Text} from '@react-spectrum/text';
+import {Horizontal} from '../chromatic/HorizontalCard.chromatic';
 import {Image} from '@react-spectrum/image';
-import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumCardProps} from '@react-types/card';
 
-// see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
-const StoryFn = ({storyFn}) => storyFn();
-
-const meta: Meta<SpectrumCardProps> = {
+export default {
   title: 'Card/horizontal',
-  component: Card,
-  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
-};
+  component: Card
+} as ComponentMeta<typeof Card>;
 
-export default meta;
-
-
-const Template = (): Story<SpectrumCardProps> => (args) => (
-  <div style={{height: '90px'}}>
-    <Card {...args} />
-  </div>
-);
-
-export const Horizontal = Template().bind({});
-Horizontal.args = {...Default.args, orientation: 'horizontal'};
-
-export const HorizontalSquare = Template().bind({});
-HorizontalSquare.args = {...Horizontal.args, ...DefaultSquare.args};
-
-export const HorizontalTall = Template().bind({});
-HorizontalTall.args = {...Horizontal.args, ...DefaultTall.args};
-
-export const HorizontalNoDescription = Template().bind({});
-HorizontalNoDescription.args = {...Horizontal.args, ...NoDescription.args};
-
-export const HorizontalNoDescriptionSquare = Template().bind({});
-HorizontalNoDescriptionSquare.args = {...Horizontal.args, ...NoDescriptionSquare.args};
-
-export const HorizontalWithIllustration = Template().bind({});
-HorizontalWithIllustration.args = {...Horizontal.args, ...WithIllustration.args};
-
-export const HorizontalLongTitle = Template().bind({});
-HorizontalLongTitle.args = {...Horizontal.args, ...LongTitle.args};
-
-export const HorizontalLongDescription = Template().bind({});
-HorizontalLongDescription.args = {...Horizontal.args, ...LongContent.args};
-
-export const HorizontalLongDetail = Template().bind({});
-HorizontalLongDetail.args = {...Horizontal.args, ...LongDetail.args};
 
 export const CardGrid = (props: SpectrumCardProps) => (
   <div
