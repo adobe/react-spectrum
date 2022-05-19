@@ -165,7 +165,8 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     onKeyDownCapture: onKeyDown,
     onFocus,
     'aria-label': node.textValue,
-    'aria-selected': state.selectionManager.selectionMode !== 'none' ? state.selectionManager.isSelected(node.key) : undefined,
+    'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
+    'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
     id: getRowId(state, node.key)
   });
 

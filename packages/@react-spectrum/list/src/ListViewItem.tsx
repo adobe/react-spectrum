@@ -51,10 +51,6 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
 
-  // We only make use of useGridCell here to allow for keyboard navigation to the focusable children of the row.
-  // The actual grid cell of the ListView is inert since we don't want to ever focus it to decrease screenreader
-  // verbosity, so we pretend the row node is the cell for interaction purposes. useGridRow is never used since
-  // it would conflict with useGridCell if applied to the same node.
   let {
     rowProps,
     gridCellProps,

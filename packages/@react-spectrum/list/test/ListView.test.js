@@ -262,6 +262,39 @@ describe('ListView', function () {
     }
   });
 
+  it('should disable nested elements when row is disabled', function () {
+    let tree = renderListWithFocusables({disabledKeys: ['foo'], selectionMode: 'multiple'});
+    let row = getRow(tree, 'Foo');
+    expect(row).toHaveAttribute('aria-disabled', 'true');
+    expect(row).not.toHaveAttribute('aria-selected');
+    expect(within(row).getByRole('checkbox')).toHaveAttribute('disabled');
+
+    let buttons = within(row).getAllByRole('button');
+    expect(buttons[0]).toHaveAttribute('disabled');
+    expect(buttons[1]).toHaveAttribute('disabled');
+
+    row = getRow(tree, 'Bar');
+    expect(row).not.toHaveAttribute('aria-disabled', 'true');
+    expect(row).toHaveAttribute('aria-selected', 'false');
+    expect(within(row).getByRole('checkbox')).not.toHaveAttribute('disabled');
+
+    buttons = within(row).getAllByRole('button');
+    expect(buttons[0]).not.toHaveAttribute('disabled');
+    expect(buttons[1]).not.toHaveAttribute('disabled');
+  });
+
+  it('should disable nested elements with disabledBehavior="selection"', function () {
+    let tree = renderListWithFocusables({disabledKeys: ['foo'], disabledBehavior: 'selection', selectionMode: 'multiple'});
+    let row = getRow(tree, 'Foo');
+    expect(row).not.toHaveAttribute('aria-disabled');
+    expect(row).not.toHaveAttribute('aria-selected');
+    expect(within(row).getByRole('checkbox')).toHaveAttribute('disabled');
+
+    let buttons = within(row).getAllByRole('button');
+    expect(buttons[0]).not.toHaveAttribute('disabled');
+    expect(buttons[1]).not.toHaveAttribute('disabled');
+  });
+
   describe('keyboard focus', function () {
     describe('Type to select', function () {
       it('focuses the correct cell when typing', function () {
@@ -852,6 +885,27 @@ describe('ListView', function () {
         fireEvent.keyUp(rows[0], {key: 'Enter'});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).not.toHaveBeenCalled();
+      });
+
+      it('should not trigger actions when a row is disabled', function () {
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onAction, disabledKeys: ['foo']});
+        let rows = tree.getAllByRole('row');
+
+        userEvent.click(rows[0], {pointerType: 'mouse'});
+        expect(onAction).not.toHaveBeenCalled();
+
+        userEvent.click(rows[1], {pointerType: 'mouse'});
+        expect(onAction).toHaveBeenCalledTimes(1);
+      });
+
+      it('should trigger actions when a disabledBehavior="selection"', function () {
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onAction, disabledKeys: ['foo'], disabledBehavior: 'selection'});
+        let rows = tree.getAllByRole('row');
+
+        userEvent.click(rows[0], {pointerType: 'mouse'});
+        expect(onAction).toHaveBeenCalledTimes(1);
       });
     });
 
