@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 import {classNames, SlotProvider} from '@react-spectrum/utils';
-import {Content} from '@react-spectrum/view';
 import {Grid} from '@react-spectrum/layout';
 import {GridNode} from '@react-types/grid';
 import listStyles from './styles.css';
 import React from 'react';
+import {Text} from '@react-spectrum/text';
 
 interface DragPreviewProps {
   item: GridNode<any>,
@@ -41,7 +41,6 @@ export function DragPreview(props: DragPreviewProps) {
             description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
             icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
             image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
-            link: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content'], isQuiet: true},
             actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
             actionGroup: {
               UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
@@ -50,7 +49,7 @@ export function DragPreview(props: DragPreviewProps) {
             },
             actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
           }}>
-          {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
+          {typeof item.rendered === 'string' ? <Text>{item.rendered}</Text> : item.rendered}
           {isDraggingMultiple &&
             <div className={classNames(listStyles, 'react-spectrum-ListViewItem-badge')}>{itemCount}</div>
           }

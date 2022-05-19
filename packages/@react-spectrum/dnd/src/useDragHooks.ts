@@ -1,4 +1,5 @@
 import {DraggableCollectionOptions, DraggableCollectionState, useDraggableCollectionState} from '@react-stately/dnd';
+import {DraggableCollectionProps} from '@react-types/shared';
 import {DraggableItemProps, DraggableItemResult, DragPreview, useDraggableItem} from '@react-aria/dnd';
 import {useMemo} from 'react';
 
@@ -8,27 +9,10 @@ export interface DragHooks {
   DragPreview: typeof DragPreview
 }
 
-export type DragHookOptions = Omit<DraggableCollectionOptions, 'collection' | 'selectionManager' | 'isDragging' | 'getKeysForDrag'>
-
-export function useDragHooks(options: DragHookOptions): DragHooks {
+export function useDragHooks(options: DraggableCollectionProps): DragHooks {
   return useMemo(() => ({
     useDraggableCollectionState(props: DraggableCollectionOptions) {
-      let {
-        collection,
-        selectionManager,
-        allowsDraggingItem,
-        getItems,
-        preview
-      } = props;
-
-      return useDraggableCollectionState({
-        collection,
-        selectionManager,
-        allowsDraggingItem,
-        getItems,
-        preview,
-        ...options
-      });
+      return useDraggableCollectionState({...props, ...options});
     },
     useDraggableItem,
     DragPreview

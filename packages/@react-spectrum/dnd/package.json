@@ -33,7 +33,8 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/dnd": "3.0.0-alpha.8",
-    "@react-stately/dnd": "3.0.0-alpha.6"
+    "@react-stately/dnd": "3.0.0-alpha.6",
+    "@react-types/shared": "^3.12.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"

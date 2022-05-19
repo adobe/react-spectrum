@@ -64,6 +64,10 @@ export function useDrag(options: DragOptions): DragResult {
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   let onDragStart = (e: DragEvent) => {
+    if (e.defaultPrevented) {
+      return;
+    }
+
     if (typeof options.onDragStart === 'function') {
       options.onDragStart({
         type: 'dragstart',

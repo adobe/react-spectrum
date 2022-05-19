@@ -263,6 +263,7 @@ describe('NumberParser', function () {
 
   describe('getNumberingSystem', function () {
     it('should return the default numbering system for a locale', function () {
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem(' ')).toBe('latn');
       expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('12')).toBe('latn');
       expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('.')).toBe('latn');
       expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('12.5')).toBe('latn');
