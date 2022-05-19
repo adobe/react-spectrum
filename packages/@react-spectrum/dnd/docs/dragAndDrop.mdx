@@ -12,7 +12,8 @@ export default Layout;
 
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import docs from 'docs:@react-spectrum/dnd';
-import {FunctionAPI, PageDescription} from '@react-spectrum/docs';
+import dndDocs from 'docs:@react-types/shared/src/dnd.d.ts';
+import {FunctionAPI, PageDescription, TypeContext, InterfaceType} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 
 ---
@@ -40,32 +41,38 @@ If you are interested in adding drag and drop support to your own components, fe
 <FunctionAPI function={docs.exports.useDragHooks} links={docs.links} />
 <FunctionAPI function={docs.exports.useDropHooks} links={docs.links} />
 
-## How to use
+## Usage
 
-Enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you maybe familiar with.
-Instead of providing each event handler directly to the component, you must first import `useDragHooks` from `@react-spectrum/dnd` package and provide it with
-your desired options. `useDragHooks` will then provide you with `DragHooks` that you can pass to the component via the `dragHooks` prop.
+Enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you may be familiar with.
+Instead of providing each event handler directly to the component, you must first import `useDragHooks` and `useDropHooks` from `@react-spectrum/dnd` package
+and provide those hooks with your desired options.
+
+`useDragHooks` supports the following options:
+<TypeContext.Provider value={dndDocs.links}>
+  <InterfaceType properties={dndDocs.exports.DraggableCollectionProps.properties} />
+</TypeContext.Provider>
+
+`useDropHooks` supports the following options:
+<TypeContext.Provider value={dndDocs.links}>
+  <InterfaceType properties={dndDocs.exports.DroppableCollectionProps.properties} />
+</TypeContext.Provider>
+
+`useDragHooks` will then provide you with a set of drag hooks that you can pass to the component via its `dragHooks` prop, thus enabling drag operations for the component.
+Drop operations can be enabled in the same way by passing the hooks from `useDropHooks` to the component's `dropHooks` prop.
 
 You may be wondering why we didn't simply import the drag and drop hooks within the components themselves. The reason behind this is to reduce the bundle size of
 the component for users who don't need the drag and drop support for their component.
 
 The following list shows which components currently support drag and drop:
--  [ListView](ListView.html)
+-  [ListView](ListView.html#drag-and-drop)
 
-### Example
+## Example
 
-The example below illustrates how one would use `useDragHooks` to enable drag and drop for a ListView. Note how only non-folder type items are made draggable via
-the `allowsDraggingItem` option provided to `useDragHooks`. The data transferred during the drop operation is specified by the value returned by `getItems`, in this case
-returning plain text matching the text value associated with the dragged row. Finally, the `onDragStart`, `onDragMove`, `onDragEnd` event handlers just need to be provided
-to `useDragHooks` and ListView will handle attaching those event handlers to each draggable row.
+The example below illustrates how one would use `useDragHooks` and `useDropHooks` to enable dragging files from one ListView to another. For the first ListView, we want to make the rows draggable and
+have the dragged rows removed from the list upon a successful drop. To accomplish this, we first want to specify the types of data associated with each item via the array returned by `getItems`. In this case,
+we add a `text/plain` type that matches the text value associated with each item. The item's type is also included with the item's `id` mapped to it. We also provide a `onDragEnd` event handler to `useDragHooks`
+that removes the dragged items from the list only upon a successful drop operation.
 
-To perform a drag and drop operations via a keyboard, first select the items to be dragged. You can then start the drag operation by focusing the drag handle on any of the
-selected rows and hitting <Keyboard>Enter</Keyboard>/<Keyboard>Space</Keyboard>. Once a drag operation is started, <Keyboard>Tab</Keyboard> can be used to cycle through valid
-drop targets. Hitting <Keyboard>Enter</Keyboard> will then confirm the drop operation on the focused drop target. For screen readers, please follow the instructions announced
-when focusing the row's drag handle to begin a drag operation.
-
-TODO: update below example with two ListViews once we support drop as well. Have it be drag from one into the other
-A custom droppable input element is used in the example below.
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
@@ -73,7 +80,7 @@ A custom droppable input element is used in the example below.
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Item, ListView} from '@react-spectrum/list';
 import {Text} from '@adobe/react-spectrum';
-import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useDragHooks} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 
 function DraggableList(props) {
@@ -127,6 +134,18 @@ function DraggableList(props) {
     </ListView>
   );
 }
+```
+</details>
+
+For the second ListView, we want to make it droppable but have it ignore any dropped folder items. To do so, we first create a `onDrop` event handler that checks the drop position and the contents of the dropped items.
+If the drag items have the expected types, we go ahead and add them to the list of items, inserting them accordingly with respect to the drop position. In order to implement the drop filtering described previously, we
+provide a `getDropOperation` to `useDropHooks` that returns a "cancel" drop operation if any of the item types includes "folder".
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useDropHooks} from '@react-spectrum/dnd';
 
 function DroppableList(props) {
   let {
@@ -144,45 +163,42 @@ function DroppableList(props) {
   });
 
   let onDrop = async (e) => {
-    // Only allow drops between the list items and on the list root
-    if (e.target.dropPosition !== 'on') {
-      let itemsToAdd = [];
-      for (let item of e.items) {
-        let type, id, textValue;
-        if (item.kind === 'text') {
-          if (item.types.has('file')) {
-            type = 'file';
-            id = await item.getText('file');
-          }
-
-          if (item.types.has('text/plain')) {
-            textValue = await item.getText('text/plain');
-          }
-
-          if (!type || !id || !textValue) {
-            continue;
-          }
-
-          itemsToAdd.push({
-            id,
-            type,
-            textValue
-          });
+    let itemsToAdd = [];
+    for (let item of e.items) {
+      let type, id, textValue;
+      if (item.kind === 'text') {
+        if (item.types.has('file')) {
+          type = 'file';
+          id = await item.getText('file');
         }
-      }
 
-      if (e.target.type === 'root') {
-        list.prepend(...itemsToAdd);
-      } else if (e.target.dropPosition === 'before') {
-        list.insertBefore(e.target.key, ...itemsToAdd);
-      } else {
-        list.insertAfter(e.target.key, ...itemsToAdd);
+        if (item.types.has('text/plain')) {
+          textValue = await item.getText('text/plain');
+        }
+
+        if (!type || !id || !textValue) {
+          continue;
+        }
+
+        itemsToAdd.push({
+          id,
+          type,
+          textValue
+        });
       }
+    }
+
+    if (e.target.type === 'root') {
+      list.prepend(...itemsToAdd);
+    } else if (e.target.dropPosition === 'before') {
+      list.insertBefore(e.target.key, ...itemsToAdd);
+    } else {
+      list.insertAfter(e.target.key, ...itemsToAdd);
     }
   };
 
   let getDropOperation = (target, types) => {
-    if (types.has('folder') || target.dropPosition === 'on') {
+    if (types.has('folder')) {
       return 'cancel';
     }
 
@@ -214,6 +230,11 @@ function DroppableList(props) {
 }
 ```
 </details>
+
+To perform a drag and drop operations via a keyboard, first select the items to be dragged. You can then start the drag operation by focusing the drag handle on any of the
+selected rows and hitting <Keyboard>Enter</Keyboard>/<Keyboard>Space</Keyboard>. Once a drag operation is started, <Keyboard>Tab</Keyboard> can be used to cycle through valid
+drop targets. Hitting <Keyboard>Enter</Keyboard> will then confirm the drop operation on the focused drop target. For screen readers, please follow the instructions announced
+when focusing the row's drag handle to begin a drag operation. Go ahead and try out drag and drop in the example below!
 
 ```tsx example
 import {Flex} from '@react-spectrum/layout';

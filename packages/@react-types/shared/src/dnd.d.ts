@@ -119,11 +119,21 @@ export interface DragTypes {
 }
 
 export interface DroppableCollectionProps {
+  /**
+   * A function that returns the drop operation that will be performed when items of
+   * the given types are dropped on the drop target. A list of operations that are allowed
+   * by the drag source are provided.
+   */
   getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation,
+  /** Hander that is called when a valid drag element enters the drop target. */
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
+  /** Hander that is called when a valid drag element is moved within the drop target. */
   onDropMove?: (e: DroppableCollectionMoveEvent) => void,
+  /** Hander that is called after a valid drag element is held over the drop target for set amount of time. */
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
+  /** Hander that is called when a valid drag element exits the drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
+  /** Hander that is called when a valid drag element is dropped on the drop target. */
   onDrop?: (e: DroppableCollectionDropEvent) => void
 }
 
@@ -140,10 +150,16 @@ interface DraggableCollectionEndEvent extends DragEndEvent {
 }
 
 export interface DraggableCollectionProps {
+  /** Hander that is called when a drag operation is started. */
   onDragStart?: (e: DraggableCollectionStartEvent) => void,
+  /** Hander that is called when the dragged element is moved. */
   onDragMove?: (e: DraggableCollectionMoveEvent) => void,
+  /** Hander that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
   onDragEnd?: (e: DraggableCollectionEndEvent) => void,
+  /** A function that returns the drag item types for each item in the drag. */
   getItems: (keys: Set<Key>) => DragItem[],
+  /** Function that is called to render a preview to display while a drag operation is in progress. */
   renderPreview?: (selectedKeys: Set<Key>, draggedKey: Key) => JSX.Element,
+  /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[]
 }
