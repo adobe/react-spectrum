@@ -12,17 +12,21 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
+import {composeStories} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';
-import {FalsyIds, falsyItems} from '../stories/GridCardView.stories';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Provider} from '@react-spectrum/provider';
 import React, {useMemo} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import * as stories from '../stories/GridCardView.stories';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {useCollator} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
+
+let {falsyItems} = stories;
+let {FalsyIds} = composeStories(stories);
 
 let theme = {
   light: themeLight,

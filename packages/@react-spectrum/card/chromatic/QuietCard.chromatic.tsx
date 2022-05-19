@@ -26,7 +26,6 @@ import {
   WithIllustration
 } from './Card.chromatic';
 import {ComponentMeta} from '@storybook/react';
-import React from 'react';
 
 export default {
   title: 'Card/quiet',

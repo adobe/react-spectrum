@@ -11,11 +11,15 @@
  */
 
 import {
-  AsyncLoading, AsyncLoadingCardViewStory, CardViewIdKeysStory,
-  ControlledCards, ControlledCardViewStory,
+  AsyncLoading,
+  AsyncLoadingCardViewStory,
+  CardViewIdKeysStory,
+  ControlledCards,
+  ControlledCardViewStory,
   CustomLayout,
   DisabledKeys,
-  DynamicCards, DynamicCardViewStory,
+  DynamicCards,
+  DynamicCardViewStory,
   EmptyWithHeightGrid,
   FalsyIds,
   FilteringGrid,
@@ -24,15 +28,16 @@ import {
   LoadingMoreGrid,
   NoSelection,
   SingleSelection,
-  StaticCards, StaticCardViewStory
+  StaticCards,
+  StaticCardViewStory
 } from './GridCardView.stories';
+import {CardView, WaterfallLayout} from '../';
+import {ComponentStoryObj} from '@storybook/react';
 import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
-import {ComponentStoryObj, Story} from '@storybook/react';
 import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
-import {CardView, GalleryLayout, WaterfallLayout} from '../';
 import {WaterfallLayoutOptions} from '../src/WaterfallLayout';
 
 let itemsNoSize = [
