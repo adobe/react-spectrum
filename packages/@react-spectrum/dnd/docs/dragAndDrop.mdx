@@ -12,7 +12,6 @@ export default Layout;
 
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import docs from 'docs:@react-spectrum/dnd';
-import listviewDocs from 'docs:@react-spectrum/list';
 import {FunctionAPI, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 
@@ -29,8 +28,8 @@ This page describes how to enable drag and drop functionality for the various Re
 ## Introduction
 
 Drag and drop is an operation performed when a user "grabs" a UI element via their pointing device and drops it on a different location or element.
-It has become a common interaction in many modern applications due to its flexibilty across a variety of use cases but can come saddled with
-a variety of accessibility issues, including but not limited to keyboard interaction parity and difficulties mimicking drag operations with mouse emulators.
+It has become a common interaction in many modern applications due to its flexibility across a variety of use cases but can come saddled with
+many accessibility issues, including but not limited to keyboard interaction parity and difficulties mimicking drag operations with mouse emulators.
 React Spectrum components that support drag and drop operations seek to address these issues by providing full keyboard and screen reader drag and drop
 support.
 
@@ -39,6 +38,7 @@ If you are interested in adding drag and drop support to your own components, fe
 ## API
 
 <FunctionAPI function={docs.exports.useDragHooks} links={docs.links} />
+<FunctionAPI function={docs.exports.useDropHooks} links={docs.links} />
 
 ## How to use
 
@@ -70,99 +70,156 @@ A custom droppable input element is used in the example below.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {mergeProps} from '@react-aria/utils';
-import {useDrop} from '@react-aria/dnd';
-import {useTextField} from '@react-aria/textfield';
+import Folder from '@spectrum-icons/workflow/Folder';
+import {Item, ListView} from '@react-spectrum/list';
+import {Text} from '@adobe/react-spectrum';
+import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useListData} from '@react-stately/data';
 
-function DroppableInput(props) {
-  let {label, type} = props;
-  let ref = React.useRef();
-  let onDrop = async (e) => {
-    let text = ref.current.value;
-    for (let item of e.items) {
-      let type = item.types.values().next().value;
-      text = text.concat(await item.getText(type));
-    }
-    ref.current.value = text;
-  };
-
-  let {dropProps} = useDrop({
-    ref,
-    onDrop,
-    getDropOperation(types, allowedOperations) {
-      return type && types.has(type) && allowedOperations.includes('move') ? 'move' : 'cancel';
-    }
+function DraggableList(props) {
+  let {
+    items,
+    ...otherProps
+  } = props;
+  let list = useListData({
+    initialItems: items || [
+      {id: 'a', textValue: 'Adobe Photoshop', type: 'file'},
+      {id: 'b', textValue: 'Adobe XD', type: 'file'},
+      {id: 'c', textValue: 'Documents', type: 'folder'},
+      {id: 'd', textValue: 'Adobe InDesign', type: 'file'},
+      {id: 'e', textValue: 'Utilities', type: 'folder'}
+    ]
   });
 
-  let {labelProps, inputProps} = useTextField(props, ref);
+  let getItems = (keys) => [...keys].map(key => {
+    let item = list.getItem(key);
+    return {
+      'text/plain': item.textValue,
+      [item.type]: item.id
+    };
+  });
+
+  let onDragEnd = (e) => {
+    if (e.dropOperation === 'move') {
+      list.remove(...e.keys);
+    }
+  };
+  let dragHooks = useDragHooks({
+    getItems,
+    onDragEnd
+  });
+
   return (
-    <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
-      <label {...labelProps}>{label}</label>
-      <input {...mergeProps(dropProps, inputProps)} ref={ref} />
-    </div>
+    <ListView
+      aria-label="Draggable list view example"
+      width="size-3600"
+      height="size-3600"
+      selectionMode="multiple"
+      items={list.items}
+      dragHooks={dragHooks}
+      {...otherProps}>
+      {item => (
+        <Item key={item.key} textValue={item.textValue}>
+          {item.type === 'folder' && <Folder />}
+          <Text>{item.textValue}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DroppableList(props) {
+  let {
+    items,
+    ...otherProps
+  } = props;
+  let list = useListData({
+    initialItems: items || [
+      {id: 'f', textValue: 'Adobe AfterEffects', type: 'file'},
+      {id: 'g', textValue: 'Adobe Illustrator', type: 'file'},
+      {id: 'h', textValue: 'Adobe Lightroom', type: 'file'},
+      {id: 'i', textValue: 'Adobe Premiere Pro', type: 'file'},
+      {id: 'j', textValue: 'Adobe Fresco', type: 'file'}
+    ]
+  });
+
+  let onDrop = async (e) => {
+    // Only allow drops between the list items and on the list root
+    if (e.target.dropPosition !== 'on') {
+      let itemsToAdd = [];
+      for (let item of e.items) {
+        let type, id, textValue;
+        if (item.kind === 'text') {
+          if (item.types.has('file')) {
+            type = 'file';
+            id = await item.getText('file');
+          }
+
+          if (item.types.has('text/plain')) {
+            textValue = await item.getText('text/plain');
+          }
+
+          if (!type || !id || !textValue) {
+            continue;
+          }
+
+          itemsToAdd.push({
+            id,
+            type,
+            textValue
+          });
+        }
+      }
+
+      if (e.target.type === 'root') {
+        list.prepend(...itemsToAdd);
+      } else if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...itemsToAdd);
+      } else {
+        list.insertAfter(e.target.key, ...itemsToAdd);
+      }
+    }
+  };
+
+  let getDropOperation = (target, types) => {
+    if (types.has('folder') || target.dropPosition === 'on') {
+      return 'cancel';
+    }
+
+    return 'move';
+  };
+
+  let dropHooks = useDropHooks({
+    getDropOperation,
+    onDrop
+  });
+
+  return (
+    <ListView
+      aria-label="Droppable list view example"
+      width="size-3600"
+      height="size-3600"
+      selectionMode="multiple"
+      items={list.items}
+      dropHooks={dropHooks}
+      {...otherProps}>
+      {item => (
+        <Item key={item.key} textValue={item.textValue}>
+          {item.type === 'folder' && <Folder />}
+          <Text>{item.textValue}</Text>
+        </Item>
+      )}
+    </ListView>
   );
 }
 ```
 </details>
 
 ```tsx example
-import Folder from '@spectrum-icons/workflow/Folder';
-import {Item, ListView} from '@react-spectrum/list';
-import {Text, View} from '@adobe/react-spectrum';
-import {useDragHooks} from '@react-spectrum/dnd';
+import {Flex} from '@react-spectrum/layout';
 
-function DragExample() {
-  let [event, setEvent] = React.useState('none');
-  let [dragPosition, setDragPosition] = React.useState('n/a');
-  let items = [
-    {key: 'a', textValue: 'File a', type: 'file'},
-    {key: 'b', textValue: 'File b', type: 'file'},
-    {key: 'c', textValue: 'Folder c', type: 'folder'}
-  ];
-  let getItems = (keys) => [...keys].map(key => {
-    let item = items.find(item => item.key === key);
-    return {
-      'text/plain': item.textValue
-    };
-  });
-  let allowsDraggingItem = (key) => {
-    let item = items.find(item => item.key === key);
-    return item.type !== 'folder';
-  };
-  let onDragStart = (e) => setEvent(JSON.stringify(e));
-  let onDragMove = (e) => setDragPosition(JSON.stringify(e));
-  let onDragEnd = (e) => setEvent(JSON.stringify(e));
-  let dragHooks = useDragHooks({
-    allowsDraggingItem,
-    getItems,
-    onDragStart,
-    onDragMove,
-    onDragEnd
-  });
-
-  return (
-    <>
-      <ListView
-        aria-label="Draggable list view example"
-        width="size-3600"
-        selectionMode="multiple"
-        items={items}
-        dragHooks={dragHooks}>
-        {item => (
-          <Item key={item.key} textValue={item.textValue}>
-            {item.type === 'folder' && <Folder />}
-            <Text slot="content">{item.textValue}</Text>
-          </Item>
-        )}
-      </ListView>
-      <DroppableInput label="Drop target" type="text/plain" />
-      <View marginTop="size-200">
-        Last drag start/end: {event}
-      </View>
-      <View>
-        Drag position: {dragPosition}
-      </View>
-    </>
-  );
-}
+<Flex gap="size-300">
+  <DraggableList />
+  <DroppableList />
+</Flex>
 ```
