@@ -250,9 +250,11 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     // Safari requires that a selection is set or it won't fire input events.
     // Since usePress disables text selection, this won't happen by default.
     ref.current.style.webkitUserSelect = 'text';
+    ref.current.style.userSelect = 'text';
     let selection = window.getSelection();
     selection.collapse(ref.current);
-    ref.current.style.webkitUserSelect = '';
+    ref.current.style.webkitUserSelect = 'none';
+    ref.current.style.userSelect = 'none';
   };
 
   let compositionRef = useRef('');
