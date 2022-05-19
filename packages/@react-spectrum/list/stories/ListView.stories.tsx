@@ -319,6 +319,24 @@ storiesOf('ListView', module)
           (item) => <Item textValue={item.title}><Image src={item.url} /><Text>{item.title}</Text><Text slot="description">JPG</Text></Item>
         }
     </ListView>
+  ))
+  .add('overflowMode="truncate" (default)', () => (
+    <ListView width="250px" overflowMode="truncate">
+      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
+      <Item textValue="row 2">
+        <Text>Text slot with a really really really long name</Text>
+        <Text slot="description">Description slot with a really really long name</Text>
+      </Item>
+    </ListView>
+  ))
+  .add('overflowMode="wrap"', () => (
+    <ListView width="250px" overflowMode="wrap">
+      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
+      <Item textValue="row 2">
+        <Text>Text slot with a really really really long name</Text>
+        <Text slot="description">Description slot with a really really long name</Text>
+      </Item>
+    </ListView>
   ));
 
 storiesOf('ListView/Drag and Drop', module)
@@ -383,25 +401,7 @@ storiesOf('ListView/Drag and Drop', module)
         <Droppable />
         <DragExample listViewProps={{selectionStyle: 'highlight', onAction: action('onAction')}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </Flex>
-    ), {description: {data: 'Folders are non-draggable.'}})
-  .add('overflowMode="truncate" (default)', () => (
-    <ListView width="250px" overflowMode="truncate">
-      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
-      <Item textValue="row 2">
-        <Text>Text slot with a really really really long name</Text>
-        <Text slot="description">Description slot with a really really long name</Text>
-      </Item>
-    </ListView>
-  ))
-  .add('overflowMode="wrap"', () => (
-    <ListView width="250px" overflowMode="wrap">
-      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
-      <Item textValue="row 2">
-        <Text>Text slot with a really really really long name</Text>
-        <Text slot="description">Description slot with a really really long name</Text>
-      </Item>
-    </ListView>
-  ));
+    ), {description: {data: 'Folders are non-draggable.'}});
 
 function Example(props?) {
   return (
