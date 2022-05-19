@@ -466,14 +466,12 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
         document.removeEventListener('keydown', onKeyDown, true);
       }
 
-      if (nodeToRestore) {
-        if (restoreFocus && isElementInScope(document.activeElement, scopeRef.current)) {
-          requestAnimationFrame(() => {
-            // If the nodeToRestore is not the last in the nodeToRestoreArray,
-            // do nothing because a later focusScope is open and should take precedence.
-            if (nodeToRestoreArray.indexOf(nodeToRestore) !== nodeToRestoreArray.length - 1) {
-              return;
-            }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      if (nodeToRestore && restoreFocus && isElementInScope(document.activeElement, scopeRef.current)) {
+        requestAnimationFrame(() => {
+          let index = nodeToRestoreArray.lastIndexOf(nodeToRestore);
+          // If the nodeToRestore is the last item in the nodeToRestoreArray.
+          if (index === nodeToRestoreArray.length - 1) {
             // Iterate backwards through the nodeToRestoreArray until you find a valid node to restore.
             while (nodeToRestoreArray.length > 0) {
               let node = nodeToRestoreArray.pop();
@@ -482,8 +480,16 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
                 break;
               }
             }
-          });
-        }
+            return;
+          }
+          // Otherwise try to focus the nodeToRestore, and clean up
+          if (document.body.contains(nodeToRestore)) {
+            focusElement(nodeToRestore);
+            if (scopes.size === 0) {
+              nodeToRestoreArray = [];
+            }
+          }
+        });
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
