@@ -363,20 +363,18 @@ function DragAndDropExample() {
 
   let dropHooks = useDropHooks({
     async onDrop(e) {
-      if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
-        let keysToMove = [];
-        // Only add the dropped item to the list of keys to move
-        // if the dropped item has the expected types and fields
-        for (let item of e.items) {
-          if (item.kind === 'text' && item.types.has('text/plain')) {
-            if (item.types.has('folder') || item.types.has('file')) {
-              let key = await item.getText('id');
-              keysToMove.push(key);
-            }
+      let keysToMove = [];
+      // Only add the dropped item to the list of keys to move
+      // if the dropped item has the expected types and fields
+      for (let item of e.items) {
+        if (item.kind === 'text' && item.types.has('text/plain')) {
+          if (item.types.has('folder') || item.types.has('file')) {
+            let key = await item.getText('id');
+            keysToMove.push(key);
           }
         }
-        onMove(keysToMove, e.target);
       }
+      onMove(keysToMove, e.target);
     },
     getDropOperation(target) {
       // Cancel the drop operations if done on the root of the ListView or on the ListView items themselves
