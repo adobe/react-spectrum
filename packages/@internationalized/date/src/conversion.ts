@@ -15,13 +15,14 @@
 
 import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguation, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
+import {getExtendedYear, GregorianCalendar} from './calendars/GregorianCalendar';
 import {getLocalTimeZone} from './queries';
-import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
 
 export function epochFromDate(date: AnyDateTime) {
   date = toCalendar(date, new GregorianCalendar());
-  return epochFromParts(date.year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
+  let year = getExtendedYear(date.era, date.year);
+  return epochFromParts(year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
 }
 
 function epochFromParts(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number) {
@@ -115,7 +116,8 @@ export function toAbsolute(date: CalendarDate | CalendarDateTime, timeZone: stri
 
     // Don't use Date constructor here because two-digit years are interpreted in the 20th century.
     let date = new Date();
-    date.setFullYear(dateTime.year, dateTime.month - 1, dateTime.day);
+    let year = getExtendedYear(dateTime.era, dateTime.year);
+    date.setFullYear(year, dateTime.month - 1, dateTime.day);
     date.setHours(dateTime.hour, dateTime.minute, dateTime.second, dateTime.millisecond);
     return date.getTime();
   }

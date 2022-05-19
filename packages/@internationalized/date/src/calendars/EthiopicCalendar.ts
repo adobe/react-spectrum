@@ -173,8 +173,15 @@ export class CopticCalendar extends EthiopicCalendar {
     return getDaysInMonth(year, date.month);
   }
 
-  getYearsToAdd(date: Mutable<AnyCalendarDate>, years: number) {
-    return date.era === 'BCE' ? -years : years;
+  isInverseEra(date: AnyCalendarDate): boolean {
+    return date.era === 'BCE';
+  }
+
+  balanceDate(date: Mutable<AnyCalendarDate>) {
+    if (date.year <= 0) {
+      date.era = date.era === 'BCE' ? 'CE' : 'BCE';
+      date.year = 1 - date.year;
+    }
   }
 
   getEras() {
