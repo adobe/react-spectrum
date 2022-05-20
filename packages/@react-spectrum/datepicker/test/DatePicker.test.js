@@ -900,7 +900,7 @@ describe('DatePicker', function () {
           let nextSegment = segments[segments.indexOf(segment) + 1];
           expect(nextSegment).toHaveFocus();
         } else {
-          expect(label === 'year' ? getAllByRole('button')[0] : segment).toHaveFocus();
+          expect(label === 'year' || label === 'AM/PM' ? getAllByRole('button')[0] : segment).toHaveFocus();
         }
 
         unmount();
@@ -933,7 +933,7 @@ describe('DatePicker', function () {
           let nextSegment = segments[segments.indexOf(segment) + 1];
           expect(nextSegment).toHaveFocus();
         } else {
-          expect(label === 'year' ? getAllByRole('button')[0] : segment).toHaveFocus();
+          expect(label === 'year' || label === 'AM/PM' ? getAllByRole('button')[0] : segment).toHaveFocus();
         }
 
         unmount();
@@ -994,7 +994,7 @@ describe('DatePicker', function () {
         testIgnored('day', new CalendarDate(2019, 2, 3), '00');
       });
 
-      it.only('should support typing into the year segment', function () {
+      it('should support typing into the year segment', function () {
         testInput('year', new CalendarDate(2019, 2, 3), '1993', new CalendarDate(1993, 2, 3), false);
         testInput('year', new CalendarDateTime(2019, 2, 3, 8), '1993', new CalendarDateTime(1993, 2, 3, 8), true);
         testIgnored('year', new CalendarDate(2019, 2, 3), '0');
@@ -1347,7 +1347,7 @@ describe('DatePicker', function () {
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(3);
       beforeInput(document.activeElement, '0');
-      expect(segments[2]).toHaveFocus();
+      expect(getAllByRole('button')[0]).toHaveFocus();
       expect(onChange).toHaveBeenCalledTimes(4);
       value = new CalendarDate(2020, 4, 5);
       expect(onChange).toHaveBeenCalledWith(value);
