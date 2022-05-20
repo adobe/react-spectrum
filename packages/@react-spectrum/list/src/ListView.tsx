@@ -115,7 +115,6 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let {locale} = useLocale();
   let layout = useListLayout(state, props.density || 'regular', state.selectionManager.disabledBehavior === 'selection');
   let dragState: DraggableCollectionState;
   let preview = useRef(null);
