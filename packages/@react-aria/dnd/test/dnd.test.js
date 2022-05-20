@@ -2073,8 +2073,8 @@ describe('useDrag and useDrop', function () {
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Click to cancel drag.');
 
       // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
-      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
       fireEvent.click(draggable, {detail: 1});
       expect(draggable).toHaveAttribute('data-dragging', 'false');
       expect(draggable).toHaveAttribute('aria-describedby');
@@ -2103,8 +2103,8 @@ describe('useDrag and useDrop', function () {
 
       // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
       fireEvent.focus(droppable);
-      fireEvent(droppable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-      fireEvent(droppable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(droppable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent(droppable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
       fireEvent.click(droppable, {detail: 1});
       expect(draggable).toHaveAttribute('data-dragging', 'false');
       expect(draggable).toHaveAttribute('aria-describedby');
