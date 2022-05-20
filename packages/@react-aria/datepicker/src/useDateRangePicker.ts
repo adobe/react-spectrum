@@ -20,7 +20,6 @@ import {focusManagerSymbol, roleSymbol} from './useDateField';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent} from '@react-types/shared';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
@@ -62,7 +61,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
 
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
 
-  let {locale, direction} = useLocale();
+  let {locale} = useLocale();
   let range = state.formatValue(locale, {month: 'long'});
   let description = range ? formatMessage('selectedRangeDescription', {startDate: range.start, endDate: range.end}) : '';
   let descProps = useDescription(description);
@@ -88,33 +87,10 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   });
 
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
-  let focusManager = useMemo(() => createFocusManager(ref), [ref]);
-  let onKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'ArrowLeft':
-        e.preventDefault();
-        if (direction === 'rtl') {
-          focusManager.focusNext({tabbable: true});
-        } else {
-          focusManager.focusPrevious({tabbable: true});
-        }
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        if (direction === 'rtl') {
-          focusManager.focusPrevious({tabbable: true});
-        } else {
-          focusManager.focusNext({tabbable: true});
-        }
-        break;
-      case 'ArrowDown':
-      case 'ArrowUp':
-        if (e.altKey) {
-          e.continuePropagation();
-        }
-        break;
-    }
-  };
+  let focusManager = useMemo(() => createFocusManager(ref, {
+    // Exclude the button from the focus manager.
+    accept: element => element.id !== buttonId
+  }), [ref, buttonId]);
 
   let commonFieldProps = {
     [focusManagerSymbol]: focusManager,
@@ -153,8 +129,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       'aria-label': formatMessage('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,
       'aria-describedby': ariaDescribedBy,
-      onPress: () => state.setOpen(true),
-      onKeyDown
+      onPress: () => state.setOpen(true)
     },
     dialogProps: {
       id: dialogId,

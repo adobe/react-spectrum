@@ -900,7 +900,7 @@ describe('DatePicker', function () {
           let nextSegment = segments[segments.indexOf(segment) + 1];
           expect(nextSegment).toHaveFocus();
         } else {
-          expect(label === 'year' || label === 'AM/PM' ? getAllByRole('button')[0] : segment).toHaveFocus();
+          expect(segment).toHaveFocus();
         }
 
         unmount();
@@ -933,7 +933,7 @@ describe('DatePicker', function () {
           let nextSegment = segments[segments.indexOf(segment) + 1];
           expect(nextSegment).toHaveFocus();
         } else {
-          expect(label === 'year' || label === 'AM/PM' ? getAllByRole('button')[0] : segment).toHaveFocus();
+          expect(segment).toHaveFocus();
         }
 
         unmount();
@@ -1347,7 +1347,7 @@ describe('DatePicker', function () {
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(3);
       beforeInput(document.activeElement, '0');
-      expect(getAllByRole('button')[0]).toHaveFocus();
+      expect(segments[2]).toHaveFocus();
       expect(onChange).toHaveBeenCalledTimes(4);
       value = new CalendarDate(2020, 4, 5);
       expect(onChange).toHaveBeenCalledWith(value);
