@@ -1259,7 +1259,9 @@ describe('NumberField', function () {
     act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(13);
-    act(() => {jest.advanceTimersByTime(3 * 60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(6);
     expect(onChangeSpy).toHaveBeenNthCalledWith(4, 14);
     expect(onChangeSpy).toHaveBeenNthCalledWith(5, 15);
@@ -1277,7 +1279,9 @@ describe('NumberField', function () {
     act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(13);
-    act(() => {jest.advanceTimersByTime(3 * 60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(6);
     expect(onChangeSpy).toHaveBeenNthCalledWith(4, 12);
     expect(onChangeSpy).toHaveBeenNthCalledWith(5, 11);
@@ -1292,7 +1296,10 @@ describe('NumberField', function () {
     fireEvent.mouseDown(incrementButton);
     // to get to 20, it'll take 11 (0ms), 12 (400ms), 13 (60ms) ... 20 (540ms) 22 (660ms)
     // we should never get to 21 or 22 though, but lets advance the time there to make sure
-    act(() => {jest.advanceTimersByTime(400 + (10 * 60));});
+    act(() => {jest.advanceTimersByTime(400);});
+    for (let i = 0; i < 10; i += 1) {
+      act(() => {jest.advanceTimersByTime(60);});
+    }
     expect(onChangeSpy).toHaveBeenCalledTimes(10);
     expect(onChangeSpy).toHaveBeenLastCalledWith(20);
     fireEvent.mouseUp(incrementButton);
@@ -1300,7 +1307,10 @@ describe('NumberField', function () {
     onChangeSpy.mockReset();
 
     fireEvent.mouseDown(decrementButton);
-    act(() => {jest.advanceTimersByTime(400 + (20 * 60));});
+    act(() => {jest.advanceTimersByTime(400);});
+    for (let i = 0; i < 20; i += 1) {
+      act(() => {jest.advanceTimersByTime(60);});
+    }
     expect(onChangeSpy).toHaveBeenCalledTimes(20);
     expect(onChangeSpy).toHaveBeenLastCalledWith(0);
     fireEvent.mouseUp(decrementButton);
@@ -1312,7 +1322,8 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     fireEvent.mouseDown(incrementButton);
     // it should start at 0
-    act(() => {jest.advanceTimersByTime(400 + 60);});
+    act(() => {jest.advanceTimersByTime(400);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(2);
     fireEvent.mouseUp(incrementButton);
@@ -1323,7 +1334,8 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     fireEvent.mouseDown(incrementButton);
-    act(() => {jest.advanceTimersByTime(400 + 60);});
+    act(() => {jest.advanceTimersByTime(400);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(22);
     fireEvent.mouseUp(incrementButton);
@@ -1335,7 +1347,8 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     fireEvent.mouseDown(decrementButton);
     // it should start at 0
-    act(() => {jest.advanceTimersByTime(400 + 60);});
+    act(() => {jest.advanceTimersByTime(400);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(-2);
     fireEvent.mouseUp(decrementButton);
