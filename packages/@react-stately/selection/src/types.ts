@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy, LongPressEvent, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
+import {DisabledBehavior, FocusStrategy, LongPressEvent, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 
 export interface FocusState {
@@ -49,7 +49,9 @@ export interface MultipleSelectionState extends FocusState {
   /** Sets the selected keys in the collection. */
   setSelectedKeys(keys: Selection): void,
   /** The currently disabled keys in the collection. */
-  readonly disabledKeys: Set<Key>
+  readonly disabledKeys: Set<Key>,
+  /** Whether `disabledKeys` applies to selection, actions, or both. */
+  readonly disabledBehavior: DisabledBehavior
 }
 
 export interface MultipleSelectionManager extends FocusState {
@@ -69,6 +71,10 @@ export interface MultipleSelectionManager extends FocusState {
   readonly firstSelectedKey: Key | null,
   /** The last selected key in the collection. */
   readonly lastSelectedKey: Key | null,
+  /** The currently disabled keys in the collection. */
+  readonly disabledKeys: Set<Key>,
+  /** Whether `disabledKeys` applies to selection, actions, or both. */
+  readonly disabledBehavior: DisabledBehavior,
   /** Returns whether a key is selected. */
   isSelected(key: Key): boolean,
   /** Returns whether the current selection is equal to the given selection. */
@@ -94,6 +100,8 @@ export interface MultipleSelectionManager extends FocusState {
   select(key: Key, e?: PressEvent | LongPressEvent | PointerEvent): void,
   /** Returns whether the given key can be selected. */
   canSelectItem(key: Key): boolean,
+  /** Returns whether the given key is non-interactive, i.e. both selection and actions are disabled. */
+  isDisabled(key: Key): boolean,
   /** Sets the selection behavior for the collection. */
   setSelectionBehavior(selectionBehavior: SelectionBehavior): void
 }

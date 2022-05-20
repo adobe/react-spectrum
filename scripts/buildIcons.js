@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import spawn from 'cross-spawn';
-import glob from 'fast-glob';
-import {promises as fs} from 'fs';
-import path from 'path';
 import concurrently from 'concurrently';
+import glob from 'fast-glob';
+import path from 'path';
+import fs from 'fs';
 
 const PACKAGES = {
   ui: path.dirname(require.resolve('@adobe/react-spectrum-ui/dist/')),
@@ -69,14 +68,14 @@ function getIconPackageFolder(name) {
 }
 
 async function isNewerThan(a, b) {
-  let a_mtime = (await fs.stat(a)).mtime;
-  let b_mtime = (await fs.stat(b)).mtime;
+  let a_mtime = (await fs.promises.stat(a)).mtime;
+  let b_mtime = (await fs.promises.stat(b)).mtime;
   return a_mtime > b_mtime;
 }
 
 async function exists(f) {
   try {
-    await fs.access(f);
+    await fs.promises.access(f);
     return true;
   } catch (e) {
     if (e.code === 'ENOENT') return false;
