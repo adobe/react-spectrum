@@ -102,6 +102,8 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
   };
 
+  let lastSegment = useMemo(() => state.segments.find((s, i, segments) => s.isEditable && i === segments.length - 1), [state.segments]);
+
   let onKeyDown = (e) => {
     // Firefox does not fire selectstart for Ctrl/Cmd + A
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
@@ -138,7 +140,9 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
         if (segment.isPlaceholder && !state.isReadOnly) {
           state.confirmPlaceholder(segment.type);
         }
-        focusManager.focusNext({tabbable: true});
+        if (segment !== lastSegment) {
+          focusManager.focusNext({tabbable: true});
+        }
         break;
       case 'Tab':
         break;
