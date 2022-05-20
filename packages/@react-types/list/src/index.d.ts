@@ -55,7 +55,7 @@ export interface SpectrumListProps<T> extends AriaListProps<T>, StyleProps, Spec
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: (key: string) => void,
-  /** Whether `disabledKeys` applies to the whole row, or only selection. */
+  /** Whether `disabledKeys` applies to all interactions, or only selection. */
   disabledBehavior?: DisabledBehavior,
   /**
    * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the

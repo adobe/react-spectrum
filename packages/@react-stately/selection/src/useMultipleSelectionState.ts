@@ -35,7 +35,7 @@ export interface MultipleSelectionStateProps extends MultipleSelection {
   selectionBehavior?: SelectionBehavior,
   /** Whether onSelectionChange should fire even if the new set of keys is the same as the last. */
   allowDuplicateSelectionEvents?: boolean,
-  /** Whether `disabledKeys` applies to the whole item, or only selection. */
+  /** Whether `disabledKeys` applies to all interactions, or only selection. */
   disabledBehavior?: DisabledBehavior
 }
 

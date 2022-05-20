@@ -31,7 +31,8 @@ const parameters = {
     isQuiet: false,
     density: 'regular',
     selectionMode: 'multiple',
-    selectionStyle: 'checkbox'
+    selectionStyle: 'checkbox',
+    overflowMode: 'truncate'
   },
   argTypes: {
     selectionMode: {
@@ -53,6 +54,12 @@ const parameters = {
       control: {
         type: 'select',
         options: ['compact', 'regular', 'spacious']
+      }
+    },
+    overflowMode: {
+      control: {
+        type: 'radio',
+        options: ['truncate', 'wrap']
       }
     }
   }
@@ -216,17 +223,8 @@ storiesOf('ListView', module)
       {(item: any) => <Item textValue={item.title}><Image src={item.url} /><Text>{item.title}</Text><Text slot="description">JPG</Text></Item>}
     </ListView>
   ))
-  .add('overflowMode="truncate" (default)', args => (
-    <ListView width="250px" {...args} overflowMode="truncate">
-      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
-      <Item textValue="row 2">
-        <Text>Text slot with a really really really long name</Text>
-        <Text slot="description">Description slot with a really really long name</Text>
-      </Item>
-    </ListView>
-  ))
-  .add('overflowMode="wrap"', args => (
-    <ListView width="250px" {...args} overflowMode="wrap">
+  .add('long text', args => (
+    <ListView width="250px" {...args}>
       <Item textValue="row 1">row 1 with a very very very very very long title</Item>
       <Item textValue="row 2">
         <Text>Text slot with a really really really long name</Text>
@@ -1118,8 +1116,8 @@ function ActionBarExample(props?) {
   });
   return (
     <ActionBarContainer height={300}>
-      <ListView selectionMode="multiple" selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} items={list.items} width="250px">
-        {item => <Item>{item.name}</Item>}
+      <ListView {...props} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} items={list.items} width="250px">
+        {(item: any) => <Item>{item.name}</Item>}
       </ListView>
       <ActionBar
         selectedItemCount={list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size}
