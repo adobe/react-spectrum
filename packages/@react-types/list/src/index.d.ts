@@ -14,6 +14,7 @@ import {
   AriaLabelingProps,
   AsyncLoadable,
   CollectionBase,
+  DisabledBehavior,
   DOMProps,
   LoadingState,
   MultipleSelection,
@@ -54,6 +55,8 @@ export interface SpectrumListProps<T> extends AriaListProps<T>, StyleProps, Spec
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: (key: string) => void,
+  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  disabledBehavior?: DisabledBehavior,
   /**
    * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
    * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.

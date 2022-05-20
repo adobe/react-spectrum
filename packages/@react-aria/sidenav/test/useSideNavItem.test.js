@@ -22,6 +22,9 @@ describe('useSideNavItem', function () {
       },
       canSelectItem() {
         return true;
+      },
+      isDisabled() {
+        return false;
       }
     },
     disabledKeys: new Set()

@@ -262,6 +262,39 @@ describe('ListView', function () {
     }
   });
 
+  it('should disable nested elements when row is disabled', function () {
+    let tree = renderListWithFocusables({disabledKeys: ['foo'], selectionMode: 'multiple'});
+    let row = getRow(tree, 'Foo');
+    expect(row).toHaveAttribute('aria-disabled', 'true');
+    expect(row).not.toHaveAttribute('aria-selected');
+    expect(within(row).getByRole('checkbox')).toHaveAttribute('disabled');
+
+    let buttons = within(row).getAllByRole('button');
+    expect(buttons[0]).toHaveAttribute('disabled');
+    expect(buttons[1]).toHaveAttribute('disabled');
+
+    row = getRow(tree, 'Bar');
+    expect(row).not.toHaveAttribute('aria-disabled', 'true');
+    expect(row).toHaveAttribute('aria-selected', 'false');
+    expect(within(row).getByRole('checkbox')).not.toHaveAttribute('disabled');
+
+    buttons = within(row).getAllByRole('button');
+    expect(buttons[0]).not.toHaveAttribute('disabled');
+    expect(buttons[1]).not.toHaveAttribute('disabled');
+  });
+
+  it('should disable nested elements with disabledBehavior="selection"', function () {
+    let tree = renderListWithFocusables({disabledKeys: ['foo'], disabledBehavior: 'selection', selectionMode: 'multiple'});
+    let row = getRow(tree, 'Foo');
+    expect(row).not.toHaveAttribute('aria-disabled');
+    expect(row).not.toHaveAttribute('aria-selected');
+    expect(within(row).getByRole('checkbox')).toHaveAttribute('disabled');
+
+    let buttons = within(row).getAllByRole('button');
+    expect(buttons[0]).not.toHaveAttribute('disabled');
+    expect(buttons[1]).not.toHaveAttribute('disabled');
+  });
+
   describe('keyboard focus', function () {
     describe('Type to select', function () {
       it('focuses the correct cell when typing', function () {
@@ -375,8 +408,17 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(end);
       });
 
-      it('should allow focus on disabled rows', function () {
-        let tree = renderListWithFocusables({disabledKeys: ['foo'], selectionMode: 'single'});
+      it('should skip disabled rows', function () {
+        let tree = renderListWithFocusables({disabledKeys: ['bar'], selectionMode: 'single'});
+        let start = getRow(tree, 'Baz');
+        let end = getRow(tree, 'Foo');
+        triggerPress(start);
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(end);
+      });
+
+      it('should allow focus on disabled rows with disabledBehavior="selection"', function () {
+        let tree = renderListWithFocusables({disabledKeys: ['foo'], disabledBehavior: 'selection', selectionMode: 'single'});
         let start = getRow(tree, 'Bar');
         let end = getRow(tree, 'Foo');
         triggerPress(start);
@@ -403,8 +445,17 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(end);
       });
 
-      it('should allow focus on disabled rows', function () {
+      it('should skip disabled rows', function () {
         let tree = renderListWithFocusables({disabledKeys: ['bar'], selectionMode: 'single'});
+        let start = getRow(tree, 'Foo');
+        let end = getRow(tree, 'Baz');
+        triggerPress(start);
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(end);
+      });
+
+      it('should allow focus on disabled rows with disabledBehavior="selection"', function () {
+        let tree = renderListWithFocusables({disabledKeys: ['bar'], disabledBehavior: 'selection', selectionMode: 'single'});
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Bar');
         triggerPress(start);
@@ -834,6 +885,27 @@ describe('ListView', function () {
         fireEvent.keyUp(rows[0], {key: 'Enter'});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).not.toHaveBeenCalled();
+      });
+
+      it('should not trigger actions when a row is disabled', function () {
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onAction, disabledKeys: ['foo']});
+        let rows = tree.getAllByRole('row');
+
+        userEvent.click(rows[0], {pointerType: 'mouse'});
+        expect(onAction).not.toHaveBeenCalled();
+
+        userEvent.click(rows[1], {pointerType: 'mouse'});
+        expect(onAction).toHaveBeenCalledTimes(1);
+      });
+
+      it('should trigger actions when a disabledBehavior="selection"', function () {
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onAction, disabledKeys: ['foo'], disabledBehavior: 'selection'});
+        let rows = tree.getAllByRole('row');
+
+        userEvent.click(rows[0], {pointerType: 'mouse'});
+        expect(onAction).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -1444,9 +1516,25 @@ describe('ListView', function () {
         });
       });
 
-      it('should allow drag operations on a disabled row', function () {
+      it('should not allow drag operations on a disabled row', function () {
         let {getAllByRole} = render(
           <DraggableListView listViewProps={{disabledKeys: ['a']}} />
+        );
+
+        let row = getAllByRole('row')[0];
+        let cell = within(row).getByRole('gridcell');
+        expect(cell).toHaveTextContent('Adobe Photoshop');
+        expect(row).not.toHaveAttribute('draggable', 'true');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(onDragStart).toHaveBeenCalledTimes(0);
+      });
+
+      it('should allow drag operations on a disabled row with disabledBehavior="selection"', function () {
+        let {getAllByRole} = render(
+          <DraggableListView listViewProps={{disabledKeys: ['a'], disabledBehavior: 'selection'}} />
         );
 
         let row = getAllByRole('row')[0];
@@ -1656,7 +1744,7 @@ describe('ListView', function () {
       expect(dragHandle.style.position).toBe('');
     });
 
-    it('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
+    it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
       function hasDragHandle(el) {
         let buttons = within(el).getAllByRole('button');
         return buttons[0].getAttribute('draggable');
@@ -1664,6 +1752,39 @@ describe('ListView', function () {
 
       let {getAllByRole} = render(
         <DraggableListView listViewProps={{disabledKeys: ['a']}} />
+      );
+
+      let rows = getAllByRole('row');
+      let cellA = within(rows[0]).getByRole('gridcell');
+      let cellB = within(rows[1]).getByRole('gridcell');
+
+      userEvent.tab();
+      expect(hasDragHandle(cellA)).toBeFalsy();
+      moveFocus('ArrowDown');
+      expect(hasDragHandle(cellB)).toBeTruthy();
+
+      fireEvent.pointerDown(cellA, {button: 0, pointerId: 1});
+      expect(hasDragHandle(cellA)).toBeFalsy();
+      fireEvent.pointerUp(cellA, {button: 0, pointerId: 1});
+
+      fireEvent.pointerDown(cellB, {button: 0, pointerId: 1});
+      expect(hasDragHandle(cellB)).toBeTruthy();
+      fireEvent.pointerUp(cellB, {button: 0, pointerId: 1});
+
+      fireEvent.pointerEnter(cellA);
+      expect(hasDragHandle(cellA)).toBeFalsy();
+      fireEvent.pointerEnter(cellB);
+      expect(hasDragHandle(cellB)).toBeTruthy();
+    });
+
+    it('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items with disabledBehavior="selection"', function () {
+      function hasDragHandle(el) {
+        let buttons = within(el).getAllByRole('button');
+        return buttons[0].getAttribute('draggable');
+      }
+
+      let {getAllByRole} = render(
+        <DraggableListView listViewProps={{disabledKeys: ['a'], disabledBehavior: 'selection'}} />
       );
 
       let rows = getAllByRole('row');
