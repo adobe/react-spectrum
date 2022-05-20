@@ -28,13 +28,20 @@ export default {
 
 export type CardStory = ComponentStoryObj<typeof Card>;
 
-export const CardGrid: ComponentStoryObj<typeof _CardGrid> = {
-  render: (args) => <_CardGrid {...args} />,
-  args: {...Default.args}
+export const CardGrid: CardStory = {
+  render: (args, context) => <Card {...args} {...context} />,
+  args: {layout: 'grid'},
+  decorators: [(Story, context) => (
+    <Decorator
+      Story={Story}
+      context={context} />
+  )]
 };
-let _CardGrid = (props: Omit<SpectrumCardProps, 'children'>) => {
-  let {scale} = useProvider();
 
+let Decorator = (props) => {
+  let {Story, context} = props;
+  let {args} = context;
+  let {scale} = useProvider();
   return (
     <div
       style={{
@@ -52,13 +59,13 @@ let _CardGrid = (props: Omit<SpectrumCardProps, 'children'>) => {
         (new Array(15).fill(0)).map((_, index) => {
           let url = getImage(index);
           return (
-            <div style={scale === 'medium' ? {width: '208px', height: '293px'} : {width: '208px', height: '355px'}}>
-              <Card {...props} layout="grid" key={`${index}${url}`}>
+            <div style={scale === 'medium' ? {width: '208px', height: '293px'} : {width: '208px', height: '355px'}} key={`${index}${url}`}>
+              <Story {...args}>
                 <Image src={url} />
                 <Heading>Title {index}</Heading>
                 <Text slot="detail">PNG</Text>
                 <Content>Description</Content>
-              </Card>
+              </Story>
             </div>
           );
         })
@@ -243,35 +250,38 @@ let _CardGridNoPreview = (props: SpectrumCardProps) => {
   );
 };
 
-export const CardWaterfallNoPreview: ComponentStoryObj<typeof _CardWaterfallNoPreview> = {
-  render: (args) => <_CardWaterfallNoPreview {...args} />,
-  args: {...Default.args}
+export const CardWaterfallNoPreview: CardStory = {
+  render: (args, context) => <Card {...args} {...context} />,
+  args: {layout: 'waterfall'},
+  decorators: [(Story, {args: props}) => (
+    <div
+      style={{
+        width: '100%',
+        height: '150vh',
+        margin: '50px',
+        display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'wrap',
+        alignItems: 'start'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
+              <Story
+                {...props}
+                children={(
+                  <>
+                    <Heading>Title {index}</Heading>
+                    <Text slot="detail">PNG</Text>
+                    <Content>{getDescription(index)}</Content>
+                  </>
+                )} />
+            </div>
+          );
+        })
+      }
+    </div>
+  )]
 };
-
-let _CardWaterfallNoPreview = (props: SpectrumCardProps) => (
-  <div
-    style={{
-      width: '100%',
-      height: '150vh',
-      margin: '50px',
-      display: 'flex',
-      flexDirection: 'column',
-      flexWrap: 'wrap',
-      alignItems: 'start'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{width: '208px', margin: '10px'}}>
-            <Card {...Default.args} {...props} layout="waterfall" key={`${index}${url}`}>
-              <Heading>Title {index}</Heading>
-              <Text slot="detail">PNG</Text>
-              <Content>{getDescription(index)}</Content>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
