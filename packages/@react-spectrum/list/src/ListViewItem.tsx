@@ -12,8 +12,7 @@
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
-import {Content} from '@react-spectrum/view';
+import {classNames, ClearSlots, SlotProvider, useHasChild} from '@react-spectrum/utils';
 import {CSSTransition} from 'react-transition-group';
 import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
 import {DropTarget, Node} from '@react-types/shared';
@@ -25,6 +24,7 @@ import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
+import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useListItem, useListSelectionCheckbox} from '@react-aria/list';
 import {useLocale} from '@react-aria/i18n';
@@ -58,10 +58,10 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let {rowProps, gridCellProps, isPressed} = useListItem({
     node: item,
     isVirtualized: true,
-    shouldSelectOnPressUp: isListDraggable,
-    isDisabled
+    shouldSelectOnPressUp: isListDraggable
   }, state, rowRef);
   let {checkboxProps} = useListSelectionCheckbox({key: item.key}, state);
+  let hasDescription = useHasChild(`.${listStyles['react-spectrum-ListViewItem-description']}`, rowRef);
 
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
@@ -172,7 +172,8 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               'react-spectrum-ListViewItem--dropTarget': !!isDropTarget,
               'react-spectrum-ListViewItem--firstRow': isFirstRow,
               'react-spectrum-ListViewItem--lastRow': isLastRow,
-              'react-spectrum-ListViewItem--isFlushBottom': isFlushWithContainerBottom
+              'react-spectrum-ListViewItem--isFlushBottom': isFlushWithContainerBottom,
+              'react-spectrum-ListViewItem--hasDescription': hasDescription
             }
           )
         }
@@ -216,7 +217,6 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
           </CSSTransition>
           <SlotProvider
             slots={{
-              content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
               text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
               description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
               icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
@@ -229,7 +229,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               },
               actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
             }}>
-            {typeof item.rendered === 'string' ? <Content>{item.rendered}</Content> : item.rendered}
+            {typeof item.rendered === 'string' ? <Text>{item.rendered}</Text> : item.rendered}
             <ClearSlots>
               {chevron}
             </ClearSlots>
