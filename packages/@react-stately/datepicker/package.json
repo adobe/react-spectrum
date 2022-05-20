@@ -19,6 +19,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@internationalized/date": "3.0.0-rc.0",
+    "@internationalized/message": "^3.0.6",
     "@react-stately/overlays": "^3.2.0",
     "@react-stately/utils": "^3.4.1",
     "@react-types/datepicker": "3.0.0-rc.0",

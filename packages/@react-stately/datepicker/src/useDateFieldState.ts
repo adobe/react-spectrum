@@ -13,6 +13,7 @@
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
 import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
+import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
@@ -31,6 +32,8 @@ export interface DateSegment {
   maxValue?: number,
   /** Whether the value is a placeholder. */
   isPlaceholder: boolean,
+  /** A placeholder string for the segment. */
+  placeholder: string,
   /** Whether the segment is editable. */
   isEditable: boolean
 }
@@ -256,10 +259,11 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
           text: segment.value,
           ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
           isPlaceholder: EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type],
+          placeholder: EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null,
           isEditable
         } as DateSegment;
       })
-  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar]);
+  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale]);
 
   let hasEra = useMemo(() => segments.some(s => s.type === 'era'), [segments]);
 

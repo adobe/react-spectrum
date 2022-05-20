@@ -70,6 +70,7 @@ function EditableSegment({segment, state}: DatePickerSegmentProps) {
         minWidth: !isNumeric ? null : String(segment.maxValue).length + 'ch'
       }}
       data-testid={segment.type}>
+      <span aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder}</span>
       {segment.isPlaceholder ? '' : segment.text}
     </div>
   );

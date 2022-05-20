@@ -35,7 +35,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let displayNames = useDisplayNames();
   let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state);
 
-  let textValue = segment.text;
+  let textValue = segment.isPlaceholder ? '' : segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
   let monthDateFormatter = useDateFormatter({month: 'long', timeZone: options.timeZone});
   let hourDateFormatter = useDateFormatter({
@@ -44,15 +44,15 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     timeZone: options.timeZone
   });
 
-  if (segment.type === 'month') {
+  if (segment.type === 'month' && !segment.isPlaceholder) {
     let monthTextValue = monthDateFormatter.format(state.dateValue);
     textValue = monthTextValue !== textValue ? `${textValue} – ${monthTextValue}` : monthTextValue;
-  } else if (segment.type === 'hour') {
+  } else if (segment.type === 'hour' && !segment.isPlaceholder) {
     textValue = hourDateFormatter.format(state.dateValue);
   }
 
   let {spinButtonProps} = useSpinButton({
-    value: segment.value,
+    value: segment.isPlaceholder ? null : segment.value,
     textValue,
     minValue: segment.minValue,
     maxValue: segment.maxValue,
@@ -332,7 +332,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       ...touchPropOverrides,
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
       'aria-describedby': ariaDescribedBy,
-      'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
       'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,

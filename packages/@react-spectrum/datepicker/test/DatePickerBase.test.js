@@ -41,7 +41,7 @@ function render(el) {
   );
 }
 
-describe('DatePickerBase', function () {
+describe.skip('DatePickerBase', function () {
   describe('basics', function () {
     it.each`
       Name                   | Component            | numSegments
