@@ -13,7 +13,6 @@
 import {MessageDictionary} from '@internationalized/message';
 
 const placeholders = new MessageDictionary({
-  ace: {year: undefined, month: undefined, day: undefined},
   ach: {year: 'mwaka', month: 'dwe', day: 'nino'},
   af: {year: 'jjjj', month: 'mm', day: 'dd'},
   am: {year: 'ዓዓዓዓ', month: 'ሚሜ', day: 'ቀቀ'},
@@ -46,7 +45,7 @@ const placeholders = new MessageDictionary({
   'es-419': {year: 'aaaa', month: 'mm', day: 'dd'},
   et: {year: 'aaaa', month: 'kk', day: 'pp'},
   eu: {year: 'uuuu', month: 'hh', day: 'ee'},
-  fa: {year: 'yyyy', month: 'mm', day: 'dd'},
+  fa: {year: 'سال', month: 'ماه', day: 'روز'},
   ff: {year: 'hhhh', month: 'll', day: 'ññ'},
   fi: {year: 'vvvv', month: 'kk', day: 'pp'},
   fil: {year: 'yyyy', month: 'mm', day: 'dd'},
@@ -69,7 +68,6 @@ const placeholders = new MessageDictionary({
   is: {year: 'yyyy', month: 'mm', day: 'dd'},
   it: {year: 'aaaa', month: 'mm', day: 'gg'},
   iw: {year: 'yyyy', month: 'mm', day: 'dd'},
-  ixl: {year: undefined, month: undefined, day: undefined},
   ja: {year: ' 年 ', month: '月', day: '日'},
   ka: {year: 'წწწწ', month: 'თთ', day: 'რრ'},
   kab: {year: 'yyyy', month: 'mm', day: 'dd'},
@@ -83,10 +81,9 @@ const placeholders = new MessageDictionary({
   ltg: {year: 'yyyy', month: 'mm', day: 'dd'},
   lv: {year: 'gggg', month: 'mm', day: 'dd'},
   meh: {year: 'aaaa', month: 'mm', day: 'dd'},
-  mix: {year: undefined, month: undefined, day: undefined},
   ml: {year: 'വർഷം', month: 'മാസം', day: 'തീയതി'},
   mr: {year: 'yyyy', month: 'mm', day: 'dd'},
-  ms: {year: 'yyyy', month: 'mm', day: 'dd'},
+  ms: {year: 'tttt', month: 'mm', day: 'hh'},
   my: {year: 'yyyy', month: 'mm', day: 'dd'},
   nb: {year: 'yyyy', month: 'mm', day: 'dd'},
   ne: {year: 'yyyy', month: 'mm', day: 'dd'},
@@ -124,8 +121,8 @@ const placeholders = new MessageDictionary({
   ur: {year: 'yyyy', month: 'mm', day: 'dd'},
   vi: {year: 'yyyy', month: 'mm', day: 'dd'},
   zh: {year: 'yyyy', month: 'mm', day: 'dd'},
-  'zh-CN': {year: ' 年 ', month: '月', day: '日'},
-  'zh-TW': {year: ' 年 ', month: '月', day: '日'}
+  'zh-CN': {year: '年', month: '月', day: '日'},
+  'zh-TW': {year: '年', month: '月', day: '日'}
 }, 'en');
 
 export function getPlaceholder(field: string, value: string, locale: string) {
