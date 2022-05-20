@@ -490,7 +490,7 @@ export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOpt
         if ((node as HTMLElement).matches(selector)
           && isElementVisible(node as HTMLElement)
           && (!scope || isElementInScope(node as HTMLElement, scope))
-          && (!opts.accept || opts.accept(node as Element))
+          && (!opts?.accept || opts.accept(node as Element))
         ) {
           return NodeFilter.FILTER_ACCEPT;
         }
