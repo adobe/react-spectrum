@@ -16,3 +16,5 @@ export * from './useGridRowGroup';
 export * from './useGridRow';
 export * from './useGridCell';
 export * from './useGridSelectionCheckbox';
+export * from './useHighlightSelectionDescription';
+export * from './useGridSelectionAnnouncement';

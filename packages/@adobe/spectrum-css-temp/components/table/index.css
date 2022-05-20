@@ -338,7 +338,7 @@ svg.spectrum-Table-sortedIcon {
       }
     }
   }
-  &.spectrum-Table--isScrollingVertically {
+  &.spectrum-Table--isVerticalScrollbarVisible {
     .spectrum-Table-row {
       &.spectrum-Table-row--firstRow.is-selected {
         &:after {
@@ -353,7 +353,7 @@ svg.spectrum-Table-sortedIcon {
       }
     }
   }
-  &.spectrum-Table--isScrollingHorizontally {
+  &.spectrum-Table--isHorizontalScrollbarVisible {
     .spectrum-Table-row {
       /* beat specificity of isFlushBottom */
       &.spectrum-Table-row--lastRow.is-selected.is-selected {

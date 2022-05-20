@@ -7,7 +7,7 @@ module.exports = {
     '@storybook/addon-actions',
     '@storybook/addon-links',
     '@storybook/addon-a11y',
-    '@storybook/addon-knobs',
+    '@storybook/addon-controls',
     'storybook-dark-mode',
     './custom-addons/provider/register',
     './custom-addons/descriptions/register',
