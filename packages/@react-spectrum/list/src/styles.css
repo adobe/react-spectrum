@@ -72,14 +72,18 @@
           background-color: var(--spectrum-table-row-background-color-selected-key-focus);
         }
 
-        /* Box shadow for left, right, and bottom border for selected rows. */
+        /* Negative block start causes borders to actually be shared between items. Only works if we allow item overflow to be visible, like card focus rings. */
         &:after {
+          inset-block-start: -1px;
           box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
         }
+      }
 
-        &.is-prev-selected {
+      /* First item in the ListView should not have a border that extends outside of itself to the top, it doesn't need to share a border space. */
+      &.react-spectrum-ListViewItem--firstRow {
+        &.is-selected {
           &:after {
-            box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+            inset-block-start: 0px;
           }
         }
       }
@@ -249,6 +253,12 @@
     }
   }
 
+  &.is-disabled {
+    &, .react-spectrum-ListViewItem-content, .react-spectrum-ListViewItem-description {
+      color: var(--spectrum-alias-text-color-disabled);
+    }
+  }
+
   &.has-checkbox {
     /* have to eliminate vertical padding to allow proper vertical alignment */
     padding-top: 0px;
@@ -372,6 +382,11 @@
     grid-area: chevron;
     padding-inline-start: var(--spectrum-global-dimension-size-75);
     display: none;
+    transition: color var(--spectrum-global-animation-duration-100);
+
+    &.is-disabled {
+      color: var(--spectrum-alias-icon-color-disabled);
+    }
   }
 
   &.react-spectrum-ListViewItem-dragPreview {

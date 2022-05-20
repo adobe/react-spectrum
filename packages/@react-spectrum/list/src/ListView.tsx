@@ -9,7 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, LoadingState} from '@react-types/shared';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
@@ -65,7 +64,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density']) {
+function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density'], allowDisabledKeyFocus: boolean) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
@@ -75,9 +74,9 @@ function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['de
       padding: 0,
       collator,
       loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
-      allowDisabledKeyFocus: true
+      allowDisabledKeyFocus
     })
-    , [collator, scale, density, isEmpty]);
+    , [collator, scale, density, isEmpty, allowDisabledKeyFocus]);
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
@@ -117,7 +116,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
 
   let {styleProps} = useStyleProps(props);
   let {locale} = useLocale();
-  let layout = useListLayout(state, props.density || 'regular');
+  let layout = useListLayout(state, props.density || 'regular', state.selectionManager.disabledBehavior === 'selection');
   let provider = useProvider();
   let dragState: DraggableCollectionState;
   if (isListDraggable) {
