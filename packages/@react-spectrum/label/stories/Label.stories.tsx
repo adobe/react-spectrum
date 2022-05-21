@@ -9,92 +9,55 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { Label } from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Label} from '../';
 import React from 'react';
-import { SpectrumLabelProps } from '@react-types/label';
-import { TextField } from '@react-spectrum/textfield';
+import {SpectrumLabelProps} from '@react-types/label';
+import {TextField} from '@react-spectrum/textfield';
+
+type LabelStory = ComponentStoryObj<typeof Label>;
+
+const argTypes = {
+  labelAlign: {
+    control: 'radio',
+    defaultValue: 'start',
+    options: ['end', 'start']
+  },
+  labelPosition: {
+    control: 'radio',
+    defaultValue: 'top',
+    options: ['side', 'top']
+  },
+  necessityIndicator: {
+    control: 'radio',
+    defaultValue: 'icon',
+    options: ['icon', 'label']
+  },
+  isRequired: {
+    control: 'boolean',
+    defaultValue: false
+  }
+}
+
 export default {
   title: 'Label',
-  parameters: {
-    providerSwitcher: {
-      status: 'positive',
-    },
-  },
-};
-export const Default = () => render({});
-export const LabelAlignStart = {
-  render: () =>
-    render({
-      labelAlign: 'start',
-      width: '100%',
-    }),
-  name: 'labelAlign: start',
-};
-export const LabelAlignEnd = {
-  render: () =>
-    render({
-      labelAlign: 'end',
-      width: '100%',
-    }),
-  name: 'labelAlign: end',
-};
-export const LabelPositionSideLabelAlignStart = {
-  render: () =>
-    render({
-      labelPosition: 'side',
-      labelAlign: 'start',
-      width: 80,
-    }),
-  name: 'labelPosition: side, labelAlign: start',
-};
-export const LabelPositionSideLabelAlignEnd = {
-  render: () =>
-    render({
-      labelPosition: 'side',
-      labelAlign: 'end',
-      width: 80,
-    }),
-  name: 'labelPosition: side, labelAlign: end',
-};
-export const IsRequired = {
-  render: () =>
-    render({
-      isRequired: true,
-    }),
-  name: 'isRequired',
-};
-export const NecessityIndicatorIcon = {
-  render: () =>
-    render({
-      isRequired: true,
-      necessityIndicator: 'icon',
-    }),
-  name: 'necessityIndicator: icon',
-};
-export const NecessityIndicatorLabel = {
-  render: () =>
-    render({
-      isRequired: true,
-      necessityIndicator: 'label',
-    }),
-  name: 'necessityIndicator: label',
-};
-export const IsRequiredFalseNecessityIndicatorLabel = {
-  render: () =>
-    render({
-      isRequired: false,
-      necessityIndicator: 'label',
-    }),
-  name: 'isRequired: false, necessityIndicator: label',
+  component: Label,
+  args: {width: '100%'},
+  argTypes: argTypes
+} as ComponentMeta<typeof Label>;
+
+export let Default: LabelStory = {
+  render: (args) => <TextFieldLabel {...args} />
 };
 
-function render(props: SpectrumLabelProps = {}) {
+export let WidthForLabelAlignSide: LabelStory = {
+  ...Default,
+  args: {width: 80, labelPosition: 'side'}
+};
+
+function TextFieldLabel(props: SpectrumLabelProps = {}) {
   return (
-    <div
-      style={{
-        whiteSpace: 'nowrap',
-      }}
-    >
+    <div style={{whiteSpace: 'nowrap'}}>
       <Label {...props} for="test">
         Test
       </Label>
