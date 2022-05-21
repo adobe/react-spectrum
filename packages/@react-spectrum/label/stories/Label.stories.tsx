@@ -37,7 +37,7 @@ const argTypes = {
     control: 'boolean',
     defaultValue: false
   }
-}
+};
 
 export default {
   title: 'Label',
