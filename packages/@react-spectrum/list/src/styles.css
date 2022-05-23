@@ -253,6 +253,12 @@
     }
   }
 
+  &.is-disabled {
+    &, .react-spectrum-ListViewItem-content, .react-spectrum-ListViewItem-description {
+      color: var(--spectrum-alias-text-color-disabled);
+    }
+  }
+
   &.has-checkbox {
     /* have to eliminate vertical padding to allow proper vertical alignment */
     padding-top: 0px;
@@ -376,6 +382,11 @@
     grid-area: chevron;
     padding-inline-start: var(--spectrum-global-dimension-size-75);
     display: none;
+    transition: color var(--spectrum-global-animation-duration-100);
+
+    &.is-disabled {
+      color: var(--spectrum-alias-icon-color-disabled);
+    }
   }
 
   &.react-spectrum-ListViewItem-dragPreview {
