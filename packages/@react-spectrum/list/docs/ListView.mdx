@@ -148,13 +148,13 @@ Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<Action
 to an `<Item>` will add a chevron icon to the end of the row to visually indicate that the row has children.
 
 ```tsx example
-<ListView selectionMode="multiple" maxWidth="size-6000" aria-label="List example with complex items">
-  <Item textValue="Utilities" hasChildItems>
+<ListView selectionMode="multiple" maxWidth="size-6000" aria-label="List example with complex items" onAction={key => alert(`Triggering action on item ${key}`)}>
+  <Item key="1" textValue="Utilities" hasChildItems>
     <Folder />
     <Text>Utilities</Text>
     <Text slot="description">16 items</Text>
   </Item>
-  <Item textValue="Glasses Dog">
+  <Item key="2" textValue="Glasses Dog">
     <Image
       src="https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg"
       alt="Shiba Inu with glasses" />
@@ -164,7 +164,7 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
       <Info />
     </ActionButton>
   </Item>
-  <Item textValue="readme">
+  <Item key="3" textValue="readme">
     <Text>readme.txt</Text>
     <Text slot="description">TXT</Text>
     <ActionGroup buttonLabelBehavior="hide">
@@ -178,7 +178,7 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
       </Item>
     </ActionGroup>
   </Item>
-  <Item textValue="Onboarding">
+  <Item key="4" textValue="Onboarding">
     <Text>Onboarding</Text>
     <Text slot="description">PDF</Text>
     <ActionMenu>
