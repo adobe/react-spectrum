@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from 'react';
+import {Key, RefObject} from 'react';
 
 export interface DragDropEvent {
   // Relative to the target element's position
@@ -149,6 +149,8 @@ interface DraggableCollectionEndEvent extends DragEndEvent {
   keys: Set<Key>
 }
 
+export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement) => void) => void;
+
 export interface DraggableCollectionProps {
   /** Hander that is called when a drag operation is started. */
   onDragStart?: (e: DraggableCollectionStartEvent) => void,
@@ -158,8 +160,8 @@ export interface DraggableCollectionProps {
   onDragEnd?: (e: DraggableCollectionEndEvent) => void,
   /** A function that returns the drag item types for each item in the drag. */
   getItems: (keys: Set<Key>) => DragItem[],
-  /** Function that is called to render a preview to display while a drag operation is in progress. */
-  renderPreview?: (selectedKeys: Set<Key>, draggedKey: Key) => JSX.Element,
+  /** The ref of the element that will be rendered as the drag preview while dragging. */
+  preview?: RefObject<DragPreviewRenderer>,
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[]
 }

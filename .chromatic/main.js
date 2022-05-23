@@ -6,8 +6,7 @@ module.exports = {
   addons: [
     '@storybook/addon-actions',
     '@storybook/addon-links',
-    '@storybook/addon-a11y',
-    '@storybook/addon-knobs'
+    '@storybook/addon-a11y'
   ],
   typescript: {
     check: false,
