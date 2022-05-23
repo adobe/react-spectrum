@@ -10,17 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {number, withKnobs} from '@storybook/addon-knobs';
 import {ProgressCircle} from '../';
 import React, {CSSProperties} from 'react';
 import {storiesOf} from '@storybook/react';
-
-const sliderOptions = {
-  range: true,
-  min: 0,
-  max: 100,
-  step: 1
-};
 
 const grayedBoxStyle: CSSProperties = {
   width: '100px',
@@ -32,50 +24,46 @@ const grayedBoxStyle: CSSProperties = {
 };
 
 storiesOf('Progress/ProgressCircle', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .addDecorator(withKnobs)
+  .addParameters({
+    providerSwitcher: {status: 'positive'},
+    args: {value: 32},
+    argTypes: {
+      value: {
+        control: {
+          type: 'range',
+          min: 0,
+          max: 100
+        }
+      }
+    }
+  })
   .add(
     'Default',
-    () => render()
+    args => render(args)
   )
   .add(
     'value: 50',
-    () => {
-      const value = number('Value', 50, sliderOptions);
-      return render({value});
-    }
+    () => render({value: 50})
   )
   .add(
     'value: 100',
-    () => {
-      const value = number('Value', 100, sliderOptions);
-      return render({value});
-    }
+    () => render({value: 100})
   )
   .add(
     'size: S',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({value, size: 'S'});
-    }
+    args => render({...args, size: 'S'})
   )
   .add(
     'size: L',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({value, size: 'L'});
-    }
+    args => render({...args, size: 'L'})
   )
   .add(
     'variant: overBackground',
-    () =>  {
-      const value = number('Value', 32, sliderOptions);
-      return (
-        <div style={grayedBoxStyle}>
-          {render({value, variant: 'overBackground'})}
-        </div>
-      );
-    }
+    args =>  (
+      <div style={grayedBoxStyle}>
+        {render({...args, variant: 'overBackground'})}
+      </div>
+    )
   )
   .add(
     'Using raw values for minValue, maxValue, and value',

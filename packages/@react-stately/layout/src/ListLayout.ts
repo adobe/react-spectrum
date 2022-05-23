@@ -293,6 +293,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     let rect = new Rect(x, y, width - x, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+    // allow overflow so the focus ring/selection ring can extend outside to overlap with the adjacent items borders
+    layoutInfo.allowOverflow = true;
     layoutInfo.estimatedSize = isEstimated;
     return {
       layoutInfo
