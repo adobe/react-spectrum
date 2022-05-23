@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "Curseur 2D",
-  "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorNameAndValue": "{name} : {value}",
+  "colorPicker": "Sélecteur de couleurs",
+  "twoDimensionalSlider": "Curseur 2D"
 }

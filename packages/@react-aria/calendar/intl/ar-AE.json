@@ -1,11 +1,14 @@
 {
-  "dateSelected": "تم تحديد {date, date, full}",
+  "dateRange": "{startDate} إلى {endDate}",
+  "dateSelected": "{date} المحدد",
   "finishRangeSelectionPrompt": "انقر لإنهاء عملية تحديد نطاق التاريخ",
+  "maximumDate": "آخر تاريخ متاح",
+  "minimumDate": "أول تاريخ متاح",
   "next": "التالي",
   "previous": "السابق",
-  "selectedDateDescription": "التاريخ المحدد: {date, date, full}",
-  "selectedRangeDescription": "النطاق المحدد: {start, date, long} إلى {end, date, long}",
+  "selectedDateDescription": "تاريخ محدد: {date}",
+  "selectedRangeDescription": "المدى الزمني المحدد: {dateRange}",
   "startRangeSelectionPrompt": "انقر لبدء عملية تحديد نطاق التاريخ",
-  "todayDate": "اليوم، {date, date, full}",
-  "todayDateSelected": "اليوم، تم تحديد {date, date, full}"
+  "todayDate": "اليوم، {date}",
+  "todayDateSelected": "اليوم، {date} محدد"
 }

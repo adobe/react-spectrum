@@ -12,9 +12,10 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {CalendarDate, parseDate, toZoned} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {DateRangePicker} from '../';
+import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@adobe/react-spectrum';
@@ -85,6 +86,29 @@ storiesOf('Date and Time/DateRangePicker', module)
   .add(
     'minDate: 2010/1/1, maxDate: 2020/1/1',
     () => render({minValue: new CalendarDate(2010, 1, 1), maxValue: new CalendarDate(2020, 1, 1)})
+  )
+  .add(
+    'isDateUnavailable',
+    () => {
+      const disabledRanges = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+      let [value, setValue] = React.useState(null);
+      let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
+      let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      return render({
+        value,
+        onChange: setValue,
+        validationState: isInvalid ? 'invalid' : null,
+        isDateUnavailable,
+        errorMessage: 'Selected ranges may not include unavailable dates.'
+      });
+    }
+  )
+  .add(
+    'isDateAvailable, allowsNonContiguousRanges',
+    () => {
+      let {locale} = useLocale();
+      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true});
+    }
   )
   .add(
     'placeholderValue: 1980/1/1',
@@ -162,12 +186,20 @@ storiesOf('Date and Time/DateRangePicker/styling', module)
     () => render({errorMessage: 'Dates must be after today', validationState: 'invalid'})
   )
   .add(
+    'invalid with time',
+    () => render({validationState: 'invalid', granularity: 'minute', defaultValue: {start: toZoned(parseDate('2020-02-03'), 'America/New_York'), end: toZoned(parseDate('2020-02-12'), 'America/Los_Angeles')}})
+  )
+  .add(
     'in scrollable container',
     () => (
       <div style={{height: '200vh'}}>
         {render({granularity: 'second'})}
       </div>
     )
+  )
+  .add(
+    'shouldFlip: false',
+    () => render({shouldFlip: false})
   );
 
 function render(props = {}) {

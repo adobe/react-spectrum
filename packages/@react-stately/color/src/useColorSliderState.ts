@@ -51,13 +51,14 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
       setColor(color.withChannelValue(channel, v));
     },
     onChangeEnd([v]) {
-      // onChange will have already been called with the right value, this is just to trigger onChangEnd
+      // onChange will have already been called with the right value, this is just to trigger onChangeEnd
       if (props.onChangeEnd) {
         props.onChangeEnd(color.withChannelValue(channel, v));
       }
     }
   });
 
+  let {step, pageSize} = color.getChannelRange(channel);
   return {
     ...sliderState,
     value: color,
@@ -84,6 +85,8 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     },
     getThumbValueLabel() {
       return color.formatChannelValue(channel, locale);
-    }
+    },
+    step,
+    pageSize
   };
 }

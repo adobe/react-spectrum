@@ -10,8 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useDatePicker';
-export * from './useDateSegment';
-export * from './useDateField';
-export * from './useDateRangePicker';
-export * from './useDisplayNames';
+export {useDatePicker} from './useDatePicker';
+export {useDateSegment} from './useDateSegment';
+export {useDateField, useTimeField} from './useDateField';
+export {useDateRangePicker} from './useDateRangePicker';
+export {useDisplayNames} from './useDisplayNames';
+
+export type {AriaDatePickerProps, AriaDateRangePickerProps} from '@react-types/datepicker';
+export type {AriaDateFieldProps, DateFieldAria} from './useDateField';
+export type {DatePickerAria} from './useDatePicker';
+export type {DateRangePickerAria} from './useDateRangePicker';
+export type {DateSegmentAria} from './useDateSegment';

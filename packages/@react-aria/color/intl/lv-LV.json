@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "Plaknes slīdnis",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Krāsu atlasītājs",
+  "twoDimensionalSlider": "2D slīdnis"
 }

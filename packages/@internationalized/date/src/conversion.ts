@@ -180,6 +180,7 @@ export function fromDateToLocal(date: Date): ZonedDateTime {
   return fromDate(date, getLocalTimeZone());
 }
 
+/** Converts a value with date components such as a `CalendarDateTime` or `ZonedDateTime` into a `CalendarDate`. */
 export function toCalendarDate(dateTime: AnyCalendarDate): CalendarDate {
   return new CalendarDate(dateTime.calendar, dateTime.era, dateTime.year, dateTime.month, dateTime.day);
 }
@@ -202,6 +203,10 @@ export function toTimeFields(date: AnyTime): TimeFields {
   };
 }
 
+/**
+ * Converts a date value to a `CalendarDateTime`. An optional `Time` value can be passed to set the time
+ * of the resulting value, otherwise it will default to midnight.
+ */
 export function toCalendarDateTime(date: CalendarDate | CalendarDateTime | ZonedDateTime, time?: AnyTime): CalendarDateTime {
   let hour = 0, minute = 0, second = 0, millisecond = 0;
   if ('timeZone' in date) {
@@ -227,10 +232,12 @@ export function toCalendarDateTime(date: CalendarDate | CalendarDateTime | Zoned
   );
 }
 
-export function toTime(dateTime: CalendarDateTime): Time {
+/** Extracts the time components from a value containing a date and time. */
+export function toTime(dateTime: CalendarDateTime | ZonedDateTime): Time {
   return new Time(dateTime.hour, dateTime.minute, dateTime.second, dateTime.millisecond);
 }
 
+/** Converts a date from one calendar system to another. */
 export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calendar): T {
   if (date.calendar.identifier === calendar.identifier) {
     return date;
@@ -246,7 +253,11 @@ export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calenda
   return copy;
 }
 
-export function toZoned(date: CalendarDate | CalendarDateTime | ZonedDateTime, timeZone: string, disambiguation?: Disambiguation) {
+/**
+ * Converts a date value to a `ZonedDateTime` in the provided time zone. The `disambiguation` option can be set
+ * to control how values that fall on daylight saving time changes are interpreted.
+ */
+export function toZoned(date: CalendarDate | CalendarDateTime | ZonedDateTime, timeZone: string, disambiguation?: Disambiguation): ZonedDateTime {
   if (date instanceof ZonedDateTime) {
     if (date.timeZone === timeZone) {
       return date;
@@ -264,11 +275,13 @@ export function zonedToDate(date: ZonedDateTime) {
   return new Date(ms);
 }
 
+/** Converts a `ZonedDateTime` from one time zone to another. */
 export function toTimeZone(date: ZonedDateTime, timeZone: string): ZonedDateTime {
   let ms = epochFromDate(date) - date.offset;
   return toCalendar(fromAbsolute(ms, timeZone), date.calendar);
 }
 
-export function toLocalTimeZone(date: ZonedDateTime) {
+/** Converts the given `ZonedDateTime` into the user's local time zone. */
+export function toLocalTimeZone(date: ZonedDateTime): ZonedDateTime {
   return toTimeZone(date, getLocalTimeZone());
 }
