@@ -91,6 +91,7 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
 
   let formatMessage = useMessageFormatter(intlMessages);
   let {longPressProps} = useLongPress({
+    isDisabled: isDisabled || trigger !== 'longPress',
     accessibilityDescription: formatMessage('longPressMessage'),
     onLongPressStart() {
       state.close();

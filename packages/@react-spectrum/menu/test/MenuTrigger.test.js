@@ -87,7 +87,7 @@ describe('MenuTrigger', function () {
     expect(onOpenChange).toBeCalledTimes(0);
 
     triggerEvent(triggerButton);
-    jest.runAllTimers();
+    act(() => {jest.runAllTimers();});
 
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
@@ -111,7 +111,7 @@ describe('MenuTrigger', function () {
     }
 
     triggerEvent(triggerButton, menu);
-    jest.runAllTimers();
+    act(() => {jest.runAllTimers();});
     expect(menu).not.toBeInTheDocument();
 
     if (Component === MenuTrigger) {
@@ -251,6 +251,7 @@ describe('MenuTrigger', function () {
       act(() => {jest.runAllTimers();});
 
       expect(menu).not.toBeInTheDocument();
+      act(() => {jest.runAllTimers();});
 
       // Opening menu via down arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -368,7 +369,8 @@ describe('MenuTrigger', function () {
       act(() => {
         triggerEvent(itemToAction);
       });
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
     }
 
     it.each`
@@ -385,7 +387,8 @@ describe('MenuTrigger', function () {
 
       let scrollable = tree.getByTestId('scrollable');
       fireEvent.scroll(scrollable);
-      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
     });
@@ -403,7 +406,8 @@ describe('MenuTrigger', function () {
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
-      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
     });
@@ -422,7 +426,8 @@ describe('MenuTrigger', function () {
       expect(menu).toBeTruthy();
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
-      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
     });
@@ -669,7 +674,8 @@ describe('MenuTrigger', function () {
       act(() => {
         fireEvent.click(buttons[0]);
       });
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+      act(() => {jest.runAllTimers();}); // FocusScope raf
       expect(onOpenChange).toHaveBeenCalledTimes(2);
 
       expect(menu).not.toBeInTheDocument();
@@ -769,7 +775,8 @@ describe('MenuTrigger', function () {
 
     // pressing once on button 2 should close menu1, but not open menu2 yet
     triggerPress(button2);
-    act(() => jest.runAllTimers());
+    act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
+    act(() => {jest.runAllTimers();}); // FocusScope raf
     expect(queryByRole('menu')).toBeNull();
 
     // second press of button2 should open menu2

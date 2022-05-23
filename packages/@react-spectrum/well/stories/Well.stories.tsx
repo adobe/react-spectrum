@@ -10,17 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {Well} from '../';
 
-storiesOf('Well', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'Default',
-    () => render()
-  );
+type WellStory = ComponentStoryObj<typeof Well>;
 
-function render() {
-  return (<Well>This is a React Spectrum Well</Well>);
-}
+let meta = {
+  title: 'Well',
+  component: Well
+} as ComponentMeta<typeof Well>;
+
+export default meta;
+
+export let Default: WellStory = {
+  args: {children: <>This is a React Spectrum Well</>}
+};
