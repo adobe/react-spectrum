@@ -60,6 +60,15 @@ and provide those hooks with your desired options.
 `useDragHooks` will then provide you with a set of drag hooks that you can pass to the component via its `dragHooks` prop, thus enabling drag operations for the component.
 Drop operations can be enabled in the same way by passing the hooks from `useDropHooks` to the component's `dropHooks` prop.
 
+Of the various hook options above, `getAllowedDropOperations` and `getDropOperation` maybe of particular interest since it allows you to specify what kinds of drag and drop operations you want to allow.
+When the dragged items are dropped on a drop target created using the React Aria drag and drop hooks, the allowed drop operations you return in `getAllowedDropOperations`
+are provided to the drop target's `getDropOperation`, giving the drop target extra information which it can use to decide what drop operation to execute. This in turn provides
+the `onDragEnd` and `onDrop` handlers with the executed drop operation, allowing you to decide what to do with the dragged items in your original collection and in the dropped collection.
+For instance, you may have a draggable collection of items that allows `move` and `copy` operations but you need a way to know whether or not you should be removing the dragged items
+from the list after a drop operation. A drop target that only allows `copy` operations, such as a file upload drop zone, would be able to return `copy` from its `getDropOperation` and communicate that
+to your collection's `onDragEnd` handler, letting it know that it shouldn't remove the dragged items from the list. Alternatively, a drop target that allows `move` operations, like in the
+[example](#example) below, would return `move` from its `getDropOperation` and thus inform your draggable collection to remove the dragged items from it list.
+
 You may be wondering why we didn't simply import the drag and drop hooks within the components themselves. The reason behind this is to reduce the bundle size of
 the component for users who don't need the drag and drop support for their component.
 
