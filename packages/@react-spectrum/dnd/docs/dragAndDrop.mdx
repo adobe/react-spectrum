@@ -60,7 +60,7 @@ and provide those hooks with your desired options.
 `useDragHooks` will then provide you with a set of drag hooks that you can pass to the component via its `dragHooks` prop, thus enabling drag operations for the component.
 Drop operations can be enabled in the same way by passing the hooks from `useDropHooks` to the component's `dropHooks` prop.
 
-Of the various hook options above, `getAllowedDropOperations` and `getDropOperation` maybe of particular interest since it allows you to specify what kinds of drag and drop operations you want to allow.
+Of the various hook options above, `getAllowedDropOperations` and `getDropOperation` may be of particular interest since it allows you to specify what kinds of drag and drop operations you want to allow.
 When the dragged items are dropped on a drop target created using the React Aria drag and drop hooks, the allowed drop operations you return in `getAllowedDropOperations`
 are provided to the drop target's `getDropOperation`, giving the drop target extra information which it can use to decide what drop operation to execute. This in turn provides
 the `onDragEnd` and `onDrop` handlers with the executed drop operation, allowing you to decide what to do with the dragged items in your original collection and in the dropped collection.
