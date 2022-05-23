@@ -56,13 +56,13 @@ export const CardGrid: CardStory = {
   render: (args, context) => <Card {...args} {...context} />,
   args: {layout: 'grid'},
   decorators: [(Story, context) => (
-    <Decorator
+    <CardGridDecorator
       Story={Story}
       context={context} />
   )]
 };
 
-let Decorator = (props) => {
+let CardGridDecorator = (props) => {
   let {Story, context} = props;
   let {args} = context;
   let {scale} = useProvider();
@@ -98,186 +98,20 @@ let Decorator = (props) => {
   );
 };
 
-export const CardWaterfall: ComponentStoryObj<typeof _CardWaterfall> = {
-  render: (args) => <_CardWaterfall {...args} />,
-  args: {...Default.args}
-};
-
-let _CardWaterfall = (props: SpectrumCardProps) => (
-  <div
-    style={{
-      width: '100%',
-      height: '150vh',
-      margin: '50px',
-      display: 'flex',
-      flexDirection: 'column',
-      flexWrap: 'wrap',
-      alignItems: 'start'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{width: '208px', margin: '10px'}}>
-            <Card {...props} layout="waterfall" key={`${index}${url}`}>
-              <Image src={url} />
-              <Heading>Title {index}</Heading>
-              <Text slot="detail">PNG</Text>
-              <Content>{getDescription(index)}</Content>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
-
-export const CardFloat: ComponentStoryObj<typeof _CardFloat> = {
-  render: (args) => <_CardFloat {...args} />,
-  args: {...Default.args}
-};
-
-let _CardFloat = (props: SpectrumCardProps) => (
-  <div
-    style={{
-      width: '100%',
-      margin: '50px'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{float: 'left', margin: '10px'}}>
-            <Card {...props} key={`${index}${url}`}>
-              <Image src={url} />
-              <Heading>Title {index}</Heading>
-              <Text slot="detail">PNG</Text>
-              <Content>Description</Content>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
-
-export const CardGridMessyText: ComponentStoryObj<typeof _CardGridMessyText> = {
-  render: (args) => <_CardGridMessyText {...args} />,
-  args: {...Default.args}
-};
-
-let _CardGridMessyText = (props: SpectrumCardProps) => {
-  let {scale} = useProvider();
-
-  return (
-    <div
-      style={{
-        width: '100%',
-        margin: '50px',
-        display: 'grid',
-        gap: '20px',
-        gridTemplateColumns: 'repeat(auto-fit, 208px)',
-        gridAutoRows: 'auto',
-        justifyContent: 'center',
-        justifyItems: 'center',
-        alignItems: 'start'
-      }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <div style={scale === 'medium' ? {width: '208px', height: '293px'} : {width: '208px', height: '355px'}}>
-              <Card {...props} layout="grid" key={`${index}${url}`}>
-                <Image src={url} />
-                <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
-                <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
-                <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-              </Card>
-            </div>
-          );
-        })
-      }
-    </div>
-  );
-};
-
-export const CardWaterfallMessyText: ComponentStoryObj<typeof _CardWaterfallMessyText> = {
-  render: (args) => <_CardWaterfallMessyText {...args} />,
-  args: {...Default.args}
-};
-
-let _CardWaterfallMessyText = (props: SpectrumCardProps) => (
-  <div
-    style={{
-      width: '100%',
-      height: '150vh',
-      margin: '50px',
-      display: 'flex',
-      flexDirection: 'column',
-      flexWrap: 'wrap',
-      alignItems: 'start'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{width: '208px', margin: '10px'}}>
-            <Card {...props} layout="waterfall" key={`${index}${url}`}>
-              <Image src={url} />
-              <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
-              <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
-              <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
-
-export const CardGridNoPreview: ComponentStoryObj<typeof _CardGridNoPreview> = {
-  render: (args) => <_CardGridNoPreview {...args} />,
-  args: {...Default.args}
-};
-
-let _CardGridNoPreview = (props: SpectrumCardProps) => {
-  let {scale} = useProvider();
-
-  return (
-    <div
-      style={{
-        width: '100%',
-        margin: '50px',
-        display: 'grid',
-        gap: '20px',
-        gridTemplateColumns: 'repeat(auto-fit, 208px)',
-        gridAutoRows: 'auto',
-        justifyContent: 'center',
-        justifyItems: 'center',
-        alignItems: 'start'
-      }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <div style={scale === 'medium' ? {width: '208px', height: '160px'} : {width: '208px', height: '200px'}}>
-              <Card {...props} layout="grid" key={`${index}${url}`}>
-                <Heading>Title {index}</Heading>
-                <Text slot="detail">PNG</Text>
-                <Content>Description</Content>
-              </Card>
-            </div>
-          );
-        })
-      }
-    </div>
-  );
-};
-
-export const CardWaterfallNoPreview: CardStory = {
+export const CardWaterfall: CardStory = {
   render: (args, context) => <Card {...args} {...context} />,
-  args: {layout: 'waterfall'},
-  decorators: [(Story, {args: props}) => (
+  args: {...Default.args, layout: 'waterfall'},
+  decorators: [(Story, context) => (
+    <CardWaterfallDecorator
+      Story={Story}
+      context={context} />
+  )]
+};
+
+let CardWaterfallDecorator = (props) => {
+  let {Story, context} = props;
+  let {args} = context;
+  return (
     <div
       style={{
         width: '100%',
@@ -293,21 +127,235 @@ export const CardWaterfallNoPreview: CardStory = {
           let url = getImage(index);
           return (
             <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
-              <Story
-                {...props}
-                children={(
-                  <>
-                    <Heading>Title {index}</Heading>
-                    <Text slot="detail">PNG</Text>
-                    <Content>{getDescription(index)}</Content>
-                  </>
-                )} />
+              <Story {...args}>
+                <Image src={url} />
+                <Heading>Title {index}</Heading>
+                <Text slot="detail">PNG</Text>
+                <Content>{getDescription(index)}</Content>
+              </Story>
             </div>
           );
         })
       }
     </div>
+  );
+};
+
+export const CardFloat: CardStory = {
+  render: (args, context) => <Card {...args} {...context} />,
+  args: {},
+  decorators: [(Story, context) => (
+    <CardFloatDecorator
+      Story={Story}
+      context={context} />
   )]
+};
+
+let CardFloatDecorator = (props) => {
+  let {Story, context} = props;
+  let {args} = context;
+  return (
+    <div
+      style={{
+        width: '100%',
+        margin: '50px'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <div style={{float: 'left', margin: '10px'}} key={`${index}${url}`}>
+              <Story {...args}>
+                <Image src={url} />
+                <Heading>Title {index}</Heading>
+                <Text slot="detail">PNG</Text>
+                <Content>Description</Content>
+              </Story>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
+};
+
+export const CardGridMessyText: CardStory = {
+  render: (args, context) => <Card {...args} {...context} />,
+  args: {...Default.args, layout: 'grid'},
+  decorators: [(Story, context) => (
+    <CardGridMessyTextDecorator
+      Story={Story}
+      context={context} />
+  )]
+};
+
+let CardGridMessyTextDecorator = (props) => {
+  let {Story, context} = props;
+  let {args} = context;
+  let {scale} = useProvider();
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        margin: '50px',
+        display: 'grid',
+        gap: '20px',
+        gridTemplateColumns: 'repeat(auto-fit, 208px)',
+        gridAutoRows: 'auto',
+        justifyContent: 'center',
+        justifyItems: 'center',
+        alignItems: 'start'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <div style={scale === 'medium' ? {width: '208px', height: '293px'} : {width: '208px', height: '355px'}} key={`${index}${url}`}>
+              <Story {...args}>
+                <Image src={url} />
+                <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+                <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+                <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+              </Story>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
+};
+
+export const CardWaterfallMessyText: CardStory = {
+  render: (args, context) => <Card {...args} {...context} />,
+  args: {...Default.args, layout: 'waterfall'},
+  decorators: [(Story, context) => (
+    <CardWaterfallMessyTextDecorator
+      Story={Story}
+      context={context} />
+  )]
+};
+
+let CardWaterfallMessyTextDecorator = (props) => {
+  let {Story, context} = props;
+  let {args} = context;
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '150vh',
+        margin: '50px',
+        display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'wrap',
+        alignItems: 'start'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
+              <Story {...args}>
+                <Image src={url} />
+                <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
+                <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
+                <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
+              </Story>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
+};
+
+export const CardGridNoPreview: CardStory = {
+  render: (args, context) => <Card {...args} {...context} />,
+  args: {...Default.args, layout: 'grid'},
+  decorators: [(Story, context) => (
+    <CardGridNoPreviewDecorator
+      Story={Story}
+      context={context} />
+  )]
+};
+
+let CardGridNoPreviewDecorator = (props) => {
+  let {Story, context} = props;
+  let {args} = context;
+  let {scale} = useProvider();
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        margin: '50px',
+        display: 'grid',
+        gap: '20px',
+        gridTemplateColumns: 'repeat(auto-fit, 208px)',
+        gridAutoRows: 'auto',
+        justifyContent: 'center',
+        justifyItems: 'center',
+        alignItems: 'start'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <div style={scale === 'medium' ? {width: '208px', height: '160px'} : {width: '208px', height: '200px'}} key={`${index}${url}`}>
+              <Story {...args}>
+                <Heading>Title {index}</Heading>
+                <Text slot="detail">PNG</Text>
+                <Content>Description</Content>
+              </Story>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
+};
+
+export const CardWaterfallNoPreview: CardStory = {
+  render: (args, context) => <Card {...args} {...context} />,
+  args: {layout: 'waterfall'},
+  decorators: [(Story, context) => (
+    <CardWaterfallNoPreviewDecorator
+      Story={Story}
+      context={context} />
+  )]
+};
+
+let CardWaterfallNoPreviewDecorator = (props) => {
+  let {Story, context} = props;
+  let {args} = context;
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '150vh',
+        margin: '50px',
+        display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'wrap',
+        alignItems: 'start'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
+              <Story {...args}>
+                <Heading>Title {index}</Heading>
+                <Text slot="detail">PNG</Text>
+                <Content>{getDescription(index)}</Content>
+              </Story>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
 };
 
 
