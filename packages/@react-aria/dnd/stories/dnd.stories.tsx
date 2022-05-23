@@ -20,6 +20,7 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import dndStyles from './dnd.css';
+import {DragPreview} from '../src/DragPreview';
 import {DroppableGridExample} from './DroppableGrid';
 import {DroppableListBox, DroppableListBoxExample} from './DroppableListBox';
 import dropzoneStyles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
@@ -32,8 +33,7 @@ import {Item} from '@react-stately/collections';
 import {mergeProps} from '@react-aria/utils';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {PressResponder} from '@react-aria/interactions';
-import {Provider, useProvider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useRef} from 'react';
 import {ReorderableGridExample} from './Reorderable';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {storiesOf} from '@storybook/react';
@@ -342,7 +342,7 @@ function DraggableCollection(props) {
     })
   });
 
-  let provider = useProvider();
+  let preview = useRef(null);
   let dragState = useDraggableCollectionState({
     collection: gridState.collection,
     selectionManager: gridState.selectionManager,
@@ -357,22 +357,7 @@ function DraggableCollection(props) {
         };
       });
     },
-    renderPreview(selectedKeys, draggedKey) {
-      let item = state.collection.getItem(draggedKey);
-      return (
-        <Provider {...provider}>
-          <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
-            <div className={classNames(dndStyles, 'drag-handle')}>
-              <ShowMenu size="XS" />
-            </div>
-            <span>{item.rendered}</span>
-            {selectedKeys.size > 1 &&
-              <div className={classNames(dndStyles, 'badge')}>{selectedKeys.size}</div>
-            }
-          </div>
-        </Provider>
-      );
-    },
+    preview,
     onDragStart: action('onDragStart'),
     onDragEnd: chain(action('onDragEnd'), props.onDragEnd)
   });
@@ -399,6 +384,24 @@ function DraggableCollection(props) {
           dragState={dragState}
           onCut={props.onCut} />
       ))}
+      <DragPreview ref={preview}>
+        {() => {
+          let selectedKeys = dragState.draggingKeys;
+          let draggedKey = [...selectedKeys][0];
+          let item = state.collection.getItem(draggedKey);
+          return (
+            <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
+              <div className={classNames(dndStyles, 'drag-handle')}>
+                <ShowMenu size="XS" />
+              </div>
+              <span>{item.rendered}</span>
+              {selectedKeys.size > 1 &&
+                <div className={classNames(dndStyles, 'badge')}>{selectedKeys.size}</div>
+              }
+            </div>
+          );
+        }}
+      </DragPreview>
     </div>
   );
 }

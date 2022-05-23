@@ -353,7 +353,7 @@ storiesOf('ListView/Drag and Drop', module)
         <Droppable />
         <DragExample
           dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
-          listViewProps={{args}} />
+          listViewProps={args} />
       </Flex>
     )
   )
@@ -619,18 +619,29 @@ export function DragExample(props?) {
   );
 }
 
+let itemList1 = [
+  {id: '1', type: 'item', textValue: 'Item One'},
+  {id: '2', type: 'item', textValue: 'Item Two'},
+  {id: '3', type: 'item', textValue: 'Item Three'},
+  {id: '4', type: 'item', textValue: 'Item Four'},
+  {id: '5', type: 'item', textValue: 'Item Five'},
+  {id: '6', type: 'item', textValue: 'Item Six'}
+];
+
+let itemList2 = [
+  {id: '7', type: 'item', textValue: 'Item Seven'},
+  {id: '8', type: 'item', textValue: 'Item Eight'},
+  {id: '9', type: 'item', textValue: 'Item Nine'},
+  {id: '10', type: 'item', textValue: 'Item Ten'},
+  {id: '11', type: 'item', textValue: 'Item Eleven'},
+  {id: '12', type: 'item', textValue: 'Item Twelve'}
+];
+
 export function ReorderExample(props) {
   let onDropAction = action('onDrop');
 
   let list = useListData({
-    initialItems: [
-      {id: '1', type: 'item', textValue: 'One'},
-      {id: '2', type: 'item', textValue: 'Two'},
-      {id: '3', type: 'item', textValue: 'Three'},
-      {id: '4', type: 'item', textValue: 'Four'},
-      {id: '5', type: 'item', textValue: 'Five'},
-      {id: '6', type: 'item', textValue: 'Six'}
-    ]
+    initialItems: props.items || itemList1
   });
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
@@ -646,9 +657,13 @@ export function ReorderExample(props) {
 
   let dragHooks = useDragHooks({
     getItems(keys) {
-      return [...keys].map(key => ({
-        [dragType]: JSON.stringify(key)
-      }));
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          [dragType]: key,
+          'text/plain': key
+        };
+      });
     },
     onDragStart: action('dragStart'),
     onDragEnd: action('dragEnd')
@@ -659,9 +674,17 @@ export function ReorderExample(props) {
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
         for (let item of e.items) {
-          if (item.kind === 'text' && item.types.has(dragType)) {
-            let key = JSON.parse(await item.getText(dragType));
-            keys.push(key);
+          if (item.kind === 'text') {
+            let key;
+            if (item.types.has(dragType)) {
+              key = JSON.parse(await item.getText(dragType));
+            } else if (item.types.has('text/plain')) {
+              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+              key = JSON.parse(await item.getText('text/plain'));
+            }
+            if (key) {
+              keys.push(key);
+            }
           }
         }
         onDropAction(e);
@@ -689,8 +712,8 @@ export function ReorderExample(props) {
       dropHooks={dropHooks}
       {...props}>
       {(item: any) => (
-        <Item key={item.id} textValue={item.textValue}>
-          Item {item.id}
+        <Item>
+          {item.textValue}
         </Item>
       )}
     </ListView>
@@ -724,9 +747,13 @@ export function DragIntoItemExample(props) {
 
   let dragHooks = useDragHooks({
     getItems(keys) {
-      return [...keys].map(key => ({
-        [dragType]: JSON.stringify(key)
-      }));
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          [dragType]: key,
+          'text/plain': key
+        };
+      });
     },
     onDragStart: action('dragStart'),
     onDragEnd: action('dragEnd')
@@ -737,9 +764,17 @@ export function DragIntoItemExample(props) {
       if (e.target.type !== 'root' && e.target.dropPosition === 'on') {
         let keys = [];
         for (let item of e.items) {
-          if (item.kind === 'text' && item.types.has(dragType)) {
-            let key = JSON.parse(await item.getText(dragType));
-            keys.push(key);
+          if (item.kind === 'text') {
+            let key;
+            if (item.types.has(dragType)) {
+              key = JSON.parse(await item.getText(dragType));
+            } else if (item.types.has('text/plain')) {
+              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+              key = JSON.parse(await item.getText('text/plain'));
+            }
+            if (key) {
+              keys.push(key);
+            }
           }
         }
         onDropAction(e);
@@ -768,12 +803,12 @@ export function DragIntoItemExample(props) {
       dropHooks={dropHooks}
       {...props}>
       {(item: any) => (
-        <Item key={item.id} textValue={item.textValue} hasChildItems={item.type === 'folder'}>
+        <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
           <Text>{item.type === 'folder' ? 'Drop items here' : `Item ${item.textValue}`}</Text>
           {item.type === 'folder' &&
             <>
               <Folder />
-              <Text slot="description">contains {item.childNodes.length} dropped item(s)</Text>
+              <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
             </>
           }
         </Item>
@@ -786,25 +821,11 @@ export function DragBetweenListsExample(props) {
   let onDropAction = action('onDrop');
 
   let list1 = useListData({
-    initialItems: [
-      {id: '1', type: 'item', textValue: 'One'},
-      {id: '2', type: 'item', textValue: 'Two'},
-      {id: '3', type: 'item', textValue: 'Three'},
-      {id: '4', type: 'item', textValue: 'Four'},
-      {id: '5', type: 'item', textValue: 'Five'},
-      {id: '6', type: 'item', textValue: 'Six'}
-    ]
+    initialItems: props.items1 || itemList1
   });
 
   let list2 = useListData({
-    initialItems: [
-      {id: '7', type: 'item', textValue: 'Seven'},
-      {id: '8', type: 'item', textValue: 'Eight'},
-      {id: '9', type: 'item', textValue: 'Nine'},
-      {id: '10', type: 'item', textValue: 'Ten'},
-      {id: '11', type: 'item', textValue: 'Eleven'},
-      {id: '12', type: 'item', textValue: 'Twelve'}
-    ]
+    initialItems: props.items2 || itemList2
   });
 
   let onMove = (keys: React.Key[], target: ItemDropTarget) => {
@@ -831,9 +852,13 @@ export function DragBetweenListsExample(props) {
 
   let dragHooks = useDragHooks({
     getItems(keys) {
-      return [...keys].map(key => ({
-        [dragType]: JSON.stringify(key)
-      }));
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          [dragType]: key,
+          'text/plain': key
+        };
+      });
     },
     onDragStart: action('dragStart'),
     onDragEnd: action('dragEnd')
@@ -847,9 +872,17 @@ export function DragBetweenListsExample(props) {
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
         for (let item of e.items) {
-          if (item.kind === 'text' && item.types.has(dragType)) {
-            let key = JSON.parse(await item.getText(dragType));
-            keys.push(key);
+          if (item.kind === 'text') {
+            let key;
+            if (item.types.has(dragType)) {
+              key = JSON.parse(await item.getText(dragType));
+            } else if (item.types.has('text/plain')) {
+              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+              key = JSON.parse(await item.getText('text/plain'));
+            }
+            if (key) {
+              keys.push(key);
+            }
           }
         }
         onDropAction(e);
@@ -879,8 +912,8 @@ export function DragBetweenListsExample(props) {
           dropHooks={dropHooks}
           {...props}>
           {(item: any) => (
-            <Item key={item.id} textValue={item.textValue}>
-              Item {item.textValue}
+            <Item>
+              {item.textValue}
             </Item>
         )}
         </ListView>
@@ -897,8 +930,8 @@ export function DragBetweenListsExample(props) {
           dropHooks={dropHooks}
           {...props}>
           {(item: any) => (
-            <Item key={item.id} textValue={item.textValue}>
-              Item {item.textValue}
+            <Item>
+              {item.textValue}
             </Item>
         )}
         </ListView>
@@ -911,25 +944,11 @@ export function DragBetweenListsRootOnlyExample(props) {
   let onDropAction = action('onDrop');
 
   let list1 = useListData({
-    initialItems: [
-      {id: '1', type: 'item', textValue: 'One'},
-      {id: '2', type: 'item', textValue: 'Two'},
-      {id: '3', type: 'item', textValue: 'Three'},
-      {id: '4', type: 'item', textValue: 'Four'},
-      {id: '5', type: 'item', textValue: 'Five'},
-      {id: '6', type: 'item', textValue: 'Six'}
-    ]
+    initialItems: props.items1 || itemList1
   });
 
   let list2 = useListData({
-    initialItems: [
-      {id: '7', type: 'item', textValue: 'Seven'},
-      {id: '8', type: 'item', textValue: 'Eight'},
-      {id: '9', type: 'item', textValue: 'Nine'},
-      {id: '10', type: 'item', textValue: 'Ten'},
-      {id: '11', type: 'item', textValue: 'Eleven'},
-      {id: '12', type: 'item', textValue: 'Twelve'}
-    ]
+    initialItems: props.items2 || itemList2
   });
 
   let onMove = (keys: React.Key[]) => {
@@ -942,9 +961,13 @@ export function DragBetweenListsRootOnlyExample(props) {
 
   let dragHooksFirst = useDragHooks({
     getItems(keys) {
-      return [...keys].map(key => ({
-        'list1': JSON.stringify(key)
-      }));
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          'list1': key,
+          'text/plain': key
+        };
+      });
     },
     onDragStart: action('dragStart'),
     onDragEnd: action('dragEnd')
@@ -952,9 +975,13 @@ export function DragBetweenListsRootOnlyExample(props) {
 
   let dragHooksSecond = useDragHooks({
     getItems(keys) {
-      return [...keys].map(key => ({
-        'list2': JSON.stringify(key)
-      }));
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          'list2': key,
+          'text/plain': key
+        };
+      });
     },
     onDragStart: action('dragStart'),
     onDragEnd: action('dragEnd')
@@ -965,9 +992,17 @@ export function DragBetweenListsRootOnlyExample(props) {
       if (e.target.type === 'root') {
         let keys = [];
         for (let item of e.items) {
-          if (item.kind === 'text' && item.types.has('list2')) {
-            let key = JSON.parse(await item.getText('list2'));
-            keys.push(key);
+          if (item.kind === 'text') {
+            let key;
+            if (item.types.has('list2')) {
+              key = JSON.parse(await item.getText('list2'));
+            } else if (item.types.has('text/plain')) {
+              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+              key = JSON.parse(await item.getText('text/plain'));
+            }
+            if (key) {
+              keys.push(key);
+            }
           }
         }
         onDropAction(e);
@@ -989,9 +1024,17 @@ export function DragBetweenListsRootOnlyExample(props) {
       if (e.target.type === 'root') {
         let keys = [];
         for (let item of e.items) {
-          if (item.kind === 'text' && item.types.has('list1')) {
-            let key = JSON.parse(await item.getText('list1'));
-            keys.push(key);
+          if (item.kind === 'text') {
+            let key;
+            if (item.types.has('list1')) {
+              key = JSON.parse(await item.getText('list1'));
+            } else if (item.types.has('text/plain')) {
+              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+              key = JSON.parse(await item.getText('text/plain'));
+            }
+            if (key) {
+              keys.push(key);
+            }
           }
         }
         onDropAction(e);
@@ -1021,8 +1064,8 @@ export function DragBetweenListsRootOnlyExample(props) {
           dropHooks={dropHooksFirst}
           {...props}>
           {(item: any) => (
-            <Item key={item.id} textValue={item.textValue}>
-              Item {item.textValue}
+            <Item>
+              {item.textValue}
             </Item>
         )}
         </ListView>
@@ -1039,8 +1082,8 @@ export function DragBetweenListsRootOnlyExample(props) {
           dropHooks={dropHooksSecond}
           {...props}>
           {(item: any) => (
-            <Item key={item.id} textValue={item.textValue}>
-              Item {item.textValue}
+            <Item>
+              {item.textValue}
             </Item>
         )}
         </ListView>
