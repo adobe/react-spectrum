@@ -11,19 +11,15 @@
  */
 
 import assetStyles from '@adobe/spectrum-css-temp/components/asset/vars.css';
-import {Avatar} from '@react-spectrum/avatar';
 import {Card} from '..';
-import {CardBase} from '../src/CardBase';
-import {CardViewContext} from '../src/CardViewContext';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
+import {Default as DefaultCard, Selected as SelectedStory} from '../stories/Card.stories';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
-import React, {Dispatch, SetStateAction, useState} from 'react';
-import {SpectrumCardProps} from '@react-types/card';
-import {usePress} from '@react-aria/interactions';
+import React from 'react';
 
 export default {
   title: 'Card/default',
@@ -33,67 +29,7 @@ export default {
 
 export type CardStory = ComponentStoryObj<typeof Card>;
 
-
-/* This is a bit of a funny template, we can't get selected on a Card through context because
-* if there's context it assumes it's being rendered in a collection. It's just here for a quick check of styles. */
-interface ISelectableCard {
-  disabledKeys: Set<any>,
-  selectionManager: {
-    isSelected: () => boolean,
-    select: () => Dispatch<SetStateAction<ISelectableCard>>
-  }
-}
-let SelectableCard = (props: SpectrumCardProps) => {
-  let [state, setState] = useState<ISelectableCard>({
-    disabledKeys: new Set(),
-    selectionManager: {
-      isSelected: () => true,
-      select: () => setState(prev => ({
-        ...prev,
-        selectionManager: {
-          ...prev.selectionManager,
-          isSelected: () => !prev.selectionManager.isSelected()
-        }
-      }))
-    }
-  });
-  let {pressProps} = usePress({onPress: () => setState(prev => ({
-    ...prev,
-    selectionManager: {
-      ...prev.selectionManager,
-      isSelected: () => !prev.selectionManager.isSelected()
-    }
-  }))});
-  return (
-    <div style={{width: '208px'}} {...pressProps}>
-      <CardViewContext.Provider value={{state}}>
-        <CardBase {...props} />
-      </CardViewContext.Provider>
-    </div>
-  );
-};
-
-
-export const Default: CardStory = {
-  args: {
-    children: (
-      <>
-        <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
-        <Avatar src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" />
-        <Heading>Title</Heading>
-        <Text slot="detail">PNG</Text>
-        <Content>Description</Content>
-      </>
-    )
-  },
-  decorators: [
-    (Story) => (
-      <div style={{width: '208px'}}>
-        <Story />
-      </div>
-    )
-  ]
-};
+export const Default = DefaultCard;
 
 export const DefaultSquare: CardStory = {
   ...Default,
@@ -316,10 +252,7 @@ export const LongEverything: CardStory = {
   }
 };
 
-export const Selected: CardStory = {
-  ...Default,
-  render: (args) => <SelectableCard {...args} />
-};
+export const Selected: CardStory = SelectedStory;
 
 // actually use Illustration???
 // where to get the three asset svgs to use with Illustration

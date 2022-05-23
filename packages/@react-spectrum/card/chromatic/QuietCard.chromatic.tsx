@@ -22,7 +22,8 @@ import {
   LongEverything,
   LongTitle,
   NoDescription,
-  NoDescriptionSquare, Selected,
+  NoDescriptionSquare,
+  Selected,
   WithIllustration
 } from './Card.chromatic';
 import {ComponentMeta} from '@storybook/react';
