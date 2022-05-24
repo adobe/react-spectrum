@@ -63,22 +63,27 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
         break;
       case 'PageUp':
         e.preventDefault();
+        e.stopPropagation();
         state.focusPreviousSection(e.shiftKey);
         break;
       case 'PageDown':
         e.preventDefault();
+        e.stopPropagation();
         state.focusNextSection(e.shiftKey);
         break;
       case 'End':
         e.preventDefault();
+        e.stopPropagation();
         state.focusSectionEnd();
         break;
       case 'Home':
         e.preventDefault();
+        e.stopPropagation();
         state.focusSectionStart();
         break;
       case 'ArrowLeft':
         e.preventDefault();
+        e.stopPropagation();
         if (direction === 'rtl') {
           state.focusNextDay();
         } else {
@@ -87,10 +92,12 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
         break;
       case 'ArrowUp':
         e.preventDefault();
+        e.stopPropagation();
         state.focusPreviousRow();
         break;
       case 'ArrowRight':
         e.preventDefault();
+        e.stopPropagation();
         if (direction === 'rtl') {
           state.focusPreviousDay();
         } else {
@@ -99,6 +106,7 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
         break;
       case 'ArrowDown':
         e.preventDefault();
+        e.stopPropagation();
         state.focusNextRow();
         break;
       case 'Escape':

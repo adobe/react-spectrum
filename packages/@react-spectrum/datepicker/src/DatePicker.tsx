@@ -62,6 +62,12 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
     autoFocus
   });
 
+  let {isFocused: isFocusedButton, focusProps: focusPropsButton} = useFocusRing({
+    within: false,
+    isTextInput: false,
+    autoFocus
+  });
+
   let className = classNames(
     styles,
     'spectrum-InputGroup',
@@ -71,7 +77,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
       'is-disabled': isDisabled,
       'is-hovered': isHovered,
       'is-focused': isFocused,
-      'focus-ring': isFocusVisible
+      'focus-ring': isFocusVisible && !isFocusedButton
     }
   );
 
@@ -136,7 +142,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
           onOpenChange={setOpen}
           shouldFlip={props.shouldFlip}>
           <FieldButton
-            {...buttonProps}
+            {...mergeProps(buttonProps, focusPropsButton)}
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
             validationState={state.validationState}

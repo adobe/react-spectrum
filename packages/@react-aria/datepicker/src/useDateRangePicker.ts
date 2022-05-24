@@ -87,7 +87,11 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   });
 
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
-  let focusManager = useMemo(() => createFocusManager(ref), [ref]);
+  let focusManager = useMemo(() => createFocusManager(ref, {
+    // Exclude the button from the focus manager.
+    accept: element => element.id !== buttonId
+  }), [ref, buttonId]);
+
   let commonFieldProps = {
     [focusManagerSymbol]: focusManager,
     [roleSymbol]: 'presentation',
@@ -121,7 +125,6 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     buttonProps: {
       ...descProps,
       id: buttonId,
-      excludeFromTabOrder: true,
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,
