@@ -33,7 +33,7 @@ const styles: CSSProperties = {
   clip: `rect(0 ${isAndroid() ? '10px 10px' : '0 0'} 0)`,
   clipPath: `inset(${isAndroid() ? 40 : 50}%)`,
   height: (isAndroid() ? 10 : 1),
-  lineHeight: 0,
+  lineHeight: (isAndroid() ? 0 : undefined),
   margin: `0 ${isAndroid() ? '-10px -10px' : '-1px -1px'} 0`,
   opacity: 0.0001,
   overflow: 'hidden',
