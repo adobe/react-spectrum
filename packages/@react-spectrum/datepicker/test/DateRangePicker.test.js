@@ -809,6 +809,18 @@ describe('DateRangePicker', function () {
         expect(segment).not.toHaveAttribute('aria-describedby');
       }
     });
+
+    it('should include era for BC dates', function () {
+      let {getAllByRole} = render(<DateRangePicker label="Date" value={{start: new CalendarDate('BC', 1, 12, 3), end: new CalendarDate(1, 1, 10)}} />);
+      let group = getAllByRole('group')[0];
+      expect(group).toHaveAttribute('aria-describedby');
+
+      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(description).toBe('Selected Range: December 3, 1 BC to January 10, 1 AD');
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments[3]).toHaveTextContent('BC');
+    });
   });
 
   describe('focus management', function () {

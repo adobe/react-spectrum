@@ -11,7 +11,7 @@
  */
 
 import {CalendarCell} from './CalendarCell';
-import {CalendarDate, endOfMonth, getWeeksInMonth, startOfWeek} from '@internationalized/date';
+import {CalendarDate, endOfMonth, getWeeksInMonth} from '@internationalized/date';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
@@ -41,7 +41,6 @@ export function CalendarMonth(props: CalendarMonthProps) {
   }, state);
 
   let {locale} = useLocale();
-  let monthStart = startOfWeek(startDate, locale);
   let weeksInMonth = getWeeksInMonth(startDate, locale);
 
   return (
@@ -64,12 +63,14 @@ export function CalendarMonth(props: CalendarMonthProps) {
       <tbody>
         {[...new Array(weeksInMonth).keys()].map(weekIndex => (
           <tr key={weekIndex}>
-            {[...new Array(7).keys()].map(dayIndex => (
-              <CalendarCell
-                key={dayIndex}
-                state={state}
-                date={monthStart.add({weeks: weekIndex, days: dayIndex})}
-                currentMonth={startDate} />
+            {state.getDatesInWeek(weekIndex, startDate).map((date, i) => (
+              date ? (
+                <CalendarCell
+                  key={i}
+                  state={state}
+                  date={date}
+                  currentMonth={startDate} />
+              ) : <td key={i} />
             ))}
           </tr>
         ))}
