@@ -66,7 +66,7 @@ describe('DatePickerBase', function () {
 
       let button = getAllByRole('button')[0];
       expect(button).toBeVisible();
-      expect(button).toHaveAttribute('tabindex', '-1');
+      expect(button).not.toHaveAttribute('tabindex');
     });
 
     it.each`
@@ -383,12 +383,16 @@ describe('DatePickerBase', function () {
       let {getAllByRole} = render(<Component label="Date" />);
 
       let segments = getAllByRole('spinbutton');
+      let button = getAllByRole('button')[0];
       act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       }
+
+      expect(button).toHaveFocus();
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
 
       for (let i = segments.length - 1; i >= 0; i--) {
         expect(segments[i]).toHaveFocus();
@@ -408,12 +412,16 @@ describe('DatePickerBase', function () {
       );
 
       let segments = getAllByRole('spinbutton');
+      let button = getAllByRole('button')[0];
       act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
       }
+
+      expect(button).toHaveFocus();
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
 
       for (let i = segments.length - 1; i >= 0; i--) {
         expect(segments[i]).toHaveFocus();
