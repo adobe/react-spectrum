@@ -22,27 +22,16 @@ let idsUpdaterMap: Map<string, (v: string) => void> = new Map();
  * @param defaultId - Default component id.
  */
 export function useId(defaultId?: string): string {
-  let isRendering = useRef(true);
-  isRendering.current = true;
   let [value, setValue] = useState(defaultId);
   let nextId = useRef(null);
 
   let res = useSSRSafeId(value);
 
-  // don't memo this, we want it new each render so that the Effects always run
-  let updateValue = (val) => {
-    if (!isRendering.current) {
-      setValue(val);
-    } else {
-      nextId.current = val;
-    }
-  };
+  let updateValue = useCallback((val) => {
+    nextId.current = val;
+  }, []);
 
   idsUpdaterMap.set(res, updateValue);
-
-  useLayoutEffect(() => {
-    isRendering.current = false;
-  }, [updateValue]);
 
   useLayoutEffect(() => {
     let r = res;
@@ -51,13 +40,16 @@ export function useId(defaultId?: string): string {
     };
   }, [res]);
 
+  // This cannot cause an infinite loop because the ref is updated first.
+  // eslint-disable-next-line
   useEffect(() => {
     let newId = nextId.current;
     if (newId) {
-      setValue(newId);
       nextId.current = null;
+      setValue(newId);
     }
-  }, [setValue, updateValue]);
+  });
+
   return res;
 }
 

@@ -68,6 +68,9 @@ storybook:
 storybook-16:
 	yarn build:storybook-16
 
+storybook-17:
+	yarn build:storybook-17
+
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
 	$(MAKE) publish
