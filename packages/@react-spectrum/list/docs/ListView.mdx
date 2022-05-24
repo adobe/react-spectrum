@@ -33,6 +33,7 @@ import {Link} from '@react-spectrum/link';
 ---
 category: Collections
 keywords: [listview, collections]
+after_version: 3.0.0
 ---
 
 # ListView
@@ -153,6 +154,16 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
     <Folder />
     <Text>Utilities</Text>
     <Text slot="description">16 items</Text>
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
   </Item>
   <Item key="2" textValue="Glasses Dog">
     <Image
@@ -160,23 +171,30 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
       alt="Shiba Inu with glasses" />
     <Text>Glasses Dog</Text>
     <Text slot="description">JPG</Text>
-    <ActionButton aria-label="Info">
-      <Info />
-    </ActionButton>
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
   </Item>
   <Item key="3" textValue="readme">
     <Text>readme.txt</Text>
     <Text slot="description">TXT</Text>
-    <ActionGroup buttonLabelBehavior="hide">
-      <Item key="edit">
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
         <Edit />
         <Text>Edit</Text>
       </Item>
-      <Item key="delete">
+      <Item key="delete" textValue="Delete">
         <Delete />
         <Text>Delete</Text>
       </Item>
-    </ActionGroup>
+    </ActionMenu>
   </Item>
   <Item key="4" textValue="Onboarding">
     <Text>Onboarding</Text>
@@ -200,7 +218,7 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
 By default, ListView doesn't allow row selection, but this can be enabled using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the value of the selected keys must match the `key` prop of the Item.
 
-The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "row1" and "row3".
+The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "Charizard" and "Venusaur".
 
 ```tsx example
 <ListView maxWidth="size-6000" selectionMode="multiple" defaultSelectedKeys={["Charizard", "Venusaur"]} aria-label="List selection example">
@@ -255,7 +273,7 @@ To limit users to selecting only a single item at a time, `selectionMode` can be
 
 ```tsx example
 // Using the same list as above
-<PokemonList selectionMode="single" aria-label="List with single selection" />
+<PokemonList selectionMode="single" selectionStyle="highlight" aria-label="List with single selection" />
 ```
 
 ### Disallow empty selection
@@ -310,9 +328,9 @@ Double clicking matches the behavior of desktop platforms like macOS and Windows
 
 ```tsx example
 // Checkbox selection with onAction
-<Flex direction="column" gap="size-300">
-  <PokemonList onAction={key => alert(`Opening item ${key}...`)} aria-label="Checkbox selection list with row actions" />
-  <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection list with row actions" />
+<Flex wrap gap="size-300">
+  <PokemonList onAction={key => alert(`Opening item ${key}...`)} aria-label="Checkbox selection list with row actions" width="size-2400" />
+  <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection list with row actions" width="size-2400" />
 </Flex>
 ```
 
@@ -320,7 +338,7 @@ Double clicking matches the behavior of desktop platforms like macOS and Windows
 
 To enable drag and drop in a ListView, you must provide the respective drag and drop hooks sourced from `useDragHooks` and `useDropHooks` to the ListView's `dragHooks` and `dropHooks` props respectively.
 The example below demonstrates how to create a ListView that supports reordering its rows via drag and drop. For more information on the hooks themselves and the various supported ways to perform a drag and drop interaction,
-please see the [following page](dragAndDrop.html).
+please see the [drag and drop documentation](dragAndDrop.html).
 
 ```tsx example
 import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
@@ -353,9 +371,7 @@ function DragAndDropExample() {
         let item = list.getItem(key);
         // Setup the info for each item that will be propagated upon drag
         return {
-          'text/plain': item.name,
-          [item.type]: item.name,
-          'id': item.id
+          [item.type]: JSON.stringify(item)
         };
       });
     }
@@ -365,20 +381,28 @@ function DragAndDropExample() {
     async onDrop(e) {
       let keysToMove = [];
       // Only add the dropped item to the list of keys to move
-      // if the dropped item has the expected types and fields
+      // if the dropped item has the expected types
       for (let item of e.items) {
-        if (item.kind === 'text' && item.types.has('text/plain')) {
-          if (item.types.has('folder') || item.types.has('file')) {
-            let key = await item.getText('id');
-            keysToMove.push(key);
-          }
+        let type;
+        if (item.types.has('folder')) {
+          type = 'folder';
+        } else if (item.types.has('file')) {
+          type = 'file';
+        }
+
+        if (type && item.kind === 'text') {
+          let {id} = JSON.parse(await item.getText(type));
+          keysToMove.push(id);
         }
       }
       onMove(keysToMove, e.target);
     },
-    getDropOperation(target) {
-      // Cancel the drop operations if done on the root of the ListView or on the ListView items themselves
-      if (target.type === 'root' || target.dropPosition === 'on') {
+    getDropOperation(target, types) {
+      let acceptedTypes = ['file', 'folder'];
+      let draggedTypes = [...types.types.values()];
+      // Cancel the drop operations if any of drag items aren't of the acceptedTypes or if
+      // the drop is done on the root of the ListView or on the ListView items themselves
+      if (!draggedTypes.every(type => acceptedTypes.includes(type)) || target.type === 'root' || target.dropPosition === 'on') {
         return 'cancel';
       }
 
@@ -417,7 +441,7 @@ function DragAndDropExample() {
 ```tsx example export=true
 function ListExample(props) {
   return (
-    <ListView selectionMode="multiple" aria-label="Quiet list example" maxWidth="size-6000" {...props}>
+    <ListView selectionMode="multiple" aria-label="Quiet list example" width="size-3000" {...props}>
       <Item>Adobe AfterEffects</Item>
       <Item>Adobe Dreamweaver</Item>
       <Item>Adobe Acrobat</Item>
@@ -432,7 +456,7 @@ function ListExample(props) {
 The amount of vertical padding that each row contains can be modified by providing the `density` prop.
 
 ```tsx example
-<Flex direction="column" gap="size-300">
+<Flex wrap gap="size-300">
   <ListExample density="compact" aria-label="Compact list example" />
   <ListExample density="spacious" aria-label="Spacious list example" />
 </Flex>
@@ -443,7 +467,7 @@ By default, text content that overflows its row will be truncated. You can have 
 to the ListView.
 
 ```tsx example
-<ListExample overflowMode="wrap" aria-label="Text wrapping list example" maxWidth="size-2000" />
+<ListExample overflowMode="wrap" aria-label="Text wrapping list example" width="size-2000" />
 ```
 
 ### Empty state
