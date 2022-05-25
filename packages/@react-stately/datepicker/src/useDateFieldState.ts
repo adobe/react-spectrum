@@ -153,18 +153,39 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
 
+  let defaultFormatter = useMemo(() => new DateFormatter(locale), [locale]);
+  let calendar = useMemo(() => createCalendar(defaultFormatter.resolvedOptions().calendar), [createCalendar, defaultFormatter]);
+
+  let [value, setDate] = useControlledState<DateValue>(
+    props.value,
+    props.defaultValue,
+    props.onChange
+  );
+
+  let calendarValue = useMemo(() => convertValue(value, calendar), [value, calendar]);
+
+  // We keep track of the placeholder date separately in state so that onChange is not called
+  // until all segments are set. If the value === null (not undefined), then assume the component
+  // is controlled, so use the placeholder as the value until all segments are entered so it doesn't
+  // change from uncontrolled to controlled and emit a warning.
+  let [placeholderDate, setPlaceholderDate] = useState(
+    () => createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
+  );
+
+  let val = calendarValue || placeholderDate;
+  let showEra = calendar.identifier === 'gregory' && val.era === 'BC';
   let formatOpts = useMemo(() => ({
     granularity,
     maxGranularity: props.maxGranularity ?? 'year',
     timeZone: defaultTimeZone,
     hideTimeZone,
-    hourCycle: props.hourCycle
-  }), [props.maxGranularity, granularity, props.hourCycle, defaultTimeZone, hideTimeZone]);
+    hourCycle: props.hourCycle,
+    showEra
+  }), [props.maxGranularity, granularity, props.hourCycle, defaultTimeZone, hideTimeZone, showEra]);
   let opts = useMemo(() => getFormatOptions({}, formatOpts), [formatOpts]);
 
   let dateFormatter = useMemo(() => new DateFormatter(locale, opts), [locale, opts]);
   let resolvedOptions = useMemo(() => dateFormatter.resolvedOptions(), [dateFormatter]);
-  let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
   // Determine how many editable segments there are for validation purposes.
   // The result is cached for performance.
@@ -176,14 +197,6 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
   let [validSegments, setValidSegments] = useState<Partial<typeof EDITABLE_SEGMENTS>>(
     () => props.value || props.defaultValue ? {...allSegments} : {}
-  );
-
-  // We keep track of the placeholder date separately in state so that onChange is not called
-  // until all segments are set. If the value === null (not undefined), then assume the component
-  // is controlled, so use the placeholder as the value until all segments are entered so it doesn't
-  // change from uncontrolled to controlled and emit a warning.
-  let [placeholderDate, setPlaceholderDate] = useState(
-    () => createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
   );
 
   // Reset placeholder when calendar changes
@@ -198,14 +211,6 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
       );
     }
   }, [calendar, granularity, validSegments, defaultTimeZone, props.placeholderValue]);
-
-  let [value, setDate] = useControlledState<DateValue>(
-    props.value,
-    props.defaultValue,
-    props.onChange
-  );
-
-  let calendarValue = useMemo(() => convertValue(value, calendar), [value, calendar]);
 
   // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
   if (value && Object.keys(validSegments).length < Object.keys(allSegments).length) {

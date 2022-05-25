@@ -11,13 +11,12 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DragEndEvent, DragItem, DragMoveEvent, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
-import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
+import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
+import {DragEvent, HTMLAttributes, RefObject, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import ReactDOM from 'react-dom';
 import {useDescription, useGlobalListeners} from '@react-aria/utils';
 import {useDragModality} from './utils';
 import {useMessageFormatter} from '@react-aria/i18n';
@@ -28,7 +27,7 @@ interface DragOptions {
   onDragMove?: (e: DragMoveEvent) => void,
   onDragEnd?: (e: DragEndEvent) => void,
   getItems: () => DragItem[],
-  renderPreview?: (items: DragItem[]) => JSX.Element,
+  preview?: RefObject<DragPreviewRenderer>,
   getAllowedDropOperations?: () => DropOperation[]
 }
 
@@ -69,6 +68,14 @@ export function useDrag(options: DragOptions): DragResult {
       return;
     }
 
+    if (typeof options.onDragStart === 'function') {
+      options.onDragStart({
+        type: 'dragstart',
+        x: e.clientX,
+        y: e.clientY
+      });
+    }
+
     let items = options.getItems();
     writeToDataTransfer(e.dataTransfer, items);
 
@@ -82,22 +89,10 @@ export function useDrag(options: DragOptions): DragResult {
       e.dataTransfer.effectAllowed = EFFECT_ALLOWED[allowed] || 'none';
     }
 
-    // If there is a renderPreview function, use it to render a custom preview image that will
+    // If there is a preview option, use it to render a custom preview image that will
     // appear under the pointer while dragging. If not, the element itself is dragged by the browser.
-    if (typeof options.renderPreview === 'function') {
-      let preview = options.renderPreview(items);
-      if (preview) {
-        // Create an off-screen div to render the preview into.
-        let node = document.createElement('div');
-        node.style.zIndex = '-100';
-        node.style.position = 'absolute';
-        node.style.top = '0';
-        node.style.left = '-100000px';
-        document.body.appendChild(node);
-
-        // Call renderPreview to get a JSX element, and render it into the div with React DOM.
-        ReactDOM.render(preview, node);
-
+    if (typeof options.preview?.current === 'function') {
+      options.preview.current(items, node => {
         // Compute the offset that the preview will appear under the mouse.
         // If possible, this is based on the point the user clicked on the target.
         // If the preview is much smaller, then just use the center point of the preview.
@@ -115,12 +110,7 @@ export function useDrag(options: DragOptions): DragResult {
         node.style.height = `${height}px`;
 
         e.dataTransfer.setDragImage(node, x, y);
-
-        // Remove the preview from the DOM after a frame so the browser has time to paint.
-        requestAnimationFrame(() => {
-          document.body.removeChild(node);
-        });
-      }
+      });
     }
 
     // Enforce that drops are handled by useDrop.
@@ -131,14 +121,6 @@ export function useDrag(options: DragOptions): DragResult {
         throw new Error('Drags initiated from the React Aria useDrag hook may only be dropped on a target created with useDrop. This ensures that a keyboard and screen reader accessible alternative is available.');
       }
     }, {capture: true, once: true});
-
-    if (typeof options.onDragStart === 'function') {
-      options.onDragStart({
-        type: 'dragstart',
-        x: e.clientX,
-        y: e.clientY
-      });
-    }
 
     state.x = e.clientX;
     state.y = e.clientY;
