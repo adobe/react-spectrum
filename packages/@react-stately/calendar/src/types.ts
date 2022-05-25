@@ -14,7 +14,7 @@ import {CalendarDate} from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
 import {RangeValue, ValidationState} from '@react-types/shared';
 
-export interface CalendarStateBase {
+interface CalendarStateBase {
   /** Whether the calendar is disabled. */
   readonly isDisabled: boolean,
   /** Whether the calendar is in a read only state. */
@@ -86,7 +86,12 @@ export interface CalendarStateBase {
   /** Returns whether the previous visible date range is allowed to be selected according to the `minValue` prop. */
   isPreviousVisibleRangeInvalid(): boolean,
   /** Returns whether the next visible date range is allowed to be selected according to the `maxValue` prop. */
-  isNextVisibleRangeInvalid(): boolean
+  isNextVisibleRangeInvalid(): boolean,
+  /**
+   * Returns an array of dates in the week index counted from the provided start date, or the first visible date if not given.
+   * The returned array always has 7 elements, but may include null if the date does not exist according to the calendar system.
+   */
+  getDatesInWeek(weekIndex: number, startDate?: CalendarDate): Array<CalendarDate | null>
 }
 
 export interface CalendarState extends CalendarStateBase {
