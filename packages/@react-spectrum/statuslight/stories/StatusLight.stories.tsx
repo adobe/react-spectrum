@@ -10,56 +10,98 @@
  * governing permissions and limitations under the License.
  */
 
-import React from 'react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {StatusLight} from '../';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('StatusLight', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'variant: celery',
-    () => render({variant: 'celery'})
-  ).add(
-    'variant: yellow',
-    () => render({variant: 'yellow'})
-  ).add(
-    'variant: fuchsia',
-    () => render({variant: 'fuchsia'})
-  ).add(
-    'variant: indigo',
-    () => render({variant: 'indigo'})
-  ).add(
-    'variant: seafoam',
-    () => render({variant: 'seafoam'})
-  ).add(
-    'variant: chartreuse',
-    () => render({variant: 'chartreuse'})
-  ).add(
-    'variant: magenta',
-    () => render({variant: 'magenta'})
-  ).add(
-    'variant: purple',
-    () => render({variant: 'purple'})
-  ).add(
-    'variant: neutral',
-    () => render({variant: 'neutral'})
-  ).add(
-    'variant: info',
-    () => render({variant: 'info'})
-  ).add(
-    'variant: positive',
-    () => render({variant: 'positive'})
-  ).add(
-    'variant: notice',
-    () => render({variant: 'notice'})
-  ).add(
-    'variant: negative',
-    () => render({variant: 'negative'})
-  ).add(
-    'isDisabled: true',
-    () => render({variant: 'positive', isDisabled: true})
-  );
+type StatusLightStory = ComponentStoryObj<typeof StatusLight>;
 
-function render(props: any = {}) {
-  return <StatusLight {...props}>Status light of love</StatusLight>;
-}
+export default {
+  title: 'StatusLight',
+  component: StatusLight,
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+} as ComponentMeta<typeof StatusLight>;
+
+export const Default: StatusLightStory = {
+  args: {children: 'Status light of love', variant: 'celery'},
+  name: 'variant: celery'
+};
+
+export const VariantYellow: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'yellow'},
+  name: 'variant: yellow'
+};
+
+export const VariantFuchsia: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'fuchsia'},
+  name: 'variant: fuchsia'
+};
+
+export const VariantIndigo: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'indigo'},
+  name: 'variant: indigo'
+};
+
+export const VariantSeafoam: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'seafoam'},
+  name: 'variant: seafoam'
+};
+
+export const VariantChartreuse: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'chartreuse'},
+  name: 'variant: chartreuse'
+};
+
+export const VariantMagenta: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'magenta'},
+  name: 'variant: magenta'
+};
+
+export const VariantPurple: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'purple'},
+  name: 'variant: purple'
+};
+
+export const VariantNeutral: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'neutral'},
+  name: 'variant: neutral'
+};
+
+export const VariantInfo: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'info'},
+  name: 'variant: info'
+};
+
+export const VariantPositive: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'positive'},
+  name: 'variant: positive'
+};
+
+export const VariantNotice: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'notice'},
+  name: 'variant: notice'
+};
+
+export const VariantNegative: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'negative'},
+  name: 'variant: negative'
+};
+
+export const IsDisabledTrue: StatusLightStory = {
+  ...Default,
+  args: {...Default.args, variant: 'positive', isDisabled: true},
+  name: 'isDisabled: true'
+};
