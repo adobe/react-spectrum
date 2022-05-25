@@ -64,8 +64,8 @@ export class TaiwanCalendar extends GregorianCalendar {
     date.year = year;
   }
 
-  getYearsToAdd(date: Mutable<AnyCalendarDate>, years: number) {
-    return date.era === 'before_minguo' ? -years : years;
+  isInverseEra(date: AnyCalendarDate): boolean {
+    return date.era === 'before_minguo';
   }
 
   getDaysInMonth(date: AnyCalendarDate): number {

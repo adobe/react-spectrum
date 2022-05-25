@@ -2366,10 +2366,10 @@ describe('TableView', function () {
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
 
-      act(() => {
-        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
-        jest.runAllTimers();
-      });
+      // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+      act(() => jest.runAllTimers());
+      // Animation.
+      act(() => jest.runAllTimers());
       let row = tree.getAllByRole('row')[1];
       triggerPress(row);
       expect(announce).toHaveBeenLastCalledWith('File C selected.');
@@ -2389,10 +2389,10 @@ describe('TableView', function () {
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
 
-      act(() => {
-        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
-        jest.runAllTimers();
-      });
+      // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+      act(() => jest.runAllTimers());
+      // Animation.
+      act(() => jest.runAllTimers());
       let row = tree.getAllByRole('row')[1];
       triggerPress(row);
       expect(announce).toHaveBeenLastCalledWith('File C selected.');
@@ -2670,8 +2670,8 @@ describe('TableView', function () {
 
         // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
         let cell = getCell(tree, 'Foo 10');
-        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
         fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
         checkSelection(onSelectionChange, [
           'Foo 5', 'Foo 8', 'Foo 10'
@@ -2691,8 +2691,8 @@ describe('TableView', function () {
 
         // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
         let cell = getCell(tree, 'Foo 10');
-        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
         fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(2);
@@ -3565,9 +3565,9 @@ describe('TableView', function () {
 
       expect(document.activeElement).toEqual(input);
 
+      fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+      fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
       act(() => {
-        fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
-        fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
         jest.runAllTimers();
       });
 
