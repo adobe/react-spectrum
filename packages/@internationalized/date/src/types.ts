@@ -75,9 +75,9 @@ export interface Calendar {
   /** @private */
   balanceYearMonth?(date: AnyCalendarDate, previousDate: AnyCalendarDate): void,
   /** @private */
-  getYearsToAdd?(date: AnyCalendarDate, years: number): number,
+  constrainDate?(date: AnyCalendarDate): void,
   /** @private */
-  constrainDate?(date: AnyCalendarDate): void
+  isInverseEra?(date: AnyCalendarDate): boolean
 }
 
 /** Represents an amount of time in calendar-specific units, for use when performing arithmetic. */

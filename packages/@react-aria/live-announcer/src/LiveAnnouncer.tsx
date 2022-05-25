@@ -10,22 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {Fragment, ReactNode, RefObject, useImperativeHandle, useState} from 'react';
-import ReactDOM from 'react-dom';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
-
 type Assertiveness = 'assertive' | 'polite';
-interface Announcer {
-  announce(message: string, assertiveness: Assertiveness, timeout: number): void,
-  clear(assertiveness: Assertiveness): void
-}
 
 /* Inspired by https://github.com/AlmeroSteyn/react-aria-live */
 const LIVEREGION_TIMEOUT_DELAY = 7000;
 
-let liveRegionAnnouncer = React.createRef<Announcer>();
-let node: HTMLElement = null;
-let messageId = 0;
+let liveAnnouncer: LiveAnnouncer = null;
 
 /**
  * Announces the message using screen reader technology.
@@ -35,108 +25,118 @@ export function announce(
   assertiveness: Assertiveness = 'assertive',
   timeout = LIVEREGION_TIMEOUT_DELAY
 ) {
-  ensureInstance(announcer => announcer.announce(message, assertiveness, timeout));
+  if (!liveAnnouncer) {
+    liveAnnouncer = new LiveAnnouncer();
+  }
+
+  liveAnnouncer.announce(message, assertiveness, timeout);
 }
 
 /**
  * Stops all queued announcements.
  */
 export function clearAnnouncer(assertiveness: Assertiveness) {
-  ensureInstance(announcer => announcer.clear(assertiveness));
+  if (liveAnnouncer) {
+    liveAnnouncer.clear(assertiveness);
+  }
 }
 
 /**
  * Removes the announcer from the DOM.
  */
 export function destroyAnnouncer() {
-  if (liveRegionAnnouncer.current) {
-    ReactDOM.unmountComponentAtNode(node);
-    document.body.removeChild(node);
-    node = null;
+  if (liveAnnouncer) {
+    liveAnnouncer.destroy();
+    liveAnnouncer = null;
   }
 }
 
-/**
- * Ensures we only have one instance of the announcer so that we don't have elements competing.
- */
-function ensureInstance(callback: (announcer: Announcer) => void) {
-  if (!liveRegionAnnouncer.current) {
-    node = document.createElement('div');
-    node.dataset.liveAnnouncer = 'true';
-    document.body.prepend(node);
-    ReactDOM.render(
-      <LiveRegionAnnouncer ref={liveRegionAnnouncer} />,
-      node,
-      () => callback(liveRegionAnnouncer.current)
-    );
-  } else {
-    callback(liveRegionAnnouncer.current);
+// LiveAnnouncer is implemented using vanilla DOM, not React. That's because as of React 18
+// ReactDOM.render is deprecated, and the replacement, ReactDOM.createRoot is moved into a
+// subpath import `react-dom/client`. That makes it hard for us to support multiple React versions.
+// As a global API, we can't use portals without introducing a breaking API change. LiveAnnouncer
+// is simple enough to implement without React, so that's what we do here.
+// See this discussion for more details: https://github.com/reactwg/react-18/discussions/125#discussioncomment-2382638
+class LiveAnnouncer {
+  node: HTMLElement;
+  assertiveLog: HTMLElement;
+  politeLog: HTMLElement;
+
+  constructor() {
+    this.node = document.createElement('div');
+    this.node.dataset.liveAnnouncer = 'true';
+    // copied from VisuallyHidden
+    Object.assign(this.node.style, {
+      border: 0,
+      clip: 'rect(0 0 0 0)',
+      clipPath: 'inset(50%)',
+      height: 1,
+      margin: '0 -1px -1px 0',
+      overflow: 'hidden',
+      padding: 0,
+      position: 'absolute',
+      width: 1,
+      whiteSpace: 'nowrap'
+    });
+
+    this.assertiveLog = this.createLog('assertive');
+    this.node.appendChild(this.assertiveLog);
+
+    this.politeLog = this.createLog('polite');
+    this.node.appendChild(this.politeLog);
+
+    document.body.prepend(this.node);
   }
-}
 
-const LiveRegionAnnouncer = React.forwardRef((_, ref: RefObject<Announcer>) => {
-  let [assertiveMessages, setAssertiveMessages] = useState([]);
-  let [politeMessages, setPoliteMessages] = useState([]);
+  createLog(ariaLive: string) {
+    let node = document.createElement('div');
+    node.setAttribute('role', 'log');
+    node.setAttribute('aria-live', ariaLive);
+    node.setAttribute('aria-relevant', 'additions');
+    return node;
+  }
 
-  let clear = (assertiveness: Assertiveness) => {
-    if (!assertiveness || assertiveness === 'assertive') {
-      setAssertiveMessages([]);
+  destroy() {
+    if (!this.node) {
+      return;
     }
 
-    if (!assertiveness || assertiveness === 'polite') {
-      setPoliteMessages([]);
-    }
-  };
+    document.body.removeChild(this.node);
+    this.node = null;
+  }
 
-  let announce = (message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) => {
-    let id = messageId++;
+  announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) {
+    if (!this.node) {
+      return;
+    }
+
+    let node = document.createElement('div');
+    node.textContent = message;
 
     if (assertiveness === 'assertive') {
-      setAssertiveMessages(messages => [...messages, {id, text: message}]);
+      this.assertiveLog.appendChild(node);
     } else {
-      setPoliteMessages(messages => [...messages, {id, text: message}]);
+      this.politeLog.appendChild(node);
     }
 
     if (message !== '') {
       setTimeout(() => {
-        if (assertiveness === 'assertive') {
-          setAssertiveMessages(messages => messages.filter(message => message.id !== id));
-        } else {
-          setPoliteMessages(messages => messages.filter(message => message.id !== id));
-        }
+        node.remove();
       }, timeout);
     }
-  };
+  }
 
-  useImperativeHandle(ref, () => ({
-    announce,
-    clear
-  }));
+  clear(assertiveness: Assertiveness) {
+    if (!this.node) {
+      return;
+    }
 
-  return (
-    <Fragment>
-      <MessageBlock aria-live="assertive">
-        {assertiveMessages.map(message => <div key={message.id}>{message.text}</div>)}
-      </MessageBlock>
-      <MessageBlock aria-live="polite">
-        {politeMessages.map(message => <div key={message.id}>{message.text}</div>)}
-      </MessageBlock>
-    </Fragment>
-  );
-});
+    if (!assertiveness || assertiveness === 'assertive') {
+      this.assertiveLog.innerHTML = '';
+    }
 
-interface MessageBlockProps {
-   children: ReactNode,
-   'aria-live': Assertiveness
- }
-
-function MessageBlock({children, 'aria-live': ariaLive}: MessageBlockProps) {
-  return (
-    <VisuallyHidden
-      role="log"
-      aria-live={ariaLive}
-      aria-relevant="additions">
-      {children}
-    </VisuallyHidden>
-  );
+    if (!assertiveness || assertiveness === 'polite') {
+      this.politeLog.innerHTML = '';
+    }
+  }
 }

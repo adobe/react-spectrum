@@ -12,7 +12,7 @@
 
 import React, {useEffect} from 'react';
 import {render, screen} from '@testing-library/react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useObjectRef} from '../';
 
