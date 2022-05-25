@@ -13,8 +13,8 @@
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {focusWithoutScrolling, useDescription} from '@react-aria/utils';
+import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
-import {hookData} from './utils';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -81,7 +81,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-    era: date.calendar.identifier !== 'gregory' ? 'long' : undefined,
+    era: getEraFormat(date),
     timeZone: state.timeZone
   });
   let isSelected = state.isSelected(date);

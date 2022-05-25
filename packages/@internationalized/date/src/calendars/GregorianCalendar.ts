@@ -122,8 +122,8 @@ export class GregorianCalendar implements Calendar {
     return ['BC', 'AD'];
   }
 
-  getYearsToAdd(date: Mutable<AnyCalendarDate>, years: number) {
-    return date.era === 'BC' ? -years : years;
+  isInverseEra(date: AnyCalendarDate): boolean {
+    return date.era === 'BC';
   }
 
   balanceDate(date: Mutable<AnyCalendarDate>) {
