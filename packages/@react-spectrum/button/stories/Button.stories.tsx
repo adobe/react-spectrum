@@ -92,7 +92,8 @@ storiesOf('Button', module)
   )
   .add(
     'user-select:none on press test',
-    () => <Example />
+    () => <Example />,
+    {description: {data: 'Pressing and holding on either buttons shouldn\'t trigger text selection on the button labels (wait for buttons to turn red).'}}
   )
   .add(
     'styles to check WHCM support',
@@ -180,7 +181,7 @@ function renderStyles<T extends ElementType = 'button'>(props: SpectrumButtonPro
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
-          variant="primary"  
+          variant="primary"
           {...props}>
           Primary
         </Button>
