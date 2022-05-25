@@ -13,7 +13,6 @@
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {TabListProps} from '@react-types/tabs';
 import {useRef} from 'react';
-import {Selection} from '@react-stately/selection/src/Selection';
 
 
 export interface TabListState<T> extends SingleSelectListState<T> {}
@@ -48,7 +47,7 @@ export function useTabListState<T extends object>(props: TabListProps<T>): TabLi
       selectedKey = collection.getFirstKey();
     }
     // directly set selection because replace/toggle selection won't consider disabled keys
-    selectionManager.setSelectedKeys(new Selection([selectedKey], selectedKey, selectedKey));
+    selectionManager.setSelectedKeys([selectedKey]);
   }
 
   // If the tablist doesn't have focus and the selected key changes or if there isn't a focused key yet, change focused key to the selected key if it exists.
