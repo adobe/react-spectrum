@@ -25,7 +25,6 @@ export default {
   title: 'Meter',
   component: Meter,
   parameters: {
-    providerSwitcher: {status: 'positive'},
     argTypes: {
       value: {
         control: {

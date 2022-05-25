@@ -17,10 +17,7 @@ type StatusLightStory = ComponentStoryObj<typeof StatusLight>;
 
 export default {
   title: 'StatusLight',
-  component: StatusLight,
-  parameters: {
-    providerSwitcher: {status: 'positive'}
-  }
+  component: StatusLight
 } as ComponentMeta<typeof StatusLight>;
 
 export const Default: StatusLightStory = {
