@@ -1126,7 +1126,7 @@ function AsyncList(props) {
       loadingState={list.loadingState}
       onLoadMore={list.loadMore}
       {...props}>
-      {(item) => {
+      {(item: any) => {
         if (props.withActions) {
           return <Item key={item.name} textValue={item.name}><Text>{item.name}</Text><ActionButton>Edit</ActionButton></Item>;
         }
@@ -1144,7 +1144,7 @@ function FalsyIds(props) {
 
   return (
     <ListView aria-label="falsy id ListView" width="250px" height={400} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={items} onAction={action('onAction')} {...props}>
-      {item => <Item>{item.name}</Item>}
+      {(item: any) => <Item>{item.name}</Item>}
     </ListView>
   );
 }
