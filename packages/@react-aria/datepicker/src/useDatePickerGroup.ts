@@ -1,17 +1,46 @@
+import {createFocusManager, getFocusableTreeWalker} from '@react-aria/focus';
 import {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
-import {getFocusableTreeWalker} from '@react-aria/focus';
 import {KeyboardEvent} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import {RefObject} from 'react';
+import {RefObject, useMemo} from 'react';
+import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
-export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<HTMLElement>) {
+export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<HTMLElement>, disableArrowNavigation?: boolean) {
+  let {direction} = useLocale();
+  let focusManager = useMemo(() => createFocusManager(ref), [ref]);
+
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
     if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp') && 'setOpen' in state) {
       e.preventDefault();
       e.stopPropagation();
       state.setOpen(true);
+    }
+
+    if (disableArrowNavigation) {
+      return;
+    }
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        e.preventDefault();
+        e.stopPropagation();
+        if (direction === 'rtl') {
+          focusManager.focusNext();
+        } else {
+          focusManager.focusPrevious();
+        }
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        e.stopPropagation();
+        if (direction === 'rtl') {
+          focusManager.focusPrevious();
+        } else {
+          focusManager.focusNext();
+        }
+        break;
     }
   };
 

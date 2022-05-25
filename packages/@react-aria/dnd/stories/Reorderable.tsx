@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {chain} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
+import {DragPreview} from '../src';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
@@ -22,8 +23,7 @@ import {Item} from '@react-stately/collections';
 import {ItemDropTarget} from '@react-types/shared';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
-import {Provider, useProvider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
 import {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
@@ -91,10 +91,9 @@ function ReorderableGrid(props) {
     })
   });
 
-  let provider = useProvider();
-
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let preview = useRef(null);
   let dragState = useDraggableCollectionState({
     collection: gridState.collection,
     selectionManager: gridState.selectionManager,
@@ -103,22 +102,7 @@ function ReorderableGrid(props) {
         [dragType]: JSON.stringify(key)
       }));
     },
-    renderPreview(selectedKeys, draggedKey) {
-      let item = gridState.collection.getItem(draggedKey);
-      return (
-        <Provider {...provider}>
-          <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
-            <div className={classNames(dndStyles, 'drag-handle')}>
-              <ShowMenu size="XS" />
-            </div>
-            <span>{item.rendered}</span>
-            {selectedKeys.size > 1 &&
-              <div className={classNames(dndStyles, 'badge')}>{selectedKeys.size}</div>
-            }
-          </div>
-        </Provider>
-      );
-    },
+    preview,
     onDragStart: action('onDragStart'),
     onDragEnd: chain(action('onDragEnd'), props.onDragEnd)
   });
@@ -251,6 +235,22 @@ function ReorderableGrid(props) {
           }
         </>
       ))}
+      <DragPreview ref={preview}>
+        {() => {
+          let item = state.collection.getItem(dragState.draggedKey);
+          return (
+            <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': dragState.draggingKeys.size > 1})}>
+              <div className={classNames(dndStyles, 'drag-handle')}>
+                <ShowMenu size="XS" />
+              </div>
+              <span>{item.rendered}</span>
+              {dragState.draggingKeys.size > 1 &&
+                <div className={classNames(dndStyles, 'badge')}>{dragState.draggingKeys.size}</div>
+              }
+            </div>
+          );
+        }}
+      </DragPreview>
     </div>
   );
 }

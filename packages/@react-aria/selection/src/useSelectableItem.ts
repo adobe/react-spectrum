@@ -18,7 +18,7 @@ import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
-interface SelectableItemOptions {
+export interface SelectableItemOptions {
   /**
    * An interface for reading and updating multiple selection state.
    */
@@ -56,19 +56,40 @@ interface SelectableItemOptions {
   /** Whether the item is disabled. */
   isDisabled?: boolean,
   /**
-   * Handler that is called when a user performs an action on the cell. The exact user event depends on
+   * Handler that is called when a user performs an action on the item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void
 }
 
-interface SelectableItemAria {
+export interface SelectableItemStates {
+  /** Whether the item is currently in a pressed state. */
+  isPressed: boolean,
+  /** Whether the item is currently selected. */
+  isSelected: boolean,
+  /**
+   * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
+   * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the item may be selected, dependent on `selectionMode`, `disabledKeys`, and `disabledBehavior`.
+   */
+  allowsSelection: boolean,
+  /**
+   * Whether the item has an action, dependent on `onAction`, `disabledKeys`,
+   * and `disabledBehavior. It may also change depending on the current selection state
+   * of the list (e.g. when selection is primary). This can be used to enable or disable hover
+   * styles or other visual indications of interactivity.
+   */
+  hasAction: boolean
+}
+
+export interface SelectableItemAria extends SelectableItemStates {
   /**
    * Props to be spread on the item root node.
    */
-  itemProps: HTMLAttributes<HTMLElement>,
-  /** Whether the item is currently in a pressed state. */
-  isPressed: boolean
+  itemProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -145,10 +166,16 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
   // With touch, onAction occurs on single tap, and long press enters selection mode.
-  let hasPrimaryAction = onAction && (manager.selectionMode === 'none' || (manager.selectionBehavior !== 'replace' && manager.isEmpty));
-  let hasSecondaryAction = onAction && manager.selectionMode !== 'none' && manager.selectionBehavior === 'replace';
-  let hasAction = hasPrimaryAction || hasSecondaryAction;
+  isDisabled = isDisabled || manager.isDisabled(key);
   let allowsSelection = !isDisabled && manager.canSelectItem(key);
+  let allowsActions = onAction && !isDisabled;
+  let hasPrimaryAction = allowsActions && (
+    manager.selectionBehavior === 'replace'
+      ? !allowsSelection
+      : manager.isEmpty
+  );
+  let hasSecondaryAction = allowsActions && allowsSelection && manager.selectionBehavior === 'replace';
+  let hasAction = hasPrimaryAction || hasSecondaryAction;
   let modality = useRef(null);
 
   let longPressEnabled = hasAction && allowsSelection;
@@ -276,7 +303,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       longPressEnabled ? longPressProps : {},
       {onDoubleClick, onDragStart}
     ),
-    isPressed
+    isPressed,
+    isSelected: manager.isSelected(key),
+    isDisabled,
+    allowsSelection,
+    hasAction
   };
 }
 
