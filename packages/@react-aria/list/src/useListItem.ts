@@ -17,8 +17,8 @@ import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 import {Node as RSNode} from '@react-types/shared';
+import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import {useLocale} from '@react-aria/i18n';
-import {useSelectableItem} from '@react-aria/selection';
 
 export interface AriaListItemOptions {
   /** An object representing the list item. Contains all the relevant information that makes up the list row. */
@@ -29,15 +29,13 @@ export interface AriaListItemOptions {
   shouldSelectOnPressUp?: boolean
 }
 
-export interface ListItemAria {
+export interface ListItemAria extends SelectableItemStates {
   /** Props for the list row element. */
   rowProps: HTMLAttributes<HTMLElement>,
   /** Props for the grid cell element within the list row. */
   gridCellProps: HTMLAttributes<HTMLElement>,
   /** Props for the list item description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
-  /** Whether the row is currently pressed. */
-  isPressed: boolean
+  descriptionProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -65,7 +63,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     }
   };
 
-  let {itemProps, isPressed} = useSelectableItem({
+  let {itemProps, ...itemStates} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
@@ -170,8 +168,8 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     onKeyDownCapture: onKeyDown,
     onFocus,
     'aria-label': node.textValue,
-    'aria-selected': state.selectionManager.selectionMode !== 'none' ? state.selectionManager.isSelected(node.key) : undefined,
-    'aria-describedby': descriptionId,
+    'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
+    'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
     id: getRowId(state, node.key)
   });
 
@@ -190,7 +188,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     descriptionProps: {
       id: descriptionId
     },
-    isPressed
+    ...itemStates
   };
 }
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {Calendar, RangeCalendar} from '../';
 import {CalendarDate, GregorianCalendar, today} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
@@ -260,6 +260,64 @@ describe('CalendarBase', () => {
       expect(prevButton).not.toHaveAttribute('disabled');
       expect(nextButton).toHaveAttribute('disabled');
       expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, April 10, 2019')).toBe(true);
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should handle minimum dates in a calendar system', ({Calendar}) => {
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme} locale="en-US-u-ca-japanese">
+          <Calendar defaultFocusedValue={new CalendarDate(1868, 9, 12)} />
+        </Provider>
+      );
+
+      let grid = getByRole('grid');
+      let headers = within(grid).getAllByRole('columnheader', {hidden: true});
+      expect(headers.map(h => h.textContent)).toEqual(['S', 'M', 'T', 'W', 'T', 'F', 'S']);
+
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells[0]).toHaveTextContent('8');
+      expect([...cells[0].parentElement.children].indexOf(cells[0])).toBe(2);
+
+      let button = getByRole('button', {name: 'Previous'});
+      expect(button).toHaveAttribute('disabled');
+
+      button = getAllByRole('button', {name: 'Next'})[0];
+      expect(button).not.toHaveAttribute('disabled');
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should handle maximum dates in a calendar system', ({Calendar}) => {
+      let {getByRole, getAllByRole} = render(<Calendar defaultFocusedValue={new CalendarDate(9999, 12, 12)} />);
+
+      let grid = getByRole('grid');
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells[cells.length - 1]).toHaveTextContent('31');
+
+      let button = getByRole('button', {name: 'Previous'});
+      expect(button).not.toHaveAttribute('disabled');
+
+      button = getAllByRole('button', {name: 'Next'})[0];
+      expect(button).toHaveAttribute('disabled');
+    });
+
+    it.each`
+      Name                   | Calendar
+      ${'v3 Calendar'}       | ${Calendar}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar}
+    `('$Name should show era for BC dates', ({Calendar}) => {
+      let {getByRole} = render(<Calendar defaultFocusedValue={new CalendarDate('BC', 2, 1, 5)} />);
+
+      let group = getByRole('group');
+      expect(group).toHaveAttribute('aria-label', 'January 2 BC');
+
+      let heading = getByRole('heading');
+      expect(heading).toHaveTextContent('January 2 BC');
     });
 
     it.each`
