@@ -17,6 +17,7 @@ import {KeyboardDelegate} from '@react-types/shared';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
+import {useInteractionModality} from '@react-aria/interactions';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface AriaListOptions<T> extends Omit<AriaListProps<T>, 'children'> {
@@ -77,10 +78,12 @@ export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: 
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
+  let modality = useInteractionModality();
+  let isGrid = !(typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0) || modality === 'keyboard';
   let gridProps: HTMLAttributes<HTMLElement> = mergeProps(
     domProps,
     {
-      role: 'grid',
+      role: isGrid ? 'grid' : 'listbox',
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
@@ -88,7 +91,7 @@ export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: 
     descriptionProps
   );
 
-  if (isVirtualized) {
+  if (isVirtualized && isGrid) {
     gridProps['aria-rowcount'] = state.collection.size;
     gridProps['aria-colcount'] = 1;
   }

@@ -39,7 +39,7 @@ function pointerEvent(type, opts) {
   return evt;
 }
 
-describe('ListView', function () {
+describe.skip('ListView', function () {
   let offsetWidth, offsetHeight, scrollHeight;
   let onSelectionChange = jest.fn();
   let onAction = jest.fn();

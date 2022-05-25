@@ -18,7 +18,7 @@ import intlMessages from '../intl/*.json';
 import {Menu} from './Menu';
 import {MenuTrigger} from './MenuTrigger';
 import More from '@spectrum-icons/workflow/More';
-import React from 'react';
+import React, {useImperativeHandle} from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useSlotProps} from '@react-spectrum/utils';
@@ -30,6 +30,17 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
   if (buttonProps['aria-label'] === undefined) {
     buttonProps['aria-label'] = formatMessage('moreActions');
   }
+
+  // @ts-ignore
+  useImperativeHandle(props.ref, () => ({
+    _getActions() {
+      return {
+        children: props.children,
+        items: props.items,
+        onAction: props.onAction
+      };
+    }
+  }));
 
   return (
     <MenuTrigger

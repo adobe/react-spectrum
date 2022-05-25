@@ -28,7 +28,7 @@ import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
-import React, {forwardRef, Key, ReactElement, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
+import React, {forwardRef, Key, ReactElement, ReactNode, useCallback, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -57,6 +57,18 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   } = props;
 
   let domRef = useDOMRef(ref);
+
+  // @ts-ignore
+  useImperativeHandle(props.ref, () => ({
+    _getActions() {
+      return {
+        children: props.children,
+        items: props.items,
+        onAction
+      };
+    }
+  }));
+
   let wrapperRef = useRef<HTMLDivElement>(null);
   let state = useListState({...props, suppressTextValueWarning: true});
   let {actionGroupProps} = useActionGroup(props, state, domRef);

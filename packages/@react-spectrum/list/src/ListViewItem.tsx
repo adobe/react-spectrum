@@ -12,23 +12,26 @@
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames, ClearSlots, SlotProvider, useHasChild} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider, unwrapDOMRef, useHasChild} from '@react-spectrum/utils';
 import {CSSTransition} from 'react-transition-group';
 import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
 import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import {isFocusVisible as isGlobalFocusVisible, useHover} from '@react-aria/interactions';
+import {isFocusVisible as isGlobalFocusVisible, useHover, useLongPress} from '@react-aria/interactions';
+import {Item, Menu} from '@react-spectrum/menu';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
+import {Popover} from '@react-spectrum/overlays';
 import {Provider} from '@react-spectrum/provider';
-import React, {useContext, useRef} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useListItem, useListSelectionCheckbox} from '@react-aria/list';
 import {useLocale} from '@react-aria/i18n';
+import {useOverlayPosition} from '@react-aria/overlays';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 interface ListViewItemProps<T> {
@@ -87,7 +90,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     droppableItem = dropHooks.useDroppableItem({target}, dropState, rowRef);
   }
 
-  let dragButtonRef = React.useRef();
+  let dragButtonRef = React.useRef(null);
   let {buttonProps} = useButton({
     ...draggableItem?.dragButtonProps,
     elementType: 'div'
@@ -126,14 +129,70 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let {visuallyHiddenProps} = useVisuallyHidden();
 
+  let actionGroupRef = useRef(null);
+  let [isOpen, setOpen] = useState(false);
+  let {longPressProps} = useLongPress({
+    accessibilityDescription: 'Long press for more actions',
+    onLongPress(e) {
+      if (e.pointerType === 'touch') {
+        setCustomActions(actionGroupRef.current._getActions());
+        setOpen(true);
+      }
+    }
+  });
+
+  let onContextMenu = e => {
+    e.preventDefault();
+    setCustomActions(actionGroupRef.current._getActions());
+    setOpen(true);
+  };
+
+  let menuPopoverRef = useRef();
+  let menuRef = useRef();
+  let {overlayProps: positionProps, placement} = useOverlayPosition({
+    targetRef: rowRef,
+    overlayRef: unwrapDOMRef(menuPopoverRef),
+    scrollRef: unwrapDOMRef(menuRef),
+    placement: 'bottom left',
+    isOpen,
+    onClose: () => setOpen(false)
+  });
+
+  let [customActions, setCustomActions] = useState(null);
+  let onAction = key => {
+    switch (key) {
+      case 'select':
+        state.selectionManager.toggleSelection(item.key);
+        break;
+      case 'drag':
+        dragButtonRef.current?.click();
+        break;
+      default:
+        customActions?.onAction?.(key);
+    }
+
+    setOpen(false);
+  };
+
+  let [hasCustomActions, setHasCustomActions] = useState(false);
+  useEffect(() => {
+    setHasCustomActions(!!actionGroupRef.current?._getActions?.());
+  });
+
   const mergedProps = mergeProps(
+    hasCustomActions ? longPressProps : {},
     rowProps,
     draggableItem?.dragProps,
     isDroppable && droppableItem?.dropProps,
     hoverProps,
     focusWithinProps,
-    focusProps
+    focusProps,
+    hasCustomActions ? {onContextMenu} : {}
   );
+
+  if (mergedProps.draggable && state.selectionManager.isEmpty) {
+    delete mergedProps.draggable;
+  }
 
   let isFirstRow = item.prevKey == null;
   let isLastRow = item.nextKey == null;
@@ -199,7 +258,8 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
             }
           )
         }
-        {...gridCellProps}>
+        {...gridCellProps}
+        aria-hidden={mergedProps.role === 'option' || undefined}>
         <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
           {isListDraggable &&
             <div className={listStyles['react-spectrum-ListViewItem-draghandle-container']}>
@@ -249,9 +309,10 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               actionGroup: {
                 UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
                 isQuiet: true,
-                density: 'compact'
+                density: 'compact',
+                ref: actionGroupRef
               },
-              actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
+              actionMenu: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true, ref: actionGroupRef}
             }}>
             {content}
             <ClearSlots>
@@ -260,6 +321,20 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
           </SlotProvider>
         </Grid>
       </div>
+      <Popover
+        isOpen={isOpen}
+        UNSAFE_style={positionProps.style}
+        ref={menuPopoverRef}
+        placement={placement}
+        hideArrow
+        onClose={() => setOpen(false)}
+        shouldCloseOnBlur>
+        <Menu ref={menuRef} autoFocus="first" onAction={onAction}>
+          {allowsSelection ? <Item key="select">Select</Item> : null}
+          {isListDraggable && !isDisabled ? <Item key="drag">Drag</Item> : null}
+          {customActions?.children}
+        </Menu>
+      </Popover>
     </div>
   );
 }

@@ -239,7 +239,7 @@ storiesOf('ListView/Actions', module)
     renderActionsExample(props => <ActionButton {...props}><Copy /></ActionButton>, args))
   .add('ActionGroup', args =>
     renderActionsExample(props => (
-      <ActionGroup buttonLabelBehavior="hide" {...props}>
+      <ActionGroup buttonLabelBehavior="hide" {...props} onAction={action('onAction')}>
         <Item key="add">
           <Add />
           <Text>Add</Text>
@@ -411,7 +411,7 @@ storiesOf('ListView/Drag and Drop', module)
 
 function renderActionsExample(renderActions, props?) {
   return (
-    <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={keys => console.log('sel', keys)}>
+    <ListView aria-label="Applications" width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={keys => console.log('sel', keys)}>
       <Item key="a" textValue="Utilities" hasChildItems>
         <Folder />
         <Text>Utilities</Text>

@@ -13,7 +13,7 @@
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
-import {isFocusVisible} from '@react-aria/interactions';
+import {isFocusVisible, useInteractionModality} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {Node as RSNode} from '@react-types/shared';
@@ -160,8 +160,10 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     }
   };
 
+  let modality = useInteractionModality();
+  let isGrid = !(typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0) || modality === 'keyboard';
   let rowProps: HTMLAttributes<HTMLElement> = mergeProps(itemProps, {
-    role: 'row',
+    role: isGrid ? 'row' : 'option',
     onKeyDownCapture: onKeyDown,
     onFocus,
     'aria-label': node.textValue,
@@ -170,13 +172,13 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     id: getRowId(state, node.key)
   });
 
-  if (isVirtualized) {
+  if (isVirtualized && isGrid) {
     rowProps['aria-rowindex'] = node.index + 1;
   }
 
   let gridCellProps = {
-    role: 'gridcell',
-    'aria-colindex': 1
+    role: isGrid ? 'gridcell' : 'presentation'
+    // 'aria-colindex': 1
   };
 
   return {
