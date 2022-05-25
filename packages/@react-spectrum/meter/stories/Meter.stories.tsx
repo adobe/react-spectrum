@@ -11,16 +11,8 @@
  */
 
 import {Meter} from '../';
-import {number, withKnobs} from '@storybook/addon-knobs';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-
-const sliderOptions = {
-  range: true,
-  min: 0,
-  max: 100,
-  step: 1
-};
 
 const formatOptions = {
   style: 'currency',
@@ -28,8 +20,19 @@ const formatOptions = {
 };
 
 storiesOf('Meter', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .addDecorator(withKnobs)
+  .addParameters({
+    providerSwitcher: {status: 'positive'},
+    args: {value: 32},
+    argTypes: {
+      value: {
+        control: {
+          type: 'range',
+          min: 0,
+          max: 100
+        }
+      }
+    }
+  })
   .add(
     'value: 50',
     () => render({value: 50})
@@ -40,24 +43,15 @@ storiesOf('Meter', module)
   )
   .add(
     'size: S',
-    () => {
-      const value = number('Value', 50, sliderOptions);
-      return render({value, size: 'S'});
-    }
+    args => render({...args, size: 'S'})
   )
   .add(
     'showValueLabel: true',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({showValueLabel: true, value});
-    }
+    args =>  render({showValueLabel: true, ...args})
   )
   .add(
     'showValueLabel: false',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({showValueLabel: false, value});
-    }
+    args => render({showValueLabel: false, ...args})
   )
   .add(
     'valueLabel: 1 of 4',
@@ -65,56 +59,35 @@ storiesOf('Meter', module)
   )
   .add(
     'Using number formatOptions with currency style',
-    () => {
-      const value = number('Value', 60, sliderOptions);
-      return render({
-        showValueLabel: true,
-        value,
-        formatOptions
-      });
-    }
+    args => render({
+      ...args,
+      showValueLabel: true,
+      formatOptions
+    })
   )
   .add(
     'no visible label',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({label: null, 'aria-label': 'Meter', value});
-    }
+    args => render({label: null, 'aria-label': 'Meter', ...args})
   )
   .add(
     'labelPosition: side',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({value, labelPosition: 'side'});
-    }
+    args => render({labelPosition: 'side', ...args})
   )
   .add(
     'labelPosition: top',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({value, labelPosition: 'top'});
-    }
+    args => render({labelPosition: 'top', ...args})
   )
   .add(
     'variant: positive',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({variant: 'positive', value});
-    }
+    args => render({variant: 'positive', ...args})
   )
   .add(
     'variant: critical',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({variant: 'critical', value});
-    }
+    args => render({variant: 'critical', ...args})
   )
   .add(
     'variant: warning',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({variant: 'warning', value});
-    }
+    args => render({variant: 'warning', ...args})
   )
   .add(
     'parent width 100%',

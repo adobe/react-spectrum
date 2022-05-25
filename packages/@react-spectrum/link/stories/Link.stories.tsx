@@ -10,62 +10,77 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
+import {ArgTypes, ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Link} from '../';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
+import {SpectrumLinkProps} from '@react-types/link';
 
-storiesOf('Link', module)
-  .addParameters({providerSwitcher: {status: 'notice'}})
-  .add(
-    'Default',
-    () => render({onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'variant: secondary',
-    () => render({variant: 'secondary', onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'variant: overBackground',
-    () => (
+type LinkStory = ComponentStoryObj<typeof Link>;
+
+export default {
+  title: 'Link',
+  component: Link,
+  argTypes: {
+    onPress: {
+      action: 'press'
+    },
+    onPressStart: {
+      action: 'pressstart'
+    },
+    onPressEnd: {
+      action: 'pressend'
+    }
+  }
+} as ComponentMeta<typeof Link>;
+
+export let Default: LinkStory = {
+  args: {children: 'This is a React Spectrum Link'}
+};
+
+export let Secondary: LinkStory = {
+  ...Default,
+  args: {...Default.args, variant: 'secondary'},
+  name: 'variant: secondary'
+};
+
+export let OverBackground: LinkStory = {
+  ...Default,
+  args: {...Default.args, variant: 'overBackground'},
+  decorators: [
+    (Story) => (
       <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
-        {render({variant: 'overBackground', onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})}
+        <Story />
       </div>
     )
-  )
-  .add(
-    'isQuiet: true',
-    () => render({isQuiet: true, onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'isQuiet: true, variant: secondary',
-    () => render({isQuiet: true, variant: 'secondary', onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'children: a',
-    () => renderWithChildren({onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'onPress',
-    () => render({onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  )
-  .add(
-    'onClick',
-    () => render({onClick: action('deprecatedOnClick'), onPress: action('press'), onPressStart: action('pressstart'), onPressEnd: action('pressend')})
-  );
+  ],
+  name: 'variant: overBackground'
+};
 
-function render(props = {}) {
-  return (
-    <Link {...props}>
-      This is a React Spectrum Link
-    </Link>
-  );
-}
+export let IsQuiet: LinkStory = {
+  ...Default,
+  args: {...Default.args, isQuiet: true},
+  name: 'isQuiet: true'
+};
 
-function renderWithChildren(props = {}) {
-  return (
-    <Link {...props}>
-      <a href="//example.com" target="_self">This is a React Spectrum Link</a>
-    </Link>
-  );
-}
+export let IsQuietSecondary: LinkStory = {
+  ...Default,
+  args: {...IsQuiet.args, ...Secondary.args},
+  name: 'isQuiet: true, variant: secondary'
+};
+
+export let WithChildren: LinkStory = {
+  ...Default,
+  args: {children: <a href="//example.com" target="_self">This is a React Spectrum Link</a>},
+  name: 'children: a'
+};
+
+export let OnClick: LinkStory = {
+  ...Default,
+  args: {...Default.args},
+  argTypes: {
+    onClick: {
+      action: 'deprecatedOnClick'
+    }
+  } as Partial<ArgTypes<SpectrumLinkProps>> & {onClick: any},
+  name: 'onClick'
+};

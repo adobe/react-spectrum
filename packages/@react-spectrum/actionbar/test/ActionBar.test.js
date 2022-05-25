@@ -28,15 +28,9 @@ describe('ActionBar', () => {
   }
 
   beforeAll(() => {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 500);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers('legacy');
-  });
-
-  afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 500);
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -109,6 +103,7 @@ describe('ActionBar', () => {
     act(() => clearButton.focus());
     triggerPress(clearButton);
     act(() => jest.runAllTimers());
+    act(() => jest.runAllTimers());
 
     expect(tree.queryByRole('toolbar')).toBeNull();
     expect(document.activeElement).toBe(checkbox);
@@ -130,6 +125,7 @@ describe('ActionBar', () => {
     act(() => within(toolbar).getAllByRole('button')[0].focus());
 
     pressKey(document.activeElement, {key: 'Escape'});
+    act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
 
     expect(tree.queryByRole('toolbar')).toBeNull();

@@ -207,7 +207,9 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
         granularity: startGranularity,
         timeZone: startTimeZone,
         hideTimeZone: props.hideTimeZone,
-        hourCycle: props.hourCycle
+        hourCycle: props.hourCycle,
+        showEra: (value.start.calendar.identifier === 'gregory' && value.start.era === 'BC') ||
+          (value.end.calendar.identifier === 'gregory' && value.end.era === 'BC')
       });
 
       let startDate = value.start.toDate(startTimeZone || 'UTC');
