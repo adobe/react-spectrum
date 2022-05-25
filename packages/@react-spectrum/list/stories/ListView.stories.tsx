@@ -139,7 +139,7 @@ storiesOf('ListView', module)
   .addDecorator(decorator)
   .addParameters(parameters)
   .add('default', args => (
-    <ListView width="250px" {...args}>
+    <ListView width="250px" aria-label="default ListView" {...args}>
       <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
       <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
       <Item textValue="Adobe XD">Adobe XD</Item>
@@ -168,7 +168,7 @@ storiesOf('ListView', module)
     )
   )
   .add('dynamic items - small viewport', args => (
-    <ListView items={items} width="100px" height="250px" {...args}>
+    <ListView aria-label="small view port listview" items={items} width="100px" height="250px" {...args}>
       {(item: any) => (
         <Item key={item.key} textValue={item.name}>
           <Text>
@@ -193,17 +193,17 @@ storiesOf('ListView', module)
     <FalsyIds {...args} />
   ))
   .add('empty list', args => (
-    <ListView width="300px" height="300px" renderEmptyState={renderEmptyState} {...args}>
+    <ListView aria-label="empty ListView" width="300px" height="300px" renderEmptyState={renderEmptyState} {...args}>
       {[]}
     </ListView>
   ))
   .add('loading', args => (
-    <ListView width="300px" height="300px" loadingState="loading" {...args}>
+    <ListView aria-label="loading ListView" width="300px" height="300px" loadingState="loading" {...args}>
       {[]}
     </ListView>
   ))
   .add('loadingMore', args => (
-    <ListView width="300px" height="300px" loadingState="loadingMore" {...args}>
+    <ListView aria-label="loading more ListView" width="300px" height="300px" loadingState="loadingMore" {...args}>
       <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
       <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
       <Item textValue="Adobe XD">Adobe XD</Item>
@@ -219,12 +219,12 @@ storiesOf('ListView', module)
   .add('with ActionBar', args => <ActionBarExample {...args} />)
   .add('with emphasized ActionBar', args => <ActionBarExample isEmphasized {...args} />)
   .add('thumbnails', args => (
-    <ListView width="250px" items={itemsWithThumbs} {...args}>
-      {(item: any) => <Item textValue={item.title}><Image src={item.url} /><Text>{item.title}</Text><Text slot="description">JPG</Text></Item>}
+    <ListView width="250px" items={itemsWithThumbs} aria-label="ListView with thumbnails" {...args}>
+      {(item: any) => <Item textValue={item.title}><Image src={item.url} alt="" /><Text>{item.title}</Text><Text slot="description">JPG</Text></Item>}
     </ListView>
   ))
   .add('long text', args => (
-    <ListView width="250px" {...args}>
+    <ListView width="250px" aria-label="long text ListView" {...args}>
       <Item textValue="row 1">row 1 with a very very very very very long title</Item>
       <Item textValue="row 2">
         <Text>Text slot with a really really really long name</Text>
@@ -288,9 +288,9 @@ storiesOf('ListView/Actions', module)
 storiesOf('ListView/Selection', module)
   .addParameters(parameters)
   .add('default', args => (
-    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} {...args}>
+    <ListView aria-label="default selection ListView" width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} {...args}>
       {(item: any) => (
-        <Item>
+        <Item textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
           <Text>{item.name}</Text>
         </Item>
@@ -298,9 +298,9 @@ storiesOf('ListView/Selection', module)
     </ListView>
   ))
   .add('disable folders', args => (
-    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} disabledKeys={['c', 'e', 'm']} {...args}>
+    <ListView aria-label="disabled folders ListView" width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} disabledKeys={['c', 'e', 'm']} {...args}>
       {(item: any) => (
-        <Item>
+        <Item textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
           <Text>{item.name}</Text>
         </Item>
@@ -308,7 +308,7 @@ storiesOf('ListView/Selection', module)
     </ListView>
   ))
   .add('disable folder selection', args => (
-    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} disabledKeys={['c', 'e', 'm']} disabledBehavior="selection" {...args}>
+    <ListView aria-label="disabled folder selection ListView" width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} disabledKeys={['c', 'e', 'm']} disabledBehavior="selection" {...args}>
       {(item: any) => (
         <Item textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
@@ -411,7 +411,7 @@ storiesOf('ListView/Drag and Drop', module)
 
 function renderActionsExample(renderActions, props?) {
   return (
-    <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={action('onSelectionChange')}>
+    <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={action('onSelectionChange')} aria-label="render actions ListView">
       <Item key="a" textValue="Utilities" hasChildItems>
         <Folder />
         <Text>Utilities</Text>
@@ -528,7 +528,7 @@ function EmptyTest() {
     <div>
       <Flex direction="row">
         <div {...divProps}>
-          <ListView items={items} width="250px" height={hasDivProps ? null : '500px'} renderEmptyState={renderEmpty}>
+          <ListView aria-label="render empty state ListView" items={items} width="250px" height={hasDivProps ? null : '500px'} renderEmptyState={renderEmpty}>
             {
               item => (
                 <Item key={item.key}>
@@ -1136,14 +1136,14 @@ function AsyncList(props) {
   );
 }
 
-function FalsyIds() {
+function FalsyIds(props) {
   let items = [
     {id: 1, name: 'key=1'},
     {id: 0, name: 'key=0'}
   ];
 
   return (
-    <ListView width="250px" height={400} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={items} onAction={action('onAction')}>
+    <ListView aria-label="falsy id ListView" width="250px" height={400} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={items} onAction={action('onAction')} {...props}>
       {item => <Item>{item.name}</Item>}
     </ListView>
   );
@@ -1160,7 +1160,7 @@ function ActionBarExample(props?) {
   });
   return (
     <ActionBarContainer height={300}>
-      <ListView {...props} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} items={list.items} width="250px">
+      <ListView {...props} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} items={list.items} width="250px" aria-label="Action Bar ListView">
         {(item: any) => <Item>{item.name}</Item>}
       </ListView>
       <ActionBar
