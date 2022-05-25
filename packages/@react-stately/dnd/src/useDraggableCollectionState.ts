@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragStartEvent, Node} from '@react-types/shared';
-import {Key, useState} from 'react';
+import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, Node} from '@react-types/shared';
+import {Key, RefObject, useRef, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
 export interface DraggableCollectionOptions extends DraggableCollectionProps {
@@ -22,10 +22,12 @@ export interface DraggableCollectionOptions extends DraggableCollectionProps {
 export interface DraggableCollectionState {
   collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager,
+  draggedKey: Key | null,
+  draggingKeys: Set<Key>,
   isDragging(key: Key): boolean,
   getKeysForDrag(key: Key): Set<Key>,
   getItems(key: Key): DragItem[],
-  renderPreview(key: Key): JSX.Element,
+  preview?: RefObject<DragPreviewRenderer>,
   startDrag(key: Key, event: DragStartEvent): void,
   moveDrag(event: DragMoveEvent): void,
   endDrag(event: DragEndEvent): void
@@ -39,9 +41,11 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     onDragStart,
     onDragMove,
     onDragEnd,
-    renderPreview
+    preview
   } = props;
-  let [draggingKeys, setDraggingKeys] = useState(new Set<Key>());
+  let [, setDragging] = useState(false);
+  let draggingKeys = useRef(new Set<Key>());
+  let draggedKey = useRef(null);
   let getKeys = (key: Key) => {
     // The clicked item is always added to the drag. If it is selected, then all of the
     // other selected items are also dragged. If it is not selected, the only the clicked
@@ -59,23 +63,25 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
   return {
     collection,
     selectionManager,
+    get draggedKey() {
+      return draggedKey.current;
+    },
+    get draggingKeys() {
+      return draggingKeys.current;
+    },
     isDragging(key) {
-      return draggingKeys.has(key);
+      return draggingKeys.current.has(key);
     },
     getKeysForDrag: getKeys,
     getItems(key) {
       return getItems(getKeys(key));
     },
-    renderPreview(key) {
-      if (typeof renderPreview === 'function') {
-        return renderPreview(getKeys(key), key);
-      }
-
-      return null;
-    },
+    preview,
     startDrag(key, event) {
+      setDragging(true);
       let keys = getKeys(key);
-      setDraggingKeys(keys);
+      draggingKeys.current = keys;
+      draggedKey.current = key;
       if (typeof onDragStart === 'function') {
         onDragStart({
           ...event,
@@ -87,7 +93,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       if (typeof onDragMove === 'function') {
         onDragMove({
           ...event,
-          keys: draggingKeys
+          keys: draggingKeys.current
         });
       }
     },
@@ -95,11 +101,13 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       if (typeof onDragEnd === 'function') {
         onDragEnd({
           ...event,
-          keys: draggingKeys
+          keys: draggingKeys.current
         });
       }
 
-      setDraggingKeys(new Set());
+      setDragging(false);
+      draggingKeys.current = new Set();
+      draggedKey.current = null;
     }
   };
 }

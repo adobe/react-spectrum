@@ -628,6 +628,18 @@ describe('DatePicker', function () {
         expect(segment).not.toHaveAttribute('aria-describedby');
       }
     });
+
+    it('should include era for BC dates', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" value={new CalendarDate('BC', 5, 2, 3)} />);
+      let group = getAllByRole('group')[0];
+      expect(group).toHaveAttribute('aria-describedby');
+
+      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(description).toBe('Selected Date: February 3, 5 BC');
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments[3]).toHaveTextContent('BC');
+    });
   });
 
   describe('focus management', function () {

@@ -122,4 +122,6 @@ export class IndianCalendar extends GregorianCalendar {
   getEras() {
     return ['saka'];
   }
+
+  balanceDate() {}
 }

@@ -2627,9 +2627,9 @@ describe('usePress', function () {
       // Ensure we close any dialogs before unmounting to avoid warning.
       let dialog = document.querySelector('[role="dialog"]');
       if (dialog) {
+        fireEvent.keyDown(dialog, {key: 'Escape'});
+        fireEvent.keyUp(dialog, {key: 'Escape'});
         act(() => {
-          fireEvent.keyDown(dialog, {key: 'Escape'});
-          fireEvent.keyUp(dialog, {key: 'Escape'});
           jest.runAllTimers();
         });
       }
