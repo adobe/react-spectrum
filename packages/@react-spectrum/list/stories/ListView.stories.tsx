@@ -411,7 +411,7 @@ storiesOf('ListView/Drag and Drop', module)
 
 function renderActionsExample(renderActions, props?) {
   return (
-    <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={keys => console.log('sel', keys)}>
+    <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={action('onSelectionChange')}>
       <Item key="a" textValue="Utilities" hasChildItems>
         <Folder />
         <Text>Utilities</Text>
@@ -479,7 +479,7 @@ function NavigationExample(props) {
         selectedKeys={selectedKeys}
         items={children}
         disabledKeys={props.disabledType ? children.filter(item => item.type === props.disabledType).map(item => item.key) : null}
-        onAction={onAction}
+        onAction={chain(onAction, action('onAction'))}
         {...props}>
         {(item: any) => (
           <Item hasChildItems={item.type === 'folder'} textValue={item.name}>
@@ -1124,7 +1124,8 @@ function AsyncList(props) {
       height="size-3000"
       items={list.items}
       loadingState={list.loadingState}
-      onLoadMore={list.loadMore}>
+      onLoadMore={list.loadMore}
+      {...props}>
       {(item) => {
         if (props.withActions) {
           return <Item key={item.name} textValue={item.name}><Text>{item.name}</Text><ActionButton>Edit</ActionButton></Item>;
