@@ -170,6 +170,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     'aria-label': node.textValue,
     'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
+    'aria-describedby': descriptionId,
     id: getRowId(state, node.key)
   });
 
