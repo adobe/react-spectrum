@@ -20,8 +20,6 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('ActionBar', () => {
-  let offsetWidth, offsetHeight;
-
   function pressKey(element, options) {
     fireEvent.keyDown(element, options);
     fireEvent.keyUp(element, options);
@@ -179,11 +177,13 @@ describe('ActionBar', () => {
     pressKey(document.activeElement, {key: 'Escape'});
 
     act(() => jest.runAllTimers());
+    act(() => jest.runAllTimers());
 
     expect(document.activeElement).toBe(moreButton);
 
     pressKey(document.activeElement, {key: 'Escape'});
 
+    act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
 
     expect(document.activeElement).toBe(rows[1]);
@@ -231,11 +231,13 @@ describe('ActionBar', () => {
     pressKey(document.activeElement, {key: 'Escape'});
 
     act(() => jest.runAllTimers());
+    act(() => jest.runAllTimers());
 
     expect(document.activeElement).toBe(moreButton);
 
     pressKey(document.activeElement, {key: 'Escape'});
 
+    act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
 
     expect(document.activeElement === within(table).getAllByRole('row')[2] || document.activeElement === table).toBe(true);
