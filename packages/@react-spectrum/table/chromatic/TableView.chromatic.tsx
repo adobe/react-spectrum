@@ -198,6 +198,10 @@ export const NestedColumns = Template().bind({});
 NestedColumns.storyName = 'nested columns';
 NestedColumns.args = {columns: nestedColumns, items};
 
+export const MaxHeight = Template.bind({});
+MaxHeight.storyName = 'maxHeight defined';
+MaxHeight.args = {columns, items, maxHeight: 'size-100'};
+
 export const Empty = EmptyTemplate().bind({});
 Empty.storyName = 'empty table';
 Empty.args = {};
