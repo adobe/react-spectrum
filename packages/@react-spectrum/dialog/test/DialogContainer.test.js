@@ -42,11 +42,13 @@ describe('DialogContainer', function () {
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
 
     triggerPress(within(dialog).getByText('Confirm'));
+    act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     expect(queryByRole('dialog')).toBeNull();
@@ -65,12 +67,14 @@ describe('DialogContainer', function () {
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
 
     fireEvent.keyDown(dialog, {key: 'Escape'});
     fireEvent.keyUp(dialog, {key: 'Escape'});
+    act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     expect(queryByRole('dialog')).toBeNull();
@@ -133,10 +137,12 @@ describe('DialogContainer', function () {
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
 
     expect(getByRole('dialog')).toBeVisible();
 
     triggerPress(document.body);
+    act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     expect(queryByRole('dialog')).toBeNull();
@@ -155,6 +161,7 @@ describe('DialogContainer', function () {
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
 
     expect(queryByRole('dialog')).toBeNull();
 
@@ -162,6 +169,7 @@ describe('DialogContainer', function () {
     let menuitem = within(menu).getByRole('menuitem');
 
     triggerPress(menuitem);
+    act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     expect(queryByRole('menu')).toBeNull();
@@ -171,6 +179,7 @@ describe('DialogContainer', function () {
     button = within(dialog).getByText('Confirm');
 
     triggerPress(button);
+    act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     expect(queryByRole('dialog')).toBeNull();
@@ -190,12 +199,14 @@ describe('DialogContainer', function () {
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
 
     // 2. Press "Do this…" menu item to open "This" dialog.
     let menu = getByRole('menu');
     let menuitem = within(menu).getByText('Do this…');
     act(() => menuitem.focus());
     triggerPress(menuitem);
+    act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     let dialog = getByRole('dialog');
@@ -207,6 +218,7 @@ describe('DialogContainer', function () {
     fireEvent.keyDown(dialog, {key: 'Escape'});
     fireEvent.keyUp(dialog, {key: 'Escape'});
     act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
 
     // 4. Focus is restored to the menu button.
     expect(queryByRole('dialog')).toBeNull();
@@ -215,12 +227,14 @@ describe('DialogContainer', function () {
     // 5. Press menu button to open menu.
     triggerPress(button);
     act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
 
     // 6. Press "Do that…" menu item to open "That" dialog.
     menu = getByRole('menu');
     menuitem = within(menu).getByText('Do that…');
     act(() => menuitem.focus());
     triggerPress(menuitem);
+    act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     // 7. Press "Do this" action button to open "This" dialog.
@@ -229,6 +243,7 @@ describe('DialogContainer', function () {
     act(() => actionButton.focus());
     expect(document.activeElement).toBe(actionButton);
     triggerPress(actionButton);
+    act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     // 8. "This" dialog opens with autoFocus on the button, "Do that".
@@ -239,6 +254,7 @@ describe('DialogContainer', function () {
     // 9. Press "Escape" key to close "This" dialog.
     fireEvent.keyDown(dialog, {key: 'Escape'});
     fireEvent.keyUp(dialog, {key: 'Escape'});
+    act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
     // 10. Dialog closes and its FocusScope restores focus to the menu button.

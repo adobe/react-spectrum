@@ -1271,7 +1271,7 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Select an option…');
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(0);
       triggerPress(picker);
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(1);
 
       let listbox = getByRole('listbox');
@@ -1288,6 +1288,7 @@ describe('Picker', function () {
 
       triggerPress(item3);
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      act(() => jest.runAllTimers());
       act(() => jest.runAllTimers());
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(2);
       expect(queryByRole('listbox')).toBeNull();
@@ -1310,6 +1311,7 @@ describe('Picker', function () {
       expect(queryByRole('listbox')).toBeNull();
 
       // run restore focus rAF
+      act(() => jest.runAllTimers());
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
