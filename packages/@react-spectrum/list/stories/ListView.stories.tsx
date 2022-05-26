@@ -952,12 +952,12 @@ export function DragBetweenListsRootOnlyExample(props) {
     initialItems: props.items2 || itemList2
   });
 
-  let onMove = (keys: React.Key[]) => {
+  let onMove = (keys: React.Key[], destinationList) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
-    let destinationList = sourceList === list1 ? list2 : list1;
 
-    destinationList.append(...keys.map(key => sourceList.getItem(key)));
+    let items = keys.map(key => sourceList.getItem(key));
     sourceList.remove(...keys);
+    destinationList.append(...items);
   };
 
   let dragHooksFirst = useDragHooks({
@@ -1007,18 +1007,17 @@ export function DragBetweenListsRootOnlyExample(props) {
           }
         }
         onDropAction(e);
-        onMove(keys);
+        onMove(keys, list1);
       }
     },
-    getDropOperation(target, types) {
-      if (target.type === 'root' && types.has('list2')) {
+    getDropOperation(target) {
+      if (target.type === 'root') {
         return 'move';
       }
 
       return 'cancel';
     }
   });
-
 
   let dropHooksSecond = useDropHooks({
     onDrop: async e => {
@@ -1039,11 +1038,11 @@ export function DragBetweenListsRootOnlyExample(props) {
           }
         }
         onDropAction(e);
-        onMove(keys);
+        onMove(keys, list2);
       }
     },
-    getDropOperation(target, types) {
-      if (target.type === 'root' && types.has('list1')) {
+    getDropOperation(target) {
+      if (target.type === 'root') {
         return 'move';
       }
 
