@@ -725,13 +725,14 @@ export function DragIntoItemExample(props) {
 
   let list = useListData({
     initialItems: [
-      {id: '0', type: 'folder', textValue: 'Folder', childNodes: []},
+      {id: '0', type: 'folder', textValue: 'Folder 1', childNodes: []},
       {id: '1', type: 'item', textValue: 'One'},
       {id: '2', type: 'item', textValue: 'Two'},
       {id: '3', type: 'item', textValue: 'Three'},
       {id: '4', type: 'item', textValue: 'Four'},
       {id: '5', type: 'item', textValue: 'Five'},
-      {id: '6', type: 'item', textValue: 'Six'}
+      {id: '6', type: 'item', textValue: 'Six'},
+      {id: '7', type: 'folder', textValue: 'Folder 2', childNodes: []}
     ]
   });
 
@@ -804,7 +805,7 @@ export function DragIntoItemExample(props) {
       {...props}>
       {(item: any) => (
         <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
-          <Text>{item.type === 'folder' ? 'Drop items here' : `Item ${item.textValue}`}</Text>
+          <Text>{item.type === 'folder' ? `${item.textValue} (Drop items here)` : `Item ${item.textValue}`}</Text>
           {item.type === 'folder' &&
             <>
               <Folder />
