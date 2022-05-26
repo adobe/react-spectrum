@@ -19,9 +19,9 @@ import {
   useStyleProps
 } from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useValueEffect} from '@react-aria/utils';
+import {filterDOMProps, useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 
@@ -68,13 +68,13 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
 
   // There are two main reasons we need to remeasure:
   // 1. Internal changes: Check for initial overflow or when orientation/scale/children change (from checkForOverflow dep array)
-  useEffect(() => {
+  useLayoutEffect(() => {
     checkForOverflow();
   }, [checkForOverflow]);
 
   // 2. External changes: buttongroup won't change size due to any parents changing size, so listen to its container for size changes to figure out if we should remeasure
   let parent = useRef<HTMLElement>();
-  useEffect(() => {
+  useLayoutEffect(() => {
     parent.current = domRef.current.parentElement;
   }, [domRef.current]);
   useResizeObserver({ref: parent, onResize: checkForOverflow});
