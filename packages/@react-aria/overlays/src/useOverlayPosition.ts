@@ -44,7 +44,7 @@ interface AriaPositionProps extends PositionProps {
   /** Handler that is called when the overlay should close. */
   onClose?: () => void,
   /**
-   * The maxHeight specified for the overlay element. 
+   * The maxHeight specified for the overlay element.
    * By default, it will take all space up to the current viewport height.
    */
   maxHeight?: number
@@ -96,9 +96,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let deps = [
     shouldUpdatePosition,
     placement,
-    overlayRef.current,
-    targetRef.current,
-    scrollRef.current,
+    overlayRef,
+    targetRef,
+    scrollRef,
     containerPadding,
     shouldFlip,
     boundaryElement,
