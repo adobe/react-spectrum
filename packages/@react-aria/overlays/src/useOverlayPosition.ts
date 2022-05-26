@@ -96,9 +96,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let deps = [
     shouldUpdatePosition,
     placement,
-    overlayRef,
-    targetRef,
-    scrollRef,
+    overlayRef.current,
+    targetRef.current,
+    scrollRef.current,
     containerPadding,
     shouldFlip,
     boundaryElement,

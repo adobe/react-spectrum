@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useDOMRef, useIsMobileDevice, useUnwrapDOMRef} from '@react-spectrum/utils';
+import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
@@ -61,7 +61,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   let isMobile = useIsMobileDevice();
   let {overlayProps: positionProps, placement} = useOverlayPosition({
     targetRef: menuTriggerRef,
-    overlayRef: useUnwrapDOMRef(menuPopoverRef),
+    overlayRef: unwrapDOMRef(menuPopoverRef),
     scrollRef: menuRef,
     placement: initialPlacement,
     shouldFlip: shouldFlip,
