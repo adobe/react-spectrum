@@ -192,7 +192,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
   // Determine how many editable segments there are for validation purposes.
   // The result is cached for performance.
-  let allSegments = useMemo(() =>
+  let allSegments: Partial<typeof EDITABLE_SEGMENTS> = useMemo(() =>
     dateFormatter.formatToParts(new Date())
       .filter(seg => EDITABLE_SEGMENTS[seg.type])
       .reduce((p, seg) => (p[seg.type] = true, p), {})
@@ -276,8 +276,14 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
   };
 
   let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
-    markValid(type);
-    setValue(addSegment(displayValue, type, amount, resolvedOptions));
+    if (!validSegments[type]) {
+      markValid(type);
+      if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
+        setValue(displayValue);
+      }
+    } else {
+      setValue(addSegment(displayValue, type, amount, resolvedOptions));
+    }
   };
 
   let validationState: ValidationState = props.validationState ||
@@ -318,8 +324,9 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
       if (!part) {
         // Confirm the rest of the placeholder if any of the segments are valid.
-        let numValid = Object.keys(validSegments).length;
-        if (numValid > 0 && numValid < Object.keys(allSegments).length) {
+        let validKeys = Object.keys(validSegments);
+        let allKeys = Object.keys(allSegments);
+        if (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod) {
           validSegments = {...allSegments};
           setValidSegments(validSegments);
           setValue(displayValue.copy());

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {createPlaceholderDate, FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
 import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useOverlayTriggerState} from '@react-stately/overlays';
@@ -63,9 +63,7 @@ export interface DateRangePickerState {
   /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
   validationState: ValidationState,
   /** Formats the selected range using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string},
-  /** Replaces the start and/or end value of the selected range with the placeholder value if unentered. */
-  confirmPlaceholder(): void
+  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string}
 }
 
 /**
@@ -99,7 +97,7 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
   };
 
   let v = (value?.start || value?.end || props.placeholderValue);
-  let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
+  let [granularity] = useDefaultProps(v, props.granularity);
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
   let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
@@ -268,19 +266,6 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
         start: startFormatter.format(startDate),
         end: endFormatter.format(endDate)
       };
-    },
-    confirmPlaceholder() {
-      // Need to use ref value here because the value can be set in the same tick as
-      // a blur, which means the component won't have re-rendered yet.
-      let value = valueRef.current;
-      if (value && Boolean(value.start) !== Boolean(value.end)) {
-        let calendar = (value.start || value.end).calendar;
-        let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
-        setValue({
-          start: value.start || placeholder,
-          end: value.end || placeholder
-        });
-      }
     }
   };
 }

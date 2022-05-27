@@ -114,16 +114,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
 
     switch (e.key) {
-      case 'Enter':
-        e.preventDefault();
-        e.stopPropagation();
-        if (segment.isPlaceholder && !state.isReadOnly) {
-          state.confirmPlaceholder(segment.type);
-        }
-        focusManager.focusNext();
-        break;
-      case 'Tab':
-        break;
       case 'Backspace':
       case 'Delete': {
         // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
