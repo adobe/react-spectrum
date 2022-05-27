@@ -33,7 +33,14 @@ interface FocusResult {
  * Handles focus events for the immediate target.
  * Focus events on child elements will be ignored.
  */
-export function useFocus({isDisabled, onFocus: onFocusProp, onBlur: onBlurProp, onFocusChange}: FocusProps): FocusResult {
+export function useFocus(props: FocusProps): FocusResult {
+  let {
+    isDisabled,
+    onFocus: onFocusProp,
+    onBlur: onBlurProp,
+    onFocusChange
+  } = props;
+
   const onBlur: FocusProps['onBlur'] = useCallback((e: FocusEvent) => {
     if (e.target === e.currentTarget) {
       if (onBlurProp) {
