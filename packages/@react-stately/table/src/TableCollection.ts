@@ -18,7 +18,7 @@ interface GridCollectionOptions {
 }
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
-const RESIZE_BUFFER_COLUMN_KEY = 'resize-buffer-column' + Math.random().toString(36).slice(2);
+// const RESIZE_BUFFER_COLUMN_KEY = 'resize-buffer-column' + Math.random().toString(36).slice(2);
 
 function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
   let columns = [];
@@ -218,36 +218,36 @@ export class TableCollection<T> extends GridCollection<T> {
       visit(node);
     }
 
-    if (Array.from(nodes).some(node => node.props?.allowsResizing)) {
-      /* 
-      If the table content width > table width, a horizontal scroll bar is present.
-      If a user tries to resize a column, making it smaller while they are scrolled to the
-      end of the content horizontally, it shrinks the total table content width, causing
-      things to snap around and breaks the resize behavior.
-      
-      To fix this, we add a resize buffer column (aka "spooky column") to the end of the table.
-      The width of this column defaults to 0. If you try and shrink a column and the width of the
-      table contents > table width, then the "spooky column" will grow to take up the difference
-      so that the total table content width remains constant while you are resizing. Once you
-      finish resizing, the "spooky column" snaps back to 0.
-      */
-      let resizeBufferColumn: GridNode<T> = {
-        type: 'column',
-        key: RESIZE_BUFFER_COLUMN_KEY,
-        value: null,
-        textValue: '',
-        level: 0,
-        index: columns.length,
-        hasChildNodes: false,
-        rendered: null,
-        childNodes: [],
-        props: {
-          isResizeBuffer: true,
-          defaultWidth: 0
-        }
-      };
-      columns.push(resizeBufferColumn);
-    }
+    // if (Array.from(nodes).some(node => node.props?.allowsResizing)) {
+    //   /*
+    //   If the table content width > table width, a horizontal scroll bar is present.
+    //   If a user tries to resize a column, making it smaller while they are scrolled to the
+    //   end of the content horizontally, it shrinks the total table content width, causing
+    //   things to snap around and breaks the resize behavior.
+
+    //   To fix this, we add a resize buffer column (aka "spooky column") to the end of the table.
+    //   The width of this column defaults to 0. If you try and shrink a column and the width of the
+    //   table contents > table width, then the "spooky column" will grow to take up the difference
+    //   so that the total table content width remains constant while you are resizing. Once you
+    //   finish resizing, the "spooky column" snaps back to 0.
+    //   */
+    //   let resizeBufferColumn: GridNode<T> = {
+    //     type: 'column',
+    //     key: RESIZE_BUFFER_COLUMN_KEY,
+    //     value: null,
+    //     textValue: '',
+    //     level: 0,
+    //     index: columns.length,
+    //     hasChildNodes: false,
+    //     rendered: null,
+    //     childNodes: [],
+    //     props: {
+    //       isResizeBuffer: true,
+    //       defaultWidth: 0
+    //     }
+    //   };
+    //   columns.push(resizeBufferColumn);
+    // }
 
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
