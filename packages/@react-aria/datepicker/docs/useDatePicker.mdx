@@ -328,7 +328,7 @@ function CalendarGrid({state, ...props}) {
   let {locale} = useLocale();
   let {gridProps, headerProps, weekDays} = useCalendarGrid(props, state);
 
-  let monthStart = startOfWeek(state.visibleRange.start, locale);
+  // Get the number of weeks in the month so we can render the proper number of rows.
   let weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale);
 
   return (
@@ -343,11 +343,13 @@ function CalendarGrid({state, ...props}) {
       <tbody>
         {[...new Array(weeksInMonth).keys()].map(weekIndex => (
           <tr key={weekIndex}>
-            {[...new Array(7).keys()].map(dayIndex => (
-              <CalendarCell
-                key={dayIndex}
-                state={state}
-                date={monthStart.add({weeks: weekIndex, days: dayIndex})} />
+            {state.getDatesInWeek(weekIndex).map((date, i) => (
+              date ? (
+                <CalendarCell
+                  key={i}
+                  state={state}
+                  date={date} />
+              ) : <td key={i} />
             ))}
           </tr>
         ))}
