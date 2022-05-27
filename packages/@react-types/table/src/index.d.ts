@@ -66,9 +66,9 @@ export interface ColumnProps<T> {
   minWidth?: number | string,
   /** The maximum width of the column. */
   maxWidth?: number | string,
-  /** The default width of the column. */
-  defaultWidth?: number | string,
-  /** Whether the column allows resizing. */
+  // /** The default width of the column. */
+  // defaultWidth?: number | string,
+  // /** Whether the column allows resizing. */
   // allowsResizing?: boolean,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
