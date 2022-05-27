@@ -20,7 +20,25 @@ date: 2022-05-27
 Ever since React 18 was announced last July, compatibility has been front of mind for the team. We are extremely pleased to announce that our library now officially supports React 18! Special thanks to [@eps1lon](https://github.com/eps1lon) for their
 help with getting our tests working with React 18.
 
-A major version bump to our workflow icons is included in this release, so be sure to upgrade accordingly. Other updates include added support for emphasized Tabs and various bug fixes to our existing components and hooks. Thank you to all who contributed to this release!
+A major version bump to our workflow icons is included in this release, so be sure to upgrade accordingly. The changes in this version update are as follows:
+
+3 icons were renamed to fix typo in name:
+```
+SelectSubstract -> SelectSubtract
+SubstractBackPath -> SubtractBackPath
+SubstractFromSelection -> SubtractFromSelection
+```
+The `Tableau` icon was removed to conform with open source rules, Adobe employees please request access to this icon from the icons team. Non-Adobe users, please stop using this icon.
+
+2 icons were added:
+```
+CircleFilled
+Invite
+```
+
+Various icons were updated, in particular `Circle` is now hollow. `CircleFilled` is the visual equivalent to the old `Circle` icon. Please see the [PR](https://github.com/adobe/react-spectrum/pull/3019) for more information.
+
+Other updates include added support for emphasized Tabs and various bug fixes to our existing components and hooks. Thank you to all who contributed to this release!
 
 ## New features
 - Support for isEmphasized Tabs - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3124)
@@ -28,7 +46,6 @@ A major version bump to our workflow icons is included in this release, so be su
 ## Updates
 - React 18 support - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3108)
 - Update dom-helpers - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3110)
-- Upgrade workflow icons - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3019)
 
 ## Fixes
 - Reduce the number of rerenders from focus hooks - [@csantos1113](https://github.com/csantos1113) - [PR](https://github.com/adobe/react-spectrum/pull/3045)
@@ -37,7 +54,6 @@ A major version bump to our workflow icons is included in this release, so be su
 - Distinguish Talkback virtual clicks from Windows FF touch event - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3136)
 - Fixes missing 'props' from API sections of useFocus and useFocusWithin docs - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3161)
 - Fix ButtonGroup visual flicker on resize check - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3160)
-- Fix React error for Tabs when every key is disabled - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3162)
 
 ## Under construction
 
