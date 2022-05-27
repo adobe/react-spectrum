@@ -120,7 +120,10 @@ describe('TableView', function () {
   });
 
   beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => {
+      cb(0);
+      return 0;
+    });
   });
 
   afterEach(() => {
