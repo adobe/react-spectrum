@@ -606,6 +606,7 @@ describe('ListView', function () {
     let rows = getAllByRole('row');
     let description = within(rows[0]).getByText('Description');
     expect(rows[0]).toHaveAttribute('aria-describedby', description.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', `${rows[0].id} ${description.id}`);
   });
 
   describe('selection', function () {
