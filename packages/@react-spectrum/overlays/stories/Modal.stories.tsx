@@ -15,12 +15,11 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
+import {FocusableRefValue} from '@react-types/shared';
 import {Heading, Text} from '@react-spectrum/text';
 import {Modal} from '../';
 import React, {Fragment, useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import { useFocusableRef } from '@react-spectrum/utils';
-import { FocusableRefValue } from '@react-types/shared';
 
 storiesOf('Modal', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
