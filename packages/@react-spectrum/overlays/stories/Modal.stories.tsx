@@ -17,8 +17,10 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
 import {Modal} from '../';
-import React, {Fragment, useState} from 'react';
+import React, {Fragment, useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import { useFocusableRef } from '@react-spectrum/utils';
+import { FocusableRefValue } from '@react-types/shared';
 
 storiesOf('Modal', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -50,6 +52,7 @@ function ModalExample() {
 }
 
 function UnmountingTrigger() {
+  let buttonRef = useRef<FocusableRefValue<HTMLButtonElement>>();
   let [isPopoverOpen, setPopoverOpen] = useState(false);
   let [isModalOpen, setModalOpen] = useState(false);
 
@@ -58,24 +61,30 @@ function UnmountingTrigger() {
     setModalOpen(true);
   };
 
+  let closeModal = () => {
+    setModalOpen(false);
+    // Explicit focus management is necessary when closing the modal.
+    setTimeout(() => buttonRef.current && buttonRef.current.focus(), 360);
+  };
+
   // Ideally this would be a menu, but we don't have those implemented yet...
   return (
     <Fragment>
       <DialogTrigger type="popover" isOpen={isPopoverOpen} onOpenChange={setPopoverOpen}>
-        <ActionButton>Open popover</ActionButton>
-        <Dialog>
+        <ActionButton ref={buttonRef}>Open popover</ActionButton>
+        <Dialog isDismissable={false}>
           <Heading>Title</Heading>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
           <ButtonGroup><ActionButton onPress={openModal}>Open modal</ActionButton></ButtonGroup>
         </Dialog>
       </DialogTrigger>
-      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
-        <Dialog>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <Dialog isDismissable={false}>
           <Heading>Title</Heading>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
-          <ButtonGroup><Button variant="cta" onPress={() => setModalOpen(false)}>Close</Button></ButtonGroup>
+          <ButtonGroup><Button variant="cta" onPress={closeModal}>Close</Button></ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>
