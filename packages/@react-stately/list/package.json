@@ -7,7 +7,6 @@
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "private": true,
   "files": [
     "dist",
     "src"
