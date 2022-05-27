@@ -238,8 +238,8 @@ storiesOf('ListView/Actions', module)
   .add('ActionButton', (args) =>
     renderActionsExample(props => <ActionButton {...props}><Copy /></ActionButton>, args))
   .add('ActionGroup', args =>
-    renderActionsExample(props => (
-      <ActionGroup buttonLabelBehavior="hide" {...props}>
+    renderActionsExample(() => (
+      <ActionGroup buttonLabelBehavior="hide" onAction={action('actionGroupAction')}>
         <Item key="add">
           <Add />
           <Text>Add</Text>
@@ -251,8 +251,8 @@ storiesOf('ListView/Actions', module)
       </ActionGroup>
     ), args))
   .add('ActionMenu', args =>
-    renderActionsExample(props => (
-      <ActionMenu {...props}>
+    renderActionsExample(() => (
+      <ActionMenu onAction={action('actionMenuAction')}>
         <Item key="add">
           <Add />
           <Text>Add</Text>
@@ -264,15 +264,15 @@ storiesOf('ListView/Actions', module)
       </ActionMenu>
     ), args))
   .add('ActionGroup + ActionMenu', args =>
-    renderActionsExample(props => (
+    renderActionsExample(() => (
       <>
-        <ActionGroup buttonLabelBehavior="hide" {...props}>
+        <ActionGroup buttonLabelBehavior="hide" onAction={action('actionGroupAction')}>
           <Item key="info">
             <Info />
             <Text>Info</Text>
           </Item>
         </ActionGroup>
-        <ActionMenu {...props}>
+        <ActionMenu onAction={action('actionMenuACtion')}>
           <Item key="add">
             <Add />
             <Text>Add</Text>
