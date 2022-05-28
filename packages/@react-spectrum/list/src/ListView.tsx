@@ -220,7 +220,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
 
   return (
     <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
-      <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
+      <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')} isListView>
         <Virtualizer
           {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
           {...filterDOMProps(otherProps)}
