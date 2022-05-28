@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AffectedColumnWidths} from './useTableColumnResizeState';
+// import {AffectedColumnWidths} from './useTableColumnResizeState';
 import {CollectionBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 // import {GridNode} from '@react-types/grid';
 import {GridState, useGridState} from '@react-stately/grid';
@@ -57,13 +57,13 @@ export interface CollectionBuilderContext<T> {
 
 export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
-  showSelectionCheckboxes?: boolean,
-  /** Function for determining the default width of columns. */
-  getDefaultWidth?: (props) => string | number,
-  /** Callback that is invoked during the entirety of the resize event. */
-  onColumnResize?: (affectedColumnWidths: AffectedColumnWidths) => void,
-  /** Callback that is invoked when the resize event is ended. */
-  onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths) => void
+  showSelectionCheckboxes?: boolean
+  // /** Function for determining the default width of columns. */
+  // getDefaultWidth?: (props) => string | number,
+  // /** Callback that is invoked during the entirety of the resize event. */
+  // onColumnResize?: (affectedColumnWidths: AffectedColumnWidths) => void,
+  // /** Callback that is invoked when the resize event is ended. */
+  // onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths) => void
 }
 
 const OPPOSITE_SORT_DIRECTION = {
