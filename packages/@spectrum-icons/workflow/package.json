@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@adobe/react-spectrum-workflow": "2.3.2",
+    "@babel/runtime": "^7.6.2",
     "@react-spectrum/icon": "^3.4.0"
   },
   "devDependencies": {
