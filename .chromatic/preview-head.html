@@ -59,3 +59,17 @@
     h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
   })(document);
 </script>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+</style>
+<script>
+// Work around storybook issue where display: none gets set on root after rendering.
+let styleSheet = document.styleSheets[0];
+let index = [...styleSheet.cssRules].findIndex(rule => rule.selectorText.startsWith('.sb-show-preparing-docs'));
+if (index >= 0) {
+  styleSheet.removeRule(index);
+}
+</script>
