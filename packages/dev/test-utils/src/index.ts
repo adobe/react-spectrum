@@ -14,3 +14,4 @@
 
 export * from './events';
 export * from './testSSR';
+export * from './renderHook';

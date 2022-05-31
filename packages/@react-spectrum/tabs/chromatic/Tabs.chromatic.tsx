@@ -85,6 +85,9 @@ DefaultMobileViewport.parameters = {chromatic: {viewports: [320]}};
 export const Quiet = Template().bind({});
 Quiet.args = {...Default.args, isQuiet: true};
 
+export const Emphasized = Template().bind({});
+Emphasized.args = {...Default.args, isEmphasized: true};
+
 export const Compact = Template().bind({});
 Compact.args = {...Default.args, density: 'compact'};
 
@@ -102,3 +105,18 @@ VerticalCompact.args = {...Vertical.args, ...Compact.args};
 
 export const VerticalCompactQuiet = Template().bind({});
 VerticalCompactQuiet.args = {...Vertical.args, ...CompactQuiet.args};
+
+export const EmphasizedQuiet = Template().bind({});
+EmphasizedQuiet.args = {...Emphasized.args, ...Quiet.args};
+
+export const EmphasizedVertical = Template().bind({});
+EmphasizedVertical.args = {...Emphasized.args, ...Vertical.args};
+
+export const EmphasizedVerticalQuiet = Template().bind({});
+EmphasizedVerticalQuiet.args = {...Emphasized.args, ...Vertical.args, ...Quiet.args};
+
+export const EmphasizedCompact = Template().bind({});
+EmphasizedCompact.args = {...Emphasized.args, ...Compact.args};
+
+export const EmphasizedCompactVertical = Template().bind({});
+EmphasizedCompactVertical.args = {...Emphasized.args, ...Compact.args, ...Vertical.args};

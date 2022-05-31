@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import {useToastState} from '../';
 
 describe('useToastState', () => {

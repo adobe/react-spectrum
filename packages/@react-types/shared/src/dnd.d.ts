@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from 'react';
+import {Key, RefObject} from 'react';
 
 export interface DragDropEvent {
   // Relative to the target element's position
@@ -139,11 +139,13 @@ interface DraggableCollectionEndEvent extends DragEndEvent {
   keys: Set<Key>
 }
 
+export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement) => void) => void;
+
 export interface DraggableCollectionProps {
   onDragStart?: (e: DraggableCollectionStartEvent) => void,
   onDragMove?: (e: DraggableCollectionMoveEvent) => void,
   onDragEnd?: (e: DraggableCollectionEndEvent) => void,
   getItems: (keys: Set<Key>) => DragItem[],
-  renderPreview?: (selectedKeys: Set<Key>, draggedKey: Key) => JSX.Element,
+  preview?: RefObject<DragPreviewRenderer>,
   getAllowedDropOperations?: () => DropOperation[]
 }

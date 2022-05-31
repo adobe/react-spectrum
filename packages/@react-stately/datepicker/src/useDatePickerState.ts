@@ -153,7 +153,8 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
         granularity,
         timeZone: defaultTimeZone,
         hideTimeZone: props.hideTimeZone,
-        hourCycle: props.hourCycle
+        hourCycle: props.hourCycle,
+        showEra: value.calendar.identifier === 'gregory' && value.era === 'BC'
       });
 
       let formatter = new DateFormatter(locale, formatOptions);

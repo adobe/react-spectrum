@@ -9,24 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {
-  AriaLabelingProps,
-  AsyncLoadable,
-  CollectionBase,
-  DOMProps,
-  DOMRef,
-  LoadingState,
-  MultipleSelection,
-  SpectrumSelectionProps,
-  StyleProps
-} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef, LoadingState} from '@react-types/shared';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
-import {DragPreview} from './DragPreview';
 import type {DroppableCollectionResult} from '@react-aria/dnd';
 import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
-import {GridCollection, GridState, useGridState} from '@react-stately/grid';
 import InsertionIndicator from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -39,13 +27,15 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
-import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useGrid} from '@react-aria/grid';
+import {DragPreview as SpectrumDragPreview} from './DragPreview';
+import {SpectrumListProps} from '@react-types/list';
+import {useCollator, useMessageFormatter} from '@react-aria/i18n';
+import {useList} from '@react-aria/list';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
 interface ListViewContextValue<T> {
-  state: GridState<T, GridCollection<any>>,
+  state: ListState<T>,
   dragState: DraggableCollectionState,
   dropState: DroppableCollectionState,
   dragHooks: DragHooks,
@@ -53,7 +43,8 @@ interface ListViewContextValue<T> {
   onAction:(key: Key) => void,
   isListDraggable: boolean,
   isListDroppable: boolean,
-  layout: ListLayout<T>
+  layout: ListLayout<T>,
+  loadingState: LoadingState
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
@@ -73,7 +64,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['density']) {
+function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density'], allowDisabledKeyFocus: boolean) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
@@ -83,46 +74,16 @@ function useListLayout<T>(state: ListState<T>, density: ListViewProps<T>['densit
       padding: 0,
       collator,
       loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
-      allowDisabledKeyFocus: true
+      allowDisabledKeyFocus
     })
-    , [collator, scale, density, isEmpty]);
+    , [collator, scale, density, isEmpty, allowDisabledKeyFocus]);
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
   return layout;
 }
 
-interface ListViewProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps, StyleProps, MultipleSelection, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
-  /**
-   * Sets the amount of vertical padding within each cell.
-   * @default 'regular'
-   */
-  density?: 'compact' | 'regular' | 'spacious',
-  /** Whether the ListView should be displayed with a quiet style. */
-  isQuiet?: boolean,
-  /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
-  loadingState?: LoadingState,
-  /**
-   * Sets the text behavior for the row contents.
-   * @default 'truncate'
-   */
-  overflowMode?: 'truncate' | 'wrap',
-  /** Sets what the ListView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element,
-  /**
-   * Handler that is called when a user performs an action on an item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
-   */
-  onAction?: (key: string) => void,
-  /**
-   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
-   * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.
-   */
-  dragHooks?: DragHooks,
-  dropHooks?: DropHooks
-}
-
-function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
     onLoadMore,
@@ -145,59 +106,34 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
   }
   let domRef = useDOMRef(ref);
-  let {collection} = useListState(props);
+  let state = useListState({
+    ...props,
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  });
+  let {collection, selectionManager} = state;
   let formatMessage = useMessageFormatter(intlMessages);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let {locale} = useLocale();
-  let gridCollection = useMemo(() => new GridCollection({
-    columnCount: 1,
-    items: [...collection].map(item => ({
-      ...item,
-      hasChildNodes: true,
-      childNodes: [{
-        key: `cell-${item.key}`,
-        type: 'cell',
-        index: 0,
-        value: null,
-        level: 0,
-        rendered: null,
-        textValue: item.textValue,
-        hasChildNodes: false,
-        childNodes: []
-      }]
-    }))
-  }), [collection]);
-  let state = useGridState({
-    ...props,
-    collection: gridCollection,
-    focusMode: 'row',
-    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
-  });
-  let layout = useListLayout(state, props.density || 'regular');
-  let provider = useProvider();
+  let layout = useListLayout(state, props.density || 'regular', state.selectionManager.disabledBehavior === 'selection');
   let dragState: DraggableCollectionState;
+  let preview = useRef(null);
   if (isListDraggable) {
     dragState = dragHooks.useDraggableCollectionState({
-      collection: state.collection,
-      selectionManager: state.selectionManager,
-      renderPreview(draggingKeys, draggedKey) {
-        let item = state.collection.getItem(draggedKey);
-        let itemCount = draggingKeys.size;
-        let itemHeight = layout.getLayoutInfo(draggedKey).rect.height;
-        return <DragPreview item={item} itemCount={itemCount} itemHeight={itemHeight} provider={provider} locale={locale}  />;
-      }
+      collection,
+      selectionManager,
+      preview
     });
   }
 
+  let DragPreview = dragHooks?.DragPreview;
   let dropState: DroppableCollectionState;
   let droppableCollection: DroppableCollectionResult;
   let isRootDropTarget: boolean;
   if (isListDroppable) {
     dropState = dropHooks.useDroppableCollectionState({
-      collection: state.collection,
-      selectionManager: state.selectionManager
+      collection,
+      selectionManager
     });
     droppableCollection = dropHooks.useDroppableCollection({
       keyboardDelegate: layout,
@@ -232,7 +168,9 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           }
 
           // TODO: Best way to implement only for when closest can be dropped on
-          if (y >= r.y + 10 && y <= r.maxY - 10 && state.collection.getItem(closest.key).value.type === 'folder') {
+          // TODO: Figure out the typescript for this
+          // @ts-ignore
+          if (y >= r.y + 10 && y <= r.maxY - 10 && collection.getItem(closest.key).value.type === 'folder') {
             closestDir = 'on';
           }
         }
@@ -251,17 +189,17 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
-  let {gridProps} = useGrid({
+  let {gridProps} = useList({
     ...props,
-    onCellAction: onAction,
     isVirtualized: true,
-    keyboardDelegate: layout
+    keyboardDelegate: layout,
+    onAction
   }, state, domRef);
 
   // Sync loading state into the layout.
   layout.isLoading = isLoading;
 
-  let focusedKey = state.selectionManager.focusedKey;
+  let focusedKey = selectionManager.focusedKey;
   if (dropState?.target?.type === 'item') {
     focusedKey = dropState.target.key;
   }
@@ -280,7 +218,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
   return (
-    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout}}>
+    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
       <Virtualizer
         {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
         {...filterDOMProps(otherProps)}
@@ -311,13 +249,13 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
           )
         }
         layout={layout}
-        collection={gridCollection}
+        collection={collection}
         transitionDuration={isLoading ? 160 : 220}>
         {(type, item) => {
           if (type === 'item') {
             return (
               <>
-                {isListDroppable && state.collection.getKeyBefore(item.key) == null &&
+                {isListDroppable && collection.getKeyBefore(item.key) == null &&
                   <RootDropIndicator key="root" />
                 }
                 {isListDroppable &&
@@ -330,7 +268,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
                   <InsertionIndicator
                     key={`${item.key}-after`}
                     target={{key: item.key, type: 'item', dropPosition: 'after'}}
-                    isPresentationOnly={state.collection.getKeyAfter(item.key) !== null} />
+                    isPresentationOnly={collection.getKeyAfter(item.key) !== null} />
                   }
               </>
             );
@@ -339,7 +277,7 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
               <CenteredWrapper>
                 <ProgressCircle
                   isIndeterminate
-                  aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+                  aria-label={collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
               </CenteredWrapper>
             );
           } else if (type === 'placeholder') {
@@ -357,6 +295,16 @@ function ListView<T extends object>(props: ListViewProps<T>, ref: DOMRef<HTMLDiv
 
         }}
       </Virtualizer>
+      {DragPreview && isListDraggable &&
+        <DragPreview ref={preview}>
+          {() => {
+            let item = state.collection.getItem(dragState.draggedKey);
+            let itemCount = dragState.draggingKeys.size;
+            let itemHeight = layout.getLayoutInfo(dragState.draggedKey).rect.height;
+            return <SpectrumDragPreview item={item} itemCount={itemCount} itemHeight={itemHeight}  />;
+          }}
+        </DragPreview>
+      }
     </ListViewContext.Provider>
   );
 }
@@ -385,5 +333,5 @@ function CenteredWrapper({children}) {
 /**
  * Lists display a linear collection of data. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
-const _ListView = React.forwardRef(ListView) as <T>(props: ListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const _ListView = React.forwardRef(ListView) as <T>(props: SpectrumListProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};

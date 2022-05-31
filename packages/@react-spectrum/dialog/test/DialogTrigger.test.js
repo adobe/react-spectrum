@@ -47,9 +47,9 @@ describe('DialogTrigger', function () {
     // Ensure we close any dialogs before unmounting to avoid warning.
     let dialog = document.querySelector('[role="dialog"]');
     if (dialog) {
+      fireEvent.keyDown(dialog, {key: 'Escape'});
+      fireEvent.keyUp(dialog, {key: 'Escape'});
       act(() => {
-        fireEvent.keyDown(dialog, {key: 'Escape'});
-        fireEvent.keyUp(dialog, {key: 'Escape'});
         jest.runAllTimers();
       });
     }
@@ -313,6 +313,11 @@ describe('DialogTrigger', function () {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
 
+    // now that it's been unmounted, run the raf callback
+    act(() => {
+      jest.runAllTimers();
+    });
+
     expect(document.activeElement).toBe(button);
   });
 
@@ -352,6 +357,11 @@ describe('DialogTrigger', function () {
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
+
+    // now that it's been unmounted, run the raf callback
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(document.activeElement).toBe(button);
     expect(onOpenChange).toHaveBeenCalledTimes(2);
@@ -758,8 +768,8 @@ describe('DialogTrigger', function () {
 
     // Close the dialog by clicking the button inside
     button = within(dialog).getByRole('button');
+    triggerPress(button);
     act(() => {
-      triggerPress(button);
       jest.runAllTimers();
     });
 
@@ -784,16 +794,16 @@ describe('DialogTrigger', function () {
 
     let button = getByRole('button');
 
+    triggerPress(button);
     act(() => {
-      triggerPress(button);
       jest.runAllTimers();
     });
 
     let menu = getByRole('menu');
     let menuitem = within(menu).getByRole('menuitem');
 
+    triggerPress(menuitem);
     act(() => {
-      triggerPress(menuitem);
       jest.runAllTimers();
     });
 
