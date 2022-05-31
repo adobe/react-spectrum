@@ -17,7 +17,18 @@ type StatusLightStory = ComponentStoryObj<typeof StatusLight>;
 
 export default {
   title: 'StatusLight',
-  component: StatusLight
+  component: StatusLight,
+  argTypes: {
+    variant: {
+      control: {
+        type: 'select',
+        options: ['positive', 'negative', 'notice', 'info', 'neutral', 'celery', 'chartreuse', 'yellow', 'magenta', 'fuchsia', 'purple', 'indigo', 'seafoam']
+      }
+    },
+    isDisabled: {
+      control: 'boolean'
+    }
+  }
 } as ComponentMeta<typeof StatusLight>;
 
 export const Default: StatusLightStory = {
