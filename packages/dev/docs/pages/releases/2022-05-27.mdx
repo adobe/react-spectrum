@@ -17,10 +17,9 @@ date: 2022-05-27
 
 # May 27, 2022 Release
 
-Ever since React 18 was announced last July, compatibility has been front of mind for the team. We are extremely pleased to announce that our library now officially supports React 18! Special thanks to [@eps1lon](https://github.com/eps1lon) for their
-help with getting our tests working with React 18.
+This release includes compatibility with React 18! We have tested each component and hook to verify that it works as expected, while retaining support for React 17 and 16 as well. Special thanks to [@eps1lon](https://github.com/eps1lon) for their help with getting our tests working with React 18. Note that this release only includes basic compatibility. Strict mode support is still a work in progress, and will be supported in a future release.
 
-A major version bump to our workflow icons package is included in this release, so please check out the changes [here](#icons-update) and upgrade accordingly.
+A major version bump to our Spectrum workflow icons package is included in this release, so please check out the changes [here](#icons-update) and upgrade accordingly.
 Other updates include added support for emphasized Tabs and various bug fixes to our existing components and hooks. Thank you to all who contributed to this release!
 
 ## New features
@@ -53,7 +52,7 @@ SelectSubstract -> SelectSubtract
 SubstractBackPath -> SubtractBackPath
 SubstractFromSelection -> SubtractFromSelection
 ```
-The `Tableau` icon was removed to conform with open source rules, Adobe employees please request access to this icon from the icons team. Non-Adobe users, please stop using this icon.
+The `Tableau` icon was removed.
 
 2 icons were added:
 ```
@@ -61,7 +60,7 @@ CircleFilled
 Invite
 ```
 
-Various icons were updated, in particular `Circle` is now hollow. `CircleFilled` is the visual equivalent to the old `Circle` icon. Please see the [PR](https://github.com/adobe/react-spectrum/pull/3019) for more information.
+Various icons were updated, including changes to `Circle` which is now `CircleFilled`  Please see the [PR](https://github.com/adobe/react-spectrum/pull/3019) for more information.
 
 ## Released packages
 
