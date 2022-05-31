@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/tabs",
-  "version": "3.1.5",
+  "version": "3.2.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,15 +18,15 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.5.5",
-    "@react-aria/i18n": "^3.3.9",
-    "@react-aria/interactions": "^3.8.4",
-    "@react-aria/selection": "^3.8.2",
-    "@react-aria/utils": "^3.12.0",
-    "@react-stately/list": "^3.4.5",
-    "@react-stately/tabs": "^3.0.5",
-    "@react-types/shared": "^3.12.0",
-    "@react-types/tabs": "^3.0.5"
+    "@react-aria/focus": "^3.6.0",
+    "@react-aria/i18n": "^3.4.0",
+    "@react-aria/interactions": "^3.9.0",
+    "@react-aria/selection": "^3.9.0",
+    "@react-aria/utils": "^3.13.0",
+    "@react-stately/list": "^3.5.0",
+    "@react-stately/tabs": "^3.1.0",
+    "@react-types/shared": "^3.13.0",
+    "@react-types/tabs": "^3.1.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
