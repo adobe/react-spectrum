@@ -24,14 +24,24 @@ const formatOptions = {
 export default {
   title: 'Meter',
   component: Meter,
-  parameters: {
-    argTypes: {
-      value: {
-        control: {
-          type: 'range',
-          min: 0,
-          max: 100
-        }
+  argTypes: {
+    value: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 100
+      }
+    },
+    variant: {
+      control: {
+        type: 'radio',
+        options: ['positive', 'warning', 'critical']
+      }
+    },
+    size: {
+      control: {
+        type: 'radio',
+        options: ['S', 'L']
       }
     }
   }
