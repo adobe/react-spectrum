@@ -721,7 +721,14 @@ export function ReorderExample(props) {
 }
 
 export function DragIntoItemExample(props) {
-  let onDropAction = action('onDrop');
+  let {
+    listViewProps = {},
+    dragHookOptions = {},
+    dropHookOptions = {}
+  } = props;
+  let {onDragStart, onDragEnd} = dragHookOptions;
+  let {onDrop} = dropHookOptions;
+  let onDropAction = chain(action('onDrop'), onDrop);
 
   let list = useListData({
     initialItems: [
@@ -755,8 +762,8 @@ export function DragIntoItemExample(props) {
         };
       });
     },
-    onDragStart: action('dragStart'),
-    onDragEnd: action('dragEnd')
+    onDragStart: chain(action('dragStart'), onDragStart),
+    onDragEnd: chain(action('dragEnd'), onDragEnd)
   });
 
   let dropHooks = useDropHooks({
@@ -801,7 +808,7 @@ export function DragIntoItemExample(props) {
       disabledKeys={['2']}
       dragHooks={dragHooks}
       dropHooks={dropHooks}
-      {...props}>
+      {...listViewProps}>
       {(item: any) => (
         <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
           <Text>{item.type === 'folder' ? 'Drop items here' : `Item ${item.textValue}`}</Text>

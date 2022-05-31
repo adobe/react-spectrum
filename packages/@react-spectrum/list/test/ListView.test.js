@@ -16,7 +16,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
-import {DragExample} from '../stories/ListView.stories';
+import {DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {installPointerEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Item, ListView} from '../src';
@@ -1833,6 +1833,94 @@ describe('ListView', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
+    it('should only count the selected keys that exist in the collection when dragging and dropping', async function () {
+      let {getAllByRole} = render(
+        <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
+      );
+
+      userEvent.tab();
+      let rows = getAllByRole('row');
+      expect(rows.length).toBe(7);
+      let droppable = rows[0];
+      moveFocus('ArrowDown');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      moveFocus('ArrowDown');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      moveFocus('ArrowDown');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['1', '2', '3']));
+      let draghandle = within(rows[3]).getAllByRole('button')[0];
+      expect(draghandle).toBeTruthy();
+      expect(draghandle).toHaveAttribute('draggable', 'true');
+
+      moveFocus('ArrowRight');
+      fireEvent.keyDown(draghandle, {key: 'Enter'});
+      fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragStart).toHaveBeenCalledWith({
+        type: 'dragstart',
+        keys: new Set(['1', '2', '3']),
+        x: 50,
+        y: 25
+      });
+
+      await act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(droppable);
+      await act(async () => {
+        fireEvent.keyDown(droppable, {key: 'Enter'});
+        fireEvent.keyUp(droppable, {key: 'Enter'});
+      });
+      await act(() => jest.runAllTimers());
+
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(await onDrop.mock.calls[0][0].items.length).toBe(3);
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        keys: new Set(['1', '2', '3']),
+        x: 50,
+        y: 25,
+        dropOperation: 'move'
+      });
+      onSelectionChange.mockClear();
+      onDragStart.mockClear();
+      rows = getAllByRole('row');
+      expect(rows.length).toBe(4);
+
+      // Select the folder and perform a drag. Drag start shouldn't include the previously selected items
+      moveFocus('ArrowDown');
+      fireEvent.keyDown(droppable, {key: 'Enter'});
+      fireEvent.keyUp(droppable, {key: 'Enter'});
+      // Selection change event still has all keys
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2', '3', '0']));
+
+      draghandle = within(rows[0]).getAllByRole('button')[0];
+      expect(draghandle).toBeTruthy();
+      expect(draghandle).toHaveAttribute('draggable', 'true');
+      moveFocus('ArrowRight');
+      await act(async () => {
+        fireEvent.keyDown(draghandle, {key: 'Enter'});
+        fireEvent.keyUp(draghandle, {key: 'Enter'});
+      });
+      await act(() => jest.runAllTimers());
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragStart).toHaveBeenCalledWith({
+        type: 'dragstart',
+        keys: new Set(['0']),
+        x: 50,
+        y: 25
+      });
+
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
+    });
+
     describe('accessibility', function () {
       it('drag handle should reflect the correct number of draggable rows', async function () {
 
@@ -1868,6 +1956,31 @@ describe('ListView', function () {
         expect(dragButtonA).toHaveAttribute('aria-label', 'Drag Adobe Photoshop');
         expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 3 selected items');
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 3 selected items');
+      });
+
+      it('disabled rows and invalid drop targets should become aria-hidden when keyboard drag session starts', function () {
+        let {getAllByRole} = render(
+          <ReorderExample listViewProps={{disabledKeys: ['2']}} />
+        );
+
+        let rows = getAllByRole('row');
+        for (let row of rows) {
+          expect(row).not.toHaveAttribute('aria-hidden');
+        }
+
+        let row = rows[0];
+        let cell = within(row).getByRole('gridcell');
+        let draghandle = within(cell).getAllByRole('button')[0];
+        expect(row).toHaveAttribute('draggable', 'true');
+        fireEvent.keyDown(draghandle, {key: 'Enter'});
+        fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+        for (let row of rows) {
+          expect(row).toHaveAttribute('aria-hidden', 'true');
+        }
+
+        fireEvent.keyDown(document.body, {key: 'Escape'});
+        fireEvent.keyUp(document.body, {key: 'Escape'});
       });
     });
   });
