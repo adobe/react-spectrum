@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTableColumnResizeState';
-export * from './utils';
+// export * from './useTableColumnResizeState';
+// export * from './utils';
 export * from './useTableState';
 export * from './TableHeader';
 export * from './TableBody';
