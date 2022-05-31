@@ -1,4 +1,7 @@
 {
   "loading": "Φόρτωση...",
-  "loadingMore": "Φόρτωση περισσότερων..."
+  "loadingMore": "Φόρτωση περισσότερων...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }

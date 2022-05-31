@@ -1,4 +1,7 @@
 {
   "loading": "Įkeliama...",
-  "loadingMore": "Įkeliama daugiau..."
+  "loadingMore": "Įkeliama daugiau...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }
