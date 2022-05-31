@@ -524,16 +524,17 @@ function TableColumnHeader(props) {
 
 function ResizableTableColumnHeader({item, state}) {
   let ref = useRef();
+  let formatMessage = useMessageFormatter(intlMessages);
 
   const onMenuSelect = (key) => {
     switch (key) {
-      case `${item.key}-sort-asc`:
+      case 'sort-asc':
         state.sort(item.key, 'ascending');
         break;
-      case `${item.key}-sort-desc`:
+      case 'sort-desc':
         state.sort(item.key, 'descending');
         break;
-      case `${item.key}-resize`:
+      case 'resize':
         // focusResizer, needs timeout so that it happens after the animation timeout for menu close
         setTimeout(() => {
           focusSafely(ref.current);
@@ -548,17 +549,17 @@ function ResizableTableColumnHeader({item, state}) {
         <TableColumnHeader column={item} />
         <Menu onAction={onMenuSelect} minWidth="size-2000">
           {item.props?.allowsSorting &&
-            <Item key={`${item.key}-sort-asc`}>
-              Sort Ascending
+            <Item key="sort-asc">
+              {formatMessage('sortAscending')}
             </Item>
           }
           {item.props?.allowsSorting &&
-            <Item key={`${item.key}-sort-desc`}>
-              Sort Descending
+            <Item key="sort-desc">
+              {formatMessage('sortDescending')}
             </Item>
           }
-          <Item key={`${item.key}-resize`}>
-            Resize column
+          <Item key="resize">
+            {formatMessage('resizeColumn')}
           </Item>
         </Menu>
       </MenuTrigger>
