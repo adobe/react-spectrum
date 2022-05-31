@@ -16868,6 +16868,21 @@ ora@^5.2.0:
     strip-ansi "^6.0.0"
     wcwidth "^1.0.1"
 
+ora@^5.4.1:
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/ora/-/ora-5.4.1.tgz#1b2678426af4ac4a509008e5e4ac9e9959db9e18"
+  integrity sha512-5b6Y85tPxZZ7QytO+BQzysW31HJku27cRIlkbAXaNx+BdcVi+LlRFmVXzeF6a7JCwJpyw5c4b+YSVImQIrBpuQ==
+  dependencies:
+    bl "^4.1.0"
+    chalk "^4.1.0"
+    cli-cursor "^3.1.0"
+    cli-spinners "^2.5.0"
+    is-interactive "^1.0.0"
+    is-unicode-supported "^0.1.0"
+    log-symbols "^4.1.0"
+    strip-ansi "^6.0.0"
+    wcwidth "^1.0.1"
+
 orchestrator@^0.3.0:
   version "0.3.8"
   resolved "https://registry.yarnpkg.com/orchestrator/-/orchestrator-0.3.8.tgz#14e7e9e2764f7315fbac184e506c7aa6df94ad7e"
@@ -21772,6 +21787,16 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+typescript-strict-plugin@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/typescript-strict-plugin/-/typescript-strict-plugin-2.0.0.tgz#67a2e6cba57b51a9925f86429e988d61c9071682"
+  integrity sha512-fTolU+9yHTqft5kKjwX++p3TBLhER+bmV8X4/iLxlrVqEA9ZcGXchnTJClLxgEdLwecjvA/Y3YlMnnh51M8eXw==
+  dependencies:
+    chalk "^3.0.0"
+    execa "^4.0.0"
+    ora "^5.4.1"
+    yargs "^16.2.0"
 
 typescript@^4.6.0:
   version "4.6.3"
