@@ -37,7 +37,13 @@ interface FocusWithinResult {
 /**
  * Handles focus events for the target and its descendants.
  */
-export function useFocusWithin({isDisabled, onBlurWithin, onFocusWithin, onFocusWithinChange}: FocusWithinProps): FocusWithinResult {
+export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
+  let {
+    isDisabled,
+    onBlurWithin,
+    onFocusWithin,
+    onFocusWithinChange
+  } = props;
   let state = useRef({
     isFocusWithin: false
   });

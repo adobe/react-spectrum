@@ -11,5 +11,5 @@
  */
 
 export * from './ListLayout';
-export * from './TableLayout';
-export * from './TableLayout_DEPRECATED';
+// export * from './TableLayout';
+export {TableLayout_DEPRECATED as TableLayout} from './TableLayout_DEPRECATED';
