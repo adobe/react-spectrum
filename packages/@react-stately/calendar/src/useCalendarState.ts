@@ -18,6 +18,7 @@ import {
   DateFormatter,
   endOfMonth,
   endOfWeek,
+  getDayOfWeek,
   GregorianCalendar,
   isSameDay,
   startOfMonth,
@@ -100,7 +101,15 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
   });
   let [isFocused, setFocused] = useState(props.autoFocus || false);
 
-  let endDate = useMemo(() => startDate.add(visibleDuration).subtract({days: 1}), [startDate, visibleDuration]);
+  let endDate = useMemo(() => {
+    let duration = {...visibleDuration};
+    if (duration.days) {
+      duration.days--;
+    } else {
+      duration.days = -1;
+    }
+    return startDate.add(duration);
+  }, [startDate, visibleDuration]);
 
   // Reset focused date and visible range when calendar changes.
   let lastCalendarIdentifier = useRef(calendar.identifier);
@@ -116,7 +125,7 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     setFocusedDate(constrainValue(focusedDate, minValue, maxValue));
   } else if (focusedDate.compare(startDate) < 0) {
     setStartDate(alignEnd(focusedDate, visibleDuration, locale, minValue, maxValue));
-  } else if (focusedDate.compare(startDate.add(visibleDuration)) >= 0) {
+  } else if (focusedDate.compare(endDate) > 0) {
     setStartDate(alignStart(focusedDate, visibleDuration, locale, minValue, maxValue));
   }
 
@@ -290,10 +299,45 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
       return props.isDateUnavailable && props.isDateUnavailable(date);
     },
     isPreviousVisibleRangeInvalid() {
-      return this.isInvalid(startDate.subtract({days: 1}), minValue, maxValue);
+      let prev = startDate.subtract({days: 1});
+      return isSameDay(prev, startDate) || this.isInvalid(prev, minValue, maxValue);
     },
     isNextVisibleRangeInvalid() {
-      return this.isInvalid(endDate.add({days: 1}), minValue, maxValue);
+      // Adding may return the same date if we reached the end of time
+      // according to the calendar system (e.g. 9999-12-31).
+      let next = endDate.add({days: 1});
+      return isSameDay(next, endDate) || this.isInvalid(next, minValue, maxValue);
+    },
+    getDatesInWeek(weekIndex, from = startDate) {
+      // let date = startOfWeek(from, locale);
+      let date = from.add({weeks: weekIndex});
+      let dates = [];
+
+      date = startOfWeek(date, locale);
+
+      // startOfWeek will clamp dates within the calendar system's valid range, which may
+      // start in the middle of a week. In this case, add null placeholders.
+      let dayOfWeek = getDayOfWeek(date, locale);
+      for (let i = 0; i < dayOfWeek; i++) {
+        dates.push(null);
+      }
+
+      while (dates.length < 7) {
+        dates.push(date);
+        let nextDate = date.add({days: 1});
+        if (isSameDay(date, nextDate)) {
+          // If the next day is the same, we have hit the end of the calendar system.
+          break;
+        }
+        date = nextDate;
+      }
+
+      // Add null placeholders if at the end of the calendar system.
+      while (dates.length < 7) {
+        dates.push(null);
+      }
+
+      return dates;
     }
   };
 }

@@ -101,6 +101,12 @@ describe('Calendar', () => {
       let cell = getByLabelText('selected', {exact: false});
       expect(grids[0].contains(cell)).toBe(true);
     });
+
+    it('should show era for BC dates', () => {
+      let {getByLabelText} = render(<Calendar value={new CalendarDate('BC', 5, 2, 3)} />);
+      let cell = getByLabelText('selected', {exact: false});
+      expect(cell).toHaveAttribute('aria-label', 'Saturday, February 3, 5 BC selected');
+    });
   });
 
   describe('selection', () => {
@@ -414,6 +420,23 @@ describe('Calendar', () => {
 
       fireEvent.keyDown(grid, {key: 'ArrowRight'});
       expect(getByLabelText('Thursday, June 6, 2019', {exact: false})).toHaveFocus();
+    });
+
+    it('includes era in BC dates', () => {
+      let {getByText, getAllByLabelText} = render(<Calendar defaultValue={new CalendarDate('BC', 5, 2, 3)} />);
+
+      let newDate = getByText('17');
+      triggerPress(newDate);
+
+      expect(announce).toHaveBeenCalledTimes(1);
+      expect(announce).toHaveBeenCalledWith('Selected Date: Saturday, February 17, 5 BC', 'polite', 4000);
+
+      announce.mockReset();
+      let nextButton = getAllByLabelText('Next')[0];
+      triggerPress(nextButton);
+
+      expect(announce).toHaveBeenCalledTimes(1);
+      expect(announce).toHaveBeenCalledWith('March 5 BC');
     });
   });
 });

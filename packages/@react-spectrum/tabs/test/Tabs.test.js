@@ -18,13 +18,14 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let items = [
+let defaultItems = [
   {name: 'Tab 1', children: 'Tab 1 body'},
   {name: '', children: 'Tab 2 body'},
   {name: 'Tab 3', children: 'Tab 3 body'}
 ];
 
-function renderComponent(props, itemProps) {
+function renderComponent(props = {}, itemProps) {
+  let {items = defaultItems} = props;
   return render(
     <Provider theme={theme}>
       <Tabs {...props} items={items}>
@@ -52,8 +53,7 @@ describe('Tabs', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -85,7 +85,7 @@ describe('Tabs', function () {
         expect(tabpanel).toBeTruthy();
         expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
         expect(tabpanel).toHaveAttribute('role', 'tabpanel');
-        expect(tabpanel).toHaveTextContent(items[0].children);
+        expect(tabpanel).toHaveTextContent(defaultItems[0].children);
       }
     }
   });
@@ -179,7 +179,7 @@ describe('Tabs', function () {
   });
 
   it('not select via left / right keys if keyboardActivation is manual, select on enter / spacebar', function () {
-    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: items[0].name, onSelectionChange});
+    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: defaultItems[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
@@ -202,7 +202,7 @@ describe('Tabs', function () {
   });
 
   it('supports using click to change tab', function () {
-    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: items[0].name, onSelectionChange});
+    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: defaultItems[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
@@ -216,7 +216,7 @@ describe('Tabs', function () {
     expect(tabpanel).toBeTruthy();
     expect(tabpanel).toHaveAttribute('aria-labelledby', secondItem.id);
     expect(tabpanel).toHaveAttribute('role', 'tabpanel');
-    expect(tabpanel).toHaveTextContent(items[1].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[1].children);
     expect(onSelectionChange).toBeCalledTimes(1);
   });
 
@@ -225,12 +225,12 @@ describe('Tabs', function () {
       <Provider theme={theme}>
         <Tabs>
           <TabList>
-            {items.map(item => (
+            {defaultItems.map(item => (
               <Item key={item.name} title={item.name || item.children} />
             ))}
           </TabList>
           <TabPanels>
-            {items.map(item => (
+            {defaultItems.map(item => (
               <Item key={item.name}>
                 {item.children}
               </Item>
@@ -239,12 +239,12 @@ describe('Tabs', function () {
         </Tabs>
         <Tabs>
           <TabList>
-            {items.map(item => (
+            {defaultItems.map(item => (
               <Item key={item.name} title={item.name || item.children} />
             ))}
           </TabList>
           <TabPanels>
-            {items.map(item => (
+            {defaultItems.map(item => (
               <Item key={item.name}>
                 {item.children}
               </Item>
@@ -264,7 +264,7 @@ describe('Tabs', function () {
   });
 
   it('should focus the selected tab when tabbing in for the first time', function () {
-    let tree = renderComponent({defaultSelectedKey: items[1].name});
+    let tree = renderComponent({defaultSelectedKey: defaultItems[1].name});
     userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
@@ -273,7 +273,7 @@ describe('Tabs', function () {
   });
 
   it('should not focus any tabs when isDisabled tabbing in for the first time', function () {
-    let tree = renderComponent({defaultSelectedKey: items[1].name, isDisabled: true});
+    let tree = renderComponent({defaultSelectedKey: defaultItems[1].name, isDisabled: true});
     userEvent.tab();
 
     let tabpanel = tree.getByRole('tabpanel');
@@ -281,7 +281,7 @@ describe('Tabs', function () {
   });
 
   it('disabled tabs cannot be keyboard navigated to', function () {
-    let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
+    let tree = renderComponent({defaultSelectedKey: defaultItems[0].name, disabledKeys: [defaultItems[1].name], onSelectionChange});
     userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
@@ -289,11 +289,11 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabs[0]);
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
-    expect(onSelectionChange).toBeCalledWith(items[2].name);
+    expect(onSelectionChange).toBeCalledWith(defaultItems[2].name);
   });
 
   it('disabled tabs cannot be pressed', function () {
-    let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
+    let tree = renderComponent({defaultSelectedKey: defaultItems[0].name, disabledKeys: [defaultItems[1].name], onSelectionChange});
     userEvent.tab();
 
     let tablist = tree.getByRole('tablist');
@@ -301,6 +301,50 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabs[0]);
     userEvent.click(tabs[1]);
     expect(onSelectionChange).not.toBeCalled();
+  });
+
+  it('finds the first non-disabled tab if the currently selected one is removed', function () {
+    let tree = renderComponent({disabledKeys: [defaultItems[0].name], onSelectionChange, items: defaultItems});
+    userEvent.tab();
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    expect(document.activeElement).toBe(tabs[1]);
+    fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
+    fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
+    expect(onSelectionChange).toBeCalledWith(defaultItems[2].name);
+
+    tree.rerender(
+      <Provider theme={theme}>
+        <Tabs disabledKeys={[defaultItems[0].name]} onSelectionChange={onSelectionChange} items={defaultItems.slice(0, 1)}>
+          <TabList>
+            {item => (
+              <Item key={item.name} title={item.name || item.children} />
+            )}
+          </TabList>
+          <TabPanels>
+            {item => (
+              <Item key={item.name} title={item.name}>
+                {item.children}
+              </Item>
+            )}
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+    expect(onSelectionChange).toBeCalledWith(defaultItems[1].name);
+  });
+
+  it('selects first tab if all tabs are disabled', function () {
+    let tree = renderComponent({disabledKeys: defaultItems.map(item => item.name), onSelectionChange, items: defaultItems});
+    userEvent.tab();
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    let tabpanel = tree.getByRole('tabpanel');
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(onSelectionChange).toBeCalledWith(defaultItems[0].name);
+    expect(document.activeElement).toBe(tabpanel);
   });
 
   it('collapses when it can\'t render all the tabs horizontally', function () {
@@ -322,13 +366,13 @@ describe('Tabs', function () {
       'aria-label': 'Test Tabs',
       'aria-labelledby': 'external label',
       onSelectionChange,
-      defaultSelectedKey: items[0].name
+      defaultSelectedKey: defaultItems[0].name
     });
 
     expect(queryByRole('tablist')).toBeNull();
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveTextContent(items[0].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[0].children);
 
     let picker = getByRole('button');
     let pickerLabel = within(picker).getByText('Tab 1');
@@ -346,7 +390,7 @@ describe('Tabs', function () {
     expect(onSelectionChange).toHaveBeenCalledWith('Tab 3');
 
     tabpanel = getByRole('tabpanel');
-    expect(tabpanel).toHaveTextContent(items[2].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[2].children);
     expect(tabpanel).toHaveAttribute('aria-labelledby', `${picker.id}`);
   });
 
@@ -389,7 +433,7 @@ describe('Tabs', function () {
 
     let {getByRole, queryByRole, rerender} = render(
       <Provider theme={theme}>
-        <Tabs aria-label="Test Tabs" items={items}>
+        <Tabs aria-label="Test Tabs" items={defaultItems}>
           <TabList>
             {item => (
               <Item key={item.name} title={item.name || item.children} />
@@ -423,7 +467,7 @@ describe('Tabs', function () {
       }
     });
 
-    let newItems = [...items];
+    let newItems = [...defaultItems];
     newItems.push({name: 'Tab 4', children: 'Tab 4 body'});
     rerender(
       <Provider theme={theme}>
@@ -447,7 +491,7 @@ describe('Tabs', function () {
     expect(queryByRole('tablist')).toBeNull();
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveTextContent(items[0].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[0].children);
 
     let picker = getByRole('button');
     expect(picker).toBeTruthy();
@@ -478,8 +522,8 @@ describe('Tabs', function () {
 
     tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveTextContent(items[0].children);
-    expect(tabpanel).toHaveAttribute('aria-labelledby', items[0].id);
+    expect(tabpanel).toHaveTextContent(defaultItems[0].children);
+    expect(tabpanel).toHaveAttribute('aria-labelledby', defaultItems[0].id);
 
     spy.mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
@@ -495,7 +539,7 @@ describe('Tabs', function () {
       }
     });
 
-    newItems = [...items];
+    newItems = [...defaultItems];
     newItems.splice(0, 1);
     rerender(
       <Provider theme={theme}>
@@ -518,8 +562,8 @@ describe('Tabs', function () {
 
     tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveTextContent(items[1].children);
-    expect(tabpanel).toHaveAttribute('aria-labelledby', items[1].id);
+    expect(tabpanel).toHaveTextContent(defaultItems[1].children);
+    expect(tabpanel).toHaveAttribute('aria-labelledby', defaultItems[1].id);
 
     tablist = getByRole('tablist');
     expect(tablist).toBeTruthy();
@@ -544,14 +588,14 @@ describe('Tabs', function () {
     let {getByRole, queryByRole} = renderComponent({
       'aria-label': 'Test Tabs',
       onSelectionChange,
-      defaultSelectedKey: items[0].name,
+      defaultSelectedKey: defaultItems[0].name,
       disabledKeys: ['Tab 3']
     });
 
     expect(queryByRole('tablist')).toBeNull();
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveTextContent(items[0].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[0].children);
 
     let picker = getByRole('button');
 
@@ -568,7 +612,7 @@ describe('Tabs', function () {
     act(() => jest.runAllTimers());
     expect(onSelectionChange).toHaveBeenCalledWith('');
     tabpanel = getByRole('tabpanel');
-    expect(tabpanel).toHaveTextContent(items[1].children);
+    expect(tabpanel).toHaveTextContent(defaultItems[1].children);
   });
 
   it('tabpanel should have tabIndex=0 only when there are no focusable elements', async function () {
@@ -660,7 +704,7 @@ describe('Tabs', function () {
   });
 
   it('fires onSelectionChange when clicking on the current tab', function () {
-    let container = renderComponent({defaultSelectedKey: items[0].name, onSelectionChange});
+    let container = renderComponent({defaultSelectedKey: defaultItems[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
@@ -668,13 +712,13 @@ describe('Tabs', function () {
 
     triggerPress(firstItem);
     expect(onSelectionChange).toBeCalledTimes(1);
-    expect(onSelectionChange).toHaveBeenCalledWith(items[0].name);
+    expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[0].name);
   });
 
   it('updates the tab index of the selected tab if programatically changed', function () {
     let Example = (props) => (
       <Provider theme={theme}>
-        <Tabs aria-label="Test Tabs" items={items} selectedKey={props.selectedKey}>
+        <Tabs aria-label="Test Tabs" items={defaultItems} selectedKey={props.selectedKey}>
           <TabList>
             {item => (
               <Item key={item.name} title={item.name || item.children} />
