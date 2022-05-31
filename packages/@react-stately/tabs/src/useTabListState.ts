@@ -38,7 +38,16 @@ export function useTabListState<T extends object>(props: TabListProps<T>): TabLi
   let selectedKey = currentSelectedKey;
   if (selectionManager.isEmpty || !collection.getItem(selectedKey)) {
     selectedKey = collection.getFirstKey();
-    selectionManager.replaceSelection(selectedKey);
+    // loop over tabs until we find one that isn't disabled and select that
+    while (state.disabledKeys.has(selectedKey) && selectedKey !== collection.getLastKey()) {
+      selectedKey = collection.getKeyAfter(selectedKey);
+    }
+    // if this check is true, then every item is disabled, it makes more sense to default to the first key than the last
+    if (state.disabledKeys.has(selectedKey) && selectedKey === collection.getLastKey()) {
+      selectedKey = collection.getFirstKey();
+    }
+    // directly set selection because replace/toggle selection won't consider disabled keys
+    selectionManager.setSelectedKeys([selectedKey]);
   }
 
   // If the tablist doesn't have focus and the selected key changes or if there isn't a focused key yet, change focused key to the selected key if it exists.

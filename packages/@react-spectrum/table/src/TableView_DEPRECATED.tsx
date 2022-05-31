@@ -26,7 +26,7 @@ import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualize
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableLayout_DEPRECATED} from '@react-stately/layout';
+import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useHover} from '@react-aria/interactions';
@@ -77,7 +77,7 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
 
 interface TableContextValue<T> {
   state: TableState<T>,
-  layout: TableLayout_DEPRECATED<T>
+  layout: TableLayout<T>
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -109,7 +109,7 @@ function TableView_DEPRECATED<T extends object>(props: SpectrumTableProps<T>, re
 
   let {scale} = useProvider();
   let density = props.density || 'regular';
-  let layout = useMemo(() => new TableLayout_DEPRECATED({
+  let layout = useMemo(() => new TableLayout({
     // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
     rowHeight: props.overflowMode === 'wrap'
       ? null
