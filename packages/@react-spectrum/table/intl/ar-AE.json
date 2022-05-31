@@ -1,4 +1,7 @@
 {
   "loading": "جارٍ التحميل...",
-  "loadingMore": "جارٍ تحميل المزيد..."
+  "loadingMore": "جارٍ تحميل المزيد...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }
