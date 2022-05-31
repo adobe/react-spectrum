@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-nocheck
-
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
@@ -472,7 +470,7 @@ function TableColumnHeader(props) {
 
   let {buttonProps} = useButton({...props, elementType: 'div'}, ref);
 
-  let columnProps = column.props;
+  let columnProps = column.props as SpectrumColumnProps<unknown>;
 
   if (columnProps.width && columnProps.allowsResizing) {
     throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
