@@ -1922,7 +1922,7 @@ describe('ListView', function () {
     });
 
     describe('accessibility', function () {
-      it('drag handle should reflect the correct number of draggable rows', async function () {
+      it('drag handle should reflect the correct number of draggable rows', function () {
 
         let {getAllByRole} = render(
           <DraggableListView listViewProps={{defaultSelectedKeys: ['a', 'b', 'c']}} />
