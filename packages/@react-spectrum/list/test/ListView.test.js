@@ -1872,7 +1872,7 @@ describe('ListView', function () {
       fireEvent.keyDown(droppable, {key: 'Enter'});
       fireEvent.keyUp(droppable, {key: 'Enter'});
       await act(async () => jest.runAllTimers());
-      await act(async () => jest.runAllTimers());
+      act(() => jest.runAllTimers());
 
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(await onDrop.mock.calls[0][0].items).toHaveLength(3);
@@ -1903,8 +1903,7 @@ describe('ListView', function () {
       moveFocus('ArrowRight');
       fireEvent.keyDown(draghandle, {key: 'Enter'});
       fireEvent.keyUp(draghandle, {key: 'Enter'});
-      await act(async () => jest.runAllTimers());
-      await act(async () => jest.runAllTimers());
+      act(() => jest.runAllTimers());
 
       expect(onDragStart).toHaveBeenCalledTimes(1);
       expect(onDragStart).toHaveBeenCalledWith({
