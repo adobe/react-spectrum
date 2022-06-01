@@ -139,13 +139,13 @@ function Example() {
     <Flex gap="size-200">
       <Button
         variant="cta"
-        UNSAFE_style={show && {background: 'red', userSelect: 'text'}}
+        UNSAFE_style={show ? undefined : {background: 'red', userSelect: 'text'}}
         onPressStart={() => setTimeout(() => setShow(true), 3000)}>
         Press and hold (overwrite)
       </Button>
       <Button
         variant="cta"
-        UNSAFE_style={show2 && {background: 'red'}}
+        UNSAFE_style={show2 ? undefined : {background: 'red'}}
         onPressStart={() => setTimeout(() => setShow2(true), 3000)}>
         Press and hold (no overwrite)
       </Button>
@@ -180,7 +180,6 @@ function renderStyles<T extends ElementType = 'button'>(props: SpectrumButtonPro
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
-          variant="primary"  
           {...props}>
           Primary
         </Button>
@@ -188,7 +187,6 @@ function renderStyles<T extends ElementType = 'button'>(props: SpectrumButtonPro
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
-          variant="primary"
           isDisabled
           {...props}>
           Disabled
@@ -237,7 +235,6 @@ function renderStyles<T extends ElementType = 'button'>(props: SpectrumButtonPro
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
-          variant="primary"
           isQuiet
           {...props}>
           Primary Quiet
@@ -246,7 +243,6 @@ function renderStyles<T extends ElementType = 'button'>(props: SpectrumButtonPro
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
-          variant="primary"
           isDisabled
           isQuiet
           {...props}>
