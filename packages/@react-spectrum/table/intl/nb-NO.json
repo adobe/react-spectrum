@@ -1,4 +1,7 @@
 {
   "loading": "Laster inn ...",
-  "loadingMore": "Laster inn flere ..."
+  "loadingMore": "Laster inn flere ...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }
