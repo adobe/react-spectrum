@@ -1,4 +1,7 @@
 {
   "loading": "Läser in...",
-  "loadingMore": "Läser in mer..."
+  "loadingMore": "Läser in mer...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }
