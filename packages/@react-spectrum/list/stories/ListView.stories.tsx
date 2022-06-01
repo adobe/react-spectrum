@@ -948,7 +948,14 @@ export function DragBetweenListsExample(props) {
 }
 
 export function DragBetweenListsRootOnlyExample(props) {
-  let onDropAction = action('onDrop');
+  let {
+    listViewProps = {},
+    dragHookOptions = {},
+    dropHookOptions = {}
+  } = props;
+  let {onDragStart, onDragEnd} = dragHookOptions;
+  let {onDrop} = dropHookOptions;
+  let onDropAction = chain(action('onDrop'), onDrop);
 
   let list1 = useListData({
     initialItems: props.items1 || itemList1
@@ -976,8 +983,8 @@ export function DragBetweenListsRootOnlyExample(props) {
         };
       });
     },
-    onDragStart: action('dragStart'),
-    onDragEnd: action('dragEnd')
+    onDragStart: chain(action('dragStart'), onDragStart),
+    onDragEnd: chain(action('dragEnd'), onDragEnd)
   });
 
   let dragHooksSecond = useDragHooks({
@@ -990,8 +997,8 @@ export function DragBetweenListsRootOnlyExample(props) {
         };
       });
     },
-    onDragStart: action('dragStart'),
-    onDragEnd: action('dragEnd')
+    onDragStart: chain(action('dragStart'), onDragStart),
+    onDragEnd: chain(action('dragEnd'), onDragEnd)
   });
 
   let dropHooksFirst = useDropHooks({
@@ -1069,7 +1076,7 @@ export function DragBetweenListsRootOnlyExample(props) {
           disabledKeys={['2']}
           dragHooks={dragHooksFirst}
           dropHooks={dropHooksFirst}
-          {...props}>
+          {...listViewProps}>
           {(item: any) => (
             <Item>
               {item.textValue}
@@ -1087,7 +1094,7 @@ export function DragBetweenListsRootOnlyExample(props) {
           disabledKeys={['2']}
           dragHooks={dragHooksSecond}
           dropHooks={dropHooksSecond}
-          {...props}>
+          {...listViewProps}>
           {(item: any) => (
             <Item>
               {item.textValue}
