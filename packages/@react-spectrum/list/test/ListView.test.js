@@ -1831,7 +1831,7 @@ describe('ListView', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
-    it.skip('should only count the selected keys that exist in the collection when dragging and dropping', async function () {
+    it('should only count the selected keys that exist in the collection when dragging and dropping', async function () {
       let {getAllByRole} = render(
         <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
       );
@@ -1867,13 +1867,12 @@ describe('ListView', function () {
         y: 25
       });
 
-      await act(() => jest.runAllTimers());
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(droppable);
-      await act(async () => {
-        fireEvent.keyDown(droppable, {key: 'Enter'});
-        fireEvent.keyUp(droppable, {key: 'Enter'});
-      });
-      await act(() => jest.runAllTimers());
+      fireEvent.keyDown(droppable, {key: 'Enter'});
+      fireEvent.keyUp(droppable, {key: 'Enter'});
+      await act(async () => jest.runAllTimers());
+      await act(async () => jest.runAllTimers());
 
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(await onDrop.mock.calls[0][0].items).toHaveLength(3);
@@ -1887,6 +1886,7 @@ describe('ListView', function () {
       });
       onSelectionChange.mockClear();
       onDragStart.mockClear();
+
       rows = getAllByRole('row');
       expect(rows).toHaveLength(4);
 
@@ -1901,11 +1901,10 @@ describe('ListView', function () {
       expect(draghandle).toBeTruthy();
       expect(draghandle).toHaveAttribute('draggable', 'true');
       moveFocus('ArrowRight');
-      await act(async () => {
-        fireEvent.keyDown(draghandle, {key: 'Enter'});
-        fireEvent.keyUp(draghandle, {key: 'Enter'});
-      });
-      await act(() => jest.runAllTimers());
+      fireEvent.keyDown(draghandle, {key: 'Enter'});
+      fireEvent.keyUp(draghandle, {key: 'Enter'});
+      await act(async () => jest.runAllTimers());
+      await act(async () => jest.runAllTimers());
 
       expect(onDragStart).toHaveBeenCalledTimes(1);
       expect(onDragStart).toHaveBeenCalledWith({
@@ -1957,7 +1956,7 @@ describe('ListView', function () {
 
       // The newly added row in the second list should be the active element
       expect(secondListRows[6]).toBe(document.activeElement);
-      // expect(secondListRows[6]).toHaveTextContent('Item One');
+      expect(secondListRows[6]).toHaveTextContent('Item One');
 
       draggedCell = firstListRows[3];
       dataTransfer = new DataTransfer();
@@ -1985,7 +1984,7 @@ describe('ListView', function () {
 
       // The 2nd newly added row in the second list should still be the active element
       expect(secondListRows[7]).toBe(document.activeElement);
-      // expect(secondListRows[7]).toHaveTextContent('Item Five');
+      expect(secondListRows[7]).toHaveTextContent('Item Five');
     });
 
     describe('accessibility', function () {
