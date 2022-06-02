@@ -140,9 +140,9 @@ storiesOf('ListView', module)
   .addParameters(parameters)
   .add('default', args => (
     <ListView width="250px" {...args}>
-      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
-      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
-      <Item textValue="Adobe XD">Adobe XD</Item>
+      <Item>Adobe Photoshop</Item>
+      <Item>Adobe Illustrator</Item>
+      <Item>Adobe XD</Item>
     </ListView>
   ))
   .add('dynamic items', args => (
@@ -220,15 +220,15 @@ storiesOf('ListView', module)
   .add('with emphasized ActionBar', args => <ActionBarExample isEmphasized {...args} />)
   .add('thumbnails', args => (
     <ListView width="250px" items={itemsWithThumbs} {...args}>
-      {(item: any) => <Item textValue={item.title}><Image src={item.url} /><Text>{item.title}</Text><Text slot="description">JPG</Text></Item>}
+      {(item: any) => <Item><Image src={item.url} alt={'dog'} /><Text>{item.title}</Text><Text slot="description">JPG</Text></Item>}
     </ListView>
   ))
   .add('long text', args => (
     <ListView width="250px" {...args}>
-      <Item textValue="row 1 with a very very very very very long title">row 1 with a very very very very very long title</Item>
-      <Item textValue="Text slot with a really really really long name">
-        <Text>Text slot with a really really really long name</Text>
-        <Text slot="description">Description slot with a really really long name</Text>
+      <Item>Homeward Bound: The Incredible Journey</Item>
+      <Item>
+        <Text>Monsters University</Text>
+        <Text slot="description">As a first grader, Mike Wazowski begins to dream of becoming a Scarer</Text>
       </Item>
     </ListView>
   ));
