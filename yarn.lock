@@ -42,11 +42,6 @@
   resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow-color/-/react-spectrum-workflow-color-1.1.0.tgz#060e041c618fc74aecfbf9a716dfc0f125643522"
   integrity sha512-RKKomNbxzpGnM78YzUoCXHHIaEdAREM9tP+vJXynfHVjgSZYtzR1pnsfYJShDlj9C0dl8GGgjAE2ESRbQbdpFg==
 
-"@adobe/react-spectrum-workflow@1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow/-/react-spectrum-workflow-1.0.2.tgz#382d81df6b3df7c15247d847cc1d483a6e8f6aaf"
-  integrity sha512-4phKdzoH7sPqlIX4kFQNZ8oXRZ4tupBkUoWZq1hRaN551fh8Ne/+Kt/IXyouZWWddLBcUncU2EqdHKInWrtNWw==
-
 "@adobe/react-spectrum-workflow@2.3.3":
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow/-/react-spectrum-workflow-2.3.3.tgz#bb33e0d5789f60436992b7e90ac294284fbfb4e8"
@@ -3465,14 +3460,6 @@
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@spectrum-css/vars/-/vars-2.3.0.tgz#0ce716fb5ee65f4af9e2d2a7aaae55e8ba4d4c8f"
   integrity sha512-k4YwFbv9+7QzBrc3ezvGuHxI3nDTG/6qJsAmhYS1vEyxpxjKmRfiz59P+fqT12PQNjxeNYHyVz1kRgaLA6gw2w==
-
-"@spectrum-icons/workflow@^3.0.0", "@spectrum-icons/workflow@^3.1.0":
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/@spectrum-icons/workflow/-/workflow-3.2.5.tgz#76494d6e7b6db6c14d44a3ddc455e00a7dea983d"
-  integrity sha512-U8OBxHQHCArLIGla+/WEb3rv2/SWjZulDpd4OKRoMtwgsnMPKut7DzDzarowW2wlKlcYVwPpqjhcqyjpYVXdPA==
-  dependencies:
-    "@adobe/react-spectrum-workflow" "1.0.2"
-    "@react-spectrum/icon" "^3.3.7"
 
 "@storybook/addon-a11y@^6.5.3":
   version "6.5.3"
