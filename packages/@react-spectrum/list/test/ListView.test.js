@@ -22,6 +22,7 @@ import {installPointerEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -590,6 +591,21 @@ describe('ListView', function () {
     );
     let grid = getByRole('grid');
     expect(grid).toHaveAttribute('data-testid', 'test');
+  });
+
+  it('should use item description text as aria-describedby', function () {
+    let {getAllByRole} = render(
+      <ListView aria-label="List">
+        <Item textValue="Label">
+          <Text>Label</Text>
+          <Text slot="description">Description</Text>
+        </Item>
+      </ListView>
+    );
+
+    let rows = getAllByRole('row');
+    let description = within(rows[0]).getByText('Description');
+    expect(rows[0]).toHaveAttribute('aria-labelledby', `${rows[0].id} ${description.id}`);
   });
 
   describe('selection', function () {
