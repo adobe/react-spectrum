@@ -126,10 +126,11 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let {visuallyHiddenProps} = useVisuallyHidden();
 
+  let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   const mergedProps = mergeProps(
     rowProps,
     draggableItem?.dragProps,
-    isDroppable && droppableItem?.dropProps,
+    dropProps,
     hoverProps,
     focusWithinProps,
     focusProps
