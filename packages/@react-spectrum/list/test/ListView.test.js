@@ -1854,7 +1854,7 @@ describe('ListView', function () {
 
       userEvent.tab();
       let rows = getAllByRole('row');
-      expect(rows).toHaveLength(7);
+      expect(rows).toHaveLength(8);
       let droppable = rows[0];
       moveFocus('ArrowDown');
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
