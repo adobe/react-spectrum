@@ -1871,7 +1871,7 @@ describe('ListView', function () {
       expect(document.activeElement).toBe(droppable);
       fireEvent.keyDown(droppable, {key: 'Enter'});
       fireEvent.keyUp(droppable, {key: 'Enter'});
-      await act(async () => jest.runAllTimers());
+      await act(async () => Promise.resolve());
       act(() => jest.runAllTimers());
 
       expect(onDrop).toHaveBeenCalledTimes(1);
