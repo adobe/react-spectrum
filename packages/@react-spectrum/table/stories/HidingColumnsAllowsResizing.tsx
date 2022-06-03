@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-nocheck
-
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Flex} from '@react-spectrum/layout';

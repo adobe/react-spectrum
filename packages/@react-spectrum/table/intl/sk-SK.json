@@ -1,4 +1,7 @@
 {
   "loading": "Načítava sa...",
-  "loadingMore": "Načítava sa viac..."
+  "loadingMore": "Načítava sa viac...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }
