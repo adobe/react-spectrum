@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {getContentWidth} from '../src/utils';
+import {getContentWidth, useTableColumnResizeState} from '../';
 import {renderHook} from '@react-spectrum/test-utils';
-import {useTableColumnResizeState} from '../src/useTableColumnResizeState';
 
 const createColumn = (key, columnProps) => ({
   type: 'column',
@@ -26,7 +25,7 @@ const createColumn = (key, columnProps) => ({
   textValue: key
 });
 
-describe.skip('useTableColumnResizeState', () => {
+describe('useTableColumnResizeState', () => {
   describe('static defaultWidth', () => {
     it('should handle pixel widths', () => {
       const columns = [

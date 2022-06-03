@@ -32,20 +32,20 @@
   dependencies:
     tunnel "0.0.6"
 
-"@adobe/react-spectrum-ui@^1.1.0":
+"@adobe/react-spectrum-ui@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-ui/-/react-spectrum-ui-1.2.0.tgz#b1c72d5db6ac84c99fd45ddb3bd8e00bfff9f150"
+  integrity sha512-os3EdjfyJbrukLcZ5uYtdFRiDlLB3zq2JoXp19J/IDpZ8btibJeRZYSwjL+LscEiT2pOYaF2McMQdkZTIwnllw==
+
+"@adobe/react-spectrum-workflow-color@1.1.0":
   version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-ui/-/react-spectrum-ui-1.1.0.tgz#6ab31697e29be80a5f04088be1eb8f2a65d9ce54"
-  integrity sha512-r8+Kl0OJQJOI0tuuQh+/m66OSbDTbfDcuc0e+wtxCLiyi3iEXHWxWkc1TPFBHq9WPX+ALAykJxmlqLtYypP78g==
+  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow-color/-/react-spectrum-workflow-color-1.1.0.tgz#060e041c618fc74aecfbf9a716dfc0f125643522"
+  integrity sha512-RKKomNbxzpGnM78YzUoCXHHIaEdAREM9tP+vJXynfHVjgSZYtzR1pnsfYJShDlj9C0dl8GGgjAE2ESRbQbdpFg==
 
-"@adobe/react-spectrum-workflow-color@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow-color/-/react-spectrum-workflow-color-1.0.1.tgz#dc0fe4a94418381c9615e0305ac027d4e5e34998"
-  integrity sha512-n5vIv4OC1WaIbkKJo2Tjm6ci7/Is7ixbQxCncPUQvnZW8tU1SGdgtZQ+KZ6pJDnWxHS1XmVwi+gBj+Jzl5jTvg==
-
-"@adobe/react-spectrum-workflow@2.3.2":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow/-/react-spectrum-workflow-2.3.2.tgz#6478f6e308b4e92d86bbe036d555edc43147eb5a"
-  integrity sha512-j4GlBF/H0HtCUOhOiQegDFQvF/vjy2D/qrZPkM+UFxkZSUBdy2iyegFu8IfIekc3XXOa7sgvWDpXM9VCt2Th9A==
+"@adobe/react-spectrum-workflow@2.3.3":
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow/-/react-spectrum-workflow-2.3.3.tgz#bb33e0d5789f60436992b7e90ac294284fbfb4e8"
+  integrity sha512-idHEptv5d+puofqO3tiv+cbYR/QV7gUWKHMrHFuJS6zDwRyi3u8GR9BInRbEYp7ZvrLMW8XnNl6lXFSf8ubDQA==
 
 "@adobe/spectrum-css-workflow-icons@^1.0.0":
   version "1.0.0"
@@ -16855,6 +16855,21 @@ ora@^5.2.0:
     strip-ansi "^6.0.0"
     wcwidth "^1.0.1"
 
+ora@^5.4.1:
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/ora/-/ora-5.4.1.tgz#1b2678426af4ac4a509008e5e4ac9e9959db9e18"
+  integrity sha512-5b6Y85tPxZZ7QytO+BQzysW31HJku27cRIlkbAXaNx+BdcVi+LlRFmVXzeF6a7JCwJpyw5c4b+YSVImQIrBpuQ==
+  dependencies:
+    bl "^4.1.0"
+    chalk "^4.1.0"
+    cli-cursor "^3.1.0"
+    cli-spinners "^2.5.0"
+    is-interactive "^1.0.0"
+    is-unicode-supported "^0.1.0"
+    log-symbols "^4.1.0"
+    strip-ansi "^6.0.0"
+    wcwidth "^1.0.1"
+
 orchestrator@^0.3.0:
   version "0.3.8"
   resolved "https://registry.yarnpkg.com/orchestrator/-/orchestrator-0.3.8.tgz#14e7e9e2764f7315fbac184e506c7aa6df94ad7e"
@@ -21759,6 +21774,16 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+typescript-strict-plugin@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/typescript-strict-plugin/-/typescript-strict-plugin-2.0.0.tgz#67a2e6cba57b51a9925f86429e988d61c9071682"
+  integrity sha512-fTolU+9yHTqft5kKjwX++p3TBLhER+bmV8X4/iLxlrVqEA9ZcGXchnTJClLxgEdLwecjvA/Y3YlMnnh51M8eXw==
+  dependencies:
+    chalk "^3.0.0"
+    execa "^4.0.0"
+    ora "^5.4.1"
+    yargs "^16.2.0"
 
 typescript@^4.6.0:
   version "4.6.3"
