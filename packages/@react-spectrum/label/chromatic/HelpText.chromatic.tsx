@@ -18,21 +18,20 @@ type HelpTextStory = ComponentStoryObj<typeof TextField>;
 
 export default {
   title: 'HelpText',
-  component: TextField
-} as ComponentMeta<typeof TextField>;
-
-export let Default: HelpTextStory = {
+  component: TextField,
   args: {
     label: 'Password',
     description: 'Password must be at least 8 characters.'
-  },
+  }
+} as ComponentMeta<typeof TextField>;
+
+export let Default: HelpTextStory = {
   name: 'description'
 };
 
 export const ErrorMessage = {
   ...Default,
   args: {
-    ...Default.args,
     errorMessage: 'Create a password with at least 8 characters.',
     validationState: 'invalid'
   },
@@ -42,7 +41,6 @@ export const ErrorMessage = {
 export const Disabled = {
   ...Default,
   args: {
-    ...Default.args,
     isDisabled: true
   },
   name: 'disabled'
@@ -51,7 +49,6 @@ export const Disabled = {
 export const LabelAlignEnd = {
   ...Default,
   args: {
-    ...Default.args,
     labelAlign: 'end'
   },
   name: 'labelAlign: end'
@@ -60,7 +57,6 @@ export const LabelAlignEnd = {
 export const LabelPositionSide = {
   ...Default,
   args: {
-    ...Default.args,
     labelPosition: 'side'
   },
   name: 'labelPosition: side'
@@ -69,7 +65,6 @@ export const LabelPositionSide = {
 export const NoVisibleLabel = {
   ...Default,
   args: {
-    ...Default.args,
     label: null,
     'aria-label': 'Password'
   },
@@ -79,7 +74,6 @@ export const NoVisibleLabel = {
 export const CustomWidth = {
   ...Default,
   args: {
-    ...Default.args,
     width: '100px'
   },
   name: 'custom width'
@@ -88,7 +82,6 @@ export const CustomWidth = {
 export const CustomWidthLabelPositionSide = {
   ...Default,
   args: {
-    ...Default.args,
     width: '440px',
     labelPosition: 'side'
   },

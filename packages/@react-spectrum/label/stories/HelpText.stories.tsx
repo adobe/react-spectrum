@@ -57,15 +57,14 @@ const argTypes = {
 export default {
   title: 'HelpText',
   component: TextField,
-  argTypes: argTypes
-} as ComponentMeta<typeof TextField>;
-
-export let Default: HelpTextStory = {
   args: {
     label: 'Password',
     description: 'Password must be at least 8 characters.'
-  }
-};
+  },
+  argTypes: argTypes
+} as ComponentMeta<typeof TextField>;
+
+export let Default: HelpTextStory = {};
 
 export let WithState: HelpTextStory = {
   args: {
@@ -102,7 +101,6 @@ export let WithState: HelpTextStory = {
 export let AriaLabel: HelpTextStory = {
   ...Default,
   args: {
-    ...Default.args,
     label: null,
     'aria-label': 'Password'
   },
@@ -119,7 +117,6 @@ export let AriaLabel: HelpTextStory = {
 export const DescriptionAndCustomDescription = {
   ...Default,
   args: {
-    ...Default.args,
     customDescription: 'Custom description.'
   },
   argTypes: {
