@@ -398,16 +398,7 @@ storiesOf('ListView/Drag and Drop', module)
         <DragExample listViewProps={{onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </Flex>
     ), {description: {data: 'Folders are non-draggable.'}}
-  )
-  .add(
-    'draggable rows, selectionStyle: highlight, onAction',
-    args => (
-      <Flex direction="row" wrap alignItems="center">
-        <input />
-        <Droppable />
-        <DragExample listViewProps={{selectionStyle: 'highlight', onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
-      </Flex>
-    ), {description: {data: 'Folders are non-draggable.'}});
+  );
 
 function renderActionsExample(renderActions, props?) {
   return (
@@ -678,12 +669,12 @@ export function ReorderExample(props) {
             let key;
             if (item.types.has(dragType)) {
               key = JSON.parse(await item.getText(dragType));
+              keys.push(key);
             } else if (item.types.has('text/plain')) {
               // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
-              key = JSON.parse(await item.getText('text/plain'));
-            }
-            if (key) {
-              keys.push(key);
+              // Multiple drag items are contained in a single string so we need to split them out
+              key = await item.getText('text/plain');
+              keys = key.split('\n').map(val => val.replaceAll('"', ''));
             }
           }
         }
@@ -768,12 +759,12 @@ export function DragIntoItemExample(props) {
             let key;
             if (item.types.has(dragType)) {
               key = JSON.parse(await item.getText(dragType));
+              keys.push(key);
             } else if (item.types.has('text/plain')) {
               // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
-              key = JSON.parse(await item.getText('text/plain'));
-            }
-            if (key) {
-              keys.push(key);
+              // Multiple drag items are contained in a single string so we need to split them out
+              key = await item.getText('text/plain');
+              keys = key.split('\n').map(val => val.replaceAll('"', ''));
             }
           }
         }
@@ -876,12 +867,12 @@ export function DragBetweenListsExample(props) {
             let key;
             if (item.types.has(dragType)) {
               key = JSON.parse(await item.getText(dragType));
+              keys.push(key);
             } else if (item.types.has('text/plain')) {
               // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
-              key = JSON.parse(await item.getText('text/plain'));
-            }
-            if (key) {
-              keys.push(key);
+              // Multiple drag items are contained in a single string so we need to split them out
+              key = await item.getText('text/plain');
+              keys = key.split('\n').map(val => val.replaceAll('"', ''));
             }
           }
         }
@@ -996,12 +987,12 @@ export function DragBetweenListsRootOnlyExample(props) {
             let key;
             if (item.types.has('list2')) {
               key = JSON.parse(await item.getText('list2'));
+              keys.push(key);
             } else if (item.types.has('text/plain')) {
               // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
-              key = JSON.parse(await item.getText('text/plain'));
-            }
-            if (key) {
-              keys.push(key);
+              // Multiple drag items are contained in a single string so we need to split them out
+              key = await item.getText('text/plain');
+              keys = key.split('\n').map(val => val.replaceAll('"', ''));
             }
           }
         }
@@ -1010,7 +1001,7 @@ export function DragBetweenListsRootOnlyExample(props) {
       }
     },
     getDropOperation(target, types) {
-      if (target.type === 'root' && types.has('list2')) {
+      if (target.type === 'root' && (types.has('list2') || types.has('text/plain'))) {
         return 'move';
       }
 
@@ -1028,12 +1019,12 @@ export function DragBetweenListsRootOnlyExample(props) {
             let key;
             if (item.types.has('list1')) {
               key = JSON.parse(await item.getText('list1'));
+              keys.push(key);
             } else if (item.types.has('text/plain')) {
               // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
-              key = JSON.parse(await item.getText('text/plain'));
-            }
-            if (key) {
-              keys.push(key);
+              // Multiple drag items are contained in a single string so we need to split them out
+              key = await item.getText('text/plain');
+              keys = key.split('\n').map(val => val.replaceAll('"', ''));
             }
           }
         }
@@ -1042,7 +1033,7 @@ export function DragBetweenListsRootOnlyExample(props) {
       }
     },
     getDropOperation(target, types) {
-      if (target.type === 'root' && types.has('list1')) {
+      if (target.type === 'root' && (types.has('list1') || types.has('text/plain'))) {
         return 'move';
       }
 
