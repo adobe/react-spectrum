@@ -9,85 +9,107 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
-import { SpectrumTextFieldProps } from '@react-types/textfield';
-import { TextField } from '@react-spectrum/textfield';
+import {TextField} from '@react-spectrum/textfield';
+
+type HelpTextStory = ComponentStoryObj<typeof TextField>;
+
 export default {
   title: 'HelpText',
-  parameters: {
-    providerSwitcher: {
-      status: 'positive',
-    },
+  component: TextField
+} as ComponentMeta<typeof TextField>;
+
+export let Default: HelpTextStory = {
+  args: {
+    label: 'Password',
+    description: 'Password must be at least 8 characters.'
   },
-};
-export const Description = {
-  render: () =>
-    render({
-      description: 'Password must be at least 8 characters.',
-    }),
-  name: 'description',
-};
-export const ErrorMessage = {
-  render: () =>
-    render({
-      errorMessage: 'Create a password with at least 8 characters.',
-      validationState: 'invalid',
-    }),
-  name: 'error message',
-};
-export const Disabled = {
-  render: () =>
-    render({
-      description: 'Password must be at least 8 characters.',
-      isDisabled: true,
-    }),
-  name: 'disabled',
-};
-export const LabelAlignEnd = {
-  render: () =>
-    render({
-      description: 'Password must be at least 8 characters.',
-      labelAlign: 'end',
-    }),
-  name: 'labelAlign: end',
-};
-export const LabelPositionSide = {
-  render: () =>
-    render({
-      description: 'Password must be at least 8 characters.',
-      labelPosition: 'side',
-    }),
-  name: 'labelPosition: side',
-};
-export const NoVisibleLabel = {
-  render: () =>
-    render({
-      label: null,
-      'aria-label': 'Password',
-      description: 'Password must be at least 8 characters.',
-    }),
-  name: 'no visible label',
-};
-export const CustomWidth = {
-  render: () =>
-    render({
-      label: 'Password',
-      description: 'Password must be at least 8 characters.',
-      width: '100px',
-    }),
-  name: 'custom width',
-};
-export const CustomWidthLabelPositionSide = {
-  render: () =>
-    render({
-      label: 'Password',
-      description: 'Password must be at least 8 characters.',
-      width: '440px',
-      labelPosition: 'side',
-    }),
-  name: 'custom width, labelPosition: side',
+  name: 'description'
 };
 
-function render(props: SpectrumTextFieldProps = {}) {
-  return <TextField label="Password" {...props} />;
-}
+export const ErrorMessage = {
+  ...Default,
+  args: {
+    ...Default.args,
+    errorMessage: 'Create a password with at least 8 characters.',
+    validationState: 'invalid'
+  },
+  name: 'error message'
+};
+
+export const Disabled = {
+  ...Default,
+  args: {
+    ...Default.args,
+    isDisabled: true
+  },
+  name: 'disabled'
+};
+
+export const LabelAlignEnd = {
+  ...Default,
+  args: {
+    ...Default.args,
+    labelAlign: 'end'
+  },
+  name: 'labelAlign: end'
+};
+
+export const LabelPositionSide = {
+  ...Default,
+  args: {
+    ...Default.args,
+    labelPosition: 'side'
+  },
+  name: 'labelPosition: side'
+};
+
+export const NoVisibleLabel = {
+  ...Default,
+  args: {
+    ...Default.args,
+    label: null,
+    'aria-label': 'Password'
+  },
+  name: 'no visible label'
+};
+
+export const CustomWidth = {
+  ...Default,
+  args: {
+    ...Default.args,
+    width: '100px'
+  },
+  name: 'custom width'
+};
+
+export const CustomWidthLabelPositionSide = {
+  ...Default,
+  args: {
+    ...Default.args,
+    width: '440px',
+    labelPosition: 'side'
+  },
+  name: 'custom width, labelPosition: side'
+};
+
+export const ContainerWithTextAlignmentSet = {
+  render: () => (
+    <Flex
+      direction="column"
+      gap="size-200"
+      UNSAFE_style={{
+        textAlign: 'center',
+      }}>
+      <TextField label="Password" description="Enter a single digit number." />
+      <TextField
+        label="Password 2"
+        errorMessage="Create a password with at least 8 characters."
+        validationState="invalid"
+      />
+    </Flex>
+  ),
+  name: 'container with text alignment set'
+};
