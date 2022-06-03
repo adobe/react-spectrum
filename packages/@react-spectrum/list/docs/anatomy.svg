@@ -33,12 +33,12 @@
     <line id="Line_9" data-name="Line 9" y2="24" transform="translate(159.5 86.5)" fill="none" stroke="var(--anatomy-gray-900)" stroke-width="1"/>
     <g id="Group_156653" data-name="Group 156653" transform="translate(976.504 423.062) rotate(180)">
       <g id="Group_2" data-name="Group 2" transform="translate(418 251.584)">
-        <path id="Path_453" data-name="Path 453" d="M418,257.539v-5.955H560.5v5.955" transform="translate(-418 -251.584)" fill="none" stroke="#768dca" stroke-width="1"/>
+        <path id="Path_453" data-name="Path 453" d="M418,257.539v-5.955H560.5v5.955" transform="translate(-418 -251.584)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
       </g>
     </g>
     <g id="Group_156654" data-name="Group 156654" transform="translate(826.5 423.062) rotate(180)">
       <g id="Group_2-2" data-name="Group 2" transform="translate(418 251.584)">
-        <path id="Path_453-2" data-name="Path 453" d="M418,257.539v-5.955H702.5v5.955" transform="translate(-418 -251.584)" fill="none" stroke="#768dca" stroke-width="1"/>
+        <path id="Path_453-2" data-name="Path 453" d="M418,257.539v-5.955H702.5v5.955" transform="translate(-418 -251.584)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
       </g>
     </g>
     <text id="Drag_icon_optional_" data-name="Drag icon
@@ -103,7 +103,7 @@
       </g>
     </g>
     <g id="Group_156664" data-name="Group 156664" transform="translate(0 -9)">
-      <g id="Rectangle_142243" data-name="Rectangle 142243" transform="translate(123 258)" fill="var(--anatomy-gray-50)" stroke="#c0cce7" stroke-width="1.5">
+      <g id="Rectangle_142243" data-name="Rectangle 142243" transform="translate(123 258)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1.5">
         <rect width="364" height="232" rx="6" stroke="none"/>
         <rect x="0.75" y="0.75" width="362.5" height="230.5" rx="5.25" fill="none"/>
       </g>
@@ -115,9 +115,9 @@
       <text id="List_view_item-2" data-name="List view item" transform="translate(174 351)" fill="var(--anatomy-gray-800)" font-size="21" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="0" y="0">List view item</tspan></text>
       <text id="List_view_item-3" data-name="List view item" transform="translate(174 409)" fill="var(--anatomy-gray-800)" font-size="21" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="0" y="0">List view item</tspan></text>
       <text id="List_view_item-4" data-name="List view item" transform="translate(174 467)" fill="var(--anatomy-gray-800)" font-size="21" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="0" y="0">List view item</tspan></text>
-      <line id="Line_13" data-name="Line 13" x2="363.252" transform="translate(123.5 316.5)" fill="none" stroke="#c0cce7" stroke-width="1.5"/>
-      <line id="Line_14" data-name="Line 14" x2="363.252" transform="translate(123.5 374.522)" fill="none" stroke="#c0cce7" stroke-width="1.5"/>
-      <line id="Line_15" data-name="Line 15" x2="363.252" transform="translate(123.5 432.522)" fill="none" stroke="#c0cce7" stroke-width="1.5"/>
+      <line id="Line_13" data-name="Line 13" x2="363.252" transform="translate(123.5 316.5)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+      <line id="Line_14" data-name="Line 14" x2="363.252" transform="translate(123.5 374.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+      <line id="Line_15" data-name="Line 15" x2="363.252" transform="translate(123.5 432.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
       <g id="Action_group" data-name="Action group" transform="translate(365.252 321)">
         <g id="Placement_Area-2" data-name="Placement Area" transform="translate(-0.252)" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
           <rect width="108" height="48" stroke="none"/>
