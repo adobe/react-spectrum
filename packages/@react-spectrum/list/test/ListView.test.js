@@ -1957,6 +1957,14 @@ describe('ListView', function () {
       expect(secondListRows[6]).toBe(document.activeElement);
       expect(secondListRows[6]).toHaveTextContent('Item One');
 
+      for (let [index, row] of secondListRows.entries()) {
+        if (index !== 6) {
+          expect(row).toHaveAttribute('tabIndex', '-1');
+        } else {
+          expect(row).toHaveAttribute('tabIndex', '0');
+        }
+      }
+
       draggedCell = firstListRows[3];
       dataTransfer = new DataTransfer();
       fireEvent.pointerDown(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
@@ -1984,6 +1992,14 @@ describe('ListView', function () {
       // The 2nd newly added row in the second list should still be the active element
       expect(secondListRows[7]).toBe(document.activeElement);
       expect(secondListRows[7]).toHaveTextContent('Item Five');
+
+      for (let [index, row] of secondListRows.entries()) {
+        if (index !== 7) {
+          expect(row).toHaveAttribute('tabIndex', '-1');
+        } else {
+          expect(row).toHaveAttribute('tabIndex', '0');
+        }
+      }
     });
 
     describe('accessibility', function () {
