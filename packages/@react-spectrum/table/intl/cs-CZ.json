@@ -1,4 +1,7 @@
 {
   "loading": "Načítání...",
-  "loadingMore": "Načítání dalších..."
+  "loadingMore": "Načítání dalších...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }
