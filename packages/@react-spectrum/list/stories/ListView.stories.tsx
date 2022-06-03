@@ -224,11 +224,11 @@ storiesOf('ListView', module)
     </ListView>
   ))
   .add('long text', args => (
-    <ListView width="250px" aria-label="long text ListView" {...args}>
-      <Item textValue="row 1">row 1 with a very very very very very long title</Item>
-      <Item textValue="row 2">
-        <Text>Text slot with a really really really long name</Text>
-        <Text slot="description">Description slot with a really really long name</Text>
+    <ListView width="250px" {...args}>
+      <Item textValue="Homeward Bound: The Incredible Journey">Homeward Bound: The Incredible Journey</Item>
+      <Item textValue="Monsters University">
+        <Text>Monsters University</Text>
+        <Text slot="description">As a first grader, Mike Wazowski begins to dream of becoming a Scarer</Text>
       </Item>
     </ListView>
   ));
