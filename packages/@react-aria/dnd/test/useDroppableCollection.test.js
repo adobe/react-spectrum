@@ -402,8 +402,8 @@ describe('useDroppableCollection', () => {
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
 
       act(() => jest.advanceTimersByTime(50));
-      expect(document.activeElement).toBe(cells[1]);
-      expect(cells[1].parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(document.activeElement).toBe(draggable);
+      expect(cells[1].parentElement).toHaveAttribute('aria-selected', 'false');
     });
 
     it('should support arrow key navigation', () => {
@@ -1079,8 +1079,8 @@ describe('useDroppableCollection', () => {
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
 
       act(() => jest.advanceTimersByTime(50));
-      expect(document.activeElement).toBe(cells[1]);
-      expect(cells[1].parentElement).toHaveAttribute('aria-selected', 'true');
+      expect(document.activeElement).toBe(draggable);
+      expect(cells[1].parentElement).toHaveAttribute('aria-selected', 'false');
     });
 
     it('should add descriptions to each item', () => {

@@ -1228,7 +1228,7 @@ describe('useDrag and useDrop', function () {
       fireEvent.keyDown(droppable2, {key: 'Enter'});
       fireEvent.keyUp(droppable2, {key: 'Enter'});
 
-      expect(document.activeElement).toBe(droppable2);
+      expect(document.activeElement).toBe(draggable);
       expect(droppable).not.toHaveAttribute('aria-describedby');
       expect(droppable2).not.toHaveAttribute('aria-describedby');
 
@@ -1538,7 +1538,7 @@ describe('useDrag and useDrop', function () {
         fireEvent.keyDown(droppable, {key: 'Escape'});
         fireEvent.keyUp(droppable, {key: 'Escape'});
         expect(droppable).toHaveAttribute('data-droptarget', 'false');
-        expect(document.activeElement).toBe(droppable);
+        expect(document.activeElement).toBe(draggable);
       });
     });
 
@@ -1961,7 +1961,7 @@ describe('useDrag and useDrop', function () {
 
       fireEvent.click(droppable2);
 
-      expect(document.activeElement).toBe(droppable2);
+      expect(document.activeElement).toBe(draggable);
       expect(droppable).not.toHaveAttribute('aria-describedby');
       expect(droppable2).not.toHaveAttribute('aria-describedby');
 
