@@ -64,7 +64,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density'], allowDisabledKeyFocus: boolean) {
+function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density'], allowDisabledKeyFocus: boolean, overflowMode: SpectrumListProps<T>['overflowMode']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
@@ -76,7 +76,8 @@ function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['de
       loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
       allowDisabledKeyFocus
     })
-    , [collator, scale, density, isEmpty, allowDisabledKeyFocus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    , [collator, scale, density, isEmpty, allowDisabledKeyFocus, overflowMode]);
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
@@ -115,7 +116,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let layout = useListLayout(state, props.density || 'regular', state.selectionManager.disabledBehavior === 'selection');
+  let layout = useListLayout(state, props.density || 'regular', state.selectionManager.disabledBehavior === 'selection', overflowMode);
   let dragState: DraggableCollectionState;
   let preview = useRef(null);
   if (isListDraggable) {
