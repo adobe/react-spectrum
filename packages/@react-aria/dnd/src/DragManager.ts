@@ -463,11 +463,9 @@ class DragSession {
       });
     }
 
-    // Blur and re-focus the drop target so that the focus ring appears.
-    if (this.currentDropTarget) {
-      this.currentDropTarget.element.blur();
-      this.currentDropTarget.element.focus();
-    }
+    // Blur and re-focus the drag target so that the focus ring appears.
+    this.dragTarget.element.blur();
+    this.dragTarget.element.focus();
 
     this.setCurrentDropTarget(null);
     endDragging();
