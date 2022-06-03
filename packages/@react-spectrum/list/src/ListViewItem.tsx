@@ -50,11 +50,11 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-
   let {
     rowProps,
     gridCellProps,
     isPressed,
+    descriptionProps,
     isSelected,
     isDisabled,
     allowsSelection,
@@ -129,10 +129,11 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let {visuallyHiddenProps} = useVisuallyHidden();
 
+  let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   const mergedProps = mergeProps(
     rowProps,
     draggableItem?.dragProps,
-    isDroppable && droppableItem?.dropProps,
+    dropProps,
     hoverProps,
     focusWithinProps,
     focusProps
@@ -248,7 +249,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
           <SlotProvider
             slots={{
               text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
+              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description'], ...descriptionProps},
               icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
               actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},

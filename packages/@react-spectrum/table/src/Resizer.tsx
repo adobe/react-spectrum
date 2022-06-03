@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
-// @ts-nocheck
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';

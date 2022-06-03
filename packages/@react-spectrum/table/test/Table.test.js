@@ -4536,7 +4536,7 @@ describe('TableView', function () {
         }
       });
 
-      describe.skip('bounded constraint on columns where dynamic columns exist before the bounded columns', () => {
+      describe('bounded constraint on columns where dynamic columns exist before the bounded columns', () => {
         it('should fulfill the constraints of the static columns and give remaining width to previously defined dynamic columns', () => {
           let tree = render(
             <TableView aria-label="Table">
@@ -4565,7 +4565,7 @@ describe('TableView', function () {
         });
       });
 
-      describe.skip("mutiple columns are bounded but earlier columns are 'less bounded' than future columns", () => {
+      describe("mutiple columns are bounded but earlier columns are 'less bounded' than future columns", () => {
         it("should satisfy the conditions of all columns but also allocate remaining space to the 'less bounded' previous columns", () => {
           let tree = render(
             <TableView aria-label="Table">
