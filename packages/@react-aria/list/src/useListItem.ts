@@ -167,11 +167,10 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     role: 'row',
     onKeyDownCapture: onKeyDown,
     onFocus,
-    'aria-label': node.textValue,
+    'aria-label': node.textValue || undefined,
     'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
-    'aria-describedby': descriptionId,
-    'aria-labelledby': descriptionId ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
+    'aria-labelledby': descriptionId && node.textValue ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
     id: getRowId(state, node.key)
   });
 
