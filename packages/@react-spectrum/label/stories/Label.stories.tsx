@@ -52,7 +52,8 @@ export let Default: LabelStory = {
 
 export let WidthForLabelAlignSide: LabelStory = {
   ...Default,
-  args: {width: 80, labelPosition: 'side'}
+  args: {width: '80px', labelPosition: 'side'},
+  argTypes: {labelPosition: {control: {disable: true}}}
 };
 
 function TextFieldLabel(props: SpectrumLabelProps = {}) {
