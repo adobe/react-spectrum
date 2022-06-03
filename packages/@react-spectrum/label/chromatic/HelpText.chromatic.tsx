@@ -9,68 +9,85 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import React from 'react';
-import {SpectrumTextFieldProps} from '@react-types/textfield';
-import {storiesOf} from '@storybook/react';
-import {TextField} from '@react-spectrum/textfield';
-
-storiesOf('HelpText', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'description',
-    () => render({description: 'Password must be at least 8 characters.'})
-  )
-  .add(
-    'error message',
-    () => render({errorMessage: 'Create a password with at least 8 characters.', validationState: 'invalid'})
-  )
-  .add(
-    'disabled',
-    () => render({description: 'Password must be at least 8 characters.', isDisabled: true})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({
+import { SpectrumTextFieldProps } from '@react-types/textfield';
+import { TextField } from '@react-spectrum/textfield';
+export default {
+  title: 'HelpText',
+  parameters: {
+    providerSwitcher: {
+      status: 'positive',
+    },
+  },
+};
+export const Description = {
+  render: () =>
+    render({
       description: 'Password must be at least 8 characters.',
-      labelAlign: 'end'
-    })
-  )
-  .add(
-    'labelPosition: side',
-    () => render({
+    }),
+  name: 'description',
+};
+export const ErrorMessage = {
+  render: () =>
+    render({
+      errorMessage: 'Create a password with at least 8 characters.',
+      validationState: 'invalid',
+    }),
+  name: 'error message',
+};
+export const Disabled = {
+  render: () =>
+    render({
       description: 'Password must be at least 8 characters.',
-      labelPosition: 'side'
-    })
-  )
-  .add(
-    'no visible label',
-    () => render({
+      isDisabled: true,
+    }),
+  name: 'disabled',
+};
+export const LabelAlignEnd = {
+  render: () =>
+    render({
+      description: 'Password must be at least 8 characters.',
+      labelAlign: 'end',
+    }),
+  name: 'labelAlign: end',
+};
+export const LabelPositionSide = {
+  render: () =>
+    render({
+      description: 'Password must be at least 8 characters.',
+      labelPosition: 'side',
+    }),
+  name: 'labelPosition: side',
+};
+export const NoVisibleLabel = {
+  render: () =>
+    render({
       label: null,
       'aria-label': 'Password',
-      description: 'Password must be at least 8 characters.'
-    })
-  )
-  .add(
-    'custom width',
-    () => render({
+      description: 'Password must be at least 8 characters.',
+    }),
+  name: 'no visible label',
+};
+export const CustomWidth = {
+  render: () =>
+    render({
       label: 'Password',
       description: 'Password must be at least 8 characters.',
-      width: '100px'
-    })
-  )
-  .add(
-    'custom width, labelPosition: side',
-    () => render({
+      width: '100px',
+    }),
+  name: 'custom width',
+};
+export const CustomWidthLabelPositionSide = {
+  render: () =>
+    render({
       label: 'Password',
       description: 'Password must be at least 8 characters.',
       width: '440px',
-      labelPosition: 'side'
-    })
-  );
+      labelPosition: 'side',
+    }),
+  name: 'custom width, labelPosition: side',
+};
 
 function render(props: SpectrumTextFieldProps = {}) {
-  return (
-    <TextField label="Password" {...props} />
-  );
+  return <TextField label="Password" {...props} />;
 }
