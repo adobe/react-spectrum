@@ -34,8 +34,8 @@ export let LabelAlignStart: LabelStory = {
 };
 
 export let LabelAlignEnd: LabelStory = {
-  ...LabelAlignStart,
-  args: {...LabelAlignStart.args, labelAlign: 'end'},
+  ...Default,
+  args: {...Default.args, labelAlign: 'end'},
   name: 'labelAlign: end'
 };
 

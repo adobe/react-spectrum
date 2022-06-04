@@ -11,8 +11,9 @@
  */
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
+import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useState} from 'react';
-import {RadioGroup, Radio} from '@react-spectrum/radio';
+import {SpectrumTextFieldProps} from '@react-types/textfield';
 import {TextField} from '@react-spectrum/textfield';
 
 type HelpTextStory = ComponentStoryObj<typeof TextField>;
@@ -73,29 +74,7 @@ export let WithState: HelpTextStory = {
     errorMessage: 'Remove input.'
   },
   argTypes: {validationState: {control: {disable: true}}},
-  render: (props) => {
-    let [value, setValue] = useState('');
-    let [valid, setValid] = useState(undefined);
-
-    return (
-      <Flex
-        direction="column"
-        gap="size-200">
-        <TextField
-          {...props}
-          value={value}
-          onChange={setValue}
-          validationState={value.length ? 'invalid' : valid} />
-        <RadioGroup
-          label="Valid State"
-          value={valid ? valid : ''}
-          onChange={setValid}>
-          <Radio value="valid">Valid</Radio>
-          <Radio value="">undefined</Radio>
-        </RadioGroup>
-      </Flex>
-    );
-  }
+  render: (props) => <TextFieldWithValidationState {...props} />
 };
 
 export let AriaLabel: HelpTextStory = {
@@ -131,3 +110,27 @@ export const DescriptionAndCustomDescription = {
     </Flex>
   )
 };
+
+function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
+  let [value, setValue] = useState('');
+  let [valid, setValid] = useState(undefined);
+
+  return (
+    <Flex
+      direction="column"
+      gap="size-200">
+      <TextField
+        {...props}
+        value={value}
+        onChange={setValue}
+        validationState={value.length ? 'invalid' : valid} />
+      <RadioGroup
+        label="Valid State"
+        value={valid ? valid : ''}
+        onChange={setValid}>
+        <Radio value="valid">Valid</Radio>
+        <Radio value="">undefined</Radio>
+      </RadioGroup>
+    </Flex>
+  );
+}
