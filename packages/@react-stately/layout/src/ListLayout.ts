@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
+import {Collection, KeyboardDelegate, KeyboardDelegateOptions, Node} from '@react-types/shared';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
@@ -349,13 +349,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return this.contentSize;
   }
 
-  getKeyAbove(key: Key) {
+  getKeyAbove(key: Key, options: KeyboardDelegateOptions = {}) {
     let collection = this.collection;
 
     key = collection.getKeyBefore(key);
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (item.type === 'item' && (options.allowsDisabled || this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -363,13 +363,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
   }
 
-  getKeyBelow(key: Key) {
+  getKeyBelow(key: Key, options: KeyboardDelegateOptions = {}) {
     let collection = this.collection;
 
     key = collection.getKeyAfter(key);
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (item.type === 'item' && (options.allowsDisabled || this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -385,13 +385,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return key;
   }
 
-  getKeyPageAbove(key: Key) {
+  getKeyPageAbove(key: Key, options: KeyboardDelegateOptions = {}) {
     let layoutInfo = this.getLayoutInfo(key);
 
     if (layoutInfo) {
       let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
       while (layoutInfo && layoutInfo.rect.y > pageY) {
-        let keyAbove = this.getKeyAbove(layoutInfo.key);
+        let keyAbove = this.getKeyAbove(layoutInfo.key, options);
         layoutInfo = this.getLayoutInfo(keyAbove);
       }
 
@@ -400,16 +400,16 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       }
     }
 
-    return this.getFirstKey();
+    return this.getFirstKey(null, null, options);
   }
 
-  getKeyPageBelow(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
+  getKeyPageBelow(key: Key, options: KeyboardDelegateOptions = {}) {
+    let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey(null, null, options));
 
     if (layoutInfo) {
       let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
       while (layoutInfo && layoutInfo.rect.y < pageY) {
-        let keyBelow = this.getKeyBelow(layoutInfo.key);
+        let keyBelow = this.getKeyBelow(layoutInfo.key, options);
         layoutInfo = this.getLayoutInfo(keyBelow);
       }
 
@@ -418,15 +418,15 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       }
     }
 
-    return this.getLastKey();
+    return this.getLastKey(null, null, options);
   }
 
-  getFirstKey() {
+  getFirstKey(_, global, options: KeyboardDelegateOptions = {}) {
     let collection = this.collection;
     let key = collection.getFirstKey();
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (item.type === 'item' && (options.allowsDisabled || this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -434,12 +434,12 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
   }
 
-  getLastKey() {
+  getLastKey(_, global, options: KeyboardDelegateOptions = {}) {
     let collection = this.collection;
     let key = collection.getLastKey();
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
+      if (item.type === 'item' && (options.allowsDisabled || this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -447,13 +447,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
   }
 
-  getKeyForSearch(search: string, fromKey?: Key) {
+  getKeyForSearch(search: string, fromKey?: Key, options: KeyboardDelegateOptions = {}) {
     if (!this.collator) {
       return null;
     }
 
     let collection = this.collection;
-    let key = fromKey || this.getFirstKey();
+    let key = fromKey || this.getFirstKey(null, null, options);
     while (key != null) {
       let item = collection.getItem(key);
       let substring = item.textValue.slice(0, search.length);
@@ -461,7 +461,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
         return key;
       }
 
-      key = this.getKeyBelow(key);
+      key = this.getKeyBelow(key, options);
     }
 
     return null;

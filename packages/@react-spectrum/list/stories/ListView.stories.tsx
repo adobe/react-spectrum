@@ -361,7 +361,7 @@ storiesOf('ListView/Drag and Drop', module)
     'Drag within list (Reorder)',
     args => (
       <Flex direction="row" wrap alignItems="center">
-        <ReorderExample {...args} />
+        <ReorderExample {...args} disabledKeys={['1']} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
       </Flex>
     )
   )
@@ -638,8 +638,7 @@ let itemList2 = [
 ];
 
 export function ReorderExample(props) {
-  let onDropAction = action('onDrop');
-
+  let {onDrop, onDragStart, onDragEnd, disabledKeys = ['2'], ...otherprops} = props;
   let list = useListData({
     initialItems: props.items || itemList1
   });
@@ -665,8 +664,8 @@ export function ReorderExample(props) {
         };
       });
     },
-    onDragStart: action('dragStart'),
-    onDragEnd: action('dragEnd')
+    onDragStart: onDragStart,
+    onDragEnd: onDragEnd
   });
 
   let dropHooks = useDropHooks({
@@ -687,7 +686,7 @@ export function ReorderExample(props) {
             }
           }
         }
-        onDropAction(e);
+        onDrop(e);
         onMove(keys, e.target);
       }
     },
@@ -707,10 +706,10 @@ export function ReorderExample(props) {
       selectionMode="multiple"
       width="300px"
       items={list.items}
-      disabledKeys={['2']}
+      disabledKeys={disabledKeys}
       dragHooks={dragHooks}
       dropHooks={dropHooks}
-      {...props}>
+      {...otherprops}>
       {(item: any) => (
         <Item>
           {item.textValue}

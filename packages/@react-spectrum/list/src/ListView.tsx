@@ -268,7 +268,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
                   <InsertionIndicator
                     key={`${item.key}-after`}
                     target={{key: item.key, type: 'item', dropPosition: 'after'}}
-                    isPresentationOnly={collection.getKeyAfter(item.key) !== null} />
+                    isPresentationOnly={collection.getKeyAfter(item.key) != null} />
                   }
               </>
             );

@@ -33,7 +33,7 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
               'react-spectrum-ListViewInsertionIndicator--dropTarget': isDropTarget
             }
           )}>
-        {!isPresentationOnly && 
+        {!isPresentationOnly &&
           <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
         }
       </div>
