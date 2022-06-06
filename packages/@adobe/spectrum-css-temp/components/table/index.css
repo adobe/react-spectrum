@@ -44,6 +44,7 @@ svg.spectrum-Table-sortedIcon {
   border-left-style: solid;
   border-right-width: 1px;
   border-right-style: solid;
+  flex: 0 0 auto;
 }
 .spectrum-Table-headCellContents {
   display: inline-block;

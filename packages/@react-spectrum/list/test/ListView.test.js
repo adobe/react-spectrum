@@ -63,6 +63,8 @@ describe('ListView', function () {
   });
 
   afterEach(function () {
+    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
     jest.clearAllMocks();
   });
 

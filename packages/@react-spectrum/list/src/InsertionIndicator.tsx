@@ -20,6 +20,10 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
 
   let isDropTarget = dropState.isDropTarget(target);
 
+  if (!isDropTarget && dropIndicatorProps['aria-hidden']) {
+    return null;
+  }
+
   return (
     <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
       <div

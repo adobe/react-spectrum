@@ -722,14 +722,15 @@ export function DragIntoItemExample(props) {
 
   let list = useListData({
     initialItems: [
-      {id: '0', type: 'folder', textValue: 'Folder', childNodes: []},
+      {id: '0', type: 'folder', textValue: 'Folder 1', childNodes: []},
       {id: '1', type: 'item', textValue: 'One'},
       {id: '2', type: 'item', textValue: 'Two'},
       {id: '3', type: 'item', textValue: 'Three'},
       {id: '4', type: 'item', textValue: 'Four'},
       {id: '5', type: 'item', textValue: 'Five'},
       {id: '6', type: 'item', textValue: 'Six'},
-      {id: '7', type: 'folder', textValue: 'Folder disabled', childNodes: []}
+      {id: '7', type: 'folder', textValue: 'Folder disabled', childNodes: []},
+      {id: '8', type: 'folder', textValue: 'Folder 2', childNodes: []}
     ]
   });
   let disabledKeys: React.Key[] = ['2', '7'];
@@ -803,7 +804,7 @@ export function DragIntoItemExample(props) {
       {...listViewProps}>
       {(item: any) => (
         <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
-          <Text>{item.type === 'folder' ? `Item ${item.textValue} Drop items here` : `Item ${item.textValue}`}</Text>
+          <Text>{item.type === 'folder' ? `${item.textValue} (Drop items here)` : `Item ${item.textValue}`}</Text>
           {item.type === 'folder' &&
             <>
               <Folder />
@@ -957,12 +958,12 @@ export function DragBetweenListsRootOnlyExample(props) {
     initialItems: props.items2 || itemList2
   });
 
-  let onMove = (keys: React.Key[]) => {
+  let onMove = (keys: React.Key[], destinationList) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
-    let destinationList = sourceList === list1 ? list2 : list1;
 
-    destinationList.append(...keys.map(key => sourceList.getItem(key)));
+    let items = keys.map(key => sourceList.getItem(key));
     sourceList.remove(...keys);
+    destinationList.append(...items);
   };
 
   let dragHooksFirst = useDragHooks({
@@ -1012,7 +1013,7 @@ export function DragBetweenListsRootOnlyExample(props) {
           }
         }
         onDropAction(e);
-        onMove(keys);
+        onMove(keys, list1);
       }
     },
     getDropOperation(target, types) {
@@ -1023,7 +1024,6 @@ export function DragBetweenListsRootOnlyExample(props) {
       return 'cancel';
     }
   });
-
 
   let dropHooksSecond = useDropHooks({
     onDrop: async e => {
@@ -1044,7 +1044,7 @@ export function DragBetweenListsRootOnlyExample(props) {
           }
         }
         onDropAction(e);
-        onMove(keys);
+        onMove(keys, list2);
       }
     },
     getDropOperation(target, types) {
