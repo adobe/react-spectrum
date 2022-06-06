@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="max-height: 552px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 680 552">
+  <title>ListView anatomy diagram</title>
+  <desc>Shows a list view with labels pointing to its parts, including a parent list view item, a child list view item, and a selected listview item. Also displays the contents of a list view item with labels pointing to its various elements, including the drag icon, checkbox, label area, description area, actions area, and navigational icon.</desc>
   <defs>
     <clipPath id="clip-path">
       <rect width="11" height="17" fill="none"/>
