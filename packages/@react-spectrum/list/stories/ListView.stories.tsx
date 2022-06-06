@@ -21,7 +21,7 @@ import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
-import React, {useEffect, useState} from 'react';
+import React, {Key, useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
@@ -728,9 +728,11 @@ export function DragIntoItemExample(props) {
       {id: '3', type: 'item', textValue: 'Three'},
       {id: '4', type: 'item', textValue: 'Four'},
       {id: '5', type: 'item', textValue: 'Five'},
-      {id: '6', type: 'item', textValue: 'Six'}
+      {id: '6', type: 'item', textValue: 'Six'},
+      {id: '7', type: 'folder', textValue: 'Folder disabled', childNodes: []}
     ]
   });
+  let disabledKeys: React.Key[] = ['2', '7'];
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
@@ -781,7 +783,7 @@ export function DragIntoItemExample(props) {
       }
     },
     getDropOperation(target) {
-      if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes) {
+      if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes || disabledKeys.includes(target.key)) {
         return 'cancel';
       }
 
@@ -795,13 +797,13 @@ export function DragIntoItemExample(props) {
       selectionMode="multiple"
       width="300px"
       items={list.items}
-      disabledKeys={['2']}
+      disabledKeys={disabledKeys}
       dragHooks={dragHooks}
       dropHooks={dropHooks}
       {...listViewProps}>
       {(item: any) => (
         <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
-          <Text>{item.type === 'folder' ? 'Drop items here' : `Item ${item.textValue}`}</Text>
+          <Text>Item {item.id} {item.type === 'folder' ? 'Drop items here' : `Item ${item.textValue}`}</Text>
           {item.type === 'folder' &&
             <>
               <Folder />
