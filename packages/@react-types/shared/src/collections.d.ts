@@ -93,31 +93,31 @@ export interface KeyboardDelegateOptions {
 
 export interface KeyboardDelegate {
   /** Returns the key visually below the given one, or `null` for none. */
-  getKeyBelow?(key: Key, options?: KeyboardDelegateOptions): Key,
+  getKeyBelow?(key: Key, options?: KeyboardDelegateOptions): Key | null,
 
   /** Returns the key visually above the given one, or `null` for none. */
-  getKeyAbove?(key: Key, options?: KeyboardDelegateOptions): Key,
+  getKeyAbove?(key: Key, options?: KeyboardDelegateOptions): Key | null,
 
   /** Returns the key visually to the left of the given one, or `null` for none. */
-  getKeyLeftOf?(key: Key, options?: KeyboardDelegateOptions): Key,
+  getKeyLeftOf?(key: Key, options?: KeyboardDelegateOptions): Key | null,
 
   /** Returns the key visually to the right of the given one, or `null` for none. */
-  getKeyRightOf?(key: Key, options?: KeyboardDelegateOptions): Key,
+  getKeyRightOf?(key: Key, options?: KeyboardDelegateOptions): Key | null,
 
   /** Returns the key visually one page below the given one, or `null` for none. */
-  getKeyPageBelow?(key: Key, options?: KeyboardDelegateOptions): Key,
+  getKeyPageBelow?(key: Key, options?: KeyboardDelegateOptions): Key | null,
 
   /** Returns the key visually one page above the given one, or `null` for none. */
-  getKeyPageAbove?(key: Key, options?: KeyboardDelegateOptions): Key,
+  getKeyPageAbove?(key: Key, options?: KeyboardDelegateOptions): Key | null,
 
   /** Returns the first key, or `null` for none. */
-  getFirstKey?(key?: Key, global?: boolean, options?: KeyboardDelegateOptions): Key,
+  getFirstKey?(key?: Key, global?: boolean, options?: KeyboardDelegateOptions): Key | null,
 
   /** Returns the last key, or `null` for none. */
-  getLastKey?(key?: Key, global?: boolean, options?: KeyboardDelegateOptions): Key,
+  getLastKey?(key?: Key, global?: boolean, options?: KeyboardDelegateOptions): Key | null,
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
-  getKeyForSearch?(search: string, fromKey?: Key, options?: KeyboardDelegateOptions): Key
+  getKeyForSearch?(search: string, fromKey?: Key, options?: KeyboardDelegateOptions): Key | null
 }
 
 /**
