@@ -326,9 +326,8 @@ clicking the row with a mouse or pressing the <Keyboard>Enter</Keyboard> key wil
 While any number of rows are selected, subsequent clicks on a row will toggle selection instead. During this state `onAction` can only be triggered via the <Keyboard>Enter</Keyboard> key, but deselecting all selected
 rows will restore the original "click for onAction" behavior. If `onAction` is provided to a highlight selection ListView, double clicking the row triggers `onAction` and a single click selects the row instead.
 
-On touch devices, `onAction` is always the primary tap interaction, and tapping on the row's checkbox or long pressing the row will select the row. In highlight selection, a long press will also shift the ListView into selection mode,
+On touch devices, `onAction` is always the primary tap interaction, and tapping on the row's checkbox or long pressing the row will select the row. In highlight selection with row actions, a long press will also shift the ListView into selection mode,
 which displays checkboxes to perform selection. While the ListView is in this state, tapping the row will toggle selection instead of triggering `onAction`. Deselecting all items exits selection mode and hides the checkboxes.
-Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
 
 ```tsx example
 // Checkbox selection with onAction
@@ -420,7 +419,7 @@ function DragIntoListExample() {
       }
       onMove(keysToMove, e.target);
     },
-    getDropOperation(target, types) {
+    getDropOperation(_, types) {
       let typesSet = types.types ? types.types : types;
       let draggedTypes = [...typesSet.values()];
       // Cancel the drop operations if any of drag items aren't a matching type
@@ -550,7 +549,7 @@ function DragIntoListFilesOnly() {
       }
       onMove(keysToMove, e.target);
     },
-    getDropOperation(target, types) {
+    getDropOperation(_, types) {
       let typesSet = types.types ? types.types : types;
       let draggedTypes = [...typesSet.values()];
       // Cancel the drop operations if any of drag items aren't a file
@@ -652,7 +651,7 @@ function ReorderableList() {
         let item = list.getItem(key);
         // Setup the info for each item that will be propagated upon drag
         return {
-          [`${dragType}-${item.type}`]: JSON.stringify(item),
+          [`${dragType}-${item.type}`]: JSON.stringify(item)
         };
       });
     }
@@ -777,7 +776,7 @@ function DragBetweenListsExample() {
         let item = list1.getItem(key);
         // Setup the info for each item that will be propagated upon drag
         return {
-          [`${dragType}-${item.type}`]: JSON.stringify(item),
+          [`${dragType}-${item.type}`]: JSON.stringify(item)
         };
       });
     }
@@ -789,7 +788,7 @@ function DragBetweenListsExample() {
         let item = list2.getItem(key);
         // Setup the info for each item that will be propagated upon drag
         return {
-          [`${dragType}-${item.type}`]: JSON.stringify(item),
+          [`${dragType}-${item.type}`]: JSON.stringify(item)
         };
       });
     }
