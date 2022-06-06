@@ -48,7 +48,7 @@ after_version: 3.0.0
 
 ## Example
 ```tsx example
-<ListView selectionMode="multiple" aria-label="List example" maxWidth="size-6000">
+<ListView selectionMode="multiple" aria-label="Static ListView items example" maxWidth="size-6000">
   <Item>Adobe Photoshop</Item>
   <Item>Adobe InDesign</Item>
   <Item>Adobe AfterEffects</Item>
@@ -81,7 +81,7 @@ const items = [
   {id: 9, name: 'Adobe Dreamweaver'}
 ];
 
-<ListView items={items} selectionMode="multiple" maxWidth="size-6000" height="250px" aria-label="List example">
+<ListView items={items} selectionMode="multiple" maxWidth="size-6000" height="250px" aria-label="Dynamic ListView items example">
   {(item) => (
     <Item key={item.key}>
       {item.name}
@@ -129,7 +129,7 @@ function AsyncList() {
   return (
     <ListView
       selectionMode="multiple"
-      aria-label="example async loading list"
+      aria-label="Async loading ListView example"
       maxWidth="size-6000"
       height="size-3000"
       items={list.items}
@@ -153,7 +153,7 @@ Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<Action
 to an `<Item>` will add a chevron icon to the end of the row to visually indicate that the row has children.
 
 ```tsx example
-<ListView selectionMode="multiple" maxWidth="size-6000" aria-label="List example with complex items" onAction={key => alert(`Triggering action on item ${key}`)}>
+<ListView selectionMode="multiple" maxWidth="size-6000" aria-label="ListView example with complex items" onAction={key => alert(`Triggering action on item ${key}`)}>
   <Item key="1" textValue="Utilities" hasChildItems>
     <Folder />
     <Text>Utilities</Text>
@@ -225,7 +225,7 @@ Use `defaultSelectedKeys` to provide a default set of selected rows. Note that t
 The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "Charizard" and "Venusaur".
 
 ```tsx example
-<ListView maxWidth="size-6000" selectionMode="multiple" defaultSelectedKeys={["Charizard", "Venusaur"]} aria-label="List selection example">
+<ListView maxWidth="size-6000" selectionMode="multiple" defaultSelectedKeys={["Charizard", "Venusaur"]} aria-label="ListView multiple selection example">
   <Item key="Charizard">
     Charizard
   </Item>
@@ -260,7 +260,7 @@ function PokemonList(props) {
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
 
   return (
-    <ListView items={rows} maxWidth="size-6000" aria-label="List with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+    <ListView items={rows} maxWidth="size-6000" aria-label="ListView with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
       {(item) => (
         <Item>
           {item.name}
@@ -277,7 +277,7 @@ To limit users to selecting only a single item at a time, `selectionMode` can be
 
 ```tsx example
 // Using the same list as above
-<PokemonList selectionMode="single" selectionStyle="highlight" aria-label="List with single selection" />
+<PokemonList selectionMode="single" selectionStyle="highlight" aria-label="ListView with single selection" />
 ```
 
 ### Disallow empty selection
@@ -287,7 +287,7 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 ```tsx example
 // Using the same list as above
-<PokemonList disallowEmptySelection aria-label="List with empty selection disallowed" />
+<PokemonList disallowEmptySelection aria-label="ListView with empty selection disallowed" />
 ```
 
 ### Disabled rows
@@ -296,7 +296,7 @@ You can disable specific rows by providing an array of keys to ListView via the 
 
 ```tsx example
 // Using the same list as above
-<PokemonList disabledKeys={[3]} aria-label="List with disabled rows" />
+<PokemonList disabledKeys={[3]} aria-label="ListView with disabled rows" />
 ```
 
 ### Highlight selection
@@ -315,7 +315,7 @@ since modifier keys may not be available. This behavior emulates native platform
 
 ```tsx example
 // Using the same list as above
-<PokemonList selectionStyle="highlight" aria-label="Highlight selection list" />
+<PokemonList selectionStyle="highlight" aria-label="Highlight selection ListView" />
 ```
 
 ### Row actions
@@ -333,8 +333,8 @@ Double clicking matches the behavior of desktop platforms like macOS and Windows
 ```tsx example
 // Checkbox selection with onAction
 <Flex wrap gap="size-300">
-  <PokemonList onAction={key => alert(`Opening item ${key}...`)} aria-label="Checkbox selection list with row actions" width="size-2400" />
-  <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection list with row actions" width="size-2400" />
+  <PokemonList onAction={key => alert(`Opening item ${key}...`)} aria-label="Checkbox selection ListView with row actions" width="size-2400" />
+  <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection ListView with row actions" width="size-2400" />
 </Flex>
 ```
 
@@ -435,7 +435,7 @@ function DragIntoListExample() {
   return (
     <Flex wrap gap="size-300">
       <ListView
-        aria-label="Draggable list view in drag into list example"
+        aria-label="Draggable ListView in drag into list example"
         selectionMode="multiple"
         width="size-3600"
         height="size-2400"
@@ -448,7 +448,7 @@ function DragIntoListExample() {
         )}
       </ListView>
       <ListView
-        aria-label="Droppable list view in drag into list example"
+        aria-label="Droppable ListView in drag into list example"
         width="size-3600"
          height="size-2400"
         items={targetList.items}
@@ -565,7 +565,7 @@ function DragIntoListFilesOnly() {
   return (
     <Flex wrap gap="size-300">
       <ListView
-        aria-label="Draggable list view in drag into list files only example"
+        aria-label="Draggable ListView in drag into list files only example"
         selectionMode="multiple"
         width="size-3600"
         height="size-3600"
@@ -579,7 +579,7 @@ function DragIntoListFilesOnly() {
         )}
       </ListView>
       <ListView
-        aria-label="Droppable list view in drag into list files only example"
+        aria-label="Droppable ListView in drag into list files only example"
         width="size-3600"
         height="size-3600"
         items={targetList.items}
@@ -687,7 +687,7 @@ function ReorderableList() {
 
   return (
     <ListView
-      aria-label="Reorderable list"
+      aria-label="Reorderable ListView"
       selectionMode="multiple"
       width="size-3600"
       height="size-3600"
@@ -826,7 +826,7 @@ function DragBetweenListsExample() {
   return (
     <Flex wrap gap="size-300">
       <ListView
-        aria-label="First listview in drag between list example"
+        aria-label="First ListView in drag between list example"
         selectionMode="multiple"
         width="size-3600"
         height="size-3600"
@@ -841,7 +841,7 @@ function DragBetweenListsExample() {
         )}
       </ListView>
       <ListView
-        aria-label="Second listview in drag between list example"
+        aria-label="Second ListView in drag between list example"
         selectionMode="multiple"
         width="size-3600"
         height="size-3600"
@@ -875,7 +875,7 @@ function DragBetweenListsExample() {
 ```tsx example export=true
 function ListExample(props) {
   return (
-    <ListView selectionMode="multiple" aria-label="Quiet list example" width="size-3000" {...props}>
+    <ListView selectionMode="multiple" aria-label="Quiet ListView example" width="size-3000" {...props}>
       <Item>Adobe AfterEffects</Item>
       <Item>Adobe Dreamweaver</Item>
       <Item>Adobe Acrobat</Item>
@@ -891,8 +891,8 @@ The amount of vertical padding that each row contains can be modified by providi
 
 ```tsx example
 <Flex wrap gap="size-300">
-  <ListExample density="compact" aria-label="Compact list example" />
-  <ListExample density="spacious" aria-label="Spacious list example" />
+  <ListExample density="compact" aria-label="Compact ListView example" />
+  <ListExample density="spacious" aria-label="Spacious ListView example" />
 </Flex>
 ```
 
@@ -901,7 +901,7 @@ By default, text content that overflows its row will be truncated. You can have 
 to the ListView.
 
 ```tsx example
-<ListExample overflowMode="wrap" aria-label="Text wrapping list example" width="size-2000" />
+<ListExample overflowMode="wrap" aria-label="Text wrapping ListView example" width="size-2000" />
 ```
 
 ### Empty state
@@ -925,7 +925,7 @@ function renderEmptyState() {
 
 <ListView
   selectionMode="multiple"
-  aria-label="Example list for empty state"
+  aria-label="Example ListView for empty state"
   maxWidth="size-6000"
   height="size-3000"
   renderEmptyState={renderEmptyState}>
