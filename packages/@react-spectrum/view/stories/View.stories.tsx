@@ -9,45 +9,43 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import { Button } from '@react-spectrum/button';
 import React from 'react';
 import { View } from '../';
-
 export default {
   title: 'View',
 };
-
-export const NameMe = () => (
-  <div style={{ display: 'flex' }}>
-    <View
-      backgroundColor="negative"
-      width="single-line-width"
-      height="size-500"
-      elementType="span"
-    />
-    <View
-      backgroundColor="positive"
-      width="size-500"
-      height="size-500"
-      marginStart="size-250"
-      borderColor="default"
-      borderWidth="thin"
-    />
-    <Button variant="primary" marginStart="size-250">
-      Test
-    </Button>
-  </div>
-);
-
-NameMe.story = {
+export const NameMe = {
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+      }}
+    >
+      <View
+        backgroundColor="negative"
+        width="single-line-width"
+        height="size-500"
+        elementType="span"
+      />
+      <View
+        backgroundColor="positive"
+        width="size-500"
+        height="size-500"
+        marginStart="size-250"
+        borderColor="default"
+        borderWidth="thin"
+      />
+      <Button variant="primary" marginStart="size-250">
+        Test
+      </Button>
+    </div>
+  ),
   name: 'name me',
 };
-
-export const DimensionFunctions = () => (
-  <View width="calc(100px + size-250)" height="single-line-height" backgroundColor="blue-400" />
-);
-
-DimensionFunctions.story = {
+export const DimensionFunctions = {
+  render: () => (
+    <View width="calc(100px + size-250)" height="single-line-height" backgroundColor="blue-400" />
+  ),
   name: 'dimension functions',
 };
