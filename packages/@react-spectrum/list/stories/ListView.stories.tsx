@@ -803,7 +803,7 @@ export function DragIntoItemExample(props) {
       {...listViewProps}>
       {(item: any) => (
         <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
-          <Text>Item {item.id} {item.type === 'folder' ? 'Drop items here' : `Item ${item.textValue}`}</Text>
+          <Text>{item.type === 'folder' ? `Item ${item.textValue} Drop items here` : `Item ${item.textValue}`}</Text>
           {item.type === 'folder' &&
             <>
               <Folder />
