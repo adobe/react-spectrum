@@ -170,3 +170,21 @@ export const WithTooltip = () => (
     <Tooltip>Actions</Tooltip>
   </TooltipTrigger>
 );
+
+export const Dynamic = () => {
+  const items = [
+    {key: 'a', label: 'Cut'},
+    {key: 'a', label: 'Copy'},
+    {key: 'a', label: 'Paste'}
+  ];
+
+  return (
+    <ActionMenu items={items}>
+      {(item) => (
+        <Item key={item.key}>
+          {item.label}
+        </Item>
+      )}
+    </ActionMenu>
+  );
+};

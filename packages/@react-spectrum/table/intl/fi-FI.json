@@ -1,4 +1,7 @@
 {
   "loading": "Ladataan…",
-  "loadingMore": "Ladataan lisää…"
+  "loadingMore": "Ladataan lisää…",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }

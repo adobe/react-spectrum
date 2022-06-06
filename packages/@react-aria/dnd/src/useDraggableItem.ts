@@ -33,9 +33,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     getItems() {
       return state.getItems(props.key);
     },
-    renderPreview() {
-      return state.renderPreview(props.key);
-    },
+    preview: state.preview,
     onDragStart(e) {
       state.startDrag(props.key, e);
     },
