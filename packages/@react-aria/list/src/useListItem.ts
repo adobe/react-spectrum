@@ -15,7 +15,7 @@ import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 import {Node as RSNode} from '@react-types/shared';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -33,7 +33,9 @@ export interface ListItemAria extends SelectableItemStates {
   /** Props for the list row element. */
   rowProps: HTMLAttributes<HTMLElement>,
   /** Props for the grid cell element within the list row. */
-  gridCellProps: HTMLAttributes<HTMLElement>
+  gridCellProps: HTMLAttributes<HTMLElement>,
+  /** Props for the list item description element, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -52,6 +54,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
 
   let {direction} = useLocale();
   let {onAction} = listMap.get(state);
+  let descriptionId = useSlotId();
   let focus = () => {
     // Don't shift focus to the row if the active element is a element within the row already
     // (e.g. clicking on a row button)
@@ -164,9 +167,10 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     role: 'row',
     onKeyDownCapture: onKeyDown,
     onFocus,
-    'aria-label': node.textValue,
+    'aria-label': node.textValue || undefined,
     'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
+    'aria-labelledby': descriptionId && node.textValue ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
     id: getRowId(state, node.key)
   });
 
@@ -182,6 +186,9 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
   return {
     rowProps,
     gridCellProps,
+    descriptionProps: {
+      id: descriptionId
+    },
     ...itemStates
   };
 }
