@@ -135,8 +135,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   };
 
   // Focus the associated DOM node when this item becomes the focusedKey
-  let isFocused = key === manager.focusedKey;
   useEffect(() => {
+    let isFocused = key === manager.focusedKey;
     if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== ref.current) {
       if (focus) {
         focus();
@@ -144,7 +144,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         focusSafely(ref.current);
       }
     }
-  }, [ref, isFocused, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
+  }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
 
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
   // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
@@ -152,7 +152,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let itemProps: SelectableItemAria['itemProps'] = {};
   if (!shouldUseVirtualFocus) {
     itemProps = {
-      tabIndex: isFocused ? 0 : -1,
+      tabIndex: key === manager.focusedKey ? 0 : -1,
       onFocus(e) {
         if (e.target === ref.current) {
           manager.setFocusedKey(key);
