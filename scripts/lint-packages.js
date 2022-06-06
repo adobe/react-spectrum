@@ -85,6 +85,14 @@ for (let pkg of packages) {
     softAssert(!json.dependencies || !json.dependencies['@react-spectrum/test-utils'], '@react-spectrum/test-utils should be a devDependency');
     softAssert(!json.dependencies || !json.dependencies['react'], `${pkg} has react as a dependency, but it should be a peerDependency`);
 
+    if (json.peerDependencies?.react) {
+      softAssert.equal(json.peerDependencies.react, '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0', `${pkg} has wrong react peer dep`);
+    }
+
+    if (json.peerDependencies?.['react-dom']) {
+      softAssert.equal(json.peerDependencies['react-dom'], '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0', `${pkg} has wrong react-dom peer dep`);
+    }
+
     if (json.name.startsWith('@react-spectrum') && json.devDependencies && json.devDependencies['@adobe/spectrum-css-temp']) {
       softAssert.deepEqual(json.targets, {
         main: {

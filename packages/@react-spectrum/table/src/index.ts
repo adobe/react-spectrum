@@ -12,7 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export {TableView_DEPRECATED as TableView} from './TableView_DEPRECATED';
+export {TableView} from './TableView';
 import {Column} from '@react-stately/table';
 import {SpectrumColumnProps} from '@react-types/table';
 
