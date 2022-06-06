@@ -98,7 +98,7 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-columnResizer {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   box-sizing: border-box;
   position: absolute;
   inset-block-start: 0px;
