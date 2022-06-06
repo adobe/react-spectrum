@@ -419,11 +419,11 @@ function DragIntoListExample() {
       }
       onMove(keysToMove, e.target);
     },
-    getDropOperation(_, types) {
+    getDropOperation(target, types) {
       let typesSet = types.types ? types.types : types;
       let draggedTypes = [...typesSet.values()];
-      // Cancel the drop operations if any of drag items aren't a matching type
-      if (!draggedTypes.every(type => acceptedDragTypes === type)) {
+      // Cancel the drop operations if any of drag items aren't a file or if attempting to drop on a item
+      if (!draggedTypes.every(type => acceptedDragTypes === type) || (target.type === 'item' && target.dropPosition === 'on')) {
         return 'cancel';
       }
 
@@ -549,11 +549,14 @@ function DragIntoListFilesOnly() {
       }
       onMove(keysToMove, e.target);
     },
-    getDropOperation(_, types) {
+    getDropOperation(target, types) {
       let typesSet = types.types ? types.types : types;
       let draggedTypes = [...typesSet.values()];
-      // Cancel the drop operations if any of drag items aren't a file
-      if (!draggedTypes.every(type => acceptedDragTypes === type)) {
+      // Cancel the drop operations if any of drag items aren't a file or if attempting to drop on a non-folder item
+      if (
+        !draggedTypes.every(type => acceptedDragTypes === type) ||
+        (target.type === 'item' && target.dropPosition === 'on' && !targetList.getItem(target.key).childNodes)
+      ) {
         return 'cancel';
       }
 
@@ -675,8 +678,13 @@ function ReorderableList() {
     getDropOperation(target, types) {
       let typesSet = types.types ? types.types : types;
       let draggedTypes = [...typesSet.values()];
-      // Cancel the drop operations if any of drag items aren't of the acceptedTypes or if the drop target is root
-      if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || target.type === 'root') {
+      // Cancel the drop operations if any of drag items aren't of the acceptedTypes, if the drop target is root,
+      // or if attempting to drop on a non-folder item
+      if (
+        !draggedTypes.every(type => acceptedDragTypes.includes(type)) ||
+        target.type === 'root' ||
+        (target.type === 'item' && target.dropPosition === 'on' && !list.getItem(target.key).childNodes)
+      ) {
         return 'cancel';
       }
 
