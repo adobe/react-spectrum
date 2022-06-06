@@ -21,7 +21,7 @@ import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
-import React, {Key, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
