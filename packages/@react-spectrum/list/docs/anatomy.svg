@@ -33,12 +33,12 @@
     <line id="Line_9" data-name="Line 9" y2="24" transform="translate(159.5 86.5)" fill="none" stroke="var(--anatomy-gray-900)" stroke-width="1"/>
     <g id="Group_156653" data-name="Group 156653" transform="translate(976.504 423.062) rotate(180)">
       <g id="Group_2" data-name="Group 2" transform="translate(418 251.584)">
-        <path id="Path_453" data-name="Path 453" d="M418,257.539v-5.955H560.5v5.955" transform="translate(-418 -251.584)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
+        <path id="Path_453" data-name="Path 453" d="M418,257.539v-5.955H560.5v5.955" transform="translate(-418 -251.584)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
       </g>
     </g>
     <g id="Group_156654" data-name="Group 156654" transform="translate(826.5 423.062) rotate(180)">
       <g id="Group_2-2" data-name="Group 2" transform="translate(418 251.584)">
-        <path id="Path_453-2" data-name="Path 453" d="M418,257.539v-5.955H702.5v5.955" transform="translate(-418 -251.584)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
+        <path id="Path_453-2" data-name="Path 453" d="M418,257.539v-5.955H702.5v5.955" transform="translate(-418 -251.584)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
       </g>
     </g>
     <text id="Drag_icon_optional_" data-name="Drag icon
@@ -109,7 +109,7 @@
       </g>
       <rect id="Rectangle_142239" data-name="Rectangle 142239" width="364" height="58" transform="translate(123 258)" fill="var(--anatomy-gray-50)" opacity="0"/>
       <rect id="Rectangle_142240" data-name="Rectangle 142240" width="364" height="58" transform="translate(123 316)" fill="var(--anatomy-gray-50)" opacity="0"/>
-      <rect id="Rectangle_142241" data-name="Rectangle 142241" width="364" height="58" transform="translate(123 374)" fill="rgba(72,110,194,0.1)"/>
+      <rect id="Rectangle_142241" data-name="Rectangle 142241" width="364" height="58" transform="translate(123 374)" fill="var(--spectrum-alias-highlight-selected)"/>
       <rect id="Rectangle_142242" data-name="Rectangle 142242" width="364" height="58" transform="translate(123 432)" fill="var(--anatomy-gray-50)" opacity="0"/>
       <text id="List_view_item" data-name="List view item" transform="translate(174 293)" fill="var(--anatomy-gray-800)" font-size="21" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="0" y="0">List view item</tspan></text>
       <text id="List_view_item-2" data-name="List view item" transform="translate(174 351)" fill="var(--anatomy-gray-800)" font-size="21" font-family="AdobeClean-Regular, Adobe Clean"><tspan x="0" y="0">List view item</tspan></text>
@@ -282,21 +282,21 @@
       <text id="Parent_list_view_item" data-name="Parent list view item" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="0" y="0">Parent list view item</tspan></text>
       <g id="Group_152108" data-name="Group 152108" transform="translate(752.999 -692) rotate(180)">
         <rect id="Rectangle_3659" data-name="Rectangle 3659" width="20" height="48" transform="translate(421 -336) rotate(-90)" fill="red" opacity="0"/>
-        <path id="Union_56" data-name="Union 56" d="M-9134-324.5a2.5,2.5,0,0,1,2-2.449V-370h1v43.052a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-324.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
+        <path id="Union_56" data-name="Union 56" d="M-9134-324.5a2.5,2.5,0,0,1,2-2.449V-370h1v43.052a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-324.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-700)"/>
       </g>
     </g>
     <g id="Group_156663" data-name="Group 156663" transform="translate(191.005 681)">
       <text id="Child_list_view_item" data-name="Child list view item" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="0" y="0">Child list view item</tspan></text>
       <g id="Group_152108-2" data-name="Group 152108" transform="translate(752.999 -692) rotate(180)">
         <rect id="Rectangle_3659-2" data-name="Rectangle 3659" width="20" height="48" transform="translate(421 -336) rotate(-90)" fill="red" opacity="0"/>
-        <path id="Union_56-2" data-name="Union 56" d="M-9134-324.5a2.5,2.5,0,0,1,2-2.449V-370h1v43.052a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-324.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
+        <path id="Union_56-2" data-name="Union 56" d="M-9134-324.5a2.5,2.5,0,0,1,2-2.449V-370h1v43.052a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-324.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-700)"/>
       </g>
     </g>
     <g id="Group_152110" data-name="Group 152110" transform="translate(191.005 738)">
       <text id="Selected_list_view_item" data-name="Selected list view item" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="0" y="0">Selected list view item</tspan></text>
       <g id="Group_152108-3" data-name="Group 152108" transform="translate(752.999 -692) rotate(180)">
         <rect id="Rectangle_3659-3" data-name="Rectangle 3659" width="20" height="48" transform="translate(421 -336) rotate(-90)" fill="red" opacity="0"/>
-        <path id="Union_56-3" data-name="Union 56" d="M-9134-324.5a2.5,2.5,0,0,1,2-2.449V-370h1v43.052a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-324.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
+        <path id="Union_56-3" data-name="Union 56" d="M-9134-324.5a2.5,2.5,0,0,1,2-2.449V-370h1v43.052a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-324.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-700)"/>
       </g>
     </g>
   </g>
