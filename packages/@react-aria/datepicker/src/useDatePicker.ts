@@ -17,7 +17,7 @@ import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
-import {HTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, RefObject, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {roleSymbol} from './useDateField';
@@ -68,6 +68,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let descProps = useDescription(description);
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
   let domProps = filterDOMProps(props);
+  let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
   return {
     groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, {
@@ -79,7 +80,6 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     labelProps: {
       ...labelProps,
       onClick: () => {
-        let focusManager = createFocusManager(ref);
         focusManager.focusFirst();
       }
     },
@@ -106,7 +106,6 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     buttonProps: {
       ...descProps,
       id: buttonId,
-      excludeFromTabOrder: true,
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,

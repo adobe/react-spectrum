@@ -198,6 +198,17 @@ export const NestedColumns = Template().bind({});
 NestedColumns.storyName = 'nested columns';
 NestedColumns.args = {columns: nestedColumns, items};
 
+export const MaxHeight = () => (
+  <TableView maxHeight="size-1200">
+    <TableHeader columns={columns}>
+      {(column: any) => <Column key={column.key}>{column.name}</Column>}
+    </TableHeader>
+    <TableBody items={items}>
+      {(item: any) => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
+    </TableBody>
+  </TableView>
+  );
+
 export const Empty = EmptyTemplate().bind({});
 Empty.storyName = 'empty table';
 Empty.args = {};
