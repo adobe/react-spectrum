@@ -89,31 +89,31 @@ export type SortDirection = 'ascending' | 'descending';
 
 export interface KeyboardDelegate {
   /** Returns the key visually below the given one, or `null` for none. */
-  getKeyBelow?(key: Key): Key,
+  getKeyBelow?(key: Key): Key | null,
 
   /** Returns the key visually above the given one, or `null` for none. */
-  getKeyAbove?(key: Key): Key,
+  getKeyAbove?(key: Key): Key | null,
 
   /** Returns the key visually to the left of the given one, or `null` for none. */
-  getKeyLeftOf?(key: Key): Key,
+  getKeyLeftOf?(key: Key): Key | null,
 
   /** Returns the key visually to the right of the given one, or `null` for none. */
-  getKeyRightOf?(key: Key): Key,
+  getKeyRightOf?(key: Key): Key | null,
 
   /** Returns the key visually one page below the given one, or `null` for none. */
-  getKeyPageBelow?(key: Key): Key,
+  getKeyPageBelow?(key: Key): Key | null,
 
   /** Returns the key visually one page above the given one, or `null` for none. */
-  getKeyPageAbove?(key: Key): Key,
+  getKeyPageAbove?(key: Key): Key | null,
 
   /** Returns the first key, or `null` for none. */
-  getFirstKey?(key?: Key, global?: boolean): Key,
+  getFirstKey?(key?: Key, global?: boolean): Key | null,
 
   /** Returns the last key, or `null` for none. */
-  getLastKey?(key?: Key, global?: boolean): Key,
+  getLastKey?(key?: Key, global?: boolean): Key | null,
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
-  getKeyForSearch?(search: string, fromKey?: Key): Key
+  getKeyForSearch?(search: string, fromKey?: Key): Key | null
 }
 
 /**
