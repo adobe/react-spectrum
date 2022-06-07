@@ -71,7 +71,6 @@ const FocusContext = React.createContext<IFocusContext>(null);
 let activeScope: ScopeRef = null;
 let scopes: Map<ScopeRef, ScopeRef | null> = new Map();
 let scopeJustAdded = false;
-let scopeJustAddedTimeoutId;
 
 // This is a hacky DOM-based implementation of a FocusScope until this RFC lands in React:
 // https://github.com/reactjs/rfcs/pull/109
