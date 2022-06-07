@@ -41,7 +41,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
       // or announce that it has opened until it has rendered. A workaround
       // is to wait for half a second, then blur and re-focus the dialog.
       let timeout = setTimeout(() => {
-        if (document.activeElement === ref.current || !ref.current.contains(document.activeElement)) {
+        if (document.activeElement === ref.current) {
           ref.current.blur();
           focusSafely(ref.current);
         }

@@ -275,6 +275,11 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
+          if (isElementInLastAddedScope(e.target)) {
+            activeScope = getScopeForElement(e.target);
+            focusedNode.current = e.target;
+            return;
+          }
           focusedNode.current.focus();
         } else if (activeScope) {
           focusFirstInScope(activeScope.current);
@@ -318,6 +323,26 @@ function isElementInAnyScope(element: Element) {
   for (let scope of scopes.keys()) {
     if (isElementInScope(element, scope.current)) {
       return true;
+    }
+  }
+  return false;
+}
+
+function getScopeForElement(element: Element) {
+  for (let scope of scopes.keys()) {
+    if (isElementInScope(element, scope.current)) {
+      return scope;
+    }
+  }
+  return null;
+}
+
+function isElementInLastAddedScope(element: Element) {
+  let count = 0;
+  for (let scope of scopes.keys()) {
+    count++;
+    if (isElementInScope(element, scope.current)) {
+      return count === scopes.size;
     }
   }
   return false;
@@ -377,7 +402,7 @@ function focusFirstInScope(scope: HTMLElement[]) {
 
 function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
   const autoFocusRef = React.useRef(autoFocus);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (autoFocusRef.current) {
       activeScope = scopeRef;
       if (!isElementInScope(document.activeElement, activeScope.current)) {
