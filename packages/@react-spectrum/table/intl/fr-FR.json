@@ -1,4 +1,7 @@
 {
   "loading": "Chargement...",
-  "loadingMore": "Chargement supplémentaire..."
+  "loadingMore": "Chargement supplémentaire...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }
