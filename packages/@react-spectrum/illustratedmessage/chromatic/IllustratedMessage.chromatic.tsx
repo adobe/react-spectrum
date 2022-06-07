@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import { Content } from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import Error from '@spectrum-icons/illustrations/src/Error';
-import { Heading } from '@react-spectrum/text';
-import { IllustratedMessage } from '../';
+import {Heading} from '@react-spectrum/text';
+import {IllustratedMessage} from '../';
 import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import NotFound from '@spectrum-icons/illustrations/src/NotFound';
@@ -55,7 +55,7 @@ export const _NoSearchResults: IllustratedMessageStory = {
       </>
     )
   },
-  name: 'No search results',
+  name: 'No search results'
 };
 
 export const _Unauthorized: IllustratedMessageStory = {
@@ -126,5 +126,5 @@ export const NoHeadingOrDescription: IllustratedMessageStory = {
   args: {
     children: (<NotFound aria-label="No Results" />)
   },
-  name: 'No heading or description',
+  name: 'No heading or description'
 };
