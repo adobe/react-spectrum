@@ -9,43 +9,46 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { Button } from '@react-spectrum/button';
+import {Button} from '@react-spectrum/button';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
-import { View } from '../';
-export default {
+import {View} from '../';
+
+type ViewStory = ComponentStoryObj<typeof View>;
+
+let meta = {
   title: 'View',
-};
-export const NameMe = {
+  component: View
+} as ComponentMeta<typeof View>;
+
+export default meta;
+
+export const NameMe: ViewStory = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-      }}
-    >
+    <div style={{display: 'flex'}}>
       <View
         backgroundColor="negative"
         width="single-line-width"
         height="size-500"
-        elementType="span"
-      />
+        elementType="span" />
       <View
         backgroundColor="positive"
         width="size-500"
         height="size-500"
         marginStart="size-250"
         borderColor="default"
-        borderWidth="thin"
-      />
+        borderWidth="thin" />
       <Button variant="primary" marginStart="size-250">
         Test
       </Button>
     </div>
-  ),
-  name: 'name me',
+  )
 };
-export const DimensionFunctions = {
-  render: () => (
-    <View width="calc(100px + size-250)" height="single-line-height" backgroundColor="blue-400" />
-  ),
-  name: 'dimension functions',
+
+export const DimensionFunctions: ViewStory = {
+  args: {
+    width: 'calc(100px + size-250)',
+    height: 'single-line-height',
+    backgroundColor: 'blue-400'
+  }
 };
