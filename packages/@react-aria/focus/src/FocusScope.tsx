@@ -70,6 +70,8 @@ const FocusContext = React.createContext<IFocusContext>(null);
 
 let activeScope: ScopeRef = null;
 let scopes: Map<ScopeRef, ScopeRef | null> = new Map();
+let scopeJustAdded = false;
+let scopeJustAddedTimeoutId;
 
 // This is a hacky DOM-based implementation of a FocusScope until this RFC lands in React:
 // https://github.com/reactjs/rfcs/pull/109
@@ -105,6 +107,8 @@ export function FocusScope(props: FocusScopeProps) {
 
   useLayoutEffect(() => {
     scopes.set(scopeRef, parentScope);
+    scopeJustAdded = true;
+    requestAnimationFrame(() => scopeJustAdded = false);
     return () => {
       // Restore the active scope on unmount if this scope or a descendant scope is active.
       // Parent effect cleanups run before children, so we need to check if the
@@ -275,7 +279,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
-          if (isElementInLastAddedScope(e.target)) {
+          if (isElementInLastAddedScope(e.target) && scopeJustAdded) {
             activeScope = getScopeForElement(e.target);
             focusedNode.current = e.target;
             return;
