@@ -71,6 +71,8 @@ describe('ListView', function () {
   });
 
   afterEach(function () {
+    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
     jest.clearAllMocks();
   });
 
@@ -1854,8 +1856,8 @@ describe('ListView', function () {
 
       userEvent.tab();
       let rows = getAllByRole('row');
-      expect(rows).toHaveLength(7);
-      let droppable = rows[0];
+      expect(rows).toHaveLength(8);
+      let droppable = rows[7];
       moveFocus('ArrowDown');
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
@@ -1882,11 +1884,12 @@ describe('ListView', function () {
         x: 50,
         y: 25
       });
-
+ 
       act(() => jest.runAllTimers());
-      expect(document.activeElement).toBe(droppable);
-      fireEvent.keyDown(droppable, {key: 'Enter'});
-      fireEvent.keyUp(droppable, {key: 'Enter'});
+      let droppableButton = await within(droppable).findByLabelText('Drop on Folder 2', {hidden: true});
+      expect(document.activeElement).toBe(droppableButton);
+      fireEvent.keyDown(droppableButton, {key: 'Enter'});
+      fireEvent.keyUp(droppableButton, {key: 'Enter'});
       await act(async () => Promise.resolve());
       act(() => jest.runAllTimers());
 
@@ -1904,14 +1907,14 @@ describe('ListView', function () {
       onDragStart.mockClear();
 
       rows = getAllByRole('row');
-      expect(rows).toHaveLength(4);
+      expect(rows).toHaveLength(5);
 
       // Select the folder and perform a drag. Drag start shouldn't include the previously selected items
       moveFocus('ArrowDown');
       fireEvent.keyDown(droppable, {key: 'Enter'});
       fireEvent.keyUp(droppable, {key: 'Enter'});
       // Selection change event still has all keys
-      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2', '3', '0']));
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2', '3', '7']));
 
       draghandle = within(rows[0]).getAllByRole('button')[0];
       expect(draghandle).toBeTruthy();
