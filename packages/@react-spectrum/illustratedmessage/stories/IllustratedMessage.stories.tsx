@@ -9,91 +9,37 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { Content } from '@react-spectrum/view';
-import Error from '@spectrum-icons/illustrations/src/Error';
-import { Heading } from '@react-spectrum/text';
-import { IllustratedMessage } from '../';
-import { Link } from '@react-spectrum/link';
-import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Content} from '@react-spectrum/view';
+import {Heading} from '@react-spectrum/text';
+import {IllustratedMessage} from '../';
 import NotFound from '@spectrum-icons/illustrations/src/NotFound';
 import React from 'react';
-import Timeout from '@spectrum-icons/illustrations/Timeout';
-import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
-import Unavailable from '@spectrum-icons/illustrations/Unavailable';
-import Upload from '@spectrum-icons/illustrations/Upload';
-export default {
+
+type IllustratedMessageStory = ComponentStoryObj<typeof IllustratedMessage>;
+
+let meta = {
   title: 'IllustratedMessage',
-};
-export const _NotFound = {
-  render: () =>
-    render({
-      heading: 'Error 404: Page not found',
-      description: 'This page isn’t available. Try checking the URL or visit a different page.',
-      illustration: <NotFound />,
-    }),
-  name: 'Not found',
-};
-export const _NoSearchResults = {
-  render: () =>
-    render({
-      heading: 'No matching results',
-      description: 'Try another search.',
-      illustration: <NoSearchResults />,
-    }),
-  name: 'No search results',
-};
-export const _Unauthorized = () =>
-  render({
-    heading: 'Error 401: Unauthorized',
-    description:
-      'You don’t have access to this page. Try checking the URL or visit a different page.',
-    illustration: <Unauthorized />,
-  });
-export const _Error = () =>
-  render({
-    heading: 'Error 500: Internal Server Error',
-    description: 'This page isn’t available right now. Try visiting this page again later.',
-    illustration: <Error />,
-  });
-export const _Unavailable = () =>
-  render({
-    heading: 'Error 503: Service Unavailable',
-    description: 'This page isn’t available right now. Try visiting this page again later.',
-    illustration: <Unavailable />,
-  });
-export const _Timeout = () =>
-  render({
-    heading: 'Error 504: Gateway Timeout',
-    description: 'This page isn’t available right now. Try visiting this page again later.',
-    illustration: <Timeout />,
-  });
-export const _Upload = () =>
-  render({
-    heading: 'Drag and drop your file',
-    description: (
+  component: IllustratedMessage
+} as ComponentMeta<typeof IllustratedMessage>;
+
+export default meta;
+
+export const _NotFound: IllustratedMessageStory = {
+  args: {
+    children: (
       <>
-        <Link>Select a file</Link> from your computer
-        <br />
-        or <Link>search Adobe Stock</Link>.
+        <NotFound />
+        <Heading>Error 404: Page not found</Heading>
+        <Content>This page isn’t available. Try checking the URL or visit a different page.</Content>
       </>
-    ),
-    illustration: <Upload />,
-  });
-export const NoHeadingOrDescription = {
-  render: () =>
-    render({
-      illustration: <NotFound aria-label="No Results" />,
-    }),
-  name: 'No heading or description',
+    )
+  },
+  name: 'Not Found'
 };
 
-function render(props: any = {}) {
-  let { illustration, heading, description, ...otherProps } = props;
-  return (
-    <IllustratedMessage {...otherProps}>
-      {description && <Content>{description}</Content>}
-      {heading && <Heading>{heading}</Heading>}
-      {illustration}
-    </IllustratedMessage>
-  );
-}
+export const NoHeadingOrDescription: IllustratedMessageStory = {
+  args: {
+    children: (<NotFound aria-label="No Results" />)
+  }
+};
