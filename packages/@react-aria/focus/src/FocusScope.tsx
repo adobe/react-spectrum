@@ -278,7 +278,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
-          if (isElementInLastAddedScope(e.target) && scopeJustAdded) {
+          if (scopeJustAdded && isElementInLastAddedScope(e.target)) {
             activeScope = getScopeForElement(e.target);
             focusedNode.current = e.target;
             return;
