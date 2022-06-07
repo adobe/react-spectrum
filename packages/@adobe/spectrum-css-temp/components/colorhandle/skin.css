@@ -42,9 +42,5 @@
     --spectrum-colorhandle-fill-color-disabled: GrayText;
     --spectrum-colorhandle-inner-border-color: ButtonText;
     --spectrum-colorhandle-outer-border-color: ButtonFace;
-    &.is-focused {
-      border-color: Highlight;
-    }
-
   }
 }
