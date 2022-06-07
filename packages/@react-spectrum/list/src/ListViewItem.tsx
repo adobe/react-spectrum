@@ -14,7 +14,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider, useHasChild} from '@react-spectrum/utils';
 import {CSSTransition} from 'react-transition-group';
-import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
+import type {DraggableItemResult, DropIndicatorAria, DroppableItemResult} from '@react-aria/dnd';
 import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -50,11 +50,11 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-
   let {
     rowProps,
     gridCellProps,
     isPressed,
+    descriptionProps,
     isSelected,
     isDisabled,
     allowsSelection,
@@ -80,11 +80,14 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   }
   let droppableItem: DroppableItemResult;
   let isDropTarget: boolean;
+  let dropIndicator: DropIndicatorAria;
+  let dropIndicatorRef = useRef();
   if (isListDroppable) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     droppableItem = dropHooks.useDroppableItem({target}, dropState, rowRef);
+    dropIndicator = dropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
   }
 
   let dragButtonRef = React.useRef();
@@ -126,10 +129,11 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let {visuallyHiddenProps} = useVisuallyHidden();
 
+  let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   const mergedProps = mergeProps(
     rowProps,
     draggableItem?.dragProps,
-    isDroppable && droppableItem?.dropProps,
+    dropProps,
     hoverProps,
     focusWithinProps,
     focusProps
@@ -222,6 +226,9 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               }
             </div>
           }
+          {isDropTarget && !dropIndicator?.dropIndicatorProps['aria-hidden'] &&
+            <div role="button" {...visuallyHiddenProps} {...dropIndicator?.dropIndicatorProps} ref={dropIndicatorRef} />
+          }
           <CSSTransition
             in={showCheckbox}
             unmountOnExit
@@ -242,7 +249,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
           <SlotProvider
             slots={{
               text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
-              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
+              description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description'], ...descriptionProps},
               icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
               actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
