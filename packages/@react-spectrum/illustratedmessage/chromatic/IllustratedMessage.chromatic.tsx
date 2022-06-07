@@ -9,32 +9,28 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import { Content } from '@react-spectrum/view';
 import { Heading } from '@react-spectrum/text';
 import { IllustratedMessage } from '../';
 import NotFound from '@spectrum-icons/illustrations/src/NotFound';
 import React from 'react';
-
 export default {
   title: 'IllustratedMessage',
 };
-
-export const _NotFound = () =>
-  render({
-    heading: 'Error 404: Page not found.',
-    description: 'This page isn’t available. Try checking the URL or visit a different page.',
-    illustration: <NotFound />,
-  });
-
-_NotFound.story = {
+export const _NotFound = {
+  render: () =>
+    render({
+      heading: 'Error 404: Page not found.',
+      description: 'This page isn’t available. Try checking the URL or visit a different page.',
+      illustration: <NotFound />,
+    }),
   name: 'Not found',
 };
-
-export const NoHeadingOrDescription = () =>
-  render({ illustration: <NotFound aria-label="No Results" /> });
-
-NoHeadingOrDescription.story = {
+export const NoHeadingOrDescription = {
+  render: () =>
+    render({
+      illustration: <NotFound aria-label="No Results" />,
+    }),
   name: 'No heading or description',
 };
 
