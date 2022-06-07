@@ -11,9 +11,9 @@
  */
 
 import {AriaDialogProps} from '@react-types/dialog';
-import {filterDOMProps, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {HTMLAttributes, RefObject, useState} from 'react';
 
 interface DialogAria {
   /** Props for the dialog container element. */
@@ -30,12 +30,17 @@ interface DialogAria {
 export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): DialogAria {
   let {role = 'dialog'} = props;
   let titleId = useSlotId();
+  let [autoFocused, setAutoFocused] = useState(false);
   titleId = props['aria-label'] ? undefined : titleId;
 
   // Focus the dialog itself on mount, unless a child element is already focused.
-  useEffect(() => {
-    if (ref.current && !ref.current.contains(document.activeElement)) {
-      focusSafely(ref.current);
+  useLayoutEffect(() => {
+    if (ref.current) {
+      if (!ref.current.contains(document.activeElement)) {
+        focusSafely(ref.current);
+      }
+
+      setAutoFocused(true);
 
       // Safari on iOS does not move the VoiceOver cursor to the dialog
       // or announce that it has opened until it has rendered. A workaround
@@ -62,7 +67,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
     dialogProps: {
       ...filterDOMProps(props, {labelable: true}),
       role,
-      tabIndex: -1,
+      tabIndex: (autoFocused ? -1 : 0),
       'aria-labelledby': props['aria-labelledby'] || titleId
     },
     titleProps: {

@@ -70,7 +70,6 @@ const FocusContext = React.createContext<IFocusContext>(null);
 
 let activeScope: ScopeRef = null;
 let scopes: Map<ScopeRef, ScopeRef | null> = new Map();
-let scopeJustAdded = false;
 
 // This is a hacky DOM-based implementation of a FocusScope until this RFC lands in React:
 // https://github.com/reactjs/rfcs/pull/109
@@ -106,8 +105,6 @@ export function FocusScope(props: FocusScopeProps) {
 
   useLayoutEffect(() => {
     scopes.set(scopeRef, parentScope);
-    scopeJustAdded = true;
-    requestAnimationFrame(() => scopeJustAdded = false);
     return () => {
       // Restore the active scope on unmount if this scope or a descendant scope is active.
       // Parent effect cleanups run before children, so we need to check if the
@@ -278,11 +275,6 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
-          if (scopeJustAdded && isElementInLastAddedScope(e.target)) {
-            activeScope = getScopeForElement(e.target);
-            focusedNode.current = e.target;
-            return;
-          }
           focusedNode.current.focus();
         } else if (activeScope) {
           focusFirstInScope(activeScope.current);
@@ -326,26 +318,6 @@ function isElementInAnyScope(element: Element) {
   for (let scope of scopes.keys()) {
     if (isElementInScope(element, scope.current)) {
       return true;
-    }
-  }
-  return false;
-}
-
-function getScopeForElement(element: Element) {
-  for (let scope of scopes.keys()) {
-    if (isElementInScope(element, scope.current)) {
-      return scope;
-    }
-  }
-  return null;
-}
-
-function isElementInLastAddedScope(element: Element) {
-  let count = 0;
-  for (let scope of scopes.keys()) {
-    count++;
-    if (isElementInScope(element, scope.current)) {
-      return count === scopes.size;
     }
   }
   return false;
@@ -413,7 +385,7 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
       }
     }
     autoFocusRef.current = false;
-  }, []);
+  });
 }
 
 function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
@@ -488,6 +460,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
         document.removeEventListener('keydown', onKeyDown, true);
       }
 
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scopeRef.current)) {
         requestAnimationFrame(() => {
           if (document.body.contains(nodeToRestore)) {
