@@ -252,12 +252,13 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
         }
 
         let isPlaceholder = EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type];
+        let placeholder = EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null;
         return {
           type: TYPE_MAPPING[segment.type] || segment.type,
-          text: isPlaceholder ? '' : segment.value,
+          text: isPlaceholder ? placeholder : segment.value,
           ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
           isPlaceholder,
-          placeholder: EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null,
+          placeholder,
           isEditable
         } as DateSegment;
       })
