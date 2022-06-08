@@ -1,8 +1,8 @@
 diff --git a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
-index 4792915..5149bd0 100644
+index 9a49f5a..f1f33b3 100644
 --- a/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
 +++ b/node_modules/@parcel/transformer-postcss/lib/PostCSSTransformer.js
-@@ -139,10 +139,10 @@ var _default = new (_plugin().Transformer)({
+@@ -129,10 +129,10 @@ var _default = new (_plugin().Transformer)({
      const postcss = await loadPostcss(options, asset.filePath);
      return {
        type: 'postcss',
@@ -15,7 +15,7 @@ index 4792915..5149bd0 100644
      };
    },
  
-@@ -172,7 +172,7 @@ var _default = new (_plugin().Transformer)({
+@@ -165,7 +165,7 @@ var _default = new (_plugin().Transformer)({
  
      const postcss = await loadPostcss(options, asset.filePath);
      let ast = (0, _nullthrows().default)(await asset.getAST());
@@ -24,7 +24,16 @@ index 4792915..5149bd0 100644
      let plugins = [...config.hydrated.plugins];
      let cssModules = null;
  
-@@ -220,8 +220,8 @@ var _default = new (_plugin().Transformer)({
+@@ -242,7 +242,7 @@ var _default = new (_plugin().Transformer)({
+ 
+ 
+       let postcssModules = await options.packageManager.require('postcss-modules', asset.filePath, {
+-        range: '^4.3.0',
++        range: '^3.2.2',
+         saveDev: true,
+         shouldAutoInstall: options.shouldAutoInstall
+       });
+@@ -287,8 +287,8 @@ var _default = new (_plugin().Transformer)({
      } = await postcss(plugins).process(program, config.hydrated);
      asset.setAST({
        type: 'postcss',
@@ -35,8 +44,12 @@ index 4792915..5149bd0 100644
      });
  
      for (let msg of messages) {
-@@ -262,13 +262,13 @@ var _default = new (_plugin().Transformer)({
-         ([className, classNameHashed]) => `module.exports[${JSON.stringify(className)}] = ${JSON.stringify(classNameHashed)};`).join('\n');
+@@ -326,16 +326,16 @@ var _default = new (_plugin().Transformer)({
+         `;
+       } else {
+         code = cssModulesList.map( // This syntax enables shaking the invidual statements, so that unused classes don't even exist in JS.
+-        ([className, classNameHashed]) => `module.exports[${JSON.stringify(className)}] = ${JSON.stringify(classNameHashed)};`).join('\n');
++          ([className, classNameHashed]) => `module.exports[${JSON.stringify(className)}] = ${JSON.stringify(classNameHashed)};`).join('\n');
        }
  
 -      asset.symbols.ensure();
@@ -54,7 +67,7 @@ index 4792915..5149bd0 100644
        assets.push({
          type: 'js',
          content: code
-@@ -285,7 +285,7 @@ var _default = new (_plugin().Transformer)({
+@@ -352,7 +352,7 @@ var _default = new (_plugin().Transformer)({
    }) {
      const postcss = await loadPostcss(options, asset.filePath);
      let code = '';
@@ -63,6 +76,15 @@ index 4792915..5149bd0 100644
        code += c;
      });
      return {
+@@ -387,7 +387,7 @@ async function createLoader(asset, resolve, options) {
+       let {
+         exportTokens
+       } = await this.core.load(source, rootRelativePath, undefined, // $FlowFixMe[method-unbinding]
+-      this.fetch.bind(this));
++        this.fetch.bind(this));
+       return exportTokens;
+     }
+ 
 diff --git a/node_modules/@parcel/transformer-postcss/lib/constants.js b/node_modules/@parcel/transformer-postcss/lib/constants.js
 index a16ee4c..995a367 100644
 --- a/node_modules/@parcel/transformer-postcss/lib/constants.js
