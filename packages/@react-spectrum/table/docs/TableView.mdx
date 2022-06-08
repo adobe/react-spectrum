@@ -486,8 +486,8 @@ These selection styles implement the behaviors defined in [Aria Practices](https
 
 ### Row actions
 
-TableView supports row actions via the `onAction` prop, which is useful for functionality such as navigation. In the default checkbox selection style, it is recommended to use a [Link](Link.html) component in the first column for navigation.
-When nothing is selected, the TableView performs actions by default when clicking or tapping a row. Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the TableView is in selection mode,
+TableView supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the TableView performs actions by default when clicking or tapping a row.
+Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the TableView is in selection mode,
 and clicking or tapping a row toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
 
 This behavior is slightly different in the highlight selection style, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
