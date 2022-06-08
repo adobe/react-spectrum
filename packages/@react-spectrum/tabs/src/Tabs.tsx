@@ -12,7 +12,7 @@
 
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, Node, Orientation} from '@react-types/shared';
-import {filterDOMProps, useValueEffect} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {ListCollection, SingleSelectListState} from '@react-stately/list';
@@ -64,7 +64,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
 
   let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
-  let [collapse, setCollapse] = useValueEffect(false);
+  let [collapse, setCollapse] = useState(false);
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
   const [tabListState, setTabListState] = useState<TabListState<T>>(null);
 
@@ -80,29 +80,16 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
   }, [children, tabListState?.selectedKey, collapse, tablistRef]);
 
   let checkShouldCollapse = useCallback(() => {
-    let computeShouldCollapse = () => {
-      if (wrapperRef.current) {
-        let tabsComponent = wrapperRef.current;
-        let tabs = tablistRef.current.querySelectorAll('[role="tab"]');
-        let lastTab = tabs[tabs.length - 1];
+    if (wrapperRef.current && orientation !== 'vertical') {
+      let tabsComponent = wrapperRef.current;
+      let tabs = tablistRef.current.querySelectorAll('[role="tab"]');
+      let lastTab = tabs[tabs.length - 1];
 
-        let end = direction === 'rtl' ? 'left' : 'right';
-        let farEdgeTabList = tabsComponent.getBoundingClientRect()[end];
-        let farEdgeLastTab = lastTab?.getBoundingClientRect()[end];
-        let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
-
-        return shouldCollapse;
-      }
-    };
-
-    if (orientation !== 'vertical') {
-      setCollapse(function* () {
-        // Make Tabs render in non-collapsed state
-        yield false;
-
-        // Compute if Tabs should collapse and update
-        yield computeShouldCollapse();
-      });
+      let end = direction === 'rtl' ? 'left' : 'right';
+      let farEdgeTabList = tabsComponent.getBoundingClientRect()[end];
+      let farEdgeLastTab = lastTab?.getBoundingClientRect()[end];
+      let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
+      setCollapse(shouldCollapse);
     }
   }, [tablistRef, wrapperRef, direction, orientation, setCollapse]);
 
@@ -270,6 +257,8 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   }, [state.disabledKeys, state.selectedItem, state.selectedKey, props.children]);
   let stylePropsForVertical = orientation === 'vertical' ? styleProps : {};
 
+  let style : React.CSSProperties = collapse ? {visibility: 'hidden', position: 'absolute'} : {};
+
   let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
   const tabContent = (
     <div
@@ -288,7 +277,9 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
         },
         orientation === 'vertical' && styleProps.className
       )
-      }>
+      }
+      aria-hidden={collapse}
+      style={style}>
       {[...state.collection].map((item) => (
         <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
@@ -309,7 +300,8 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
           'spectrum-TabsPanel-collapseWrapper',
           styleProps.className
         )}>
-        {collapse ? <TabPicker {...props} {...tabProps} id={tabPanelProps['aria-labelledby']} state={state} className={tabListclassName} /> : tabContent}
+        <TabPicker {...props} {...tabProps} visible={collapse} id={tabPanelProps['aria-labelledby']} state={state} className={tabListclassName} />
+        {tabContent}
       </div>
     );
   }
@@ -359,7 +351,8 @@ interface TabPickerProps<T> extends Omit<SpectrumPickerProps<T>, 'children'> {
   density?: 'compact' | 'regular',
   isEmphasized?: boolean,
   state: SingleSelectListState<T>,
-  className?: string
+  className?: string,
+  visible: boolean
 }
 
 function TabPicker<T>(props: TabPickerProps<T>) {
@@ -372,7 +365,8 @@ function TabPicker<T>(props: TabPickerProps<T>) {
     'aria-label': ariaLabel,
     density,
     className,
-    id
+    id,
+    visible
   } = props;
 
   let ref = useRef();
@@ -394,6 +388,8 @@ function TabPicker<T>(props: TabPickerProps<T>) {
     'aria-label': ariaLabel
   };
 
+  const style : React.CSSProperties = visible ? {} : {visibility: 'hidden', position: 'absolute'};
+
   // TODO: Figure out if tabListProps should go onto the div here, v2 doesn't do it
   return (
     <div
@@ -408,7 +404,9 @@ function TabPicker<T>(props: TabPickerProps<T>) {
           'spectrum-Tabs--emphasized': isEmphasized
         },
         className
-      )}>
+      )}
+      style={style}
+      aria-hidden={!visible}>
       <SlotProvider
         slots={{
           icon: {
@@ -425,7 +423,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
           items={items}
           ref={ref}
           isQuiet
-          isDisabled={isDisabled}
+          isDisabled={!visible || isDisabled}
           selectedKey={state.selectedKey}
           disabledKeys={state.disabledKeys}
           onSelectionChange={state.setSelectedKey}>
