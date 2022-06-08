@@ -206,8 +206,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
       let {keyboardDelegate} = localState.props;
       let nextKey = target.type === 'item'
-        ? keyboardDelegate.getKeyBelow(target.key, {allowsDisabled: true})
-        : keyboardDelegate.getFirstKey(null, null, {allowsDisabled: true});
+        ? keyboardDelegate.getKeyBelow(target.key)
+        : keyboardDelegate.getFirstKey();
       let dropPosition: DropPosition = 'before';
 
       if (target.type === 'item') {
@@ -248,8 +248,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     let getPreviousTarget = (target: DropTarget, wrap = true): DropTarget => {
       let {keyboardDelegate} = localState.props;
       let nextKey = target?.type === 'item'
-        ? keyboardDelegate.getKeyAbove(target.key, {allowsDisabled: true})
-        : keyboardDelegate.getLastKey(null, null, {allowsDisabled: true});
+        ? keyboardDelegate.getKeyAbove(target.key)
+        : keyboardDelegate.getLastKey();
       let dropPosition: DropPosition = !target || target.type === 'root' ? 'after' : 'on';
 
       if (target?.type === 'item') {

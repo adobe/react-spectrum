@@ -116,7 +116,6 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let layout = useListLayout(state, props.density || 'regular', state.selectionManager.disabledBehavior === 'selection', overflowMode);
   let dragState: DraggableCollectionState;
   let preview = useRef(null);
   if (isListDraggable) {
@@ -126,6 +125,8 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
       preview
     });
   }
+  let layout = useListLayout(state, props.density || 'regular', state.selectionManager.disabledBehavior === 'selection' || !!dragState?.draggingKeys.size, overflowMode);
+
 
   let DragPreview = dragHooks?.DragPreview;
   let dropState: DroppableCollectionState;
