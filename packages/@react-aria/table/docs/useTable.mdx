@@ -628,8 +628,8 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
 
 ```tsx example
 <div style={{display: 'flex', 'flex-wrap': 'wrap', gap: '24px'}}>
-  <PokemonTable aria-label="Pokemon table with row actions and toggle selection behavior " selectionMode="multiple" onRowAction={key => alert(`Opening item ${key}...`)} />
-  <PokemonTable aria-label="Pokemon table with row actions and replace selection behavior" selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
+  <PokemonTable aria-label="Pokemon table with row actions and toggle selection behavior " selectionMode="multiple" onCellAction={key => alert(`Opening cell ${key}...`)} onRowAction={key => alert(`Opening item ${key}...`)} />
+  <PokemonTable aria-label="Pokemon table with row actions and replace selection behavior" selectionMode="multiple" selectionBehavior="replace" onCellAction={key => alert(`Opening cell ${key}...`)} onRowAction={key => alert(`Opening item ${key}...`)} />
 </div>
 
 ```
