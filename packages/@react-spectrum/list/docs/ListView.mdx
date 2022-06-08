@@ -58,7 +58,9 @@ after_version: 3.0.0
 ```
 
 ## Content
-ListView is a [collection component](../react-stately/collections.html) that provides users with a way to view, select, navigate, or drag and drop items in a list.
+ListView is a [collection component](../react-stately/collections.html) that provides users with a way to view, select, navigate, or drag and drop items in a list. While it may feel similar to the [ListBox](ListBox.html)
+component, ListView offers greater flexibility in the contents it can render and can distinguish between row selection and actions performed on a row. This makes ListView an ideal component for use cases such as file
+managers.
 
 Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView is hard coded.
 Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data dynamically allows ListView
