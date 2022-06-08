@@ -125,7 +125,12 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
       preview
     });
   }
-  let layout = useListLayout(state, props.density || 'regular', state.selectionManager.disabledBehavior === 'selection' || !!dragState?.draggingKeys.size, overflowMode);
+  let layout = useListLayout(
+    state,
+    props.density || 'regular',
+    // !!0 is false, so we can cast size or undefined and they'll be falsy
+    state.selectionManager.disabledBehavior === 'selection' || !!dragState?.draggingKeys.size,
+    overflowMode);
 
 
   let DragPreview = dragHooks?.DragPreview;
