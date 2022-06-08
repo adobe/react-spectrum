@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "2B slayt gösterisi",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Renk Seçici",
+  "twoDimensionalSlider": "2D sürgü"
 }

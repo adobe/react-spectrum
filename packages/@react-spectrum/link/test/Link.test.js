@@ -103,10 +103,12 @@ describe('Link', function () {
   });
 
   it('supports autofocus', () => {
+    jest.useFakeTimers();
     let {getByRole} = render(<Link autoFocus>Click me</Link>);
-
+    act(() => {jest.runAllTimers();});
     let link = getByRole('link');
     expect(document.activeElement).toBe(link);
+    jest.useRealTimers();
   });
 
   it('supports a wrapping tooltip trigger', () => {

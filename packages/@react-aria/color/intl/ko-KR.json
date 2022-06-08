@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "2D 슬라이더",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "색상 피커",
+  "twoDimensionalSlider": "2D 슬라이더"
 }

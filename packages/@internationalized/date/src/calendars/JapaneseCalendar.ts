@@ -73,12 +73,16 @@ export class JapaneseCalendar extends GregorianCalendar {
   identifier = 'japanese';
 
   fromJulianDay(jd: number): CalendarDate {
-    let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
-
+    let date = super.fromJulianDay(jd);
     let era = findEraFromGregorianDate(date);
-    date.era = ERA_NAMES[era];
-    date.year -= ERA_ADDENDS[era];
-    return date as CalendarDate;
+
+    return new CalendarDate(
+      this,
+      ERA_NAMES[era],
+      date.year - ERA_ADDENDS[era],
+      date.month,
+      date.day
+    );
   }
 
   toJulianDay(date: AnyCalendarDate) {
@@ -93,6 +97,9 @@ export class JapaneseCalendar extends GregorianCalendar {
       date.era = ERA_NAMES[era];
       date.year = gregorianDate.year - ERA_ADDENDS[era];
     }
+
+    // Constrain in case we went before the first supported era.
+    this.constrainDate(date);
   }
 
   constrainDate(date: Mutable<AnyCalendarDate>) {
@@ -104,7 +111,7 @@ export class JapaneseCalendar extends GregorianCalendar {
       // Constrain the year to the maximum possible value in the era.
       // Then constrain the month and day fields within that.
       let maxYear = endYear - ERA_ADDENDS[idx];
-      date.year = Math.min(maxYear, date.year);
+      date.year = Math.max(1, Math.min(maxYear, date.year));
       if (date.year === maxYear) {
         date.month = Math.min(endMonth, date.month);
 

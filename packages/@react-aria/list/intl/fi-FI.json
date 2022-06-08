@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "Kohdetta {item} ei valittu.",
+  "longPressToSelect": "Siirry valintatilaan painamalla pitkään.",
+  "select": "Valitse",
+  "selectedAll": "Kaikki kohteet valittu.",
+  "selectedCount": "{count, plural, =0 {Ei yhtään kohdetta valittu} one {# kohde valittu} other {# kohdetta valittu}}.",
+  "selectedItem": "{item} valittu."
+}

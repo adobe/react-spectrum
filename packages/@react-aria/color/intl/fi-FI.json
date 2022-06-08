@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "2D-liukusäädin",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Värimuokkain",
+  "twoDimensionalSlider": "2D-liukusäädin"
 }

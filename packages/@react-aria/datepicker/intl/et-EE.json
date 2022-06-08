@@ -8,10 +8,11 @@
   "minute": "minut",
   "month": "kuu",
   "second": "sekund",
-  "startDate": "Alguskuupäev",
-  "year": "aasta",
-  "weekday": "nädalapäev",
-  "timeZoneName": "ajavöönd",
   "selectedDateDescription": "Valitud kuupäev: {date}",
-  "selectedRangeDescription": "Valitud vahemik: {startDate} kuni {endDate}"
+  "selectedRangeDescription": "Valitud vahemik: {startDate} kuni {endDate}",
+  "selectedTimeDescription": "Valitud aeg: {time}",
+  "startDate": "Alguskuupäev",
+  "timeZoneName": "ajavöönd",
+  "weekday": "nädalapäev",
+  "year": "aasta"
 }
