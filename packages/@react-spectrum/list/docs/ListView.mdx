@@ -725,7 +725,7 @@ function ReorderableList() {
 ```
 
 The example below demonstrates how to create a pair of ListViews that supports dragging and dropping any items between each list, but disables
-the ability to drop into a folder and onto the root of the list.
+the ability to drop into a folder.
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
@@ -758,23 +758,25 @@ function DragBetweenListsExample() {
   let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
 
   // Update the list order based on the position of the drop and the set of rows that were dropped
-  let onMove = (keys, target) => {
+  let onMove = (keys, destinationList, dropEventTarget) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
-    let destinationList = list1.getItem(target.key) ? list1 : list2;
-
     if (sourceList === destinationList) {
       // Handle dragging within same list
-      if (target.dropPosition === 'before') {
-        sourceList.moveBefore(target.key, keys);
-      } else {
-        sourceList.moveAfter(target.key, keys);
+      if (dropEventTarget.type === 'root') {
+        sourceList.moveAfter(sourceList.items.slice(-1)[0].id, keys);
+      } else if (dropEventTarget.dropPosition === 'before') {
+        sourceList.moveBefore(dropEventTarget.key, keys);
+      } else if (dropEventTarget.dropPosition === 'after') {
+        sourceList.moveAfter(dropEventTarget.key, keys);
       }
     } else {
       // Handle dragging between lists
-      if (target.dropPosition === 'before') {
-        destinationList.insertBefore(target.key, ...keys.map(key => sourceList.getItem(key)));
-      } else {
-        destinationList.insertAfter(target.key, ...keys.map(key => sourceList.getItem(key)));
+      if (dropEventTarget.type === 'root') {
+        destinationList.append(...keys.map(key => sourceList.getItem(key)));
+      } else if (dropEventTarget.dropPosition === 'before') {
+        destinationList.insertBefore(dropEventTarget.key, ...keys.map(key => sourceList.getItem(key)));
+      } else if (dropEventTarget.dropPosition === 'after'){
+        destinationList.insertAfter(dropEventTarget.key, ...keys.map(key => sourceList.getItem(key)));
       }
       sourceList.remove(...keys);
     }
@@ -804,7 +806,7 @@ function DragBetweenListsExample() {
     }
   });
 
-  let dropHooks = useDropHooks({
+  let dropHooksList1 = useDropHooks({
     async onDrop(e) {
       let keysToMove = [];
       // Only add the dropped item to the list of keys to move
@@ -817,14 +819,44 @@ function DragBetweenListsExample() {
           }
         }
       }
-      onMove(keysToMove, e.target);
+
+      onMove(keysToMove, list1, e.target);
     },
     getDropOperation(target, types) {
       let typesSet = types.types ? types.types : types;
       let draggedTypes = [...typesSet.values()];
       // Cancel the drop operations if any of drag items aren't of the acceptedTypes or if
-      // the drop is done on the root of the ListView or on the ListView items themselves
-      if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || target.type === 'root' || target.dropPosition === 'on') {
+      // the drop is done on the ListView items themselves
+      if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || (target.type === 'item' && target.dropPosition === 'on')) {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+  let dropHooksList2 = useDropHooks({
+    async onDrop(e) {
+      let keysToMove = [];
+      // Only add the dropped item to the list of keys to move
+      // if the dropped item has the expected types
+      for (let item of e.items) {
+        for (let acceptedType of acceptedDragTypes) {
+          if (item.kind === 'text' && item.types.has(acceptedType)) {
+            let {id} = JSON.parse(await item.getText(acceptedType));
+            keysToMove.push(id);
+          }
+        }
+      }
+
+      onMove(keysToMove, list2, e.target);
+    },
+    getDropOperation(target, types) {
+      let typesSet = types.types ? types.types : types;
+      let draggedTypes = [...typesSet.values()];
+      // Cancel the drop operations if any of drag items aren't of the acceptedTypes or if
+      // the drop is done on the ListView items themselves
+      if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || (target.type === 'item' && target.dropPosition === 'on')) {
         return 'cancel';
       }
 
@@ -841,7 +873,7 @@ function DragBetweenListsExample() {
         height="size-3600"
         items={list1.items}
         dragHooks={dragHooksList1}
-        dropHooks={dropHooks}>
+        dropHooks={dropHooksList1}>
         {item => (
           <Item textValue={item.name}>
             {item.type === 'folder' && <Folder />}
@@ -856,7 +888,7 @@ function DragBetweenListsExample() {
         height="size-3600"
         items={list2.items}
         dragHooks={dragHooksList2}
-        dropHooks={dropHooks}>
+        dropHooks={dropHooksList2}>
         {item => (
           <Item textValue={item.name}>
             {item.type === 'folder' && <Folder />}
