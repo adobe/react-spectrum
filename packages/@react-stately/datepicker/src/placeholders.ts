@@ -12,6 +12,9 @@
 
 import {MessageDictionary} from '@internationalized/message';
 
+// These placeholders are based on the strings used by the <input type="date">
+// implementations in Chrome and Firefox. Additional languages are supported
+// here than React Spectrum's typical translations.
 const placeholders = new MessageDictionary({
   ach: {year: 'mwaka', month: 'dwe', day: 'nino'},
   af: {year: 'jjjj', month: 'mm', day: 'dd'},
@@ -91,6 +94,7 @@ const placeholders = new MessageDictionary({
 }, 'en');
 
 export function getPlaceholder(field: string, value: string, locale: string) {
+  // Use the actual placeholder value for the era and day period fields.
   if (field === 'era' || field === 'dayPeriod') {
     return value;
   }
@@ -99,5 +103,6 @@ export function getPlaceholder(field: string, value: string, locale: string) {
     return placeholders.getStringForLocale(field, locale);
   }
 
+  // For time fields (e.g. hour, minute, etc.), use two dashes as the placeholder.
   return '––';
 }

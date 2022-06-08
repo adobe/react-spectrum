@@ -16,7 +16,7 @@ import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaul
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useOverlayTriggerState} from '@react-stately/overlays';
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 
 export interface DateRangePickerStateOptions extends DateRangePickerProps<DateValue> {
   /**
@@ -83,11 +83,8 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
   }
 
   let value = controlledValue || placeholderValue;
-  let valueRef = useRef(value);
-  valueRef.current = value;
 
   let setValue = (value: DateRange) => {
-    valueRef.current = value;
     setPlaceholderValue(value);
     if (value?.start && value.end) {
       setControlledValue(value);
