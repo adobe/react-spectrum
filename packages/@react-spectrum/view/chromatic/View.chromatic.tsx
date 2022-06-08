@@ -23,7 +23,7 @@ let meta = {
 
 export default meta;
 
-export const NameMe: ViewStory = {
+export const Default: ViewStory = {
   render: () => (
     <div style={{display: 'flex'}}>
       <View
