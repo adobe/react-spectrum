@@ -1,24 +1,47 @@
 import React from "react";
+import {ListBox, Item, Section} from '@adobe/react-spectrum'
 
-function TodoItems(props: { list : {id: number; task: string}[]; handleList: any}) {
 
-    // const [items, setItems] = React.useState(props.list);
+function TodoItems(props: { list : {id: number; task: string}[]; 
+                            handleList: any; 
+                            updateCompleted: any}) {
 
-    function removeItem(id: number){
-        // console.log(`remove ${id}`)
-    
+    let [itemId, setItemId] = React.useState();
+
+    function removeItem(id: number, task: string){    
+
+        let index = getIndex(props.list, id, task);
+
+        props.updateCompleted(props.list[index].task);
         props.handleList(props.list.filter(item => item.id !== id));
-        // setItems(prevItems => prevItems.filter(item => item.id !== id))
-        // console.log(items)
-        // props.change(items)
+        // console.log(props.list)
     };
 
+    function getIndex(list : {id: number; task: string}[], id: number, task: string){
+        for (let i = 0; i < list.length; i++){
+            let item = list[i];
+            if (item.task === task && item.id === id){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     const elements = props.list.map(item => (
-        <p onClick={() => removeItem(item.id)} key={item.id}>{item.task}</p>
+        // <Item>
+        //     {item.task}
+        // </Item>
+        <p onClick={() => removeItem(item.id, item.task)} key={item.id}>{item.task}</p>
     ))
     
     return (
-        <div className="item">
+        // <ListBox 
+        //     items={props.list}
+        //     onSelectionChange={setItemId}>
+        //     {elements}
+        // </ListBox>
+
+        <div>
             {elements}
         </div>
     );

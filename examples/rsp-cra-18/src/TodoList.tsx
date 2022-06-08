@@ -12,33 +12,59 @@ function TodoList() {
     // let [list, setList] = React.useState<string[]>([]);
     const [list, setList] = React.useState<{id: number; task: string}[]>([]);
     const [value, setValue] = React.useState('')
+    const [completed, setCompleted] = React.useState<{id: number; task: string}[]>([]);
+    const [count, setCount] = React.useState(0);
 
     function handleSubmit(e: { preventDefault: () => void; }){
         e.preventDefault()
-        // console.log('You clicked submit');
-        // console.log(value);
-        setList(prevListArray => {
-            return [
-                ...prevListArray, 
-                {id: prevListArray.length, task: value}]
-        })
+
+        if (value.length > 0){
+            setList(prevListArray => {
+                return [
+                    ...prevListArray, 
+                    {id: count, task: value}]
+            })
+
+            setCount(prevCount => {
+                return prevCount + 1;
+            })
+        }   
 
         setValue("");
     }
 
+    function updateCompleted(complete : string){
+        setCompleted(prevListArray => {
+            return [
+                ...prevListArray, 
+                {id: prevListArray.length, task: complete}]
+        });
+    }
+
+    const elements = completed.map(item => (
+        <p key={item.id}>{item.task}</p>
+    ))
+
     return (
-    <Form onSubmit={handleSubmit} maxWidth="size-3600">
-        <Flex direction="column">
-            <Flex direction='row' height='size-800' gap='size-100'
-                alignItems={"end"}>
-                <TextField label="Enter Task"
-                            value={value}
-                            onChange={setValue}/>
-                <Button variant="cta" type="submit">Submit</Button>
+    <>
+        <Form onSubmit={handleSubmit} maxWidth="size-6000">
+            <Flex direction="column">
+                <Flex direction='row' height='size-800' gap='size-200'
+                    alignItems={"end"}>
+                    <TextField label="Enter Task"
+                                width="size-5000"
+                                value={value}
+                                onChange={setValue}
+                                isRequired/>
+                    <Button variant="cta" type="submit">Submit</Button>
+                </Flex>
+                <h2>To-Do</h2>
+                <ToDoItems list={list} handleList={setList} updateCompleted={updateCompleted}/>
             </Flex>
-            <ToDoItems list={list} handleList={setList}/>
-        </Flex>
-    </Form>
+        </Form>
+        <h2>Completed</h2>
+        {elements}
+    </>
     );
 }
 
