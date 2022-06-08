@@ -11,6 +11,9 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropdown {
+  /* Override to gray-800 to meet WCAG */
+  --spectrum-dropdown-placeholder-text-color: var(--spectrum-global-color-gray-800);
+
   .spectrum-Dropdown-trigger:hover {
     .spectrum-Dropdown-chevron {
       color: var(--spectrum-dropdown-icon-color-hover);
@@ -62,8 +65,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Dropdown-label {
   &.is-placeholder {
-    /* Override to gray-800 to meet WCAG */
-    color: var(--spectrum-global-color-gray-800);
+    color: var(--spectrum-dropdown-placeholder-text-color);
   }
 }
 
