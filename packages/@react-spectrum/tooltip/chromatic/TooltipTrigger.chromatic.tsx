@@ -9,40 +9,40 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import {ActionButton} from '@react-spectrum/button';
-import {Meta, Story} from '@storybook/react';
+import { ActionButton } from '@react-spectrum/button';
+import { Meta, Story } from '@storybook/react';
 import React from 'react';
-import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
-import {Tooltip, TooltipTrigger} from '../';
-
+import { SpectrumTooltipTriggerProps } from '@react-types/tooltip';
+import { Tooltip, TooltipTrigger } from '../';
 const meta: Meta<SpectrumTooltipTriggerProps> = {
   title: 'TooltipTrigger',
   component: TooltipTrigger,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['medium'],
+      disableAnimations: true,
+    },
     // chromatic needs a bit more time than disableAnimations allows
-    chromatic: {pauseAnimationAtEnd: true}
-  }
+    chromatic: {
+      pauseAnimationAtEnd: true,
+    },
+  },
 };
-
 export default meta;
 
-const Template = (): Story<SpectrumTooltipTriggerProps> => (args) => (
-  <TooltipTrigger {...args} defaultOpen>
-    <ActionButton>Trigger Tooltip</ActionButton>
-    <Tooltip>
-      Tooltip message.
-    </Tooltip>
-  </TooltipTrigger>
-);
-
+const Template = (): Story<SpectrumTooltipTriggerProps> => (args) =>
+  (
+    <TooltipTrigger {...args} defaultOpen>
+      <ActionButton>Trigger Tooltip</ActionButton>
+      <Tooltip>Tooltip message.</Tooltip>
+    </TooltipTrigger>
+  );
 
 export const Default = Template().bind({});
 Default.args = {};
-
 export const PlacementStart = Template().bind({});
-PlacementStart.args = {...Default.args, placement: 'start'};
-
+PlacementStart.args = { ...Default.args, placement: 'start' };
 export const PlacementEnd = Template().bind({});
-PlacementEnd.args = {...Default.args, placement: 'end'};
+PlacementEnd.args = { ...Default.args, placement: 'end' };

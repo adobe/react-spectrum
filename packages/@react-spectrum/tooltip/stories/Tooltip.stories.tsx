@@ -9,102 +9,107 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import React from 'react';
 import { Tooltip } from '../src';
-
 export default {
   title: 'Tooltip',
 };
-
-export const Default = () => render('This is a tooltip.');
-
-Default.story = {
+export const Default = {
+  render: () => render('This is a tooltip.'),
   name: 'default',
 };
-
-export const PlacementLeft = () => render('This is a tooltip.', { placement: 'left' });
-
-PlacementLeft.story = {
+export const PlacementLeft = {
+  render: () =>
+    render('This is a tooltip.', {
+      placement: 'left',
+    }),
   name: 'placement: left',
 };
-
-export const PlacementRight = () => render('This is a tooltip.', { placement: 'right' });
-
-PlacementRight.story = {
+export const PlacementRight = {
+  render: () =>
+    render('This is a tooltip.', {
+      placement: 'right',
+    }),
   name: 'placement: right',
 };
-
-export const PlacementTop = () => render('This is a tooltip.', { placement: 'top' });
-
-PlacementTop.story = {
+export const PlacementTop = {
+  render: () =>
+    render('This is a tooltip.', {
+      placement: 'top',
+    }),
   name: 'placement: top',
 };
-
-export const PlacementBottom = () => render('This is a tooltip.', { placement: 'bottom' });
-
-PlacementBottom.story = {
+export const PlacementBottom = {
+  render: () =>
+    render('This is a tooltip.', {
+      placement: 'bottom',
+    }),
   name: 'placement: bottom',
 };
-
-export const VariantNeutral = () => render('This is a tooltip.', { variant: 'neutral' });
-
-VariantNeutral.story = {
+export const VariantNeutral = {
+  render: () =>
+    render('This is a tooltip.', {
+      variant: 'neutral',
+    }),
   name: 'variant: neutral',
 };
-
-export const VariantPositive = () => render('This is a tooltip.', { variant: 'positive' });
-
-VariantPositive.story = {
+export const VariantPositive = {
+  render: () =>
+    render('This is a tooltip.', {
+      variant: 'positive',
+    }),
   name: 'variant: positive',
 };
-
-export const VariantNegative = () => render('This is a tooltip.', { variant: 'negative' });
-
-VariantNegative.story = {
+export const VariantNegative = {
+  render: () =>
+    render('This is a tooltip.', {
+      variant: 'negative',
+    }),
   name: 'variant: negative',
 };
-
-export const VariantInfo = () => render('This is a tooltip.', { variant: 'info' });
-
-VariantInfo.story = {
+export const VariantInfo = {
+  render: () =>
+    render('This is a tooltip.', {
+      variant: 'info',
+    }),
   name: 'variant: info',
 };
-
-export const VariantNeutralIcon = () =>
-  render('This is a tooltip.', { variant: 'neutral', showIcon: true });
-
-VariantNeutralIcon.story = {
+export const VariantNeutralIcon = {
+  render: () =>
+    render('This is a tooltip.', {
+      variant: 'neutral',
+      showIcon: true,
+    }),
   name: 'variant: neutral, icon',
 };
-
-export const VariantPositiveIcon = () =>
-  render('This is a tooltip.', { variant: 'positive', showIcon: true });
-
-VariantPositiveIcon.story = {
+export const VariantPositiveIcon = {
+  render: () =>
+    render('This is a tooltip.', {
+      variant: 'positive',
+      showIcon: true,
+    }),
   name: 'variant: positive, icon',
 };
-
-export const VariantNegativeIcon = () =>
-  render('This is a tooltip.', { variant: 'negative', showIcon: true });
-
-VariantNegativeIcon.story = {
+export const VariantNegativeIcon = {
+  render: () =>
+    render('This is a tooltip.', {
+      variant: 'negative',
+      showIcon: true,
+    }),
   name: 'variant: negative, icon',
 };
-
-export const VariantInfoIcon = () =>
-  render('This is a tooltip.', { variant: 'info', showIcon: true });
-
-VariantInfoIcon.story = {
+export const VariantInfoIcon = {
+  render: () =>
+    render('This is a tooltip.', {
+      variant: 'info',
+      showIcon: true,
+    }),
   name: 'variant: info, icon',
 };
-
-export const LongContent = () => render(longMarkup);
-
-LongContent.story = {
+export const LongContent = {
+  render: () => render(longMarkup),
   name: 'long content',
 };
-
 const longMarkup = (
   <div>
     Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
@@ -118,7 +123,11 @@ const longMarkup = (
 
 function render(content, props = {}) {
   return (
-    <div style={{ display: 'inline-block' }}>
+    <div
+      style={{
+        display: 'inline-block',
+      }}
+    >
       <Tooltip {...props} isOpen>
         {content}
       </Tooltip>

@@ -9,7 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import { action } from '@storybook/addon-actions';
 import { ActionButton, Button } from '@react-spectrum/button';
 import { ActionGroup, Item } from '@react-spectrum/actiongroup';
@@ -17,228 +16,229 @@ import { Flex } from '@react-spectrum/layout';
 import { Link } from '@react-spectrum/link';
 import React, { useState } from 'react';
 import { Tooltip, TooltipTrigger } from '../src';
-
 export default {
   title: 'TooltipTrigger',
 };
-
-export const Default = () => render({});
-
-Default.story = {
+export const Default = {
+  render: () => render({}),
   name: 'default',
 };
-
-export const PlacementLeft = () => render({ placement: 'left' });
-
-PlacementLeft.story = {
+export const PlacementLeft = {
+  render: () =>
+    render({
+      placement: 'left',
+    }),
   name: 'placement: left',
 };
-
-export const PlacementRight = () => render({ placement: 'right' });
-
-PlacementRight.story = {
+export const PlacementRight = {
+  render: () =>
+    render({
+      placement: 'right',
+    }),
   name: 'placement: right',
 };
-
-export const PlacementStart = () => render({ placement: 'start' });
-
-PlacementStart.story = {
+export const PlacementStart = {
+  render: () =>
+    render({
+      placement: 'start',
+    }),
   name: 'placement: start',
 };
-
-export const PlacementTop = () => render({ placement: 'top' });
-
-PlacementTop.story = {
+export const PlacementTop = {
+  render: () =>
+    render({
+      placement: 'top',
+    }),
   name: 'placement: top',
 };
-
-export const PlacementBottom = () => render({ placement: 'bottom' });
-
-PlacementBottom.story = {
+export const PlacementBottom = {
+  render: () =>
+    render({
+      placement: 'bottom',
+    }),
   name: 'placement: bottom',
 };
-
-export const PlacementTopWithOffset = () => render({ placement: 'top', offset: 50 });
-
-PlacementTopWithOffset.story = {
+export const PlacementTopWithOffset = {
+  render: () =>
+    render({
+      placement: 'top',
+      offset: 50,
+    }),
   name: 'placement: top with offset',
 };
-
-export const PlacementBottomWithCrossOffset = () =>
-  render({ placement: 'bottom', crossOffset: 50 });
-
-PlacementBottomWithCrossOffset.story = {
+export const PlacementBottomWithCrossOffset = {
+  render: () =>
+    render({
+      placement: 'bottom',
+      crossOffset: 50,
+    }),
   name: 'placement: bottom with crossOffset',
 };
-
-export const IsDisabled = () => render({ placement: 'start', isDisabled: true });
-
-IsDisabled.story = {
+export const IsDisabled = {
+  render: () =>
+    render({
+      placement: 'start',
+      isDisabled: true,
+    }),
   name: 'isDisabled',
 };
-
-export const ZeroDelay = () => render({ delay: 0 });
-
-ZeroDelay.story = {
+export const ZeroDelay = {
+  render: () =>
+    render({
+      delay: 0,
+    }),
   name: 'zero delay',
 };
-
-export const FocusOnly = () => render({ trigger: 'focus' });
-
-FocusOnly.story = {
+export const FocusOnly = {
+  render: () =>
+    render({
+      trigger: 'focus',
+    }),
   name: 'focus only',
 };
-
-export const MultipleTooltips = () => renderMultipleTriggers({ placement: 'start' });
-
-MultipleTooltips.story = {
+export const MultipleTooltips = {
+  render: () =>
+    renderMultipleTriggers({
+      placement: 'start',
+    }),
   name: 'multiple tooltips',
 };
-
-export const ZeroDelayMultipleTooltips = () => renderMultipleTriggers({ delay: 0 });
-
-ZeroDelayMultipleTooltips.story = {
+export const ZeroDelayMultipleTooltips = {
+  render: () =>
+    renderMultipleTriggers({
+      delay: 0,
+    }),
   name: 'zero delay multiple tooltips',
 };
-
-export const Controlled = () => <ControlledButtons />;
-
-Controlled.story = {
+export const Controlled = {
+  render: () => <ControlledButtons />,
   name: 'controlled',
 };
-
-export const TriggerDisabled = () => renderDisabledTrigger();
-
-TriggerDisabled.story = {
+export const TriggerDisabled = {
+  render: () => renderDisabledTrigger(),
   name: 'trigger disabled',
 };
-
-export const ArrowPositioningAtEdge = () => (
-  <div style={{ width: '100%' }}>
-    <TooltipTrigger onOpenChange={action('openChange')}>
-      <ActionButton>Trigger Tooltip</ActionButton>
-      <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
-    </TooltipTrigger>
-  </div>
-);
-
-ArrowPositioningAtEdge.story = {
+export const ArrowPositioningAtEdge = {
+  render: () => (
+    <div
+      style={{
+        width: '100%',
+      }}
+    >
+      <TooltipTrigger onOpenChange={action('openChange')}>
+        <ActionButton>Trigger Tooltip</ActionButton>
+        <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
+      </TooltipTrigger>
+    </div>
+  ),
   name: 'arrow positioning at edge',
 };
-
-export const TooltipWithOtherHoverables = () => (
-  <Flex gap="size-100">
-    <TooltipTrigger onOpenChange={action('openChange')}>
-      <ActionButton>Trigger Tooltip</ActionButton>
-      <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
-    </TooltipTrigger>
-    <Button variant="secondary">No Tooltip</Button>
-  </Flex>
-);
-
-TooltipWithOtherHoverables.story = {
+export const TooltipWithOtherHoverables = {
+  render: () => (
+    <Flex gap="size-100">
+      <TooltipTrigger onOpenChange={action('openChange')}>
+        <ActionButton>Trigger Tooltip</ActionButton>
+        <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
+      </TooltipTrigger>
+      <Button variant="secondary">No Tooltip</Button>
+    </Flex>
+  ),
   name: 'tooltip with other hoverables',
 };
-
-export const TooltripTriggerInsideActionGroup = () => ActionGroupTrigger();
-
-TooltripTriggerInsideActionGroup.story = {
+export const TooltripTriggerInsideActionGroup = {
+  render: () => ActionGroupTrigger(),
   name: 'tooltrip trigger inside action group',
 };
-
-export const CrossoffsetExamples = () => (
-  <Flex gap="size-200">
-    <Flex gap="size-200" direction="column" alignItems="start">
-      <span>Left Top</span>
-      <TooltipTrigger delay={0} placement="left top" crossOffset={10}>
-        <ActionButton>Tooltip Trigger 10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left top">
-        <ActionButton>Tooltip Trigger 0</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left top" crossOffset={-10}>
-        <ActionButton>Tooltip Trigger -10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left top" crossOffset={10}>
-        <ActionButton>Tooltip 10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left top">
-        <ActionButton>Tooltip 0</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left top" crossOffset={-10}>
-        <ActionButton>Tooltip -10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
+export const CrossoffsetExamples = {
+  render: () => (
+    <Flex gap="size-200">
+      <Flex gap="size-200" direction="column" alignItems="start">
+        <span>Left Top</span>
+        <TooltipTrigger delay={0} placement="left top" crossOffset={10}>
+          <ActionButton>Tooltip Trigger 10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left top">
+          <ActionButton>Tooltip Trigger 0</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left top" crossOffset={-10}>
+          <ActionButton>Tooltip Trigger -10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left top" crossOffset={10}>
+          <ActionButton>Tooltip 10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left top">
+          <ActionButton>Tooltip 0</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left top" crossOffset={-10}>
+          <ActionButton>Tooltip -10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+      </Flex>
+      <Flex gap="size-200" direction="column" alignItems="start">
+        <span>Left</span>
+        <TooltipTrigger delay={0} placement="left" crossOffset={10}>
+          <ActionButton>Tooltip Trigger 10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left">
+          <ActionButton>Tooltip Trigger 0 </ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left" crossOffset={-10}>
+          <ActionButton>Tooltip Trigger -10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left" crossOffset={10}>
+          <ActionButton>Tooltip 10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left">
+          <ActionButton>Tooltip 0</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left" crossOffset={-10}>
+          <ActionButton>Tooltip -10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+      </Flex>
+      <Flex gap="size-200" direction="column" alignItems="start">
+        <span>Left Bottom</span>
+        <TooltipTrigger delay={0} placement="left bottom" crossOffset={10}>
+          <ActionButton>Tooltip Trigger 10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left bottom">
+          <ActionButton>Tooltip Trigger 0</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left bottom" crossOffset={-10}>
+          <ActionButton>Tooltip Trigger -10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left bottom" crossOffset={10}>
+          <ActionButton>Tooltip 10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left bottom">
+          <ActionButton>Tooltip 0</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger delay={0} placement="left bottom" crossOffset={-10}>
+          <ActionButton>Tooltip -10</ActionButton>
+          <Tooltip>Tooltip message.</Tooltip>
+        </TooltipTrigger>
+      </Flex>
     </Flex>
-    <Flex gap="size-200" direction="column" alignItems="start">
-      <span>Left</span>
-      <TooltipTrigger delay={0} placement="left" crossOffset={10}>
-        <ActionButton>Tooltip Trigger 10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left">
-        <ActionButton>Tooltip Trigger 0 </ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left" crossOffset={-10}>
-        <ActionButton>Tooltip Trigger -10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left" crossOffset={10}>
-        <ActionButton>Tooltip 10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left">
-        <ActionButton>Tooltip 0</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left" crossOffset={-10}>
-        <ActionButton>Tooltip -10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-    </Flex>
-    <Flex gap="size-200" direction="column" alignItems="start">
-      <span>Left Bottom</span>
-      <TooltipTrigger delay={0} placement="left bottom" crossOffset={10}>
-        <ActionButton>Tooltip Trigger 10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left bottom">
-        <ActionButton>Tooltip Trigger 0</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left bottom" crossOffset={-10}>
-        <ActionButton>Tooltip Trigger -10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left bottom" crossOffset={10}>
-        <ActionButton>Tooltip 10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left bottom">
-        <ActionButton>Tooltip 0</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger delay={0} placement="left bottom" crossOffset={-10}>
-        <ActionButton>Tooltip -10</ActionButton>
-        <Tooltip>Tooltip message.</Tooltip>
-      </TooltipTrigger>
-    </Flex>
-  </Flex>
-);
-
-CrossoffsetExamples.story = {
+  ),
   name: 'crossoffset examples',
 };
-
-export const TooltipOnLink = () => <LinkWithTooltip />;
-
-TooltipOnLink.story = {
+export const TooltipOnLink = {
+  render: () => <LinkWithTooltip />,
   name: 'tooltip on link',
 };
 
@@ -291,7 +291,6 @@ function renderMultipleTriggers(props = {}) {
 
 function ActionGroupTrigger() {
   let onSelectionChange = action('onSelectionChange');
-
   return (
     <ActionGroup
       selectionMode="single"
