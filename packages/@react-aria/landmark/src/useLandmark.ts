@@ -140,7 +140,7 @@ class LandmarkManager {
    * Warn if there are 2+ landmarks with the same role but no label.
    * Labels for landmarks with the same role must also be unique.
    *
-   * See https://www.w3.org/TR/wai-aria-practices/examples/landmarks/navigation.html.
+   * See https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/.
    */
   private checkLabels(role: AriaLandmarkRole) {
     let landmarksWithRole = this.getLandmarksByRole(role);
