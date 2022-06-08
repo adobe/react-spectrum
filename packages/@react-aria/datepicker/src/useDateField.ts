@@ -62,8 +62,6 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
     labelElementType: 'span'
   });
 
-  let groupProps = useDatePickerGroup(state, ref);
-
   let {focusWithinProps} = useFocusWithin({
     onBlurWithin() {
       state.confirmPlaceholder();
@@ -83,6 +81,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
     : [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
   let propsFocusManager = props[focusManagerSymbol];
   let focusManager = useMemo(() => propsFocusManager || createFocusManager(ref), [propsFocusManager, ref]);
+  let groupProps = useDatePickerGroup(state, ref, props[roleSymbol] === 'presentation');
 
   // Pass labels and other information to segments.
   hookData.set(state, {

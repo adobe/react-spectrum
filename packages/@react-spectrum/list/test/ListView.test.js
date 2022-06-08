@@ -11,17 +11,18 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {act, fireEvent, render as renderComponent, waitFor, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
-import {DragExample} from '../stories/ListView.stories';
+import {DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {installPointerEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -70,6 +71,8 @@ describe('ListView', function () {
   });
 
   afterEach(function () {
+    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
     jest.clearAllMocks();
   });
 
@@ -262,6 +265,39 @@ describe('ListView', function () {
     }
   });
 
+  it('should disable nested elements when row is disabled', function () {
+    let tree = renderListWithFocusables({disabledKeys: ['foo'], selectionMode: 'multiple'});
+    let row = getRow(tree, 'Foo');
+    expect(row).toHaveAttribute('aria-disabled', 'true');
+    expect(row).not.toHaveAttribute('aria-selected');
+    expect(within(row).getByRole('checkbox')).toHaveAttribute('disabled');
+
+    let buttons = within(row).getAllByRole('button');
+    expect(buttons[0]).toHaveAttribute('disabled');
+    expect(buttons[1]).toHaveAttribute('disabled');
+
+    row = getRow(tree, 'Bar');
+    expect(row).not.toHaveAttribute('aria-disabled', 'true');
+    expect(row).toHaveAttribute('aria-selected', 'false');
+    expect(within(row).getByRole('checkbox')).not.toHaveAttribute('disabled');
+
+    buttons = within(row).getAllByRole('button');
+    expect(buttons[0]).not.toHaveAttribute('disabled');
+    expect(buttons[1]).not.toHaveAttribute('disabled');
+  });
+
+  it('should disable nested elements with disabledBehavior="selection"', function () {
+    let tree = renderListWithFocusables({disabledKeys: ['foo'], disabledBehavior: 'selection', selectionMode: 'multiple'});
+    let row = getRow(tree, 'Foo');
+    expect(row).not.toHaveAttribute('aria-disabled');
+    expect(row).not.toHaveAttribute('aria-selected');
+    expect(within(row).getByRole('checkbox')).toHaveAttribute('disabled');
+
+    let buttons = within(row).getAllByRole('button');
+    expect(buttons[0]).not.toHaveAttribute('disabled');
+    expect(buttons[1]).not.toHaveAttribute('disabled');
+  });
+
   describe('keyboard focus', function () {
     describe('Type to select', function () {
       it('focuses the correct cell when typing', function () {
@@ -375,8 +411,17 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(end);
       });
 
-      it('should allow focus on disabled rows', function () {
-        let tree = renderListWithFocusables({disabledKeys: ['foo'], selectionMode: 'single'});
+      it('should skip disabled rows', function () {
+        let tree = renderListWithFocusables({disabledKeys: ['bar'], selectionMode: 'single'});
+        let start = getRow(tree, 'Baz');
+        let end = getRow(tree, 'Foo');
+        triggerPress(start);
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(end);
+      });
+
+      it('should allow focus on disabled rows with disabledBehavior="selection"', function () {
+        let tree = renderListWithFocusables({disabledKeys: ['foo'], disabledBehavior: 'selection', selectionMode: 'single'});
         let start = getRow(tree, 'Bar');
         let end = getRow(tree, 'Foo');
         triggerPress(start);
@@ -403,8 +448,17 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(end);
       });
 
-      it('should allow focus on disabled rows', function () {
+      it('should skip disabled rows', function () {
         let tree = renderListWithFocusables({disabledKeys: ['bar'], selectionMode: 'single'});
+        let start = getRow(tree, 'Foo');
+        let end = getRow(tree, 'Baz');
+        triggerPress(start);
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(end);
+      });
+
+      it('should allow focus on disabled rows with disabledBehavior="selection"', function () {
+        let tree = renderListWithFocusables({disabledKeys: ['bar'], disabledBehavior: 'selection', selectionMode: 'single'});
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Bar');
         triggerPress(start);
@@ -539,6 +593,21 @@ describe('ListView', function () {
     );
     let grid = getByRole('grid');
     expect(grid).toHaveAttribute('data-testid', 'test');
+  });
+
+  it('should use item description text as aria-describedby', function () {
+    let {getAllByRole} = render(
+      <ListView aria-label="List">
+        <Item textValue="Label">
+          <Text>Label</Text>
+          <Text slot="description">Description</Text>
+        </Item>
+      </ListView>
+    );
+
+    let rows = getAllByRole('row');
+    let description = within(rows[0]).getByText('Description');
+    expect(rows[0]).toHaveAttribute('aria-labelledby', `${rows[0].id} ${description.id}`);
   });
 
   describe('selection', function () {
@@ -834,6 +903,27 @@ describe('ListView', function () {
         fireEvent.keyUp(rows[0], {key: 'Enter'});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).not.toHaveBeenCalled();
+      });
+
+      it('should not trigger actions when a row is disabled', function () {
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onAction, disabledKeys: ['foo']});
+        let rows = tree.getAllByRole('row');
+
+        userEvent.click(rows[0], {pointerType: 'mouse'});
+        expect(onAction).not.toHaveBeenCalled();
+
+        userEvent.click(rows[1], {pointerType: 'mouse'});
+        expect(onAction).toHaveBeenCalledTimes(1);
+      });
+
+      it('should trigger actions when a disabledBehavior="selection"', function () {
+        let onAction = jest.fn();
+        let tree = renderSelectionList({onAction, disabledKeys: ['foo'], disabledBehavior: 'selection'});
+        let rows = tree.getAllByRole('row');
+
+        userEvent.click(rows[0], {pointerType: 'mouse'});
+        expect(onAction).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -1271,8 +1361,6 @@ describe('ListView', function () {
         let cellText = getAllByText(cell.textContent);
         expect(cellText).toHaveLength(1);
 
-        // Need raf to be async so the drag preview shows up properly
-        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
         let dataTransfer = new DataTransfer();
 
         fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 5, clientY: 5});
@@ -1426,7 +1514,7 @@ describe('ListView', function () {
         act(() => jest.runAllTimers());
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        expect(await onDrop.mock.calls[0][0].items.length).toBe(4);
+        expect(await onDrop.mock.calls[0][0].items).toHaveLength(4);
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
         expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Adobe XD');
         expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Documents');
@@ -1444,9 +1532,25 @@ describe('ListView', function () {
         });
       });
 
-      it('should allow drag operations on a disabled row', function () {
+      it('should not allow drag operations on a disabled row', function () {
         let {getAllByRole} = render(
           <DraggableListView listViewProps={{disabledKeys: ['a']}} />
+        );
+
+        let row = getAllByRole('row')[0];
+        let cell = within(row).getByRole('gridcell');
+        expect(cell).toHaveTextContent('Adobe Photoshop');
+        expect(row).not.toHaveAttribute('draggable', 'true');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(onDragStart).toHaveBeenCalledTimes(0);
+      });
+
+      it('should allow drag operations on a disabled row with disabledBehavior="selection"', function () {
+        let {getAllByRole} = render(
+          <DraggableListView listViewProps={{disabledKeys: ['a'], disabledBehavior: 'selection'}} />
         );
 
         let row = getAllByRole('row')[0];
@@ -1577,7 +1681,7 @@ describe('ListView', function () {
 
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        expect(await onDrop.mock.calls[0][0].items.length).toBe(4);
+        expect(await onDrop.mock.calls[0][0].items).toHaveLength(4);
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
         expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Adobe XD');
         expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Documents');
@@ -1656,7 +1760,7 @@ describe('ListView', function () {
       expect(dragHandle.style.position).toBe('');
     });
 
-    it('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
+    it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
       function hasDragHandle(el) {
         let buttons = within(el).getAllByRole('button');
         return buttons[0].getAttribute('draggable');
@@ -1664,6 +1768,39 @@ describe('ListView', function () {
 
       let {getAllByRole} = render(
         <DraggableListView listViewProps={{disabledKeys: ['a']}} />
+      );
+
+      let rows = getAllByRole('row');
+      let cellA = within(rows[0]).getByRole('gridcell');
+      let cellB = within(rows[1]).getByRole('gridcell');
+
+      userEvent.tab();
+      expect(hasDragHandle(cellA)).toBeFalsy();
+      moveFocus('ArrowDown');
+      expect(hasDragHandle(cellB)).toBeTruthy();
+
+      fireEvent.pointerDown(cellA, {button: 0, pointerId: 1});
+      expect(hasDragHandle(cellA)).toBeFalsy();
+      fireEvent.pointerUp(cellA, {button: 0, pointerId: 1});
+
+      fireEvent.pointerDown(cellB, {button: 0, pointerId: 1});
+      expect(hasDragHandle(cellB)).toBeTruthy();
+      fireEvent.pointerUp(cellB, {button: 0, pointerId: 1});
+
+      fireEvent.pointerEnter(cellA);
+      expect(hasDragHandle(cellA)).toBeFalsy();
+      fireEvent.pointerEnter(cellB);
+      expect(hasDragHandle(cellB)).toBeTruthy();
+    });
+
+    it('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items with disabledBehavior="selection"', function () {
+      function hasDragHandle(el) {
+        let buttons = within(el).getAllByRole('button');
+        return buttons[0].getAttribute('draggable');
+      }
+
+      let {getAllByRole} = render(
+        <DraggableListView listViewProps={{disabledKeys: ['a'], disabledBehavior: 'selection'}} />
       );
 
       let rows = getAllByRole('row');
@@ -1712,8 +1849,180 @@ describe('ListView', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
+    it('should only count the selected keys that exist in the collection when dragging and dropping', async function () {
+      let {getAllByRole} = render(
+        <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
+      );
+
+      userEvent.tab();
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(8);
+      let droppable = rows[7];
+      moveFocus('ArrowDown');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      moveFocus('ArrowDown');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      moveFocus('ArrowDown');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['1', '2', '3']));
+      let draghandle = within(rows[3]).getAllByRole('button')[0];
+      expect(draghandle).toBeTruthy();
+      expect(draghandle).toHaveAttribute('draggable', 'true');
+
+      moveFocus('ArrowRight');
+      fireEvent.keyDown(draghandle, {key: 'Enter'});
+      fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragStart).toHaveBeenCalledWith({
+        type: 'dragstart',
+        keys: new Set(['1', '2', '3']),
+        x: 50,
+        y: 25
+      });
+ 
+      act(() => jest.runAllTimers());
+      let droppableButton = await within(droppable).findByLabelText('Drop on Folder 2', {hidden: true});
+      expect(document.activeElement).toBe(droppableButton);
+      fireEvent.keyDown(droppableButton, {key: 'Enter'});
+      fireEvent.keyUp(droppableButton, {key: 'Enter'});
+      await act(async () => Promise.resolve());
+      act(() => jest.runAllTimers());
+
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(await onDrop.mock.calls[0][0].items).toHaveLength(3);
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        keys: new Set(['1', '2', '3']),
+        x: 50,
+        y: 25,
+        dropOperation: 'move'
+      });
+      onSelectionChange.mockClear();
+      onDragStart.mockClear();
+
+      rows = getAllByRole('row');
+      expect(rows).toHaveLength(5);
+
+      // Select the folder and perform a drag. Drag start shouldn't include the previously selected items
+      moveFocus('ArrowDown');
+      fireEvent.keyDown(droppable, {key: 'Enter'});
+      fireEvent.keyUp(droppable, {key: 'Enter'});
+      // Selection change event still has all keys
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2', '3', '7']));
+
+      draghandle = within(rows[0]).getAllByRole('button')[0];
+      expect(draghandle).toBeTruthy();
+      expect(draghandle).toHaveAttribute('draggable', 'true');
+      moveFocus('ArrowRight');
+      fireEvent.keyDown(draghandle, {key: 'Enter'});
+      fireEvent.keyUp(draghandle, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragStart).toHaveBeenCalledWith({
+        type: 'dragstart',
+        keys: new Set(['0']),
+        x: 50,
+        y: 25
+      });
+
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
+    });
+
+    it('should automatically focus the newly added dropped item', async function () {
+      let {getAllByRole} = render(
+        <DragBetweenListsRootOnlyExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
+      );
+
+      let grids = getAllByRole('grid');
+      expect(grids).toHaveLength(2);
+      let firstListRows = within(grids[0]).getAllByRole('row');
+      let draggedCell = within(firstListRows[0]).getByRole('gridcell');
+      let secondListRows = within(grids[1]).getAllByRole('row');
+      expect(firstListRows).toHaveLength(6);
+      expect(secondListRows).toHaveLength(6);
+
+      let dataTransfer = new DataTransfer();
+      fireEvent.pointerDown(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(draggedCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+      act(() => jest.runAllTimers());
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      fireEvent.pointerMove(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent(draggedCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+      fireEvent(grids[1], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 1}));
+      fireEvent.pointerUp(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent(draggedCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+
+      await waitFor(() => expect(within(grids[1]).getAllByRole('row')).toHaveLength(7), {interval: 10});
+      expect(onDrop).toHaveBeenCalledTimes(1);
+
+      grids = getAllByRole('grid');
+      firstListRows = within(grids[0]).getAllByRole('row');
+      secondListRows = within(grids[1]).getAllByRole('row');
+      expect(firstListRows).toHaveLength(5);
+      expect(secondListRows).toHaveLength(7);
+
+      // The newly added row in the second list should be the active element
+      expect(secondListRows[6]).toBe(document.activeElement);
+      expect(secondListRows[6]).toHaveTextContent('Item One');
+
+      for (let [index, row] of secondListRows.entries()) {
+        if (index !== 6) {
+          expect(row).toHaveAttribute('tabIndex', '-1');
+        } else {
+          expect(row).toHaveAttribute('tabIndex', '0');
+        }
+      }
+
+      draggedCell = firstListRows[3];
+      dataTransfer = new DataTransfer();
+      fireEvent.pointerDown(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(draggedCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+      act(() => jest.runAllTimers());
+      expect(onDragStart).toHaveBeenCalledTimes(2);
+      fireEvent.pointerMove(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent(draggedCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+      fireEvent(grids[1], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 2}));
+      fireEvent.pointerUp(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent(draggedCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+      expect(onDragEnd).toHaveBeenCalledTimes(2);
+      fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+
+      await waitFor(() => expect(within(grids[1]).getAllByRole('row')).toHaveLength(8), {interval: 10});
+      expect(onDrop).toHaveBeenCalledTimes(2);
+
+      grids = getAllByRole('grid');
+      firstListRows = within(grids[0]).getAllByRole('row');
+      secondListRows = within(grids[1]).getAllByRole('row');
+      expect(firstListRows).toHaveLength(4);
+      expect(secondListRows).toHaveLength(8);
+
+      // The 2nd newly added row in the second list should still be the active element
+      expect(secondListRows[7]).toBe(document.activeElement);
+      expect(secondListRows[7]).toHaveTextContent('Item Five');
+
+      for (let [index, row] of secondListRows.entries()) {
+        if (index !== 7) {
+          expect(row).toHaveAttribute('tabIndex', '-1');
+        } else {
+          expect(row).toHaveAttribute('tabIndex', '0');
+        }
+      }
+    });
+
     describe('accessibility', function () {
-      it('drag handle should reflect the correct number of draggable rows', async function () {
+      it('drag handle should reflect the correct number of draggable rows', function () {
 
         let {getAllByRole} = render(
           <DraggableListView listViewProps={{defaultSelectedKeys: ['a', 'b', 'c']}} />
@@ -1747,6 +2056,31 @@ describe('ListView', function () {
         expect(dragButtonA).toHaveAttribute('aria-label', 'Drag Adobe Photoshop');
         expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 3 selected items');
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 3 selected items');
+      });
+
+      it('disabled rows and invalid drop targets should become aria-hidden when keyboard drag session starts', function () {
+        let {getAllByRole} = render(
+          <ReorderExample listViewProps={{disabledKeys: ['2']}} />
+        );
+
+        let rows = getAllByRole('row');
+        for (let row of rows) {
+          expect(row).not.toHaveAttribute('aria-hidden');
+        }
+
+        let row = rows[0];
+        let cell = within(row).getByRole('gridcell');
+        let draghandle = within(cell).getAllByRole('button')[0];
+        expect(row).toHaveAttribute('draggable', 'true');
+        fireEvent.keyDown(draghandle, {key: 'Enter'});
+        fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+        for (let row of rows) {
+          expect(row).toHaveAttribute('aria-hidden', 'true');
+        }
+
+        fireEvent.keyDown(document.body, {key: 'Escape'});
+        fireEvent.keyUp(document.body, {key: 'Escape'});
       });
     });
   });

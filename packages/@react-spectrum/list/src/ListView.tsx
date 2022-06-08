@@ -9,12 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, LoadingState} from '@react-types/shared';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
-import {DragPreview} from './DragPreview';
 import type {DroppableCollectionResult} from '@react-aria/dnd';
 import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import InsertionIndicator from './InsertionIndicator';
@@ -29,8 +27,9 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
+import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {SpectrumListProps} from '@react-types/list';
-import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useList} from '@react-aria/list';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -44,7 +43,8 @@ interface ListViewContextValue<T> {
   onAction:(key: Key) => void,
   isListDraggable: boolean,
   isListDroppable: boolean,
-  layout: ListLayout<T>
+  layout: ListLayout<T>,
+  loadingState: LoadingState
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
@@ -64,7 +64,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density']) {
+function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density'], allowDisabledKeyFocus: boolean, overflowMode: SpectrumListProps<T>['overflowMode']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
@@ -74,9 +74,10 @@ function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['de
       padding: 0,
       collator,
       loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
-      allowDisabledKeyFocus: true
+      allowDisabledKeyFocus
     })
-    , [collator, scale, density, isEmpty]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    , [collator, scale, density, isEmpty, allowDisabledKeyFocus, overflowMode]);
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
@@ -115,23 +116,18 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let {locale} = useLocale();
-  let layout = useListLayout(state, props.density || 'regular');
-  let provider = useProvider();
+  let layout = useListLayout(state, props.density || 'regular', state.selectionManager.disabledBehavior === 'selection', overflowMode);
   let dragState: DraggableCollectionState;
+  let preview = useRef(null);
   if (isListDraggable) {
     dragState = dragHooks.useDraggableCollectionState({
       collection,
       selectionManager,
-      renderPreview(draggingKeys, draggedKey) {
-        let item = collection.getItem(draggedKey);
-        let itemCount = draggingKeys.size;
-        let itemHeight = layout.getLayoutInfo(draggedKey).rect.height;
-        return <DragPreview item={item} itemCount={itemCount} itemHeight={itemHeight} provider={provider} locale={locale}  />;
-      }
+      preview
     });
   }
 
+  let DragPreview = dragHooks?.DragPreview;
   let dropState: DroppableCollectionState;
   let droppableCollection: DroppableCollectionResult;
   let isRootDropTarget: boolean;
@@ -223,7 +219,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
   return (
-    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout}}>
+    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
       <Virtualizer
         {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
         {...filterDOMProps(otherProps)}
@@ -300,6 +296,16 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
 
         }}
       </Virtualizer>
+      {DragPreview && isListDraggable &&
+        <DragPreview ref={preview}>
+          {() => {
+            let item = state.collection.getItem(dragState.draggedKey);
+            let itemCount = dragState.draggingKeys.size;
+            let itemHeight = layout.getLayoutInfo(dragState.draggedKey).rect.height;
+            return <SpectrumDragPreview item={item} itemCount={itemCount} itemHeight={itemHeight}  />;
+          }}
+        </DragPreview>
+      }
     </ListViewContext.Provider>
   );
 }
