@@ -52,3 +52,24 @@ export const DimensionFunctions: ViewStory = {
     backgroundColor: 'blue-400'
   }
 };
+
+export const OneOfEachPropGroup: ViewStory = {
+  args: {
+    alignSelf: 'end',
+    marginStart: 'size-100',
+    height: 'single-line-height',
+    width: 'calc(150px + size-50)',
+    backgroundColor: 'red-400',
+    borderRadius: 'large',
+    id: 'uniqueId9',
+    children: (
+      <View height="size-150" width="size-150" backgroundColor="yellow-700" position="relative" start="size-300" />
+    )
+
+  },
+  decorators: [(Story) => (
+    <div style={{display: 'flex', border: '1px solid black', height: '50px'}}>
+      <Story />
+    </div>
+  )]
+};
