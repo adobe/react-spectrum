@@ -63,11 +63,16 @@ describe('MenuTrigger', function () {
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
+    act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
+    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+    act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
     onOpenChange.mockClear();
     onOpen.mockClear();
     onClose.mockClear();

@@ -471,25 +471,42 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       // eslint-disable-next-line react-hooks/exhaustive-deps
       if (nodeToRestore && restoreFocus && isElementInScope(document.activeElement, scopeRef.current)) {
         requestAnimationFrame(() => {
+          // Starting at the index of the nodeToRestore within the nodeToRestore array,
           let index = nodeToRestoreArray.lastIndexOf(nodeToRestore);
-          // If the nodeToRestore is the last item in the nodeToRestoreArray.
-          if (index === nodeToRestoreArray.length - 1) {
-            // Iterate backwards through the nodeToRestoreArray until you find a valid node to restore.
-            while (nodeToRestoreArray.length > 0) {
-              let node = nodeToRestoreArray.pop();
-              if (document.body.contains(node)) {
-                focusElement(node);
-                break;
-              }
-            }
-            return;
+
+          // or the end of the nodeToRestore array if the nodeToRestore is not in the array,
+          if (index === -1) {
+            index = nodeToRestoreArray.length - 1;
           }
-          // Otherwise try to focus the nodeToRestore, and clean up
-          if (document.body.contains(nodeToRestore)) {
-            focusElement(nodeToRestore);
-            if (scopes.size === 0) {
-              nodeToRestoreArray = [];
+
+          // loop backwards through the nodes within the nodeToRestoreArray,
+          while (index >= 0) {
+            let node = nodeToRestoreArray[index];
+            if (document.body.contains(node)) {
+              // to focus the last node that remains in the DOM.
+              focusElement(node);
+
+              // Then clean up nodeToRestoreArray items after the focused node
+              let i = nodeToRestoreArray.length - 1;
+              while (i > index) {
+                node = nodeToRestoreArray[i];
+                if (document.body.contains(node)) {
+                  break;
+                }
+                nodeToRestoreArray.splice(i, 1);
+                i--;
+              }
+
+              // Stop looping after focusing a node.
+              break;
             }
+
+            // Remove nodes that are no longer in the DOM from the array.
+            nodeToRestoreArray.splice(index, 1);
+            index--;
+          }
+          if (scopes.size === 0) {
+            nodeToRestoreArray = [];
           }
         });
       }

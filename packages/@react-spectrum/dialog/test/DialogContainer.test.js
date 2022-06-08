@@ -170,7 +170,6 @@ describe('DialogContainer', function () {
 
     triggerPress(menuitem);
     act(() => {jest.runAllTimers();});
-    act(() => {jest.runAllTimers();});
 
     expect(queryByRole('menu')).toBeNull();
     expect(queryByRole('menuitem')).toBeNull();
@@ -215,8 +214,8 @@ describe('DialogContainer', function () {
     expect(document.activeElement).toBe(actionButton);
 
     // 3. Press "Escape" key to close "This" dialog.
-    fireEvent.keyDown(dialog, {key: 'Escape'});
-    fireEvent.keyUp(dialog, {key: 'Escape'});
+    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
     act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
 
