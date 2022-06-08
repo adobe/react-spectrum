@@ -28,7 +28,7 @@ function renderComponent(props = {}, itemProps) {
   let {items = defaultItems} = props;
   return render(
     <Provider theme={theme}>
-      <Tabs {...props} items={items}>
+      <Tabs aria-label="Tab Sample" {...props} items={items}>
         <TabList>
           {item => (
             <Item {...itemProps} key={item.name} title={item.name || item.children} />
@@ -223,7 +223,7 @@ describe('Tabs', function () {
   it('does not generate conflicting ids between multiple tabs instances', function () {
     let tree = render(
       <Provider theme={theme}>
-        <Tabs>
+        <Tabs aria-label="Tab Sample">
           <TabList>
             {defaultItems.map(item => (
               <Item key={item.name} title={item.name || item.children} />
@@ -237,7 +237,7 @@ describe('Tabs', function () {
             ))}
           </TabPanels>
         </Tabs>
-        <Tabs>
+        <Tabs aria-label="Tab Sample 2">
           <TabList>
             {defaultItems.map(item => (
               <Item key={item.name} title={item.name || item.children} />
@@ -316,7 +316,7 @@ describe('Tabs', function () {
 
     tree.rerender(
       <Provider theme={theme}>
-        <Tabs disabledKeys={[defaultItems[0].name]} onSelectionChange={onSelectionChange} items={defaultItems.slice(0, 1)}>
+        <Tabs aria-label="Tab Example" disabledKeys={[defaultItems[0].name]} onSelectionChange={onSelectionChange} items={defaultItems.slice(0, 1)}>
           <TabList>
             {item => (
               <Item key={item.name} title={item.name || item.children} />
@@ -499,7 +499,7 @@ describe('Tabs', function () {
 
     rerender(
       <Provider theme={theme}>
-        <Tabs items={newItems} orientation="vertical">
+        <Tabs aria-label="Tab Example" items={newItems} orientation="vertical">
           <TabList>
             {item => (
               <Item key={item.name} title={item.name || item.children} />
@@ -618,7 +618,7 @@ describe('Tabs', function () {
   it('tabpanel should have tabIndex=0 only when there are no focusable elements', async function () {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme}>
-        <Tabs maxWidth={500}>
+        <Tabs aria-label="Tab Example" maxWidth={500}>
           <TabList>
             <Item>Tab 1</Item>
             <Item>Tab 2</Item>
@@ -653,7 +653,7 @@ describe('Tabs', function () {
   it('TabPanel children do not share values between panels', () => {
     let {getByDisplayValue, getAllByRole, getByTestId} = render(
       <Provider theme={theme}>
-        <Tabs maxWidth={500}>
+        <Tabs aria-label="Tab Example" maxWidth={500}>
           <TabList>
             <Item>Tab 1</Item>
             <Item>Tab 2</Item>
