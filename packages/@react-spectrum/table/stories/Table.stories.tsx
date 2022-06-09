@@ -1715,9 +1715,9 @@ export function TableWithBreadcrumbs() {
 }
 
 let items2 = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
-let onLoadMoreSpy = () => {console.log('onLoadMoreSpy')};
+let onLoadMoreSpy = () => {console.log('onLoadMoreSpy');};
 
-let TableMock = (props) => (
+let TableMock = () => (
   <TableView aria-label="Table" height="1000px" width="1000px">
     <TableHeader>
       <Column key="foo">Foo</Column>

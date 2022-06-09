@@ -30,7 +30,6 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
-import {TableView_DEPRECATED} from './TableView_DEPRECATED';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
@@ -812,17 +811,4 @@ function CenteredWrapper({children}) {
  */
 const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
-/*
-  When ready to remove this feature flag, you can remove this whole section of code, delete the _DEPRECATED files, and just replace the export with the _TableView above.
-*/
-function FeatureFlaggedTableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
-  return <_TableView {...props} ref={ref} />;
-}
-
-/**
- * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
- */
-const _FeatureFlaggedTableView = React.forwardRef(FeatureFlaggedTableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-
-
-export {_FeatureFlaggedTableView as TableView};
+export {_TableView as TableView};

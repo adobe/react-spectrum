@@ -18,7 +18,6 @@ interface GridCollectionOptions {
 }
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
-const RESIZE_BUFFER_COLUMN_KEY = 'resize-buffer-column' + Math.random().toString(36).slice(2);
 
 function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
   let columns = [];
