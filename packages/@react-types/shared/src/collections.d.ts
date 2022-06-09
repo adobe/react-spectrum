@@ -87,10 +87,6 @@ export interface SortDescriptor {
 
 export type SortDirection = 'ascending' | 'descending';
 
-export interface KeyboardDelegateOptions {
-  allowsDisabled?: boolean
-}
-
 export interface KeyboardDelegate {
   /** Returns the key visually below the given one, or `null` for none. */
   getKeyBelow?(key: Key): Key | null,
