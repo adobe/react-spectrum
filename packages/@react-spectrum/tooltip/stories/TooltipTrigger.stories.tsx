@@ -9,147 +9,227 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { action } from '@storybook/addon-actions';
-import { ActionButton, Button } from '@react-spectrum/button';
-import { ActionGroup, Item } from '@react-spectrum/actiongroup';
-import { Flex } from '@react-spectrum/layout';
-import { Link } from '@react-spectrum/link';
-import React, { useState } from 'react';
-import { Tooltip, TooltipTrigger } from '../src';
+import {action} from '@storybook/addon-actions';
+import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import Edit from '@spectrum-icons/workflow/Edit';
+import {Flex} from '@react-spectrum/layout';
+import {Link} from '@react-spectrum/link';
+import React, {useState} from 'react';
+import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
+import {Tooltip, TooltipTrigger} from '../src';
+
+interface TooltipTooltipTriggerProps {
+  variant?: 'neutral' | 'positive' | 'negative' | 'info',
+  isOpen?: boolean,
+  onOpenChange?: (isOpen: boolean) => void
+};
+
+type TooltipTriggerStory = ComponentStoryObj<typeof TooltipTrigger>;
+
+const argTypes = {
+  placement: {
+    control: 'select',
+    defaultValue: 'bottom',
+    options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end', 'top', 'top left', 'top right', 'top start', 'top end', 'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom', 'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom']
+  },
+  delay: {
+    control: 'number',
+    defaultValue: 1500,
+    min: 0,
+    max: 50000,
+    step: 500
+  },
+  offset: {
+    control: 'number',
+    defaultValue: 0,
+    min: -500,
+    max: 500
+  },
+  crossOffset: {
+    control: 'number',
+    defaultValue: 0,
+    min: -500,
+    max: 500
+  },
+  containerPadding: {
+    control: 'number',
+    defaultValue: 0,
+    min: -500,
+    max: 500
+  },
+  isDisabled: {
+    control: 'boolean',
+    defaultValue: false
+  },
+  shouldFlip: {
+    control: 'boolean',
+    defaultValue: true
+  },
+  trigger: {
+    control: 'radio',
+    defaultValue: undefined,
+    options: [undefined, 'focus']
+  },
+  children: {
+    control: {disable: true}
+  }
+};
+
+const disabledArgTypes = {
+  placement: {
+    control: {disable: true}
+  },
+  delay: {
+    control: {disable: true}
+  },
+  offset: {
+    control: {disable: true}
+  },
+  crossOffset: {
+    control: {disable: true}
+  },
+  containerPadding: {
+    control: {disable: true}
+  },
+  isDisabled: {
+    control: {disable: true}
+  },
+  shouldFlip: {
+    control: {disable: true}
+  },
+  trigger: {
+    control: {disable: true}
+  },
+  children: {
+    control: {disable: true}
+  }
+};
+
 export default {
   title: 'TooltipTrigger',
+  component: TooltipTrigger,
+  args: {
+    children: [
+      <ActionButton aria-label="Edit Name"><Edit /></ActionButton>,
+      <Tooltip>Change Name</Tooltip>
+    ],
+    onOpenChange: action('openChange')
+  },
+  argTypes: argTypes
+} as ComponentMeta<typeof TooltipTrigger>;
+
+export const Default: TooltipTriggerStory = {};
+
+export const DefaultOpen: TooltipTriggerStory = {
+  args: {defaultOpen: true},
+  name: 'defaultOpen: true'
 };
-export const Default = {
-  render: () => render({}),
-  name: 'default',
+
+export const IsOpen: TooltipTriggerStory = {
+  args: {isOpen: true},
+  name: 'isOpen: true'
 };
-export const PlacementLeft = {
-  render: () =>
-    render({
-      placement: 'left',
-    }),
-  name: 'placement: left',
+
+export const TriggerDisabled: TooltipTriggerStory = {
+  args: {
+    children: [
+      <ActionButton aria-label="Edit Name" isDisabled><Edit /></ActionButton>,
+      <Tooltip>Change Name</Tooltip>
+    ]
+  },
+  argTypes: disabledArgTypes
 };
-export const PlacementRight = {
-  render: () =>
-    render({
-      placement: 'right',
-    }),
-  name: 'placement: right',
+
+export const TooltipOnLink: TooltipTriggerStory  = {
+  args: {
+    children: [
+      <Link>
+        <a href="https://react-spectrum.adobe.com/" target="_blank" rel="noreferrer">
+          Why did dinosaurs have feathers?
+        </a>
+      </Link>,
+      <Tooltip>Dinosaurs had feathers, find out more.</Tooltip>
+    ]
+  }
 };
-export const PlacementStart = {
-  render: () =>
-    render({
-      placement: 'start',
-    }),
-  name: 'placement: start',
+
+export const TooltripTriggerInsideActionGroup: TooltipTriggerStory = {
+  args: {delay: 0},
+  decorators: [(Story) => (
+    <ActionGroup
+      selectionMode="single"
+      disallowEmptySelection
+      onSelectionChange={action('onSelectionChange')}
+      items={[{name: 'tooltipTrigger1'}]} >
+        {(item) => <Item key={item.name}><Story key={item.name} /></Item>}
+    </ActionGroup>
+  )]
 };
-export const PlacementTop = {
-  render: () =>
-    render({
-      placement: 'top',
-    }),
-  name: 'placement: top',
-};
-export const PlacementBottom = {
-  render: () =>
-    render({
-      placement: 'bottom',
-    }),
-  name: 'placement: bottom',
-};
-export const PlacementTopWithOffset = {
-  render: () =>
-    render({
-      placement: 'top',
-      offset: 50,
-    }),
-  name: 'placement: top with offset',
-};
-export const PlacementBottomWithCrossOffset = {
-  render: () =>
-    render({
-      placement: 'bottom',
-      crossOffset: 50,
-    }),
-  name: 'placement: bottom with crossOffset',
-};
-export const IsDisabled = {
-  render: () =>
-    render({
-      placement: 'start',
-      isDisabled: true,
-    }),
-  name: 'isDisabled',
-};
-export const ZeroDelay = {
-  render: () =>
-    render({
-      delay: 0,
-    }),
-  name: 'zero delay',
-};
-export const FocusOnly = {
-  render: () =>
-    render({
-      trigger: 'focus',
-    }),
-  name: 'focus only',
-};
-export const MultipleTooltips = {
-  render: () =>
-    renderMultipleTriggers({
-      placement: 'start',
-    }),
-  name: 'multiple tooltips',
-};
-export const ZeroDelayMultipleTooltips = {
-  render: () =>
-    renderMultipleTriggers({
-      delay: 0,
-    }),
-  name: 'zero delay multiple tooltips',
-};
-export const Controlled = {
-  render: () => <ControlledButtons />,
-  name: 'controlled',
-};
-export const TriggerDisabled = {
-  render: () => renderDisabledTrigger(),
-  name: 'trigger disabled',
-};
-export const ArrowPositioningAtEdge = {
-  render: () => (
-    <div
-      style={{
-        width: '100%',
-      }}
-    >
-      <TooltipTrigger onOpenChange={action('openChange')}>
-        <ActionButton>Trigger Tooltip</ActionButton>
-        <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
-      </TooltipTrigger>
+
+export const ArrowPositioningAtEdge: TooltipTriggerStory = {
+  args: {
+    children: [
+      <ActionButton>Trigger Tooltip</ActionButton>,
+      <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
+    ]
+  },
+  decorators: [(Story) => (
+    <div style={{width: '100%'}}>
+      <Story />
     </div>
-  ),
-  name: 'arrow positioning at edge',
+  )]
 };
-export const TooltipWithOtherHoverables = {
-  render: () => (
+
+export const TooltipWithOtherHoverables: TooltipTriggerStory = {
+  args: {
+    children: [
+      <ActionButton>Trigger Tooltip</ActionButton>,
+      <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
+    ]
+  },
+  decorators: [(Story) => (
     <Flex gap="size-100">
-      <TooltipTrigger onOpenChange={action('openChange')}>
-        <ActionButton>Trigger Tooltip</ActionButton>
-        <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
-      </TooltipTrigger>
+      <Story />
       <Button variant="secondary">No Tooltip</Button>
     </Flex>
-  ),
-  name: 'tooltip with other hoverables',
+  )]
 };
-export const TooltripTriggerInsideActionGroup = {
-  render: () => ActionGroupTrigger(),
-  name: 'tooltrip trigger inside action group',
+
+export const ControlledMultipleTooltips: TooltipTriggerStory = {
+  args: {placement: 'start'},
+  render: (props) => <MultipleTriggers {...props} />
 };
-export const CrossoffsetExamples = {
+
+let MultipleTriggers = (props: SpectrumTooltipTriggerProps) => {
+  let [one, setOne] = useState(false);
+  let [two, setTwo] = useState(false);
+  let [three, setThree] = useState(false);
+  let [four, setFour] = useState(false);
+
+  let items: Array<TooltipTooltipTriggerProps> = [
+    {variant: 'neutral', isOpen: one, onOpenChange: setOne},
+    {variant: 'positive', isOpen: two, onOpenChange: setTwo},
+    {variant: 'negative', isOpen: three, onOpenChange: setThree},
+    {variant: 'info', isOpen: four, onOpenChange: setFour}
+  ];
+
+  return (
+    <Flex gap="size-100" direction="column">
+      {items.map((item) => (
+        <TooltipTrigger {...props} key={item.variant} isOpen={item.isOpen} onOpenChange={item.onOpenChange}>
+          <ActionButton>{item.variant} Tooltip</ActionButton>
+          <Tooltip variant={item.variant} showIcon>
+            {item.variant} message.
+          </Tooltip>
+        </TooltipTrigger>
+      ))}
+    </Flex>
+  );
+}
+
+export const CrossoffsetExamples: TooltipTriggerStory = {
   render: () => (
     <Flex gap="size-200">
       <Flex gap="size-200" direction="column" alignItems="start">
@@ -234,119 +314,5 @@ export const CrossoffsetExamples = {
         </TooltipTrigger>
       </Flex>
     </Flex>
-  ),
-  name: 'crossoffset examples',
+  )
 };
-export const TooltipOnLink = {
-  render: () => <LinkWithTooltip />,
-  name: 'tooltip on link',
-};
-
-function render(props = {}) {
-  return (
-    <TooltipTrigger {...props} onOpenChange={action('openChange')}>
-      <ActionButton>Trigger Tooltip</ActionButton>
-      <Tooltip>Tooltip message.</Tooltip>
-    </TooltipTrigger>
-  );
-}
-
-function renderDisabledTrigger() {
-  return (
-    <TooltipTrigger onOpenChange={action('openChange')}>
-      <ActionButton isDisabled>Trigger Tooltip</ActionButton>
-      <Tooltip>Tooltip message.</Tooltip>
-    </TooltipTrigger>
-  );
-}
-
-function renderMultipleTriggers(props = {}) {
-  return (
-    <Flex gap="size-100" direction="column">
-      <TooltipTrigger {...props} onOpenChange={action('openChange')}>
-        <ActionButton>Neutral Tooltip</ActionButton>
-        <Tooltip showIcon>Neutral message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger {...props} onOpenChange={action('openChange')}>
-        <ActionButton>Positive Tooltip</ActionButton>
-        <Tooltip variant="positive" showIcon>
-          Positive message.
-        </Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger {...props} onOpenChange={action('openChange')}>
-        <ActionButton>Negative Tooltip</ActionButton>
-        <Tooltip variant="negative" showIcon>
-          Negative message.
-        </Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger {...props} onOpenChange={action('openChange')}>
-        <ActionButton>Info Tooltip</ActionButton>
-        <Tooltip variant="info" showIcon>
-          Informative message.
-        </Tooltip>
-      </TooltipTrigger>
-    </Flex>
-  );
-}
-
-function ActionGroupTrigger() {
-  let onSelectionChange = action('onSelectionChange');
-  return (
-    <ActionGroup
-      selectionMode="single"
-      disallowEmptySelection
-      onSelectionChange={(s) => onSelectionChange([...s])}
-    >
-      <TooltipTrigger delay={0}>
-        <Item key="item1">Trigger Tooltip</Item>
-        <Tooltip>Tooltip is inside an ActionGroup</Tooltip>
-      </TooltipTrigger>
-    </ActionGroup>
-  );
-}
-
-function ControlledButtons(props = {}) {
-  let [one, setOne] = useState(false);
-  let [two, setTwo] = useState(false);
-  let [three, setThree] = useState(false);
-  let [four, setFour] = useState(false);
-  return (
-    <Flex gap="size-100" direction="column">
-      <TooltipTrigger {...props} isOpen={one} onOpenChange={setOne}>
-        <ActionButton>Neutral Tooltip</ActionButton>
-        <Tooltip showIcon>Neutral message.</Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger {...props} isOpen={two} onOpenChange={setTwo}>
-        <ActionButton>Positive Tooltip</ActionButton>
-        <Tooltip variant="positive" showIcon>
-          Positive message.
-        </Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger {...props} isOpen={three} onOpenChange={setThree}>
-        <ActionButton>Negative Tooltip</ActionButton>
-        <Tooltip variant="negative" showIcon>
-          Negative message.
-        </Tooltip>
-      </TooltipTrigger>
-      <TooltipTrigger {...props} isOpen={four} onOpenChange={setFour}>
-        <ActionButton>Info Tooltip</ActionButton>
-        <Tooltip variant="info" showIcon>
-          Informative message.
-        </Tooltip>
-      </TooltipTrigger>
-    </Flex>
-  );
-}
-
-function LinkWithTooltip(props = {}) {
-  return (
-    <TooltipTrigger {...props}>
-      <Link>
-        <a href="https://react-spectrum.adobe.com/" target="_blank" rel="noreferrer">
-          Why did dinosaurs have feathers?
-        </a>
-      </Link>
-      <Tooltip>Dinosaurs had feathers, find out more.</Tooltip>
-    </TooltipTrigger>
-  );
-}
