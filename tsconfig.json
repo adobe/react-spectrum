@@ -27,7 +27,16 @@
       "dom",
       "dom.iterable"
     ],
-    "skipLibCheck": false
+    "skipLibCheck": false,
+    "strict": false,
+    "plugins": [
+      {
+        "name": "typescript-strict-plugin",
+        "paths": [
+          "./packages/@react-spectrum/button/s",
+        ]
+      }
+    ]
   },
   "include": [
     "packages"

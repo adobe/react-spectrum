@@ -1,4 +1,7 @@
 {
   "loading": "Carregando...",
-  "loadingMore": "Carregando mais..."
+  "loadingMore": "Carregando mais...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }

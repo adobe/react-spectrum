@@ -1,4 +1,7 @@
 {
   "loading": "Betöltés folyamatban…",
-  "loadingMore": "Továbbiak betöltése folyamatban…"
+  "loadingMore": "Továbbiak betöltése folyamatban…",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }
