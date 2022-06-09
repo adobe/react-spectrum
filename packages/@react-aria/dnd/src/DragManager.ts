@@ -14,7 +14,6 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
-import {isVirtualPointerEvent} from '@react-aria/interactions';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -158,6 +157,7 @@ class DragSession {
   private restoreAriaHidden: () => void;
   private formatMessage: (key: string) => string;
   private isVirtualClick: boolean;
+  private initialFocused: boolean;
 
   constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
@@ -169,6 +169,7 @@ class DragSession {
     this.onClick = this.onClick.bind(this);
     this.onPointerDown = this.onPointerDown.bind(this);
     this.cancelEvent = this.cancelEvent.bind(this);
+    this.initialFocused = false;
   }
 
   setup() {
@@ -447,6 +448,13 @@ class DragSession {
 
       item?.element.focus();
       this.currentDropItem = item;
+
+      // Annouce first drop target after drag start announcement finishes.
+      // Otherwise, it will never get announced because drag start announcement is assertive.
+      if (!this.initialFocused) {
+        announce(item?.element.getAttribute('aria-label'), 'polite');
+        this.initialFocused = true;
+      }
     }
   }
 
@@ -546,4 +554,20 @@ function findValidDropTargets(options: DragTarget) {
 
     return true;
   });
+}
+
+function isVirtualPointerEvent(event: PointerEvent) {
+  // If the pointer size is zero, then we assume it's from a screen reader.
+  // Android TalkBack double tap will sometimes return a event with width and height of 1
+  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
+  // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
+  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
+  return (
+    (event.width === 0 && event.height === 0) ||
+    (event.width === 1 &&
+      event.height === 1 &&
+      event.pressure === 0 &&
+      event.detail === 0
+    )
+  );
 }

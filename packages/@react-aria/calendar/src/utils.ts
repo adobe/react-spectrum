@@ -26,6 +26,14 @@ interface HookData {
 
 export const hookData = new WeakMap<CalendarState | RangeCalendarState, HookData>();
 
+export function getEraFormat(date: CalendarDate) {
+  if (date?.calendar.identifier !== 'gregory') {
+    return 'long';
+  } else if (date?.era === 'BC') {
+    return 'short';
+  }
+}
+
 export function useSelectedDateDescription(state: CalendarState | RangeCalendarState) {
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -37,7 +45,11 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
   }
 
   let dateFormatter = useDateFormatter({
-    dateStyle: 'full',
+    weekday: 'long',
+    month: 'long',
+    year: 'numeric',
+    day: 'numeric',
+    era: getEraFormat(start) || getEraFormat(end),
     timeZone: state.timeZone
   });
 
@@ -62,16 +74,20 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
 
 export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string, isAria: boolean) {
   let formatMessage = useMessageFormatter(intlMessages);
+  let era: any = getEraFormat(startDate) || getEraFormat(endDate);
   let monthFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
-    era: startDate.calendar.identifier !== 'gregory' ? 'long' : undefined,
+    era,
     calendar: startDate.calendar.identifier,
     timeZone
   });
 
   let dateFormatter = useDateFormatter({
-    dateStyle: 'long',
+    month: 'long',
+    year: 'numeric',
+    day: 'numeric',
+    era,
     calendar: startDate.calendar.identifier,
     timeZone
   });

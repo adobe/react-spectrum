@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Fargevelger",
-  "twoDimensionalSlider": "2D-glidebryter",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Fargevelger",
+  "twoDimensionalSlider": "2D-glidebryter"
 }

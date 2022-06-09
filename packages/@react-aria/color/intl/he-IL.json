@@ -1,6 +1,6 @@
 {
-  "colorPicker": "בורר הצבעים",
-  "twoDimensionalSlider": "מחוון דו-ממדי",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "בוחר הצבעים",
+  "twoDimensionalSlider": "מחוון דו מימדי"
 }

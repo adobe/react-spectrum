@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {FocusEvent, HTMLAttributes} from 'react';
+import {FocusEvent, HTMLAttributes, useCallback} from 'react';
 import {FocusEvents} from '@react-types/shared';
 import {useSyntheticBlurEvent} from './utils';
 
@@ -34,48 +34,48 @@ interface FocusResult {
  * Focus events on child elements will be ignored.
  */
 export function useFocus(props: FocusProps): FocusResult {
-  let onBlur: FocusProps['onBlur'];
-  if (!props.isDisabled && (props.onBlur || props.onFocusChange)) {
-    onBlur = (e: FocusEvent) => {
-      if (e.target === e.currentTarget) {
-        if (props.onBlur) {
-          props.onBlur(e);
-        }
+  let {
+    isDisabled,
+    onFocus: onFocusProp,
+    onBlur: onBlurProp,
+    onFocusChange
+  } = props;
 
-        if (props.onFocusChange) {
-          props.onFocusChange(false);
-        }
-
-        return true;
+  const onBlur: FocusProps['onBlur'] = useCallback((e: FocusEvent) => {
+    if (e.target === e.currentTarget) {
+      if (onBlurProp) {
+        onBlurProp(e);
       }
-    };
-  } else {
-    onBlur = null;
-  }
 
-  let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
-
-  let onFocus: FocusProps['onFocus'];
-  if (!props.isDisabled && (props.onFocus || props.onFocusChange || props.onBlur)) {
-    onFocus = (e: FocusEvent) => {
-      if (e.target === e.currentTarget) {
-        if (props.onFocus) {
-          props.onFocus(e);
-        }
-
-        if (props.onFocusChange) {
-          props.onFocusChange(true);
-        }
-
-        onSyntheticFocus(e);
+      if (onFocusChange) {
+        onFocusChange(false);
       }
-    };
-  }
+
+      return true;
+    }
+  }, [onBlurProp, onFocusChange]);
+
+
+  const onSyntheticFocus = useSyntheticBlurEvent(onBlur);
+
+  const onFocus: FocusProps['onFocus'] = useCallback((e: FocusEvent) => {
+    if (e.target === e.currentTarget) {
+      if (onFocusProp) {
+        onFocusProp(e);
+      }
+
+      if (onFocusChange) {
+        onFocusChange(true);
+      }
+
+      onSyntheticFocus(e);
+    }
+  }, [onFocusChange, onFocusProp, onSyntheticFocus]);
 
   return {
     focusProps: {
-      onFocus,
-      onBlur
+      onFocus: (!isDisabled && (onFocusProp || onFocusChange || onBlurProp)) ? onFocus : undefined,
+      onBlur: (!isDisabled && (onBlurProp || onFocusChange)) ? onBlur : null
     }
   };
 }

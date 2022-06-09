@@ -225,6 +225,12 @@ describe('RangeCalendar', () => {
       let cells = getAllByLabelText('selected', {exact: false});
       expect(grids[0].contains(cells[0])).toBe(true);
     });
+
+    it('should show era for BC dates', () => {
+      let {getAllByLabelText} = render(<RangeCalendar value={{start: new CalendarDate('BC', 1, 12, 14), end: new CalendarDate(1, 1, 22)}} />);
+      let cell = getAllByLabelText('selected', {exact: false})[0];
+      expect(cell).toHaveAttribute('aria-label', 'Selected Range: Thursday, December 14, 1 BC to Monday, January 22, 1 AD, Thursday, December 14, 1 BC selected');
+    });
   });
 
   describe('selection', () => {
@@ -1083,7 +1089,7 @@ describe('RangeCalendar', () => {
           isDateUnavailable={isDateUnavailable} />
       );
 
-      let cell = getByRole('button', {name: 'Wednesday, May 4, 2022'});
+      let cell = getByRole('button', {name: /Wednesday, May 4, 2022/});
       act(() => userEvent.click(cell));
 
       let prevButton = getByRole('button', {name: 'Previous'});
@@ -1106,7 +1112,7 @@ describe('RangeCalendar', () => {
           isDateUnavailable={isDateUnavailable} />
       );
 
-      let cell = getByRole('button', {name: 'Thursday, April 28, 2022'});
+      let cell = getByRole('button', {name: /Thursday, April 28, 2022/});
       act(() => userEvent.click(cell));
 
       let prevButton = getByRole('button', {name: 'Previous'});
@@ -1128,7 +1134,7 @@ describe('RangeCalendar', () => {
           isDateUnavailable={isDateUnavailable} />
       );
 
-      let cell = getByRole('button', {name: 'Thursday, April 28, 2022'});
+      let cell = getByRole('button', {name: /Thursday, April 28, 2022/});
       act(() => userEvent.click(cell));
 
       let prevButton = getByRole('button', {name: 'Previous'});
@@ -1144,7 +1150,7 @@ describe('RangeCalendar', () => {
       expect(cell).not.toHaveAttribute('aria-disabled');
       expect(cell).toHaveAttribute('tabindex', '0');
 
-      cell = getByRole('button', {name: 'Monday, May 2, 2022'});
+      cell = getByRole('button', {name: /Monday, May 2, 2022/});
       expect(cell).toHaveAttribute('aria-disabled', 'true');
     });
 
@@ -1351,6 +1357,23 @@ describe('RangeCalendar', () => {
       type('ArrowRight');
 
       expect(selectedDates[1]).toHaveFocus();
+    });
+
+    it('includes era in BC dates', () => {
+      let {getByText, getAllByLabelText} = render(<RangeCalendar defaultValue={{start: new CalendarDate('BC', 5, 2, 3), end: new CalendarDate('BC', 5, 18, 3)}} />);
+
+      act(() => userEvent.click(getByText('17')));
+      act(() => userEvent.click(getByText('23')));
+
+      expect(announce).toHaveBeenCalledTimes(1);
+      expect(announce).toHaveBeenCalledWith('Selected Range: Saturday, February 17 to Friday, February 23, 5 BC', 'polite', 4000);
+
+      announce.mockReset();
+      let nextButton = getAllByLabelText('Next')[0];
+      userEvent.click(nextButton);
+
+      expect(announce).toHaveBeenCalledTimes(1);
+      expect(announce).toHaveBeenCalledWith('March 5 BC');
     });
   });
 });

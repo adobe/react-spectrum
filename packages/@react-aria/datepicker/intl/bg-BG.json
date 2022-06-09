@@ -8,10 +8,11 @@
   "minute": "минута",
   "month": "месец",
   "second": "секунда",
-  "startDate": "Начална дата",
-  "year": "година",
-  "weekday": "ден от седмицата",
-  "timeZoneName": "часова зона",
   "selectedDateDescription": "Избрана дата: {date}",
-  "selectedRangeDescription": "Избран интервал: от {startDate} до {endDate}"
+  "selectedRangeDescription": "Избран диапазон: {startDate} до {endDate}",
+  "selectedTimeDescription": "Избрано време: {time}",
+  "startDate": "Начална дата",
+  "timeZoneName": "часова зона",
+  "weekday": "ден от седмицата",
+  "year": "година"
 }

@@ -1,4 +1,7 @@
 {
   "loading": "Laadimine...",
-  "loadingMore": "Laadi rohkem..."
+  "loadingMore": "Laadi rohkem...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }

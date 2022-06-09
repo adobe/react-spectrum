@@ -1,6 +1,6 @@
 {
-  "colorPicker": "Färgväljaren",
-  "twoDimensionalSlider": "2D-reglage",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "colorInputLabel": "{label}, {channelLabel}"
+  "colorPicker": "Färgväljaren",
+  "twoDimensionalSlider": "2D-reglage"
 }

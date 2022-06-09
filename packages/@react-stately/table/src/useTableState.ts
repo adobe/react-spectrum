@@ -35,9 +35,9 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   isResizingColumn: boolean,
   /** Getter for column width. */
   getColumnWidth(key: Key): number,
-    /** Getter for column min width. */
+  /** Getter for column min width. */
   getColumnMinWidth(key: Key): number,
-    /** Getter for column max widths. */
+  /** Getter for column max widths. */
   getColumnMaxWidth(key: Key): number,
   /** Trigger a resize and recalc. */
   onColumnResize: (column: GridNode<T>, width: number) => void,

@@ -1,4 +1,4 @@
-import {HTMLAttributes, useState} from 'react';
+import {HTMLAttributes, useCallback, useState} from 'react';
 import {isFocusVisible, useFocus, useFocusVisibleListener, useFocusWithin} from '@react-aria/interactions';
 import {useRef} from 'react';
 
@@ -43,20 +43,20 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
   let state = useRef({
     isFocused: false,
     isFocusVisible: autoFocus || isFocusVisible()
-  }).current;
+  });
   let [isFocused, setFocused] = useState(false);
-  let [isFocusVisibleState, setFocusVisible] = useState(() => state.isFocused && state.isFocusVisible);
+  let [isFocusVisibleState, setFocusVisible] = useState(() => state.current.isFocused && state.current.isFocusVisible);
 
-  let updateState = () => setFocusVisible(state.isFocused && state.isFocusVisible);
+  let updateState = useCallback(() => setFocusVisible(state.current.isFocused && state.current.isFocusVisible), []);
 
-  let onFocusChange = isFocused => {
-    state.isFocused = isFocused;
+  let onFocusChange = useCallback(isFocused => {
+    state.current.isFocused = isFocused;
     setFocused(isFocused);
     updateState();
-  };
+  }, [updateState]);
 
   useFocusVisibleListener((isFocusVisible) => {
-    state.isFocusVisible = isFocusVisible;
+    state.current.isFocusVisible = isFocusVisible;
     updateState();
   }, [], {isTextInput});
 
@@ -72,7 +72,7 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
 
   return {
     isFocused,
-    isFocusVisible: state.isFocused && isFocusVisibleState,
+    isFocusVisible: state.current.isFocused && isFocusVisibleState,
     focusProps: within ? focusWithinProps : focusProps
   };
 }
