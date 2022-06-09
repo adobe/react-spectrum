@@ -1361,10 +1361,6 @@ storiesOf('TableView', module)
     () => (
       <HidingColumnsAllowsResizing />
     )
-  )
-  .add(
-    'check test',
-    () => <TableMock />
   );
 
 function AsyncLoadingExample(props) {
@@ -1713,22 +1709,3 @@ export function TableWithBreadcrumbs() {
     </Flex>
   );
 }
-
-let items2 = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
-let onLoadMoreSpy = () => {console.log('onLoadMoreSpy');};
-
-let TableMock = () => (
-  <TableView aria-label="Table" height="1000px" width="1000px">
-    <TableHeader>
-      <Column key="foo">Foo</Column>
-      <Column key="bar">Bar</Column>
-    </TableHeader>
-    <TableBody items={items2} onLoadMore={onLoadMoreSpy}>
-      {row => (
-        <Row>
-          {key => <Cell>{row[key]}</Cell>}
-        </Row>
-      )}
-    </TableBody>
-  </TableView>
-);
