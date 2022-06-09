@@ -3,8 +3,8 @@ import TodoList from './TodoList';
 import {Provider, useProvider, defaultTheme} from '@adobe/react-spectrum'
 import Lighting from './Lighting';
 import React from 'react'
-
-
+import {Footer} from '@adobe/react-spectrum'
+import BodyContent from './BodyContent';
 function App() {
   let [selected, setSelection] = React.useState(false);
 
@@ -18,11 +18,18 @@ function App() {
   }, [selected]);
 
   return (
+    // <Provider theme={defaultTheme} 
+    //           colorScheme={selected ? "light" : "dark"}
+    //           margin="size-600">
+    //   <Lighting selected={selected} switch={setSelection}/>
+    //   <TodoList />
+    // </Provider>
+
     <Provider theme={defaultTheme} 
               colorScheme={selected ? "light" : "dark"}
               margin="size-600">
       <Lighting selected={selected} switch={setSelection}/>
-      <TodoList />
+      <BodyContent />
     </Provider>
   );
 }

@@ -3,7 +3,9 @@ import './App.css';
 import {Flex} from '@adobe/react-spectrum'
 import {TextField, Button} from '@adobe/react-spectrum'
 import {Form} from '@adobe/react-spectrum'
-import ToDoItems from "./ToDoItems";
+import ToDoItems from "./ToDoItems"
+import Completed from "./Completed"
+import {Divider} from '@adobe/react-spectrum'
 
 
 
@@ -41,9 +43,12 @@ function TodoList() {
         });
     }
 
-    const elements = completed.map(item => (
-        <p key={item.id}>{item.task}</p>
-    ))
+    function clearCompleted(){
+        console.log('delete button clicked')
+        setCompleted(() => {
+            return [];
+        })
+    }
 
     return (
     <>
@@ -58,12 +63,13 @@ function TodoList() {
                                 isRequired/>
                     <Button variant="cta" type="submit">Submit</Button>
                 </Flex>
-                <h2>To-Do</h2>
+                <h2>To-Do</h2> 
                 <ToDoItems list={list} handleList={setList} updateCompleted={updateCompleted}/>
             </Flex>
         </Form>
+        <Divider marginTop="size-300" marginBottom="size-300" />
         <h2>Completed</h2>
-        {elements}
+        <Completed completed={completed} onDelete={clearCompleted}/>
     </>
     );
 }
