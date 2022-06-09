@@ -89,7 +89,7 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
   );
 }
 
-function Example({usePortal, contain}: StoryProps) {
+export function Example({usePortal, contain}: StoryProps) {
   let [open, setOpen] = useState(false);
 
   return (

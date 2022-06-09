@@ -14,6 +14,7 @@ import {act, fireEvent, render} from '@testing-library/react';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
 
 describe('FocusScope', function () {
@@ -594,6 +595,76 @@ describe('FocusScope', function () {
 
       userEvent.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
+    });
+
+    it('should restore focus to previous nodeToRestore when the nodeToRestore for the unmounting scope in no longer in the DOM', function () {
+      let {getAllByText, getAllByRole, rerender} = render(<StorybookExample />);
+      act(() => {getAllByText('Open dialog')[0].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[2]);
+      act(() => {getAllByText('Open dialog')[1].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[5]);
+      act(() => {getAllByText('Open dialog')[2].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[8]);
+      act(() => {getAllByText('close')[1].focus();});
+      fireEvent.click(getAllByText('close')[1]);
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[1]);
+      act(() => {getAllByText('close')[0].focus();});
+      fireEvent.click(getAllByText('close')[0]);
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[0]);
+
+      rerender(<StorybookExample contain={false} />);
+      act(() => {getAllByText('Open dialog')[0].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[2]);
+      act(() => {getAllByText('Open dialog')[1].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[5]);
+      act(() => {getAllByText('Open dialog')[2].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[8]);
+      act(() => {getAllByText('close')[1].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[1]);
+      act(() => {getAllByText('close')[0].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[0]);
+
+      rerender(<StorybookExample usePortal />);
+      act(() => {getAllByText('Open dialog')[0].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[2]);
+      act(() => {getAllByText('Open dialog')[1].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[5]);
+      act(() => {getAllByText('Open dialog')[2].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[8]);
+      act(() => {getAllByText('close')[1].focus();});
+      fireEvent.click(getAllByText('close')[1]);
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[1]);
+      act(() => {getAllByText('close')[0].focus();});
+      fireEvent.click(getAllByText('close')[0]);
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[0]);
+
+      rerender(<StorybookExample usePortal contain={false} />);
+      act(() => {getAllByText('Open dialog')[0].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[2]);
+      act(() => {getAllByText('Open dialog')[1].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[5]);
+      act(() => {getAllByText('Open dialog')[2].focus();});
+      fireEvent.click(document.activeElement);
+      expect(document.activeElement).toBe(getAllByRole('textbox')[8]);
+      act(() => {getAllByText('close')[1].focus();});
+      fireEvent.click(getAllByText('close')[1]);
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[1]);
+      act(() => {getAllByText('close')[0].focus();});
+      fireEvent.click(getAllByText('close')[0]);
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[0]);
     });
   });
 
