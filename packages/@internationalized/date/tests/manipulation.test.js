@@ -474,6 +474,9 @@ describe('CalendarDate manipulation', function () {
 
         date = new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 30);
         expect(date.set({day: 5})).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 25));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 12, 30);
+        expect(date.set({year: 1, month: 1, day: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 5, 1));
       });
     });
 

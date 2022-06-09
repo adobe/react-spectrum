@@ -119,14 +119,14 @@ export class JapaneseCalendar extends GregorianCalendar {
           date.day = Math.min(endDay, date.day);
         }
       }
+    }
 
-      if (date.year === 1) {
-        let [, startMonth, startDay] = ERA_START_DATES[idx];
-        date.month = Math.max(startMonth, date.month);
+    if (date.year === 1 && idx >= 0) {
+      let [, startMonth, startDay] = ERA_START_DATES[idx];
+      date.month = Math.max(startMonth, date.month);
 
-        if (date.month === startMonth) {
-          date.day = Math.max(startDay, date.day);
-        }
+      if (date.month === startMonth) {
+        date.day = Math.max(startDay, date.day);
       }
     }
   }
