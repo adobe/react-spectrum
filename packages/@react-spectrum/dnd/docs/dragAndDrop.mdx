@@ -35,6 +35,7 @@ many accessibility issues, including but not limited to keyboard interaction par
 React Spectrum collection components that support drag and drop operations seek to address these issues by providing full keyboard and screen reader drag and drop
 support.
 
+TODO: move this to an accessibility section, perhaps in the example section?
 To perform a drag and drop operations via a keyboard, first select the items to be dragged. You can then start the drag operation by focusing the drag handle on any of the
 selected rows and hitting <Keyboard>Enter</Keyboard>/<Keyboard>Space</Keyboard>. Once a drag operation is started, <Keyboard>Tab</Keyboard> can be used to cycle through valid
 drop targets. Hitting <Keyboard>Enter</Keyboard> will then confirm the drop operation on the focused drop target. For screen readers, please follow the instructions announced
@@ -43,7 +44,14 @@ when focusing the row's drag handle to begin a drag operation. Go ahead and try 
 
 ## Drag and Drop Concepts
 
-TODO: add stuff from RFC
+TODO: talk about the following
+* drag sources and drop targets
+* drag types: standard mime types, custom application-specific types, providing data in multiple formats
+* dragging multiple items at once
+* drag previews
+* drop operations: move, copy, link, cancel
+* drop positions: on, between, root
+* overall, at a very brief high level, how these all work across traditional dnd surfaces, keyboards, and screen readers
 
 ## Example
 
@@ -56,11 +64,14 @@ import {Flex} from '@react-spectrum/layout';
 </Flex>
 ```
 
+### Accessibility
+The example above illustrates the drag and drop experience in React Spectrum. TODO talk about screen reader and keyboard accessiblity
+
 ### Creating the draggable list
 
-The example above illustrates how one would use `useDragHooks` and `useDropHooks` to enable dragging files from one ListView to another. For the first ListView, we want
-to make the rows draggable and have the dragged rows removed from the list upon a successful drop. To accomplish this, we first want to setup the initial list of items for
-our draggable ListView via [useListData](/react-stately/useListData.html) so that we have access to some helper methods to modify the list of items on the fly.
+For the first ListView in the example above, we want to make the rows draggable and have the dragged rows removed from the list upon a successful drop. To accomplish this,
+we first want to setup the initial list of items for our draggable ListView via [useListData](/react-stately/useListData.html) so that we have access to some helper methods
+to modify the list of items on the fly.
 
 ```tsx example render=false
 let list = useListData({
@@ -281,7 +292,7 @@ function DroppableList(props) {
   <InterfaceType properties={dndDocs.exports.DraggableCollectionProps.properties} />
 </TypeContext.Provider>
 
-<TODO: add line break here>
+TODO: add line break here
 
 <FunctionAPI function={docs.exports.useDropHooks} links={docs.links} />
 <TypeContext.Provider value={dndDocs.links}>
