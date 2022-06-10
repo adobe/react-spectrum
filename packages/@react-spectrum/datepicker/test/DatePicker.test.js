@@ -720,7 +720,11 @@ describe('DatePicker', function () {
         let onChange = jest.fn();
 
         // Test controlled mode
-        let {getByLabelText, unmount} = render(<DatePicker label="Date" value={value} onChange={onChange} {...options.props} />);
+        let {getByLabelText, unmount} = render(
+          <Provider theme={theme} locale={options?.locale}>
+            <DatePicker label="Date" value={value} onChange={onChange} {...options.props} />
+          </Provider>
+        );
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -738,7 +742,11 @@ describe('DatePicker', function () {
 
         // Test uncontrolled mode (increment)
         onChange = jest.fn();
-        ({getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} {...options.props} />));
+        ({getByLabelText, unmount} = render(
+          <Provider theme={theme} locale={options?.locale}>
+            <DatePicker label="Date" defaultValue={value} onChange={onChange} {...options.props} />
+          </Provider>
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -751,7 +759,11 @@ describe('DatePicker', function () {
 
         // Test uncontrolled mode (decrement)
         onChange = jest.fn();
-        ({getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} {...options.props} />));
+        ({getByLabelText, unmount} = render(
+          <Provider theme={theme} locale={options?.locale}>
+            <DatePicker label="Date" defaultValue={value} onChange={onChange} {...options.props} />
+          </Provider>
+          ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -764,7 +776,11 @@ describe('DatePicker', function () {
 
         // Test read only mode (increment)
         onChange = jest.fn();
-        ({getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...options.props} />));
+        ({getByLabelText, unmount} = render(
+          <Provider theme={theme} locale={options?.locale}>
+            <DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...options.props} />
+          </Provider>
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -776,7 +792,11 @@ describe('DatePicker', function () {
 
         // Test read only mode (decrement)
         onChange = jest.fn();
-        ({getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...options.props} />));
+        ({getByLabelText, unmount} = render(
+          <Provider theme={theme} locale={options?.locale}>
+            <DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...options.props} />
+          </Provider>
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -915,6 +935,30 @@ describe('DatePicker', function () {
         it('should support using the arrow keys to increment and decrement the day period', function () {
           testArrows('AM/PM', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 20), new CalendarDateTime(2019, 2, 3, 20));
           testArrows('AM/PM', new CalendarDateTime(2019, 2, 3, 20), new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 8));
+        });
+      });
+
+      describe('era', function () {
+        it('should support using the arrow keys to increment and decrement the era', function () {
+          testArrows('era', new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 2, 3), new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), {locale: 'en-US-u-ca-japanese'});
+        });
+
+        it('should show and hide the era field as needed', function () {
+          let {queryByTestId} = render(<DatePicker label="Date" />);
+          let year = queryByTestId('year');
+          expect(queryByTestId('era')).toBeNull();
+
+          beforeInput(year, '1');
+          fireEvent.keyDown(year, {key: 'ArrowDown'});
+          fireEvent.keyUp(year, {key: 'ArrowDown'});
+
+          let era = queryByTestId('era');
+          expect(era).not.toBeNull();
+
+          fireEvent.keyDown(era, {key: 'ArrowDown'});
+          fireEvent.keyUp(era, {key: 'ArrowDown'});
+
+          expect(queryByTestId('era')).toBeNull();
         });
       });
     });
