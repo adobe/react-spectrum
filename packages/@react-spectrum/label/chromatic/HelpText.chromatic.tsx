@@ -88,20 +88,34 @@ export const CustomWidthLabelPositionSide = {
   name: 'custom width, labelPosition: side'
 };
 
-export const ContainerWithTextAlignmentSet = {
-  render: () => (
-    <Flex
-      direction="column"
-      gap="size-200"
-      UNSAFE_style={{
-        textAlign: 'center'
-      }}>
-      <TextField label="Password" description="Enter a single digit number." />
-      <TextField
-        label="Password 2"
-        errorMessage="Create a password with at least 8 characters."
-        validationState="invalid" />
-    </Flex>
-  ),
-  name: 'container with text alignment set'
+export const ContainerWithTextAlignmentSetDescription = {
+  args: {
+    label: 'Password',
+    description: 'Enter a single digit number'
+  },
+  name: 'textAlign center description',
+  decorator: [TextAlignDecorator]
 };
+
+export const ContainerWithTextAlignmentSetError = {
+  args: {
+    label: 'Password',
+    errorMessage: 'Create a password with at least 8 characters.',
+    validationState: 'invalid'
+  },
+  name: 'textAlign center errorMessage',
+  decorator: [TextAlignDecorator]
+};
+
+function TextAlignDecorator(Story) {
+  return (
+    <Flex
+    direction="column"
+    gap="size-200"
+    UNSAFE_style={{
+      textAlign: 'center'
+    }}>
+      <Story />
+    </Flex>
+  );
+}
