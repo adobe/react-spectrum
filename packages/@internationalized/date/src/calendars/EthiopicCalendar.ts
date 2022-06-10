@@ -38,7 +38,6 @@ function julianDayToCE(calendar: Calendar, epoch: number, jd: number): Mutable<C
   let year = Math.floor((4 * (jd - epoch)) / 1461);
   let month = 1 + Math.floor((jd - ceToJulianDay(epoch, year, 1, 1)) / 30);
   let day = jd + 1 - ceToJulianDay(epoch, year, month, 1);
-
   return new CalendarDate(calendar, year, month, day);
 }
 
@@ -91,12 +90,7 @@ export class EthiopicCalendar implements Calendar {
   }
 
   getDaysInMonth(date: AnyCalendarDate): number {
-    let year = date.year;
-    if (date.era === 'AA') {
-      year -= AMETE_MIHRET_DELTA;
-    }
-
-    return getDaysInMonth(year, date.month);
+    return getDaysInMonth(date.year, date.month);
   }
 
   getMonthsInYear(): number {
@@ -107,8 +101,11 @@ export class EthiopicCalendar implements Calendar {
     return 365 + getLeapDay(date.year);
   }
 
-  getYearsInEra(): number {
-    return 9999;
+  getYearsInEra(date: AnyCalendarDate): number {
+    // 9999-12-31 gregorian is 9992-20-02 ethiopic.
+    // Round down to 9991 for the last full year.
+    // AA 9999-01-01 ethiopic is 4506-09-30 gregorian.
+    return date.era === 'AA' ? 9999 : 9991;
   }
 
   getEras() {
@@ -132,6 +129,11 @@ export class EthiopicAmeteAlemCalendar extends EthiopicCalendar {
 
   getEras() {
     return ['AA'];
+  }
+
+  getYearsInEra(): number {
+    // 9999-13-04 ethioaa is the maximum date, which is equivalent to 4506-09-29 gregorian.
+    return 9999;
   }
 }
 
@@ -186,5 +188,12 @@ export class CopticCalendar extends EthiopicCalendar {
 
   getEras() {
     return ['BCE', 'CE'];
+  }
+
+  getYearsInEra(date: AnyCalendarDate): number {
+    // 9999-12-30 gregorian is 9716-02-20 coptic.
+    // Round down to 9715 for the last full year.
+    // BCE 9999-01-01 coptic is BC 9716-06-15 gregorian.
+    return date.era === 'BCE' ? 9999 : 9715;
   }
 }
