@@ -514,6 +514,9 @@ export function createFocusManager(ref: RefObject<HTMLElement>, defaultOptions: 
   return {
     focusNext(opts: FocusManagerOptions = {}) {
       let root = ref.current;
+      if (!root) {
+        return;
+      }
       let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || document.activeElement;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
@@ -532,6 +535,9 @@ export function createFocusManager(ref: RefObject<HTMLElement>, defaultOptions: 
     },
     focusPrevious(opts: FocusManagerOptions = defaultOptions) {
       let root = ref.current;
+      if (!root) {
+        return;
+      }
       let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || document.activeElement;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
@@ -556,6 +562,9 @@ export function createFocusManager(ref: RefObject<HTMLElement>, defaultOptions: 
     },
     focusFirst(opts = defaultOptions) {
       let root = ref.current;
+      if (!root) {
+        return;
+      }
       let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept} = opts;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       let nextNode = walker.nextNode() as HTMLElement;
@@ -566,6 +575,9 @@ export function createFocusManager(ref: RefObject<HTMLElement>, defaultOptions: 
     },
     focusLast(opts = defaultOptions) {
       let root = ref.current;
+      if (!root) {
+        return;
+      }
       let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept} = opts;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       let next = last(walker);

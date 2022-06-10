@@ -12,7 +12,7 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId, useLabels} from '@react-aria/utils';
+import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
@@ -318,6 +318,19 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   useEvent(ref, 'selectstart', e => {
     e.preventDefault();
   });
+
+  useLayoutEffect(() => {
+    let element = ref.current;
+    return () => {
+      // If the focused segment is removed, focus the previous one, or the next one if there was no previous one.
+      if (document.activeElement === element) {
+        let prev = focusManager.focusPrevious();
+        if (!prev) {
+          focusManager.focusNext();
+        }
+      }
+    };
+  }, [ref, focusManager]);
 
   // spinbuttons cannot be focused with VoiceOver on iOS.
   let touchPropOverrides = isIOS() || segment.type === 'timeZoneName' ? {
