@@ -32,7 +32,7 @@ This page describes how to enable drag and drop functionality for the various Re
 Drag and drop is an operation performed when a user "grabs" a UI element via their pointing device and drops it on a different location or element.
 It has become a common interaction in many modern applications due to its flexibility across a variety of use cases but can come saddled with
 many accessibility issues, including but not limited to keyboard interaction parity and difficulties mimicking drag operations with mouse emulators.
-React Spectrum components that support drag and drop operations seek to address these issues by providing full keyboard and screen reader drag and drop
+React Spectrum collection components that support drag and drop operations seek to address these issues by providing full keyboard and screen reader drag and drop
 support.
 
 To perform a drag and drop operations via a keyboard, first select the items to be dragged. You can then start the drag operation by focusing the drag handle on any of the
@@ -56,15 +56,54 @@ import {Flex} from '@react-spectrum/layout';
 </Flex>
 ```
 
-The example above illustrates how one would use `useDragHooks` and `useDropHooks` to enable dragging files from one ListView to another. For the first ListView, we want to make the rows draggable and
-have the dragged rows removed from the list upon a successful drop. To accomplish this, we first want to specify the types of data associated with each item via the array returned by `getItems`. In this case,
-we stringify each dragged item's information and map it to the item's type. We also provide a `onDragEnd` event handler to `useDragHooks` that removes the dragged items from the list only
-upon a successful drop operation.
+### Creating the draggable list
+
+The example above illustrates how one would use `useDragHooks` and `useDropHooks` to enable dragging files from one ListView to another. For the first ListView, we want
+to make the rows draggable and have the dragged rows removed from the list upon a successful drop. To accomplish this, we first want to setup the initial list of items for
+our draggable ListView via [useListData](/react-stately/useListData.html) so that we have access to some helper methods to modify the list of items on the fly.
+
+```tsx example render=false
+let list = useListData({
+  initialItems: items || [
+    {id: 'a', textValue: 'Adobe Photoshop', type: 'file'},
+    {id: 'b', textValue: 'Adobe XD', type: 'file'},
+    {id: 'c', textValue: 'Adobe Dreamweaver', type: 'file'},
+    {id: 'd', textValue: 'Adobe InDesign', type: 'file'},
+    {id: 'e', textValue: 'Adobe Connect', type: 'file'}
+  ]
+});
+```
+
+Next, we need to specify the data associated with each dragged item via the array returned by `getItems`. In this case, we look up the information for each dragged item and
+serialize it, mapping it to the items type. This information will be processed and provided to the drop target's drop handlers on drop.
+
+```tsx example render=false
+function getItems(keys) {
+  return [...keys].map(key => {
+    let item = list.getItem(key);
+    return {
+      [item.type]: JSON.stringify(item)
+    };
+  })
+}
+```
+
+We also create a `onDragEnd` event handler for `useDragHooks` that handles removing the dragged items from the draggable list upon a successful drop operation. Note how we use
+the `.remove` method provided by `useListData` to remove the dropped items from our list.
+
+```tsx example render=false
+function onDragEnd(e) {
+  if (e.dropOperation === 'move') {
+    list.remove(...e.keys);
+  }
+}
+```
+
+Finally, we simply provide our `getItems` and `onDragEnd` functions as options to `useDragHooks`, providing us with a set of `dragHooks` that we can pass to our ListView directly.
+Below is what our draggable ListView would look like after combining everything together. For more info on `getItems` and `onDragEnd`, see the [API section](#api) below.
 
 ```tsx example export=true render=false
-import Folder from '@spectrum-icons/workflow/Folder';
 import {Item, ListView} from '@react-spectrum/list';
-import {Text} from '@adobe/react-spectrum';
 import {useDragHooks} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 
@@ -77,16 +116,15 @@ function DraggableList(props) {
     initialItems: items || [
       {id: 'a', textValue: 'Adobe Photoshop', type: 'file'},
       {id: 'b', textValue: 'Adobe XD', type: 'file'},
-      {id: 'c', textValue: 'Documents', type: 'folder'},
+      {id: 'c', textValue: 'Adobe Dreamweaver', type: 'file'},
       {id: 'd', textValue: 'Adobe InDesign', type: 'file'},
-      {id: 'e', textValue: 'Utilities', type: 'folder'}
+      {id: 'e', textValue: 'Adobe Connect', type: 'file'}
     ]
   });
 
   let dragHooks = useDragHooks({
     getItems: (keys) => [...keys].map(key => {
       let item = list.getItem(key);
-      // Setup the info for each item that will be propagated upon drag
       return {
         [item.type]: JSON.stringify(item)
       };
@@ -108,9 +146,8 @@ function DraggableList(props) {
       dragHooks={dragHooks}
       {...otherProps}>
       {item => (
-        <Item key={item.key} textValue={item.textValue}>
-          {item.type === 'folder' && <Folder />}
-          <Text>{item.textValue}</Text>
+        <Item key={item.key}>
+          {item.textValue}
         </Item>
       )}
     </ListView>
@@ -118,10 +155,61 @@ function DraggableList(props) {
 }
 ```
 
-For the second ListView, we want to make it droppable but have it ignore any drop operations that contains folder items. To implement this filtering, we provide a `getDropOperation` to `useDropHooks` that
-returns a "cancel" drop operation if any of the item types includes "folder". Next, we create a `onDrop` event handler to process the successfully dropped items. This `onDrop` handler first checks
-each dropped item's kind and type, extracting the item's relevant information if it detects that it is a `file`. This information is used to construct an array of items to add to the list, inserting
-them in the list where the user dropped them.
+### Creating the droppable list
+
+For the second ListView, we want to make it droppable but have it only accept root level drops. Similar to the draggable ListView, we'll start by initializing the default item list
+via [useListData](/react-stately/useListData.html).
+
+```tsx example render=false
+let list = useListData({
+  initialItems: items || [
+    {id: 'f', textValue: 'Adobe AfterEffects', type: 'file'},
+    {id: 'g', textValue: 'Adobe Illustrator', type: 'file'},
+    {id: 'h', textValue: 'Adobe Lightroom', type: 'file'},
+    {id: 'i', textValue: 'Adobe Premiere Pro', type: 'file'},
+    {id: 'j', textValue: 'Adobe Fresco', type: 'file'}
+  ]
+});
+```
+
+To implement root level only drops, we create a `getDropOperation` function that returns `"cancel"` for any drop target other than `root` and if the dragged item types doesn't include
+`'file'`.
+
+```tsx example render=false
+function getDropOperation(target, types) {
+  if (target.type !== 'root' || !types.has('file')) {
+    return 'cancel';
+  }
+
+  return 'move';
+}
+```
+
+Next, we create a `onDrop` event handler to process the successfully dropped items. This `onDrop` handler first checks each dropped item's kind and type, extracting the item's
+relevant information if it detects it has the expected types. This information is used to construct an array of items to add to the list and then inserting them to the end of the
+droppable list.
+
+```tsx example render=false
+async function onDrop(e) {
+  let itemsToAdd = [];
+  for (let item of e.items) {
+    if (item.kind === 'text' && item.types.has('file')) {
+      let {type, id, textValue} = JSON.parse(await item.getText('file'));
+      if (!!type && !!id && !!textValue) {
+        itemsToAdd.push({
+          id,
+          type,
+          textValue
+        });
+      }
+    }
+  }
+  list.append(...itemsToAdd);
+}
+```
+
+Finally, we simply provide our `getDropOperation` and `onDrop` functions as options to `useDropHooks`, providing us with a set of `dropHooks` that we can pass to our ListView directly.
+Below is what our droppable ListView would look like after combining everything together. For more info on `getDropOperation` and `onDrop`, see the [API section](#api) below.
 
 ```tsx example export=true render=false
 import {useDropHooks} from '@react-spectrum/dnd';
@@ -143,7 +231,7 @@ function DroppableList(props) {
 
   let dropHooks = useDropHooks({
     getDropOperation: (target, types) => {
-      if (types.has('folder')) {
+      if (target.type !== 'root' || !types.has('file')) {
         return 'cancel';
       }
 
@@ -152,24 +240,18 @@ function DroppableList(props) {
     onDrop: async (e) => {
       let itemsToAdd = [];
       for (let item of e.items) {
-        let type, id, textValue;
         if (item.kind === 'text' && item.types.has('file')) {
-          let {id, type, textValue} = JSON.parse(await item.getText('file'));
-          itemsToAdd.push({
-            id,
-            type,
-            textValue
-          });
+          let {type, id, textValue} = JSON.parse(await item.getText('file'));
+          if (!!type && !!id && !!textValue) {
+            itemsToAdd.push({
+              id,
+              type,
+              textValue
+            });
+          }
         }
       }
-
-      if (e.target.type === 'root') {
-        list.prepend(...itemsToAdd);
-      } else if (e.target.dropPosition === 'before') {
-        list.insertBefore(e.target.key, ...itemsToAdd);
-      } else {
-        list.insertAfter(e.target.key, ...itemsToAdd);
-      }
+      list.append(...itemsToAdd);
     }
   });
 
@@ -183,9 +265,8 @@ function DroppableList(props) {
       dropHooks={dropHooks}
       {...otherProps}>
       {item => (
-        <Item key={item.key} textValue={item.textValue}>
-          {item.type === 'folder' && <Folder />}
-          <Text>{item.textValue}</Text>
+        <Item key={item.key}>
+          {item.textValue}
         </Item>
       )}
     </ListView>
@@ -200,15 +281,15 @@ function DroppableList(props) {
   <InterfaceType properties={dndDocs.exports.DraggableCollectionProps.properties} />
 </TypeContext.Provider>
 
-TODO: add line break here
+<TODO: add line break here>
 
 <FunctionAPI function={docs.exports.useDropHooks} links={docs.links} />
 <TypeContext.Provider value={dndDocs.links}>
   <InterfaceType properties={dndDocs.exports.DroppableCollectionProps.properties} />
 </TypeContext.Provider>
 
-Enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you may be familiar with.
-Instead of providing each event handler directly to the component, you must first import `useDragHooks` and `useDropHooks` from `@react-spectrum/dnd` package
+As seen in the [example](#example) above, enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you may be familiar with.
+Instead of providing each event handler directly to the component, you must first import `useDragHooks` and `useDropHooks` from the `@react-spectrum/dnd` package
 and provide those hooks with your desired options.
 
 `useDragHooks` will then provide you with a set of drag hooks that you can pass to the component via its `dragHooks` prop, thus enabling drag operations for the component.
@@ -222,10 +303,12 @@ the `onDragEnd` and `onDrop` handlers with the executed drop operation, allowing
 For instance, you may have a draggable collection of items that allows `move` and `copy` operations but you need a way to know whether or not you should be removing the dragged items
 from the list after a drop operation. A drop target that only allows `copy` operations, such as a file upload drop zone, would be able to return `copy` from its `getDropOperation` and communicate that
 to your draggable collection's `onDragEnd` handler, letting it know that it shouldn't remove the dragged items from the list. Alternatively, a drop target that allows `move` operations, like in the
-[example](#example) below, would return `move` from its `getDropOperation` and thus inform your draggable collection to remove the dragged items from it list.
+[example](#example) above, would return `move` from its `getDropOperation` and thus inform your draggable collection to remove the dragged items from it list.
 
 You may be wondering why we didn't simply import the drag and drop hooks within the components themselves. The reason behind this is to reduce the bundle size of
 the component for users who don't need the drag and drop support for their component.
 
-The following list shows which components currently support drag and drop:
+## Supported components
+
+The following list shows which components currently support drag and drop. Common drag and drop implementations are included in each component's documentation so definitely take a look!
 -  [ListView](ListView.html#drag-and-drop)
