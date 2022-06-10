@@ -41,7 +41,7 @@ interface DatePickerBase<T extends DateValue> extends InputBase, Validation, Foc
   maxValue?: DateValue,
   /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
   isDateUnavailable?: (date: DateValue) => boolean,
-  /** A placeholder date to display when no value is selected. Defaults to today's date at midnight. */
+  /** A placeholder date that influences the format of the placeholder shown when no value is selected. Defaults to today's date at midnight. */
   placeholderValue?: T,
   /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
   hourCycle?: 12 | 24,
@@ -114,7 +114,10 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
   granularity?: 'hour' | 'minute' | 'second' | 'millisecond',
   /** Whether to hide the time zone abbreviation. */
   hideTimeZone?: boolean,
-  /** A placeholder time to display when no value is selected. Defaults to 12:00 or 00:00 depending on the hour cycle. */
+  /**
+   * A placeholder time that influences the format of the placeholder shown when no value is selected.
+   * Defaults to 12:00 AM or 00:00 depending on the hour cycle.
+   */
   placeholderValue?: T,
   /** The minimum allowed time that a user may select. */
   minValue?: TimeValue,

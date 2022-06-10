@@ -35,7 +35,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let displayNames = useDisplayNames();
   let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state);
 
-  let textValue = segment.text;
+  let textValue = segment.isPlaceholder ? '' : segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
   let monthDateFormatter = useDateFormatter({month: 'long', timeZone: options.timeZone});
   let hourDateFormatter = useDateFormatter({
@@ -44,14 +44,17 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     timeZone: options.timeZone
   });
 
-  if (segment.type === 'month') {
+  if (segment.type === 'month' && !segment.isPlaceholder) {
     let monthTextValue = monthDateFormatter.format(state.dateValue);
     textValue = monthTextValue !== textValue ? `${textValue} – ${monthTextValue}` : monthTextValue;
-  } else if (segment.type === 'hour') {
+  } else if (segment.type === 'hour' && !segment.isPlaceholder) {
     textValue = hourDateFormatter.format(state.dateValue);
   }
 
   let {spinButtonProps} = useSpinButton({
+    // The ARIA spec says aria-valuenow is optional if there's no value, but aXe seems to require it.
+    // This doesn't seem to have any negative effects with real AT since we also use aria-valuetext.
+    // https://github.com/dequelabs/axe-core/issues/3505
     value: segment.value,
     textValue,
     minValue: segment.minValue,
@@ -114,16 +117,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
 
     switch (e.key) {
-      case 'Enter':
-        e.preventDefault();
-        e.stopPropagation();
-        if (segment.isPlaceholder && !state.isReadOnly) {
-          state.confirmPlaceholder(segment.type);
-        }
-        focusManager.focusNext();
-        break;
-      case 'Tab':
-        break;
       case 'Backspace':
       case 'Delete': {
         // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
@@ -332,8 +325,8 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       ...touchPropOverrides,
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
       'aria-describedby': ariaDescribedBy,
-      'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
       'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
+      'data-placeholder': segment.isPlaceholder || undefined,
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,
       spellCheck: isEditable ? 'false' : undefined,

@@ -1,4 +1,7 @@
 {
   "loading": "로드 중",
-  "loadingMore": "추가 로드 중"
+  "loadingMore": "추가 로드 중",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }
