@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render as render_, within} from '@testing-library/react';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -880,7 +880,12 @@ describe('DatePicker', function () {
       function testInput(label, value, keys, newValue, moved, props) {
         let onChange = jest.fn();
         // Test controlled mode
-        let {getByLabelText, getAllByRole, unmount} = render(<DatePicker label="Date" value={value} onChange={onChange} {...props} />);
+        let {getByLabelText, getAllByRole, unmount} = render(
+          <Provider theme={theme} locale={props?.locale}>
+            <DatePicker label="Date" value={value} onChange={onChange} {...props} />
+          </Provider>
+        );
+
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -914,7 +919,11 @@ describe('DatePicker', function () {
 
         // Test uncontrolled mode
         onChange = jest.fn();
-        ({getByLabelText, getAllByRole, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} {...props} />));
+        ({getByLabelText, getAllByRole, unmount} = render(
+          <Provider theme={theme} locale={props?.locale}>
+            <DatePicker label="Date" defaultValue={value} onChange={onChange} {...props} />
+          </Provider>
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -947,7 +956,11 @@ describe('DatePicker', function () {
 
         // Test read only mode
         onChange = jest.fn();
-        ({getByLabelText, getAllByRole, unmount} = render(<DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...props} />));
+        ({getByLabelText, getAllByRole, unmount} = render(
+          <Provider theme={theme} locale={props?.locale}>
+            <DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...props} />
+          </Provider>
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -1064,6 +1077,14 @@ describe('DatePicker', function () {
 
       it('should support entering arabic digits', function () {
         testInput('year', new CalendarDate(2019, 2, 3), '٢٠٢٤', new CalendarDate(2024, 2, 3), false);
+      });
+
+      it('should support typing into the era segment', function () {
+        testInput('era', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), 'h', new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
+        testInput('era', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), 's', new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
+        testInput('era', new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), 'r', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
+        testInput('era', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), '0', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
+        testInput('era', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), '1', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
       });
     });
 

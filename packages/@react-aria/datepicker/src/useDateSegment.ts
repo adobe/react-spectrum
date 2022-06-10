@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
 import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId, useLabels} from '@react-aria/utils';
 import {hookData} from './useDateField';
@@ -143,6 +144,34 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod').value;
   }, [amPmFormatter]);
 
+  // Get a list of formatted era names so users can type the first character to choose one.
+  let eraFormatter = useDateFormatter({year: 'numeric', era: 'narrow', timeZone: 'UTC'});
+  let eras = useMemo(() => {
+    if (segment.type !== 'era') {
+      return [];
+    }
+
+    let date = toCalendar(new CalendarDate(1, 1, 1), state.calendar);
+    let eras = state.calendar.getEras().map(era => {
+      let eraDate = date.set({year: 1, month: 1, day: 1, era}).toDate('UTC');
+      let parts = eraFormatter.formatToParts(eraDate);
+      let formatted = parts.find(p => p.type === 'era').value;
+      return {era, formatted};
+    });
+
+    // Remove the common prefix from formatted values. This is so that in calendars with eras like
+    // ERA0 and ERA1 (e.g. Ethiopic), users can press "0" and "1" to select an era. In other cases,
+    // the first letter is used.
+    let prefixLength = commonPrefixLength(eras.map(era => era.formatted));
+    if (prefixLength) {
+      for (let era of eras) {
+        era.formatted = era.formatted.slice(prefixLength);
+      }
+    }
+
+    return eras;
+  }, [eraFormatter, state.calendar, segment.type]);
+
   let onInput = (key: string) => {
     if (state.isDisabled || state.isReadOnly) {
       return;
@@ -161,6 +190,14 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
         }
         focusManager.focusNext();
         break;
+      case 'era': {
+        let matched = eras.find(e => startsWith(e.formatted, key));
+        if (matched) {
+          state.setSegment('era', matched.era);
+          focusManager.focusNext();
+        }
+        break;
+      }
       case 'day':
       case 'hour':
       case 'minute':
@@ -334,7 +371,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
       [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,
-      inputMode: state.isDisabled || segment.type === 'dayPeriod' || !isEditable ? undefined : 'numeric',
+      inputMode: state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable ? undefined : 'numeric',
       tabIndex: state.isDisabled ? undefined : 0,
       onKeyDown,
       onFocus,
@@ -352,4 +389,17 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       }
     })
   };
+}
+
+function commonPrefixLength(strings: string[]): number {
+  // Sort the strings, and compare the characters in the first and last to find the common prefix.
+  strings.sort();
+  let first = strings[0];
+  let last = strings[strings.length - 1];
+  for (let i = 0; i < first.length; i++) {
+    if (first[i] !== last[i]) {
+      return i;
+    }
+  }
+  return 0;
 }

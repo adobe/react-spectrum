@@ -43,6 +43,8 @@ export interface DateFieldState {
   value: DateValue,
   /** The current value, converted to a native JavaScript `Date` object.  */
   dateValue: Date,
+  /** The calendar system currently in use. */
+  calendar: Calendar,
   /** Sets the field's value. */
   setValue(value: DateValue): void,
   /** A list of segments for the current value. */
@@ -78,6 +80,7 @@ export interface DateFieldState {
    */
   decrementPage(type: SegmentType): void,
   /** Sets the value of the given segment. */
+  setSegment(type: 'era', value: string): void,
   setSegment(type: SegmentType, value: number): void,
   /** Updates the remaining unfilled segments with the placeholder value. */
   confirmPlaceholder(): void,
@@ -291,6 +294,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
   return {
     value: calendarValue,
     dateValue,
+    calendar,
     setValue,
     segments,
     dateFormatter,
@@ -468,6 +472,7 @@ function setSegment(value: DateValue, part: string, segmentValue: number, option
     case 'day':
     case 'month':
     case 'year':
+    case 'era':
       return value.set({[part]: segmentValue});
   }
 
