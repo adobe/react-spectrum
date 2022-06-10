@@ -145,8 +145,12 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   }, [amPmFormatter]);
 
   // Get a list of formatted era names so users can type the first character to choose one.
-  let eraFormatter = useDateFormatter({era: 'narrow', timeZone: 'UTC'});
+  let eraFormatter = useDateFormatter({year: 'numeric', era: 'narrow', timeZone: 'UTC'});
   let eras = useMemo(() => {
+    if (segment.type !== 'era') {
+      return [];
+    }
+
     let date = toCalendar(new CalendarDate(1, 1, 1), state.calendar);
     let eras = state.calendar.getEras().map(era => {
       let eraDate = date.set({year: 1, month: 1, day: 1, era}).toDate('UTC');
@@ -166,7 +170,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
 
     return eras;
-  }, [eraFormatter, state.calendar]);
+  }, [eraFormatter, state.calendar, segment.type]);
 
   let onInput = (key: string) => {
     if (state.isDisabled || state.isReadOnly) {
