@@ -13,6 +13,7 @@
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
 import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
+import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
@@ -31,6 +32,8 @@ export interface DateSegment {
   maxValue?: number,
   /** Whether the value is a placeholder. */
   isPlaceholder: boolean,
+  /** A placeholder string for the segment. */
+  placeholder: string,
   /** Whether the segment is editable. */
   isEditable: boolean
 }
@@ -76,11 +79,8 @@ export interface DateFieldState {
   decrementPage(type: SegmentType): void,
   /** Sets the value of the given segment. */
   setSegment(type: SegmentType, value: number): void,
-  /**
-   * Replaces the value of the date field with the placeholder value.
-   * If a segment type is provided, only that segment is confirmed. Otherwise, all segments that have not been entered yet are confirmed.
-   */
-  confirmPlaceholder(type?: SegmentType): void,
+  /** Updates the remaining unfilled segments with the placeholder value. */
+  confirmPlaceholder(): void,
   /** Clears the value of the given segment, reverting it to the placeholder. */
   clearSegment(type: SegmentType): void,
   /** Formats the current date value using the given options. */
@@ -189,7 +189,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
 
   // Determine how many editable segments there are for validation purposes.
   // The result is cached for performance.
-  let allSegments = useMemo(() =>
+  let allSegments: Partial<typeof EDITABLE_SEGMENTS> = useMemo(() =>
     dateFormatter.formatToParts(new Date())
       .filter(seg => EDITABLE_SEGMENTS[seg.type])
       .reduce((p, seg) => (p[seg.type] = true, p), {})
@@ -251,15 +251,18 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
           isEditable = false;
         }
 
+        let isPlaceholder = EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type];
+        let placeholder = EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null;
         return {
           type: TYPE_MAPPING[segment.type] || segment.type,
-          text: segment.value,
+          text: isPlaceholder ? placeholder : segment.value,
           ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
-          isPlaceholder: EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type],
+          isPlaceholder,
+          placeholder,
           isEditable
         } as DateSegment;
       })
-  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar]);
+  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale]);
 
   let hasEra = useMemo(() => segments.some(s => s.type === 'era'), [segments]);
 
@@ -272,8 +275,14 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
   };
 
   let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
-    markValid(type);
-    setValue(addSegment(displayValue, type, amount, resolvedOptions));
+    if (!validSegments[type]) {
+      markValid(type);
+      if (Object.keys(validSegments).length >= Object.keys(allSegments).length) {
+        setValue(displayValue);
+      }
+    } else {
+      setValue(addSegment(displayValue, type, amount, resolvedOptions));
+    }
   };
 
   let validationState: ValidationState = props.validationState ||
@@ -307,21 +316,17 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
       markValid(part);
       setValue(setSegment(displayValue, part, v, resolvedOptions));
     },
-    confirmPlaceholder(part) {
+    confirmPlaceholder() {
       if (props.isDisabled || props.isReadOnly) {
         return;
       }
 
-      if (!part) {
-        // Confirm the rest of the placeholder if any of the segments are valid.
-        let numValid = Object.keys(validSegments).length;
-        if (numValid > 0 && numValid < Object.keys(allSegments).length) {
-          validSegments = {...allSegments};
-          setValidSegments(validSegments);
-          setValue(displayValue.copy());
-        }
-      } else if (!validSegments[part]) {
-        markValid(part);
+      // Confirm the placeholder if only the day period is not filled in.
+      let validKeys = Object.keys(validSegments);
+      let allKeys = Object.keys(allSegments);
+      if (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod) {
+        validSegments = {...allSegments};
+        setValidSegments(validSegments);
         setValue(displayValue.copy());
       }
     },

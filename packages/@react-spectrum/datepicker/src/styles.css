@@ -107,11 +107,21 @@
   }
 }
 
+.react-spectrum-DatePicker-placeholder {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-style: italic;
+  visibility: hidden;
+  height: 0;
+}
+
 .react-spectrum-DatePicker-cell.is-placeholder {
   color: var(--react-spectrum-datepicker-placeholder-color);
 
-  &:before {
-    content: attr(aria-placeholder);
+  .react-spectrum-DatePicker-placeholder {
+    visibility: visible;
+    height: auto;
   }
 }
 
