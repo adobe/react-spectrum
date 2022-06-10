@@ -138,12 +138,13 @@ export class JapaneseCalendar extends GregorianCalendar {
   getYearsInEra(date: AnyCalendarDate): number {
     // Get the number of years in the era, taking into account the date's month and day fields.
     let era = ERA_NAMES.indexOf(date.era);
+    let cur = ERA_START_DATES[era];
     let next = ERA_START_DATES[era + 1];
     if (next == null) {
-      return 9999;
+      // 9999 gregorian is the maximum year allowed.
+      return 9999 - cur[0] + 1;
     }
 
-    let cur = ERA_START_DATES[era];
     let years = next[0] - cur[0];
 
     if (date.month < next[1] || (date.month === next[1] && date.day < next[2])) {
