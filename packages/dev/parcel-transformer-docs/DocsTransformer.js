@@ -293,6 +293,10 @@ module.exports = new Transformer({
         for (let propertyPath of path.get('body.body')) {
           let property = processExport(propertyPath);
           if (property) {
+            let prev = properties[property.name];
+            if (!property.description && prev?.description) {
+              property.description = prev.description;
+            }
             properties[property.name] = property;
           } else {
             console.log('UNKNOWN PROPERTY interface declaration', propertyPath.node);
