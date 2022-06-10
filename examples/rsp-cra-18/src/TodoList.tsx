@@ -1,17 +1,11 @@
 import React from "react";
 import './App.css';
-import {Flex} from '@adobe/react-spectrum'
-import {TextField, Button} from '@adobe/react-spectrum'
-import {Form} from '@adobe/react-spectrum'
+import {Flex, TextField, Button, Form, Divider} from '@adobe/react-spectrum'
 import ToDoItems from "./ToDoItems"
 import Completed from "./Completed"
-import {Divider} from '@adobe/react-spectrum'
-
-
 
 function TodoList() {
 
-    // let [list, setList] = React.useState<string[]>([]);
     const [list, setList] = React.useState<{id: number; task: string}[]>([]);
     const [value, setValue] = React.useState('')
     const [completed, setCompleted] = React.useState<{id: number; task: string}[]>([]);
@@ -27,12 +21,13 @@ function TodoList() {
                     {id: count, task: value}]
             })
 
+            //used to determine the key for each item in the list object
             setCount(prevCount => {
                 return prevCount + 1;
             })
         }   
 
-        setValue("");
+        setValue(""); //clears text field on submit
     }
 
     function updateCompleted(complete : string){
@@ -44,7 +39,6 @@ function TodoList() {
     }
 
     function clearCompleted(){
-        console.log('delete button clicked')
         setCompleted(() => {
             return [];
         })

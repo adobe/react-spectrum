@@ -1,30 +1,21 @@
 import './App.css';
-import TodoList from './TodoList';
-import {Provider, useProvider, defaultTheme} from '@adobe/react-spectrum'
+import {Provider, defaultTheme} from '@adobe/react-spectrum'
 import Lighting from './Lighting';
 import React from 'react'
-import {Footer} from '@adobe/react-spectrum'
 import BodyContent from './BodyContent';
 function App() {
   let [selected, setSelection] = React.useState(false);
 
+  //changes the background color of the document based on the status of 'selected'
   React.useEffect(() => {
-    // document.body.style.backgroundColor = "##f5f5f5";
+    document.body.style.backgroundColor = selected ? "#f5f5f5" : "#1e1e1e";
 
     return () => {
-      // console.log("changed");
-      document.body.style.backgroundColor = selected ? "#1e1e1e" : "#f5f5f5";
+      document.body.style.backgroundColor = selected ? "#f5f5f5" : "#1e1e1e";
     };
   }, [selected]);
 
   return (
-    // <Provider theme={defaultTheme} 
-    //           colorScheme={selected ? "light" : "dark"}
-    //           margin="size-600">
-    //   <Lighting selected={selected} switch={setSelection}/>
-    //   <TodoList />
-    // </Provider>
-
     <Provider theme={defaultTheme} 
               colorScheme={selected ? "light" : "dark"}
               margin="size-600">

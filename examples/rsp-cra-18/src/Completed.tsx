@@ -1,14 +1,12 @@
-import React from 'react'
 import Delete from '@spectrum-icons/workflow/Delete';
 import {AlertDialog, DialogTrigger, ActionButton} from '@adobe/react-spectrum'
-import {CheckboxGroup, Checkbox} from '@adobe/react-spectrum'
+import {Checkbox} from '@adobe/react-spectrum'
 import {Flex} from '@adobe/react-spectrum'
 
 
 function Completed(props: {completed: {id: number; task: string}[]; onDelete: any}){
 
     const elements = props.completed.map(item => (
-        // <p key={item.id}>{item.task}</p>
         <Checkbox isDisabled key={item.id}>{item.task}</Checkbox>
     ))
 
