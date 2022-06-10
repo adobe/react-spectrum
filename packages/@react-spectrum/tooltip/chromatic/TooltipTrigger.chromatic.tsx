@@ -77,7 +77,7 @@ export const ArrowPositioningAtEdge: TooltipTriggerStory = {
   )]
 };
 
-export const PlacementSideFlip: TooltipTriggerStory = {
+export const PlacementNoFlip: TooltipTriggerStory = {
   args: {
     placement: 'start',
     shouldFlip: false,
