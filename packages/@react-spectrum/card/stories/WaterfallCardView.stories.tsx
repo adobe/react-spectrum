@@ -26,8 +26,6 @@ import {
   IsLoadingHeightGrid,
   IsLoadingNoHeightGrid,
   LoadingMoreGrid,
-  NoSelection,
-  SingleSelection,
   StaticCards,
   StaticCardViewStory
 } from './GridCardView.stories';
@@ -67,7 +65,22 @@ let itemsNoSize = [
 
 export default {
   title: 'CardView/Waterfall layout',
-  component: CardView
+  component: CardView,
+  args: {
+    'aria-label': 'Test CardView'
+  },
+  argTypes: {
+    layout: {
+      table: {
+        disable: true
+      }
+    },
+    selectionMode: {
+      control: 'radio',
+      defaultValue: 'multiple',
+      options: ['none', 'single', 'multiple']
+    }
+  }
 } as ComponentStoryObj<typeof CardView>;
 
 export const DefaultWaterfallStatic: StaticCardViewStory = {
@@ -134,22 +147,6 @@ export const DisabledKeysWaterfall: DynamicCardViewStory = {
   }
 };
 
-export const NoSelectionWaterfall: DynamicCardViewStory = {
-  ...NoSelection,
-  args: {
-    ...NoSelection.args,
-    layout: WaterfallLayout
-  }
-};
-
-export const SingleSelectionWaterfall: DynamicCardViewStory = {
-  ...SingleSelection,
-  args: {
-    ...SingleSelection.args,
-    layout: WaterfallLayout
-  }
-};
-
 export const SelectedKeys: ControlledCardViewStory = {
   ...ControlledCards,
   args: {
@@ -209,7 +206,6 @@ export const AsyncLoadingWaterfall: AsyncLoadingCardViewStory = {
 export const CustomLayoutOptions: CustomWaterfallLayoutStory = {
   render: (args) => <CustomWaterfallLayout {...args} />,
   args: {
-    'aria-label': 'Test CardView',
     selectionMode: 'multiple',
     items: itemsNoSize,
     layoutOptions: {minSpace: new Size(50, 50), maxColumns: 2, margin: 10}

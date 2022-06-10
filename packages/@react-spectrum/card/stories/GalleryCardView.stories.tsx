@@ -26,9 +26,8 @@ import {
   IsLoadingHeightGrid,
   IsLoadingNoHeightGrid,
   LoadingMoreGrid,
-  NoSelection,
-  SingleSelection,
-  StaticCards, StaticCardViewStory
+  StaticCards,
+  StaticCardViewStory
 } from './GridCardView.stories';
 import {CardView, GalleryLayout} from '../';
 import {ComponentStoryObj} from '@storybook/react';
@@ -82,7 +81,22 @@ let itemsNoThinImages = [
 
 export default {
   title: 'CardView/Gallery layout',
-  component: CardView
+  component: CardView,
+  args: {
+    'aria-label': 'Test CardView'
+  },
+  argTypes: {
+    layout: {
+      table: {
+        disable: true
+      }
+    },
+    selectionMode: {
+      control: 'radio',
+      defaultValue: 'multiple',
+      options: ['none', 'single', 'multiple']
+    }
+  }
 };
 
 export const DefaultGalleryStatic: StaticCardViewStory = {
@@ -134,24 +148,6 @@ export const DisabledKeysGallery: DynamicCardViewStory = {
   ...DisabledKeys,
   args: {
     ...DisabledKeys.args,
-    layout: GalleryLayout,
-    items: itemsLowVariance
-  }
-};
-
-export const NoSelectionGallery: DynamicCardViewStory = {
-  ...NoSelection,
-  args: {
-    ...NoSelection.args,
-    layout: GalleryLayout,
-    items: itemsLowVariance
-  }
-};
-
-export const SingleSelectionGallery: DynamicCardViewStory = {
-  ...SingleSelection,
-  args: {
-    ...SingleSelection.args,
     layout: GalleryLayout,
     items: itemsLowVariance
   }
@@ -217,7 +213,6 @@ export const AsyncLoadingGallery: AsyncLoadingCardViewStory = {
 export const CustomLayoutOptions: CustomGalleryLayoutStory = {
   render: (args) => <CustomGalleryLayout {...args} />,
   args: {
-    'aria-label': 'Test CardView',
     selectionMode: 'multiple',
     items: itemsLowVariance,
     layoutOptions: {idealRowHeight: 400, itemSpacing: new Size(10, 10), itemPadding: 78, minItemSize: new Size(150, 400)}

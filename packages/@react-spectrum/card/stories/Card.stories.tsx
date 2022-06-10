@@ -26,7 +26,19 @@ import {useProvider} from '@react-spectrum/provider';
 
 export default {
   title: 'Card/default',
-  component: Card
+  component: Card,
+  argTypes: {
+    layout: {
+      table: {
+        disable: true
+      }
+    },
+    children: {
+      table: {
+        disable: true
+      }
+    }
+  }
 } as ComponentMeta<typeof Card>;
 
 export type CardStory = ComponentStoryObj<typeof Card>;
@@ -35,7 +47,7 @@ export const Default: CardStory = {
   args: {
     children: (
       <>
-        <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
+        <Image src="https://i.imgur.com/Z7AzH2c.jpg" alt="preview" />
         <Avatar src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" />
         <Heading>Title</Heading>
         <Text slot="detail">PNG</Text>
@@ -100,7 +112,7 @@ let CardGridDecorator = (props) => {
 
 export const CardWaterfall: CardStory = {
   render: (args, context) => <Card {...args} {...context} />,
-  args: {...Default.args, layout: 'waterfall'},
+  args: {layout: 'waterfall'},
   decorators: [(Story, context) => (
     <CardWaterfallDecorator
       Story={Story}
@@ -143,7 +155,6 @@ let CardWaterfallDecorator = (props) => {
 
 export const CardFloat: CardStory = {
   render: (args, context) => <Card {...args} {...context} />,
-  args: {},
   decorators: [(Story, context) => (
     <CardFloatDecorator
       Story={Story}
@@ -399,6 +410,6 @@ let SelectableCard = (props: SpectrumCardProps) => {
 };
 
 export const Selected: CardStory = {
-  ...Default,
+  args: {...Default.args},
   render: (args) => <SelectableCard {...args} />
 };

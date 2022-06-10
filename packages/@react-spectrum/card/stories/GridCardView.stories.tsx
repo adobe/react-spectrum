@@ -75,7 +75,22 @@ function renderEmptyState() {
 export default {
   title: 'CardView/Grid layout',
   component: CardView,
-  excludeStories: ['NoCards', 'CustomLayout', 'falsyItems']
+  excludeStories: ['NoCards', 'CustomLayout', 'falsyItems'],
+  args: {
+    'aria-label': 'Test CardView'
+  },
+  argTypes: {
+    layout: {
+      table: {
+        disable: true
+      }
+    },
+    selectionMode: {
+      control: 'radio',
+      defaultValue: 'multiple',
+      options: ['none', 'single', 'multiple']
+    }
+  }
 } as ComponentStoryObj<typeof CardView>;
 
 let onSelectionChange = action('onSelectionChange');
@@ -87,19 +102,13 @@ let actions = {
 export const DynamicCards: DynamicCardViewStory = {
   render: (args) => <DynamicCardView {...args} />,
   args: {
-    items: items,
-    'aria-label': 'Test CardView',
-    selectionMode: 'multiple'
+    items: items
   },
   name: 'default Grid layout with initialized layout'
 };
 
 export const StaticCards: StaticCardViewStory = {
   render: (args) => <StaticCardView {...args} />,
-  args: {
-    'aria-label': 'Test CardView',
-    selectionMode: 'multiple'
-  },
   name: 'static card'
 };
 
@@ -124,9 +133,7 @@ export const HorizontalGridConstructor: DynamicCardViewStory = {
 export const FalsyIds: CardViewIdKeysStory = {
   render: (args) => <CardViewIdKeys {...args} />,
   args: {
-    items: falsyItems,
-    'aria-label': 'Test CardView',
-    selectionMode: 'multiple'
+    items: falsyItems
   },
   name: 'falsy ids'
 };
@@ -137,33 +144,16 @@ export const DisabledKeys: DynamicCardViewStory = {
   name: 'disabled keys, Joe2, Bob 4'
 };
 
-export const NoSelection: DynamicCardViewStory = {
-  ...DynamicCards,
-  args: {...DynamicCards.args, selectionMode: 'none'},
-  name: 'no selection allowed'
-};
-
-export const SingleSelection: DynamicCardViewStory = {
-  ...DynamicCards,
-  args: {...DynamicCards.args, selectionMode: 'single'},
-  name: 'single selection only'
-};
-
 export const ControlledCards: ControlledCardViewStory = {
   render: (args) => <ControlledCardView {...args} />,
   args: {
-    'aria-label': 'Test CardView',
-    selectionMode: 'multiple',
     items: items
   },
   name: 'selected keys, controlled'
 };
 
 export const NoCards: NoItemCardViewStory = {
-  render: (args) => <NoItemCardView {...args} />,
-  args: {
-    'aria-label': 'Test CardView'
-  }
+  render: (args) => <NoItemCardView {...args} />
 };
 
 export const IsLoadingNoHeightGrid: DynamicCardViewStory = {
@@ -199,8 +189,6 @@ export const EmptyWithHeightGrid: DynamicCardViewStory = {
 export const AsyncLoading: AsyncLoadingCardViewStory = {
   render: (args) => <AsyncLoadingCardView {...args} />,
   args: {
-    'aria-label': 'Test CardView',
-    selectionMode: 'multiple',
     items: items
   },
   name: 'Async loading'
@@ -209,8 +197,6 @@ export const AsyncLoading: AsyncLoadingCardViewStory = {
 export const CustomLayoutOptions: CustomLayoutStory = {
   render: (args) => <CustomLayout {...args} />,
   args: {
-    'aria-label': 'Test CardView',
-    selectionMode: 'multiple',
     items: items,
     layoutOptions: {maxColumns: 2, margin: 150, minSpace: new Size(10, 10), itemPadding: 400}
   },

@@ -25,7 +25,24 @@ import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 
 export default {
   title: 'Card/quiet',
-  component: Card
+  component: Card,
+  argTypes: {
+    layout: {
+      table: {
+        disable: true
+      }
+    },
+    children: {
+      table: {
+        disable: true
+      }
+    },
+    isQuiet: {
+      table: {
+        disable: true
+      }
+    }
+  }
 } as ComponentMeta<typeof Card>;
 
 export const CardGrid: CardStory = {

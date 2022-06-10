@@ -28,12 +28,14 @@ import React from 'react';
 
 export default {
   title: 'Card/horizontal',
-  component: Card
+  component: Card,
+  args: {
+    orientation: 'horizontal'
+  }
 } as ComponentMeta<typeof Card>;
 
 export const Horizontal: CardStory = {
   ...Default,
-  args: {...Default.args, orientation: 'horizontal'},
   decorators: [
     (Story) => (
       <div style={{height: '90px'}}>
@@ -46,47 +48,47 @@ export const Horizontal: CardStory = {
 export const HorizontalSquare: CardStory = {
   ...DefaultSquare,
   ...Horizontal,
-  args: {...DefaultSquare.args, orientation: 'horizontal'}
+  args: {...DefaultSquare.args}
 };
 
 export const HorizontalTall: CardStory = {
   ...DefaultTall,
   ...Horizontal,
-  args: {...DefaultTall.args, orientation: 'horizontal'}
+  args: {...DefaultTall.args}
 };
 
 export const HorizontalNoDescription: CardStory = {
   ...NoDescription,
   ...Horizontal,
-  args: {...NoDescription.args, orientation: 'horizontal'}
+  args: {...NoDescription.args}
 };
 
 export const HorizontalNoDescriptionSquare: CardStory = {
   ...NoDescriptionSquare,
   ...Horizontal,
-  args: {...NoDescriptionSquare.args, orientation: 'horizontal'}
+  args: {...NoDescriptionSquare.args}
 };
 
 export const HorizontalWithIllustration: CardStory = {
   ...WithIllustration,
   ...Horizontal,
-  args: {...WithIllustration.args, orientation: 'horizontal'}
+  args: {...WithIllustration.args}
 };
 
 export const HorizontalLongTitle: CardStory = {
   ...LongTitle,
   ...Horizontal,
-  args: {...LongTitle.args, orientation: 'horizontal'}
+  args: {...LongTitle.args}
 };
 
 export const HorizontalLongDescription: CardStory = {
   ...LongContent,
   ...Horizontal,
-  args: {...LongContent.args, orientation: 'horizontal'}
+  args: {...LongContent.args}
 };
 
 export const HorizontalLongDetail: CardStory = {
   ...LongDetail,
   ...Horizontal,
-  args: {...LongDetail.args, orientation: 'horizontal'}
+  args: {...LongDetail.args}
 };

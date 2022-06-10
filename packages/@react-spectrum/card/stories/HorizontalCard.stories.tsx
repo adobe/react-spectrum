@@ -22,7 +22,22 @@ import React from 'react';
 
 export default {
   title: 'Card/horizontal',
-  component: Card
+  component: Card,
+  args: {
+    orientation: 'horizontal'
+  },
+  argTypes: {
+    layout: {
+      table: {
+        disable: true
+      }
+    },
+    children: {
+      table: {
+        disable: true
+      }
+    }
+  }
 } as ComponentMeta<typeof Card>;
 
 export const CardGrid: CardStory = {
