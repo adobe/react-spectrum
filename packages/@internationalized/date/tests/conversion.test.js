@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BuddhistCalendar, CalendarDate, CalendarDateTime, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
+import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
 import {fromAbsolute, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
 
 describe('CalendarDate conversion', function () {
@@ -373,6 +373,18 @@ describe('CalendarDate conversion', function () {
       it('gregorian to hebrew in a leap year', function () {
         let date = new CalendarDate(2022, 2, 2);
         expect(toCalendar(date, new HebrewCalendar())).toEqual(new CalendarDate(new HebrewCalendar(), 5782, 6, 1));
+      });
+    });
+
+    describe('ethioaa', function () {
+      it('ethioaa to gregorian', function () {
+        let date = new CalendarDate(new EthiopicAmeteAlemCalendar(), 9999, 13, 5);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(4507, 9, 29));
+      });
+
+      it('gregorian to ethioaa', function () {
+        let date = new CalendarDate(4507, 9, 29);
+        expect(toCalendar(date, new EthiopicAmeteAlemCalendar())).toEqual(new CalendarDate(new EthiopicAmeteAlemCalendar(), 9999, 13, 5));
       });
     });
   });
