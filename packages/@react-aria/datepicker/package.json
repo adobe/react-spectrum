@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@internationalized/date": "3.0.0-rc.1",
     "@internationalized/message": "^3.0.7",
     "@internationalized/number": "^3.1.1",
     "@react-aria/focus": "^3.6.0",

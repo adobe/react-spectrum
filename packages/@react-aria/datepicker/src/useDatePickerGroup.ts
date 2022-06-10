@@ -66,9 +66,9 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
     }
 
     // Now go backwards until we find an element that is not a placeholder.
-    while (target?.getAttribute('aria-placeholder')) {
+    while (target?.hasAttribute('data-placeholder')) {
       let prev = walker.previousNode() as HTMLElement;
-      if (prev && prev.getAttribute('aria-placeholder')) {
+      if (prev && prev.hasAttribute('data-placeholder')) {
         target = prev;
       } else {
         break;
