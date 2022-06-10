@@ -47,7 +47,7 @@ export const Default: CardStory = {
   args: {
     children: (
       <>
-        <Image src="https://i.imgur.com/Z7AzH2c.jpg" alt="preview" />
+        <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
         <Avatar src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png" />
         <Heading>Title</Heading>
         <Text slot="detail">PNG</Text>
