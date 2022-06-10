@@ -14,6 +14,7 @@ import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {ColumnResizeState, TableState, useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
@@ -29,7 +30,6 @@ import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
-import {TableState, useTableState} from '@react-stately/table';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
@@ -80,7 +80,8 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
 
 interface TableContextValue<T> {
   state: TableState<T>,
-  layout: TableLayout<T>
+  layout: TableLayout<T>,
+  columnState: ColumnResizeState<T>
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -94,6 +95,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let {styleProps} = useStyleProps(props);
 
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
+  let {direction} = useLocale();
   let {scale} = useProvider();
 
   const getDefaultWidth = useCallback(({hideHeader, isSelectionCell, showDivider}) => {
@@ -108,9 +110,11 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
-    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle',
-    getDefaultWidth
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
+
+  const columnState = useTableColumnResizeState({...props, columns: state.collection.columns, getDefaultWidth, onColumnResize: props.onColumnResize, onColumnResizeEnd: props.onColumnResizeEnd});
+
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -140,9 +144,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }),
     [props.overflowMode, scale, density]
   );
-  let {direction} = useLocale();
   layout.collection = state.collection;
-  layout.getColumnWidth = state.getColumnWidth;
+  layout.getColumnWidth = columnState.getColumnWidth;
 
   let {gridProps} = useTable({
     ...props,
@@ -258,7 +261,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         }
 
         if (item.props.allowsResizing) {
-          return <ResizableTableColumnHeader item={item} state={state} />;
+          return <ResizableTableColumnHeader column={item} />;
         }
 
         return (
@@ -302,7 +305,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }, []);
 
   return (
-    <TableContext.Provider value={{state, layout}}>
+    <TableContext.Provider value={{state, layout, columnState}}>
       <TableVirtualizer
         {...gridProps}
         {...styleProps}
@@ -315,7 +318,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
               'spectrum-Table--quiet': isQuiet,
               'spectrum-Table--wrap': props.overflowMode === 'wrap',
               'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
-              'spectrum-Table--resizingColumn': state.isResizingColumn,
+              'spectrum-Table--resizingColumn': columnState.isResizingColumn,
               'spectrum-Table--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
               'spectrum-Table--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible
             },
@@ -330,11 +333,11 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         focusedKey={state.selectionManager.focusedKey}
         renderView={renderView}
         renderWrapper={renderWrapper}
-        setTableWidth={state.setTableWidth}
+        setTableWidth={columnState.setTableWidth}
         onVisibleRectChange={onVisibleRectChange}
         domRef={domRef}
         bodyRef={bodyRef}
-        getColumnWidth={state.getColumnWidth} />
+        getColumnWidth={columnState.getColumnWidth} />
     </TableContext.Provider>
   );
 }
@@ -518,17 +521,18 @@ function TableColumnHeader(props) {
   );
 }
 
-function ResizableTableColumnHeader({item, state}) {
+function ResizableTableColumnHeader({column}) {
   let ref = useRef();
+  let {state} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
 
   const onMenuSelect = (key) => {
     switch (key) {
       case 'sort-asc':
-        state.sort(item.key, 'ascending');
+        state.sort(column.key, 'ascending');
         break;
       case 'sort-desc':
-        state.sort(item.key, 'descending');
+        state.sort(column.key, 'descending');
         break;
       case 'resize':
         // focusResizer, needs timeout so that it happens after the animation timeout for menu close
@@ -538,28 +542,43 @@ function ResizableTableColumnHeader({item, state}) {
         break;
     }
   };
+  let allowsSorting = column.props?.allowsSorting;
+  let items = useMemo(() => {
+    let options = {
+      sortAscending: allowsSorting && {
+        label: formatMessage('sortAscending'),
+        id: 'sort-asc'
+      },
+      sortDescending: allowsSorting && {
+        label: formatMessage('sortDescending'),
+        id: 'sort-desc'
+      },
+      resize: {
+        label: formatMessage('resizeColumn'),
+        id: 'resize'
+      }
+    };
+    return Object.keys(options).reduce((acc, key) => {
+      if (options[key]) {
+        acc.push(options[key]);
+      }
+      return acc;
+    }, []);
+  }, [allowsSorting]);
 
   return (
     <>
       <MenuTrigger>
-        <TableColumnHeader column={item} />
-        <Menu onAction={onMenuSelect} minWidth="size-2000">
-          {item.props?.allowsSorting &&
-            <Item key="sort-asc">
-              {formatMessage('sortAscending')}
+        <TableColumnHeader column={column} />
+        <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
+          {(item) => (
+            <Item>
+              {item.label}
             </Item>
-          }
-          {item.props?.allowsSorting &&
-            <Item key="sort-desc">
-              {formatMessage('sortDescending')}
-            </Item>
-          }
-          <Item key="resize">
-            {formatMessage('resizeColumn')}
-          </Item>
+          )}
         </Menu>
       </MenuTrigger>
-      <Resizer ref={ref} item={item} />
+      <Resizer ref={ref} column={column} />
     </>
   );
 }
