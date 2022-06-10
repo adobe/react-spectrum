@@ -51,7 +51,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     crossOffset,
     isOpen: state.isOpen,
     shouldFlip: props.shouldFlip,
-    containerPadding: props.containerPadding,
+    containerPadding: props.containerPadding
   });
 
   return (

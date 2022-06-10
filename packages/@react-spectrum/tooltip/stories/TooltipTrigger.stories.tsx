@@ -24,7 +24,7 @@ interface TooltipTooltipTriggerProps {
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
   isOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void
-};
+}
 
 type TooltipTriggerStory = ComponentStoryObj<typeof TooltipTrigger>;
 
@@ -163,7 +163,7 @@ export const TooltripTriggerInsideActionGroup: TooltipTriggerStory = {
       disallowEmptySelection
       onSelectionChange={action('onSelectionChange')}
       items={[{name: 'tooltipTrigger1'}]} >
-        {(item) => <Item key={item.name}><Story key={item.name} /></Item>}
+      {(item) => <Item key={item.name}><Story key={item.name} /></Item>}
     </ActionGroup>
   )]
 };
@@ -227,7 +227,7 @@ let MultipleTriggers = (props: SpectrumTooltipTriggerProps) => {
       ))}
     </Flex>
   );
-}
+};
 
 export const CrossoffsetExamples: TooltipTriggerStory = {
   render: () => (

@@ -35,7 +35,7 @@ export default {
     },
     // chromatic needs a bit more time than disableAnimations allows
     chromatic: {
-      pauseAnimationAtEnd: true,
+      pauseAnimationAtEnd: true
     }
   }
 } as ComponentMeta<typeof TooltipTrigger>;
@@ -44,15 +44,15 @@ export const Default: TooltipTriggerStory = {};
 
 export const PlacementStart: TooltipTriggerStory = {
   args: {placement: 'start'}
-}
+};
 
 export const Offset50: TooltipTriggerStory = {
   args: {offset: 50}
-}
+};
 
 export const CrossOffset50: TooltipTriggerStory = {
   args: {crossOffset: 50}
-}
+};
 
 export const ContainerPadding50AtEdge: TooltipTriggerStory = {
   args: {containerPadding: 50},
@@ -61,7 +61,7 @@ export const ContainerPadding50AtEdge: TooltipTriggerStory = {
       <Story />
     </div>
   )]
-}
+};
 
 export const ArrowPositioningAtEdge: TooltipTriggerStory = {
   args: {
@@ -91,4 +91,4 @@ export const PlacementSideFlip: TooltipTriggerStory = {
       <Story />
     </div>
   )]
-}
+};
