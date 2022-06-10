@@ -46,7 +46,7 @@ keywords: [list, aria, grid]
 ## Features
 
 A list can be built using [&lt;ul&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul) or [&lt;ol&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol) HTML elements, but is very limited in functionality especially when it comes to user interactions.
-HTML lists are meant for static content, rather than lists with rich interactions like focusable elements within rows, keyboard navigation, row selection, sorting, etc.
+HTML lists are meant for static content, rather than lists with rich interactions like focusable elements within rows, keyboard navigation, row selection, etc.
 `useList` helps achieve accessible and interactive list components that can be styled as needed.
 
 * Exposed to assistive technology as a `grid` using ARIA
@@ -57,7 +57,7 @@ HTML lists are meant for static content, rather than lists with rich interaction
 * Support for both `toggle` and `replace` selection behaviors
 * Support for row actions via double click, <Keyboard>Enter</Keyboard> key, or tapping
 * Long press to enter selection mode on touch when there is both selection and row actions
-* Async loading, infinite scrolling, filtering, and sorting support
+* Async loading and infinite scrolling
 * Typeahead to allow focusing rows by typing text
 * Automatic scrolling support during keyboard navigation
 * Labeling support for accessibility
@@ -103,8 +103,8 @@ For more information, see [Selection](/react-stately/selection.html).
 ## Example
 
 The <TypeLink links={docs.links} type={docs.exports.useList} /> hook will be used to render the outer most list element. It uses
-the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} /> hook to construct the list's collection of rows and columns,
-and manage state such as the focused row, selection, and sort column/direction. We'll use the collection to iterate through
+the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} /> hook to construct the list's collection of rows,
+and manage state such as the focused row and row selection. We'll use the collection to iterate through
 the rows of the List and render the relevant components, which we'll define below.
 
 ```tsx example export=true
@@ -209,8 +209,8 @@ function ListItem({ item, state }) {
 
 ### Adding selection
 
-Next, let's add support for selection. For multiple selection, we'll want to add a column of checkboxes to the left
-of the List to allow the user to select rows. This is done using the <TypeLink links={docs.links} type={docs.exports.useListSelectionCheckbox} />
+Next, let's add support for selection. For multiple selection, we'll want to add a checkbox to the row to allow the user to select rows.
+This is done using the <TypeLink links={docs.links} type={docs.exports.useListSelectionCheckbox} />
 hook. It is passed the `parentKey` of the cell, which refers to the row the cell is contained within. When the user
 checks or unchecks the checkbox, the row will be added or removed from the List's selection.
 
@@ -243,9 +243,7 @@ function ListCheckbox({ item, state }) {
 ```
 
 The following example shows how to enable multiple selection support using the List component we built above.
-It's as simple as setting the `selectionMode` prop to `"multiple"`. Because we set the `showSelectionCheckboxes`
-option of `useListState` to true when multiple selection is enabled, an extra column for these checkboxes is
-automatically added for us.
+It's as simple as setting the `selectionMode` prop to `"multiple"`.
 
 ```tsx example
 <List aria-label="List with selection" selectionMode="multiple">
@@ -256,8 +254,8 @@ automatically added for us.
 </List>
 ```
 
-And that's it! We now have a fully interactive List component that can support keyboard navigation, single or multiple selection,
-as well as column sorting. In addition, it is fully accessible for screen readers and other assistive technology. See below for more
+And that's it! We now have a fully interactive List component that can support keyboard navigation, single or multiple selection.
+In addition, it is fully accessible for screen readers and other assistive technology. See below for more
 examples of how to use the List component that we've built.
 
 ## Usage
