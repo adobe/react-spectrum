@@ -669,6 +669,49 @@ describe('DatePicker', function () {
       triggerPress(field);
       expect(segments[2]).toHaveFocus();
     });
+
+    it('should focus the previous segment when the era is removed', function () {
+      let {getByTestId, queryByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />);
+      let field = getByTestId('date-field');
+      let era = getByTestId('era');
+      expect(era).toBe(field.lastChild);
+
+      act(() => era.focus());
+      fireEvent.keyDown(era, {key: 'ArrowUp'});
+      fireEvent.keyUp(era, {key: 'ArrowUp'});
+
+      expect(queryByTestId('era')).toBeNull();
+      expect(document.activeElement).toBe(field.lastChild);
+    });
+
+    it('should focus the next segment when the era is removed and is the first segment', function () {
+      let {getByTestId, queryByTestId} = render(
+        <Provider theme={theme} locale="lv-LV">
+          <DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />
+        </Provider>
+      );
+      let field = getByTestId('date-field');
+      let era = getByTestId('era');
+      expect(era).toBe(field.firstChild);
+
+      act(() => era.focus());
+      fireEvent.keyDown(era, {key: 'ArrowUp'});
+      fireEvent.keyUp(era, {key: 'ArrowUp'});
+
+      expect(queryByTestId('era')).toBeNull();
+      expect(document.activeElement).toBe(field.firstChild);
+    });
+
+    it('does not try to shift focus when the entire datepicker is unmounted while focused', function () {
+      let {rerender, getByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />);
+      let era = getByTestId('era');
+
+      act(() => era.focus());
+
+      rerender(<div />);
+      expect(era).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(document.body);
+    });
   });
 
   describe('editing', function () {
