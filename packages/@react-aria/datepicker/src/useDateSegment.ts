@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId, useLabels} from '@react-aria/utils';
+import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
@@ -35,7 +36,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let displayNames = useDisplayNames();
   let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state);
 
-  let textValue = segment.text;
+  let textValue = segment.isPlaceholder ? '' : segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
   let monthDateFormatter = useDateFormatter({month: 'long', timeZone: options.timeZone});
   let hourDateFormatter = useDateFormatter({
@@ -44,14 +45,17 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     timeZone: options.timeZone
   });
 
-  if (segment.type === 'month') {
+  if (segment.type === 'month' && !segment.isPlaceholder) {
     let monthTextValue = monthDateFormatter.format(state.dateValue);
     textValue = monthTextValue !== textValue ? `${textValue} – ${monthTextValue}` : monthTextValue;
-  } else if (segment.type === 'hour') {
+  } else if (segment.type === 'hour' && !segment.isPlaceholder) {
     textValue = hourDateFormatter.format(state.dateValue);
   }
 
   let {spinButtonProps} = useSpinButton({
+    // The ARIA spec says aria-valuenow is optional if there's no value, but aXe seems to require it.
+    // This doesn't seem to have any negative effects with real AT since we also use aria-valuetext.
+    // https://github.com/dequelabs/axe-core/issues/3505
     value: segment.value,
     textValue,
     minValue: segment.minValue,
@@ -114,16 +118,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
 
     switch (e.key) {
-      case 'Enter':
-        e.preventDefault();
-        e.stopPropagation();
-        if (segment.isPlaceholder && !state.isReadOnly) {
-          state.confirmPlaceholder(segment.type);
-        }
-        focusManager.focusNext();
-        break;
-      case 'Tab':
-        break;
       case 'Backspace':
       case 'Delete': {
         // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
@@ -150,6 +144,34 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod').value;
   }, [amPmFormatter]);
 
+  // Get a list of formatted era names so users can type the first character to choose one.
+  let eraFormatter = useDateFormatter({year: 'numeric', era: 'narrow', timeZone: 'UTC'});
+  let eras = useMemo(() => {
+    if (segment.type !== 'era') {
+      return [];
+    }
+
+    let date = toCalendar(new CalendarDate(1, 1, 1), state.calendar);
+    let eras = state.calendar.getEras().map(era => {
+      let eraDate = date.set({year: 1, month: 1, day: 1, era}).toDate('UTC');
+      let parts = eraFormatter.formatToParts(eraDate);
+      let formatted = parts.find(p => p.type === 'era').value;
+      return {era, formatted};
+    });
+
+    // Remove the common prefix from formatted values. This is so that in calendars with eras like
+    // ERA0 and ERA1 (e.g. Ethiopic), users can press "0" and "1" to select an era. In other cases,
+    // the first letter is used.
+    let prefixLength = commonPrefixLength(eras.map(era => era.formatted));
+    if (prefixLength) {
+      for (let era of eras) {
+        era.formatted = era.formatted.slice(prefixLength);
+      }
+    }
+
+    return eras;
+  }, [eraFormatter, state.calendar, segment.type]);
+
   let onInput = (key: string) => {
     if (state.isDisabled || state.isReadOnly) {
       return;
@@ -168,6 +190,14 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
         }
         focusManager.focusNext();
         break;
+      case 'era': {
+        let matched = eras.find(e => startsWith(e.formatted, key));
+        if (matched) {
+          state.setSegment('era', matched.era);
+          focusManager.focusNext();
+        }
+        break;
+      }
       case 'day':
       case 'hour':
       case 'minute':
@@ -229,14 +259,9 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     enteredKeys.current = '';
     scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
 
-    // Safari requires that a selection is set or it won't fire input events.
-    // Since usePress disables text selection, this won't happen by default.
-    ref.current.style.webkitUserSelect = 'text';
-    ref.current.style.userSelect = 'text';
+    // Collapse selection to start or Chrome won't fire input events.
     let selection = window.getSelection();
     selection.collapse(ref.current);
-    ref.current.style.webkitUserSelect = 'none';
-    ref.current.style.userSelect = 'none';
   };
 
   let compositionRef = useRef('');
@@ -289,6 +314,19 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     e.preventDefault();
   });
 
+  useLayoutEffect(() => {
+    let element = ref.current;
+    return () => {
+      // If the focused segment is removed, focus the previous one, or the next one if there was no previous one.
+      if (document.activeElement === element) {
+        let prev = focusManager.focusPrevious();
+        if (!prev) {
+          focusManager.focusNext();
+        }
+      }
+    };
+  }, [ref, focusManager]);
+
   // spinbuttons cannot be focused with VoiceOver on iOS.
   let touchPropOverrides = isIOS() || segment.type === 'timeZoneName' ? {
     role: 'textbox',
@@ -332,8 +370,8 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       ...touchPropOverrides,
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
       'aria-describedby': ariaDescribedBy,
-      'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
       'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
+      'data-placeholder': segment.isPlaceholder || undefined,
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,
       spellCheck: isEditable ? 'false' : undefined,
@@ -341,14 +379,12 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
       [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,
-      inputMode: state.isDisabled || segment.type === 'dayPeriod' || !isEditable ? undefined : 'numeric',
+      inputMode: state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable ? undefined : 'numeric',
       tabIndex: state.isDisabled ? undefined : 0,
       onKeyDown,
       onFocus,
       style: {
-        caretColor: 'transparent',
-        userSelect: 'none',
-        WebkitUserSelect: 'none'
+        caretColor: 'transparent'
       },
       // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
       onPointerDown(e) {
@@ -359,4 +395,17 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       }
     })
   };
+}
+
+function commonPrefixLength(strings: string[]): number {
+  // Sort the strings, and compare the characters in the first and last to find the common prefix.
+  strings.sort();
+  let first = strings[0];
+  let last = strings[strings.length - 1];
+  for (let i = 0; i < first.length; i++) {
+    if (first[i] !== last[i]) {
+      return i;
+    }
+  }
+  return 0;
 }

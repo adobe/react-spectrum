@@ -93,6 +93,8 @@ export class PersianCalendar implements Calendar {
   }
 
   getYearsInEra(): number {
-    return 9999;
+    // 9378-10-10 persian is 9999-12-31 gregorian.
+    // Round down to 9377 to set the maximum full year.
+    return 9377;
   }
 }
