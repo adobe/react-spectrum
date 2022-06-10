@@ -1,15 +1,15 @@
-import {MutableRefObject, useEffect} from 'react';
+import {RefObject, useEffect} from 'react';
 
 function hasResizeObserver() {
   return typeof window.ResizeObserver !== 'undefined';
 }
 
 type useResizeObserverOptionsType<T> = {
-  ref: MutableRefObject<T>,
+  ref: RefObject<T | undefined>,
   onResize: () => void
 }
 
-export function useResizeObserver<T extends HTMLElement | undefined>(options: useResizeObserverOptionsType<T>) {
+export function useResizeObserver<T extends HTMLElement>(options: useResizeObserverOptionsType<T>) {
   const {ref, onResize} = options;
 
   useEffect(() => {
