@@ -982,7 +982,6 @@ export function DragBetweenListsRootOnlyExample(props) {
 
   let dragHooksSecond = useDragHooks({
     getItems(keys) {
-      console.log('keys', keys)
       return [...keys].map(key => {
         key = JSON.stringify(key);
         return {

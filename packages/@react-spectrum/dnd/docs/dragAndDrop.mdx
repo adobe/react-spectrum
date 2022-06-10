@@ -35,13 +35,6 @@ many accessibility issues, including but not limited to keyboard interaction par
 React Spectrum collection components that support drag and drop operations seek to address these issues by providing full keyboard and screen reader drag and drop
 support.
 
-TODO: move this to an accessibility section, perhaps in the example section?
-To perform a drag and drop operations via a keyboard, first select the items to be dragged. You can then start the drag operation by focusing the drag handle on any of the
-selected rows and hitting <Keyboard>Enter</Keyboard>/<Keyboard>Space</Keyboard>. Once a drag operation is started, <Keyboard>Tab</Keyboard> can be used to cycle through valid
-drop targets. Hitting <Keyboard>Enter</Keyboard> will then confirm the drop operation on the focused drop target. For screen readers, please follow the instructions announced
-when focusing the row's drag handle to begin a drag operation. Go ahead and try out drag and drop in the example below!
-
-
 ## Drag and Drop Concepts
 
 TODO: talk about the following
@@ -65,7 +58,15 @@ import {Flex} from '@react-spectrum/layout';
 ```
 
 ### Accessibility
-The example above illustrates the drag and drop experience in React Spectrum. TODO talk about screen reader and keyboard accessiblity
+
+To perform a drag and drop operations via a keyboard, first select the items to be dragged. You can then start the drag operation by focusing the drag handle on any of the
+selected rows and hitting <Keyboard>Enter</Keyboard>/<Keyboard>Space</Keyboard>. Once a drag operation is started, you will be automatically brought to the first valid drop target.
+<Keyboard>Tab</Keyboard> can then be used to cycle through other valid drop targets. For collection components like the ListView above, <Keyboard>Tab</Keyboard> will move you on or off
+the overall component itself whereas <Keyboard>ArrowUp</Keyboard> and <Keyboard>ArrowDown</Keyboard> will cycle through the valid drop targets within the component itself.
+Hitting <Keyboard>Enter</Keyboard> will then confirm the drop operation on the focused drop target. To cancel a drag operation, you can hit <Keyboard>Esc</Keyboard> at any time.
+
+For screen readers, please follow the instructions announced when focusing the row's drag handle to begin a drag operation. For screen readers on mobile devices, swiping left and right should
+move you between valid drop targets and double tapping should confirm a drop operation. Go ahead and try out drag and drop in the example above!
 
 ### Creating the draggable list
 
