@@ -13,10 +13,12 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
 import React, {useState} from 'react';
+import SaveTo from '@spectrum-icons/workflow/SaveTo';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {Tooltip, TooltipTrigger} from '../src';
 
@@ -25,6 +27,10 @@ interface TooltipTooltipTriggerProps {
   isOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void
 }
+
+interface MultipleTriggersProps extends SpectrumTooltipTriggerProps {
+   isControlled?: boolean
+ }
 
 type TooltipTriggerStory = ComponentStoryObj<typeof TooltipTrigger>;
 
@@ -157,15 +163,25 @@ export const TooltipOnLink: TooltipTriggerStory  = {
 
 export const TooltripTriggerInsideActionGroup: TooltipTriggerStory = {
   args: {delay: 0},
-  decorators: [(Story) => (
+  render: (args) => (
     <ActionGroup
       selectionMode="single"
       disallowEmptySelection
-      onSelectionChange={action('onSelectionChange')}
-      items={[{name: 'tooltipTrigger1'}]} >
-      {(item) => <Item key={item.name}><Story key={item.name} /></Item>}
+      onSelectionChange={action('onSelectionChange')} >
+      <TooltipTrigger {...args}>
+        <Item key="editKey" aria-label="Edit"><Edit /></Item>
+        <Tooltip>Edit</Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...args}>
+        <Item key="saveKey" aria-label="Save"><SaveTo /></Item>
+        <Tooltip>Save</Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...args}>
+        <Item key="deleteKey" aria-label="Delete"><Delete /></Item>
+        <Tooltip>Delete</Tooltip>
+      </TooltipTrigger>
     </ActionGroup>
-  )]
+  )
 };
 
 export const ArrowPositioningAtEdge: TooltipTriggerStory = {
@@ -197,12 +213,17 @@ export const TooltipWithOtherHoverables: TooltipTriggerStory = {
   )]
 };
 
-export const ControlledMultipleTooltips: TooltipTriggerStory = {
+export const MultipleTooltips: TooltipTriggerStory = {
   args: {placement: 'start'},
   render: (props) => <MultipleTriggers {...props} />
 };
 
-let MultipleTriggers = (props: SpectrumTooltipTriggerProps) => {
+export const ControlledMultipleTooltips: TooltipTriggerStory = {
+  args: {placement: 'start'},
+  render: (props) => <MultipleTriggers {...props} isControlled />
+};
+
+let MultipleTriggers = (props: MultipleTriggersProps) => {
   let [one, setOne] = useState(false);
   let [two, setTwo] = useState(false);
   let [three, setThree] = useState(false);
@@ -218,7 +239,11 @@ let MultipleTriggers = (props: SpectrumTooltipTriggerProps) => {
   return (
     <Flex gap="size-100" direction="column">
       {items.map((item) => (
-        <TooltipTrigger {...props} key={item.variant} isOpen={item.isOpen} onOpenChange={item.onOpenChange}>
+        <TooltipTrigger
+          {...props}
+          key={item.variant}
+          isOpen={props.isControlled ? item.isOpen : undefined}
+          onOpenChange={props.isControlled ? item.onOpenChange : action('onOpenChange')}>
           <ActionButton>{item.variant} Tooltip</ActionButton>
           <Tooltip variant={item.variant} showIcon>
             {item.variant} message.
