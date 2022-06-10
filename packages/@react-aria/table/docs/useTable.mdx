@@ -617,7 +617,7 @@ When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the
 <PokemonTable selectionMode="multiple" selectionBehavior="replace" />
 ```
 
-### Row and cell actions
+### Row actions
 `useTable` supports row actions via the `onRowAction` prop, which is useful for functionality such as navigation. In the default `"toggle"` selection behavior, when nothing is selected, clicking or tapping the row triggers the row action.
 When at least one item is selected, the table is in selection mode, and clicking or tapping a row toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
 
@@ -630,15 +630,6 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
   <PokemonTable aria-label="Pokemon table with row actions and toggle selection behavior" selectionMode="multiple" onRowAction={key => alert(`Opening item ${key}...`)} />
   <PokemonTable aria-label="Pokemon table with row actions and replace selection behavior" selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
 </div>
-```
-
-`useTable` also supports cell actions via the `onCellAction`. It follows the same interaction patterns as `onRowAction` in the default `"toggle"` selection mode, with the only difference being that it fires when clicking or tapping any cell within the
-table.
-
-Note: `onCellAction` is not meant to be used alongside `onRowAction` or with the `"replace"` `selectionMode`.
-
-```tsx example
-<PokemonTable aria-label="Pokemon table with cell actions and toggle selection behavior" selectionMode="multiple" onCellAction={key => alert(`Opening cell ${key}...`)} />
 ```
 
 ### Sorting
