@@ -173,7 +173,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       return (
         <TableHeader
           key={reusableView.key}
-          style={style}>
+          style={{...style, zIndex: 1}}>
           {renderChildren(children)}
         </TableHeader>
       );
@@ -260,7 +260,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         }
 
         if (item.props.allowsResizing) {
-          return <ResizableTableColumnHeader column={item} />;
+          return <ResizableTableColumnHeader tableRef={domRef} column={item} />;
         }
 
         return (
@@ -422,7 +422,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         style={{
           width: visibleRect.width,
           height: headerHeight,
-          overflow: 'hidden',
+          overflow: 'visible',
           position: 'relative',
           willChange: state.isScrolling ? 'scroll-position' : '',
           transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
@@ -522,7 +522,8 @@ function TableColumnHeader(props) {
   );
 }
 
-function ResizableTableColumnHeader({column}) {
+function ResizableTableColumnHeader(props) {
+  let {column} = props;
   let ref = useRef();
   let {state} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
@@ -537,9 +538,7 @@ function ResizableTableColumnHeader({column}) {
         break;
       case 'resize':
         // focusResizer, needs timeout so that it happens after the animation timeout for menu close
-        setTimeout(() => {
-          focusSafely(ref.current);
-        }, 360);
+        focusSafely(ref.current);
         break;
     }
   };
@@ -579,7 +578,7 @@ function ResizableTableColumnHeader({column}) {
           )}
         </Menu>
       </MenuTrigger>
-      <Resizer ref={ref} column={column} />
+      <Resizer ref={ref} tableRef={props.tableRef} column={column} />
     </>
   );
 }

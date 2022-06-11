@@ -13,7 +13,7 @@
 import {ColumnResizeState} from '@react-stately/table';
 import {focusSafely, useFocusable} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
-import {HTMLAttributes, RefObject, useRef} from 'react';
+import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -23,7 +23,8 @@ interface ResizerAria {
 }
 
 interface ResizerProps<T> {
-  column: GridNode<T>
+  column: GridNode<T>,
+  label: string
 }
 
 export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): ResizerAria {
@@ -54,10 +55,9 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnRes
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
     onMoveStart() {
-      stateRef.current.onColumnResizeStart();
+      stateRef.current.onColumnResizeStart(item.key);
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
       cursor.current = document.body.style.cursor;
-      document.body.style.setProperty('cursor', 'col-resize');
     },
     onMove({deltaX, pointerType}) {
       if (direction === 'rtl') {
@@ -70,18 +70,35 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnRes
         }
         columnResizeWidthRef.current += deltaX;
         stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
+        if (stateRef.current.getColumnMinWidth(item.key) >= stateRef.current.getColumnWidth(item.key)) {
+          document.body.style.setProperty('cursor', 'e-resize');
+        } else if (stateRef.current.getColumnMaxWidth(item.key) <= stateRef.current.getColumnWidth(item.key)) {
+          document.body.style.setProperty('cursor', 'w-resize');
+        } else {
+          document.body.style.setProperty('cursor', 'col-resize');
+        }
       }
     },
     onMoveEnd() {
-      stateRef.current.onColumnResizeEnd();
+      stateRef.current.onColumnResizeEnd(item.key);
       columnResizeWidthRef.current = 0;
       document.body.style.cursor = cursor.current;
     }
   });
 
+  let ariaProps = {
+    role: 'separator',
+    'aria-label': props.label,
+    'aria-orientation': 'vertical',
+    'aria-labelledby': item.key,
+    'aria-valuenow': stateRef.current.getColumnWidth(item.key),
+    'aria-valuemin': stateRef.current.getColumnMinWidth(item.key),
+    'aria-valuemax': stateRef.current.getColumnMaxWidth(item.key)
+  };
+
   return {
     resizerProps: {
-      ...mergeProps(moveProps, focusableProps, keyboardProps)
+      ...mergeProps(moveProps, focusableProps, keyboardProps, ariaProps)
     }
   };
 }

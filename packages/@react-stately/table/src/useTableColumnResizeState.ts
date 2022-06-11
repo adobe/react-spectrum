@@ -59,6 +59,8 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
+  const currentlyResizingColumn = useRef(null);
+
   function setColumnWidthsForRef(newWidths: Map<Key, number>) {
     columnWidthsRef.current = newWidths;
     // new map so that change detection is triggered
@@ -122,7 +124,8 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
     }
   }
 
-  function onColumnResizeStart() {
+  function onColumnResizeStart(column: GridNode<T>) {
+    currentlyResizingColumn.current = column;
     isResizing.current = true;
     startResizeContentWidth.current = getContentWidth(columnWidthsRef.current);
   }
@@ -133,7 +136,8 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
     props.onColumnResize && props.onColumnResize(affectedColumnWidthsRef.current);
   }
 
-  function onColumnResizeEnd() {
+  function onColumnResizeEnd(column: GridNode<T>) {
+    currentlyResizingColumn.current = null;
     isResizing.current = false;
     props.onColumnResizeEnd && props.onColumnResizeEnd(affectedColumnWidthsRef.current);
     affectedColumnWidthsRef.current = [];
@@ -212,6 +216,7 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
     getColumnWidth,
     getColumnMinWidth,
     getColumnMaxWidth,
-    isResizingColumn: isResizing.current
+    isResizingColumn: isResizing.current,
+    getResizingColumn: () => currentlyResizingColumn.current
   };
 }
