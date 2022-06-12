@@ -26,6 +26,9 @@ import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 export default {
   title: 'Card/quiet',
   component: Card,
+  args: {
+    isQuiet: true
+  },
   argTypes: {
     layout: {
       table: {
