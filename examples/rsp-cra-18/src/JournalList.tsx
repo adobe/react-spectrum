@@ -7,7 +7,8 @@ function JournalList(){
     let [rating, setRating] = React.useState<React.Key>('');
     let [entryList, setEntryList] = React.useState<{rate: React.Key, description: string, id: number}[]>([]);
     let [value, setValue] = React.useState('');
-    let [count, setCount] = React.useState(0);
+    // let [count, setCount] = React.useState(0);
+    let count = React.useRef(0);
 
     let options = [
         {id: "Bad", name: "Bad"},
@@ -16,15 +17,16 @@ function JournalList(){
         {id: "Great", name: "Great"}
     ]
 
-    function handleSubmit(e: { preventDefault: () => void; }){
+    function handleSubmit(e: React.FormEvent<HTMLInputElement>){
         e.preventDefault()
 
-        setCount(prevCount => prevCount + 1) //used to determine key for each item in the entryList array
+        // setCount(prevCount => prevCount + 1) //used to determine key for each item in the entryList array
+        count.current = count.current + 1;
 
         setEntryList(prevListArray => {
             return [
                 ...prevListArray,
-                {rate: rating, description: value, id: count}
+                {rate: rating, description: value, id: count.current}
             ]
         })
 

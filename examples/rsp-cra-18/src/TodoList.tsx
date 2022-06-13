@@ -9,22 +9,24 @@ function TodoList() {
     const [list, setList] = React.useState<{id: number; task: string}[]>([]);
     const [value, setValue] = React.useState('')
     const [completed, setCompleted] = React.useState<{id: number; task: string}[]>([]);
-    const [count, setCount] = React.useState(0);
+    // const [count, setCount] = React.useState(0);
+    const count = React.useRef(0);
 
-    function handleSubmit(e: { preventDefault: () => void; }){
+    function handleSubmit(e: React.FormEvent<HTMLInputElement>){
         e.preventDefault()
 
         if (value.length > 0){
             setList(prevListArray => {
                 return [
                     ...prevListArray, 
-                    {id: count, task: value}]
+                    {id: count.current, task: value}]
             })
 
             //used to determine the key for each item in the list object
-            setCount(prevCount => {
-                return prevCount + 1;
-            })
+            // setCount(prevCount => {
+            //     return prevCount + 1;
+            // })
+            count.current = count.current + 1;
         }   
 
         setValue(""); //clears text field on submit
