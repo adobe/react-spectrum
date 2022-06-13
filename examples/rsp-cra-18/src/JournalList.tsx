@@ -3,49 +3,26 @@ import AddCircle from '@spectrum-icons/workflow/AddCircle';
 import {Flex, Text, Button, Form, TextArea, Picker, Item, Divider} from '@adobe/react-spectrum'
 import JournalEntries from './JournalEntries'
 
-function JournalList(){
-    let [rating, setRating] = React.useState<React.Key>('');
-    let [entryList, setEntryList] = React.useState<{rate: React.Key, description: string, id: number}[]>([]);
-    let [value, setValue] = React.useState('');
-    // let [count, setCount] = React.useState(0);
-    let count = React.useRef(0);
-
-    let options = [
-        {id: "Bad", name: "Bad"},
-        {id: "Okay", name: "Okay"},
-        {id: "Good", name: "Good"},
-        {id: "Great", name: "Great"}
-    ]
-
-    function handleSubmit(e: React.FormEvent<HTMLInputElement>){
-        e.preventDefault()
-
-        // setCount(prevCount => prevCount + 1) //used to determine key for each item in the entryList array
-        count.current = count.current + 1;
-
-        setEntryList(prevListArray => {
-            return [
-                ...prevListArray,
-                {rate: rating, description: value, id: count.current}
-            ]
-        })
-
-        setValue('') //clears the text area when submitted
-    }
-    
+function JournalList(props: {rating: React.Key;
+                            setRating: any;
+                            entryList: {rate: React.Key, description: string, id: number}[];
+                            options: {id: string, name: string}[];
+                            description: string;
+                            setDescription: any;
+                            handleSubmit: any;}){
     return(
         <>
-            <Form onSubmit={handleSubmit} maxWidth="size-6000">
+            <Form onSubmit={props.handleSubmit} maxWidth="size-6000">
                 <Flex direction="column" marginTop="size-300" gap="size-100">
                     <Picker label="How Was Your Day?"
-                            items={options}
-                            onSelectionChange={(selected) => setRating(selected)}
+                            items={props.options}
+                            onSelectionChange={(selected) => props.setRating(selected)}
                     >
                         {(item) => <Item key={item.id}>{item.name}</Item>}
                    </Picker>
                     <TextArea width="size-5000" label="Description" 
-                                value={value}
-                                onChange={setValue}/>
+                                value={props.description}
+                                onChange={props.setDescription}/>
                     <Button type="submit" marginTop="size-200" variant="primary" width="150px">
                         <AddCircle aria-label="add circle" />
                         <Text marginEnd="size-200">Add Entry</Text>
@@ -54,7 +31,7 @@ function JournalList(){
             </Form>
             <Divider marginTop="size-600" marginBottom="size-300" />
             <h2>Entries</h2>
-            <JournalEntries list={entryList}/>
+            <JournalEntries list={props.entryList}/>
         </>
     )
 }
