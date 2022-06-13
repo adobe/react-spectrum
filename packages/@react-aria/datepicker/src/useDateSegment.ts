@@ -309,11 +309,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
   });
 
-  // For Android: prevent selection on long press.
-  useEvent(ref, 'selectstart', e => {
-    e.preventDefault();
-  });
-
   useLayoutEffect(() => {
     let element = ref.current;
     return () => {
