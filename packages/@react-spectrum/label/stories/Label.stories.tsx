@@ -12,7 +12,6 @@
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Label} from '../';
 import React from 'react';
-import {SpectrumLabelProps} from '@react-types/label';
 import {TextField} from '@react-spectrum/textfield';
 
 type LabelStory = ComponentStoryObj<typeof Label>;
