@@ -94,7 +94,7 @@ export const ContainerWithTextAlignmentSetDescription = {
     description: 'Enter a single digit number'
   },
   name: 'textAlign center description',
-  decorator: [TextAlignDecorator]
+  decorators: [TextAlignDecorator]
 };
 
 export const ContainerWithTextAlignmentSetError = {
@@ -104,7 +104,27 @@ export const ContainerWithTextAlignmentSetError = {
     validationState: 'invalid'
   },
   name: 'textAlign center errorMessage',
-  decorator: [TextAlignDecorator]
+  decorators: [TextAlignDecorator]
+};
+
+export const ContainerWithTextAlignmentSetDescriptionAndSetError = {
+  args: {
+    label: 'Password',
+    errorMessage: 'Create a password with at least 8 characters.',
+    validationState: 'invalid'
+  },
+  name: 'textAlign center errorMessage',
+  decorators: [(Story) => (
+    <Flex
+    direction="column"
+    gap="size-200"
+    UNSAFE_style={{
+      textAlign: 'center'
+    }}>
+      <TextField label="Username" description="Please use your email" />
+      <Story />
+    </Flex>
+  )]
 };
 
 function TextAlignDecorator(Story) {

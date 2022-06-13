@@ -78,7 +78,6 @@ export let WithState: HelpTextStory = {
 };
 
 export let AriaLabel: HelpTextStory = {
-  ...Default,
   args: {
     label: null,
     'aria-label': 'Password'
@@ -94,21 +93,22 @@ export let AriaLabel: HelpTextStory = {
 };
 
 export const DescriptionAndCustomDescription = {
-  ...Default,
   args: {
-    customDescription: 'Custom description.'
+    customDescription: 'Custom description.',
+    'aria-describedby': 'custom-description'
   },
   argTypes: {
     customDescription: {
       control: 'text'
-    }
+    },
+    'aria-describedby': {control: {disable: true}}
   },
-  render: ({customDescription, ...props}) => (
+  decorators: [(Story, Context) => (
     <Flex direction="column" gap="size-125">
-      <TextField {...props} aria-describedby="custom-description" />
-      <p id="custom-description">{customDescription}</p>
+      <Story />
+      <p id={Context.args['aria-describedby']}>{Context.args.customDescription}</p>
     </Flex>
-  )
+  )]
 };
 
 function TextFieldWithValidationState(props: SpectrumTextFieldProps) {

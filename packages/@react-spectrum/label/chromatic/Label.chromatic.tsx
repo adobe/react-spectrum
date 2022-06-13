@@ -12,7 +12,6 @@
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Label} from '../';
 import React from 'react';
-import {SpectrumLabelProps} from '@react-types/label';
 import {TextField} from '@react-spectrum/textfield';
 
 type LabelStory = ComponentStoryObj<typeof Label>;
@@ -20,68 +19,57 @@ type LabelStory = ComponentStoryObj<typeof Label>;
 export default {
   title: 'Label',
   component: Label,
-  args: {width: '100%'}
+  args: {
+    width: '100%',
+    htmlFor: 'test',
+    children: 'Test'
+  },
+  decorators: [(Story, Context) => (
+    <div style={{whiteSpace: 'nowrap'}}>
+      <Story htmlFor="test" />
+      <TextField id="test" isRequired={Context.args.isRequired} />
+    </div>
+  )]
 } as ComponentMeta<typeof Label>;
 
-export let Default: LabelStory = {
-  render: (args) => <TextFieldLabel {...args} />
-};
+export let Default: LabelStory = {};
 
 export let LabelAlignStart: LabelStory = {
-  ...Default,
   args: {labelAlign: 'start'},
   name: 'labelAlign: start'
 };
 
 export let LabelAlignEnd: LabelStory = {
-  ...Default,
-  args: {...Default.args, labelAlign: 'end'},
+  args: {labelAlign: 'end'},
   name: 'labelAlign: end'
 };
 
 export let LabelPositionSideLabelAlignStart: LabelStory = {
-  ...LabelAlignStart,
   args: {...LabelAlignStart.args, width: 80, labelPosition: 'side'},
   name: 'labelPosition: side, labelAlign: start'
 };
 
 export let LabelPositionSideLabelAlignEnd: LabelStory = {
-  ...LabelPositionSideLabelAlignStart,
   args: {...LabelPositionSideLabelAlignStart.args, labelAlign: 'end'},
   name: 'labelPosition: side, labelAlign: end'
 };
 
 export let IsRequired: LabelStory = {
-  ...Default,
   args: {isRequired: true},
   name: 'isRequired'
 };
 
 export let IsRequiredNecessityIndicatorIcon: LabelStory = {
-  ...IsRequired,
   args: {...IsRequired.args, necessityIndicator: 'icon'},
   name: 'isRequired: true, necessityIndicator: icon'
 };
 
 export let NecessityIndicatorLabel: LabelStory = {
-  ...Default,
   args: {...Default.args, necessityIndicator: 'label'},
   name: 'necessityIndicator: label'
 };
 
 export let IsRequiredNecessityIndicatorLabel: LabelStory = {
-  ...IsRequired,
   args: {...IsRequired.args, necessityIndicator: 'label'},
   name: 'isRequired: true, necessityIndicator: label'
 };
-
-function TextFieldLabel(props: SpectrumLabelProps = {}) {
-  return (
-    <div style={{whiteSpace: 'nowrap'}}>
-      <Label {...props} for="test">
-        Test
-      </Label>
-      <TextField id="test" isRequired={props.isRequired} />
-    </div>
-  );
-}

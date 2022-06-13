@@ -36,33 +36,30 @@ const argTypes = {
   isRequired: {
     control: 'boolean',
     defaultValue: false
-  }
+  },
+  htmlFor: {control: {disable: true}}
 };
 
 export default {
   title: 'Label',
   component: Label,
-  args: {width: '100%'},
-  argTypes: argTypes
+  args: {
+    width: '100%',
+    htmlFor: 'test',
+    children: 'Test'
+  },
+  argTypes: argTypes,
+  decorators: [(Story, Context) => (
+    <div style={{whiteSpace: 'nowrap'}}>
+      <Story />
+      <TextField id={Context.args.htmlFor} isRequired={Context.args.isRequired} />
+    </div>
+  )]
 } as ComponentMeta<typeof Label>;
 
-export let Default: LabelStory = {
-  render: (args) => <TextFieldLabel {...args} />
-};
+export let Default: LabelStory = {};
 
 export let WidthForLabelAlignSide: LabelStory = {
-  ...Default,
   args: {width: '80px', labelPosition: 'side'},
   argTypes: {labelPosition: {control: {disable: true}}}
 };
-
-function TextFieldLabel(props: SpectrumLabelProps = {}) {
-  return (
-    <div style={{whiteSpace: 'nowrap'}}>
-      <Label {...props} for="test">
-        Test
-      </Label>
-      <TextField id="test" isRequired={props.isRequired} />
-    </div>
-  );
-}
