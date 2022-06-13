@@ -114,6 +114,7 @@
   font-style: italic;
   visibility: hidden;
   height: 0;
+  pointer-events: none;
 }
 
 .react-spectrum-DatePicker-cell.is-placeholder {
