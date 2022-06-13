@@ -57,11 +57,11 @@ storiesOf('Drag and Drop', module)
     () => (
       <Flex direction="column" gap="size-200" alignItems="center">
         <Draggable />
-        <Droppable />
+        <Droppable>(1)</Droppable>
         <input />
-        <Droppable type="text/html" />
+        <Droppable type="text/html">(2)</Droppable>
         <input />
-        <Droppable />
+        <Droppable>(3)</Droppable>
       </Flex>
     )
   )
@@ -71,7 +71,8 @@ storiesOf('Drag and Drop', module)
       <Flex direction="column" gap="size-200" alignItems="center">
         <Draggable />
         <Droppable actionId="Parent">
-          <Droppable actionId="Child" />
+          (Parent)
+          <Droppable actionId="Child">(Child)</Droppable>
         </Droppable>
       </Flex>
     )
@@ -106,8 +107,8 @@ storiesOf('Drag and Drop', module)
             <Content>
               <Flex direction="column" gap="size-200" alignItems="center">
                 <Draggable />
-                <Droppable />
-                <Droppable />
+                <Droppable>1</Droppable>
+                <Droppable>2</Droppable>
               </Flex>
             </Content>
           </Dialog>
@@ -260,6 +261,7 @@ export function Droppable({type, children, actionId = ''}: any) {
         ref={ref}
         className={classNames(dropzoneStyles, 'spectrum-Dropzone', {'is-dragged': isDropTarget})}>
         Drop here
+        {' '}
         {children}
       </div>
     </FocusRing>

@@ -1,4 +1,5 @@
 {
+  "dragApplicationLabel": "Dragging. Press Escape to cancel drag.",
   "dragItem": "Drag {itemText}",
   "dragSelectedItems": "Drag {count, plural, one {# selected item} other {# selected items}}",
   "dragDescriptionKeyboard": "Press Enter to start dragging.",

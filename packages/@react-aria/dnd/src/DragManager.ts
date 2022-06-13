@@ -61,6 +61,7 @@ interface DragTarget {
   onDragEnd?: (e: DragEndEvent) => void
 }
 
+let beginDraggingTimeout:number;
 export function beginDragging(target: DragTarget, formatMessage: (key: string) => string) {
   if (dragSession) {
     throw new Error('Cannot begin dragging while already dragging');
@@ -69,6 +70,17 @@ export function beginDragging(target: DragTarget, formatMessage: (key: string) =
   dragSession = new DragSession(target, formatMessage);
   requestAnimationFrame(() => {
     dragSession.setup();
+
+    if (beginDraggingTimeout) {
+      cancelAnimationFrame(beginDraggingTimeout);
+      beginDraggingTimeout = undefined;
+    }
+
+    if (getDragModality() === 'virtual') {
+      target.element.blur();
+      beginDraggingTimeout = requestAnimationFrame(() => target.element.focus());
+      return;
+    }
 
     if (getDragModality() === 'keyboard') {
       dragSession.next();
@@ -95,6 +107,11 @@ export function useDragSession() {
 }
 
 function endDragging() {
+  if (beginDraggingTimeout) {
+    cancelAnimationFrame(beginDraggingTimeout);
+    beginDraggingTimeout = undefined;
+  }
+
   dragSession = null;
   for (let cb of subscriptions) {
     cb();
@@ -158,6 +175,7 @@ class DragSession {
   private formatMessage: (key: string) => string;
   private isVirtualClick: boolean;
   private initialFocused: boolean;
+  private genericAncestor: Element;
 
   constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
@@ -188,7 +206,23 @@ class DragSession {
     );
     this.updateValidDropTargets();
 
-    announce(this.formatMessage(MESSAGES[getDragModality()]));
+    let dragModality = getDragModality();
+    announce(this.formatMessage(MESSAGES[dragModality]));
+
+    if (dragModality === 'virtual') {
+      this.genericAncestor =
+        Array.from(document.body.querySelectorAll(':not([aria-hidden]):not([role])'))
+        .find(
+          element => (
+            element.contains(this.dragTarget.element) &&
+            this.validDropTargets.every(target => element.contains(target.element))
+          )
+        );
+      if (this.genericAncestor) {
+        this.genericAncestor.setAttribute('role', 'application');
+        this.genericAncestor.setAttribute('aria-label', this.formatMessage('dragApplicationLabel'));
+      }
+    }
   }
 
   teardown() {
@@ -206,6 +240,12 @@ class DragSession {
     this.restoreAriaHidden();
     if (this.mutationImmediate) {
       clearImmediate(this.mutationImmediate);
+    }
+
+    if (this.genericAncestor) {
+      this.genericAncestor.removeAttribute('role');
+      this.genericAncestor.removeAttribute('aria-label');
+      this.genericAncestor = undefined;
     }
   }
 
