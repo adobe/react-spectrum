@@ -36,7 +36,7 @@ interface TabsContext<T> {
     tabListState: TabListState<T>,
     setTabListState: (state: TabListState<T>) => void,
     selectedTab: HTMLElement,
-    collapse: boolean
+    collapsed: boolean
   },
   refs: {
     wrapperRef: MutableRefObject<HTMLDivElement>,
@@ -64,7 +64,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
 
   let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
-  let [collapse, setCollapse] = useState(false);
+  let [collapsed, setCollapsed] = useState(false);
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
   const [tabListState, setTabListState] = useState<TabListState<T>>(null);
 
@@ -77,7 +77,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
       }
     }
     // collapse is in the dep array so selectedTab can be updated for TabLine positioning
-  }, [children, tabListState?.selectedKey, collapse, tablistRef]);
+  }, [children, tabListState?.selectedKey, collapsed, tablistRef]);
 
   let checkShouldCollapse = useCallback(() => {
     if (wrapperRef.current && orientation !== 'vertical') {
@@ -89,9 +89,9 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
       let farEdgeTabList = tabsComponent.getBoundingClientRect()[end];
       let farEdgeLastTab = lastTab?.getBoundingClientRect()[end];
       let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
-      setCollapse(shouldCollapse);
+      setCollapsed(shouldCollapse);
     }
-  }, [tablistRef, wrapperRef, direction, orientation, setCollapse]);
+  }, [tablistRef, wrapperRef, direction, orientation, setCollapsed]);
 
   useEffect(() => {
     checkShouldCollapse();
@@ -105,14 +105,14 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
 
   // When the tabs are collapsed, the tabPanel should be labelled by the Picker button element.
   let collapsibleTabListId = useId();
-  if (collapse && orientation !== 'vertical') {
+  if (collapsed && orientation !== 'vertical') {
     tabPanelProps['aria-labelledby'] = collapsibleTabListId;
   }
   return (
     <TabContext.Provider
       value={{
         tabProps: {...props, orientation, density},
-        tabState: {tabListState, setTabListState, selectedTab, collapse},
+        tabState: {tabListState, setTabListState, selectedTab, collapsed},
         refs: {tablistRef, wrapperRef},
         tabPanelProps
       }}>
@@ -242,7 +242,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   const tabContext = useContext(TabContext);
   const {refs, tabState, tabProps, tabPanelProps} = tabContext;
   const {isQuiet, density, isDisabled, isEmphasized, orientation} = tabProps;
-  const {selectedTab, collapse, setTabListState} = tabState;
+  const {selectedTab, collapsed, setTabListState} = tabState;
   const {tablistRef, wrapperRef} = refs;
   // Pass original Tab props but override children to create the collection.
   const state = useTabListState({...tabProps, children: props.children});
@@ -255,14 +255,18 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
     setTabListState(state);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.disabledKeys, state.selectedItem, state.selectedKey, props.children]);
-  let stylePropsForVertical = orientation === 'vertical' ? styleProps : {};
 
-  let style : React.CSSProperties = collapse ? {visibility: 'hidden', position: 'absolute'} : {};
+  let collapseStyle : React.CSSProperties = collapsed && orientation !== 'vertical' ? {visibility: 'hidden', position: 'absolute'} : {};
+  let stylePropsFinal = orientation === 'vertical' ? styleProps : {style: collapseStyle};
+
+  if (collapsed && orientation !== 'vertical') {
+    tabListProps['aria-hidden'] = true;
+  }
 
   let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
   const tabContent = (
     <div
-      {...stylePropsForVertical}
+      {...stylePropsFinal}
       {...tabListProps}
       ref={tablistRef}
       className={classNames(
@@ -277,9 +281,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
         },
         orientation === 'vertical' && styleProps.className
       )
-      }
-      aria-hidden={collapse}
-      style={style}>
+      }>
       {[...state.collection].map((item) => (
         <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
       ))}
@@ -300,7 +302,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
           'spectrum-TabsPanel-collapseWrapper',
           styleProps.className
         )}>
-        <TabPicker {...props} {...tabProps} visible={collapse} id={tabPanelProps['aria-labelledby']} state={state} className={tabListclassName} />
+        <TabPicker {...props} {...tabProps} visible={collapsed} id={tabPanelProps['aria-labelledby']} state={state} className={tabListclassName} />
         {tabContent}
       </div>
     );
