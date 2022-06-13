@@ -116,11 +116,11 @@ export const ContainerWithTextAlignmentSetDescriptionAndSetError = {
   name: 'textAlign center errorMessage',
   decorators: [(Story) => (
     <Flex
-    direction="column"
-    gap="size-200"
-    UNSAFE_style={{
-      textAlign: 'center'
-    }}>
+      direction="column"
+      gap="size-200"
+      UNSAFE_style={{
+        textAlign: 'center'
+      }}>
       <TextField label="Username" description="Please use your email" />
       <Story />
     </Flex>
@@ -130,11 +130,11 @@ export const ContainerWithTextAlignmentSetDescriptionAndSetError = {
 function TextAlignDecorator(Story) {
   return (
     <Flex
-    direction="column"
-    gap="size-200"
-    UNSAFE_style={{
-      textAlign: 'center'
-    }}>
+      direction="column"
+      gap="size-200"
+      UNSAFE_style={{
+        textAlign: 'center'
+      }}>
       <Story />
     </Flex>
   );
