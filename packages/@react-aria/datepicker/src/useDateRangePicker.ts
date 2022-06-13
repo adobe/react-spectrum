@@ -23,7 +23,6 @@ import intlMessages from '../intl/*.json';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
-import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 export interface DateRangePickerAria {
@@ -80,11 +79,6 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   let dialogId = useId();
 
   let groupProps = useDatePickerGroup(state, ref);
-  let {focusWithinProps} = useFocusWithin({
-    onBlurWithin() {
-      state.confirmPlaceholder();
-    }
-  });
 
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
   let focusManager = useMemo(() => createFocusManager(ref, {
@@ -111,7 +105,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   let domProps = filterDOMProps(props);
 
   return {
-    groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
+    groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-describedby': ariaDescribedBy
