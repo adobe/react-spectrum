@@ -259,14 +259,9 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     enteredKeys.current = '';
     scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
 
-    // Safari requires that a selection is set or it won't fire input events.
-    // Since usePress disables text selection, this won't happen by default.
-    ref.current.style.webkitUserSelect = 'text';
-    ref.current.style.userSelect = 'text';
+    // Collapse selection to start or Chrome won't fire input events.
     let selection = window.getSelection();
     selection.collapse(ref.current);
-    ref.current.style.webkitUserSelect = 'none';
-    ref.current.style.userSelect = 'none';
   };
 
   let compositionRef = useRef('');
@@ -312,11 +307,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
         }
         break;
     }
-  });
-
-  // For Android: prevent selection on long press.
-  useEvent(ref, 'selectstart', e => {
-    e.preventDefault();
   });
 
   useLayoutEffect(() => {
@@ -389,9 +379,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       onKeyDown,
       onFocus,
       style: {
-        caretColor: 'transparent',
-        userSelect: 'none',
-        WebkitUserSelect: 'none'
+        caretColor: 'transparent'
       },
       // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
       onPointerDown(e) {
