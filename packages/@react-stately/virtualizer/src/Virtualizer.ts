@@ -92,6 +92,7 @@ export class Virtualizer<T extends object, V, W> {
   private _children: Set<ReusableView<T, V>>;
   private _invalidationContext: InvalidationContext<T, V> | null;
   private _overscanManager: OverscanManager;
+  private _persistedKeys: Set<Key>;
   private _relayoutRaf: number | null;
   private _scrollAnimation: CancelablePromise<void> | null;
   private _isScrolling: boolean;
@@ -112,6 +113,7 @@ export class Virtualizer<T extends object, V, W> {
     this._children = new Set();
     this._invalidationContext = null;
     this._overscanManager = new OverscanManager();
+    this._persistedKeys = new Set();
 
     this._scrollAnimation = null;
     this._isScrolling = false;
@@ -231,6 +233,18 @@ export class Virtualizer<T extends object, V, W> {
    */
   getItem(key: Key) {
     return this._collection ? this._collection.getItem(key) : null;
+  }
+
+  /**
+   * Set the keys of keys for layoutInfos persisted by the virtualizer.
+   * This is to prevent these views from being reused by the virtualizer.
+   */
+  set persistedKeys(persistedKeys: Set<Key>) {
+    this._setPersistedKeys(persistedKeys);
+  }
+
+  _setPersistedKeys(persistedKeys: Set<Key>) {
+    this._persistedKeys = persistedKeys;
   }
 
   /**
@@ -631,6 +645,20 @@ export class Virtualizer<T extends object, V, W> {
       }
 
       map.set(layoutInfo.key, layoutInfo);
+    }
+
+    // Views that are outside of the viewable rectangle that we don't
+    // want to be reused by Virtualizer.
+    for (let persistKey of this._persistedKeys) {
+      let layoutInfo = this.layout.getLayoutInfo(persistKey);
+
+      if (layoutInfo) {
+        if (copy) {
+          layoutInfo = layoutInfo.copy();
+        }
+
+        map.set(layoutInfo.key, layoutInfo);
+      }
     }
 
     return map;
