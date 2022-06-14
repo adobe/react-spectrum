@@ -1,28 +1,25 @@
 import {CheckboxGroup, Checkbox, Flex} from '@adobe/react-spectrum'
+import ToDo from './ToDo'
 
-function TodoItems(props: { list : {id: number; task: string}[]; 
+
+function TodoItems(props: { list : ToDo[]; 
                             handleList: any; 
                             updateCompleted: any}) {
 
-    function removeItem(id: number, task: string){    
-        let index = getIndex(props.list, task);
+    function removeItem(id: number){
+        
+        //add selected item to the completed list
+        const found = props.list.find(element => element.id === id)
+        if (found){
+            props.updateCompleted(found.task); 
+        }
 
-        props.updateCompleted(props.list[index].task); 
+        //remove the item from the list
         props.handleList(props.list.filter(item => item.id !== id));
     }
 
-    function getIndex(list : {id: number; task: string}[], task: string){
-        for (let i = 0; i < list.length; i++){
-            let item = list[i];
-            if (item.task === task){
-                return i;
-            }
-        }
-        return -1;
-    }
-
     const elements = props.list.map(item => (
-        <Checkbox onChange={() => removeItem(item.id, item.task)} 
+        <Checkbox onChange={() => removeItem(item.id)} 
                     key={item.id} 
                     value={item.task}>
             {item.task}
@@ -30,7 +27,7 @@ function TodoItems(props: { list : {id: number; task: string}[];
     ))
     
     return (
-            <CheckboxGroup>
+            <CheckboxGroup aria-label="to-do list">
                 <Flex direction="column">
                     {elements}
                 </Flex>

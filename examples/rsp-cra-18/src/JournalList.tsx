@@ -1,15 +1,16 @@
-import React from 'react'
+import {Key} from 'react'
 import AddCircle from '@spectrum-icons/workflow/AddCircle';
 import {Flex, Text, Button, Form, TextArea, Picker, Item, Divider} from '@adobe/react-spectrum'
 import JournalEntries from './JournalEntries'
+import Journal from './Journal'
 
-function JournalList(props: {rating: React.Key;
+function JournalList(props: {rating: Key;
                             setRating: any;
-                            entryList: {rate: React.Key, description: string, id: number}[];
+                            entryList: Journal[];
                             options: {id: string, name: string}[];
                             description: string;
                             setDescription: any;
-                            handleSubmit: any;}){
+                            handleSubmit: any}){
     return(
         <>
             <Form onSubmit={props.handleSubmit} maxWidth="size-6000">

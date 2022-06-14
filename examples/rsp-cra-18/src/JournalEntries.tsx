@@ -1,6 +1,7 @@
 import {Flex, Divider} from '@adobe/react-spectrum'
+import Journal from './Journal'
 
-function JournalEntries(props : {list : {rate: React.Key, description: string, id: number}[]}){
+function JournalEntries(props : {list : Journal[]}){
 
     const element = props.list.map(item => (
         <li key={item.id}>

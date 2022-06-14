@@ -1,11 +1,11 @@
 import './App.css';
 import {Provider, defaultTheme} from '@adobe/react-spectrum'
 import Lighting from './Lighting';
-import React from 'react'
+import {useState} from 'react'
 import BodyContent from './BodyContent';
 
 function App() {
-  let [selected, setSelection] = React.useState(false);
+  let [selected, setSelection] = useState(false);
 
   return (
     <Provider theme={defaultTheme} 

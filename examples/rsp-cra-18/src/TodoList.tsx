@@ -2,13 +2,15 @@ import './App.css';
 import {Flex, TextField, Button, Form, Divider} from '@adobe/react-spectrum'
 import ToDoItems from "./ToDoItems"
 import Completed from "./Completed"
+import ToDo from './ToDo'
 
-function TodoList(props: {list: {id: number; task: string}[];
+
+function TodoList(props: {list: ToDo[];
                         setList: any;
                         handleSubmit: any;
                         value: string;
                         setValue: any;
-                        completed: {id: number; task: string}[];
+                        completed: ToDo[];
                         updateCompleted: any;
                         clearCompleted: any}){
 
@@ -32,7 +34,6 @@ function TodoList(props: {list: {id: number; task: string}[];
         <Divider marginTop="size-300" marginBottom="size-300" />
         <h2>Completed</h2>
         <Completed completed={props.completed} onDelete={props.clearCompleted}/>
-        {/* <h2>{props.count}</h2> */}
     </>
     );
 }

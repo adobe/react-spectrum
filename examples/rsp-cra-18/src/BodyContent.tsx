@@ -1,23 +1,26 @@
-import React from "react";
+import {useState, FormEvent, Key, useRef} from "react";
 import {Item, TabList, TabPanels, Tabs} from '@adobe/react-spectrum'
 import TodoList from './TodoList';
 import JournalList from './JournalList';
+import ToDo from './ToDo'
+import Journal from './Journal'
+
 
 function BodyContent(){
 
   //states for the To-Do list
-  const [list, setList] = React.useState<{id: number; task: string}[]>([]);
-  const [value, setValue] = React.useState('');
-  const [completed, setCompleted] = React.useState<{id: number; task: string}[]>([]);
-  const count = React.useRef(0);
+  const [list, setList] = useState<ToDo[]>([]);
+  const [value, setValue] = useState('');
+  const [completed, setCompleted] = useState<ToDo[]>([]);
+  const count = useRef(0);
 
   //states for journal entries
-  let [rating, setRating] = React.useState<React.Key>('');
-  let [entryList, setEntryList] = React.useState<{rate: React.Key, description: string, id: number}[]>([]);
-  let [description, setDescription] = React.useState('');
-  let countJournals = React.useRef(0);
+  const [rating, setRating] = useState<Key>('');
+  const [entryList, setEntryList] = useState<Journal[]>([]);
+  const [description, setDescription] = useState('');
+  const countJournals = useRef(0);
 
-  let options = [
+  const options = [
     {id: "Bad", name: "Bad"},
     {id: "Okay", name: "Okay"},
     {id: "Good", name: "Good"},
@@ -25,7 +28,7 @@ function BodyContent(){
   ] 
 
   //functions for the To-Do list
-  function handleSubmitToDo(e: React.FormEvent<HTMLInputElement>){
+  function handleSubmitToDo(e: FormEvent<HTMLInputElement>){
     e.preventDefault()
 
     if (value.length > 0){
@@ -55,7 +58,7 @@ function BodyContent(){
   }
 
   //functions for journal entries
-  function handleSubmitJournals(e: React.FormEvent<HTMLInputElement>){
+  function handleSubmitJournals(e: FormEvent<HTMLInputElement>){
       e.preventDefault()
 
       countJournals.current = countJournals.current + 1; //used to determine key for each item in the entryList array
@@ -63,7 +66,7 @@ function BodyContent(){
       setEntryList(prevListArray => {
           return [
               ...prevListArray,
-              {rate: rating, description: value, id: countJournals.current}
+              {rate: rating, description: description, id: countJournals.current}
           ]
       })
 
