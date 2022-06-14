@@ -54,7 +54,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
   let monthDateFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
-    era: currentMonth.calendar.identifier !== 'gregory' ? 'long' : undefined,
+    era: currentMonth.calendar.identifier === 'gregory' && currentMonth.era === 'BC' ? 'short' : undefined,
     calendar: currentMonth.calendar.identifier,
     timeZone: state.timeZone
   });
