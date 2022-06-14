@@ -116,7 +116,9 @@ export class IndianCalendar extends GregorianCalendar {
   }
 
   getYearsInEra(): number {
-    return 9999;
+    // 9999-12-31 gregorian is 9920-10-10 indian.
+    // Round down to 9919 for the last full year.
+    return 9919;
   }
 
   getEras() {
