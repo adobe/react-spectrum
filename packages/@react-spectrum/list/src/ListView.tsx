@@ -227,7 +227,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
 
   return (
     <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
-      <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')} isListView>
+      <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
         <Virtualizer
           {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
           {...filterDOMProps(otherProps)}
@@ -279,18 +279,6 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
                       target={{key: item.key, type: 'item', dropPosition: 'after'}}
                       isPresentationOnly={collection.getKeyAfter(item.key) != null} />
                   }
-                  {isListDroppable &&
-                    <InsertionIndicator
-                      key={`${item.key}-before`}
-                      target={{key: item.key, type: 'item', dropPosition: 'before'}} />
-                  }
-                  <ListViewItem item={item} isEmphasized hasActions={!!onAction} />
-                  {isListDroppable &&
-                    <InsertionIndicator
-                      key={`${item.key}-after`}
-                      target={{key: item.key, type: 'item', dropPosition: 'after'}}
-                      isPresentationOnly={collection.getKeyAfter(item.key) !== null} />
-                    }
                 </>
               );
             } else if (type === 'loader') {
