@@ -137,7 +137,7 @@ function onDragEnd(e) {
 ```
 
 Finally, we provide our `getItems` and `onDragEnd` functions as options to `useDragHooks`, providing us with a set of `dragHooks` that we can pass to our ListView directly.
-Below is what our draggable ListView would look like after combining everything together. For more info on `getItems` and `onDragEnd`, see the [API section](#api) below.
+Below is what our draggable ListView would look like after combining everything together. For more info on `getItems` and `onDragEnd`, see the [API section](#usedraghooks-props) below.
 
 ```tsx example export=true render=false
 import {Item, ListView} from '@react-spectrum/list';
@@ -245,7 +245,7 @@ async function onDrop(e) {
 ```
 
 Finally, we provide our `getDropOperation` and `onDrop` functions as options to `useDropHooks`, providing us with a set of `dropHooks` that we can pass to our ListView directly.
-Below is what our droppable ListView would look like after combining everything together. For more info on `getDropOperation` and `onDrop`, see the [API section](#api) below.
+Below is what our droppable ListView would look like after combining everything together. For more info on `getDropOperation` and `onDrop`, see the [API section](#usedrophook-props) below.
 
 ```tsx example export=true render=false
 import {useDropHooks} from '@react-spectrum/dnd';
@@ -312,12 +312,14 @@ function DroppableList(props) {
 
 ## API
 
+### useDragHooks props
+
 <FunctionAPI function={docs.exports.useDragHooks} links={docs.links} />
 <TypeContext.Provider value={dndDocs.links}>
   <InterfaceType properties={dndDocs.exports.DraggableCollectionProps.properties} />
 </TypeContext.Provider>
 
-// TODO: add line break here
+### useDropHook props
 
 <FunctionAPI function={docs.exports.useDropHooks} links={docs.links} />
 <TypeContext.Provider value={dndDocs.links}>
