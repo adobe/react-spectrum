@@ -94,6 +94,7 @@ class RGBColor extends Color {
       while(values.length > 0) {
         colors.push( parseInt( values.splice(0, 2).join(''), 16) )
       }
+      colors[3] = colors[3] !== undefined ? colors[3] / 255 : undefined
     }
 
     // matching rgb(rrr, ggg, bbb), rgba(rrr, ggg, bbb, 0.a)
