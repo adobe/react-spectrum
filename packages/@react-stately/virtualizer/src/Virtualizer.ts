@@ -1164,7 +1164,7 @@ export class Virtualizer<T extends object, V, W> {
     for (let [key, view] of this._visibleViews) {
       // If an item has a width of 0, there is no need to remove it from the _visibleViews.
       // Removing an item with  width of 0 can cause a loop where the item gets added, removed,
-      // added, removed... etc in a loop. The resize buffer ("spooky column") often has a width of 0.
+      // added, removed... etc in a loop.
       if (!finalMap.has(key) && view.layoutInfo.rect.width > 0) {
         transaction.removed.set(key, view);
         this._visibleViews.delete(key);

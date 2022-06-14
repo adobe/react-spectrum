@@ -115,7 +115,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 
   const columnState = useTableColumnResizeState({...props, columns: state.collection.columns, getDefaultWidth, onColumnResize: props.onColumnResize, onColumnResizeEnd: props.onColumnResizeEnd});
 
-
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
   if (shouldShowCheckboxes !== showSelectionCheckboxes) {
@@ -476,11 +475,13 @@ function TableColumnHeader(props) {
   }
 
   let {hoverProps, isHovered} = useHover({});
+  if (columnProps.allowsResizing) {
+    // if we allow resizing, override the usePress that useTableColumnHeader generates so that clicking brings up the menu
+    // instead of sorting the column immediately
+    columnHeaderProps = {...columnHeaderProps, ...buttonProps};
+  }
 
   const allProps = [columnHeaderProps, hoverProps];
-  if (columnProps.allowsResizing) {
-    allProps.push(buttonProps);
-  }
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

@@ -149,7 +149,6 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
 
     // copy the columnWidths map and set the new width for the column being resized
     let widths = new Map<Key, number>(columnWidthsRef.current);
-    widths.set(columnsRef.current[columnsRef.current.length - 1].key, 0);
     widths.set(column.key, boundedWidth);
 
     // keep track of all columns that have been sized
