@@ -61,7 +61,6 @@ interface DragTarget {
   onDragEnd?: (e: DragEndEvent) => void
 }
 
-let beginDraggingTimeout;
 export function beginDragging(target: DragTarget, formatMessage: (key: string) => string) {
   if (dragSession) {
     throw new Error('Cannot begin dragging while already dragging');
@@ -71,16 +70,10 @@ export function beginDragging(target: DragTarget, formatMessage: (key: string) =
   requestAnimationFrame(() => {
     dragSession.setup();
 
-    if (beginDraggingTimeout) {
-      cancelAnimationFrame(beginDraggingTimeout);
-      beginDraggingTimeout = undefined;
-    }
-
     if (getDragModality() === 'virtual') {
-      target.element.blur();
-      beginDraggingTimeout = setTimeout(() => {
-        target.element.focus();
-      }, 20);
+      let {element} = target;
+      element.blur();
+      setTimeout(() => element.focus(), 100);
       return;
     }
 
@@ -109,11 +102,6 @@ export function useDragSession() {
 }
 
 function endDragging() {
-  if (beginDraggingTimeout) {
-    clearTimeout(beginDraggingTimeout);
-    beginDraggingTimeout = undefined;
-  }
-
   dragSession = null;
   for (let cb of subscriptions) {
     cb();
