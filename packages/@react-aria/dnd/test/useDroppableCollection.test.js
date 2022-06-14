@@ -1051,6 +1051,11 @@ describe('useDroppableCollection', () => {
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
+
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(7);
 
@@ -1081,6 +1086,9 @@ describe('useDroppableCollection', () => {
       act(() => jest.advanceTimersByTime(50));
       expect(document.activeElement).toBe(cells[1]);
       expect(cells[1].parentElement).toHaveAttribute('aria-selected', 'true');
+
+      expect(containerApplication).not.toHaveAttribute('role');
+      expect(containerApplication).not.toHaveAttribute('aria-label');
     });
 
     it('should add descriptions to each item', () => {
@@ -1099,6 +1107,12 @@ describe('useDroppableCollection', () => {
       fireEvent.focus(draggable);
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
+
+
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(7);
@@ -1127,6 +1141,11 @@ describe('useDroppableCollection', () => {
       fireEvent.focus(draggable);
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
+
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(7);
@@ -1192,6 +1211,11 @@ describe('useDroppableCollection', () => {
       fireEvent.focus(draggable);
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
+
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
 
       cells = within(grid).getAllByRole('gridcell', {hidden: true});
       expect(cells).toHaveLength(8);

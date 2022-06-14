@@ -609,6 +609,12 @@ describe('useDraggableCollection', () => {
       fireEvent.focus(dragButton);
       fireEvent.click(dragButton);
       act(() => jest.runAllTimers());
+
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
+
       expect(cells[0]).not.toHaveClass('is-dragging');
       expect(cells[1]).toHaveClass('is-dragging');
       expect(cells[2]).not.toHaveClass('is-dragging');
@@ -656,6 +662,9 @@ describe('useDraggableCollection', () => {
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);
       expect(cells.map(c => c.textContent)).toEqual(['Foo', 'Baz']);
+
+      expect(containerApplication).not.toHaveAttribute('role');
+      expect(containerApplication).not.toHaveAttribute('aria-label');
     });
 
     it('should drag multiple selected items', async () => {
@@ -687,6 +696,12 @@ describe('useDraggableCollection', () => {
       fireEvent.focus(dragButton);
       fireEvent.click(dragButton);
       act(() => jest.runAllTimers());
+
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
+
       expect(cells[0]).toHaveClass('is-dragging');
       expect(cells[1]).toHaveClass('is-dragging');
       expect(cells[2]).not.toHaveClass('is-dragging');
@@ -742,6 +757,9 @@ describe('useDraggableCollection', () => {
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(1);
       expect(cells.map(c => c.textContent)).toEqual(['Baz']);
+
+      expect(containerApplication).not.toHaveAttribute('role');
+      expect(containerApplication).not.toHaveAttribute('aria-label');
     });
 
     it('should drag only clicked item when not selected', async () => {
@@ -771,6 +789,12 @@ describe('useDraggableCollection', () => {
       fireEvent.focus(dragButton);
       fireEvent.click(dragButton);
       act(() => jest.runAllTimers());
+
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
+
       expect(cells[0]).not.toHaveClass('is-dragging');
       expect(cells[1]).toHaveClass('is-dragging');
       expect(cells[2]).not.toHaveClass('is-dragging');
@@ -818,6 +842,9 @@ describe('useDraggableCollection', () => {
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);
       expect(cells.map(c => c.textContent)).toEqual(['Foo', 'Baz']);
+
+      expect(containerApplication).not.toHaveAttribute('role');
+      expect(containerApplication).not.toHaveAttribute('aria-label');
     });
   });
 });

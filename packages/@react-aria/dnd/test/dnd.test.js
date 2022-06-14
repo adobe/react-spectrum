@@ -1905,6 +1905,12 @@ describe('useDrag and useDrop', function () {
 
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
+
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
+
       expect(document.activeElement).toBe(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Click to cancel drag.');
@@ -2003,6 +2009,9 @@ describe('useDrag and useDrop', function () {
       expect(draggable).toHaveAttribute('data-dragging', 'false');
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
       expect(droppable2).toHaveAttribute('data-droptarget', 'false');
+
+      expect(containerApplication).not.toHaveAttribute('role');
+      expect(containerApplication).not.toHaveAttribute('aria-label');
     });
 
     it('should hide all non drop target elements from screen readers while dragging', () => {
@@ -2043,6 +2052,12 @@ describe('useDrag and useDrop', function () {
       fireEvent.focus(draggable);
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
+
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
+
       expect(draggable).toHaveAttribute('data-dragging', 'true');
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Click to cancel drag.');
@@ -2053,6 +2068,9 @@ describe('useDrag and useDrop', function () {
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
 
       expect(announce).toHaveBeenCalledWith('Drop canceled.');
+
+      expect(containerApplication).not.toHaveAttribute('role');
+      expect(containerApplication).not.toHaveAttribute('aria-label');
     });
 
     it('should support clicking the original drag target to cancel drag (virtual pointer event)', () => {
@@ -2068,6 +2086,12 @@ describe('useDrag and useDrop', function () {
       fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
+
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
+
       expect(draggable).toHaveAttribute('data-dragging', 'true');
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Click to cancel drag.');
@@ -2081,6 +2105,9 @@ describe('useDrag and useDrop', function () {
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
 
       expect(announce).toHaveBeenCalledWith('Drop canceled.');
+
+      expect(containerApplication).not.toHaveAttribute('role');
+      expect(containerApplication).not.toHaveAttribute('aria-label');
     });
 
     it('should support double tapping the drop target to complete drag (virtual pointer event)', () => {
@@ -2098,6 +2125,12 @@ describe('useDrag and useDrop', function () {
       fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
+
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
+
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 
 
@@ -2112,6 +2145,9 @@ describe('useDrag and useDrop', function () {
 
       expect(announce).toHaveBeenCalledWith('Drop complete.');
       expect(onDrop).toHaveBeenCalledTimes(1);
+
+      expect(containerApplication).not.toHaveAttribute('role');
+      expect(containerApplication).not.toHaveAttribute('aria-label');
     });
 
     it('should handle when a drop target is added', () => {
