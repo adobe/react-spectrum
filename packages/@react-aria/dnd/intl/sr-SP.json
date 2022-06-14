@@ -1,4 +1,5 @@
 {
+  "dragApplicationLabel": "Prevlačenje u toku. Pritisnite Escape da biste otkazali prevlačenje.",
   "dragItem": "Prevucite {itemText}",
   "dragSelectedItems": "Prevucite {count, plural, one {# izabranu stavku} other {# izabrane stavke}}",
   "dragDescriptionKeyboard": "Pritisnite Enter da biste započeli prevlačenje..",

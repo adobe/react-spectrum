@@ -1,4 +1,5 @@
 {
+  "dragApplicationLabel": "Ziehvorgang läuft. Drücken Sie Escape, um den Vorgang abzubrechen.",
   "dragDescriptionKeyboard": "Drücken Sie die Eingabetaste, um den Ziehvorgang zu starten.",
   "dragDescriptionTouch": "Tippen Sie doppelt, um den Ziehvorgang zu starten.",
   "dragDescriptionVirtual": "Zum Starten des Ziehvorgangs klicken.",
