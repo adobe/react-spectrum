@@ -9,57 +9,56 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Label} from '../';
 import React from 'react';
-import {SpectrumLabelProps} from '@react-types/label';
-import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
-storiesOf('Label', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'Default',
-    () => render({})
-  )
-  .add(
-    'labelAlign: start',
-    () => render({labelAlign: 'start', width: '100%'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelAlign: 'end', width: '100%'})
-  )
-  .add(
-    'labelPosition: side, labelAlign: start',
-    () => render({labelPosition: 'side', labelAlign: 'start', width: 80})
-  )
-  .add(
-    'labelPosition: side, labelAlign: end',
-    () => render({labelPosition: 'side', labelAlign: 'end', width: 80})
-  )
-  .add(
-    'isRequired',
-    () => render({isRequired: true})
-  )
-  .add(
-    'necessityIndicator: icon',
-    () => render({isRequired: true, necessityIndicator: 'icon'})
-  )
-  .add(
-    'necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'isRequired: false, necessityIndicator: label',
-    () => render({isRequired: false, necessityIndicator: 'label'})
-  );
+type LabelStory = ComponentStoryObj<typeof Label>;
 
-function render(props: SpectrumLabelProps = {}) {
-  return (
+const argTypes = {
+  labelAlign: {
+    control: 'radio',
+    defaultValue: 'start',
+    options: ['end', 'start']
+  },
+  labelPosition: {
+    control: 'radio',
+    defaultValue: 'top',
+    options: ['side', 'top']
+  },
+  necessityIndicator: {
+    control: 'radio',
+    defaultValue: 'icon',
+    options: ['icon', 'label']
+  },
+  isRequired: {
+    control: 'boolean',
+    defaultValue: false
+  },
+  htmlFor: {control: {disable: true}}
+};
+
+export default {
+  title: 'Label',
+  component: Label,
+  args: {
+    width: '100%',
+    htmlFor: 'test',
+    children: 'Test'
+  },
+  argTypes: argTypes,
+  decorators: [(Story, Context) => (
     <div style={{whiteSpace: 'nowrap'}}>
-      <Label {...props} for="test">Test</Label>
-      <TextField id="test" isRequired={props.isRequired} />
+      <Story />
+      <TextField id={Context.args.htmlFor} isRequired={Context.args.isRequired} />
     </div>
-  );
-}
+  )]
+} as ComponentMeta<typeof Label>;
+
+export let Default: LabelStory = {};
+
+export let WidthForLabelAlignSide: LabelStory = {
+  args: {width: '80px', labelPosition: 'side'},
+  argTypes: {labelPosition: {control: {disable: true}}}
+};
