@@ -89,6 +89,12 @@ export class DateFormatter implements Intl.DateTimeFormat {
       resolvedOptions.hour12 = this.resolvedHourCycle === 'h11' || this.resolvedHourCycle === 'h12';
     }
 
+    // Safari uses a different name for the Ethiopic (Amete Alem) calendar.
+    // https://bugs.webkit.org/show_bug.cgi?id=241564
+    if (resolvedOptions.calendar === 'ethiopic-amete-alem') {
+      resolvedOptions.calendar = 'ethioaa';
+    }
+
     return resolvedOptions;
   }
 }
