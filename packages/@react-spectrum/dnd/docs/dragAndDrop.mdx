@@ -37,13 +37,13 @@ support.
 
 ## Drag and Drop Concepts
 
-Before we dive into how to enable drag and drop in React Spectrum, lets touch briefly on the terminology and concepts of drag and drop. In a drag and drop operation, there is
+Before we dive into how to enable drag and drop in React Spectrum, let's touch briefly on the terminology and concepts of drag and drop. In a drag and drop operation, there is
 a **drag source** and a **drop target**. The drag source is the starting location of your dragged data and the drop target is its intended destination. The dragged data
 is made up of one or more **drag items**, each of which contains information specific to their original item within the drag source.
 
 A drag item contains two pieces of information: the **type** of the data and the actual data itself. The type of a drag item can be one of the
 [common mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or a custom type specific to your application. Multiple types can be attached to a
-single drag item so that the item's data can be provided in different formats for interoperability with various drop targets. For example, an image could be represented by a
+single drag item so that the item's data can be provided in different formats for interoperability with various drop targets. For example, an image could be represented by an
 `image/jpeg` type and thus be recognized as a JPEG by a file upload drop target but also have a `plain/text` type that allows the image's file name to be communicated to a
 text input drop target.
 
@@ -55,7 +55,7 @@ of the dragged items to selectively allow or disallow certain positions.
 There are several **drop operations** that can be performed in a drag and drop operation: `"move"`, `"copy"`, `"link"`, and `"cancel"`. A `"move"` operation indicates that the dragged data should be
 moved from its source location to the target location. A `"copy"` operation indicates that the dragged data should be copied to the target destination. A `"link"` operation indicates that
 there should be a relationship established between the source and target locations. Finally, a `"cancel"` operation indicates that the drag and drop operation should be canceled, resulting in
-no changes made to the source or target. The drag source can specify what drop operations are allowed for its data, allowing the the drop source to decide what operation to perform on drop by using the restrictions
+no changes made to the source or target. The drag source can specify what drop operations are allowed for its data, allowing the drop source to decide what operation to perform on drop by using the restrictions
 set by the drag source as a guideline.
 
 ### Interaction modes
@@ -64,11 +64,11 @@ There are several interaction modes that need to be considered for drag and drop
 be performed by releasing the mouse button or canceled by the <Keyboard>Esc</Keyboard> key. A similar interaction can be performed via touch, with a drag initialized via a long press and a drop performed by
 removing your finger from the screen. In both cases, selecting and dragging an item is often accompanied by a **drag preview**. The drag preview is typically a smaller version of the dragged item that follows the cursor
 or touch point. When multiple items are dragged at once, a badge or some other visual affordance is displayed to indicate that multiple items are being dragged. Drop targets are often visually highlighted when dragged
-over and the desired drop operation can be controlled via modifier key presses or drop activations via hovering over the drop target for a period of time.
+over, and the desired drop operation can be controlled via modifier key presses or drop activations via hovering over the drop target for a period of time.
 
 For keyboards, copy and paste shortcuts have traditionally been the alternative method to drag and drop. This comes with many limitations as it is often hard to know where pasting is allowed and difficult to control the
 exact positioning of your pasted items. Touch screen readers are even more limited in their ability to perform these operations since they often lack access to a keyboard and thus cannot copy paste in the same manner. React Spectrum
-attempts to resolve these limitations by providing interactive drag affordances that brings a user into drag and drop mode when triggered via keyboard or screen reader virtual click. See the
+attempts to resolve these limitations by providing interactive drag affordances that bring a user into drag and drop mode when triggered via keyboard or screen reader virtual click. See the
 [Accessibility section](#accessibility) below for further explanation on how this works.
 
 ## Example
@@ -84,7 +84,7 @@ import {Flex} from '@react-spectrum/layout';
 
 ### Accessibility
 
-To perform a drag and drop operations via a keyboard, first select the items to be dragged by focusing the row and pressing <Keyboard>Space</Keyboard>. You can then start the drag operation by moving focus to the drag handle
+To perform a drag and drop operation via a keyboard, first select the items to be dragged by focusing the row and pressing <Keyboard>Space</Keyboard>. You can then start the drag operation by moving focus to the drag handle
 on any of the selected rows via the arrow keys and hitting <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard>. Once a drag operation is started, you will be automatically brought to the first valid drop target.
 <Keyboard>Tab</Keyboard> can then be used to cycle through other valid drop targets. For collection components like the ListView above, <Keyboard>Tab</Keyboard> will move you on or off
 the overall component itself whereas <Keyboard>ArrowUp</Keyboard> and <Keyboard>ArrowDown</Keyboard> will cycle through the valid drop targets within the component itself.
