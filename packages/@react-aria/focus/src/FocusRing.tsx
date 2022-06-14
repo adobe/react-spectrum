@@ -31,8 +31,6 @@ interface FocusRingProps {
   within?: boolean,
   /** Whether the element is a text input. */
   isTextInput?: boolean,
-  /** Whether the element is a ListView. */
-  isListView?: boolean,
   /** Whether the element will be auto focused. */
   autoFocus?: boolean
 }

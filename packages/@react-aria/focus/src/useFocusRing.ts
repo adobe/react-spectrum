@@ -14,9 +14,6 @@ interface FocusRingProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
 
-  /** Whether the element is a ListView. */
-  isListView?: boolean,
-
   /** Whether the element will be auto focused. */
   autoFocus?: boolean
 }
@@ -41,7 +38,6 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
   let {
     autoFocus = false,
     isTextInput,
-    isListView,
     within
   } = props;
   let state = useRef({
@@ -54,15 +50,8 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
   let updateState = useCallback(() => setFocusVisible(state.current.isFocused && state.current.isFocusVisible), []);
 
   let onFocusChange = useCallback(isFocused => {
-    // ListView needs to not focus when getting focus during scroll and
-    // useFocusVisibleListener() is only aware of modality changes of down events.
-    if (isListView) {
-      state.current.isFocused = isFocused && isFocusVisible();
-      setFocused(isFocused && isFocusVisible());
-    } else {
-      state.current.isFocused = isFocused;
-      setFocused(isFocused);
-    }
+    state.current.isFocused = isFocused;
+    setFocused(isFocused);
     updateState();
   }, [updateState]);
 
