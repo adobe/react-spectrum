@@ -165,7 +165,7 @@ class DragSession {
   private formatMessage: (key: string) => string;
   private isVirtualClick: boolean;
   private initialFocused: boolean;
-  private genericAncestor: Element;
+  private genericAncestor: HTMLElement;
 
   constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
@@ -200,16 +200,12 @@ class DragSession {
     announce(this.formatMessage(MESSAGES[dragModality]));
 
     if (dragModality === 'virtual') {
-      this.genericAncestor =
-        Array.from(document.body.querySelectorAll(':not([aria-hidden]):not([role])'))
-        .find(
-          element => (
-            element.contains(this.dragTarget.element) &&
-            this.validDropTargets.every(target => element.contains(target.element))
-          )
-        );
+      this.genericAncestor = findGenericAncestor(this.dragTarget, this.validDropTargets);
       if (this.genericAncestor) {
         this.genericAncestor.setAttribute('role', 'application');
+        if (this.genericAncestor.hasAttribute('aria-label')) {
+          this.genericAncestor.dataset.ariaLabel = this.genericAncestor.getAttribute('aria-label');
+        }
         this.genericAncestor.setAttribute('aria-label', this.formatMessage('dragApplicationLabel'));
       }
     }
@@ -234,7 +230,12 @@ class DragSession {
 
     if (this.genericAncestor) {
       this.genericAncestor.removeAttribute('role');
-      this.genericAncestor.removeAttribute('aria-label');
+      if (this.genericAncestor.dataset.ariaLabel) {
+        this.genericAncestor.setAttribute('aria-label',  this.genericAncestor.dataset.ariaLabel);
+        delete this.genericAncestor.dataset.ariaLabel;
+      } else {
+        this.genericAncestor.removeAttribute('aria-label');
+      }
       this.genericAncestor = undefined;
     }
   }
@@ -599,5 +600,17 @@ function isVirtualPointerEvent(event: PointerEvent) {
       event.pressure === 0 &&
       event.detail === 0
     )
+  );
+}
+
+function findGenericAncestor(dragTarget: DragTarget, validDropTargets: DropTarget[]): HTMLElement {
+  return (
+    Array.from(document.body.querySelectorAll(':not([aria-hidden]):not([role])'))
+    .find(
+      ancestor => (
+        ancestor.contains(dragTarget.element) &&
+        validDropTargets.every(dropTarget => ancestor.contains(dropTarget.element))
+      )
+    ) as HTMLElement
   );
 }

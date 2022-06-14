@@ -2034,11 +2034,46 @@ describe('useDrag and useDrop', function () {
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
+      let containerApplication = tree.getByRole('application');
+      expect(containerApplication).toBeDefined();
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
+
       buttons = tree.getAllByRole('button');
       expect(buttons).toEqual([draggable, droppable, droppable2]);
 
       expect(tree.queryByRole('textbox')).toBeNull();
       expect(tree.getByText('Text')).toHaveAttribute('aria-hidden', 'true');
+    });
+
+    it('should cache aria-label on the generic container while dragging and restore on cancel', () => {
+      let tree = render(<>
+        <Draggable />
+        <input />
+        <Droppable />
+        <button>Test</button>
+        <Droppable>Drop here 2</Droppable>
+        <span>Text</span>
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+
+      // set an aria-label on the generic ancestor
+      let containerApplication = draggable.closest('div:not([aria-hidden]):not([role])');
+      containerApplication.setAttribute('aria-label', 'generic ancestor');
+
+      fireEvent.click(draggable);
+      act(() => jest.runAllTimers());
+
+      expect(containerApplication).toHaveAttribute('role', 'application');
+      expect(containerApplication).toHaveAttribute('aria-label', 'Dragging. Press Escape to cancel drag.');
+      expect(containerApplication.dataset.ariaLabel).toBe('generic ancestor');
+
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
+      act(() => jest.runAllTimers());
+      expect(containerApplication).not.toHaveAttribute('role');
+      expect(containerApplication).toHaveAttribute('aria-label', 'generic ancestor');
     });
 
     it('should support clicking the original drag target to cancel drag', () => {
