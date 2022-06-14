@@ -65,7 +65,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density'], allowDisabledKeyFocus: boolean) {
+function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density'], overflowMode: SpectrumListProps<T>['overflowMode']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
@@ -74,10 +74,10 @@ function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['de
       estimatedRowHeight: ROW_HEIGHTS[density][scale],
       padding: 0,
       collator,
-      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale],
-      allowDisabledKeyFocus
+      loaderHeight: isEmpty ? null : ROW_HEIGHTS[density][scale]
     })
-    , [collator, scale, density, isEmpty, allowDisabledKeyFocus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    , [collator, scale, density, isEmpty, overflowMode]);
 
   layout.collection = state.collection;
   layout.disabledKeys = state.disabledKeys;
@@ -116,7 +116,6 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
-  let layout = useListLayout(state, props.density || 'regular', state.selectionManager.disabledBehavior === 'selection');
   let dragState: DraggableCollectionState;
   let preview = useRef(null);
   if (isListDraggable) {
@@ -126,6 +125,14 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
       preview
     });
   }
+  let layout = useListLayout(
+    state,
+    props.density || 'regular',
+    overflowMode
+  );
+  // !!0 is false, so we can cast size or undefined and they'll be falsy
+  layout.allowDisabledKeyFocus = state.selectionManager.disabledBehavior === 'selection' || !!dragState?.draggingKeys.size;
+
 
   let DragPreview = dragHooks?.DragPreview;
   let dropState: DroppableCollectionState;
@@ -259,6 +266,18 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
                 <>
                   {isListDroppable && collection.getKeyBefore(item.key) == null &&
                     <RootDropIndicator key="root" />
+                  }
+                  {isListDroppable &&
+                    <InsertionIndicator
+                      key={`${item.key}-before`}
+                      target={{key: item.key, type: 'item', dropPosition: 'before'}} />
+                  }
+                  <ListViewItem item={item} isEmphasized hasActions={!!onAction} />
+                  {isListDroppable &&
+                    <InsertionIndicator
+                      key={`${item.key}-after`}
+                      target={{key: item.key, type: 'item', dropPosition: 'after'}}
+                      isPresentationOnly={collection.getKeyAfter(item.key) != null} />
                   }
                   {isListDroppable &&
                     <InsertionIndicator

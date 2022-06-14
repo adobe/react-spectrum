@@ -91,7 +91,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.rootNodes = [];
     this.lastWidth = 0;
     this.lastCollection = null;
-    this.allowDisabledKeyFocus = options.allowDisabledKeyFocus;
   }
 
   getLayoutInfo(key: Key) {

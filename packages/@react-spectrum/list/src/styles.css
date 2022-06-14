@@ -569,7 +569,7 @@
       box-sizing: border-box;
       border-color: var(--spectrum-dropindicator-circle-border-color);
       background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
-      z-index: 3;
+      z-index: 5;
     }
   }
 }
