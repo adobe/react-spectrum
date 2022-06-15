@@ -1,0 +1,70 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: After a long wait, our date and time components and hooks have been released!! Our DatePicker and Calendar packages support dates and times with configurable granularity in 13 different calendar systems used around the world! They are accessible, time zone aware, and touch friendly. They are also internationalized, supporting locale specific formatting, number systems, calendar systems, hour cycles, and right-to-left languages.
+date: 2022-06-15
+---
+
+# June 15, 2022 Release
+
+After a long wait, our date and time components and hooks have been released! 🎉  Our DatePicker and Calendar packages support dates and times with configurable granularity in 13 different calendar systems used around the world! They are accessible, time zone aware, and touch friendly. They are also internationalized, supporting locale specific formatting, number systems, calendar systems, hour cycles, and right-to-left languages. You can find docs for the calendars, date and time fields, and range pickers below.
+
+In addition to these components is a new library [`@internationalized`](https://react-spectrum.adobe.com/internationalized/index.html), that provides locale-aware objects and functions for manipulating dates and times. This library supports time zone and calendar system aware arithmetic, locale-specific queries and conversions, and more in just 8 kB! Learn more about it in our [docs](https://react-spectrum.adobe.com/internationalized/date/index.html).
+
+A special thanks to [@devongovett](https://github.com/devongovett) for his work on all things date and to our other contributors for this release 🤩
+Enjoy!
+
+
+## New Components
+React Spectrum
+  - [Calendar](https://react-spectrum.adobe.com/react-spectrum/Calendar.html)
+  - [RangeCalendar](https://react-spectrum.adobe.com/react-spectrum/RangeCalendar.html)
+  - [DateField](https://react-spectrum.adobe.com/react-spectrum/DateField.html)
+  - [DatePicker](https://react-spectrum.adobe.com/react-spectrum/DatePicker.html)
+  - [DateRangePicker](https://react-spectrum.adobe.com/react-spectrum/DateRangePicker.html)
+  - [TimeField](https://react-spectrum.adobe.com/react-spectrum/TimeField.html)
+
+React Aria
+  - [useCalendar](https://react-spectrum.adobe.com/react-aria/useCalendar.html)
+  - [useRangeCalendar](https://react-spectrum.adobe.com/react-aria/useRangeCalendar.html)
+  - [useDateField](https://react-spectrum.adobe.com/react-aria/useDateField.html)
+  - [useDatePicker](https://react-spectrum.adobe.com/react-aria/useDatePicker.html)
+  - [useDateRangePicker](https://react-spectrum.adobe.com/react-aria/useDateRangePicker.html)
+  - [useTimeField](https://react-spectrum.adobe.com/react-aria/useTimeField.html)
+
+
+## Fixed
+* Update TS for strict mode in `SpectrumButton` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3143)
+* Allow null in return types of `KeyboardDelegate` in collections - [@dlech](https://github.com/dlech) - [PR](https://github.com/adobe/react-spectrum/pull/3139)
+
+## Docs
+* Update W3C APG links - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3204)
+* Update TableView docs for checkbox/highlight + onAction behavior update - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3205)
+
+## Under construction
+
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+* Fix `ListView` shifting height with truncation - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3158)
+* Allow focusing disbaled rows when dragging in `ListView` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3181)
+* Improve VO announcing by using `ListView` description text in aria-describedby - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3121)
+* Fix announcing first drop target in `ListView` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3191)
+* Update `ListView` drop indicator style - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3135)
+* Fix `ListView` root drop indicator in Firefox  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3224)
+
+
+## Released packages
+
+```
+
+ ```
