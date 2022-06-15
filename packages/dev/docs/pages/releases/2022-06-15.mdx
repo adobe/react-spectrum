@@ -1,0 +1,240 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: After a long wait, our date and time components and hooks have been released!! Our DatePicker and Calendar packages support dates and times with configurable granularity in 13 different calendar systems used around the world! They are accessible, time zone aware, and touch friendly. They are also internationalized, supporting locale specific formatting, number systems, calendar systems, hour cycles, and right-to-left languages.
+date: 2022-06-15
+---
+
+# June 15, 2022 Release
+
+After a long wait, our date and time components and hooks have been released!! 🎉.  Our DatePicker and Calendar packages support dates and times with configurable granularity in 13 different calendar systems used around the world! They are accessible, time zone aware, and touch friendly. They are also internationalized, supporting locale specific formatting, number systems, calendar systems, hour cycles, and right-to-left languages. You can find docs for the calendars, date and time fields, and range pickers below.
+
+In addition to these components is a new library [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/index.html), that provides locale-aware objects and functions for manipulating dates and times. This library supports time zone and calendar system aware arithmetic, locale-specific queries and conversions, and more in just 8 kB! Learn more about it in our [docs](https://react-spectrum.adobe.com/internationalized/index.html).
+
+A special thanks to [@devongovett](https://github.com/devongovett) for his work on all things date related and to our other contributors for this release 🤩
+
+Enjoy!
+
+
+## New Components
+React Spectrum
+  - [Calendar](https://react-spectrum.adobe.com/react-spectrum/Calendar.html)
+  - [RangeCalendar](https://react-spectrum.adobe.com/react-spectrum/RangeCalendar.html)
+  - [DateField](https://react-spectrum.adobe.com/react-spectrum/DateField.html)
+  - [DatePicker](https://react-spectrum.adobe.com/react-spectrum/DatePicker.html)
+  - [DateRangePicker](https://react-spectrum.adobe.com/react-spectrum/DateRangePicker.html)
+  - [TimeField](https://react-spectrum.adobe.com/react-spectrum/TimeField.html)
+
+React Aria
+  - [useCalendar](https://react-spectrum.adobe.com/react-aria/useCalendar.html)
+  - [useRangeCalendar](https://react-spectrum.adobe.com/react-aria/useRangeCalendar.html)
+  - [useDateField](https://react-spectrum.adobe.com/react-aria/useDateField.html)
+  - [useDatePicker](https://react-spectrum.adobe.com/react-aria/useDatePicker.html)
+  - [useDateRangePicker](https://react-spectrum.adobe.com/react-aria/useDateRangePicker.html)
+  - [useTimeField](https://react-spectrum.adobe.com/react-aria/useTimeField.html)
+
+
+## Fixed
+* Update TS for strict mode in `SpectrumButton` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3143)
+* Allow null in return types of `KeyboardDelegate` in collections - [@dlech](https://github.com/dlech) - [PR](https://github.com/adobe/react-spectrum/pull/3139)
+
+## Docs
+* Update W3C APG links - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3204)
+* Update TableView docs for checkbox/highlight + onAction behavior update - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3205)
+
+## Under construction
+
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+[ListView](https://react-spectrum.adobe.com/react-spectrum/ListView.html)
+* Fix `ListView` shifting height with truncation - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3158)
+* Update `ListView` drag and drop focus - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3181)
+* Improve VO announcing by using `ListView` description text in aria-describedby - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3121)
+* Fix announcing first drop target in `ListView` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3191)
+* Update `ListView` drop indicator style - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3135)
+* Fix `ListView` root drop indicator in Firefox  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3224)
+
+
+## Released packages
+
+```
+- @adobe/react-spectrum@3.19.0
+- @internationalized/date@3.0.0
+- @internationalized/message@3.0.8
+- @react-aria/accordion@3.0.0-alpha.9
+- @react-aria/actiongroup@3.3.1
+- @react-aria/aria-modal-polyfill@3.5.1
+- @react-aria/autocomplete@3.0.0-alpha.8
+- @react-aria/breadcrumbs@3.2.1
+- @react-aria/button@3.5.1
+- @react-aria/calendar@3.0.0
+- @react-aria/checkbox@3.4.1
+- @react-aria/color@3.0.0-beta.13
+- @react-aria/combobox@3.3.1
+- @react-aria/datepicker@3.0.0
+- @react-aria/dialog@3.2.1
+- @react-aria/dnd@3.0.0-alpha.10
+- @react-aria/focus@3.6.1
+- @react-aria/grid@3.3.1
+- @react-aria/i18n@3.4.1
+- @react-aria/interactions@3.9.1
+- @react-aria/label@3.3.1
+- @react-aria/landmark@3.0.0-alpha.0
+- @react-aria/link@3.3.1
+- @react-aria/list@3.0.0-beta.0
+- @react-aria/listbox@3.5.1
+- @react-aria/menu@3.5.1
+- @react-aria/meter@3.2.1
+- @react-aria/numberfield@3.2.1
+- @react-aria/overlays@3.9.1
+- @react-aria/progress@3.2.1
+- @react-aria/radio@3.2.1
+- @react-aria/searchfield@3.3.1
+- @react-aria/select@3.7.1
+- @react-aria/selection@3.9.1
+- @react-aria/separator@3.2.1
+- @react-aria/slider@3.1.1
+- @react-aria/spinbutton@3.1.1
+- @react-aria/switch@3.2.1
+- @react-aria/tabs@3.2.1
+- @react-aria/tag@3.0.0-alpha.7
+- @react-aria/textfield@3.6.1
+- @react-aria/toggle@3.3.1
+- @react-aria/tooltip@3.2.1
+- @react-aria/utils@3.13.1
+- @react-aria/virtualizer@3.4.1
+- @react-aria/visually-hidden@3.3.1
+- @react-spectrum/accordion@3.0.0-alpha.10
+- @react-spectrum/actionbar@3.0.0-alpha.10
+- @react-spectrum/actiongroup@3.5.1
+- @react-spectrum/autocomplete@3.0.0-alpha.8
+- @react-spectrum/avatar@3.0.0-alpha.7
+- @react-spectrum/breadcrumbs@3.4.1
+- @react-spectrum/button@3.8.1
+- @react-spectrum/buttongroup@3.3.1
+- @react-spectrum/calendar@3.0.0
+- @react-spectrum/card@3.0.0-alpha.9
+- @react-spectrum/checkbox@3.4.1
+- @react-spectrum/color@3.0.0-beta.13
+- @react-spectrum/combobox@3.4.1
+- @react-spectrum/contextualhelp@3.1.1
+- @react-spectrum/datepicker@3.0.0
+- @react-spectrum/dialog@3.4.1
+- @react-spectrum/divider@3.3.1
+- @react-spectrum/dnd@3.0.0-alpha.4
+- @react-spectrum/form@3.3.1
+- @react-spectrum/icon@3.4.1
+- @react-spectrum/illustratedmessage@3.2.1
+- @react-spectrum/image@3.2.1
+- @react-spectrum/label@3.6.1
+- @react-spectrum/layout@3.3.1
+- @react-spectrum/link@3.3.1
+- @react-spectrum/list@3.0.0-beta.0
+- @react-spectrum/listbox@3.6.1
+- @react-spectrum/menu@3.7.1
+- @react-spectrum/meter@3.2.1
+- @react-spectrum/numberfield@3.3.1
+- @react-spectrum/overlays@3.6.1
+- @react-spectrum/picker@3.6.1
+- @react-spectrum/progress@3.2.1
+- @react-spectrum/provider@3.4.1
+- @react-spectrum/radio@3.2.1
+- @react-spectrum/searchfield@3.4.1
+- @react-spectrum/searchwithin@3.0.0-alpha.8
+- @react-spectrum/slider@3.1.1
+- @react-spectrum/statuslight@3.3.1
+- @react-spectrum/switch@3.2.1
+- @react-spectrum/tabs@3.2.1
+- @react-spectrum/tag@3.0.0-alpha.7
+- @react-spectrum/text@3.2.1
+- @react-spectrum/textfield@3.5.1
+- @react-spectrum/theme-dark@3.3.1
+- @react-spectrum/theme-default@3.3.1
+- @react-spectrum/theme-light@3.2.1
+- @react-spectrum/tooltip@3.2.1
+- @react-spectrum/utils@3.7.1
+- @react-spectrum/view@3.2.1
+- @react-spectrum/well@3.2.1
+- @react-stately/calendar@3.0.0
+- @react-stately/checkbox@3.1.1
+- @react-stately/collections@3.4.1
+- @react-stately/color@3.0.0
+- @react-stately/combobox@3.1.1
+- @react-stately/data@3.5.1
+- @react-stately/datepicker@3.0.0
+- @react-stately/dnd@3.0.0-alpha.8
+- @react-stately/grid@3.2.1
+- @react-stately/list@3.5.1
+- @react-stately/menu@3.3.1
+- @react-stately/numberfield@3.1.1
+- @react-stately/overlays@3.3.1
+- @react-stately/radio@3.4.1
+- @react-stately/searchfield@3.2.1
+- @react-stately/select@3.2.1
+- @react-stately/selection@3.10.1
+- @react-stately/slider@3.1.1
+- @react-stately/tabs@3.1.1
+- @react-stately/toggle@3.3.1
+- @react-stately/tooltip@3.1.1
+- @react-stately/tree@3.3.1
+- @react-stately/virtualizer@3.2.1
+- @react-types/accordion@3.0.0-alpha.7
+- @react-types/actionbar@3.0.0-alpha.7
+- @react-types/actiongroup@3.3.1
+- @react-types/autocomplete@3.0.0-alpha.6
+- @react-types/avatar@3.0.0-alpha.6
+- @react-types/breadcrumbs@3.4.1
+- @react-types/button@3.5.1
+- @react-types/buttongroup@3.2.1
+- @react-types/calendar@3.0.0
+- @react-types/card@3.0.0-alpha.7
+- @react-types/checkbox@3.3.1
+- @react-types/color@3.0.0-beta.10
+- @react-types/combobox@3.5.1
+- @react-types/contextualhelp@3.1.1
+- @react-types/datepicker@3.0.0
+- @react-types/dialog@3.4.1
+- @react-types/divider@3.2.1
+- @react-types/form@3.3.1
+- @react-types/grid@3.1.1
+- @react-types/illustratedmessage@3.2.1
+- @react-types/image@3.2.1
+- @react-types/label@3.6.1
+- @react-types/layout@3.3.1
+- @react-types/link@3.3.1
+- @react-types/list@3.0.0-alpha.1
+- @react-types/listbox@3.3.1
+- @react-types/menu@3.6.1
+- @react-types/meter@3.2.1
+- @react-types/numberfield@3.3.1
+- @react-types/overlays@3.6.1
+- @react-types/progress@3.2.1
+- @react-types/provider@3.5.1
+- @react-types/radio@3.2.1
+- @react-types/searchfield@3.3.1
+- @react-types/searchwithin@3.0.0-alpha.6
+- @react-types/select@3.6.1
+- @react-types/shared@3.13.1
+- @react-types/slider@3.1.1
+- @react-types/statuslight@3.2.1
+- @react-types/switch@3.2.1
+- @react-types/tabs@3.1.1
+- @react-types/tag@3.0.0-alpha.5
+- @react-types/text@3.2.1
+- @react-types/textfield@3.5.1
+- @react-types/tooltip@3.2.1
+- @react-types/view@3.2.1
+- @react-types/well@3.2.1
+- react-aria@3.17.0
+- react-stately@3.15.0
+ ```
