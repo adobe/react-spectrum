@@ -58,14 +58,16 @@ after_version: 3.0.0
 ```
 
 ## Content
-ListView is a [collection component](../react-stately/collections.html) that provides users with a way to view, select, navigate, or drag and drop items in a list.
+ListView is a [collection component](../react-stately/collections.html) that provides users with a way to view, select, navigate, or drag and drop items in a list. While it may feel similar to the [ListBox](ListBox.html)
+component, ListView offers greater flexibility in the contents it can render and can distinguish between row selection and actions performed on a row. This makes ListView an ideal component for use cases such as file
+managers.
 
-Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView is hard coded.
+Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView are hard coded.
 Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data dynamically allows ListView
 to automatically cache the rendering of each item, which dramatically improves performance.
 
 Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object.
-See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
+See [collections](../react-stately/collections.html#unique-keys) to learn more about keys in dynamic collections.
 
 
 ```tsx example
@@ -292,7 +294,7 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 ### Disabled rows
 
-You can disable specific rows by providing an array of keys to ListView via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+You can disable specific rows by providing an array of keys to ListView via the `disabledKeys` prop. This will prevent rows from being selectable, as shown in the example below.
 
 ```tsx example
 // Using the same list as above
@@ -301,17 +303,17 @@ You can disable specific rows by providing an array of keys to ListView via the 
 
 ### Highlight selection
 
-By default, ListView uses the checkbox selection style, which includes a checkbox in each row for selection. When the `selectionStyle` prop is set to `"highlight"`, the checkboxes are hidden,
-and the selected rows are displayed with a highlighted background instead.
+By default, ListView uses the checkbox selection style, which includes a checkbox in each row for selection. When the selectionStyle prop is set to `"highlight"`, the checkboxes are hidden,
+ and the selected rows are displayed with a highlighted background instead.
 
-In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping,
-or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
+In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping, or pressing
+the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
 
-In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection.
-To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used.  To move focus without moving
-selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing
-the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle
-since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows.
+In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows,
+modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier
+keys may not be available.
+
+These selection styles implement the behaviors defined in [Aria Practices](https://w3c.github.io/aria-practices/#listbox_kbd_interaction).
 
 ```tsx example
 // Using the same list as above
@@ -320,14 +322,11 @@ since modifier keys may not be available. This behavior emulates native platform
 
 ### Row actions
 
-ListView may be used in use cases where users can perform actions on rows, such as navigating into items to open them or get more details. The `onAction` prop can be used to enable
-these row actions, but the interaction to trigger the row action depends on the selection style and current selection state of the ListView. When `onAction` is provided to a checkbox selection style ListView,
-clicking the row with a mouse or pressing the <Keyboard>Enter</Keyboard> key will trigger onAction. Row selection is performed by pressing on the row's checkbox itself or by pressing <Keyboard>Space</Keyboard>.
-While any number of rows are selected, subsequent clicks on a row will toggle selection instead. During this state `onAction` can only be triggered via the <Keyboard>Enter</Keyboard> key, but deselecting all selected
-rows will restore the original "click for onAction" behavior. If `onAction` is provided to a highlight selection ListView, double clicking the row triggers `onAction` and a single click selects the row instead.
+ListView supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the ListView performs actions by default when clicking or tapping a row.
+Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the ListView is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
+be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
 
-On touch devices, `onAction` is always the primary tap interaction, and tapping on the row's checkbox or long pressing the row will select the row. In highlight selection with row actions, a long press will also shift the ListView into selection mode,
-which displays checkboxes to perform selection. While the ListView is in this state, tapping the row will toggle selection instead of triggering `onAction`. Deselecting all items exits selection mode and hides the checkboxes.
+This behavior is slightly different in the highlight selection style, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
 
 ```tsx example
 // Checkbox selection with onAction
@@ -470,7 +469,7 @@ function DragIntoListExample() {
 <DragIntoListExample />
 ```
 
-The example below replicates the previous example but demonstrates how to handle multiple item types. In the droppable ListView, folders are valid drop targets but we cancel any
+The example below replicates the previous example but demonstrates how to handle multiple item types. In the droppable ListView, folders are valid drop targets, but we cancel any
 drop operations if any of the dragged items is a folder.
 
 <details>
@@ -725,7 +724,7 @@ function ReorderableList() {
 ```
 
 The example below demonstrates how to create a pair of ListViews that supports dragging and dropping any items between each list, but disables
-the ability to drop into a folder and onto the root of the list.
+the ability to drop into a folder.
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
@@ -758,23 +757,25 @@ function DragBetweenListsExample() {
   let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
 
   // Update the list order based on the position of the drop and the set of rows that were dropped
-  let onMove = (keys, target) => {
+  let onMove = (keys, destinationList, dropEventTarget) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
-    let destinationList = list1.getItem(target.key) ? list1 : list2;
-
     if (sourceList === destinationList) {
       // Handle dragging within same list
-      if (target.dropPosition === 'before') {
-        sourceList.moveBefore(target.key, keys);
-      } else {
-        sourceList.moveAfter(target.key, keys);
+      if (dropEventTarget.type === 'root') {
+        sourceList.moveAfter(sourceList.items.slice(-1)[0].id, keys);
+      } else if (dropEventTarget.dropPosition === 'before') {
+        sourceList.moveBefore(dropEventTarget.key, keys);
+      } else if (dropEventTarget.dropPosition === 'after') {
+        sourceList.moveAfter(dropEventTarget.key, keys);
       }
     } else {
       // Handle dragging between lists
-      if (target.dropPosition === 'before') {
-        destinationList.insertBefore(target.key, ...keys.map(key => sourceList.getItem(key)));
-      } else {
-        destinationList.insertAfter(target.key, ...keys.map(key => sourceList.getItem(key)));
+      if (dropEventTarget.type === 'root') {
+        destinationList.append(...keys.map(key => sourceList.getItem(key)));
+      } else if (dropEventTarget.dropPosition === 'before') {
+        destinationList.insertBefore(dropEventTarget.key, ...keys.map(key => sourceList.getItem(key)));
+      } else if (dropEventTarget.dropPosition === 'after'){
+        destinationList.insertAfter(dropEventTarget.key, ...keys.map(key => sourceList.getItem(key)));
       }
       sourceList.remove(...keys);
     }
@@ -804,7 +805,7 @@ function DragBetweenListsExample() {
     }
   });
 
-  let dropHooks = useDropHooks({
+  let dropHooksList1 = useDropHooks({
     async onDrop(e) {
       let keysToMove = [];
       // Only add the dropped item to the list of keys to move
@@ -817,14 +818,44 @@ function DragBetweenListsExample() {
           }
         }
       }
-      onMove(keysToMove, e.target);
+
+      onMove(keysToMove, list1, e.target);
     },
     getDropOperation(target, types) {
       let typesSet = types.types ? types.types : types;
       let draggedTypes = [...typesSet.values()];
       // Cancel the drop operations if any of drag items aren't of the acceptedTypes or if
-      // the drop is done on the root of the ListView or on the ListView items themselves
-      if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || target.type === 'root' || target.dropPosition === 'on') {
+      // the drop is done on the ListView items themselves
+      if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || (target.type === 'item' && target.dropPosition === 'on')) {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+  let dropHooksList2 = useDropHooks({
+    async onDrop(e) {
+      let keysToMove = [];
+      // Only add the dropped item to the list of keys to move
+      // if the dropped item has the expected types
+      for (let item of e.items) {
+        for (let acceptedType of acceptedDragTypes) {
+          if (item.kind === 'text' && item.types.has(acceptedType)) {
+            let {id} = JSON.parse(await item.getText(acceptedType));
+            keysToMove.push(id);
+          }
+        }
+      }
+
+      onMove(keysToMove, list2, e.target);
+    },
+    getDropOperation(target, types) {
+      let typesSet = types.types ? types.types : types;
+      let draggedTypes = [...typesSet.values()];
+      // Cancel the drop operations if any of drag items aren't of the acceptedTypes or if
+      // the drop is done on the ListView items themselves
+      if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || (target.type === 'item' && target.dropPosition === 'on')) {
         return 'cancel';
       }
 
@@ -841,7 +872,7 @@ function DragBetweenListsExample() {
         height="size-3600"
         items={list1.items}
         dragHooks={dragHooksList1}
-        dropHooks={dropHooks}>
+        dropHooks={dropHooksList1}>
         {item => (
           <Item textValue={item.name}>
             {item.type === 'folder' && <Folder />}
@@ -856,7 +887,7 @@ function DragBetweenListsExample() {
         height="size-3600"
         items={list2.items}
         dragHooks={dragHooksList2}
-        dropHooks={dropHooks}>
+        dropHooks={dropHooksList2}>
         {item => (
           <Item textValue={item.name}>
             {item.type === 'folder' && <Folder />}
