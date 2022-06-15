@@ -337,6 +337,8 @@ which displays checkboxes to perform selection. While the ListView is in this st
 </Flex>
 ```
 
+{/*
+
 ## Drag and drop
 
 To enable drag and drop in a ListView, you must provide the respective drag and drop hooks sourced from `useDragHooks` and `useDropHooks` to the ListView's `dragHooks` and `dropHooks` props respectively.
@@ -872,9 +874,18 @@ function DragBetweenListsExample() {
 <DragBetweenListsExample />
 ```
 
+*/}
+
 ## Props
 
-<PropTable component={docs.exports.ListView} links={docs.links} />
+<PropTable component={{
+  // Temporarily filter out dragHooks and dropHooks from docs.
+  ...docs.exports.ListView,
+  props: {
+    ...docs.exports.ListView.props,
+    properties: Object.fromEntries(Object.entries(docs.exports.ListView.props.properties).filter(([k, v]) => k !== 'dragHooks' && k !== 'dropHooks'))
+  }
+}} links={docs.links} />
 
 ## Visual options
 ### Quiet
