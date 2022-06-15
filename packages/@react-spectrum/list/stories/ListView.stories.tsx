@@ -369,7 +369,7 @@ storiesOf('ListView/Drag and Drop', module)
     'Drag into folder',
     args => (
       <Flex direction="row" wrap alignItems="center">
-        <DragIntoItemExample {...args} />
+        <DragIntoItemExample listViewProps={args} />
       </Flex>
     )
   )
@@ -385,7 +385,7 @@ storiesOf('ListView/Drag and Drop', module)
     'Drag between lists (Root only)',
     args => (
       <Flex direction="row" wrap alignItems="center">
-        <DragBetweenListsRootOnlyExample {...args} />
+        <DragBetweenListsRootOnlyExample listViewProps={args} />
       </Flex>
     ), {description: {data: 'Folders are non-draggable.'}}
   )

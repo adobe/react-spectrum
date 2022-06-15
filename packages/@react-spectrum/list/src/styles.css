@@ -47,6 +47,15 @@
   }
 
   &.react-spectrum-ListView--emphasized {
+    &.react-spectrum-ListView--dropTarget {
+      .react-spectrum-ListViewItem:not(.is-selected) {
+        /* shift bottom border inwards so it doesn't overlap the root drop target */
+        &:after {
+          inset-inline-start: 1px;
+          inset-inline-end: 1px;
+        }
+      }
+    }
     .react-spectrum-ListViewItem {
       /* common pseudoelement for box shadows */
       &:after {
@@ -509,22 +518,14 @@
     inset 0 2px 0 0 var(--spectrum-table-cell-border-color-key-focus);
 }
 
-.react-spectrum-ListView--dropTarget {
+.react-spectrum-ListView.react-spectrum-ListView--dropTarget {
   border-color: var(--spectrum-global-color-blue-500);
   background-color: var(--spectrum-alias-highlight-selected);
   box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
-  &::after {
-    border-radius: inherit;
-    border-color: var(--spectrum-global-color-blue-500);
-    background-color: var(--spectrum-alias-highlight-selected);
-    box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
-    content: '';
-    display: block;
-    position: absolute;
-    top: 0;
-    inset-inline-start: 0;
-    width: 100%;
-    height: 100%;
+
+  /* Add border to quiet ListView only when it is a drop target */
+  &.react-spectrum-ListView--quiet {
+    box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus), 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
   }
 }
 

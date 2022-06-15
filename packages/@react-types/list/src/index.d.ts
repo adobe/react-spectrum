@@ -59,11 +59,12 @@ export interface SpectrumListProps<T> extends AriaListProps<T>, StyleProps, Spec
   disabledBehavior?: DisabledBehavior,
   /**
    * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
-   * [docs](https://react-spectrum.adobe.com/react-spectrum/useDragHooks.html) for more info.
+   * [docs](https://react-spectrum.adobe.com/react-spectrum/dragAndDrop.html) for more info.
    */
   dragHooks?: DragHooks,
   /**
-   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView.
+   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
+   * [docs](https://react-spectrum.adobe.com/react-spectrum/dragAndDrop.html) for more info.
    */
   dropHooks?: DropHooks
 }
