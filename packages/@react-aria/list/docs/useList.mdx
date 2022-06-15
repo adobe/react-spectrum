@@ -68,7 +68,7 @@ HTML lists are meant for static content, rather than lists with rich interaction
 
 <Anatomy />
 
-A list consists of a container element, with rows of containing data inside. The rows within a list may contain focusable elements or plain text content.
+A list consists of a container element, with rows of data inside. The rows within a list may contain focusable elements or plain text content.
 If the list supports row selection, each row can optionally include a selection checkbox.
 
 The <TypeLink links={docs.links} type={docs.exports.useList} /> and <TypeLink links={docs.links} type={docs.exports.useListItem} /> hooks handle keyboard, mouse, and other interactions to support
@@ -102,6 +102,11 @@ For more information, see [Selection](/react-stately/selection.html).
 
 ## Example
 
+Lists are [collection components](../react-stately/collections.html) that include rows as child elements.
+In this example, we'll use the standard HTML unordered list elements along with hooks from React
+Aria for each child. You may also use other elements like `<div>` to render these components as appropriate.
+We'll walk through creating the list container and list item, then add some additional behavior such as selection.
+
 The <TypeLink links={docs.links} type={docs.exports.useList} /> hook will be used to render the outer most list element. It uses
 the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} /> hook to construct the list's collection of rows,
 and manage state such as the focused row and row selection. We'll use the collection to iterate through
@@ -118,10 +123,8 @@ import { Item } from "@react-stately/collections";
 function List(props) {
   let { selectionMode, selectionBehavior } = props;
   let state = useListState(props);
-
   let ref = useRef();
   let { collection } = state;
-
   let { gridProps } = useList(props, state, ref);
 
   return (
@@ -293,7 +296,7 @@ A user can click on a different row to change the selection, or click on the sam
 
 ```tsx example
 // Using the example above
-<ExampleList selectionMode="single" defaultSelectedKeys={[2]} />
+<ExampleList aria-label="List with single selection" selectionMode="single" defaultSelectedKeys={[2]} />
 ```
 
 ### Multiple selection
@@ -302,7 +305,7 @@ Multiple selection can be enabled by setting `selectionMode` to `multiple`.
 
 ```tsx example
 // Using the example above
-<ExampleList selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
+<ExampleList aria-label="List with multiple selection" selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
 ```
 
 ### Disallow empty selection
@@ -312,7 +315,7 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 ```tsx example
 // Using the example above
-<ExampleList selectionMode="single" defaultSelectedKeys={[2]} disallowEmptySelection />
+<ExampleList aria-label="List with disallowed empty selection" selectionMode="single" defaultSelectedKeys={[2]} disallowEmptySelection />
 ```
 
 ### Controlled selection
@@ -346,7 +349,7 @@ Note that you are responsible for the styling of disabled rows, however, the sel
 
 ```tsx example
 // Using the same List as above
-<PokemonList selectionMode="multiple" disabledKeys={[3]} />
+<PokemonList aria-label="List with disabled rows" selectionMode="multiple" disabledKeys={[3]} />
 ```
 
 ### Selection behavior
@@ -356,7 +359,7 @@ By default, `useList` uses the `"toggle"` selection behavior, which behaves like
 When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows, and is often used when checkboxes in each row are not desired.
 
 ```tsx example
-<PokemonList selectionMode="multiple" selectionBehavior="replace" />
+<PokemonList aria-label="List with replace selection behavior" selectionMode="multiple" selectionBehavior="replace" />
 ```
 
 ### Row actions
@@ -369,7 +372,14 @@ and a long press enters into selection mode, which temporarily swaps the selecti
 and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
 
 ```tsx example
-<PokemonList selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
+<PokemonList aria-label="List with replace selection behavior and row actions" selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
+```
+
+With `"toggle"` selection behavior, we can show checkboxes for selection while still having row actions. In this case, clicking the checkbox itself will toggle selection of that row, while single clicking anywhere else on the row will trigger the action.
+Once one row has been selected, clicking anywhere the rows will select or deselect them.
+
+```tsx example
+<PokemonList aria-label="List with toggle selection behavior and row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
 ```
 
 ## Internationalization
