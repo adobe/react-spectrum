@@ -651,7 +651,7 @@ export class Virtualizer<T extends object, V, W> {
       // Assuming that any item with a parent is a subitem and we need to
       // persist the parent layout, unless the parent is "body" a Table special key
       if (layoutInfo && layoutInfo.parentKey && layoutInfo.parentKey !== 'body') {
-        layoutInfo = this.layout.getLayoutInfo(layoutInfo.parentKey)
+        layoutInfo = this.layout.getLayoutInfo(layoutInfo.parentKey);
       }
 
       if (layoutInfo) {
