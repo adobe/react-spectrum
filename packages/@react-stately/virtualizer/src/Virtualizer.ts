@@ -240,10 +240,6 @@ export class Virtualizer<T extends object, V, W> {
    * This is to prevent these views from being reused by the virtualizer.
    */
   set persistedKeys(persistedKeys: Set<Key>) {
-    this._setPersistedKeys(persistedKeys);
-  }
-
-  _setPersistedKeys(persistedKeys: Set<Key>) {
     this._persistedKeys = persistedKeys;
   }
 
