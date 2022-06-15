@@ -89,7 +89,7 @@ class RGBColor extends Color {
   static parse(value: string) {
     let colors = [];
     // matching #rgb, #rgba, #rrggbb, #rrggbbaa 
-    if (/^#[0-9a-f]+$/i.test(value) && [4, 5, 7, 9].includes(value.length)) {
+    if (/^#[\da-f]+$/i.test(value) && [4, 5, 7, 9].includes(value.length)) {
       const values = (value.length < 6 ? value.replace(/[^#]/gi, '$&$&') : value).slice(1).split('');
       while (values.length > 0) {
         colors.push(parseInt(values.splice(0, 2).join(''), 16));
@@ -98,7 +98,7 @@ class RGBColor extends Color {
     }
 
     // matching rgb(rrr, ggg, bbb), rgba(rrr, ggg, bbb, 0.a)
-    const match = value.match(/^rgb[a]?\((.*)\)$/);
+    const match = value.match(/^rgba?\((.*)\)$/);
     if (match?.[1]) {
       colors = match[1].split(',').map(value => Number(value.trim()));
       colors = colors.map((num, i) => clamp(num, 0, i < 3 ? 255 : 1));
