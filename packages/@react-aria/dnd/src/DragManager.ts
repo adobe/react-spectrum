@@ -604,13 +604,13 @@ function isVirtualPointerEvent(event: PointerEvent) {
 }
 
 function findGenericAncestor(dragTarget: DragTarget, validDropTargets: DropTarget[]): HTMLElement {
-  return (
-    Array.from(document.body.querySelectorAll(':not([aria-hidden]):not([role])'))
-    .find(
-      ancestor => (
-        ancestor.contains(dragTarget.element) &&
-        validDropTargets.every(dropTarget => ancestor.contains(dropTarget.element))
-      )
-    ) as HTMLElement
-  );
+  let ancestor = dragTarget.element.parentElement.closest(':not([aria-hidden]):not([role])');
+  let genericAncestor;
+  while (ancestor && ancestor !== document.body) {
+    if (validDropTargets.every(dropTarget => ancestor.contains(dropTarget.element))) {
+      genericAncestor = ancestor;
+    }
+    ancestor = ancestor.parentElement.closest(':not([aria-hidden]):not([role])');
+  }
+  return genericAncestor;
 }
