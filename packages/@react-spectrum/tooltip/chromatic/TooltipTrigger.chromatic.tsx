@@ -46,6 +46,10 @@ export const PlacementStart: TooltipTriggerStory = {
   args: {placement: 'start'}
 };
 
+export const PlacementEnd: TooltipTriggerStory = {
+  args: {placement: 'end'}
+};
+
 export const Offset50: TooltipTriggerStory = {
   args: {offset: 50}
 };
