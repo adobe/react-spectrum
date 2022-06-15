@@ -982,7 +982,7 @@ describe('FocusScope', function () {
       function Item(props) {
         let focusManager = useFocusManager();
         let onClick = () => {
-          focusManager.focusNext({
+          focusManager.focusPrevious({
             wrap: true,
             accept: (e) => !e.getAttribute('data-skip')
           });
