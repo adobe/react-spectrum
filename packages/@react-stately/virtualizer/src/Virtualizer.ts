@@ -646,28 +646,28 @@ export class Virtualizer<T extends object, V, W> {
     // Views that are outside of the viewable rectangle that we don't
     // want to be reused by Virtualizer.
     for (let persistKey of this._persistedKeys) {
-      this._addPersistedKeyAndParentKeys(persistKey, copy, map);
+      let key = persistKey
+
+      while (key) {
+        let layoutInfo = this.layout.getLayoutInfo(key);
+
+        if (layoutInfo) {
+          if (copy) {
+            layoutInfo = layoutInfo.copy();
+          }
+
+          map.set(layoutInfo.key, layoutInfo);
+
+          // Assuming that any item with a parent is a subitem and we need to
+          // persist the parent layout, no parentKey is null
+          key = layoutInfo.parentKey
+        } else {
+          key = null; // if there is no layoutInfo make sure the key is null to exit
+        }
+      }
     }
 
     return map;
-  }
-
-  _addPersistedKeyAndParentKeys(persistKey: Key, copy: boolean, map: Map<Key, LayoutInfo>) {
-    let layoutInfo = this.layout.getLayoutInfo(persistKey);
-
-    if (layoutInfo) {
-      if (copy) {
-        layoutInfo = layoutInfo.copy();
-      }
-
-      map.set(layoutInfo.key, layoutInfo);
-
-      // Assuming that any item with a parent is a subitem and we need to
-      // persist the parent layout
-      if (layoutInfo && layoutInfo.parentKey) {
-        this._addPersistedKeyAndParentKeys(layoutInfo.parentKey, copy, map);
-      }
-    }
   }
 
   updateSubviews(forceUpdate = false) {
