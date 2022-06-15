@@ -468,11 +468,17 @@ You can disable specific rows by providing an array of keys to TableView via the
 
 ### Highlight selection
 
-By default, TableView uses the checkbox selection style, which includes a column of checkboxes in each row for selection. When the `selectionStyle` prop is set to `"highlight"`, the checkboxes are hidden, and the selected rows are displayed with a highlighted background instead.
+By default, TableView uses the checkbox selection style, which includes a checkbox in each row for selection. When the selectionStyle prop is set to `"highlight"`, the checkboxes are hidden,
+and the selected rows are displayed with a highlighted background instead.
 
-In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
+In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping, or pressing
+the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
 
-In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used.  To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows.
+In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows,
+modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier
+keys may not be available.
+
+These selection styles implement the behaviors defined in [Aria Practices](https://w3c.github.io/aria-practices/#listbox_kbd_interaction).
 
 ```tsx example
 <PokemonTable selectionMode="multiple" selectionStyle="highlight" />
@@ -480,12 +486,17 @@ In the highlight selection style, however, clicking a row with the mouse _replac
 
 ### Row actions
 
-TableView may be used in use cases where users can perform actions on rows, such as navigating into items to open them or get more details. In the default checkbox selection style, it is recommended to use a [Link](Link.html) component in the first column for navigation.
+TableView supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the TableView performs actions by default when clicking or tapping a row.
+Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the TableView is in selection mode,
+and clicking or tapping a row toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
 
-In the highlight selection style, the `onAction` prop can be used to enable row actions, which differ depending on the interaction method. When provided, double clicking with a mouse or pressing the <Keyboard>Enter</Keyboard> key triggers `onAction`, while single click and the <Keyboard>Space</Keyboard> key are reserved for selection. On touch devices, `onAction` becomes the primary tap interaction, and a long press enters into selection mode, which displays checkboxes to perform selection. Deselecting all items exits selection mode and hides the checkboxes. Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
+This behavior is slightly different in the highlight selection style, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
 
 ```tsx example
-<PokemonTable selectionMode="multiple" selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} />
+<Flex direction="column" gap="size-300">
+  <PokemonTable aria-label="Pokemon table with row actions and checkbox selection" selectionMode="multiple" onAction={key => alert(`Opening item ${key}...`)} />
+  <PokemonTable aria-label="Pokemon table with row actions and highlight selection" selectionMode="multiple" selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} />
+</Flex>
 ```
 
 ## Sorting
