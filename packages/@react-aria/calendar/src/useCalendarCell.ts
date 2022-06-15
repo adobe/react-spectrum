@@ -12,7 +12,7 @@
 
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {focusWithoutScrolling, useDescription} from '@react-aria/utils';
+import {focusWithoutScrolling, getScrollParent, scrollIntoView, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
@@ -283,12 +283,14 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   // Focus the button in the DOM when the state updates.
   useEffect(() => {
     if (isFocused && ref.current) {
+      focusWithoutScrolling(ref.current);
+
       // Scroll into view if navigating with a keyboard, otherwise
       // try not to shift the view under the user's mouse/finger.
-      if (getInteractionModality() === 'pointer') {
-        focusWithoutScrolling(ref.current);
-      } else {
-        ref.current.focus();
+      // Only scroll the direct scroll parent, not the whole page, so
+      // we don't scroll to the bottom when opening date picker popover.
+      if (getInteractionModality() !== 'pointer') {
+        scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
       }
     }
   }, [isFocused, ref]);
