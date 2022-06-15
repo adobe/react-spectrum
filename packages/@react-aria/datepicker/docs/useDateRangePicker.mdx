@@ -692,6 +692,16 @@ function Example() {
 }
 ```
 
+### Placeholder value
+
+When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys, as well as the default month shown in the calendar popover. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.
+
+```tsx example
+import {CalendarDate} from '@internationalized/date';
+
+<DateRangePicker label="Date range" placeholderValue={new CalendarDate(1980, 1, 1)} />
+```
+
 ### Hide time zone
 
 When `ZonedDateTime` objects are provided as the value of to `useDateRangePicker`, the time zone abbreviation is displayed by default. However, if this is displayed elsewhere or implicit based on the usecase, it can be hidden using the `hideTimeZone` option.

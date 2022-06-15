@@ -86,8 +86,8 @@ function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['de
 function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
-    onLoadMore,
     loadingState,
+    onLoadMore,
     isQuiet,
     overflowMode = 'truncate',
     onAction,
@@ -338,7 +338,7 @@ function CenteredWrapper({children}) {
 }
 
 /**
- * Lists display a linear collection of data. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ * Lists are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
 const _ListView = React.forwardRef(ListView) as <T>(props: SpectrumListProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};
