@@ -21,8 +21,10 @@
   "dependencies": {
     "@react-aria/breadcrumbs": "^3.2.0",
     "@react-aria/button": "^3.5.0",
+    "@react-aria/calendar": "3.0.0-rc.1",
     "@react-aria/checkbox": "^3.4.0",
     "@react-aria/combobox": "^3.3.0",
+    "@react-aria/datepicker": "3.0.0-rc.1",
     "@react-aria/dialog": "^3.2.0",
     "@react-aria/focus": "^3.6.0",
     "@react-aria/i18n": "^3.4.0",
