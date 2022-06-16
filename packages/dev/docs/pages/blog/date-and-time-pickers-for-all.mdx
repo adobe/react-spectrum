@@ -82,7 +82,7 @@ The [useDateField](../../react-aria/useDateField.html) and [useTimeField](../../
 
 ### Calendars
 
-When a user doesn’t know what date they will select, it can be useful to offer a browsing experience using a calendar component. This allows users to see dates organized into weeks and months, or with additional context such as which dates are unavailable for selection. Calendar follows the [ARIA grid pattern](https://www.w3.org/TR/wai-aria-practices/#grid), which allows keyboard users to navigate using the arrow keys, and press the Enter key to select a date.
+When a user doesn’t know what date they will select, it can be useful to offer a browsing experience using a calendar component. This allows users to see dates organized into weeks and months, or with additional context such as which dates are unavailable for selection. Calendar follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), which allows keyboard users to navigate using the arrow keys, and press the Enter key to select a date.
 
 Calendars can quickly get complicated, with many different states which need to be represented both visually and to screen reader users. For example, a [RangeCalendar](../../react-spectrum/RangeCalendar.html) allows users to select not only a single date, but a range of dates. Certain dates can be marked as unavailable, e.g. in an appointment booking application. When combined, a user may be allowed to select only contiguously available ranges (e.g. a rental house), or non-contiguous (e.g. a time off request where weekends are not included). Minimum and maximum allowed dates may also be defined. Finally, if a user makes an invalid selection external to the calendar, we may need to display an invalid state.
 
