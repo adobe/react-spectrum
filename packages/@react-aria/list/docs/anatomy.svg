@@ -1,95 +1,155 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="max-height: 140px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 516 137">
-  <title>ListView anatomy diagram</title>
-  <desc>Shows a list view with labels pointing to its parts, including a parent list view item, a child list view item, and a selected listview item.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" style="max-height:552px;background:var(--anatomy-gray-100);padding:32px;margin-bottom:16px;width:calc(100% - 64px);border-radius:4px" viewBox="0 0 680 552">
+  <title>List anatomy diagram</title>
+  <desc>Shows a list and list item component with labels pointing to its parts.</desc>
   <defs>
-    <clipPath id="clip-path">
-      <rect width="11" height="17" fill="none"/>
-    </clipPath>
-    <clipPath id="clip-listview_anatomy">
-      <rect width="680" height="552"/>
+    <clipPath id="a">
+      <path d="M0 0h680v552H0z"/>
     </clipPath>
   </defs>
-  <g id="listview_anatomy" clip-path="url(#clip-listview_anatomy)" transform="translate(-55 -55)">
-    <rect id="Rectangle_142147" data-name="Rectangle 142147" width="436" height="58" transform="translate(123 96)" fill="var(--anatomy-gray-50)"/>
-    <g id="Rectangle_142150" data-name="Rectangle 142150" transform="translate(177.5 104)" fill="var(--anatomy-gray-100)" stroke="#a5b6dd" stroke-width="1" stroke-dasharray="3">
-      <rect width="42" height="42" stroke="none"/>
-      <rect x="0.5" y="0.5" width="41" height="41" fill="none"/>
+  <g clip-path="url(#a)">
+    <path data-name="Rectangle 142147" fill="var(--anatomy-gray-50)" d="M116.25 86h436v58h-436z"/>
+    <g data-name="Rectangle 142152" fill="var(--anatomy-gray-100)" stroke="#a5b6dd" stroke-dasharray="3">
+      <path stroke="none" d="M409.25 94h101.504v42H409.25z"/>
+      <path fill="none" d="M409.75 94.5h100.504v41H409.75z"/>
     </g>
-    <g id="Rectangle_142152" data-name="Rectangle 142152" transform="translate(416 104)" fill="var(--anatomy-gray-100)" stroke="#a5b6dd" stroke-width="1" stroke-dasharray="3">
-      <rect width="101.504" height="42" stroke="none"/>
-      <rect x="0.5" y="0.5" width="100.504" height="41" fill="none"/>
+    <text data-name="Actions (optional)" transform="translate(460.25 112)" fill="var(--anatomy-gray-700)" font-size="14" font-family="Adobe Clean" font-style="italic"><tspan x="-17.04" y="0">Actions</tspan><tspan x="-23.25" y="15">(optional)</tspan></text>
+    <text data-name="Navigation icon (optional)" transform="translate(526.75 56)" fill="var(--anatomy-gray-700)" font-size="14" font-family="Adobe Clean" font-style="italic"><tspan x="-36.84" y="0">Navigation icon</tspan><tspan x="-23.25" y="15">(optional)</tspan></text>
+    <text data-name="Checkbox (optional)" transform="translate(165.25 56)" fill="var(--anatomy-gray-700)" font-size="14" font-family="Adobe Clean" font-style="italic"><tspan x="-44.88" y="0">Checkbox</tspan><tspan x="-46.5" y="15">(optional)</tspan></text>
+    <path data-name="Line 10" fill="none" stroke="var(--anatomy-gray-700)" d="M527.25 76.5v24"/>
+    <path data-name="Line 9" fill="none" stroke="var(--anatomy-gray-700)" d="M142.75 76.5v24"/>
+    <g data-name="Rectangle 142153" fill="var(--anatomy-gray-100)" stroke="#a5b6dd" stroke-dasharray="3">
+      <path stroke="none" d="M165.25 117h236.5v19h-236.5z"/>
+      <path fill="none" d="M165.75 117.5h235.5v18h-235.5z"/>
     </g>
-    <text id="Actions_optional_" data-name="Actions
-(optional)" transform="translate(467 122)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-17.04" y="0">Actions</tspan><tspan x="-23.25" y="15">(optional)</tspan></text>
-    <text id="Justify_end_" data-name="Justify end →" transform="translate(488 190)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-29.82" y="0">Justify end →</tspan></text>
-    <text id="_Justify_start" data-name="← Justify start" transform="translate(266 190)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-31.716" y="0">← Justify start</tspan></text>
-    <text id="Context_area_optional_" data-name="Context area
-(optional)" transform="translate(187 66)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Context area</tspan><tspan x="0" y="15">(optional)</tspan></text>
-    <text id="Navigation_icon_optional_" data-name="Navigation icon
-(optional)" transform="translate(533.5 66)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-36.84" y="0">Navigation icon</tspan><tspan x="-23.25" y="15">(optional)</tspan></text>
-    <text id="Checkbox_optional_" data-name="Checkbox
-(optional)" transform="translate(171 66)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-44.88" y="0">Checkbox</tspan><tspan x="-46.5" y="15">(optional)</tspan></text>
-    <line id="Line_8" data-name="Line 8" y2="24" transform="translate(199 86.5)" fill="none" stroke="var(--anatomy-gray-900)" stroke-width="1"/>
-    <line id="Line_10" data-name="Line 10" y2="24" transform="translate(534 86.5)" fill="none" stroke="var(--anatomy-gray-900)" stroke-width="1"/>
-    <line id="Line_9" data-name="Line 9" y2="24" transform="translate(159.5 86.5)" fill="none" stroke="var(--anatomy-gray-900)" stroke-width="1"/>
-    <g id="Group_156653" data-name="Group 156653" transform="translate(976.504 423.062) rotate(180)">
-      <g id="Group_2" data-name="Group 2" transform="translate(418 251.584)">
-        <path id="Path_453" data-name="Path 453" d="M418,257.539v-5.955H560.5v5.955" transform="translate(-418 -251.584)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
-      </g>
+    <g data-name="Rectangle 142154" fill="var(--anatomy-gray-100)" stroke="#a5b6dd" stroke-dasharray="3">
+      <path stroke="none" d="M165.25 94h236.5v19h-236.5z"/>
+      <path fill="none" d="M165.75 94.5h235.5v18h-235.5z"/>
     </g>
-    <g id="Group_156654" data-name="Group 156654" transform="translate(826.5 423.062) rotate(180)">
-      <g id="Group_2-2" data-name="Group 2" transform="translate(418 251.584)">
-        <path id="Path_453-2" data-name="Path 453" d="M418,257.539v-5.955H702.5v5.955" transform="translate(-418 -251.584)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
-      </g>
+    <text data-name="Label area" transform="translate(283.5 107.739)" fill="var(--anatomy-gray-700)" font-size="14" font-family="Adobe Clean" font-style="italic"><tspan x="-24.678" y="0">Label area</tspan></text>
+    <text data-name="Description area (optional)" transform="translate(283.5 131.261)" fill="var(--anatomy-gray-700)" font-size="14" font-family="Adobe Clean" font-style="italic"><tspan x="-62.94" y="0">Description area (optional)</tspan></text>
+    <g transform="translate(132.25 104.5)" fill="var(--anatomy-gray-100)" stroke="#718dcf" stroke-width="3">
+      <rect width="21" height="21" rx="2" stroke="none"/>
+      <rect x="1.5" y="1.5" width="18" height="18" rx=".5" fill="none"/>
     </g>
-    <text id="Drag_icon_optional_" data-name="Drag icon
-(optional)" transform="translate(77 122)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-22.746" y="0">Drag icon</tspan><tspan x="-23.25" y="15">(optional)</tspan></text>
-    <path id="Path_35565" data-name="Path 35565" d="M439,263.248v-20" transform="translate(-137.814 563.664) rotate(-90)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
-    <g id="Repeat_Grid_46" data-name="Repeat Grid 46" transform="translate(130 117)" clip-path="url(#clip-path)">
-      <g transform="translate(-287 -281)">
-        <rect id="Rectangle_11" data-name="Rectangle 11" width="4" height="4" rx="1" transform="translate(287 281)" fill="var(--anatomy-gray-700)"/>
-      </g>
-      <g transform="translate(-281 -281)">
-        <rect id="Rectangle_11-2" data-name="Rectangle 11" width="4" height="4" rx="1" transform="translate(287 281)" fill="var(--anatomy-gray-700)"/>
-      </g>
-      <g transform="translate(-287 -275)">
-        <rect id="Rectangle_11-3" data-name="Rectangle 11" width="4" height="4" rx="1" transform="translate(287 281)" fill="var(--anatomy-gray-700)"/>
-      </g>
-      <g transform="translate(-281 -275)">
-        <rect id="Rectangle_11-4" data-name="Rectangle 11" width="4" height="4" rx="1" transform="translate(287 281)" fill="var(--anatomy-gray-700)"/>
-      </g>
-      <g transform="translate(-287 -269)">
-        <rect id="Rectangle_11-5" data-name="Rectangle 11" width="4" height="4" rx="1" transform="translate(287 281)" fill="var(--anatomy-gray-700)"/>
-      </g>
-      <g transform="translate(-281 -269)">
-        <rect id="Rectangle_11-6" data-name="Rectangle 11" width="4" height="4" rx="1" transform="translate(287 281)" fill="var(--anatomy-gray-700)"/>
+    <g data-name="Group 156660">
+      <path fill="rgba(255,0,0,0)" d="M519.25 107.5h15v15h-15z"/>
+      <path data-name="Path 35561" d="M523.75 122.425a1.312 1.312 0 0 1-.922-2.246L528.07 115l-5.242-5.175a1.314 1.314 0 1 1 1.845-1.872l6.188 6.113a1.314 1.314 0 0 1 0 1.868l-6.188 6.113a1.307 1.307 0 0 1-.923.378Z" fill="var(--anatomy-gray-700)"/>
+    </g>
+    <g data-name="Group 156661" fill="var(--anatomy-gray-700)">
+      <text data-name="List view" transform="translate(75.999 370)" font-size="13" font-family="Adobe Clean" font-style="italic"><tspan x="-43.771" y="0">List view</tspan></text>
+      <g data-name="Group 152111">
+        <path data-name="Rectangle 138454" d="M94 367h-8v-1h8z"/>
+        <g data-name="Group 72702">
+          <path data-name="Rectangle 138451" d="M103 480h-8v-1h8z"/>
+          <path data-name="Rectangle 138453" d="M95 480h-1V252h1z"/>
+          <path data-name="Rectangle 138452" d="M103 253h-8v-1h8z"/>
+        </g>
       </g>
     </g>
-    <g id="Rectangle_142153" data-name="Rectangle 142153" transform="translate(227.5 127)" fill="var(--anatomy-gray-100)" stroke="#a5b6dd" stroke-width="1" stroke-dasharray="3">
-      <rect width="181" height="19" stroke="none"/>
-      <rect x="0.5" y="0.5" width="180" height="18" fill="none"/>
-    </g>
-    <g id="Rectangle_142154" data-name="Rectangle 142154" transform="translate(227.5 104)" fill="var(--anatomy-gray-100)" stroke="#a5b6dd" stroke-width="1" stroke-dasharray="3">
-      <rect width="181" height="19" stroke="none"/>
-      <rect x="0.5" y="0.5" width="180" height="18" fill="none"/>
-    </g>
-    <text id="Label_area" data-name="Label area" transform="translate(318.5 118)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-24.678" y="0">Label area</tspan></text>
-    <text id="Description_area_optional_" data-name="Description area (optional)" transform="translate(318.5 141)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-62.94" y="0">Description area (optional)</tspan></text>
-    <g id="Checkbox" transform="translate(149 101)">
-      <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
-        <rect width="21" height="48" stroke="none"/>
-        <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+    <g data-name="Group 156664">
+      <g data-name="Rectangle 142243" transform="translate(123 249)" fill="var(--anatomy-gray-50)" stroke="#c0cce7" stroke-width="1.5">
+        <rect width="364" height="232" rx="6" stroke="none"/>
+        <rect x=".75" y=".75" width="362.5" height="230.5" rx="5.25" fill="none"/>
       </g>
-      <g id="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="3">
-        <rect width="21" height="21" rx="2" stroke="none"/>
-        <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
+      <path data-name="Rectangle 142241" fill="rgba(72,110,194,0.1)" d="M123 365h364v58H123z"/>
+      <text data-name="List view item" transform="translate(174 284)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe Clean"><tspan x="0" y="0">List view item</tspan></text>
+      <text data-name="List view item" transform="translate(174 342)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe Clean"><tspan x="0" y="0">List view item</tspan></text>
+      <text data-name="List view item" transform="translate(174 400)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe Clean"><tspan x="0" y="0">List view item</tspan></text>
+      <text data-name="List view item" transform="translate(174 458)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe Clean"><tspan x="0" y="0">List view item</tspan></text>
+      <path data-name="Line 13" fill="none" stroke="#c0cce7" stroke-width="1.5" d="M123.5 307.5h363.252"/>
+      <path data-name="Line 14" fill="none" stroke="#c0cce7" stroke-width="1.5" d="M123.5 365.522h363.252"/>
+      <path data-name="Line 15" fill="none" stroke="#c0cce7" stroke-width="1.5" d="M123.5 423.522h363.252"/>
+      <g data-name="Action group">
+        <g data-name="Action Button" transform="translate(375.252 312)">
+          <rect width="48" height="48" rx="4" transform="translate(-.252)" fill="rgba(255,0,0,0)"/>
+          <path data-name="Path 35570" d="M25.612 19.5A1.612 1.612 0 1 1 24 17.888a1.613 1.613 0 0 1 1.613 1.612Zm.138 9h-.25v-5.7a.3.3 0 0 0-.3-.3h-2.95s-.875.024-.875.75.875.75.875.75h.25v4.5h-.25s-.875.024-.875.75.875.75.875.75h3.5s.875-.025.875-.75-.875-.75-.875-.75ZM24 11.25A12.75 12.75 0 1 0 36.75 24 12.75 12.75 0 0 0 24 11.25Zm0 22.762A10.012 10.012 0 1 1 34.012 24 10.012 10.012 0 0 1 24 34.012Z" fill="var(--anatomy-gray-700)"/>
+        </g>
+        <g data-name="Action Button" transform="translate(425.252 312)">
+          <rect data-name="Background" width="48" height="48" rx="4" transform="translate(-.252)" fill="rgba(255,0,0,0)"/>
+          <g data-name="Icon" fill="var(--anatomy-gray-700)">
+            <path data-name="Path 35573" d="M35.25 12h-22.5a.75.75 0 0 0-.75.75v10.5a.75.75 0 0 0 .75.75h1.5a.75.75 0 0 0 .75-.75V15h18v18h-8.25a.75.75 0 0 0-.75.75v1.5a.75.75 0 0 0 .75.75h10.5a.75.75 0 0 0 .75-.75v-22.5a.75.75 0 0 0-.75-.75Z"/>
+            <path data-name="Path 35574" d="M24.477 31.323a.586.586 0 0 0 .423.177.6.6 0 0 0 .6-.566v-8.059a.375.375 0 0 0-.375-.375h-8.06a.6.6 0 0 0-.565.6.588.588 0 0 0 .176.42l2.84 2.84-6.782 6.784a.75.75 0 0 0 0 1.061l1.061 1.061a.75.75 0 0 0 1.061 0l6.782-6.782Z"/>
+          </g>
+        </g>
+      </g>
+      <g data-name="Action group">
+        <g data-name="Action Button" transform="translate(375.252 370)">
+          <rect data-name="Background" width="48" height="48" rx="4" transform="translate(-.252)" fill="rgba(255,0,0,0)"/>
+          <g data-name="Icon">
+            <path data-name="Path 35570" d="M25.612 19.5A1.612 1.612 0 1 1 24 17.888a1.613 1.613 0 0 1 1.613 1.612Zm.138 9h-.25v-5.7a.3.3 0 0 0-.3-.3h-2.95s-.875.024-.875.75.875.75.875.75h.25v4.5h-.25s-.875.024-.875.75.875.75.875.75h3.5s.875-.025.875-.75-.875-.75-.875-.75ZM24 11.25A12.75 12.75 0 1 0 36.75 24 12.75 12.75 0 0 0 24 11.25Zm0 22.762A10.012 10.012 0 1 1 34.012 24 10.012 10.012 0 0 1 24 34.012Z" fill="var(--anatomy-gray-700)"/>
+          </g>
+        </g>
+        <g data-name="Action Button" transform="translate(425.252 370)">
+          <rect data-name="Background" width="48" height="48" rx="4" transform="translate(-.252)" fill="rgba(255,0,0,0)"/>
+          <g data-name="Icon" fill="var(--anatomy-gray-700)">
+            <path data-name="Path 35573" d="M35.25 12h-22.5a.75.75 0 0 0-.75.75v10.5a.75.75 0 0 0 .75.75h1.5a.75.75 0 0 0 .75-.75V15h18v18h-8.25a.75.75 0 0 0-.75.75v1.5a.75.75 0 0 0 .75.75h10.5a.75.75 0 0 0 .75-.75v-22.5a.75.75 0 0 0-.75-.75Z"/>
+            <path data-name="Path 35574" d="M24.477 31.323a.586.586 0 0 0 .423.177.6.6 0 0 0 .6-.566v-8.059a.375.375 0 0 0-.375-.375h-8.06a.6.6 0 0 0-.565.6.588.588 0 0 0 .176.42l2.84 2.84-6.782 6.784a.75.75 0 0 0 0 1.061l1.061 1.061a.75.75 0 0 0 1.061 0l6.782-6.782Z"/>
+          </g>
+        </g>
+      </g>
+      <g data-name="Action group">
+        <g data-name="Action Button" transform="translate(375.252 428)">
+          <rect data-name="Background" width="48" height="48" rx="4" transform="translate(-.252)" fill="rgba(255,0,0,0)"/>
+          <g data-name="Icon">
+            <path data-name="Path 35570" d="M25.612 19.5A1.612 1.612 0 1 1 24 17.888a1.613 1.613 0 0 1 1.613 1.612Zm.138 9h-.25v-5.7a.3.3 0 0 0-.3-.3h-2.95s-.875.024-.875.75.875.75.875.75h.25v4.5h-.25s-.875.024-.875.75.875.75.875.75h3.5s.875-.025.875-.75-.875-.75-.875-.75ZM24 11.25A12.75 12.75 0 1 0 36.75 24 12.75 12.75 0 0 0 24 11.25Zm0 22.762A10.012 10.012 0 1 1 34.012 24 10.012 10.012 0 0 1 24 34.012Z" fill="var(--anatomy-gray-700)"/>
+          </g>
+        </g>
+        <g data-name="Action Button" transform="translate(425.252 428)">
+          <rect data-name="Background" width="48" height="48" rx="4" transform="translate(-.252)" fill="rgba(255,0,0,0)"/>
+          <g data-name="Icon" fill="var(--anatomy-gray-700)">
+            <path data-name="Path 35573" d="M35.25 12h-22.5a.75.75 0 0 0-.75.75v10.5a.75.75 0 0 0 .75.75h1.5a.75.75 0 0 0 .75-.75V15h18v18h-8.25a.75.75 0 0 0-.75.75v1.5a.75.75 0 0 0 .75.75h10.5a.75.75 0 0 0 .75-.75v-22.5a.75.75 0 0 0-.75-.75Z"/>
+            <path data-name="Path 35574" d="M24.477 31.323a.586.586 0 0 0 .423.177.6.6 0 0 0 .6-.566v-8.059a.375.375 0 0 0-.375-.375h-8.06a.6.6 0 0 0-.565.6.588.588 0 0 0 .176.42l2.84 2.84-6.782 6.784a.75.75 0 0 0 0 1.061l1.061 1.061a.75.75 0 0 0 1.061 0l6.782-6.782Z"/>
+          </g>
+        </g>
+      </g>
+      <g data-name="Group 156659">
+        <g data-name="ChevronSize100">
+          <path data-name="Frame" fill="rgba(255,0,0,0)" d="M454.252 270.5h15v15h-15z"/>
+          <path data-name="Path 35561" d="M458.752 285.425a1.312 1.312 0 0 1-.922-2.246l5.242-5.179-5.242-5.175a1.314 1.314 0 1 1 1.845-1.872l6.188 6.113a1.314 1.314 0 0 1 0 1.868l-6.188 6.113a1.307 1.307 0 0 1-.923.378Z" fill="var(--anatomy-gray-700)"/>
+        </g>
+      </g>
+      <g data-name="Checkbox">
+        <g data-name="Box" transform="translate(141 267.5)" fill="var(--anatomy-gray-100)" stroke="#718dcf" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx=".5" fill="none"/>
+        </g>
+      </g>
+      <g data-name="Checkbox">
+        <g data-name="Box" transform="translate(141 325.5)" fill="var(--anatomy-gray-100)" stroke="#718dcf" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx=".5" fill="none"/>
+        </g>
+      </g>
+      <g data-name="Checkbox">
+        <g data-name="Box" transform="translate(141 383.5)" fill="var(--anatomy-gray-700)" stroke="rgba(0,0,0,0)">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x=".5" y=".5" width="20" height="20" rx="1.5" fill="none"/>
+        </g>
+        <path d="M149.682 400a1.5 1.5 0 0 1-1.182-.578l-3.432-4.499a1.5 1.5 0 1 1 2.364-1.845l2.25 2.986 5.886-7.486a1.5 1.5 0 1 1 2.364 1.845l-7.068 9a1.5 1.5 0 0 1-1.182.577Z" fill="var(--anatomy-gray-100)"/>
+      </g>
+      <g data-name="Checkbox">
+        <g data-name="Box" transform="translate(141 441.5)" fill="var(--anatomy-gray-100)" stroke="#718dcf" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx=".5" fill="none"/>
+        </g>
       </g>
     </g>
-    <g id="Group_156660" data-name="Group 156660" transform="translate(515 101)">
-      <rect id="Rectangle_139996" data-name="Rectangle 139996" width="15" height="48" transform="translate(11)" fill="red" opacity="0"/>
-      <g id="ChevronSize100" transform="translate(11 16.5)">
-        <rect id="Frame" width="15" height="15" fill="rgba(255,0,0,0)"/>
-        <path id="Path_35561" data-name="Path 35561" d="M3.437,14.9a1.312,1.312,0,0,1-.922-2.246L7.757,7.475,2.515,2.3A1.312,1.312,0,1,1,4.36.428l6.188,6.113a1.314,1.314,0,0,1,0,1.868L4.36,14.522A1.307,1.307,0,0,1,3.437,14.9Z" transform="translate(1.063 0.025)" fill="var(--anatomy-gray-700)"/>
+    <g data-name="Group 152101">
+      <text data-name="Parent list view item" transform="translate(527.005 281)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe Clean" font-style="italic"><tspan x="0" y="0">Parent list view item</tspan></text>
+      <g data-name="Group 152108">
+        <path data-name="Union 56" d="M477.504 275.5a2.5 2.5 0 0 1 2.449 2h43.051v1h-43.052a2.5 2.5 0 0 1-2.449 2 2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.501-2.5Z" fill="var(--anatomy-gray-500)"/>
+      </g>
+    </g>
+    <g data-name="Group 156663">
+      <text data-name="Child list view item" transform="translate(527.005 338)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe Clean" font-style="italic"><tspan x="0" y="0">Child list view item</tspan></text>
+      <g data-name="Group 152108">
+        <path data-name="Union 56" d="M477.504 332.5a2.5 2.5 0 0 1 2.449 2h43.051v1h-43.052a2.5 2.5 0 0 1-2.449 2 2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.501-2.5Z" fill="var(--anatomy-gray-500)"/>
+      </g>
+    </g>
+    <g data-name="Group 152110">
+      <text data-name="Selected list view item" transform="translate(527.005 395)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe Clean" font-style="italic"><tspan x="0" y="0">Selected list view item</tspan></text>
+      <g data-name="Group 152108">
+        <path data-name="Union 56" d="M477.504 389.5a2.5 2.5 0 0 1 2.449 2h43.051v1h-43.052a2.5 2.5 0 0 1-2.449 2 2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.501-2.5Z" fill="var(--anatomy-gray-500)"/>
       </g>
     </g>
   </g>
