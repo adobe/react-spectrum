@@ -19,7 +19,7 @@ export default {
   component: TooltipTrigger,
   parameters: {
     chromaticProvider: {
-      colorSchemes: ['dark'],
+      colorSchemes: ['light'],
       locales: ['ar-AE'],
       scales: ['large'],
       disableAnimations: true
