@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {StrictMode, useEffect, useState} from 'react';
 import {ActionButton} from '@react-spectrum/button';
 import addons, { makeDecorator } from '@storybook/addons';
 import {Content} from '@react-spectrum/view';
@@ -7,6 +7,7 @@ import {Provider} from '@react-spectrum/provider';
 import {Text} from '@react-spectrum/text';
 import {themes, defaultTheme} from '../../constants';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+// import {StrictModeWrapper} from '@react-spectrum/test-utils';
 
 document.body.style.margin = '0';
 
@@ -46,8 +47,26 @@ function ProviderUpdater(props) {
 
   if (props.options.mainElement == null) {
     return (
-      <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
-        <main>
+      <StrictModeWrapper>
+        <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
+          <main>
+            <div style={{position: 'absolute', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px'}}>
+              {props.context.parameters.note && (<DialogTrigger type="popover">
+                <ActionButton>Note</ActionButton>
+                <Dialog>
+                  <Content><Text>{props.context.parameters.note}</Text></Content>
+                </Dialog>
+              </DialogTrigger>)}
+            </div>
+            {storyReady && props.children}
+          </main>
+        </Provider>
+      </StrictModeWrapper>
+    );
+  } else {
+    return (
+      <StrictModeWrapper>
+        <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
           <div style={{position: 'absolute', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px'}}>
             {props.context.parameters.note && (<DialogTrigger type="popover">
               <ActionButton>Note</ActionButton>
@@ -57,22 +76,8 @@ function ProviderUpdater(props) {
             </DialogTrigger>)}
           </div>
           {storyReady && props.children}
-        </main>
-      </Provider>
-    );
-  } else {
-    return (
-      <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
-        <div style={{position: 'absolute', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px'}}>
-          {props.context.parameters.note && (<DialogTrigger type="popover">
-            <ActionButton>Note</ActionButton>
-            <Dialog>
-              <Content><Text>{props.context.parameters.note}</Text></Content>
-            </Dialog>
-          </DialogTrigger>)}
-        </div>
-        {storyReady && props.children}
-      </Provider>
+        </Provider>
+      </StrictModeWrapper>
     );
   }
 }
@@ -89,3 +94,16 @@ export const withProviderSwitcher = makeDecorator({
     );
   }
 });
+
+// TODO: not sure why importing this from test-utils doesn't work...
+export function StrictModeWrapper(props) {
+  if (process.env.STRICT_MODE) {
+    return (
+      <StrictMode>
+        {props.children}
+      </StrictMode>
+    );
+  }
+
+  return props.children;
+}
