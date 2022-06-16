@@ -113,7 +113,7 @@ import {today, getLocalTimeZone} from '@internationalized/date';
 import {useLocale} from '@adobe/react-spectrum';
 
 function Example() {
-  let now = today(getLocalTimeZone());
+  let now = today(getLocalTimeZone()).set({day: 8});
   let disabledRanges = [
     [now, now.add({days: 2})],
     [now.add({days: 10}), now.add({days: 14})],
@@ -127,7 +127,7 @@ function Example() {
     <Flex direction="column" alignItems="center">
       <RangeCalendar
         aria-label="Trip dates"
-        minValue={today(getLocalTimeZone())}
+        minValue={now}
         isDateUnavailable={isDateUnavailable}
         defaultValue={{start: now.add({days: 5}), end: now.add({days: 8})}} />
     </Flex>
