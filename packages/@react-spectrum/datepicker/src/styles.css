@@ -191,8 +191,14 @@
   }
   .react-spectrum-DatePicker-cell.is-read-only {
     color: ButtonText;
+    &:focus {
+      color: HighlightText;
+    }
   }
   .react-spectrum-DatePicker-cell.is-placeholder {
     color: ButtonText;
+    &:focus {
+      color: HighlightText;
+    }
   }
 }
