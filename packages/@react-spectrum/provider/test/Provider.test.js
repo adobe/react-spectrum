@@ -13,14 +13,13 @@
 // needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '../';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
-import {triggerPress} from '@react-spectrum/test-utils';
 import {useBreakpoint} from '@react-spectrum/utils';
 import userEvent from '@testing-library/user-event';
 
