@@ -617,15 +617,19 @@ When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the
 <PokemonTable selectionMode="multiple" selectionBehavior="replace" />
 ```
 
-### Row and cell actions
+### Row actions
+`useTable` supports row actions via the `onRowAction` prop, which is useful for functionality such as navigation. In the default `"toggle"` selection behavior, when nothing is selected, clicking or tapping the row triggers the row action.
+When at least one item is selected, the table is in selection mode, and clicking or tapping a row toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
 
-`useTable` may be used in use cases where users can perform actions on rows or cells, such as navigating into items to open them or get more details. In the default `"toggle"` selection behavior, it is recommended to use a link in the first column for navigation.
-
-In the `"replace"` selection behavior, the `onRowAction` and `onCellAction` prop can be used to enable row and cell actions, which differ depending on the interaction method. When provided to `useTableState`, double clicking with a mouse or pressing the <Keyboard>Enter</Keyboard> key triggers the action, while single click and the <Keyboard>Space</Keyboard> key are reserved for selection. On touch devices, the action becomes the primary tap interaction, and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode and reverts the selection behavior back to `"replace"`. Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
-
+This behavior is slightly different in the `"replace"` selection behavior, where single clicking selects the row and actions are performed via double click. On touch devices, the action becomes the primary tap interaction,
+and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode
+and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
 
 ```tsx example
-<PokemonTable selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
+<div style={{display: 'flex', 'flex-wrap': 'wrap', gap: '24px'}}>
+  <PokemonTable aria-label="Pokemon table with row actions and toggle selection behavior" selectionMode="multiple" onRowAction={key => alert(`Opening item ${key}...`)} />
+  <PokemonTable aria-label="Pokemon table with row actions and replace selection behavior" selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
+</div>
 ```
 
 ### Sorting
