@@ -267,11 +267,19 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
       })
   , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale]);
 
-  let hasEra = useMemo(() => segments.some(s => s.type === 'era'), [segments]);
+  // When the era field appears, mark it valid if the year field is already valid.
+  // If the era field disappears, remove it from the valid segments.
+  if (allSegments.era && validSegments.year && !validSegments.era) {
+    validSegments.era = true;
+    setValidSegments({...validSegments});
+  } else if (!allSegments.era && validSegments.era) {
+    delete validSegments.era;
+    setValidSegments({...validSegments});
+  }
 
   let markValid = (part: Intl.DateTimeFormatPartTypes) => {
     validSegments[part] = true;
-    if (part === 'year' && hasEra) {
+    if (part === 'year' && allSegments.era) {
       validSegments.era = true;
     }
     setValidSegments({...validSegments});

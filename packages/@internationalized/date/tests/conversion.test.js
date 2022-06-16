@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
+import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, EthiopicCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
 import {fromAbsolute, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
 
 describe('CalendarDate conversion', function () {
@@ -373,6 +373,27 @@ describe('CalendarDate conversion', function () {
       it('gregorian to hebrew in a leap year', function () {
         let date = new CalendarDate(2022, 2, 2);
         expect(toCalendar(date, new HebrewCalendar())).toEqual(new CalendarDate(new HebrewCalendar(), 5782, 6, 1));
+      });
+    });
+
+    describe('ethiopic', function () {
+      it('ethiopic to gregorian', function () {
+        let date = new CalendarDate(new EthiopicCalendar(), 'AA', 9999, 13, 5);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(4507, 9, 29));
+
+        date = new CalendarDate(new EthiopicCalendar(), 'AM', 9991, 13, 5);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(9999, 11, 9));
+      });
+
+      it('gregorian to ethioaa', function () {
+        let date = new CalendarDate(4507, 9, 29);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(new CalendarDate(new EthiopicCalendar(), 'AM', 4499, 13, 5));
+
+        date = new CalendarDate(1, 9, 29);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(new CalendarDate(new EthiopicCalendar(), 'AA', 5494, 2, 4));
+
+        date = new CalendarDate('BC', 1200, 9, 29);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(new CalendarDate(new EthiopicCalendar(), 'AA', 4294, 2, 13));
       });
     });
 
