@@ -321,7 +321,7 @@ function Nav({currentPageName, pages}) {
   let back = '../index.html';
   if (isBlog) {
     sectionIndex = '/index.html';
-  } else if (currentPageName.startsWith('internationalized/')) {
+  } else if (currentPageName.startsWith('internationalized/') && currentPageName !== 'internationalized/index.html') {
     sectionIndex = '../index.html';
     back = '../../index.html';
   }
