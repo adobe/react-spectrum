@@ -375,7 +375,7 @@ Both a description and an error message can be supplied to a `DateRangePicker`. 
 
 ### Placeholder value
 
-When no value is set, a placeholder value is shown. By default, this is today's date at midnight. However, this can be overridden by setting the `placeholderValue` prop to a more appropriate placeholder for your specific usecase.
+When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys, as well as the default month shown in the calendar popover. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.
 
 ```tsx example
 import {CalendarDate} from '@internationalized/date';
