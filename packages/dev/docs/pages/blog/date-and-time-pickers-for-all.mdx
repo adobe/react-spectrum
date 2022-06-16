@@ -9,10 +9,11 @@ governing permissions and limitations under the License. */}
 
 import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
 import calendarMobileScreenReader from 'url:../assets/calendar-mobile-screen-reader.mp4';
+import calendarMobileScreenReaderVTT from 'url:../assets/calendar-mobile-screen-reader.vtt';
 import datepickerScreenReader from 'url:../assets/datepicker-screen-reader.mp4';
 import datepickerVideo from 'url:../assets/datepicker.mp4';
 
-import {BlogPostLayout, Video, Image} from '@react-spectrum/docs';
+import {BlogPostLayout, Video, Track, Image} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ```jsx import
@@ -123,7 +124,9 @@ Another important area we considered with our calendar components was mobile. Wi
   preload="metadata"
   controls
   aria-label="Demo of the Calendar component using VoiceOver on iOS"
-  style={{maxHeight: '600px', maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}} />
+  style={{maxHeight: '600px', maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}}>
+  <Track src={calendarMobileScreenReaderVTT} default kind="captions" label="English Captions" srclang="en-us" type="text/vtt" />
+</Video>
 
 We went through many iterations of our calendar components to come to a solution that we think works well across a wide variety of devices and screen readers. [useCalendar](../../react-aria/useCalendar.html) and [useRangeCalendar](../../react-aria/useRangeCalendar.html) encapsulate this research and testing into reusable hooks that you can apply in your own calendar components. These are also very flexible, including support for displaying multiple months at once, or other time ranges such as a week view.
 
