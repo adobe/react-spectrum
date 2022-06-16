@@ -125,7 +125,7 @@ function getItems(keys) {
 }
 ```
 
-We also create a `onDragEnd` event handler for `useDragHooks` that handles removing the dragged items from the draggable list upon a successful drop operation. Note how we use
+We also create an `onDragEnd` event handler for `useDragHooks` that handles removing the dragged items from the draggable list upon a successful drop operation. Note how we use
 the `.remove` method provided by `useListData` to remove the dropped items from our list.
 
 ```tsx example render=false
@@ -222,7 +222,7 @@ function getDropOperation(target, types) {
 }
 ```
 
-Next, we create a `onDrop` event handler to process the successfully dropped items. This `onDrop` handler first checks each dropped item's kind and type, extracting the item's
+Next, we create an `onDrop` event handler to process the successfully dropped items. This `onDrop` handler first checks each dropped item's kind and type, extracting the item's
 relevant information if it detects it has the expected types. This information is used to construct an array of items to insert to the end of the droppable list via `list.append`.
 
 ```tsx example render=false

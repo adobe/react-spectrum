@@ -120,16 +120,15 @@ export interface DragTypes {
 
 export interface DroppableCollectionProps {
   /**
-   * A function returning the drop operation to be performed when items matching
-   * the given types are dropped on the drop target. A list of operations that are allowed
-   * by the drag source are provided.
+   * A function returning the drop operation to be performed when items matching the given types are dropped
+   * on the drop target.
    */
   getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation,
   /** Handler that is called when a valid drag element enters the drop target. */
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   /** Handler that is called when a valid drag element is moved within the drop target. */
   onDropMove?: (e: DroppableCollectionMoveEvent) => void,
-  /** Handler that is called after a valid drag element is held over the drop target for set amount of time. */
+  /** Handler that is called after a valid drag element is held over the drop target for 800 ms. */
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
   /** Handler that is called when a valid drag element exits the drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
