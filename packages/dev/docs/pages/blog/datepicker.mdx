@@ -48,29 +48,6 @@ In building these components, we have focused on the following areas:
   aria-label="Video showing features of the React Spectrum and React Aria date and time picker components"
   style={{maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}} />
 
-```tsx import
-if (matchMedia('(prefers-reduced-motion)').matches) {
-  heroVideo.pause();
-  heroVideo.controls = true;
-} else {
-  let toggle = () => {
-    if (heroVideo.paused) {
-      heroVideo.play();
-    } else {
-      heroVideo.pause();
-    }
-  };
-
-  heroVideo.onclick = toggle;
-  heroVideo.onkeydown = e => {
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      toggle();
-    }
-  }
-}
-```
-
 ## User experience
 
 Picking dates and times is a complex task, and designing a user experience that takes into account internationalization, accessibility, and usability across many types of devices is a huge challenge. We worked together with the Adobe Spectrum design, accessibility, internationalization, and product teams to meticulously research, design, test, and iterate on our components while taking into account each of these challenges.
