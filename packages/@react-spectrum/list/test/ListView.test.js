@@ -1378,7 +1378,7 @@ describe('ListView', function () {
       expect(tree.queryByText('Item 0')).toBe(row.firstElementChild.firstElementChild.firstElementChild);
 
       // Moving focus should scroll the new focused item into view
-      moveFocus('ArrowRight');
+      moveFocus('ArrowDown');
       expect(body.scrollTop).toBe(0);
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
     });
