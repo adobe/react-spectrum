@@ -460,7 +460,7 @@ function TableHeader({children, ...otherProps}) {
 function TableColumnHeader(props) {
   let {column} = props;
   let ref = useRef();
-  let {state} = useTableContext();
+  let {state, columnState} = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true
@@ -474,11 +474,14 @@ function TableColumnHeader(props) {
     throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
   }
 
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover(props);
   if (columnProps.allowsResizing) {
     // if we allow resizing, override the usePress that useTableColumnHeader generates so that clicking brings up the menu
     // instead of sorting the column immediately
     columnHeaderProps = {...columnHeaderProps, ...buttonProps};
+  }
+  if (columnState.isResizingColumn) {
+    delete columnHeaderProps.onKeyDownCapture; // see CardView where we also delete onKeyDownCapture
   }
 
   const allProps = [columnHeaderProps, hoverProps];
@@ -517,6 +520,7 @@ function TableColumnHeader(props) {
         {columnProps.allowsSorting &&
           <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
         }
+        {props.children}
       </div>
     </FocusRing>
   );
@@ -527,19 +531,24 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef();
   let {state} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
+  let [isResizingAvailable, setIsResizingAvailable] = useState(false);
+  let [isHovered, setIsHovered] = useState(false);
 
   const onMenuSelect = (key) => {
     switch (key) {
       case 'sort-asc':
         state.sort(column.key, 'ascending');
+        setIsResizingAvailable(false);
         break;
       case 'sort-desc':
         state.sort(column.key, 'descending');
+        setIsResizingAvailable(false);
         break;
       case 'resize':
-        // focusResizer, needs timeout so that it happens after the animation timeout for menu close
         focusSafely(ref.current);
         break;
+      default:
+        setIsResizingAvailable(false);
     }
   };
   let allowsSorting = column.props?.allowsSorting;
@@ -568,8 +577,10 @@ function ResizableTableColumnHeader(props) {
 
   return (
     <>
-      <MenuTrigger>
-        <TableColumnHeader column={column} />
+      <MenuTrigger onOpenChange={(e) => {if (e) {setIsResizingAvailable(true);}}}>
+        <TableColumnHeader column={column} onHoverChange={setIsHovered}>
+          <Resizer ref={ref} tableRef={props.tableRef} column={column} showResizer={isResizingAvailable || isHovered} onResizeDone={() => setIsResizingAvailable(false)} />
+        </TableColumnHeader>
         <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
           {(item) => (
             <Item>
@@ -578,7 +589,6 @@ function ResizableTableColumnHeader(props) {
           )}
         </Menu>
       </MenuTrigger>
-      <Resizer ref={ref} tableRef={props.tableRef} column={column} />
     </>
   );
 }

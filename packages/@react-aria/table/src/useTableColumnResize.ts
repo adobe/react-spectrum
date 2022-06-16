@@ -11,9 +11,9 @@
  */
 
 import {ColumnResizeState} from '@react-stately/table';
-import {focusSafely, useFocusable} from '@react-aria/focus';
+import {focusSafely} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
-import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
+import {HTMLAttributes, RefObject, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -24,18 +24,20 @@ interface ResizerAria {
 
 interface ResizerProps<T> {
   column: GridNode<T>,
+  tableRef: RefObject<HTMLElement>,
+  showResizer: boolean,
+  onResizeDone: () => void,
   label: string
 }
 
 export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): ResizerAria {
-  let {column: item} = props;
+  let {column: item, showResizer, onResizeDone} = props;
   const stateRef = useRef(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef(null);
   stateRef.current = state;
 
   let {direction} = useLocale();
-  let {focusableProps} = useFocusable({excludeFromTabOrder: true}, ref);
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
       if (e.key === 'Tab') {
@@ -44,7 +46,7 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnRes
       }
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
         // switch focus back to the column header on escape
-        const columnHeader = ref.current.previousSibling as HTMLElement;
+        const columnHeader = ref.current.parentElement as HTMLElement;
         if (columnHeader) {
           focusSafely(columnHeader);
         }
@@ -98,7 +100,17 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnRes
 
   return {
     resizerProps: {
-      ...mergeProps(moveProps, focusableProps, keyboardProps, ariaProps)
+      ...mergeProps(
+        moveProps,
+        {
+          onBlur: () => {
+            onResizeDone();
+          },
+          tabIndex: showResizer ? 0 : undefined
+        },
+        keyboardProps,
+        ariaProps
+      )
     }
   };
 }

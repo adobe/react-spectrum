@@ -69,7 +69,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     if (focusMode === 'child') {
       // If focus is already on a focusable child within the cell, early return so we don't shift focus
       // We may have non-grid cell contained interactive elements but that live next to a grid cell
-      if (ref.current.parentElement.contains(document.activeElement) && ref.current !== document.activeElement) {
+      if (ref.current.contains(document.activeElement) && ref.current !== document.activeElement) {
         return;
       }
 
