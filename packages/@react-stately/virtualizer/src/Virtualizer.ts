@@ -646,7 +646,7 @@ export class Virtualizer<T extends object, V, W> {
     // Views that are outside of the viewable rectangle that we don't
     // want to be reused by Virtualizer.
     for (let persistKey of this._persistedKeys) {
-      let key = persistKey
+      let key = persistKey;
 
       while (key) {
         let layoutInfo = this.layout.getLayoutInfo(key);
@@ -660,7 +660,7 @@ export class Virtualizer<T extends object, V, W> {
 
           // Assuming that any item with a parent is a subitem and we need to
           // persist the parent layout, no parentKey is null
-          key = layoutInfo.parentKey
+          key = layoutInfo.parentKey;
         } else {
           key = null; // if there is no layoutInfo make sure the key is null to exit
         }
