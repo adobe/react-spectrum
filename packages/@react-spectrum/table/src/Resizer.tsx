@@ -5,7 +5,7 @@ import {GridNode} from '@react-types/grid';
 import intlMessages from '../intl/*.json';
 import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext} from './TableView';
 
@@ -20,6 +20,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
   let {column, tableRef, showResizer} = props;
   let {columnState} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
+  let {direction} = useLocale();
 
   let {resizerProps} = useTableColumnResize({...props, label: formatMessage('columnResizer')}, columnState, ref);
 
@@ -33,9 +34,9 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
     style.height = `${tableRef.current.offsetHeight}px`;
   }
   if (columnState.getColumnMinWidth(column.key) >= columnState.getColumnWidth(column.key)) {
-    style.cursor = 'e-resize';
+    style.cursor = direction === 'rtl' ? 'e-resize' : 'w-resize';
   } else if (columnState.getColumnMaxWidth(column.key) <= columnState.getColumnWidth(column.key)) {
-    style.cursor = 'w-resize';
+    style.cursor = direction === 'rtl' ? 'w-resize' : 'e-resize';
   } else {
     style.cursor = 'col-resize';
   }

@@ -529,10 +529,11 @@ function TableColumnHeader(props) {
 function ResizableTableColumnHeader(props) {
   let {column} = props;
   let ref = useRef();
-  let {state} = useTableContext();
+  let {state, columnState} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
   let [isResizingAvailable, setIsResizingAvailable] = useState(false);
   let [isHovered, setIsHovered] = useState(false);
+  let isResizing = columnState.getResizingColumn()?.key === column.key;
 
   const onMenuSelect = (key) => {
     switch (key) {
@@ -579,7 +580,7 @@ function ResizableTableColumnHeader(props) {
     <>
       <MenuTrigger onOpenChange={(e) => {if (e) {setIsResizingAvailable(true);}}}>
         <TableColumnHeader column={column} onHoverChange={setIsHovered}>
-          <Resizer ref={ref} tableRef={props.tableRef} column={column} showResizer={isResizingAvailable || isHovered} onResizeDone={() => setIsResizingAvailable(false)} />
+          <Resizer ref={ref} tableRef={props.tableRef} column={column} showResizer={isResizingAvailable || isHovered || isResizing} onResizeDone={() => setIsResizingAvailable(false)} />
         </TableColumnHeader>
         <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
           {(item) => (

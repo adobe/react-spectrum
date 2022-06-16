@@ -57,7 +57,7 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnRes
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
     onMoveStart() {
-      stateRef.current.onColumnResizeStart(item.key);
+      stateRef.current.onColumnResizeStart(item);
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
       cursor.current = document.body.style.cursor;
     },
@@ -73,16 +73,16 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnRes
         columnResizeWidthRef.current += deltaX;
         stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
         if (stateRef.current.getColumnMinWidth(item.key) >= stateRef.current.getColumnWidth(item.key)) {
-          document.body.style.setProperty('cursor', 'e-resize');
+          document.body.style.setProperty('cursor', direction === 'rtl' ? 'e-resize' : 'w-resize');
         } else if (stateRef.current.getColumnMaxWidth(item.key) <= stateRef.current.getColumnWidth(item.key)) {
-          document.body.style.setProperty('cursor', 'w-resize');
+          document.body.style.setProperty('cursor', direction === 'rtl' ? 'w-resize' : 'e-resize');
         } else {
           document.body.style.setProperty('cursor', 'col-resize');
         }
       }
     },
     onMoveEnd() {
-      stateRef.current.onColumnResizeEnd(item.key);
+      stateRef.current.onColumnResizeEnd(item);
       columnResizeWidthRef.current = 0;
       document.body.style.cursor = cursor.current;
     }

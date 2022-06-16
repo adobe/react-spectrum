@@ -17,20 +17,22 @@ export interface ColumnResizeState<T> {
   columnWidths: MutableRefObject<Map<Key, number>>,
   /** Setter for the table width. */
   setTableWidth: (width: number) => void,
-  /** Trigger a resize and recalc. */
+  /** Trigger a resize and recalculation. */
   onColumnResize: (column: GridNode<T>, width: number) => void,
   /** Callback for when onColumnResize has started. */
-  onColumnResizeStart: () => void,
+  onColumnResizeStart: (key: GridNode<T>) => void,
     /** Callback for when onColumnResize has ended. */
-  onColumnResizeEnd: () => void,
+  onColumnResizeEnd: (key: GridNode<T>) => void,
   /** Getter for column width. */
-  getColumnWidth(key: Key): number,
+  getColumnWidth: (key: Key) => number,
     /** Getter for column min width. */
-  getColumnMinWidth(key: Key): number,
+  getColumnMinWidth: (key: Key) => number,
     /** Getter for column max widths. */
-  getColumnMaxWidth(key: Key): number,
+  getColumnMaxWidth: (key: Key) => number,
   /** Boolean for if a column is being resized. */
-  isResizingColumn: boolean
+  isResizingColumn: boolean,
+  /** Node of column currently being resized. */
+  getResizingColumn: () => GridNode<T>
 }
 
 export interface ColumnResizeStateProps<T> {
@@ -59,7 +61,7 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
   const [resizedColumns, setResizedColumns] = useState<Set<Key>>(new Set());
   const resizedColumnsRef = useRef<Set<Key>>(resizedColumns);
 
-  const currentlyResizingColumn = useRef(null);
+  const currentlyResizingColumn = useRef<GridNode<T>>(null);
 
   function setColumnWidthsForRef(newWidths: Map<Key, number>) {
     columnWidthsRef.current = newWidths;
@@ -136,6 +138,7 @@ export function useTableColumnResizeState<T>(props: ColumnResizeStateProps<T>): 
     props.onColumnResize && props.onColumnResize(affectedColumnWidthsRef.current);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function onColumnResizeEnd(column: GridNode<T>) {
     currentlyResizingColumn.current = null;
     isResizing.current = false;
