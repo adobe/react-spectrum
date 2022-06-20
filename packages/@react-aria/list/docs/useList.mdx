@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/list';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/list';
@@ -237,27 +238,45 @@ See the [useCheckbox docs](useCheckbox.html) for more information.
 
 ```tsx example export=true render=false
 import {useListSelectionCheckbox} from '@react-aria/list';
-import {useToggleState} from '@react-stately/toggle';
-import {useCheckbox} from '@react-aria/checkbox';
+
+// Reuse the Checkbox from your component library. See below for details.
+import {Checkbox} from 'your-component-library';
 
 function ListCheckbox({ item, state }) {
   let ref = useRef();
   let { checkboxProps } = useListSelectionCheckbox({ key: item.key }, state);
 
-  let inputRef = useRef(null);
-  let { inputProps } = useCheckbox(
-    checkboxProps,
-    useToggleState(checkboxProps),
-    inputRef
-  );
-
   return (
     <span ref={ref}>
-      <input {...inputProps} />
+      <Checkbox {...checkboxProps} />
     </span>
   );
 }
 ```
+
+### Checkbox
+
+The `Checkbox` component is used in the above example for row selection. It is built using the [useCheckbox](useCheckbox.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useCheckbox} from '@react-aria/checkbox';
+import {useToggleState} from '@react-stately/toggle';
+
+function Checkbox(props) {
+  let inputRef = useRef(null);
+  let { inputProps } = useCheckbox(
+    props,
+    useToggleState(props),
+    inputRef
+  );
+  return <input {...inputProps} ref={inputRef} />;
+}
+```
+
+</details>
 
 The following example shows how to enable multiple selection support using the List component we built above.
 It's as simple as setting the `selectionMode` prop to `"multiple"`.
