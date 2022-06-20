@@ -1,0 +1,982 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import Anatomy from './anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import docs from 'docs:@react-spectrum/list';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-spectrum/list/package.json';
+
+```jsx import
+import {ActionButton} from '@react-spectrum/button';
+import {ActionGroup} from '@react-spectrum/actiongroup';
+import {ActionMenu} from '@react-spectrum/menu';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Edit from '@spectrum-icons/workflow/Edit';
+import {Flex} from '@react-spectrum/layout';
+import Folder from '@spectrum-icons/workflow/Folder';
+import {Heading, Text} from '@react-spectrum/text';
+import {Image} from '@react-spectrum/image';
+import Info from '@spectrum-icons/workflow/Info';
+import {Item, ListView} from '@react-spectrum/list';
+import {Link} from '@react-spectrum/link';
+```
+
+---
+category: Collections
+keywords: [listview, collections]
+---
+
+# ListView
+
+<PageDescription>{docs.exports.ListView.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Item', 'ListView']} />
+
+## Example
+```tsx example
+<ListView selectionMode="multiple" aria-label="Static ListView items example" maxWidth="size-6000">
+  <Item>Adobe Photoshop</Item>
+  <Item>Adobe InDesign</Item>
+  <Item>Adobe AfterEffects</Item>
+  <Item>Adobe Illustrator</Item>
+  <Item>Adobe Lightroom</Item>
+</ListView>
+```
+
+## Content
+ListView is a [collection component](../react-stately/collections.html) that provides users with a way to view, select, navigate, or drag and drop items in a list. While it may feel similar to the [ListBox](ListBox.html)
+component, ListView offers greater flexibility in the contents it can render and can distinguish between row selection and actions performed on a row. This makes ListView an ideal component for use cases such as file
+managers.
+
+Basic usage of ListView, seen in the example above, shows the use of a static collection where the contents of the ListView are hard coded.
+Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data dynamically allows ListView
+to automatically cache the rendering of each item, which dramatically improves performance.
+
+Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object.
+See [collections](../react-stately/collections.html#unique-keys) to learn more about keys in dynamic collections.
+
+
+```tsx example
+const items = [
+  {id: 1, name: 'Adobe Photoshop'},
+  {id: 2, name: 'Adobe XD'},
+  {id: 3, name: 'Adobe InDesign'},
+  {id: 4, name: 'Adobe AfterEffects'},
+  {id: 5, name: 'Adobe Illustrator'},
+  {id: 6, name: 'Adobe Lightroom'},
+  {id: 7, name: 'Adobe Premiere Pro'},
+  {id: 8, name: 'Adobe Fresco'},
+  {id: 9, name: 'Adobe Dreamweaver'}
+];
+
+<ListView items={items} selectionMode="multiple" maxWidth="size-6000" height="250px" aria-label="Dynamic ListView items example">
+  {(item) => (
+    <Item key={item.key}>
+      {item.name}
+    </Item>
+  )}
+</ListView>
+```
+
+### Internationalization
+To internationalize a ListView, all text content within the ListView should be localized. This includes the `aria-label` provided to the ListView if any.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of ListView is automatically flipped.
+
+## Labeling
+### Accessibility
+An `aria-label` must be provided to the ListView for accessibility. If the ListView is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+## Asynchronous loading
+ListView supports loading data asynchronously, and will display a progress circle reflecting the current load state,
+set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+See the docs for more information.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncList() {
+
+  let list = useAsyncList({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ListView
+      selectionMode="multiple"
+      aria-label="Async loading ListView example"
+      maxWidth="size-6000"
+      height="size-3000"
+      items={list.items}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {(item) => (
+        <Item key={item.name}>{item.name}</Item>
+      )}
+    </ListView>
+  );
+}
+```
+
+## Complex items
+
+<Anatomy />
+
+Items within a ListView also allow for additional content used to add context or provide additional actions to items. Descriptions, icons, and thumbnails can be added to
+the children of `<Item>` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<ActionMenu>` will be styled appropriately if included within an item. Providing the `hasChildItems` prop
+to an `<Item>` will add a chevron icon to the end of the row to visually indicate that the row has children.
+
+```tsx example
+<ListView selectionMode="multiple" maxWidth="size-6000" aria-label="ListView example with complex items" onAction={key => alert(`Triggering action on item ${key}`)}>
+  <Item key="1" textValue="Utilities" hasChildItems>
+    <Folder />
+    <Text>Utilities</Text>
+    <Text slot="description">16 items</Text>
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
+  </Item>
+  <Item key="2" textValue="Glasses Dog">
+    <Image
+      src="https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg"
+      alt="Shiba Inu with glasses" />
+    <Text>Glasses Dog</Text>
+    <Text slot="description">JPG</Text>
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
+  </Item>
+  <Item key="3" textValue="readme">
+    <Text>readme.txt</Text>
+    <Text slot="description">TXT</Text>
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
+  </Item>
+  <Item key="4" textValue="Onboarding">
+    <Text>Onboarding</Text>
+    <Text slot="description">PDF</Text>
+    <ActionMenu>
+      <Item key="edit" textValue="Edit">
+        <Edit />
+        <Text>Edit</Text>
+      </Item>
+      <Item key="delete" textValue="Delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
+  </Item>
+</ListView>
+```
+
+## Selection
+
+By default, ListView doesn't allow row selection, but this can be enabled using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected rows. Note that the value of the selected keys must match the `key` prop of the Item.
+
+The example below enables multiple selection mode, and uses `defaultSelectedKeys` to select the rows with keys "Charizard" and "Venusaur".
+
+```tsx example
+<ListView maxWidth="size-6000" selectionMode="multiple" defaultSelectedKeys={["Charizard", "Venusaur"]} aria-label="ListView multiple selection example">
+  <Item key="Charizard">
+    Charizard
+  </Item>
+  <Item key="Blastoise">
+    Blastoise
+  </Item>
+  <Item key="Venusaur">
+    Venusaur
+  </Item>
+  <Item key="Pikachu">
+    Pikachu
+  </Item>
+</ListView>
+```
+
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly. Note that the value of the selected keys must match the `key` prop of the Item.
+
+Here is how you would control selection for the above example.
+
+```tsx example export=true
+function PokemonList(props) {
+  let rows = [
+    {id: 1, name: 'Charizard'},
+    {id: 2, name: 'Blastoise'},
+    {id: 3, name: 'Venusaur'},
+    {id: 4, name: 'Pikachu'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+
+  return (
+    <ListView items={rows} maxWidth="size-6000" aria-label="ListView with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+      {(item) => (
+        <Item>
+          {item.name}
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+
+### Single selection
+
+To limit users to selecting only a single item at a time, `selectionMode` can be set to `single`.
+
+```tsx example
+// Using the same list as above
+<PokemonList selectionMode="single" selectionStyle="highlight" aria-label="ListView with single selection" />
+```
+
+### Disallow empty selection
+
+ListView also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the ListView selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+// Using the same list as above
+<PokemonList disallowEmptySelection aria-label="ListView with empty selection disallowed" />
+```
+
+### Disabled rows
+
+You can disable specific rows by providing an array of keys to ListView via the `disabledKeys` prop. This will prevent rows from being selectable, as shown in the example below.
+
+```tsx example
+// Using the same list as above
+<PokemonList disabledKeys={[3]} aria-label="ListView with disabled rows" />
+```
+
+### Highlight selection
+
+By default, ListView uses the checkbox selection style, which includes a checkbox in each row for selection. When the selectionStyle prop is set to `"highlight"`, the checkboxes are hidden,
+ and the selected rows are displayed with a highlighted background instead.
+
+In addition to changing the appearance, the selection behavior also changes depending on the `selectionStyle` prop. In the default checkbox selection style, clicking, tapping, or pressing
+the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
+
+In the highlight selection style, however, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows,
+modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier
+keys may not be available.
+
+These selection styles implement the behaviors defined in [Aria Practices](https://w3c.github.io/aria-practices/#listbox_kbd_interaction).
+
+```tsx example
+// Using the same list as above
+<PokemonList selectionStyle="highlight" aria-label="Highlight selection ListView" />
+```
+
+### Row actions
+
+ListView supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the ListView performs actions by default when clicking or tapping a row.
+Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the ListView is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
+be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
+
+This behavior is slightly different in the highlight selection style, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
+
+```tsx example
+// Checkbox selection with onAction
+<Flex wrap gap="size-300">
+  <PokemonList onAction={key => alert(`Opening item ${key}...`)} aria-label="Checkbox selection ListView with row actions" width="size-2400" />
+  <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection ListView with row actions" width="size-2400" />
+</Flex>
+```
+
+{/*
+
+## Drag and drop
+
+To enable drag and drop in a ListView, you must provide the respective drag and drop hooks sourced from `useDragHooks` and `useDropHooks` to the ListView's `dragHooks` and `dropHooks` props respectively.
+See the examples below for various common drag and drop use cases. For more information on the hooks themselves and the various supported ways to perform a drag and drop interaction,
+please see the [drag and drop documentation](dragAndDrop.html).
+
+The example below demonstrates how to create a draggable ListView and a droppable ListView.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useListData} from '@react-stately/data';
+
+function DragIntoListExample() {
+  let sourceList = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'file', name: 'Adobe InDesign'},
+      {id: '4', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let targetList = useListData({
+    initialItems: [
+      {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
+      {id: '6', type: 'file', name: 'Adobe Fresco'},
+      {id: '7', type: 'file', name: 'Adobe Connect'},
+      {key: '8', type: 'file', name: 'Adobe Lightroom'}
+    ]
+  });
+
+  // Append a generated key to the item type so they can only be dragged between these two lists
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let acceptedDragTypes = `${dragType}-file`;
+
+  // Update the target and source list upon successful drop
+  let onMove = (keys, target) => {
+    if (target.type === 'root') {
+      targetList.append(...keys.map(key => sourceList.getItem(key)));
+    } else {
+      switch (target.dropPosition) {
+        case 'before':
+          targetList.insertBefore(target.key, ...keys.map(key => sourceList.getItem(key)));
+          break;
+        case 'after':
+          targetList.insertAfter(target.key, ...keys.map(key => sourceList.getItem(key)));
+          break;
+      }
+    }
+    sourceList.remove(...keys);
+  };
+
+  let dragHooks = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+
+        let item = sourceList.getItem(key);
+        // Setup the info for each item that will be propagated upon drag
+        return {
+          [`${dragType}-${item.type}`]: JSON.stringify(item)
+        };
+      });
+    }
+  });
+
+  let dropHooks = useDropHooks({
+    async onDrop(e) {
+      let keysToMove = [];
+      // Only add the dropped item to the list of keys to move
+      // if the dropped item has the expected types
+      for (let item of e.items) {
+        if (item.kind === 'text' && item.types.has(acceptedDragTypes)) {
+          let type = acceptedDragTypes;
+          let {id} = JSON.parse(await item.getText(type));
+          keysToMove.push(id);
+        }
+      }
+      onMove(keysToMove, e.target);
+    },
+    getDropOperation(target, types) {
+      let typesSet = types.types ? types.types : types;
+      let draggedTypes = [...typesSet.values()];
+      // Cancel the drop operations if any of drag items aren't a file or if attempting to drop on a item
+      if (!draggedTypes.every(type => acceptedDragTypes === type) || (target.type === 'item' && target.dropPosition === 'on')) {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+  return (
+    <Flex wrap gap="size-300">
+      <ListView
+        aria-label="Draggable ListView in drag into list example"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-2400"
+        items={sourceList.items}
+        dragHooks={dragHooks}>
+        {item => (
+          <Item textValue={item.name}>
+            <Text>{item.name}</Text>
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="Droppable ListView in drag into list example"
+        width="size-3600"
+         height="size-2400"
+        items={targetList.items}
+        dropHooks={dropHooks}>
+        {item => (
+          <Item textValue={item.name}>
+            <Text>{item.name}</Text>
+          </Item>
+        )}
+      </ListView>
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragIntoListExample />
+```
+
+The example below replicates the previous example but demonstrates how to handle multiple item types. In the droppable ListView, folders are valid drop targets, but we cancel any
+drop operations if any of the dragged items is a folder.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function DragIntoListFilesOnly() {
+  let sourceList = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'folder', name: 'Documents'},
+      {id: '4', type: 'file', name: 'Adobe InDesign'},
+      {id: '5', type: 'folder', name: 'Utilities'},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let targetList = useListData({
+    initialItems: [
+      {id: '7', type: 'folder', name: 'Pictures', childNodes: []},
+      {id: '8', type: 'file', name: 'Adobe Fresco'},
+      {id: '9', type: 'folder', name: 'Apps', childNodes: []}
+    ]
+  });
+
+  // Append a generated key to the item type so they can only be dragged between these two lists
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let acceptedDragTypes = `${dragType}-file`;
+
+  // Update the target and source list upon successful drop
+  let onMove = (keys, target) => {
+    if (target.type === 'root') {
+      targetList.append(...keys.map(key => sourceList.getItem(key)));
+    } else {
+      switch (target.dropPosition) {
+        case 'before':
+          targetList.insertBefore(target.key, ...keys.map(key => sourceList.getItem(key)));
+          break;
+        case 'after':
+          targetList.insertAfter(target.key, ...keys.map(key => sourceList.getItem(key)));
+          break;
+        case 'on': {
+          let targetFolder = targetList.getItem(target.key);
+          let draggedItems = keys.map((key) => sourceList.getItem(key));
+          targetList.update(target.key, {...targetFolder, childNodes: [...targetFolder.childNodes, ...draggedItems]});
+          break;
+        }
+      }
+    }
+    sourceList.remove(...keys);
+  };
+
+  let dragHooks = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+
+        let item = sourceList.getItem(key);
+        // Setup the info for each item that will be propagated upon drag
+        return {
+          [`${dragType}-${item.type}`]: JSON.stringify(item)
+        };
+      });
+    }
+  });
+
+  let dropHooks = useDropHooks({
+    async onDrop(e) {
+      let keysToMove = [];
+      // Only add the dropped item to the list of keys to move
+      // if the dropped item has the expected types
+      for (let item of e.items) {
+        if (item.kind === 'text' && item.types.has(acceptedDragTypes)) {
+          let type = acceptedDragTypes;
+          let {id} = JSON.parse(await item.getText(type));
+          keysToMove.push(id);
+        }
+      }
+      onMove(keysToMove, e.target);
+    },
+    getDropOperation(target, types) {
+      let typesSet = types.types ? types.types : types;
+      let draggedTypes = [...typesSet.values()];
+      // Cancel the drop operations if any of drag items aren't a file or if attempting to drop on a non-folder item
+      if (
+        !draggedTypes.every(type => acceptedDragTypes === type) ||
+        (target.type === 'item' && target.dropPosition === 'on' && !targetList.getItem(target.key).childNodes)
+      ) {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+  return (
+    <Flex wrap gap="size-300">
+      <ListView
+        aria-label="Draggable ListView in drag into list files only example"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={sourceList.items}
+        dragHooks={dragHooks}>
+        {item => (
+          <Item textValue={item.name}>
+            {item.type === 'folder' && <Folder />}
+            <Text>{item.name}</Text>
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="Droppable ListView in drag into list files only example"
+        width="size-3600"
+        height="size-3600"
+        items={targetList.items}
+        dropHooks={dropHooks}>
+        {item => (
+          <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragIntoListFilesOnly />
+```
+
+The example below demonstrates how to make a ListView draggable and droppable at the same time. The ListView below supports reordering its own rows via drag and drop.
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function ReorderableList() {
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'folder', name: 'Documents', childNodes: []},
+      {id: '4', type: 'file', name: 'Adobe InDesign'},
+      {id: '5', type: 'folder', name: 'Utilities', childNodes: []},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
+
+  // Update the list order based on the position of the drop and the set of rows that were dropped
+  let onMove = (keys, target) => {
+    switch (target.dropPosition) {
+      case 'before':
+        list.moveBefore(target.key, keys);
+        break;
+      case 'after':
+        list.moveAfter(target.key, keys);
+        break;
+      case 'on': {
+        let targetFolder = list.getItem(target.key);
+        let draggedItems = keys.map((key) => list.getItem(key));
+        list.update(target.key, {...targetFolder, childNodes: [...targetFolder.childNodes, ...draggedItems]});
+        list.remove(...keys);
+        break;
+      }
+    }
+  };
+
+  let dragHooks = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        // Setup the info for each item that will be propagated upon drag
+        return {
+          [`${dragType}-${item.type}`]: JSON.stringify(item)
+        };
+      });
+    }
+  });
+
+  let dropHooks = useDropHooks({
+    async onDrop(e) {
+      let keysToMove = [];
+      // Only add the dropped item to the list of keys to move
+      // if the dropped item has the expected types
+      for (let item of e.items) {
+        for (let acceptedType of acceptedDragTypes) {
+          if (item.kind === 'text' && item.types.has(acceptedType)) {
+            let {id} = JSON.parse(await item.getText(acceptedType));
+            keysToMove.push(id);
+          }
+        }
+      }
+      onMove(keysToMove, e.target);
+    },
+    getDropOperation(target, types) {
+      let typesSet = types.types ? types.types : types;
+      let draggedTypes = [...typesSet.values()];
+      // Cancel the drop operations if any of drag items aren't of the acceptedTypes, if the drop target is root,
+      // or if attempting to drop on a non-folder item
+      if (
+        !draggedTypes.every(type => acceptedDragTypes.includes(type)) ||
+        target.type === 'root' ||
+        (target.type === 'item' && target.dropPosition === 'on' && !list.getItem(target.key).childNodes)
+      ) {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+  return (
+    <ListView
+      aria-label="Reorderable ListView"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-3600"
+      items={list.items}
+      dragHooks={dragHooks}
+      dropHooks={dropHooks}>
+      {item => (
+        <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
+          <Text>{item.name}</Text>
+          {item.type === 'folder' &&
+            <>
+              <Folder />
+              <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+            </>
+          }
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+</details>
+
+```tsx example
+<ReorderableList />
+```
+
+The example below demonstrates how to create a pair of ListViews that supports dragging and dropping any items between each list, but disables
+the ability to drop into a folder.
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function DragBetweenListsExample() {
+  let list1 = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'folder', name: 'Documents'},
+      {id: '4', type: 'file', name: 'Adobe InDesign'},
+      {id: '5', type: 'folder', name: 'Utilities'},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let list2 = useListData({
+    initialItems: [
+      {id: '7', type: 'folder', name: 'Pictures'},
+      {id: '8', type: 'file', name: 'Adobe Fresco'},
+      {id: '9', type: 'folder', name: 'Apps'},
+      {id: '10', type: 'file', name: 'Adobe Illustrator'},
+      {id: '11', type: 'file', name: 'Adobe Lightroom'},
+      {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
+    ]
+  });
+
+  // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
+
+  // Update the list order based on the position of the drop and the set of rows that were dropped
+  let onMove = (keys, destinationList, dropEventTarget) => {
+    let sourceList = list1.getItem(keys[0]) ? list1 : list2;
+    if (sourceList === destinationList) {
+      // Handle dragging within same list
+      if (dropEventTarget.type === 'root') {
+        sourceList.moveAfter(sourceList.items.slice(-1)[0].id, keys);
+      } else if (dropEventTarget.dropPosition === 'before') {
+        sourceList.moveBefore(dropEventTarget.key, keys);
+      } else if (dropEventTarget.dropPosition === 'after') {
+        sourceList.moveAfter(dropEventTarget.key, keys);
+      }
+    } else {
+      // Handle dragging between lists
+      if (dropEventTarget.type === 'root') {
+        destinationList.append(...keys.map(key => sourceList.getItem(key)));
+      } else if (dropEventTarget.dropPosition === 'before') {
+        destinationList.insertBefore(dropEventTarget.key, ...keys.map(key => sourceList.getItem(key)));
+      } else if (dropEventTarget.dropPosition === 'after'){
+        destinationList.insertAfter(dropEventTarget.key, ...keys.map(key => sourceList.getItem(key)));
+      }
+      sourceList.remove(...keys);
+    }
+  };
+
+  let dragHooksList1 = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list1.getItem(key);
+        // Setup the info for each item that will be propagated upon drag
+        return {
+          [`${dragType}-${item.type}`]: JSON.stringify(item)
+        };
+      });
+    }
+  });
+
+  let dragHooksList2 = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list2.getItem(key);
+        // Setup the info for each item that will be propagated upon drag
+        return {
+          [`${dragType}-${item.type}`]: JSON.stringify(item)
+        };
+      });
+    }
+  });
+
+  let dropHooksList1 = useDropHooks({
+    async onDrop(e) {
+      let keysToMove = [];
+      // Only add the dropped item to the list of keys to move
+      // if the dropped item has the expected types
+      for (let item of e.items) {
+        for (let acceptedType of acceptedDragTypes) {
+          if (item.kind === 'text' && item.types.has(acceptedType)) {
+            let {id} = JSON.parse(await item.getText(acceptedType));
+            keysToMove.push(id);
+          }
+        }
+      }
+
+      onMove(keysToMove, list1, e.target);
+    },
+    getDropOperation(target, types) {
+      let typesSet = types.types ? types.types : types;
+      let draggedTypes = [...typesSet.values()];
+      // Cancel the drop operations if any of drag items aren't of the acceptedTypes or if
+      // the drop is done on the ListView items themselves
+      if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || (target.type === 'item' && target.dropPosition === 'on')) {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+  let dropHooksList2 = useDropHooks({
+    async onDrop(e) {
+      let keysToMove = [];
+      // Only add the dropped item to the list of keys to move
+      // if the dropped item has the expected types
+      for (let item of e.items) {
+        for (let acceptedType of acceptedDragTypes) {
+          if (item.kind === 'text' && item.types.has(acceptedType)) {
+            let {id} = JSON.parse(await item.getText(acceptedType));
+            keysToMove.push(id);
+          }
+        }
+      }
+
+      onMove(keysToMove, list2, e.target);
+    },
+    getDropOperation(target, types) {
+      let typesSet = types.types ? types.types : types;
+      let draggedTypes = [...typesSet.values()];
+      // Cancel the drop operations if any of drag items aren't of the acceptedTypes or if
+      // the drop is done on the ListView items themselves
+      if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || (target.type === 'item' && target.dropPosition === 'on')) {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+  return (
+    <Flex wrap gap="size-300">
+      <ListView
+        aria-label="First ListView in drag between list example"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list1.items}
+        dragHooks={dragHooksList1}
+        dropHooks={dropHooksList1}>
+        {item => (
+          <Item textValue={item.name}>
+            {item.type === 'folder' && <Folder />}
+            <Text>{item.name}</Text>
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="Second ListView in drag between list example"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list2.items}
+        dragHooks={dragHooksList2}
+        dropHooks={dropHooksList2}>
+        {item => (
+          <Item textValue={item.name}>
+            {item.type === 'folder' && <Folder />}
+            <Text>{item.name}</Text>
+          </Item>
+        )}
+      </ListView>
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragBetweenListsExample />
+```
+
+*/}
+
+## Props
+
+<PropTable component={{
+  // Temporarily filter out dragHooks and dropHooks from docs.
+  ...docs.exports.ListView,
+  props: {
+    ...docs.exports.ListView.props,
+    properties: Object.fromEntries(Object.entries(docs.exports.ListView.props.properties).filter(([k, v]) => k !== 'dragHooks' && k !== 'dropHooks'))
+  }
+}} links={docs.links} />
+
+## Visual options
+### Quiet
+
+```tsx example export=true
+function ListExample(props) {
+  return (
+    <ListView selectionMode="multiple" aria-label="Quiet ListView example" width="size-3000" {...props}>
+      <Item>Adobe AfterEffects</Item>
+      <Item>Adobe Dreamweaver</Item>
+      <Item>Adobe Acrobat</Item>
+    </ListView>
+  );
+}
+
+<ListExample isQuiet />
+```
+
+### Density
+The amount of vertical padding that each row contains can be modified by providing the `density` prop.
+
+```tsx example
+<Flex wrap gap="size-300">
+  <ListExample density="compact" aria-label="Compact ListView example" />
+  <ListExample density="spacious" aria-label="Spacious ListView example" />
+</Flex>
+```
+
+### Overflow mode
+By default, text content that overflows its row will be truncated. You can have it wrap instead by passing `overflowMode="wrap"`
+to the ListView.
+
+```tsx example
+<ListExample overflowMode="wrap" aria-label="Text wrapping ListView example" width="size-2000" />
+```
+
+### Empty state
+Use the `renderEmptyState` prop to customize what the ListView will display if there are no rows provided.
+
+```tsx example
+import {Content} from '@react-spectrum/view';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
+import {Heading} from '@react-spectrum/text';
+
+function renderEmptyState() {
+  return (
+    <IllustratedMessage>
+      <NotFound />
+      <Heading>No results</Heading>
+      <Content>No results found</Content>
+    </IllustratedMessage>
+  );
+}
+
+<ListView
+  selectionMode="multiple"
+  aria-label="Example ListView for empty state"
+  maxWidth="size-6000"
+  height="size-3000"
+  renderEmptyState={renderEmptyState}>
+  {[]}
+</ListView>
+```
