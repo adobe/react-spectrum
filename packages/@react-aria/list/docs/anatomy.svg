@@ -26,7 +26,7 @@
       </g>
       <rect id="Rectangle_142239" data-name="Rectangle 142239" width="364" height="58" transform="translate(123 258)" fill="var(--anatomy-gray-800)" opacity="0"/>
       <rect id="Rectangle_142240" data-name="Rectangle 142240" width="364" height="58" transform="translate(123 316)" fill="var(--anatomy-gray-800)" opacity="0"/>
-      <rect id="Rectangle_142241" data-name="Rectangle 142241" width="364" height="58" transform="translate(123 374)" fill="rgba(72,110,194,0.1)"/>
+      <rect id="Rectangle_142241" data-name="Rectangle 142241" width="364" height="58" transform="translate(123 374)" fill="var(--spectrum-alias-highlight-selected)"/>
       <rect id="Rectangle_142242" data-name="Rectangle 142242" width="364" height="58" transform="translate(123 432)" fill="var(--anatomy-gray-800)" opacity="0"/>
       <text id="List_item" data-name="List item" transform="translate(174 293)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
       <text id="List_item-2" data-name="List item" transform="translate(174 351)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
@@ -40,7 +40,7 @@
           <rect width="21" height="48" stroke="none"/>
           <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
         </g>
-        <g id="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-100)" stroke="#718dcf" stroke-width="3">
+        <g id="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="3">
           <rect width="21" height="21" rx="2" stroke="none"/>
           <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
         </g>
@@ -50,7 +50,7 @@
           <rect width="21" height="48" stroke="none"/>
           <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
         </g>
-        <g id="Box-2" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-100)" stroke="#718dcf" stroke-width="3">
+        <g id="Box-2" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="3">
           <rect width="21" height="21" rx="2" stroke="none"/>
           <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
         </g>
@@ -77,7 +77,7 @@
           <rect width="21" height="48" stroke="none"/>
           <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
         </g>
-        <g id="Box-4" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-100)" stroke="#718dcf" stroke-width="3">
+        <g id="Box-4" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="3">
           <rect width="21" height="21" rx="2" stroke="none"/>
           <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
         </g>
@@ -99,7 +99,7 @@
     </g>
     <text id="Selection_checkbox_optional_" data-name="Selection
 checkbox
-(optional)" transform="translate(175 14)" fill="#486ec2" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-41.82" y="0">Selection</tspan><tspan x="-43.26" y="15">checkbox</tspan><tspan x="-46.5" y="30">(optional)</tspan></text>
-    <line id="Line_9" data-name="Line 9" y2="24" transform="translate(152.5 50.5)" fill="none" stroke="#486ec2" stroke-width="1"/>
+(optional)" transform="translate(175 14)" fill="var(--anatomy-gray-700)" font-size="12" font-family="Adobe-Clean" font-style="italic"><tspan x="-41.82" y="0">Selection</tspan><tspan x="-43.26" y="15">checkbox</tspan><tspan x="-46.5" y="30">(optional)</tspan></text>
+    <line id="Line_9" data-name="Line 9" y2="24" transform="translate(152.5 50.5)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
   </g>
 </svg>
