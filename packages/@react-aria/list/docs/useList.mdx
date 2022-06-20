@@ -397,22 +397,15 @@ When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the
 
 ### Row actions
 
-`useList` supports row actions via the `onAction` prop, which is useful for functionality such as navigation. In the default `"toggle"` selection behavior, when nothing is selected, clicking or tapping the row triggers the row action.
-When at least one item is selected, the list is in selection mode, and clicking or tapping a row toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
+`useList` supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the list performs actions by default when clicking or tapping a row.
+Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the list is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
+be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
 
-This behavior is slightly different in the `"replace"` selection behavior, where single clicking selects the row and actions are performed via double click. On touch devices, the action becomes the primary tap interaction,
-and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode
-and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
-
-```tsx example
-<PokemonList aria-label="List with replace selection behavior and row actions" selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
-```
-
-With `"toggle"` selection behavior, we can show checkboxes for selection while still having row actions. In this case, clicking the checkbox itself will toggle selection of that row, while single clicking anywhere else on the row will trigger the action.
-Once one row has been selected, clicking anywhere the rows will select or deselect them.
+This behavior is slightly different in the highlight selection style, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
 
 ```tsx example
-<PokemonList aria-label="List with toggle selection behavior and row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
+<PokemonList aria-label="Checkbox selection list with row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
+<PokemonList aria-label="Highlight selection list with row actions" selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
 ```
 
 ## Internationalization
