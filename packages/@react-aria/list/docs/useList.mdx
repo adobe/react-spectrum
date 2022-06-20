@@ -312,7 +312,7 @@ function ExampleList(props) {
   ];
 
   return (
-    <List aria-label="Example dynamic collection List" items={rows} {...props}>
+    <List aria-label="Example dynamic collection List" selectionMode="single" items={rows} {...props}>
       {item => <Item>{item.name}</Item>}
     </List>
   );
