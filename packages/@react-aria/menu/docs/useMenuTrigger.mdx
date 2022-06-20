@@ -19,6 +19,7 @@ import statelyDocs from 'docs:@react-stately/menu';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/menu/package.json';
 import Anatomy from './menu-trigger-anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 category: Overlays
@@ -88,47 +89,42 @@ In addition, see [useMenu](useMenu.html) for examples of menu item groups, and m
 
 ```tsx example
 import {useMenuTriggerState} from '@react-stately/menu';
-import {useButton} from '@react-aria/button';
 import {useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 import {Item} from '@react-stately/collections';
-import {mergeProps} from '@react-aria/utils';
-import {FocusScope} from '@react-aria/focus';
-import {useFocus} from '@react-aria/interactions';
-import {useOverlay, DismissButton} from '@react-aria/overlays';
+
+// Reuse the Popover, and Button from your component library. See below for details.
+import {Popover, Button} from 'your-component-library';
 
 function MenuButton(props) {
   // Create state based on the incoming props
   let state = useMenuTriggerState(props);
 
-  // Get props for the menu trigger and menu elements
+  // Get props for the button and menu elements
   let ref = React.useRef();
   let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
 
-  // Get props for the button based on the trigger props from useMenuTrigger
-  let {buttonProps} = useButton(menuTriggerProps, ref);
-
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
-      <button
-        {...buttonProps}
-        ref={ref}
+      <Button
+        {...menuTriggerProps}
+        buttonRef={ref}
         style={{height: 30, fontSize: 14}}>
         {props.label}
         <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
-      </button>
+      </Button>
       {state.isOpen &&
-        <MenuPopup
-          {...props}
-          {...menuProps}
-          autoFocus={state.focusStrategy}
-          onClose={() => state.close()} />
+        <Popover isOpen={state.isOpen} onClose={state.close}>
+          <Menu
+            {...props}
+            {...menuProps} />
+        </Popover>
       }
     </div>
   );
 }
 
-function MenuPopup(props) {
+function Menu(props) {
   // Create menu state based on the incoming props
   let state = useTreeState({...props, selectionMode: 'none'});
 
@@ -136,69 +132,33 @@ function MenuPopup(props) {
   let ref = React.useRef();
   let {menuProps} = useMenu(props, state, ref);
 
-  // Handle events that should cause the menu to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let overlayRef = React.useRef();
-  let {overlayProps} = useOverlay({
-    onClose: props.onClose,
-    shouldCloseOnBlur: true,
-    isOpen: true,
-    isDismissable: true
-  }, overlayRef);
-
-  // Wrap in <FocusScope> so that focus is restored back to the
-  // trigger when the menu is closed. In addition, add hidden
-  // <DismissButton> components at the start and end of the list
-  // to allow screen reader users to dismiss the popup easily.
   return (
-    <FocusScope restoreFocus>
-      <div {...overlayProps} ref={overlayRef}>
-        <DismissButton onDismiss={props.onClose} />
-        <ul
-          {...mergeProps(menuProps, props.domProps)}
-          ref={ref}
-          style={{
-            position: 'absolute',
-            width: '100%',
-            margin: '4px 0 0 0',
-            padding: 0,
-            listStyle: 'none',
-            border: '1px solid gray',
-            background: 'lightgray'
-          }}>
-          {[...state.collection].map(item => (
-            <MenuItem
-              key={item.key}
-              item={item}
-              state={state}
-              onAction={props.onAction}
-              onClose={props.onClose} />
-          ))}
-        </ul>
-        <DismissButton onDismiss={props.onClose} />
-      </div>
-    </FocusScope>
+    <ul
+      {...menuProps}
+      ref={ref}
+      style={{
+        margin: 0,
+        padding: 0,
+        listStyle: 'none'
+      }}>
+      {[...state.collection].map(item => (
+        <MenuItem
+          key={item.key}
+          item={item}
+          state={state} />
+      ))}
+    </ul>
   );
 }
 
-function MenuItem({item, state, onAction, onClose}) {
+function MenuItem({item, state}) {
   // Get props for the menu item element
   let ref = React.useRef();
-  let {menuItemProps} = useMenuItem({
-    key: item.key,
-    isDisabled: item.isDisabled,
-    onAction,
-    onClose
-  }, state, ref);
-
-  // Handle focus events so we can apply highlighted
-  // style to the focused menu item
-  let [isFocused, setFocused] = React.useState(false);
-  let {focusProps} = useFocus({onFocusChange: setFocused});
+  let {menuItemProps, isFocused} = useMenuItem({key: item.key}, state, ref);
 
   return (
     <li
-      {...mergeProps(menuItemProps, focusProps)}
+      {...menuItemProps}
       ref={ref}
       style={{
         background: isFocused ? 'gray' : 'transparent',
@@ -218,6 +178,81 @@ function MenuItem({item, state, onAction, onClose}) {
   <Item key="paste">Paste</Item>
 </MenuButton>
 ```
+
+### Popover
+
+The `Popover` component is used to contain menu.
+It can be shared between many other components, including [ComboBox](useComboBox.html),
+[Select](useSelect.html), [Dialog](useOverlayTrigger.html), and others.
+See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {DismissButton, useOverlay} from '@react-aria/overlays';
+import {FocusScope} from '@react-aria/focus';
+
+function Popover(props) {
+  let ref = React.useRef();
+  let {
+    popoverRef = ref,
+    isOpen,
+    onClose,
+    children
+  } = props;
+
+  // Handle events that should cause the popup to close,
+  // e.g. blur, clicking outside, or pressing the escape key.
+  let {overlayProps} = useOverlay({
+    isOpen,
+    onClose,
+    shouldCloseOnBlur: true,
+    isDismissable: true
+  }, popoverRef);
+
+  // Add a hidden <DismissButton> component at the end of the popover
+  // to allow screen reader users to dismiss the popup easily.
+  return (
+    <FocusScope restoreFocus>
+      <div
+        {...overlayProps}
+        ref={popoverRef}
+        style={{
+          position: "absolute",
+          width: "100%",
+          border: "1px solid gray",
+          background: "lightgray",
+          marginTop: 4
+        }}>
+        {children}
+        <DismissButton onDismiss={onClose} />
+      </div>
+    </FocusScope>
+  );
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to toggle the menu. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+}
+```
+
+</details>
 
 ## Internationalization
 
