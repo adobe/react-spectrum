@@ -118,12 +118,10 @@ and another for the dropdown arrow icon (hidden from screen readers with `aria-h
 A &lt;<TypeLink links={docs.links} type={docs.exports.HiddenSelect} />&gt; is used to render a hidden native
 `<select>`, which enables browser form autofill support.
 
-The listbox popup uses <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useListBox} />
-and <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useOption} /> to render the
-list of options. In addition, a &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;
-is used to automatically restore focus to the trigger
-when the popup closes. A hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
-is added at the start and end of the popup to allow screen reader users to dismiss the popup.
+The same `Popover`, `ListBox`, and `Button` components created with [useOverlay](useOverlay.html), [useListBox](useListBox.html),
+and [useButton](useButton.html) that you may already have in your component library or application should be reused. These can be shared with other
+components such as a `ComboBox` created with [useComboBox](useComboBox.html) or a `Dialog` popover created with [useDialog](useDialog.html).
+The code for these components is also included below in the collapsed sections.
 
 This example does not do any advanced popover positioning or portaling to escape its visual container.
 See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to implement this
@@ -135,11 +133,10 @@ options. For an example of the description and error message elements, see [useT
 ```tsx example export=true
 import {HiddenSelect, useSelect} from '@react-aria/select';
 import {Item} from '@react-stately/collections';
-import {useButton} from '@react-aria/button';
 import {useSelectState} from '@react-stately/select';
 
-// Reuse the ListBox and Popover from your component library. See below for details.
-import {ListBox, Popover} from 'your-component-library';
+// Reuse the ListBox, Popover, and Button from your component library. See below for details.
+import {ListBox, Popover, Button} from 'your-component-library';
 
 function Select(props) {
   // Create state based on the incoming props
@@ -154,9 +151,6 @@ function Select(props) {
     menuProps
   } = useSelect(props, state, ref);
 
-  // Get props for the button based on the trigger props from useSelect
-  let {buttonProps} = useButton(triggerProps, ref);
-
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
       <div {...labelProps}>{props.label}</div>
@@ -165,9 +159,9 @@ function Select(props) {
         triggerRef={ref}
         label={props.label}
         name={props.name} />
-      <button
-        {...buttonProps}
-        ref={ref}
+      <Button
+        {...triggerProps}
+        buttonRef={ref}
         style={{height: 30, fontSize: 14}}>
         <span {...valueProps}>
           {state.selectedItem
@@ -180,7 +174,7 @@ function Select(props) {
           style={{paddingLeft: 5}}>
           ▼
         </span>
-      </button>
+      </Button>
       {state.isOpen &&
         <Popover isOpen={state.isOpen} onClose={state.close}>
           <ListBox
@@ -331,6 +325,25 @@ function Option({item, state}) {
       {item.rendered}
     </li>
   );
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to toggle the listbox popup. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
 }
 ```
 
