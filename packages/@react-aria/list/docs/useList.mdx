@@ -114,11 +114,16 @@ the rows of the List and render the relevant components, which we'll define belo
 
 You may notice the extra `<div>` with `gridCellProps` in our example. This is needed because we are following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
 
+You may also notice that we included an info button in the rows in our example. This is to highlight `useList`'s ability to handle interactive elements inside a row.
+This differs from [useListBox](useListBox.html), which is a selectable list with no support for interactive elements. If your list will not contain interactive elements,
+[useListBox](useListBox.html) may be a better choice due to better screen reader experience, especially on mobile devices.
+
 ```tsx example export=true
 import {useListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {useRef} from 'react';
 import {useFocusRing} from '@react-aria/focus';
+import {useButton} from '@react-aria/button';
 import {useList, useListItem} from '@react-aria/list';
 import { Item } from "@react-stately/collections";
 
@@ -167,6 +172,10 @@ function ListItem({ item, state }) {
   );
   let {isFocusVisible, focusProps} = useFocusRing();
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
+  let buttonRef = React.useRef();
+  let { buttonProps } = useButton({
+    onPress: () => alert('Info pressed...')
+  }, buttonRef);
 
   let backgroundColor;
   let color = "black";
@@ -201,12 +210,13 @@ function ListItem({ item, state }) {
       <div {...gridCellProps}>
         {showCheckbox && <ListCheckbox item={item} state={state} />}
         {item.rendered}
+        <button style={{float: 'right'}} {...buttonProps} ref={buttonRef}>Info</button>
       </div>
     </li>
   );
 }
 
-<List aria-label="Example List">
+<List aria-label="Example List" selectionMode="multiple" selectionBehavior="replace">
   <Item key="1">Charizard</Item>
   <Item key="2">Blastoise</Item>
   <Item key="3">Venusaur</Item>
@@ -214,9 +224,9 @@ function ListItem({ item, state }) {
 </List>
 ```
 
-### Adding selection
+### Adding selection checkboxes
 
-Next, let's add support for selection. For multiple selection, we'll want to add a checkbox to the row to allow the user to select rows.
+Next, let's add support for selection checkboxes. For multiple selection, we'll want to add a checkbox to the row to allow the user to select rows.
 This is done using the <TypeLink links={docs.links} type={docs.exports.useListSelectionCheckbox} />
 hook. It is passed the `parentKey` of the cell, which refers to the row the cell is contained within. When the user
 checks or unchecks the checkbox, the row will be added or removed from the List's selection.
