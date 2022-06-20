@@ -129,7 +129,6 @@ import {useList, useListItem} from '@react-aria/list';
 import { Item } from "@react-stately/collections";
 
 function List(props) {
-  let { selectionMode, selectionBehavior } = props;
   let state = useListState(props);
   let ref = useRef();
   let { collection } = state;
