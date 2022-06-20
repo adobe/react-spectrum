@@ -172,10 +172,6 @@ function ListItem({ item, state }) {
   );
   let {isFocusVisible, focusProps} = useFocusRing();
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
-  let buttonRef = React.useRef();
-  let { buttonProps } = useButton({
-    onPress: () => alert('Info pressed...')
-  }, buttonRef);
 
   let backgroundColor;
   let color = "black";
@@ -210,7 +206,9 @@ function ListItem({ item, state }) {
       <div {...gridCellProps}>
         {showCheckbox && <ListCheckbox item={item} state={state} />}
         {item.rendered}
-        <button style={{float: 'right'}} {...buttonProps} ref={buttonRef}>Info</button>
+        <span style={{float: 'right'}}>
+          <Button onPress={() => alert(`Info for item ${item.key}`)}>Info</Button>
+        </span>
       </div>
     </li>
   );
@@ -272,6 +270,25 @@ function Checkbox(props) {
     inputRef
   );
   return <input {...inputProps} ref={inputRef} />;
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to show how rows can contain interactive elements. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = React.useRef();
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref}>{props.children}</button>;
 }
 ```
 
