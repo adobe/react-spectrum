@@ -43,7 +43,7 @@ A drag item contains several pieces of information: the **type** of the data, th
 [common mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or a custom type specific to your application. Multiple types can be attached to a
 single drag item so that the item's data can be provided in different formats for interoperability with various drop targets. For example, an image could be represented by an
 `image/jpeg` type and thus be recognized as a JPEG by a file upload drop target but also have a `plain/text` type that allows the image's file name to be communicated to a
-text input drop target. The item's kind can be one of two types: `"string"` if the item is inline data in the form of a plain Unicode string or `"file"` if the item is a reference to file(s) from
+text input drop target. The item's kind can be one of two types: `"string"` if the item is inline data in the form of a plain Unicode string or `"file"` if the item is a reference to a file from
 the user's computer.
 
 There are several **drop operations** that can be performed in a drag and drop operation: `"move"`, `"copy"`, `"link"`, and `"cancel"`. A `"move"` operation indicates that the dragged data will be
