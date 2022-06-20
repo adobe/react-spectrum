@@ -112,6 +112,8 @@ the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} 
 and manage state such as the focused row and row selection. We'll use the collection to iterate through
 the rows of the List and render the relevant components, which we'll define below.
 
+You may notice the extra `<div>` with `gridCellProps` in our example. This is needed because we are following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
+
 ```tsx example export=true
 import {useListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
@@ -196,8 +198,10 @@ function ListItem({ item, state }) {
         outline: isFocusVisible ? '2px solid orange' : 'none'
       }}
     >
-      {showCheckbox && <ListCheckbox item={item} state={state} />}
-      {item.rendered}
+      <div {...gridCellProps}>
+        {showCheckbox && <ListCheckbox item={item} state={state} />}
+        {item.rendered}
+      </div>
     </li>
   );
 }
