@@ -25,10 +25,7 @@ const generateScopedName = (localName, resourcePath) => {
 
 module.exports = () => {
   return {
-    plugins: [
-      new webpack.DefinePlugin({REACT_VERSION: JSON.stringify(reactVersion)}),
-      new webpack.EnvironmentPlugin(['NODE_ENV', 'STRICT_MODE'])
-    ],
+    plugins: [new webpack.DefinePlugin({REACT_VERSION: JSON.stringify(reactVersion)})],
     parallelism: 1,
     module: {
       rules: [
