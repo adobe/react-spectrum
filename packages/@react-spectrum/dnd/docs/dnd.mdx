@@ -29,11 +29,9 @@ This page describes how to enable drag and drop functionality for the various Re
 
 ## Introduction
 
-Drag and drop is an operation performed when a user "grabs" a UI element via their mouse or finger and drops it on a different location or element.
-Due to its flexibility across a variety of use cases, it has become a common interaction in many modern applications but can come saddled with
-many accessibility issues, including but not limited to keyboard interaction parity and difficulties mimicking drag operations with mouse emulators.
-React Spectrum collection components that support drag and drop operations seek to address these issues by providing full keyboard and screen reader drag and drop
-support.
+Drag and drop is a common UI interaction that allows users to transfer data between two locations by directly moving a visual representation on screen.
+It is a flexible, efficient, and intuitive way for users to perform a wide variety of tasks, and is widely supported across both desktop and mobile operating systems.
+In addition to the standard mouse and touch interactions, React Spectrum also implements keyboard and screen reader accessible alternatives for drag and drop to enable all users to perform these tasks.
 
 ## Drag and Drop Concepts
 
@@ -41,35 +39,42 @@ Before we dive into how to enable drag and drop in React Spectrum, let's touch b
 a **drag source** and a **drop target**. The drag source is the starting location of your dragged data and the drop target is its intended destination. The dragged data
 is made up of one or more **drag items**, each of which contains information specific to their original item within the drag source.
 
-A drag item contains two pieces of information: the **type** of the data and the actual data itself. The type of a drag item can be one of the
+A drag item contains several pieces of information: the **type** of the data, the item's **kind**, and the actual data itself. The type of a drag item can be one of the
 [common mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or a custom type specific to your application. Multiple types can be attached to a
 single drag item so that the item's data can be provided in different formats for interoperability with various drop targets. For example, an image could be represented by an
 `image/jpeg` type and thus be recognized as a JPEG by a file upload drop target but also have a `plain/text` type that allows the image's file name to be communicated to a
-text input drop target.
+text input drop target. The item's kind can be one of two types: `"string"` if the item is inline data in the form of a plain Unicode string or `"file"` if the item is a reference to file(s) from
+the user's computer.
 
-When performing a drag operation, drop targets can specify what **drop positions** they allow. A collection component, such as a list or a table, may support a `"root"` drop position,
-allowing items to be dropped on the collection as a whole. It may also support `"on"` drop positions, such as when dropping into a folder in a list. If the collection supports reordering of
-its items, it could support `"between"` drop positions, allowing the user to insert or move items between other items. A drop target can support as many drop positions as it needs and can use the types
-of the dragged items to selectively allow or disallow certain positions.
-
-There are several **drop operations** that can be performed in a drag and drop operation: `"move"`, `"copy"`, `"link"`, and `"cancel"`. A `"move"` operation indicates that the dragged data should be
-moved from its source location to the target location. A `"copy"` operation indicates that the dragged data should be copied to the target destination. A `"link"` operation indicates that
-there should be a relationship established between the source and target locations. Finally, a `"cancel"` operation indicates that the drag and drop operation should be canceled, resulting in
+There are several **drop operations** that can be performed in a drag and drop operation: `"move"`, `"copy"`, `"link"`, and `"cancel"`. A `"move"` operation indicates that the dragged data will be
+moved from its source location to the target location. A `"copy"` operation indicates that the dragged data will be copied to the target destination. A `"link"` operation indicates that
+there will be a relationship established between the source and target locations. Finally, a `"cancel"` operation indicates that the drag and drop operation will be canceled, resulting in
 no changes made to the source or target. The drag source can specify what drop operations are allowed for its data, allowing the drop source to decide what operation to perform on drop by using the restrictions
 set by the drag source as a guideline.
+
+Collection components, such as ListView, support multiple **drop positions**. The component may support a `"root"` drop position, allowing items to be dropped on the collection as a whole.
+It may also support `"on"` drop positions, such as when dropping into a folder in a list. If the collection allows reordering of its items, it could support `"between"` drop positions, allowing the
+user to insert or move items between other items. Any number of these drop positions can be allowed at the same time and the component can use the types of the dragged items to selectively allow or disallow certain positions.
 
 ### Interaction modes
 
 There are several interaction modes that need to be considered for drag and drop. When using a mouse, you can click an item and drag by holding the mouse button down and moving the pointer. A drop can
 be performed by releasing the mouse button or canceled by the <Keyboard>Esc</Keyboard> key. A similar interaction can be performed via touch, with a drag initialized via a long press and a drop performed by
-removing your finger from the screen. In both cases, selecting and dragging an item is often accompanied by a **drag preview**. The drag preview is typically a smaller version of the dragged item that follows the cursor
-or touch point. When multiple items are dragged at once, a badge or some other visual affordance is displayed to indicate that multiple items are being dragged. Drop targets are often visually highlighted when dragged
-over, and the desired drop operation can be controlled via modifier key presses or drop activations via hovering over the drop target for a period of time.
+removing your finger from the screen. In both cases, selecting and dragging an item is often accompanied by a **drag preview**. The drag preview is a smaller version of the dragged item that follows the cursor
+or touch point. When multiple items are dragged at once, the drag preview displays a stack of items instead, accompanied by a badge reflecting the total number of dragged items. Drop targets are visually highlighted
+when dragged over, and the desired drop operation can be controlled via modifier key presses or drop activations via hovering over the drop target for a period of time.
 
 For keyboards, copy and paste shortcuts have traditionally been the alternative method to drag and drop. This comes with many limitations as it is often hard to know where pasting is allowed and difficult to control the
-exact positioning of your pasted items. Touch screen readers are even more limited in their ability to perform these operations since they often lack access to a keyboard and thus cannot copy paste in the same manner. React Spectrum
-attempts to resolve these limitations by providing interactive drag affordances that bring a user into drag and drop mode when triggered via keyboard or screen reader virtual click. See the
-[Accessibility section](#accessibility) below for further explanation on how this works.
+exact positioning of the pasted items. Touch screen readers are even more limited in their ability to perform these operations since they often lack access to a keyboard and thus cannot copy paste in the same manner.
+
+React Spectrum attempts to resolve the above limitations by providing interactive drag affordances that bring a user into drag and drop mode when triggered via keyboard or screen reader virtual click. To perform a drag and drop operation via a keyboard,
+first select the items to be dragged by focusing the row and pressing <Keyboard>Space</Keyboard>. You can then start the drag operation by moving focus to the drag handle on any of the selected rows via the arrow keys and hitting <Keyboard>Enter</Keyboard>
+or <Keyboard>Space</Keyboard>. Once a drag operation is started, you will be automatically brought to the first valid drop target. <Keyboard>Tab</Keyboard> can then be used to cycle through other valid drop targets. For collection components like the ListView above,
+<Keyboard>Tab</Keyboard> will move you on or off the overall component itself whereas <Keyboard>ArrowUp</Keyboard> and <Keyboard>ArrowDown</Keyboard> will cycle through the valid drop targets within the component itself. Hitting <Keyboard>Enter</Keyboard>
+will then confirm the drop operation on the focused drop target. To cancel a drag operation, you can hit <Keyboard>Esc</Keyboard> at any time.
+
+For screen readers, please follow the custom instructions announced when focusing the row's drag handle to begin a drag operation. For screen readers on mobile devices, swiping left and right will
+move you between valid drop targets and double tapping will confirm a drop operation. Go ahead and try out drag and drop in the example below!
 
 ## Example
 
@@ -82,26 +87,16 @@ import {Flex} from '@react-spectrum/layout';
 </Flex>
 ```
 
-### Accessibility
-
-To perform a drag and drop operation via a keyboard, first select the items to be dragged by focusing the row and pressing <Keyboard>Space</Keyboard>. You can then start the drag operation by moving focus to the drag handle
-on any of the selected rows via the arrow keys and hitting <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard>. Once a drag operation is started, you will be automatically brought to the first valid drop target.
-<Keyboard>Tab</Keyboard> can then be used to cycle through other valid drop targets. For collection components like the ListView above, <Keyboard>Tab</Keyboard> will move you on or off
-the overall component itself whereas <Keyboard>ArrowUp</Keyboard> and <Keyboard>ArrowDown</Keyboard> will cycle through the valid drop targets within the component itself.
-Hitting <Keyboard>Enter</Keyboard> will then confirm the drop operation on the focused drop target. To cancel a drag operation, you can hit <Keyboard>Esc</Keyboard> at any time.
-
-For screen readers, please follow the instructions announced when focusing the row's drag handle to begin a drag operation. For screen readers on mobile devices, swiping left and right should
-move you between valid drop targets and double tapping should confirm a drop operation. Go ahead and try out drag and drop in the example above!
-
 ### Creating the draggable list
 
 For the first ListView in the example above, we want to make the rows draggable and have the dragged rows removed from the list upon a successful drop. To accomplish this,
 we first want to setup the initial list of items for our draggable ListView via [useListData](/react-stately/useListData.html) so that we have access to some helper methods
-to modify the list of items on the fly.
+to modify the list of items on the fly. Note that this is completely optional and is not required to enable drag and drop in React Spectrum. You may substitute `useListData` with
+[useAsyncList](/react-stately/useAsyncList.html) or with any other state management solution.
 
-```tsx example render=false
+```tsx
 let list = useListData({
-  initialItems: items || [
+  initialItems: [
     {id: 'a', textValue: 'Adobe Photoshop', type: 'file'},
     {id: 'b', textValue: 'Adobe XD', type: 'file'},
     {id: 'c', textValue: 'Adobe Dreamweaver', type: 'file'},
@@ -111,10 +106,10 @@ let list = useListData({
 });
 ```
 
-Next, we need to specify the data associated with each dragged item via the array returned by `getItems`. In this case, we look up the information for each dragged item and
-serialize it, mapping it to the item's type. This information will be processed and provided to the drop target's drop handlers on drop.
+Next, we need to specify the data associated with each dragged item by returning an array from the `getItems` function. As described above in the [concepts section](#drag-and-drop-concepts), each item includes a mapping of drag types to serialized data.
+In this case, we look up the information for each dragged item and serialize it, mapping it to the item's type (e.g. `folder` or `file`). This information will be processed and provided to the drop target's drop handlers on drop.
 
-```tsx example render=false
+```tsx
 function getItems(keys) {
   return [...keys].map(key => {
     let item = list.getItem(key);
@@ -128,7 +123,7 @@ function getItems(keys) {
 We also create an `onDragEnd` event handler for `useDragHooks` that handles removing the dragged items from the draggable list upon a successful drop operation. Note how we use
 the `.remove` method provided by `useListData` to remove the dropped items from our list.
 
-```tsx example render=false
+```tsx
 function onDragEnd(e) {
   if (e.dropOperation === 'move') {
     list.remove(...e.keys);
@@ -195,11 +190,11 @@ function DraggableList(props) {
 ### Creating the droppable list
 
 For the second ListView, we want to make it droppable but have it only accept root level drops. Similar to the draggable ListView, we'll start by initializing the default item list
-via [useListData](/react-stately/useListData.html).
+via [useListData](/react-stately/useListData.html). As a reminder, `useListData` is completely optional here and can be replaced by [useAsyncList](/react-stately/useAsyncList.html) or any other state management solution.
 
-```tsx example render=false
+```tsx
 let list = useListData({
-  initialItems: items || [
+  initialItems: [
     {id: 'f', textValue: 'Adobe AfterEffects', type: 'file'},
     {id: 'g', textValue: 'Adobe Illustrator', type: 'file'},
     {id: 'h', textValue: 'Adobe Lightroom', type: 'file'},
@@ -212,7 +207,7 @@ let list = useListData({
 To implement root level only drops, we create a `getDropOperation` function that returns `"cancel"` for any drop targets other than `root` or if the dragged item types doesn't include
 `'file'`.
 
-```tsx example render=false
+```tsx
 function getDropOperation(target, types) {
   if (target.type !== 'root' || !types.has('file')) {
     return 'cancel';
@@ -225,21 +220,13 @@ function getDropOperation(target, types) {
 Next, we create an `onDrop` event handler to process the successfully dropped items. This `onDrop` handler first checks each dropped item's kind and type, extracting the item's
 relevant information if it detects it has the expected types. This information is used to construct an array of items to insert to the end of the droppable list via `list.append`.
 
-```tsx example render=false
+```tsx
 async function onDrop(e) {
-  let itemsToAdd = [];
-  for (let item of e.items) {
-    if (item.kind === 'text' && item.types.has('file')) {
-      let {type, id, textValue} = JSON.parse(await item.getText('file'));
-      if (!!type && !!id && !!textValue) {
-        itemsToAdd.push({
-          id,
-          type,
-          textValue
-        });
-      }
-    }
-  }
+  let itemsToAdd = await Promise.all(
+    e.items
+      .filter(item => item.kind === 'text' && item.types.has('file'))
+      .map(async item => JSON.parse(await item.getText('file')))
+  );
   list.append(...itemsToAdd);
 }
 ```
@@ -274,19 +261,11 @@ function DroppableList(props) {
       return 'move';
     },
     onDrop: async (e) => {
-      let itemsToAdd = [];
-      for (let item of e.items) {
-        if (item.kind === 'text' && item.types.has('file')) {
-          let {type, id, textValue} = JSON.parse(await item.getText('file'));
-          if (!!type && !!id && !!textValue) {
-            itemsToAdd.push({
-              id,
-              type,
-              textValue
-            });
-          }
-        }
-      }
+      let itemsToAdd = await Promise.all(
+        e.items
+          .filter(item => item.kind === 'text' && item.types.has('file'))
+          .map(async item => JSON.parse(await item.getText('file')))
+      );
       list.append(...itemsToAdd);
     }
   });
@@ -315,8 +294,8 @@ function DroppableList(props) {
 ### useDragHooks props
 
 <FunctionAPI function={docs.exports.useDragHooks} links={docs.links} />
-<TypeContext.Provider value={dndDocs.links}>
-  <InterfaceType properties={dndDocs.exports.DraggableCollectionProps.properties} />
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.exports.DragHookOptions.properties} />
 </TypeContext.Provider>
 
 ### useDropHook props
@@ -329,7 +308,8 @@ function DroppableList(props) {
 As seen in the [example](#example) above, enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you may be familiar with.
 Instead of providing each event handler directly to the component, you must first import `useDragHooks` and `useDropHooks` from the `@react-spectrum/dnd` package
 and provide those hooks with your desired options. `useDragHooks` will then provide you with a set of drag hooks that you can pass to the component via its `dragHooks` prop, thus enabling drag operations for the component.
-Drop operations are then enabled in the same way by passing the hooks from `useDropHooks` to the component's `dropHooks` prop.
+Drop operations are then enabled in the same way by passing the hooks from `useDropHooks` to the component's `dropHooks` prop. This approach allows the drag and drop implementation to be included only when used,
+keeping bundle sizes small when unused by an application.
 
 Of the various hook options above, `getAllowedDropOperations` and `getDropOperation` may be of particular interest since it allows you to specify what kinds of drag and drop operations you want to allow.
 When the dragged items are dropped on a drop target created using the React Aria drag and drop hooks, the allowed drop operations you return in `getAllowedDropOperations`
@@ -341,8 +321,6 @@ from the list after a drop operation. A drop target that only allows `"copy"` op
 to your draggable collection's `onDragEnd` handler, letting the draggable collection know that it shouldn't remove the dragged items from its list. Alternatively, a drop target that allows `"move"` operations, like in the
 [example](#example) above, would return `move` from its `getDropOperation` and thus inform your draggable collection to remove the dragged items from its list.
 
-You may be wondering why we didn't simply import the drag and drop hooks within the components themselves. The reason behind this is to reduce the bundle size of
-the component for users who don't need the drag and drop support for their component.
 
 ## Supported components
 
