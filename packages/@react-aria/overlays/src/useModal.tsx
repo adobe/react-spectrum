@@ -122,25 +122,20 @@ interface OverlayContainerProps extends ModalProviderProps {
  * be accessible at once.
  */
 export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal {
-  let {portalContainer, ...rest} = props;
-  let [currentPortalContainer, setCurrentPortalContainer] = useState(portalContainer);
+  let {portalContainer = typeof document !== 'undefined' ? document.body : null, ...rest} = props;
 
   React.useEffect(() => {
-    setCurrentPortalContainer(portalContainer ?? document.body);
-  }, [portalContainer]);
-
-  React.useEffect(() => {
-    if (currentPortalContainer?.closest('[data-overlay-container]')) {
+    if (portalContainer?.closest('[data-overlay-container]')) {
       throw new Error('An OverlayContainer must not be inside another container. Please change the portalContainer prop.');
     }
-  }, [currentPortalContainer]);
+  }, [portalContainer]);
 
-  if (!currentPortalContainer) {
+  if (!portalContainer) {
     return null;
   }
 
   let contents = <OverlayProvider {...rest} />;
-  return ReactDOM.createPortal(contents, currentPortalContainer);
+  return ReactDOM.createPortal(contents, portalContainer);
 }
 
 interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
