@@ -128,7 +128,7 @@ export interface DroppableCollectionProps {
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   /** Handler that is called when a valid drag element is moved within the drop target. */
   onDropMove?: (e: DroppableCollectionMoveEvent) => void,
-  /** Handler that is called after a valid drag element is held over the drop target for 800 ms. */
+  /** Handler that is called after a valid drag element is held over the drop target for a period of time. */
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
   /** Handler that is called when a valid drag element exits the drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
