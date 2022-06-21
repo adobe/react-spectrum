@@ -223,3 +223,43 @@ window.addEventListener('pagehide', () => {
   sessionStorage.setItem('sidebarSelectedItem', location.pathname);
   sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
 });
+
+// Disable autoplay for videos when the prefers-reduced-motion media query is enabled.
+function reducedMotionCheck(e) {
+  let videos = document.querySelectorAll('video[autoplay]');
+  if (e.matches) {
+    for (let v of videos) {
+      v.pause();
+      v.controls = true;
+      v.removeAttribute('tabindex');
+      v.onclick = undefined;
+      v.onkeydown = undefined;
+    }
+  } else {
+    for (let v of videos) {
+      let toggle = () => {
+        if (v.paused) {
+          v.play();
+        } else {
+          v.pause();
+        }
+      };
+      if (v.paused) {
+        v.play();
+      }
+      v.tabIndex = 0;
+      v.controls = false;
+      v.onclick = toggle;
+      v.onkeydown = e => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          toggle();
+        }
+      };
+    }
+  }
+}
+
+let prefersReducedMotion = matchMedia('(prefers-reduced-motion)');
+reducedMotionCheck(prefersReducedMotion);
+prefersReducedMotion.addEventListener('change', reducedMotionCheck);
