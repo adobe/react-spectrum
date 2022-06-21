@@ -179,5 +179,8 @@
     "postcss-calc": "6.0.2",
     "jsdom": "16.7.0",
     "postcss-modules": "^3.2.2"
+  },
+  "dependencies": {
+    "verdaccio": "^5.13.0"
   }
 }
