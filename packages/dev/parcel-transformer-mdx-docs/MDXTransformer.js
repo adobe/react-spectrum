@@ -149,6 +149,7 @@ module.exports = new Transformer({
 
     let toc = [];
     let title = '';
+    let navigationTitle;
     let category = '';
     let keywords = [];
     let description = '';
@@ -220,6 +221,7 @@ module.exports = new Transformer({
           let yamlData = yaml.safeLoad(metadata.value);
           // title defined in yaml data will override
           title = yamlData.title || title;
+          navigationTitle = yamlData.navigationTitle;
           category = yamlData.category || '';
           keywords = yamlData.keywords || [];
           description = yamlData.description || '';
@@ -301,6 +303,7 @@ module.exports = new Transformer({
     asset.setCode(String(compiled));
     asset.meta.toc = toc;
     asset.meta.title = title;
+    asset.meta.navigationTitle = navigationTitle;
     asset.meta.category = category;
     asset.meta.description = description;
     asset.meta.keywords = keywords;
