@@ -30,7 +30,7 @@ This page describes how to enable drag and drop functionality for the various Re
 ## Introduction
 
 Drag and drop is a common UI interaction that allows users to transfer data between two locations by directly moving a visual representation on screen.
-It is a flexible, efficient, and intuitive way for users to perform a wide variety of tasks, and is widely supported across both desktop and mobile operating systems.
+It is a flexible, efficient, and intuitive way for users to perform a variety of tasks, and is widely supported across both desktop and mobile operating systems.
 In addition to the standard mouse and touch interactions, React Spectrum also implements keyboard and screen reader accessible alternatives for drag and drop to enable all users to perform these tasks.
 
 ## Drag and Drop Concepts
@@ -43,7 +43,7 @@ A drag item contains several pieces of information: the **type** of the data, th
 [common mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or a custom type specific to your application. Multiple types can be attached to a
 single drag item so that the item's data can be provided in different formats for interoperability with various drop targets. For example, an image could be represented by an
 `image/jpeg` type and thus be recognized as a JPEG by a file upload drop target but also have a `plain/text` type that allows the image's file name to be communicated to a
-text input drop target. The item's kind can be one of two types: `"string"` if the item is inline data in the form of a plain Unicode string or `"file"` if the item is a reference to a file from
+text input drop target. In addition, there are two kinds of items: string items include inline data in the form of a Unicode string, and file items include a reference to a file from
 the user's computer.
 
 There are several **drop operations** that can be performed in a drag and drop operation: `"move"`, `"copy"`, `"link"`, and `"cancel"`. A `"move"` operation indicates that the dragged data will be
@@ -59,7 +59,7 @@ user to insert or move items between other items. Any number of these drop posit
 ### Interaction modes
 
 There are several interaction modes that need to be considered for drag and drop. When using a mouse, you can click an item and drag by holding the mouse button down and moving the pointer. A drop can
-be performed by releasing the mouse button or canceled by the <Keyboard>Esc</Keyboard> key. A similar interaction can be performed via touch, with a drag initialized via a long press and a drop performed by
+be performed by releasing the mouse button or canceled by the <Keyboard>Esc</Keyboard> key. A similar interaction can be performed via touch, with a drag initiated via a long press and a drop performed by
 removing your finger from the screen. In both cases, selecting and dragging an item is often accompanied by a **drag preview**. The drag preview is a smaller version of the dragged item that follows the cursor
 or touch point. When multiple items are dragged at once, the drag preview displays a stack of items instead, accompanied by a badge reflecting the total number of dragged items. Drop targets are visually highlighted
 when dragged over, and the desired drop operation can be controlled via modifier key presses or drop activations via hovering over the drop target for a period of time.
@@ -78,7 +78,7 @@ move you between valid drop targets and double tapping will confirm a drop opera
 
 ## Example
 
-```tsx example
+```tsx snippet
 import {Flex} from '@react-spectrum/layout';
 
 <Flex gap="size-300">
@@ -97,24 +97,24 @@ to modify the list of items on the fly. Note that this is completely optional an
 ```tsx
 let list = useListData({
   initialItems: [
-    {id: 'a', textValue: 'Adobe Photoshop', type: 'file'},
-    {id: 'b', textValue: 'Adobe XD', type: 'file'},
-    {id: 'c', textValue: 'Adobe Dreamweaver', type: 'file'},
-    {id: 'd', textValue: 'Adobe InDesign', type: 'file'},
-    {id: 'e', textValue: 'Adobe Connect', type: 'file'}
+    {id: 'a', textValue: 'Adobe Photoshop'},
+    {id: 'b', textValue: 'Adobe XD'},
+    {id: 'c', textValue: 'Adobe Dreamweaver'},
+    {id: 'd', textValue: 'Adobe InDesign'},
+    {id: 'e', textValue: 'Adobe Connect'}
   ]
 });
 ```
 
 Next, we need to specify the data associated with each dragged item by returning an array from the `getItems` function. As described above in the [concepts section](#drag-and-drop-concepts), each item includes a mapping of drag types to serialized data.
-In this case, we look up the information for each dragged item and serialize it, mapping it to the item's type (e.g. `folder` or `file`). This information will be processed and provided to the drop target's drop handlers on drop.
+In this case, we look up the information for each dragged item and serialize it, mapping it to a custom item type. This information will be processed and provided to the drop target's drop handlers on drop.
 
 ```tsx
 function getItems(keys) {
   return [...keys].map(key => {
     let item = list.getItem(key);
     return {
-      [item.type]: JSON.stringify(item)
+      'adobe-app': JSON.stringify(item)
     };
   })
 }
@@ -146,11 +146,11 @@ function DraggableList(props) {
   } = props;
   let list = useListData({
     initialItems: items || [
-      {id: 'a', textValue: 'Adobe Photoshop', type: 'file'},
-      {id: 'b', textValue: 'Adobe XD', type: 'file'},
-      {id: 'c', textValue: 'Adobe Dreamweaver', type: 'file'},
-      {id: 'd', textValue: 'Adobe InDesign', type: 'file'},
-      {id: 'e', textValue: 'Adobe Connect', type: 'file'}
+      {id: 'a', textValue: 'Adobe Photoshop'},
+      {id: 'b', textValue: 'Adobe XD'},
+      {id: 'c', textValue: 'Adobe Dreamweaver'},
+      {id: 'd', textValue: 'Adobe InDesign'},
+      {id: 'e', textValue: 'Adobe Connect'}
     ]
   });
 
@@ -158,7 +158,7 @@ function DraggableList(props) {
     getItems: (keys) => [...keys].map(key => {
       let item = list.getItem(key);
       return {
-        [item.type]: JSON.stringify(item)
+        'adobe-app': JSON.stringify(item)
       };
     }),
     onDragEnd: (e) => {
@@ -195,21 +195,21 @@ via [useListData](/react-stately/useListData.html). As a reminder, `useListData`
 ```tsx
 let list = useListData({
   initialItems: [
-    {id: 'f', textValue: 'Adobe AfterEffects', type: 'file'},
-    {id: 'g', textValue: 'Adobe Illustrator', type: 'file'},
-    {id: 'h', textValue: 'Adobe Lightroom', type: 'file'},
-    {id: 'i', textValue: 'Adobe Premiere Pro', type: 'file'},
-    {id: 'j', textValue: 'Adobe Fresco', type: 'file'}
+    {id: 'f', textValue: 'Adobe AfterEffects'},
+    {id: 'g', textValue: 'Adobe Illustrator'},
+    {id: 'h', textValue: 'Adobe Lightroom'},
+    {id: 'i', textValue: 'Adobe Premiere Pro'},
+    {id: 'j', textValue: 'Adobe Fresco'}
   ]
 });
 ```
 
 To implement root level only drops, we create a `getDropOperation` function that returns `"cancel"` for any drop targets other than `root` or if the dragged item types doesn't include
-`'file'`.
+`'adobe-app'`.
 
 ```tsx
 function getDropOperation(target, types) {
-  if (target.type !== 'root' || !types.has('file')) {
+  if (target.type !== 'root' || !types.has('adobe-app')) {
     return 'cancel';
   }
 
@@ -224,8 +224,8 @@ relevant information if it detects it has the expected types. This information i
 async function onDrop(e) {
   let itemsToAdd = await Promise.all(
     e.items
-      .filter(item => item.kind === 'text' && item.types.has('file'))
-      .map(async item => JSON.parse(await item.getText('file')))
+      .filter(item => item.kind === 'text' && item.types.has('adobe-app'))
+      .map(async item => JSON.parse(await item.getText('adobe-app')))
   );
   list.append(...itemsToAdd);
 }
@@ -244,17 +244,17 @@ function DroppableList(props) {
   } = props;
   let list = useListData({
     initialItems: items || [
-      {id: 'f', textValue: 'Adobe AfterEffects', type: 'file'},
-      {id: 'g', textValue: 'Adobe Illustrator', type: 'file'},
-      {id: 'h', textValue: 'Adobe Lightroom', type: 'file'},
-      {id: 'i', textValue: 'Adobe Premiere Pro', type: 'file'},
-      {id: 'j', textValue: 'Adobe Fresco', type: 'file'}
+      {id: 'f', textValue: 'Adobe AfterEffects'},
+      {id: 'g', textValue: 'Adobe Illustrator'},
+      {id: 'h', textValue: 'Adobe Lightroom'},
+      {id: 'i', textValue: 'Adobe Premiere Pro'},
+      {id: 'j', textValue: 'Adobe Fresco'}
     ]
   });
 
   let dropHooks = useDropHooks({
     getDropOperation: (target, types) => {
-      if (target.type !== 'root' || !types.has('file')) {
+      if (target.type !== 'root' || !types.has('adobe-app')) {
         return 'cancel';
       }
 
@@ -263,8 +263,8 @@ function DroppableList(props) {
     onDrop: async (e) => {
       let itemsToAdd = await Promise.all(
         e.items
-          .filter(item => item.kind === 'text' && item.types.has('file'))
-          .map(async item => JSON.parse(await item.getText('file')))
+          .filter(item => item.kind === 'text' && item.types.has('adobe-app'))
+          .map(async item => JSON.parse(await item.getText('adobe-app')))
       );
       list.append(...itemsToAdd);
     }
@@ -291,25 +291,25 @@ function DroppableList(props) {
 
 ## API
 
-### useDragHooks props
+As seen in the [example](#example) above, enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you may be familiar with.
+Instead of providing each event handler directly to the component, you must first import `useDragHooks` and `useDropHooks` from the `@react-spectrum/dnd` package
+and provide those hooks with your desired options. `useDragHooks` will then provide you with a set of drag hooks that you can pass to the component via its `dragHooks` prop, thus enabling drag operations for the component.
+Drop operations are then enabled in the same way by passing the hooks from `useDropHooks` to the component's `dropHooks` prop. This approach allows the drag and drop implementation to be included only when used,
+keeping bundle sizes small when unused by an application.
+
+### useDragHooks
 
 <FunctionAPI function={docs.exports.useDragHooks} links={docs.links} />
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.exports.DragHookOptions.properties} />
 </TypeContext.Provider>
 
-### useDropHook props
+### useDropHook
 
 <FunctionAPI function={docs.exports.useDropHooks} links={docs.links} />
 <TypeContext.Provider value={dndDocs.links}>
   <InterfaceType properties={dndDocs.exports.DroppableCollectionProps.properties} />
 </TypeContext.Provider>
-
-As seen in the [example](#example) above, enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you may be familiar with.
-Instead of providing each event handler directly to the component, you must first import `useDragHooks` and `useDropHooks` from the `@react-spectrum/dnd` package
-and provide those hooks with your desired options. `useDragHooks` will then provide you with a set of drag hooks that you can pass to the component via its `dragHooks` prop, thus enabling drag operations for the component.
-Drop operations are then enabled in the same way by passing the hooks from `useDropHooks` to the component's `dropHooks` prop. This approach allows the drag and drop implementation to be included only when used,
-keeping bundle sizes small when unused by an application.
 
 Of the various hook options above, `getAllowedDropOperations` and `getDropOperation` may be of particular interest since it allows you to specify what kinds of drag and drop operations you want to allow.
 When the dragged items are dropped on a drop target created using the React Aria drag and drop hooks, the allowed drop operations you return in `getAllowedDropOperations`
