@@ -203,19 +203,19 @@ function ListItem({ item, state }) {
         outline: isFocusVisible ? '2px solid orange' : 'none'
       }}
     >
-      <div {...gridCellProps} style={{display: 'flex', justifyContent: 'space-between'}}>
-        <div>
-          {showCheckbox && <ListCheckbox item={item} state={state} />}
-          {item.rendered}
-        </div>
-        <Button onPress={() => alert(`Info for item ${item.key}`)}>Info</Button>
+      <div {...gridCellProps}>
+        {showCheckbox && <ListCheckbox item={item} state={state} />}
+        {item.rendered}
       </div>
     </li>
   );
 }
 
 <List aria-label="Example List" selectionMode="multiple" selectionBehavior="replace">
-  <Item key="1">Charizard</Item>
+  <Item key="1">
+    Charizard
+    <Button onPress={() => alert(`Info for Charizard...`)}>Info</Button>
+  </Item>
   <Item key="2">Blastoise</Item>
   <Item key="3">Venusaur</Item>
   <Item key="4">Pikachu</Item>
@@ -250,7 +250,10 @@ It's as simple as setting the `selectionMode` prop to `"multiple"`.
 
 ```tsx example
 <List aria-label="List with selection" selectionMode="multiple">
-  <Item key="1">Charizard</Item>
+  <Item key="1">
+    Charizard
+    <Button onPress={() => alert(`Info for Charizard...`)}>Info</Button>
+  </Item>
   <Item key="2">Blastoise</Item>
   <Item key="3">Venusaur</Item>
   <Item key="4">Pikachu</Item>
@@ -298,7 +301,7 @@ import {useButton} from '@react-aria/button';
 function Button(props) {
   let ref = React.useRef();
   let {buttonProps} = useButton(props, ref);
-  return <button {...buttonProps} ref={ref}>{props.children}</button>;
+  return <button {...buttonProps} ref={ref} style={{margin: '0 5px'}}>{props.children}</button>;
 }
 ```
 
