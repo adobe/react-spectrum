@@ -329,7 +329,6 @@
   .react-spectrum-ListViewItem-illustration,
   .react-spectrum-ListViewItem-image {
     grid-area: image;
-    align-items: center;
     justify-items: center;
     padding-inline-end: var(--spectrum-global-dimension-size-100);
     display: flex;
