@@ -48,9 +48,13 @@ A time field can be built using `<input type="time">`, but this is very limited 
 * **Touch friendly** – Time segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `useTimeField`.
+
 ## Anatomy
 
-<Anatomy />
+<Anatomy
+  role="img"
+  aria-label="Anatomy diagram of a time field component, which consists of a label, field, segments for each time unit." />
 
 A time field consists of a label, and a group of segments representing each unit of a time (e.g. hours, minutes, and seconds). Each segment is individually focusable and editable by the user, by typing or using the arrow keys to increment and decrement the value. This approach allows values to be formatted and parsed correctly regardless of the locale or time format, and offers an easy and error-free way to edit times using the keyboard.
 
@@ -235,7 +239,7 @@ import {parseZonedDateTime} from '@internationalized/date';
   defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
 ```
 
-`useTimeField` displays times in the time zone included in the `ZoneDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+`useTimeField` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
 
 ```tsx example
 import {parseAbsoluteToLocal} from '@internationalized/date';

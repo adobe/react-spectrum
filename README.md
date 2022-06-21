@@ -20,6 +20,12 @@ A library of React Hooks that provides cross-platform state management for your 
 
 [More information about React Stately](https://react-spectrum.adobe.com/react-stately/index.html)
 
+### Internationalized
+
+A collection of framework-agnostic internationalization libraries for the web.
+
+[Internationalized Packages](https://react-spectrum.adobe.com/internationalized/index.html)
+
 ## Features
 
 * ♿️ **[Accessible](https://react-spectrum.adobe.com/react-aria/accessibility.html)** – Accessibility and behavior is implemented according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.
