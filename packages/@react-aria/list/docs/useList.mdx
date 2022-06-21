@@ -212,7 +212,7 @@ function ListItem({ item, state }) {
 }
 
 <List aria-label="Example List" selectionMode="multiple" selectionBehavior="replace">
-  <Item key="1">
+  <Item key="1" textValue="Charizard">
     Charizard
     <Button onPress={() => alert(`Info for Charizard...`)}>Info</Button>
   </Item>
@@ -250,7 +250,7 @@ It's as simple as setting the `selectionMode` prop to `"multiple"`.
 
 ```tsx example
 <List aria-label="List with selection" selectionMode="multiple">
-  <Item key="1">
+  <Item key="1" textValue="Charizard">
     Charizard
     <Button onPress={() => alert(`Info for Charizard...`)}>Info</Button>
   </Item>
