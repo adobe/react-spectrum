@@ -113,7 +113,7 @@ the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} 
 and manage state such as the focused row and row selection. We'll use the collection to iterate through
 the rows of the List and render the relevant components, which we'll define below.
 
-You may notice the extra `<div>` with `gridCellProps` in our example. This is needed because we are following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
+You may notice the extra `<div>` with `gridCellProps` in our example. This is needed because we are following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), which does not allow rows without any child `gridcell` elements.
 
 You may also notice that we included an info button in the rows in our example. This is to highlight `useList`'s ability to handle interactive elements inside a row.
 This differs from [useListBox](useListBox.html), which is a selectable list with no support for interactive elements. If your list will not contain interactive elements,
@@ -203,12 +203,12 @@ function ListItem({ item, state }) {
         outline: isFocusVisible ? '2px solid orange' : 'none'
       }}
     >
-      <div {...gridCellProps}>
-        {showCheckbox && <ListCheckbox item={item} state={state} />}
-        {item.rendered}
-        <span style={{float: 'right'}}>
-          <Button onPress={() => alert(`Info for item ${item.key}`)}>Info</Button>
-        </span>
+      <div {...gridCellProps} style={{display: 'flex', justifyContent: 'space-between'}}>
+        <div>
+          {showCheckbox && <ListCheckbox item={item} state={state} />}
+          {item.rendered}
+        </div>
+        <Button onPress={() => alert(`Info for item ${item.key}`)}>Info</Button>
       </div>
     </li>
   );
@@ -226,13 +226,12 @@ function ListItem({ item, state }) {
 
 Next, let's add support for selection checkboxes. For multiple selection, we'll want to add a checkbox to the row to allow the user to select rows.
 This is done using the <TypeLink links={docs.links} type={docs.exports.useListSelectionCheckbox} />
-hook. It is passed the `parentKey` of the cell, which refers to the row the cell is contained within. When the user
+hook. It is passed the `key` of the item it is contained within. When the user
 checks or unchecks the checkbox, the row will be added or removed from the List's selection.
 
-In this example, we pass the result of the `checkboxProps` into the <TypeLink links={checkboxDocs.links} type={checkboxDocs.exports.useCheckbox} />
-hook and render an `<input>` element directly, but it's likely you'll have a `Checkbox` component in your component library that uses these hooks already.
-See the [useCheckbox docs](useCheckbox.html) for more information.
-
+In this example, we pass the result of the `checkboxProps` into our checkbox defined below.
+It's likely you'll have a `Checkbox` component in your component library that uses these hooks already.
+See below for an example.
 ```tsx example export=true render=false
 import {useListSelectionCheckbox} from '@react-aria/list';
 
@@ -240,16 +239,27 @@ import {useListSelectionCheckbox} from '@react-aria/list';
 import {Checkbox} from 'your-component-library';
 
 function ListCheckbox({ item, state }) {
-  let ref = useRef();
   let { checkboxProps } = useListSelectionCheckbox({ key: item.key }, state);
 
-  return (
-    <span ref={ref}>
-      <Checkbox {...checkboxProps} />
-    </span>
-  );
+  return <Checkbox {...checkboxProps} />;
 }
 ```
+
+The following example shows how to enable multiple selection support using the List component we built above.
+It's as simple as setting the `selectionMode` prop to `"multiple"`.
+
+```tsx example
+<List aria-label="List with selection" selectionMode="multiple">
+  <Item key="1">Charizard</Item>
+  <Item key="2">Blastoise</Item>
+  <Item key="3">Venusaur</Item>
+  <Item key="4">Pikachu</Item>
+</List>
+```
+
+And that's it! We now have a fully interactive List component that can support keyboard navigation, single or multiple selection.
+In addition, it is fully accessible for screen readers and other assistive technology. See below for more
+examples of how to use the List component that we've built.
 
 ### Checkbox
 
@@ -294,22 +304,6 @@ function Button(props) {
 
 </details>
 
-The following example shows how to enable multiple selection support using the List component we built above.
-It's as simple as setting the `selectionMode` prop to `"multiple"`.
-
-```tsx example
-<List aria-label="List with selection" selectionMode="multiple">
-  <Item key="1">Charizard</Item>
-  <Item key="2">Blastoise</Item>
-  <Item key="3">Venusaur</Item>
-  <Item key="4">Pikachu</Item>
-</List>
-```
-
-And that's it! We now have a fully interactive List component that can support keyboard navigation, single or multiple selection.
-In addition, it is fully accessible for screen readers and other assistive technology. See below for more
-examples of how to use the List component that we've built.
-
 ## Usage
 
 ### Dynamic collections
@@ -328,7 +322,7 @@ function ExampleList(props) {
   ];
 
   return (
-    <List aria-label="Example dynamic collection List" selectionMode="single" items={rows} {...props}>
+    <List aria-label="Example dynamic collection List" selectionMode="multiple" items={rows} {...props}>
       {item => <Item>{item.name}</Item>}
     </List>
   );
@@ -345,7 +339,7 @@ A user can click on a different row to change the selection, or click on the sam
 
 ```tsx example
 // Using the example above
-<ExampleList aria-label="List with single selection" selectionMode="single" defaultSelectedKeys={[2]} />
+<ExampleList aria-label="List with single selection" selectionMode="single" selectionBehavior="replace" defaultSelectedKeys={[2]} />
 ```
 
 ### Multiple selection
@@ -364,7 +358,7 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 ```tsx example
 // Using the example above
-<ExampleList aria-label="List with disallowed empty selection" selectionMode="single" defaultSelectedKeys={[2]} disallowEmptySelection />
+<ExampleList aria-label="List with disallowed empty selection" selectionMode="multiple" defaultSelectedKeys={[2]} disallowEmptySelection />
 ```
 
 ### Controlled selection
@@ -405,7 +399,7 @@ Note that you are responsible for the styling of disabled rows, however, the sel
 
 By default, `useList` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with a checkbox in each row as an explicit affordance for selection.
 
-In the highlight selection style, however, clicking a row with the mouse replaces the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier keys may not be available.
+When `selectionBehavior` is set to `"replace"`, clicking a row with the mouse replaces the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier keys may not be available.
 
 These selection styles implement the behaviors defined in [Aria Practices](https://w3c.github.io/aria-practices/#listbox_kbd_interaction).
 
@@ -419,7 +413,7 @@ These selection styles implement the behaviors defined in [Aria Practices](https
 Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the list is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
 be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
 
-This behavior is slightly different in the highlight selection style, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
+This behavior is slightly different when `selectionBehavior="replace"`, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
 
 ```tsx example
 <PokemonList aria-label="Checkbox selection list with row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
