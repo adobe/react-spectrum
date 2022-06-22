@@ -88,7 +88,7 @@ import {parseZonedDateTime} from '@internationalized/date';
   defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
 ```
 
-`DatePicker` displays times in the time zone included in the `ZoneDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+`DatePicker` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
 
 ```tsx example
 import {parseAbsoluteToLocal} from '@internationalized/date';
