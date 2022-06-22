@@ -131,6 +131,7 @@
     "lerna": "^3.13.2",
     "lfcdn": "^0.4.2",
     "md5": "^2.2.1",
+    "npm-cli-login": "^1.0.0",
     "nyc": "^10.2.0",
     "p-queue": "^6.2.1",
     "parcel": "^2.2.1",
@@ -166,6 +167,7 @@
     "typescript": "^4.6.0",
     "typescript-strict-plugin": "^2.0.0",
     "url-loader": "^1.1.2",
+    "verdaccio": "^5.13.0",
     "walk-object": "^4.0.0",
     "webpack": "^4.44.2",
     "webpack-dev-middleware": "^3.6.1",
@@ -179,9 +181,5 @@
     "postcss-calc": "6.0.2",
     "jsdom": "16.7.0",
     "postcss-modules": "^3.2.2"
-  },
-  "dependencies": {
-    "npm-cli-login": "^1.0.0",
-    "verdaccio": "^5.13.0"
   }
 }
