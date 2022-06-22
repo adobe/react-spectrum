@@ -11,10 +11,9 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
-import {installPointerEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

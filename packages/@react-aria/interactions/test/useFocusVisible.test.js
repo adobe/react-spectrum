@@ -9,9 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, fireEvent, render, screen} from '@testing-library/react';
+import {act, fireEvent, render, renderHook, screen} from '@react-spectrum/test-utils';
 import React from 'react';
-import {renderHook} from '@react-spectrum/test-utils';
 import {useFocusVisible, useFocusVisibleListener} from '../';
 
 function Example(props) {
