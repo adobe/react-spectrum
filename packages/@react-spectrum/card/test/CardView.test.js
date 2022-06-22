@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {Content} from '@react-spectrum/view';
 import {FalsyIds, falsyItems} from '../stories/GridCardView.stories';
@@ -20,7 +20,6 @@ import {Provider} from '@react-spectrum/provider';
 import React, {useMemo} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {triggerPress} from '@react-spectrum/test-utils';
 import {useCollator} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
 

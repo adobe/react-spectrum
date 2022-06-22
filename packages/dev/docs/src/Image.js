@@ -70,3 +70,13 @@ export function Video({src, ...otherProps}) {
     <video src={url} playsInline className={docStyles.video} {...otherProps} />
   );
 }
+
+export function Track({src, ...otherProps}) {
+  let publicUrl = React.useContext(ImageContext);
+  let baseUrl = publicUrl.replace(/\/$/, '');
+  let url = baseUrl + '/' + path.basename(src);
+
+  return (
+    <track src={url} {...otherProps} />
+  );
+}

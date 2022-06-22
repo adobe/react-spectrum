@@ -30,6 +30,18 @@ describe('Color', function () {
       expect(color.toString('css')).toBe('rgba(170, 187, 204, 1)');
     });
 
+    it('should parse a short hexa color', function () {
+      let color = parseColor('#abc9');
+      expect(color.getChannelValue('red')).toBe(170);
+      expect(color.getChannelValue('green')).toBe(187);
+      expect(color.getChannelValue('blue')).toBe(204);
+      expect(color.getChannelValue('alpha')).toBe(0.6);
+      expect(color.toString('hex')).toBe('#AABBCC');
+      expect(color.toString('rgb')).toBe('rgb(170, 187, 204)');
+      expect(color.toString('rgba')).toBe('rgba(170, 187, 204, 0.6)');
+      expect(color.toString('css')).toBe('rgba(170, 187, 204, 0.6)');
+    });
+
     it('should parse a long hex color', function () {
       let color = parseColor('#abcdef');
       expect(color.getChannelValue('red')).toBe(171);
@@ -40,6 +52,18 @@ describe('Color', function () {
       expect(color.toString('rgb')).toBe('rgb(171, 205, 239)');
       expect(color.toString('rgba')).toBe('rgba(171, 205, 239, 1)');
       expect(color.toString('css')).toBe('rgba(171, 205, 239, 1)');
+    });
+
+    it('should parse a long hexa color', function () {
+      let color = parseColor('#abcdef99');
+      expect(color.getChannelValue('red')).toBe(171);
+      expect(color.getChannelValue('green')).toBe(205);
+      expect(color.getChannelValue('blue')).toBe(239);
+      expect(color.getChannelValue('alpha')).toBe(0.6);
+      expect(color.toString('hex')).toBe('#ABCDEF');
+      expect(color.toString('rgb')).toBe('rgb(171, 205, 239)');
+      expect(color.toString('rgba')).toBe('rgba(171, 205, 239, 0.6)');
+      expect(color.toString('css')).toBe('rgba(171, 205, 239, 0.6)');
     });
 
     it('should throw on invalid hex value', function () {

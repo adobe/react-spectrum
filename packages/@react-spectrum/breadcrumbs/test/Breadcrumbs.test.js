@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, waitFor, within} from '@testing-library/react';
+
+import {act, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {Breadcrumbs} from '../';
 import {DynamicBreadcrumbs} from '../stories/Breadcrumbs.stories';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('Breadcrumbs', function () {
   beforeAll(() => {
