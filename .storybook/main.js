@@ -36,5 +36,8 @@ module.exports = {
     }
 
     return resultConfig;
-  }
+  },
+  reactOptions: {
+    strictMode: process.env.STRICT_MODE
+  },
 };

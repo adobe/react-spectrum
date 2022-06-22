@@ -12,8 +12,7 @@
 
 import {ActionButton} from '../';
 import React from 'react';
-import {render} from '@testing-library/react';
-import {triggerPress} from '@react-spectrum/test-utils';
+import {render, triggerPress} from '@react-spectrum/test-utils';
 
 describe('ActionButton', function () {
   let onPressSpy = jest.fn();
