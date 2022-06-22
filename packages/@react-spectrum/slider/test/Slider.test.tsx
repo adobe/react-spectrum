@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
-import {installMouseEvent} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, render} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
