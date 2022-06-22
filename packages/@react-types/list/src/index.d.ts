@@ -58,13 +58,11 @@ export interface SpectrumListProps<T> extends AriaListProps<T>, StyleProps, Spec
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
   disabledBehavior?: DisabledBehavior,
   /**
-   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
-   * [docs](https://react-spectrum.adobe.com/react-spectrum/dragAndDrop.html) for more info.
+   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView.
    */
   dragHooks?: DragHooks,
   /**
-   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView. See the
-   * [docs](https://react-spectrum.adobe.com/react-spectrum/dragAndDrop.html) for more info.
+   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView.
    */
   dropHooks?: DropHooks
 }
