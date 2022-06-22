@@ -12,7 +12,7 @@
 
 import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {useIsSSR} from '../../../react-aria';
+import {useIsSSR} from '@react-aria/ssr';
 
 interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode
