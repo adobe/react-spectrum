@@ -313,7 +313,7 @@ function Button(props) {
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
-As seen below, an iterable list of options is passed to the ComboBox using the `defaultItems` prop. Each item accepts a `key` prop, which
+As seen below, an iterable list of options is passed to the ComboBox using the `items` prop. Each item accepts a `key` prop, which
 is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
 as shown in the example below, then this is used automatically and a `key` prop is not required.
 
@@ -364,7 +364,8 @@ function Example() {
 ## Sections
 
 Menu supports sections with separators and headings in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` and `key` prop.
-To implement sections, use the <TypeLink links={docs.links} type={docs.exports.useMenuSection} /> hook, and add four extra elements:
+To implement sections, implement the `ListBoxSection` component referenced above
+using the <TypeLink links={docs.links} type={docs.exports.useMenuSection} /> hook. It will include four extra elements:
 an `<li>` between the sections to represent the separator, an `<li>` to contain the heading `<span>` element, and a
 `<ul>` to contain the child items. This structure is necessary to ensure HTML
 semantics are correct.
