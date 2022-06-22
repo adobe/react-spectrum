@@ -106,7 +106,7 @@ const itemsWithThumbs = [
   {key: '9', title: 'folder of great bois', illustration: <Folder />}
 ];
 
-export function IllustrationContainer(props) {
+function IllustrationContainer(props) {
   props = useSlotProps(props, 'illustration');
   let {styleProps} = useStyleProps(props);
   return (
@@ -116,7 +116,7 @@ export function IllustrationContainer(props) {
   );
 }
 
-export function Folder() {
+function Folder() {
   return (
     <IllustrationContainer>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95.23 67" height="110">
