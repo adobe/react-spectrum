@@ -779,6 +779,42 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(item2);
     });
 
+    it('should move focus forward and allow users to skip certain elements', function () {
+      function Test() {
+        return (
+          <FocusScope>
+            <Item data-testid="item1" />
+            <Item data-testid="item2" data-skip />
+            <Item data-testid="item3" />
+          </FocusScope>
+        );
+      }
+
+      function Item(props) {
+        let focusManager = useFocusManager();
+        let onClick = () => {
+          focusManager.focusNext({
+            wrap: true,
+            accept: (e) => !e.getAttribute('data-skip')
+          });
+        };
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+        return <div {...props} tabIndex={-1} role="button" onClick={onClick} />;
+      }
+
+      let {getByTestId} = render(<Test />);
+      let item1 = getByTestId('item1');
+      let item3 = getByTestId('item3');
+
+      act(() => {item1.focus();});
+
+      fireEvent.click(item1);
+      expect(document.activeElement).toBe(item3);
+
+      fireEvent.click(item3);
+      expect(document.activeElement).toBe(item1);
+    });
+
     it('should move focus backward', function () {
       function Test() {
         return (
@@ -929,6 +965,42 @@ describe('FocusScope', function () {
       // focus should remain unchanged,
       // because there is no focusable element in scope before group1,
       // and wrap is false
+      expect(document.activeElement).toBe(item1);
+    });
+
+    it('should move focus backward and allow users to skip certain elements', function () {
+      function Test() {
+        return (
+          <FocusScope>
+            <Item data-testid="item1" />
+            <Item data-testid="item2" data-skip />
+            <Item data-testid="item3" />
+          </FocusScope>
+        );
+      }
+
+      function Item(props) {
+        let focusManager = useFocusManager();
+        let onClick = () => {
+          focusManager.focusPrevious({
+            wrap: true,
+            accept: (e) => !e.getAttribute('data-skip')
+          });
+        };
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+        return <div {...props} tabIndex={-1} role="button" onClick={onClick} />;
+      }
+
+      let {getByTestId} = render(<Test />);
+      let item1 = getByTestId('item1');
+      let item3 = getByTestId('item3');
+
+      act(() => {item1.focus();});
+
+      fireEvent.click(item1);
+      expect(document.activeElement).toBe(item3);
+
+      fireEvent.click(item3);
       expect(document.activeElement).toBe(item1);
     });
   });
