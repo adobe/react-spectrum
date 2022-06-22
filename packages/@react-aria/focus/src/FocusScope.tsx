@@ -147,10 +147,10 @@ function createFocusManagerForScope(scopeRef: React.RefObject<HTMLElement[]>): F
   return {
     focusNext(opts: FocusManagerOptions = {}) {
       let scope = scopeRef.current;
-      let {from, tabbable, wrap} = opts;
+      let {from, tabbable, wrap, accept} = opts;
       let node = from || document.activeElement;
       let sentinel = scope[0].previousElementSibling;
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable, accept}, scope);
       walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
       let nextNode = walker.nextNode() as HTMLElement;
       if (!nextNode && wrap) {
@@ -164,10 +164,10 @@ function createFocusManagerForScope(scopeRef: React.RefObject<HTMLElement[]>): F
     },
     focusPrevious(opts: FocusManagerOptions = {}) {
       let scope = scopeRef.current;
-      let {from, tabbable, wrap} = opts;
+      let {from, tabbable, wrap, accept} = opts;
       let node = from || document.activeElement;
       let sentinel = scope[scope.length - 1].nextElementSibling;
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable, accept}, scope);
       walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
       let previousNode = walker.previousNode() as HTMLElement;
       if (!previousNode && wrap) {
@@ -181,8 +181,8 @@ function createFocusManagerForScope(scopeRef: React.RefObject<HTMLElement[]>): F
     },
     focusFirst(opts = {}) {
       let scope = scopeRef.current;
-      let {tabbable} = opts;
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+      let {tabbable, accept} = opts;
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable, accept}, scope);
       walker.currentNode = scope[0].previousElementSibling;
       let nextNode = walker.nextNode() as HTMLElement;
       if (nextNode) {
@@ -192,8 +192,8 @@ function createFocusManagerForScope(scopeRef: React.RefObject<HTMLElement[]>): F
     },
     focusLast(opts = {}) {
       let scope = scopeRef.current;
-      let {tabbable} = opts;
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+      let {tabbable, accept} = opts;
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable, accept}, scope);
       walker.currentNode = scope[scope.length - 1].nextElementSibling;
       let previousNode = walker.previousNode() as HTMLElement;
       if (previousNode) {
