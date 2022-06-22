@@ -11,9 +11,9 @@
  */
 
 import {AriaDialogProps} from '@react-types/dialog';
-import {filterDOMProps, useLayoutEffect, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, RefObject, useState} from 'react';
+import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
 
 interface DialogAria {
   /** Props for the dialog container element. */
@@ -34,7 +34,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
   titleId = props['aria-label'] ? undefined : titleId;
 
   // Focus the dialog itself on mount, unless a child element is already focused.
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       if (!ref.current.contains(document.activeElement)) {
         focusSafely(ref.current);
