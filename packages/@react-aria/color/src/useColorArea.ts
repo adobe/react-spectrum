@@ -351,7 +351,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     'aria-label': ariaLabel ? formatMessage('colorInputLabel', {label: ariaLabel, channelLabel: colorPickerLabel}) : colorPickerLabel
   });
 
-  let colorAriaLabellingProps = useLabels(
+  let colorAreaLabellingProps = useLabels(
     {
       ...props,
       'aria-label': ariaLabel ? `${ariaLabel} ${colorPickerLabel}` : undefined
@@ -382,7 +382,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
 
   return {
     colorAreaProps: {
-      ...colorAriaLabellingProps,
+      ...colorAreaLabellingProps,
       ...colorAreaInteractions,
       ...colorAreaStyleProps,
       role: 'group'
