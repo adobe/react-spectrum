@@ -414,7 +414,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
         add aria-hidden="true" to the unfocused control when the value has not changed via the keyboard,
         but remove aria-hidden to reveal the input for each channel when the value has changed with the keyboard.
       */
-      'aria-hidden': (!isMobile && focusedInputRef.current === inputYRef.current && !valueChangedViaKeyboard.current ? 'true' : undefined),
+      'aria-hidden': (isMobile || !focusedInputRef.current || focusedInputRef.current === inputXRef.current || valueChangedViaKeyboard.current ? undefined : 'true'),
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         state.setXValue(parseFloat(e.target.value));
       }
@@ -432,13 +432,13 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
       'aria-orientation': 'vertical',
       disabled: isDisabled,
       value: state.value.getChannelValue(yChannel),
-      tabIndex: (isMobile || focusedInputRef.current === inputYRef.current ? undefined : -1),
+      tabIndex: (isMobile || (focusedInputRef.current && focusedInputRef.current === inputYRef.current) ? undefined : -1),
       /*
         So that only a single "2d slider" control shows up when listing form elements for screen readers,
         add aria-hidden="true" to the unfocused input when the value has not changed via the keyboard,
         but remove aria-hidden to reveal the input for each channel when the value has changed with the keyboard.
       */
-      'aria-hidden': (isMobile || focusedInputRef.current === inputYRef.current || valueChangedViaKeyboard.current ? undefined : 'true'),
+      'aria-hidden': (isMobile || (focusedInputRef.current && focusedInputRef.current === inputYRef.current) || valueChangedViaKeyboard.current ? undefined : 'true'),
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         state.setYValue(parseFloat(e.target.value));
       }
