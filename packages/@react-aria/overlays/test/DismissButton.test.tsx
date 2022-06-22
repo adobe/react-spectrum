@@ -12,7 +12,7 @@
 
 import {DismissButton} from '..';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils';
 
 
 describe('DismissButton', function () {
