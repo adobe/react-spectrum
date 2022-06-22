@@ -354,7 +354,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
   let colorAreaLabellingProps = useLabels(
     {
       ...props,
-      'aria-label': ariaLabel ? `${ariaLabel} ${colorPickerLabel}` : undefined
+      'aria-label': ariaLabel ? `${ariaLabel}, ${colorPickerLabel}` : undefined
     },
     isMobile ? colorPickerLabel : undefined
   );
