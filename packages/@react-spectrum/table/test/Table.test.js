@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, typeText, within} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
@@ -24,7 +24,6 @@ import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from '../stories/HidingColumns';
-import {installPointerEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -32,7 +31,6 @@ import {Switch} from '@react-spectrum/switch';
 import {TableWithBreadcrumbs} from '../stories/Table.stories';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let columns = [

@@ -10,11 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-let reactTestingLibrary = require('@testing-library/react');
-export let renderHook = reactTestingLibrary.renderHook;
-export let actHook = reactTestingLibrary.act;
-if (!renderHook) {
-  let rhtl = require('@testing-library/react-hooks');
-  renderHook = rhtl.renderHook;
-  actHook = rhtl.act;
+import React, {StrictMode} from 'react';
+
+export function StrictModeWrapper(props) {
+  if (process.env.STRICT_MODE) {
+    return (
+      <StrictMode>
+        {props.children}
+      </StrictMode>
+    );
+  }
+
+  return props.children;
 }

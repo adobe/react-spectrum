@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '../';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 // Sync with useTooltipTriggerState.ts
 const TOOLTIP_DELAY = 1500;

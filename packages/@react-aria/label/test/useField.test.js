@@ -11,8 +11,7 @@
  */
 
 import React from 'react';
-import {render} from '@testing-library/react';
-import {renderHook} from '@react-spectrum/test-utils';
+import {render, renderHook} from '@react-spectrum/test-utils';
 import {useField} from '../';
 import {WithError} from '../stories/useField.stories';
 
