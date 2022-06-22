@@ -137,6 +137,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
+      isDisabled,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
       onKeyUp: props.onKeyUp,
       'aria-labelledby': [
@@ -196,7 +197,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         if (props.onFocusChange) {
           props.onFocusChange(false);
         }
-        
+
         state.setFocused(false);
       },
       'aria-labelledby': [
