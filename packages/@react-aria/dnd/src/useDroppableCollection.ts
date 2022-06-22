@@ -34,7 +34,7 @@ interface DroppingState {
   collection: Collection<Node<unknown>>,
   focusedKey: Key,
   selectedKeys: Set<Key>,
-  timeout: NodeJS.Timeout
+  timeout: ReturnType<typeof setTimeout>
 }
 
 const DROP_POSITIONS: DropPosition[] = ['before', 'on', 'after'];

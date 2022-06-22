@@ -5,7 +5,7 @@ function hasResizeObserver() {
 }
 
 type useResizeObserverOptionsType<T> = {
-  ref: RefObject<T>,
+  ref: RefObject<T | undefined>,
   onResize: () => void
 }
 
