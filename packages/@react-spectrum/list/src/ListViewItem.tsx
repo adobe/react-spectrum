@@ -14,7 +14,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider, useHasChild} from '@react-spectrum/utils';
 import {CSSTransition} from 'react-transition-group';
-import type {DraggableItemResult, DroppableItemResult} from '@react-aria/dnd';
+import type {DraggableItemResult, DropIndicatorAria, DroppableItemResult} from '@react-aria/dnd';
 import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -80,11 +80,14 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   }
   let droppableItem: DroppableItemResult;
   let isDropTarget: boolean;
+  let dropIndicator: DropIndicatorAria;
+  let dropIndicatorRef = useRef();
   if (isListDroppable) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     droppableItem = dropHooks.useDroppableItem({target}, dropState, rowRef);
+    dropIndicator = dropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
   }
 
   let dragButtonRef = React.useRef();
@@ -222,6 +225,9 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
                 </FocusRing>
               }
             </div>
+          }
+          {isDropTarget && !dropIndicator?.dropIndicatorProps['aria-hidden'] &&
+            <div role="button" {...visuallyHiddenProps} {...dropIndicator?.dropIndicatorProps} ref={dropIndicatorRef} />
           }
           <CSSTransition
             in={showCheckbox}

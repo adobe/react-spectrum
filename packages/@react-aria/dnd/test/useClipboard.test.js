@@ -11,7 +11,7 @@
  */
 
 import {ClipboardEvent, DataTransfer, DataTransferItem} from './mocks';
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useClipboard} from '../';
 import userEvent from '@testing-library/user-event';

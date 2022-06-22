@@ -153,10 +153,10 @@ class DragSession {
   currentDropItem: DroppableItem;
   dropOperation: DropOperation;
   private mutationObserver: MutationObserver;
-  private mutationImmediate: NodeJS.Immediate;
   private restoreAriaHidden: () => void;
   private formatMessage: (key: string) => string;
   private isVirtualClick: boolean;
+  private initialFocused: boolean;
 
   constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
@@ -168,6 +168,7 @@ class DragSession {
     this.onClick = this.onClick.bind(this);
     this.onPointerDown = this.onPointerDown.bind(this);
     this.cancelEvent = this.cancelEvent.bind(this);
+    this.initialFocused = false;
   }
 
   setup() {
@@ -202,9 +203,6 @@ class DragSession {
 
     this.mutationObserver.disconnect();
     this.restoreAriaHidden();
-    if (this.mutationImmediate) {
-      clearImmediate(this.mutationImmediate);
-    }
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -446,6 +444,13 @@ class DragSession {
 
       item?.element.focus();
       this.currentDropItem = item;
+
+      // Annouce first drop target after drag start announcement finishes.
+      // Otherwise, it will never get announced because drag start announcement is assertive.
+      if (!this.initialFocused) {
+        announce(item?.element.getAttribute('aria-label'), 'polite');
+        this.initialFocused = true;
+      }
     }
   }
 
