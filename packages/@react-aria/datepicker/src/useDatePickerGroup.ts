@@ -81,6 +81,8 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
   };
 
   let {pressProps} = usePress({
+    preventFocusOnPress: true,
+    allowTextSelectionOnPress: true,
     onPressStart(e) {
       if (e.pointerType === 'mouse') {
         focusLast();
