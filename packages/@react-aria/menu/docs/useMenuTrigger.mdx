@@ -619,7 +619,7 @@ function MenuItem({item, state}) {
 
 ## Disabled items
 
-`useMenu` supports marking items as disabled using the `disabledKeys` property. Each key in this list
+`useMenu` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
 to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
 
@@ -636,8 +636,7 @@ The `isDisabled` property returned by `useMenuItem` can be used to style the ite
 
 ## Controlled open state
 
-The `isOpen` and `defaultOpen` props on the MenuTrigger control whether the Menu is open by default.
-They apply controlled and uncontrolled behavior on the Menu respectively.
+The open state of the menu can be controlled via the `defaultOpen` and `isOpen` props
 
 ```tsx example
 function Example() {

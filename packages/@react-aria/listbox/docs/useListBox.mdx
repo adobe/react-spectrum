@@ -202,7 +202,7 @@ function Option({item, state}) {
 The example above shows static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
-As seen below, an iterable list of options is passed to the ComboBox using the `items` prop. Each item accepts a `key` prop, which
+As seen below, an iterable list of options is passed to the ListBox using the `items` prop. Each item accepts a `key` prop, which
 is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
 as shown in the example below, then this is used automatically and a `key` prop is not required.
 
@@ -230,9 +230,9 @@ function Example() {
 
 ## Selection
 
-Menu supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
+ListBox supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
-See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for more details.
+See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
 ```tsx example
 function Example() {

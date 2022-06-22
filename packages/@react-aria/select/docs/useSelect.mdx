@@ -363,6 +363,160 @@ function Button(props) {
   title="Styled Components"
   description="A Select with complex item content built with Styled Components." />
 
+## Usage
+
+The following examples show how to use the Select component created in the above example.
+
+### Dynamic collections
+
+`Select` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
+as shown below, can be used when the options come from an external data source such as an API call, or update over time.
+
+As seen below, an iterable list of options is passed to the Select using the `items` prop. Each item accepts a `key` prop, which
+is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
+as shown in the example below, then this is used automatically and a `key` prop is not required.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, name: 'Aerospace'},
+    {id: 2, name: 'Mechanical'},
+    {id: 3, name: 'Civil'},
+    {id: 4, name: 'Biomedical'},
+    {id: 5, name: 'Nuclear'},
+    {id: 6, name: 'Industrial'},
+    {id: 7, name: 'Chemical'},
+    {id: 8, name: 'Agricultural'},
+    {id: 9, name: 'Electrical'}
+  ];
+
+  return (
+    <>
+      <Select label="Pick an engineering major" items={options}>
+        {(item) => <Item>{item.name}</Item>}
+      </Select>
+    </>
+  );
+}
+```
+
+### Controlled selection
+
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item.
+When `Select` is used with a dynamic collection as described above, the key of each item is derived from the data.
+See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+
+```tsx example
+function Example() {
+  let options = [
+    {name: 'Koala'},
+    {name: 'Kangaroo'},
+    {name: 'Platypus'},
+    {name: 'Bald Eagle'},
+    {name: 'Bison'},
+    {name: 'Skunk'}
+  ];
+  let [animal, setAnimal] = React.useState("Bison");
+
+  return (
+    <Select
+      label="Pick an animal (controlled)"
+      items={options}
+      selectedKey={animal}
+      onSelectionChange={selected => setAnimal(selected)}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </Select>
+  );
+}
+```
+
+### Asynchronous loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+of data from a server. You may additionally want to display a spinner to indicate the loading
+state to the user, or support features like infinite scroll to load more data.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList({
+    async load({signal, filterText}) {
+      let res = await fetch(
+        `https://pokeapi.co/api/v2/pokemon`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results
+      };
+    }
+  });
+
+  return (
+    <Select label="Pick a Pokemon" items={list.items} selectionMode="single">
+      {(item) => <Item key={item.name}>{item.name}</Item>}
+    </Select>
+  );
+}
+```
+
+### Disabled
+
+A Select can be fully disabled using the `isDisabled` prop.
+
+```tsx example
+<Select label="Choose frequency" isDisabled>
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
+</Select>
+```
+
+### Disabled options
+
+`useSelect` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
+corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
+to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
+
+Disabled items are not focusable, selectable, or keyboard navigable. The `isDisabled` property returned by
+`useOption` can be used to style the item appropriately.
+
+```tsx example
+<Select label="Favorite Animal" disabledKeys={['cat', 'kangaroo']}>
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</Select>
+```
+
+### Controlled open state
+
+The open state of the select can be controlled via the `defaultOpen` and `isOpen` props
+
+```tsx example
+function Example() {
+  let [open, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <p>Select is {open ? 'open' : 'closed'}</p>
+      <Select label="Choose frequency" isOpen={open} onOpenChange={setOpen}>
+        <Item key="rarely">Rarely</Item>
+        <Item key="sometimes">Sometimes</Item>
+        <Item key="always">Always</Item>
+      </Select>
+    </>
+  );
+}
+```
+
+
 ## Internationalization
 
 `useSelect` and `useListBox` handle some aspects of internationalization automatically.
