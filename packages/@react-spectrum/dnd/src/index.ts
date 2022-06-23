@@ -14,3 +14,4 @@
 
 export * from './useDragHooks';
 export * from './useDropHooks';
+export * from './useReorderable';

@@ -449,7 +449,7 @@ function DragIntoListExample() {
       <ListView
         aria-label="Droppable ListView in drag into list example"
         width="size-3600"
-         height="size-2400"
+        height="size-2400"
         items={targetList.items}
         dropHooks={dropHooks}>
         {item => (
@@ -773,7 +773,7 @@ function DragBetweenListsExample() {
         destinationList.append(...keys.map(key => sourceList.getItem(key)));
       } else if (dropEventTarget.dropPosition === 'before') {
         destinationList.insertBefore(dropEventTarget.key, ...keys.map(key => sourceList.getItem(key)));
-      } else if (dropEventTarget.dropPosition === 'after'){
+      } else if (dropEventTarget.dropPosition === 'after') {
         destinationList.insertAfter(dropEventTarget.key, ...keys.map(key => sourceList.getItem(key)));
       }
       sourceList.remove(...keys);
