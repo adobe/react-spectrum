@@ -55,7 +55,7 @@ export interface SliderThumbProps extends FocusableProps, Validation, LabelableP
   index: number
 }
 
-export interface AriaSliderProps<T = number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaSliderProps<T = number | number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}
 export interface AriaSliderThumbProps extends SliderThumbProps, DOMProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {}
 
 export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<T>, StyleProps {

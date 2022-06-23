@@ -150,7 +150,7 @@ const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP_VALUE = 1;
 
-interface SliderStateOptions extends SliderProps {
+interface SliderStateOptions<T> extends SliderProps<T> {
   numberFormatter: Intl.NumberFormat
 }
 
@@ -160,7 +160,7 @@ interface SliderStateOptions extends SliderProps {
  * of any thumbs.
  * @param props
  */
-export function useSliderState(props: SliderStateOptions): SliderState {
+export function useSliderState<T extends number | number[]>(props: SliderStateOptions<T>): SliderState {
   const {
     isDisabled = false,
     minValue = DEFAULT_MIN_VALUE,
@@ -179,13 +179,8 @@ export function useSliderState(props: SliderStateOptions): SliderState {
 
   let value = useMemo(() => convertValue(props.value), [props.value]);
   let defaultValue = useMemo(() => convertValue(props.defaultValue) ?? [minValue], [props.defaultValue, minValue]);
-  let onChange = (value: number[]) => {
-    if (Array.isArray(props.value) || Array.isArray(props.defaultValue)) {
-      props.onChange?.(value);
-    } else {
-      props.onChange?.(value[0]);
-    }
-  };
+  let onChange = createOnChange(props.value, props.defaultValue, props.onChange);
+  let onChangeEnd = createOnChange(props.value, props.defaultValue, props.onChangeEnd);
 
   const [values, setValues] = useControlledState<number[]>(
     value,
@@ -243,8 +238,8 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     setDraggings(isDraggingsRef.current);
 
     // Call onChangeEnd if no handles are dragging.
-    if (props.onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
-      props.onChangeEnd(valuesRef.current);
+    if (onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
+      onChangeEnd(valuesRef.current);
     }
   }
 
@@ -316,4 +311,14 @@ function convertValue(value: number | number[]) {
   }
 
   return Array.isArray(value) ? value : [value];
+}
+
+function createOnChange(value, defaultValue, onChange) {
+  return (newValue: number[]) => {
+    if (Array.isArray(value) || Array.isArray(defaultValue)) {
+      onChange?.(newValue);
+    } else {
+      onChange?.(newValue[0]);
+    }
+  };
 }

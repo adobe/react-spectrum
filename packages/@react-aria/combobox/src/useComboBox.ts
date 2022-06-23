@@ -75,7 +75,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   } = props;
 
   let formatMessage = useMessageFormatter(intlMessages);
-  let {menuTriggerProps, menuProps} = useMenuTrigger(
+  let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
     {
       type: 'listbox',
       isDisabled: isDisabled || isReadOnly
