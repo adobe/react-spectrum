@@ -110,7 +110,7 @@ This example uses CSS to reset the default browser styling for a search field an
 custom styles. It also includes a custom clear button, built with [useButton](useButton.html).
 The `Button` component is independent, and can be shared with many other components.
 
-```tsx example
+```tsx example export=true
 // Reuse the Button from your component library. See below for details.
 import {Button} from 'your-component-library';
 
@@ -195,6 +195,92 @@ function Button(props) {
 ```
 
 </details>
+
+## Usage
+
+The following examples show how to use the `SearchField` component created in the above example.
+
+### Default value
+
+A SearchField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+
+```tsx example
+<SearchField
+  label="Search"
+  defaultValue="Puppies" />
+```
+
+### Controlled value
+
+The `value` prop can be used to make the value controlled. The `onChange` event is fired when the user edits the text, and receives the new value.
+
+```tsx example
+function Example() {
+  let [text, setText] = React.useState();
+
+  return (
+    <>
+      <SearchField label="Search" onChange={setText} />
+      <p>Mirrored text: {text}</p>
+    </>
+  );
+}
+```
+
+### Events
+
+The most commonly used handlers for events in SearchField are the:
+- `onChange` prop which is triggered whenever the value is edited by the user.
+- `onSubmit` prop which is triggered whenever the value is submitted by the user (e.g. by pressing <Keyboard>Enter</Keyboard>).
+- `onClear` prop which is triggered whenever the value is cleared by the user (e.g. by pressing clear button or <Keyboard>Escape</Keyboard> key).
+
+The example below uses `onChange`, `onSubmit`, and `onClear` to update two separate elements with the text entered into the SearchField.
+
+```tsx example
+function Example() {
+  let [currentText, setCurrentText] = React.useState('');
+  let [submittedText, setSubmittedText] = React.useState('');
+
+  return (
+    <div>
+      <SearchField
+        onClear={() => setCurrentText('')}
+        onChange={setCurrentText}
+        onSubmit={setSubmittedText}
+        label="Your text"
+        value={currentText}
+      />
+      <p>Mirrored text: {currentText}</p>
+      <p>Submitted text: {submittedText}</p>
+    </div>
+  );
+}
+```
+
+### Disabled
+
+A SearchField can be disabled using the `isDisabled` prop.
+
+```tsx example
+<SearchField label="Email" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled`, the SearchField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<SearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
+```
+
+### HTML forms
+
+SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<SearchField label="Email" name="email" type="email" />
+```
 
 ## Internationalization
 
