@@ -165,7 +165,8 @@ The following examples show how to use the `CheckboxGroup` component created in 
 
 ### Default value
 
-An initial, uncontrolled value can be provided to the CheckboxGroup using the `defaultValue` prop.
+An initial, uncontrolled value can be provided to the CheckboxGroup using the `defaultValue` prop, which accepts an array of selected items, which map to the
+`value` prop on each Checkbox.
 
 ```tsx example
 <CheckboxGroup label="Favorite sports (uncontrolled)" defaultValue={['soccer', 'baseball']}>
@@ -177,8 +178,9 @@ An initial, uncontrolled value can be provided to the CheckboxGroup using the `d
 
 ### Controlled value
 
-A controlled value can be provided using the `value` prop. Both of these props accept an array of selected items, which map to the
-`value` prop on each Checkbox.
+A controlled value can be provided using the `value` prop, which accepts an array of selected items, which map to the
+`value` prop on each Checkbox. The `onChange` event is fired when the user checks or unchecks an option. It receives a new array
+containing the updated selected values.
 
 ```tsx example
 function Example() {
