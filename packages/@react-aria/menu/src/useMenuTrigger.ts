@@ -16,8 +16,8 @@ import {AriaMenuOptions} from './useMenu';
 import intlMessages from '../intl/*.json';
 import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
-import {mergeProps, useId} from '@react-aria/utils';
 import {RefObject} from 'react';
+import {useId} from '@react-aria/utils';
 import {useLongPress} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';
@@ -118,11 +118,10 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     }
   };
 
-  triggerProps = mergeProps(triggerProps, trigger === 'press' ? pressProps : longPressProps);
-
   return {
     menuTriggerProps: {
       ...triggerProps,
+      ...(trigger === 'press' ? pressProps : longPressProps),
       id: menuTriggerId,
       onKeyDown
     },

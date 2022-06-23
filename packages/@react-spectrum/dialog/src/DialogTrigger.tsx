@@ -211,7 +211,6 @@ function DialogTriggerBase({type, state, isDismissable, dialogProps = {}, trigge
     <Fragment>
       <PressResponder
         {...triggerProps}
-        onPress={state.toggle}
         isPressed={state.isOpen && type !== 'modal' && type !== 'fullscreen' && type !== 'fullscreenTakeover'}>
         {trigger}
       </PressResponder>
