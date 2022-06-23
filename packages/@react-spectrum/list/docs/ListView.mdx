@@ -293,11 +293,30 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 ### Disabled rows
 
-You can disable specific rows by providing an array of keys to ListView via the `disabledKeys` prop. This will prevent rows from being selectable, as shown in the example below.
+You can disable specific rows by providing an array of keys to ListView via the `disabledKeys` prop. By default, this will disable all interactions on disabled rows.
 
 ```tsx example
 // Using the same list as above
 <PokemonList disabledKeys={[3]} aria-label="ListView with disabled rows" />
+```
+
+You can use the `disabledBehavior` prop to either disable all interactions, or just selection on disabled rows. With `disabledBehavior` set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
+
+```tsx example
+<Flex wrap gap="size-300">
+  <PokemonList
+    disabledKeys={[3]}
+    disabledBehavior="all"
+    aria-label="ListView with all interaction disabled for disabled rows" 
+    width="size-2400"
+  />
+  <PokemonList
+    disabledKeys={[3]}
+    disabledBehavior="selection"
+    aria-label="ListView with selection disabled for disabled rows"
+    width="size-2400"
+  />
+</Flex>
 ```
 
 ### Highlight selection
