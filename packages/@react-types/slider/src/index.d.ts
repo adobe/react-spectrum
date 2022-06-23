@@ -14,7 +14,7 @@ import {
   ValueBase
 } from '@react-types/shared';
 
-export interface SliderProps<T = number[]> extends RangeInputBase<number>, ValueBase<T>, LabelableProps {
+export interface SliderProps<T = number | number[]> extends RangeInputBase<number>, ValueBase<T>, LabelableProps {
   /**
    * The orientation of the Slider.
    * @default 'horizontal'
@@ -46,6 +46,7 @@ export interface SliderThumbProps extends FocusableProps, Validation, LabelableP
   /**
    * The orientation of the Slider.
    * @default 'horizontal'
+   * @deprecated - pass to the slider instead.
    */
   orientation?: Orientation,
   /** Whether the Thumb is disabled. */

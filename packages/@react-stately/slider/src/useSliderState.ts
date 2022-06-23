@@ -11,6 +11,7 @@
  */
 
 import {clamp, snapValueToStep} from '@react-aria/utils';
+import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
@@ -136,7 +137,13 @@ export interface SliderState {
   /**
    * The page size for the slider, used to do a bigger step.
    */
-  readonly pageSize: number
+  readonly pageSize: number,
+
+  /** The orientation of the slider. */
+  readonly orientation: Orientation,
+
+  /** Whether the slider is disabled. */
+  readonly isDisabled: boolean
 }
 
 const DEFAULT_MIN_VALUE = 0;
@@ -155,11 +162,12 @@ interface SliderStateOptions extends SliderProps {
  */
 export function useSliderState(props: SliderStateOptions): SliderState {
   const {
-    isDisabled,
+    isDisabled = false,
     minValue = DEFAULT_MIN_VALUE,
     maxValue = DEFAULT_MAX_VALUE,
     numberFormatter: formatter,
-    step = DEFAULT_STEP_VALUE
+    step = DEFAULT_STEP_VALUE,
+    orientation = 'horizontal'
   } = props;
 
   // Page step should be at least equal to step and always a multiple of the step.
@@ -169,10 +177,20 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     return Math.max(calcPageSize, step);
   }, [step, maxValue, minValue]);
 
+  let value = useMemo(() => convertValue(props.value), [props.value]);
+  let defaultValue = useMemo(() => convertValue(props.defaultValue) ?? [minValue], [props.defaultValue, minValue]);
+  let onChange = (value: number[]) => {
+    if (Array.isArray(props.value) || Array.isArray(props.defaultValue)) {
+      props.onChange?.(value);
+    } else {
+      props.onChange?.(value[0]);
+    }
+  };
+
   const [values, setValues] = useControlledState<number[]>(
-    props.value as any,
-    props.defaultValue ?? [minValue] as any,
-    props.onChange as any
+    value,
+    defaultValue,
+    onChange
   );
   const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
@@ -278,7 +296,9 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     incrementThumb,
     decrementThumb,
     step,
-    pageSize
+    pageSize,
+    orientation,
+    isDisabled
   };
 }
 
@@ -288,4 +308,12 @@ function replaceIndex<T>(array: T[], index: number, value: T) {
   }
 
   return [...array.slice(0, index), value, ...array.slice(index + 1)];
+}
+
+function convertValue(value: number | number[]) {
+  if (value == null) {
+    return undefined;
+  }
+
+  return Array.isArray(value) ? value : [value];
 }
