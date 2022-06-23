@@ -315,10 +315,10 @@ function convertValue(value: number | number[]) {
 
 function createOnChange(value, defaultValue, onChange) {
   return (newValue: number[]) => {
-    if (Array.isArray(value) || Array.isArray(defaultValue)) {
-      onChange?.(newValue);
-    } else {
+    if (typeof value === 'number' || typeof defaultValue === 'number') {
       onChange?.(newValue[0]);
+    } else {
+      onChange?.(newValue);
     }
   };
 }
