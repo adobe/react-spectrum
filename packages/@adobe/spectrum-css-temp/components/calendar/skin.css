@@ -189,6 +189,11 @@ governing permissions and limitations under the License.
         color: HighlightText;
       }
     }
+    &.is-unavailable {
+      &.is-today {
+        color: var(--spectrum-calendar-day-text-color-hover);
+      }
+    }
     &:hover {
       &.is-today {
         color: var(--spectrum-calendar-day-today-text-color);
