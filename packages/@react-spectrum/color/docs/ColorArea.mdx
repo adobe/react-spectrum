@@ -49,7 +49,7 @@ keywords: [color area]
 
 A ColorArea requires either an uncontrolled default value or a controlled value, provided using the `defaultValue` or `value` props respectively.
 The value provided to either of these props should be a color string or <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object.
-`xChannel` and `yChannel` props may must also be provided to specify which color channels the color area should should display, and the direction of each channel in the color gradient.
+`xChannel` and `yChannel` props may also be provided to specify which color channels the color area should display, and the direction of each channel in the color gradient.
 This must be one of the channels included in the color value, for example, for RGB colors, the "red", "green", and "blue" channels are available.
 For a full list of supported channels, see the [Props](#props) table below.
 
@@ -90,7 +90,7 @@ function Example() {
 By default, ColorArea uses an `aria-label` for the localized string "Color Picker",
 which labels the visually hidden `<input>` elements for the two color channels, or on mobile devices,
 the group containing them. If you wish to override this with a more specific label, an `aria-label` or
-`aria-labelledby` prop may be passed to further to identify the element to assistive technologies.
+`aria-labelledby` prop may be passed to further identify the element to assistive technologies.
 For example, for a ColorArea that adjusts a background color you might pass the `aria-label` prop,
 "Background color", which ColorArea will return as the `aria-label` prop "Background color, Color picker"
 for each of the `<input>` elements, or on mobile devices, the group containing them. If you provide your own
@@ -122,7 +122,7 @@ Use `aria-labelledby` to label the ColorArea using the IDREF assigned to a visib
 
 #### Role description
 
-In order to communicate to a screen reader user that the ColorArea adjusts in two-dimensions,
+In order to communicate to a screen reader user that the ColorArea adjusts in two dimensions,
 ColorArea provides an `aria-roledescription`, using the localized string "2D Slider", on each of the
 visually hidden `<input>` elements.
 
@@ -169,8 +169,7 @@ function Example() {
 
 ## Creating a color picker
 
-To build a fully functional color picker, the ColorArea control, that adjusts two channels of a color value stored in state,
-should be combined with a separate control, like a [ColorSlider](ColorSlider.html) or [ColorWheel](useColorWheel.html), for
+To build a fully functional color picker, combine a ColorArea, which adjusts two channels of a color value stored in state, with a separate control, like a [ColorSlider](ColorSlider.html) or [ColorWheel](useColorWheel.html), for
 adjusting the value of the third channel within the color space for the color value stored in state.
 The current color space for a color can be returned using the `color.getColorSpace` method.
 An array of channel names for a color can be returned using the `color.getColorChannels` method.
@@ -179,7 +178,7 @@ To get a localized channel name to use as a label, you can use the `color.getCha
 
 ### RGBA
 
-This example shows how you could build an RGB color picker using a color area and a color sliders bound to the same
+This example shows how you could build an RGB color picker using a color area and color sliders bound to the same
 color value in state. The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} />
 function is used to parse the initial color from a hex value, stored in state. The `value` and `onChange` props
 of both the ColorArea and ColorSlider are used to make the components controlled, so that they both update when the
@@ -290,19 +289,19 @@ function Example() {
 
 ## Props
 
-<PropTable component={docs.exports.ColorSlider} links={docs.links} />
+<PropTable component={docs.exports.ColorArea} links={docs.links} />
 
 ## Visual options
 
 ### Disabled
-[View guidelines](https://spectrum.adobe.com/page/color-slider/#Disabled)
+[View guidelines](https://spectrum.adobe.com/page/color-area/#Disabled)
 
 ```tsx example
 <ColorArea defaultValue="#7f0000" isDisabled />
 ```
 
 ### Custom Size
-[View guidelines](https://spectrum.adobe.com/page/color-slider/#Length)
+[View guidelines](https://spectrum.adobe.com/page/color-area/#Width)
 
 ```tsx example
 <Flex direction="column" gap="size-300">
