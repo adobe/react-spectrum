@@ -130,6 +130,38 @@ governing permissions and limitations under the License.
     }
   }
 
+  .spectrum-Textfield--readonly & {
+    background-color: var(--spectrum-textfield-quiet-background-color);
+    border-color: var(--spectrum-textfield-quiet-border-color);
+
+    &:hover {
+      border-color: var(--spectrum-textfield-quiet-border-color-hover);
+    }
+
+    &:active {
+      border-color: var(--spectrum-textfield-quiet-border-color-down);
+    }
+
+    &:focus,
+    &.is-focused {
+      border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
+    }
+
+    &:focus-ring {
+      &:not(:active) {
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+        box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-key-focus);
+      }
+    }
+
+    &:disabled,
+    &.is-disabled {
+      background-color: var(--spectrum-textfield-quiet-background-color-disabled);
+      border-color:  var(--spectrum-textfield-quiet-border-color-disabled);
+    }
+  }
+
+
   .spectrum-Textfield.spectrum-Textfield--invalid & {
     border-color: var(--spectrum-textfield-border-color-error);
 

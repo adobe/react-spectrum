@@ -35,7 +35,7 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-textfield-min-width);
   width: var(--spectrum-component-single-line-width);
 
-  &:not(.spectrum-Textfield--quiet).spectrum-Textfield--multiline .spectrum-Textfield-input:not(:disabled) {
+  &:not(.spectrum-Textfield--quiet, .spectrum-Textfield--readonly).spectrum-Textfield--multiline .spectrum-Textfield-input:not(:disabled){
     resize: vertical;
   }
 
@@ -172,6 +172,19 @@ governing permissions and limitations under the License.
   .spectrum-Textfield--quiet & {
     border-radius: var(--spectrum-textfield-quiet-border-radius);
     border-width: 0 0 var(--spectrum-textfield-quiet-border-size) 0;
+
+    /* removes the side padding to align the text properly */
+    padding-inline-start: var(--spectrum-textfield-quiet-padding-x);
+    padding-inline-end: var(--spectrum-textfield-quiet-padding-x);
+
+    /* Treat all quiet inputs and textareas the same */
+    resize: none;
+    overflow-y: hidden;
+  }
+
+  .spectrum-Textfield--readonly & {
+    border-radius: var(--spectrum-textfield-quiet-border-radius);
+    border-width: 0 0 0 0;
 
     /* removes the side padding to align the text properly */
     padding-inline-start: var(--spectrum-textfield-quiet-padding-x);

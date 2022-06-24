@@ -140,7 +140,26 @@ storiesOf('TextField', module)
   )
   .add('custom width small, labelPosition: side',
     () => render({icon: <Info />, validationState: 'invalid', width: '30px', labelPosition: 'side'})
-  );
+  )
+  .add('test: readOnly test',
+    () => render({isReadOnly: true, readOnlyText: 'hello'})
+  )
+  .add('test: readOnly test no text',
+    () => render({isReadOnly: true, readOnlyText: ''})
+  )
+  .add('test: readOnly test with longer text',
+  () => render({isReadOnly: true, readOnlyText: 'a much only piece of text to see what happens'})
+  )
+  .add('test: readOnly test with autofocus',
+  () => render({autoFocus: true, isReadOnly: true, readOnlyText: 'a much longer piece of text to see what happens'})
+  )
+  .add('test: readOnly test with description',
+  () => render({description: 'Please enter your street address', isReadOnly: true, readOnlyText: 'a much longer piece of text to see what happens'})
+  )
+  .add('test: readOnly test with error message',
+  () => render({errorMessage: 'Please enter a valid street address.', validationState: 'invalid', isReadOnly: true, readOnlyText: 'a much longer piece of text to see what happens'})
+  )
+  ;
 
 function render(props = {}) {
   return (

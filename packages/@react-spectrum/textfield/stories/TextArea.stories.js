@@ -147,7 +147,18 @@ storiesOf('TextArea', module)
     () => <ControlledTextArea />
   )
   .add('in flex', () => renderInFlexRowAndBlock())
-  .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}));
+  .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}))
+  .add(
+    'test read only: true, value: read only value',
+    () => render({readOnlyText: 'Read only value', isReadOnly: true})
+  )
+  .add(
+    "test: isReadOnly: true, readOnlyText: ''",
+    () => render({isReadOnly: true, readOnlyText: ''})
+  )
+  .add('test: readOnly: true readOnlyText: very very long text',
+  () => render({isReadOnly: true, readOnlyText: 'cats are actually the best animals. i know there is a lot of debate and im sure dog people will argue against this claim but i love cats so much'})
+  );
 
 function render(props = {}) {
   return (

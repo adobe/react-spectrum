@@ -12,6 +12,7 @@
 
 import {Alignment, DOMProps, LabelPosition, NecessityIndicator, SpectrumHelpTextProps, StyleProps} from '@react-types/shared';
 import {ElementType, HTMLAttributes, ReactElement, ReactNode} from 'react';
+import {InputHTMLAttributes, RefObject, TextareaHTMLAttributes} from 'react';
 
 export interface LabelProps {
   children?: ReactNode,
@@ -33,8 +34,15 @@ export interface SpectrumLabelProps extends SpectrumLabelPropsBase, HTMLAttribut
 export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps {
   children: ReactElement,
   label?: ReactNode,
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>, 
   descriptionProps?: HTMLAttributes<HTMLElement>,
   errorMessageProps?: HTMLAttributes<HTMLElement>,
-  wrapperClassName?: string
+  wrapperClassName?: string,
+  readOnlyText?: string, // should this even be here??
+  isReadOnly?: boolean,
+  multiLine?: boolean,
+  inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
+  autoFocus?: boolean,
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  // wrapperChildren?: ReactElement | ReactElement[]
 }

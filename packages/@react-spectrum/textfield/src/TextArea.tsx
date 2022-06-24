@@ -35,7 +35,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
   let inputRef = useRef<HTMLTextAreaElement>();
 
   let onHeightChange = useCallback(() => {
-    if (isQuiet) {
+    if (isQuiet || isReadOnly) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       input.style.alignSelf = 'start';
@@ -43,7 +43,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       input.style.height = `${input.scrollHeight}px`;
       input.style.alignSelf = prevAlignment;
     }
-  }, [isQuiet, inputRef]);
+  }, [isQuiet, isReadOnly, inputRef]);
 
   useLayoutEffect(() => {
     if (inputRef.current) {
