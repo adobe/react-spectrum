@@ -24,8 +24,8 @@ import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
+import {useDnDHooks, useDraggable, useDroppable, useReorderable} from '@react-spectrum/dnd';
 import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
-import {useDnDHooks, useReorderable} from '@react-spectrum/dnd';
 
 const parameters = {
   args: {
@@ -403,14 +403,14 @@ storiesOf('ListView/Drag and Drop', module)
     'reorderable test',
     () => <ReorderableList />
   ).add(
-    'Drag into list files only',
-    () => <DragIntoListFilesOnly />
-  ).add(
-    'DragIntoListExample',
+    'Draggable list, droppable list, only files',
     () => <DragIntoListExample />
   ).add(
-    'DragBetweenListsExampleTest',
-    () => <DragBetweenListsExampleTest />
+    'Draggable list, droppable list, prevent folder drag',
+    () => <DragIntoListPreventFolderDrag />
+  ).add(
+    'drag between two lists, complex',
+    () => <DragBetweenListsComplex />
   );
 
 function renderActionsExample(renderActions, props?) {
@@ -1222,7 +1222,7 @@ function ReorderableList() {
     return `adobe-${item.type}`;
   };
 
-  let acceptedDragTypes = ['adobe-file1', 'adobe-folder'];
+  let acceptedDragTypes = ['adobe-file', 'adobe-folder'];
   // let acceptedDragTypes = ['adobe-file'];
   // let acceptedDragTypes = ['adobe-folder'];
 
@@ -1231,6 +1231,16 @@ function ReorderableList() {
     acceptedDragTypes,
     list
   });
+
+  // let {dragHooks} = useDraggable({
+  //   getDragType,
+  //   list
+  // });
+
+  // let {dropHooks} = useDroppable({
+  //   acceptedDragTypes,
+  //   list
+  // });
 
   return (
     <ListView
@@ -1258,7 +1268,7 @@ function ReorderableList() {
   );
 }
 
-function DragIntoListFilesOnly() {
+function DragIntoListPreventFolderDrag() {
   let sourceList = useListData({
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -1278,8 +1288,23 @@ function DragIntoListFilesOnly() {
     ]
   });
 
-  let {dragHooks} = useDnDHooks({
-    allowsDrag: true,
+  // let {dragHooks} = useDnDHooks({
+  //   allowsDrag: true,
+  //   getDragType: (key) => {
+  //     let item = sourceList.getItem(key);
+  //     return `list-1-adobe-${item.type}`;
+  //   },
+  //   list: sourceList,
+  //   getAllowedDropOperations: () => ['move']
+  // });
+
+  // let {dropHooks} = useDnDHooks({
+  //   allowsDrop: true,
+  //   acceptedDragTypes: ['list-1-adobe-file'],
+  //   list: targetList
+  // });
+
+  let {dragHooks} = useDraggable({
     getDragType: (key) => {
       let item = sourceList.getItem(key);
       return `list-1-adobe-${item.type}`;
@@ -1288,8 +1313,7 @@ function DragIntoListFilesOnly() {
     getAllowedDropOperations: () => ['move']
   });
 
-  let {dropHooks} = useDnDHooks({
-    allowsDrop: true,
+  let {dropHooks} = useDroppable({
     acceptedDragTypes: ['list-1-adobe-file'],
     list: targetList
   });
@@ -1353,20 +1377,32 @@ function DragIntoListExample() {
   });
 
 
-  let {dragHooks} = useDnDHooks({
-    allowsDrag: true,
+  // let {dragHooks} = useDnDHooks({
+  //   allowsDrag: true,
+  //   getDragType: () => 'list-1-adobe-file',
+  //   list: sourceList,
+  //   // Known bug that this option doesn't actually do anything, already filed
+  //   getAllowedDropOperations: () => ['copy']
+  // });
+
+  // let {dropHooks} = useDnDHooks({
+  //   allowsDrop: true,
+  //   acceptedDragTypes: ['list-1-adobe-file'],
+  //   list: targetList
+  // });
+
+
+  let {dragHooks} = useDraggable({
     getDragType: () => 'list-1-adobe-file',
     list: sourceList,
     // Known bug that this option doesn't actually do anything, already filed
     getAllowedDropOperations: () => ['copy']
   });
 
-  let {dropHooks} = useDnDHooks({
-    allowsDrop: true,
+  let {dropHooks} = useDroppable({
     acceptedDragTypes: ['list-1-adobe-file'],
     list: targetList
   });
-
 
   return (
     <Flex wrap gap="size-300">
@@ -1400,7 +1436,7 @@ function DragIntoListExample() {
 }
 
 
-function DragBetweenListsExampleTest() {
+function DragBetweenListsComplex() {
   let list1 = useListData({
     initialItems: [
       {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -1425,32 +1461,62 @@ function DragBetweenListsExampleTest() {
     getKey: (item) => item.identifier
   });
 
-  let {dragHooks: dragHooksList1, dropHooks: dropHooksList1} = useDnDHooks({
-    allowsDrag: true,
-    allowsDrop: true,
+  // let {dragHooks: dragHooksList1, dropHooks: dropHooksList1} = useDnDHooks({
+  //   allowsDrag: true,
+  //   allowsDrop: true,
+  //   getDragType: (key) => {
+  //     let item = list1.getItem(key);
+  //     return `list-1-adobe-${item.type}`;
+  //   },
+  //   // Disallow reordering
+  //   acceptedDragTypes: ['list-2-adobe-file', 'list-2-adobe-folder'],
+  //   list: list1,
+  //   rootDropOrder: 'prepend'
+  // });
+
+  // let {dragHooks: dragHooksList2, dropHooks: dropHooksList2} = useDnDHooks({
+  //   allowsDrag: true,
+  //   allowsDrop: true,
+  //   getDragType: (key) => {
+  //     let item = list2.getItem(key);
+  //     return `list-2-adobe-${item.type}`;
+  //   },
+  //   acceptedDragTypes: ['list-1-adobe-file', 'list-2-adobe-file', 'list-1-adobe-folder', 'list-2-adobe-folder'],
+  //   list: list2,
+  //   allowedDropPositions: ['root', 'between']
+  // });
+
+
+  let {dragHooks: dragHooksList1} = useDraggable({
     getDragType: (key) => {
       let item = list1.getItem(key);
       return `list-1-adobe-${item.type}`;
     },
+    list: list1
+  });
+
+  let {dropHooks: dropHooksList1} = useDroppable({
     // Disallow reordering
     acceptedDragTypes: ['list-2-adobe-file', 'list-2-adobe-folder'],
     list: list1,
     rootDropOrder: 'prepend'
   });
 
-  let {dragHooks: dragHooksList2, dropHooks: dropHooksList2} = useDnDHooks({
-    allowsDrag: true,
-    allowsDrop: true,
+  let {dragHooks: dragHooksList2} = useDraggable({
     getDragType: (key) => {
       let item = list2.getItem(key);
       return `list-2-adobe-${item.type}`;
     },
+    list: list2
+  });
+
+  let {dropHooks: dropHooksList2} = useDroppable({
     acceptedDragTypes: ['list-1-adobe-file', 'list-2-adobe-file', 'list-1-adobe-folder', 'list-2-adobe-folder'],
     list: list2,
     allowedDropPositions: ['root', 'between']
   });
 
-  // TODO: reorder is broken because stuff gets removed before handle drop happens
+  // TODO: reorder is broken because stuff gets removed before handle drop happens (different behavior in mouse and keyboard)
   // TODO: root order is broken, debug
   // TODO: test dropping on folder
 

@@ -10,17 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DropOperation} from '@react-types/shared';
 import {Key} from 'react';
-import {useDragHooks} from './useDragHooks';
 import {useDropHooks} from './useDropHooks';
 
-export interface DnDOptions {
-  // TODO: a getter that returns the drag type for a given key in the list
-  // Limitations: returns a single type, don't think we should support multiple types per item in this utility
-  // Maybe don't even need this, maybe just accept a "dragType" from user or make it a requirement that the "list"
-  // contains the drag type information for each item
-  getDragType?: (key) => string,
+export interface DroppableOption {
   // Array of accepted dragTypes, determines what items can be dropped into the collection. Defaults to 'all' which would allow anything?
   // TODO: perhaps this is better way to prevent or allow reordering
   // Maybe make this a function that returns true or false when passed a drag type, allows user to use regex and partial string matching
@@ -31,19 +24,6 @@ export interface DnDOptions {
   list: any,
   // Whether a root drop should add the items to the top or bottom of the collection
   rootDropOrder?: 'append' | 'prepend',
-  // Whether the collection support reordering within itself (use this in getDropOperation to prevent reorder from being a valid drop operation)
-  // TODO: unfortunately, doesn't seem to be a good way to do this in getDropOperation. Only way would be to either have the type of each dragItem identify
-  // the source of the item OR to do something hacky via the drop event listeners that tracks the source of the items by searching for each item's existance in the list...
-  // Unecessary, just expect user to provide unique drag types per collection to identify the source of the drag item
-  // allowsReorder?: boolean,
-  // Whether the collection allows dragging for its elements
-  allowsDrag?: boolean,
-  // Whether the collection allows drop operations. Note that this must be true if reordering is supported
-  allowsDrop?: boolean,
-  // TODO Same prop as in useDragHooks, preferably doesn't allow "link" cuz we don't provide onDragEnd?
-  // Probably should always allow "cancel". This is specifically for dragging FROM the collection
-  // Maybe this can just be an array instead of a function?
-  getAllowedDropOperations?: () => DropOperation[],
   // TODO: some way for user to specify that the collection supports 'root', 'on', and/or 'between' drops.
   // This is specifically for drops into the collection
   allowedDropPositions?: Array<'root' | 'on' | 'between'>,
@@ -55,32 +35,20 @@ export interface DnDOptions {
 /*
  Assumptions made:
 - user is using useListData, useAsyncList, or some kind of list state tracker with similar list manipulation utilities methods
-- user is only interested in returning one drag type per item
-- user is interested in making a list draggable, droppable, reorderable, or all at the same time.
+- user is interested in making a list droppable and/or reorderable, maybe both at the same time.
 - the keys of the collection are unique throughout the entire app (need this to check if a dropped item is a result of reordering or from a external source)
 - that dragged data from an external source is structured in a similar way to the current collection (at the very least has the same fields)
-- that the external drag source will handle updating itself on drop completion
+- that the external drag source will handle updating itself on drop completion via its own onDragEnd
 - that items with childNodes are the only valid "on" drop targets (up for debate and the reason I've added validDropTargets to the options)
-- that the first allowedOperation from the drag sourceis the desired one
+- that the first allowedOperation from the drag source is the desired one
 */
 
-
-// TODO: rename this to something better. Essentially this is a basic draggable + droppable collection that supports "move" + "copy" operations
-// TODO: add return types aka the drag and drop hooks
-// TODO: Potenttially just have utility functions capture parts of the below logic instead. For instance, can take the isSameCollection logic handling for manipulating the list and
-// make it a function that users call in their own onDrops. Another idea could be to do something similar for the getDropOperation cancel logic, provide a helper function
-// that encapsulates that logic for others to use?
-// TODO: can probably split this into useDraggable and useDroppable
-export function useDnDHooks(options: DnDOptions) {
+export function useDroppable(options: DroppableOption) {
   let {
-    getDragType,
     acceptedDragTypes = 'all',
     list,
     rootDropOrder = 'append',
-    allowsDrag,
-    allowsDrop,
-    allowedDropPositions = ['root', 'on', 'between'],
-    getAllowedDropOperations
+    allowedDropPositions = ['root', 'on', 'between']
   } = options;
 
   // TODO: this feels fairly complicated and makes a fair number of assumptions, the alternative would be to have the user provide a function that handles
@@ -91,6 +59,11 @@ export function useDnDHooks(options: DnDOptions) {
     // dragged data
     let isSameCollection = list.getItem(data[0].key);
     let keys = data.map((item) => item.key);
+    // TODO: this isSameCollection logic breaks if the user tries to reorder their list via keyboard since onDragEnd removes the dragged keys before the moveBefore/After can execute?
+    // For some reason, doing the same operation via mouse actually removes the dragged keys before handleDrop even executes and thus we enter the else block of the isSameCollection
+    // Getting rid of this isSameCollection if block and defaulting to remove item -> add item in the reordering case kinda works but will break if the user attempts to
+    // drop the item in the same place it started at. Ideally, we would keep this reorder logic and have onDrag NOT remove the item but we don't have a great way to tell
+    // onDragEnd that the drag operation is within the same list
     if (isSameCollection) {
       // Handle dragging within same list
       if (target.type === 'root') {
@@ -133,43 +106,6 @@ export function useDnDHooks(options: DnDOptions) {
     }
   };
 
-  let dragHooks = useDragHooks({
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = list.getItem(key);
-        // Add the key to the item's data in case it doesn't exist (e.g. a useListData with a getKey for generating the item's keys instead of having an id/key in the data already)
-        item = {key, ...item};
-        let dragType = getDragType(key);
-        return {
-          [`${dragType}`]: JSON.stringify(item)
-        };
-      });
-    },
-    onDragEnd: (e) => {
-      // TODO: Don't need to do anything for cancel or copy(?) since those don't affect the current list
-      // What about link? Perhaps we can treat link as an operation where the user shouldn't be using this hook
-      // and instead should be using useDragHooks/useDropHooks directly
-      // Alternative would be for the user to provide onDragEnd directly to the hook
-      // Note that this will remove the item from the source list before the onDrop happens for a reorder case since onDragEnd happens before onDrop
-      if (e.dropOperation === 'move') {
-        list.remove(...e.keys);
-      }
-
-      // The below was an attempt to detect if a DnD event was a same list reordering event but it doesn't quite work
-      // because it then doesn't remove the item from the list if it is dropped into a different list (no way to distinguish the two events).
-      // The behavior seems to be different between mouse drag and keyboard drag too
-      // It maybe a good idea to have drag events show what the source collection and target collection are
-
-      // if (e.dropOperation === 'move') {
-      //   let firstDraggedKey = e.keys.values().next().value;
-      //   if (!list.getItem(firstDraggedKey)) {
-      //     list.remove(...e.keys);
-      //   }
-      // }
-    },
-    getAllowedDropOperations
-  });
-
   let dropHooks = useDropHooks({
     async onDrop(e) {
       let dataList = [];
@@ -208,8 +144,5 @@ export function useDnDHooks(options: DnDOptions) {
   });
 
 
-  return {
-    dragHooks: allowsDrag ? dragHooks : undefined,
-    dropHooks: allowsDrop ? dropHooks : undefined
-  };
+  return {dropHooks};
 }

@@ -20,6 +20,9 @@ export interface DropHooks {
   useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria
 }
 
+// TODO: the below proposed changes are if we want to make the api simplification at the useDropHooks level rather than making
+// a utility hook like useDroppable
+
 // TODO: possible optimizations/simplifications:
 // - A default getDropOperations. User could pass acceptedDragTypes (would be another new option, array of accepted types) and
 // allowedDropOperations (new option, array of allowed drop positions) and we would use those to automatically determine if a drop operation

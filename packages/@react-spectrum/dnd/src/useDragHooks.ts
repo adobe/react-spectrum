@@ -9,6 +9,8 @@ export interface DragHooks {
   DragPreview: typeof DragPreview
 }
 
+// TODO: the below changes are if we want to make the api simplification at the useDragHooks level rather than making
+// a utility hook like useDraggable
 export interface DragHookOptions extends Omit<DraggableCollectionProps, 'preview'> {
   // The below two props honestly feel unecessary tbh since getItems doesn't feel that complex
   // and this approach might be more confusing
