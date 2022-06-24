@@ -18,8 +18,9 @@ export default Layout;
 
 ```jsx import
 import {ColorArea, ColorSlider, ColorWheel} from '@react-spectrum/color';
-import {Flex} from '@react-spectrum/layout';
+import {Flex, Grid} from '@react-spectrum/layout';
 import {Label} from '@react-spectrum/label';
+import {View} from '@react-spectrum/view';
 ```
 
 ---
@@ -215,30 +216,30 @@ function Example() {
     <fieldset style={{border: 0}}>
       <legend>{color.getColorSpace().toUpperCase()}A Example</legend>
       <Flex
-        direction="column"
-        alignItems="start"
-        UNSAFE_style={{
-          marginTop: 'calc( .25 * var(--spectrum-global-dimension-size-2400))'
-        }}>
-        <Flex
-          alignItems="center"
-          direction="column">
-          <ColorArea
-            xChannel={saturationChannel}
-            yChannel={lightnessChannel}
-            value={color}
-            onChange={setColor}
-            size={'size-1200'} />
+        direction="column">
+        <View
+          position="relative"
+          width="size-2400">
+          <Grid
+            position="absolute"
+            justifyContent="center"
+            alignContent="center"
+            width="100%"
+            height="100%">
+            <ColorArea
+              xChannel={saturationChannel}
+              yChannel={lightnessChannel}
+              value={color}
+              onChange={setColor}
+              size="size-1200" />
+          </Grid>
           <ColorWheel
             value={color}
             onChange={setColor}
-            size={'size-2400'}
-            UNSAFE_style={{
-              marginTop: 'calc( -.75 * var(--spectrum-global-dimension-size-2400))'
-            }} />
-        </Flex>
+            size="size-2400" />
+        </View>
         <ColorSlider channel="alpha" value={color} onChange={setColor} />
-        <p>Current value: {color.toString('css')}</p>
+        <p>Current value: {color.toString(`${color.getColorSpace()}a`)}</p>
       </Flex>
     </fieldset>
   );
@@ -257,28 +258,28 @@ function Example() {
     <fieldset style={{border: 0}}>
       <legend>{color.getColorSpace().toUpperCase()}A Example</legend>
       <Flex
-        direction="column"
-        alignItems="start"
-        UNSAFE_style={{
-          marginTop: 'calc( .25 * var(--spectrum-global-dimension-size-2400))'
-        }}>
-        <Flex
-          alignItems="center"
-          direction="column">
-          <ColorArea
-            xChannel={saturationChannel}
-            yChannel={brightnessChannel}
-            value={color}
-            onChange={setColor}
-            size={'size-1200'} />
+        direction="column">
+        <View
+          position="relative"
+          width="size-2400">
+          <Grid
+            position="absolute"
+            justifyContent="center"
+            alignContent="center"
+            width="100%"
+            height="100%">
+            <ColorArea
+              xChannel={saturationChannel}
+              yChannel={brightnessChannel}
+              value={color}
+              onChange={setColor}
+              size="size-1200" />
+          </Grid>
           <ColorWheel
             value={color}
             onChange={setColor}
-            size={'size-2400'}
-            UNSAFE_style={{
-              marginTop: 'calc( -.75 * var(--spectrum-global-dimension-size-2400))'
-            }} />
-        </Flex>
+            size="size-2400" />
+        </View>
         <ColorSlider channel="alpha" value={color} onChange={setColor} />
         <p>Current value: {color.toString(`${color.getColorSpace()}a`)}</p>
       </Flex>
