@@ -20,10 +20,11 @@ export interface DnDOptions {
   // Limitations: returns a single type, don't think we should support multiple types per item in this utility
   // Maybe don't even need this, maybe just accept a "dragType" from user or make it a requirement that the "list"
   // contains the drag type information for each item
-  getDragType: (key) => string,
+  getDragType?: (key) => string,
   // Array of accepted dragTypes, determines what items can be dropped into the collection. Defaults to 'all' which would allow anything?
-  // TODO: perhaps a better way to prevent or allow reordering
-  acceptedDragTypes?: Array<string>,
+  // TODO: perhaps this is better way to prevent or allow reordering
+  // Maybe make this a function that returns true or false when passed a drag type, allows user to use regex and partial string matching
+  acceptedDragTypes?: 'all' | Array<string>,
   // takes a list from useListData or useAsyncList, but should support an arbitrary list state tracker. That tracker will need the
   // same ".update", ".remove", "moveBefore", etc help methods which maybe a tall order. Perhaps do away with this and rely on the user to provide a
   // onDrop/handleDrop/handler that handles updating the collection when a drop happens?
@@ -37,10 +38,11 @@ export interface DnDOptions {
   // allowsReorder?: boolean,
   // Whether the collection allows dragging for its elements
   allowsDrag?: boolean,
-  // Whether the collection allows drop operations
+  // Whether the collection allows drop operations. Note that this must be true if reordering is supported
   allowsDrop?: boolean,
   // TODO Same prop as in useDragHooks, preferably doesn't allow "link" cuz we don't provide onDragEnd?
   // Probably should always allow "cancel". This is specifically for dragging FROM the collection
+  // Maybe this can just be an array instead of a function?
   getAllowedDropOperations?: () => DropOperation[],
   // TODO: some way for user to specify that the collection supports 'root', 'on', and/or 'between' drops.
   // This is specifically for drops into the collection
@@ -50,6 +52,19 @@ export interface DnDOptions {
   validDropTargets?: Array<Key>
 }
 
+/*
+ Assumptions made:
+- user is using useListData, useAsyncList, or some kind of list state tracker with similar list manipulation utilities methods
+- user is only interested in returning one drag type per item
+- user is interested in making a list draggable, droppable, reorderable, or all at the same time.
+- the keys of the collection are unique throughout the entire app (need this to check if a dropped item is a result of reordering or from a external source)
+- that dragged data from an external source is structured in a similar way to the current collection (at the very least has the same fields)
+- that the external drag source will handle updating itself on drop completion
+- that items with childNodes are the only valid "on" drop targets (up for debate and the reason I've added validDropTargets to the options)
+- that the first allowedOperation from the drag sourceis the desired one
+*/
+
+
 // TODO: rename this to something better. Essentially this is a basic draggable + droppable collection that supports "move" + "copy" operations
 // TODO: add return types aka the drag and drop hooks
 // TODO: Potenttially just have utility functions capture parts of the below logic instead. For instance, can take the isSameCollection logic handling for manipulating the list and
@@ -58,12 +73,12 @@ export interface DnDOptions {
 export function useDnDHooks(options: DnDOptions) {
   let {
     getDragType,
-    acceptedDragTypes,
+    acceptedDragTypes = 'all',
     list,
-    rootDropOrder,
+    rootDropOrder = 'append',
     allowsDrag,
     allowsDrop,
-    allowedDropPositions,
+    allowedDropPositions = ['root', 'on', 'between'],
     getAllowedDropOperations
   } = options;
 
@@ -79,10 +94,13 @@ export function useDnDHooks(options: DnDOptions) {
       // Handle dragging within same list
       if (target.type === 'root') {
         if (rootDropOrder === 'append') {
+          let lastKey = list.getKey(list.items.slice(-1)[0])
           // TODO: what if this is an async list? Perhaps it is ok that the root drop appends to the last visible item?
-          list.moveAfter(list.items.slice(-1)[0].id, keys);
+          // TODO: can't rely on id here, will need to use move and a for loop since moveAfter doesn't support an index
+          list.moveAfter(lastKey, keys);
         } else {
-          list.moveBefore(list.items[0].id, keys);
+          let firstKey = list.getKey(list.items[0].id);
+          list.moveBefore(firstKey, keys);
         }
       } else if (target.dropPosition === 'before') {
         list.moveBefore(target.key, keys);
@@ -95,7 +113,12 @@ export function useDnDHooks(options: DnDOptions) {
         // TODO: instead of grabbing the item from the sourceList (which we don't know since there could be a number of valid source collections from which this drop originates from),
         // we can perhaps just pass through the data given by getItems.
         // This assumes that the data extracted from the drag item matches the data format of the list though...
-        list.append(...data);
+        if (rootDropOrder === 'append') {
+          // TODO: what if this is an async list? Perhaps it is ok that the root drop appends to the last visible item?
+          list.append(...data);
+        } else {
+          list.prepend(...data);
+        }
       } else if (target.dropPosition === 'before') {
         list.insertBefore(target.key, ...data);
       } else if (target.dropPosition === 'after') {
@@ -113,7 +136,7 @@ export function useDnDHooks(options: DnDOptions) {
     getItems(keys) {
       return [...keys].map(key => {
         let item = list.getItem(key);
-        // Add the key to the item's data in case it doesn't exist (e.g. useListData with getKey to generate the item's keys)
+        // Add the key to the item's data in case it doesn't exist (e.g. a useListData with a getKey for generating the item's keys instead of having an id/key in the data already)
         item = {key, ...item};
         let dragType = getDragType(key);
         return {
@@ -127,7 +150,10 @@ export function useDnDHooks(options: DnDOptions) {
       // and instead should be using useDragHooks/useDropHooks directly
       // Alternative would be for the user to provide onDragEnd directly to the hook
       if (e.dropOperation === 'move') {
-        list.remove(...e.keys);
+        let firstDraggedKey = e.keys.values().next().value;
+        if (!list.getItem(firstDraggedKey)) {
+          list.remove(...e.keys);
+        }
       }
     },
     getAllowedDropOperations
@@ -155,7 +181,7 @@ export function useDnDHooks(options: DnDOptions) {
       // TODO prevent drops on disabled folders?
       // TODO allow for drops only on folders? what about collections that are droppable but allow a greater range of valid drop targets or don't have the concept of folders? Check if item has child nodes?
       // TODO prevent reordering, how to tell if the item is the same target (maybe the acceptedDragType check is sufficient if we assume the user will have a unique identifier in the type)
-      // TODO perhaps also have the user provide a function that returns the keys for valid drop targets, to further filter down
+      // TODO perhaps also have the user provide a function that returns the keys for valid drop targets, to further filter down the list of droptarget options other than just all folders
       if (
         !draggedTypes.every(type => acceptedDragTypes.includes(type)) ||
         target.type === 'root' && !allowedDropPositions.includes('root') ||

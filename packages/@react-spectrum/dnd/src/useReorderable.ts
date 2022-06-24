@@ -29,6 +29,16 @@ export interface ReorderableOptions {
   // onMove or some kind of function that actually performs the list updates based on the dropped keys and the target.dropPosition?
   list: any
 }
+/*
+ Assumptions made:
+- user is using useListData, useAsyncList, or some kind of list state tracker with similar list manipulation utilities
+- user is only interested in returning one drag type per item
+- user is only interested in making the list reorderable. This means dragging items out of the list to another collection and dropping items
+  from a different collection aren't stictly supported at the moment. Up for debate on whether or not to allow this or not, IMO it feels like it complicates it more but I've added acceptedDragTypes for now
+  If we want to restrict it so the list only accepts items from within this list, we can remove acceptedDragTypes entirely, and have getDropOperation check that the types are one of getDragType or just
+  remove getDragType and acceptedDragTypes entirely (aka all items are reorderable)
+- user allows moving items from the list into a folder within the list. "on" drops are limited strictly to folders aka items w/ childNodes
+*/
 
 // TODO: add return types aka the drag and drop hooks
 export function useReorderable(options: ReorderableOptions) {
@@ -86,7 +96,6 @@ export function useReorderable(options: ReorderableOptions) {
       for (let item of e.items) {
         for (let acceptedType of acceptedDragTypes) {
           if (item.kind === 'text' && item.types.has(acceptedType)) {
-            // TODO: this makes an assumption on the item's structure, aka that the list has ids. Will need to generalize
             let {key} = JSON.parse(await item.getText(acceptedType));
             keysToMove.push(key);
           }

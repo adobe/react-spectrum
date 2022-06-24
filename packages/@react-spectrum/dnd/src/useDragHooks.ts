@@ -13,7 +13,7 @@ export interface DragHookOptions extends Omit<DraggableCollectionProps, 'preview
   // The below two props honestly feel unecessary tbh since getItems doesn't feel that complex
   // and this approach might be more confusing
   // TODO: Tentative, if provided and getItems isn't provided, then we create a default getItems
-  // Will be dependent on the user providing a list
+  // Will be dependent on the user providing both of the below
   getDragType?: (key) => string,
   // TODO: returns the data associated with a drag key for use in getItems
   getItemData?: (key) => object
