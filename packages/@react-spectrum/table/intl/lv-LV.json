@@ -1,4 +1,7 @@
 {
   "loading": "Notiek ielāde...",
-  "loadingMore": "Tiek ielādēts vēl..."
+  "loadingMore": "Tiek ielādēts vēl...",
+  "sortAscending": "Sort Ascending",
+  "sortDescending": "Sort Descending",
+  "resizeColumn": "Resize column"
 }

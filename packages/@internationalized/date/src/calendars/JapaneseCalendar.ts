@@ -73,12 +73,16 @@ export class JapaneseCalendar extends GregorianCalendar {
   identifier = 'japanese';
 
   fromJulianDay(jd: number): CalendarDate {
-    let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
-
+    let date = super.fromJulianDay(jd);
     let era = findEraFromGregorianDate(date);
-    date.era = ERA_NAMES[era];
-    date.year -= ERA_ADDENDS[era];
-    return date as CalendarDate;
+
+    return new CalendarDate(
+      this,
+      ERA_NAMES[era],
+      date.year - ERA_ADDENDS[era],
+      date.month,
+      date.day
+    );
   }
 
   toJulianDay(date: AnyCalendarDate) {
@@ -93,6 +97,9 @@ export class JapaneseCalendar extends GregorianCalendar {
       date.era = ERA_NAMES[era];
       date.year = gregorianDate.year - ERA_ADDENDS[era];
     }
+
+    // Constrain in case we went before the first supported era.
+    this.constrainDate(date);
   }
 
   constrainDate(date: Mutable<AnyCalendarDate>) {
@@ -104,7 +111,7 @@ export class JapaneseCalendar extends GregorianCalendar {
       // Constrain the year to the maximum possible value in the era.
       // Then constrain the month and day fields within that.
       let maxYear = endYear - ERA_ADDENDS[idx];
-      date.year = Math.min(maxYear, date.year);
+      date.year = Math.max(1, Math.min(maxYear, date.year));
       if (date.year === maxYear) {
         date.month = Math.min(endMonth, date.month);
 
@@ -112,14 +119,14 @@ export class JapaneseCalendar extends GregorianCalendar {
           date.day = Math.min(endDay, date.day);
         }
       }
+    }
 
-      if (date.year === 1) {
-        let [, startMonth, startDay] = ERA_START_DATES[idx];
-        date.month = Math.max(startMonth, date.month);
+    if (date.year === 1 && idx >= 0) {
+      let [, startMonth, startDay] = ERA_START_DATES[idx];
+      date.month = Math.max(startMonth, date.month);
 
-        if (date.month === startMonth) {
-          date.day = Math.max(startDay, date.day);
-        }
+      if (date.month === startMonth) {
+        date.day = Math.max(startDay, date.day);
       }
     }
   }
@@ -131,12 +138,13 @@ export class JapaneseCalendar extends GregorianCalendar {
   getYearsInEra(date: AnyCalendarDate): number {
     // Get the number of years in the era, taking into account the date's month and day fields.
     let era = ERA_NAMES.indexOf(date.era);
+    let cur = ERA_START_DATES[era];
     let next = ERA_START_DATES[era + 1];
     if (next == null) {
-      return 9999;
+      // 9999 gregorian is the maximum year allowed.
+      return 9999 - cur[0] + 1;
     }
 
-    let cur = ERA_START_DATES[era];
     let years = next[0] - cur[0];
 
     if (date.month < next[1] || (date.month === next[1] && date.day < next[2])) {

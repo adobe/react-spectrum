@@ -1,9 +1,5 @@
 {
   "calendar": "Kalender",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} bis {end, date, long}",
-  "date": "Datum",
-  "dateRange": "Datumsbereich",
   "day": "Tag",
   "dayPeriod": "Tageshälfte",
   "endDate": "Enddatum",
@@ -12,8 +8,11 @@
   "minute": "Minute",
   "month": "Monat",
   "second": "Sekunde",
+  "selectedDateDescription": "Ausgewähltes Datum: {date}",
+  "selectedRangeDescription": "Ausgewählter Bereich: {startDate} bis {endDate}",
+  "selectedTimeDescription": "Ausgewählte Zeit: {time}",
   "startDate": "Anfangsdatum",
-  "year": "Jahr",
+  "timeZoneName": "Zeitzone",
   "weekday": "Wochentag",
-  "timeZoneName": "Zeitzone"
+  "year": "Jahr"
 }

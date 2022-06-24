@@ -81,41 +81,32 @@ abstract class Color implements IColor {
   }
   abstract getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
-
-const HEX_REGEX = /^#(?:([0-9a-f]{3})|([0-9a-f]{6}))$/i;
-
-// X = <negative/positive number with/without decimal places>
-// before/after a comma, 0 or more whitespaces are allowed
-// - rgb(X, X, X)
-// - rgba(X, X, X, X)
-const RGB_REGEX = /rgb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?)\)|rgba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d(.\d+)?)\)/;
-
 class RGBColor extends Color {
   constructor(private red: number, private green: number, private blue: number, private alpha: number) {
     super();
   }
 
-  static parse(value: string): RGBColor | void {
-    let m;
-    if ((m = value.match(HEX_REGEX))) {
-      if (m[1]) {
-        let r = parseInt(m[1][0] + m[1][0], 16);
-        let g = parseInt(m[1][1] + m[1][1], 16);
-        let b = parseInt(m[1][2] + m[1][2], 16);
-        return new RGBColor(r, g, b, 1);
-      } else if (m[2]) {
-        let r = parseInt(m[2][0] + m[2][1], 16);
-        let g = parseInt(m[2][2] + m[2][3], 16);
-        let b = parseInt(m[2][4] + m[2][5], 16);
-        return new RGBColor(r, g, b, 1);
+  static parse(value: string) {
+    let colors = [];
+    // matching #rgb, #rgba, #rrggbb, #rrggbbaa 
+    if (/^#[\da-f]+$/i.test(value) && [4, 5, 7, 9].includes(value.length)) {
+      const values = (value.length < 6 ? value.replace(/[^#]/gi, '$&$&') : value).slice(1).split('');
+      while (values.length > 0) {
+        colors.push(parseInt(values.splice(0, 2).join(''), 16));
       }
+      colors[3] = colors[3] !== undefined ? colors[3] / 255 : undefined;
     }
 
-    if ((m = value.match(RGB_REGEX))) {
-      const [r, g, b, a] = (m[1] ?? m[2]).split(',').map(n => Number(n.trim()));
-      return new RGBColor(clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255), clamp(a ?? 1, 0, 1));
+    // matching rgb(rrr, ggg, bbb), rgba(rrr, ggg, bbb, 0.a)
+    const match = value.match(/^rgba?\((.*)\)$/);
+    if (match?.[1]) {
+      colors = match[1].split(',').map(value => Number(value.trim()));
+      colors = colors.map((num, i) => clamp(num, 0, i < 3 ? 255 : 1));
     }
+
+    return colors.length < 3 ? undefined : new RGBColor(colors[0], colors[1], colors[2], colors[3] ?? 1);
   }
+
 
   toString(format: ColorFormat | 'css') {
     switch (format) {

@@ -11,6 +11,7 @@
  */
 
 import {FocusableDOMProps, FocusableProps} from '@react-types/shared';
+import {focusSafely} from './';
 import {mergeProps, useSyncRef} from '@react-aria/utils';
 import React, {HTMLAttributes, MutableRefObject, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
@@ -60,10 +61,15 @@ function FocusableProvider(props: FocusableProviderProps, ref: RefObject<HTMLEle
 let _FocusableProvider = React.forwardRef(FocusableProvider);
 export {_FocusableProvider as FocusableProvider};
 
+interface FocusableAria {
+  /** Props for the focusable element. */
+  focusableProps: HTMLAttributes<HTMLElement>
+}
+
 /**
  * Used to make an element focusable and capable of auto focus.
  */
-export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElement>) {
+export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElement>): FocusableAria {
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);
@@ -73,10 +79,10 @@ export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElem
 
   useEffect(() => {
     if (autoFocusRef.current && domRef.current) {
-      domRef.current.focus();
+      focusSafely(domRef.current);
     }
     autoFocusRef.current = false;
-  }, []);
+  }, [domRef]);
 
   return {
     focusableProps: mergeProps(

@@ -1,9 +1,5 @@
 {
   "calendar": "التقويم",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} إلى {end, date, long}",
-  "date": "التاريخ",
-  "dateRange": "نطاق التاريخ",
   "day": "يوم",
   "dayPeriod": "ص/م",
   "endDate": "تاريخ الانتهاء",
@@ -12,8 +8,11 @@
   "minute": "الدقائق",
   "month": "الشهر",
   "second": "الثواني",
+  "selectedDateDescription": "تاريخ محدد: {date}",
+  "selectedRangeDescription": "المدى الزمني المحدد: {startDate} إلى {endDate}",
+  "selectedTimeDescription": "الوقت المحدد: {time}",
   "startDate": "تاريخ البدء",
-  "year": "السنة",
+  "timeZoneName": "التوقيت",
   "weekday": "اليوم",
-  "timeZoneName": "التوقيت"
+  "year": "السنة"
 }

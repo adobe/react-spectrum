@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_, within} from '@testing-library/react';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
+import {act, fireEvent, render as render_, triggerPress, within} from '@react-spectrum/test-utils';
+import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 function beforeInput(target, key) {
@@ -26,9 +25,8 @@ function beforeInput(target, key) {
 }
 
 function getTextValue(el) {
-  let placeholder = el.getAttribute('aria-placeholder');
-  if (placeholder) {
-    return placeholder;
+  if (el.className?.includes?.('DatePicker-placeholder') && !el.parentElement.className.includes('is-placeholder')) {
+    return '';
   }
 
   return [...el.childNodes].map(el => el.nodeType === 3 ? el.textContent : getTextValue(el)).join('');
@@ -76,21 +74,21 @@ describe('DatePicker', function () {
       let segments = getAllByRole('spinbutton');
       expect(segments.length).toBe(3);
 
-      expect(segments[0].textContent).toBe('2');
+      expect(getTextValue(segments[0])).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
       expect(segments[0].getAttribute('aria-valuetext')).toBe('2 – February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
-      expect(segments[1].textContent).toBe('3');
+      expect(getTextValue(segments[1])).toBe('3');
       expect(segments[1].getAttribute('aria-label')).toBe('day');
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
 
-      expect(segments[2].textContent).toBe('2019');
+      expect(getTextValue(segments[2])).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('year');
       expect(segments[2].getAttribute('aria-valuenow')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuetext')).toBe('2019');
@@ -109,51 +107,81 @@ describe('DatePicker', function () {
       let segments = getAllByRole('spinbutton');
       expect(segments.length).toBe(7);
 
-      expect(segments[0].textContent).toBe('2');
+      expect(getTextValue(segments[0])).toBe('2');
       expect(segments[0].getAttribute('aria-label')).toBe('month');
       expect(segments[0].getAttribute('aria-valuenow')).toBe('2');
       expect(segments[0].getAttribute('aria-valuetext')).toBe('2 – February');
       expect(segments[0].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[0].getAttribute('aria-valuemax')).toBe('12');
 
-      expect(segments[1].textContent).toBe('3');
+      expect(getTextValue(segments[1])).toBe('3');
       expect(segments[1].getAttribute('aria-label')).toBe('day');
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
 
-      expect(segments[2].textContent).toBe('2019');
+      expect(getTextValue(segments[2])).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('year');
       expect(segments[2].getAttribute('aria-valuenow')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuetext')).toBe('2019');
       expect(segments[2].getAttribute('aria-valuemin')).toBe('1');
       expect(segments[2].getAttribute('aria-valuemax')).toBe('9999');
 
-      expect(segments[3].textContent).toBe('12');
+      expect(getTextValue(segments[3])).toBe('12');
       expect(segments[3].getAttribute('aria-label')).toBe('hour');
       expect(segments[3].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[3].getAttribute('aria-valuetext')).toBe('12 AM');
       expect(segments[3].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[3].getAttribute('aria-valuemax')).toBe('11');
 
-      expect(segments[4].textContent).toBe('00');
+      expect(getTextValue(segments[4])).toBe('00');
       expect(segments[4].getAttribute('aria-label')).toBe('minute');
       expect(segments[4].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[4].getAttribute('aria-valuetext')).toBe('00');
       expect(segments[4].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[4].getAttribute('aria-valuemax')).toBe('59');
 
-      expect(segments[5].textContent).toBe('00');
+      expect(getTextValue(segments[5])).toBe('00');
       expect(segments[5].getAttribute('aria-label')).toBe('second');
       expect(segments[5].getAttribute('aria-valuenow')).toBe('0');
       expect(segments[5].getAttribute('aria-valuetext')).toBe('00');
       expect(segments[5].getAttribute('aria-valuemin')).toBe('0');
       expect(segments[5].getAttribute('aria-valuemax')).toBe('59');
 
-      expect(segments[6].textContent).toBe('AM');
+      expect(getTextValue(segments[6])).toBe('AM');
       expect(segments[6].getAttribute('aria-label')).toBe('AM/PM');
       expect(segments[6].getAttribute('aria-valuetext')).toBe('AM');
+    });
+
+    it('should support focusing via a ref', function () {
+      let ref = React.createRef();
+      let {getAllByRole} = render(<DatePicker label="Date" ref={ref} />);
+      expect(ref.current).toHaveProperty('focus');
+
+      act(() => ref.current.focus());
+      expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+    });
+
+    it('should support autoFocus', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" autoFocus />);
+      expect(document.activeElement).toBe(getAllByRole('spinbutton')[0]);
+    });
+
+    it('should pass through data attributes', function () {
+      let {getByTestId} = render(<DatePicker label="Date" data-testid="foo" />);
+      expect(getByTestId('foo')).toHaveAttribute('role', 'group');
+    });
+
+    it('should return the outer most DOM element from the ref', function () {
+      let ref = React.createRef();
+      render(<DatePicker label="Date" ref={ref} />);
+      expect(ref.current).toHaveProperty('UNSAFE_getDOMNode');
+
+      let wrapper = ref.current.UNSAFE_getDOMNode();
+      expect(wrapper).toBeInTheDocument();
+      expect(within(wrapper).getByText('Date')).toBeInTheDocument();
+      expect(within(wrapper).getAllByRole('spinbutton')[0]).toBeInTheDocument();
     });
   });
 
@@ -167,7 +195,7 @@ describe('DatePicker', function () {
       );
 
       let combobox = getAllByRole('group')[0];
-      expect(combobox).toHaveTextContent('2/3/2019');
+      expect(getTextValue(combobox)).toBe('2/3/2019');
 
       let button = getByRole('button');
       triggerPress(button);
@@ -186,7 +214,7 @@ describe('DatePicker', function () {
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDate(2019, 2, 4));
-      expect(combobox).toHaveTextContent('2/3/2019'); // controlled
+      expect(getTextValue(combobox)).toBe('2/3/2019'); // controlled
     });
 
     it('should emit onChange when selecting a date in the calendar in uncontrolled mode', function () {
@@ -198,7 +226,7 @@ describe('DatePicker', function () {
       );
 
       let combobox = getAllByRole('group')[0];
-      expect(combobox).toHaveTextContent('2/3/2019');
+      expect(getTextValue(combobox)).toBe('2/3/2019');
 
       let button = getByRole('button');
       triggerPress(button);
@@ -215,7 +243,7 @@ describe('DatePicker', function () {
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDate(2019, 2, 4));
-      expect(combobox).toHaveTextContent('2/4/2019'); // uncontrolled
+      expect(getTextValue(combobox)).toBe('2/4/2019'); // uncontrolled
     });
 
     it('should display a time field when a CalendarDateTime value is used', function () {
@@ -227,7 +255,7 @@ describe('DatePicker', function () {
       );
 
       let combobox = getAllByRole('group')[0];
-      expect(combobox).toHaveTextContent('2/3/2019, 8:45 AM');
+      expect(getTextValue(combobox)).toBe('2/3/2019, 8:45 AM');
 
       let button = getByRole('button');
       triggerPress(button);
@@ -240,7 +268,7 @@ describe('DatePicker', function () {
       expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
 
       let timeField = getAllByLabelText('Time')[0];
-      expect(timeField).toHaveTextContent('8:45 AM');
+      expect(getTextValue(timeField)).toBe('8:45 AM');
 
       // selecting a date should not close the popover
       triggerPress(selected.nextSibling.children[0]);
@@ -248,7 +276,7 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 8, 45));
-      expect(combobox).toHaveTextContent('2/4/2019, 8:45 AM');
+      expect(getTextValue(combobox)).toBe('2/4/2019, 8:45 AM');
 
       let hour = within(timeField).getByLabelText('hour');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -263,7 +291,7 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(2);
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2019, 2, 4, 9, 45));
-      expect(combobox).toHaveTextContent('2/4/2019, 9:45 AM');
+      expect(getTextValue(combobox)).toBe('2/4/2019, 9:45 AM');
     });
 
     it('should not fire onChange until both date and time are selected', function () {
@@ -276,8 +304,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
-      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
-      expectPlaceholder(combobox, placeholder);
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
       triggerPress(button);
@@ -290,7 +317,7 @@ describe('DatePicker', function () {
       expect(selected).toBeUndefined();
 
       let timeField = getAllByLabelText('Time')[0];
-      expectPlaceholder(timeField, '12:00 AM');
+      expectPlaceholder(timeField, '––:–– AM');
 
       // selecting a date should not close the popover
       let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
@@ -300,46 +327,46 @@ describe('DatePicker', function () {
 
       expect(dialog).toBeVisible();
       expect(onChange).not.toHaveBeenCalled();
-      expectPlaceholder(combobox, placeholder);
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let hour = within(timeField).getByLabelText('hour');
       expect(hour).toHaveAttribute('role', 'spinbutton');
-      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
+      expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
 
       act(() => hour.focus());
       fireEvent.keyDown(hour, {key: 'ArrowUp'});
       fireEvent.keyUp(hour, {key: 'ArrowUp'});
 
-      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
 
       expect(onChange).not.toHaveBeenCalled();
-      expectPlaceholder(combobox, placeholder);
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'minute');
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'Empty');
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', '01');
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', '00');
 
       expect(onChange).not.toHaveBeenCalled();
-      expectPlaceholder(combobox, placeholder);
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       fireEvent.keyDown(hour, {key: 'ArrowRight'});
       fireEvent.keyUp(hour, {key: 'ArrowRight'});
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM');
-      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'AM');
+      expect(document.activeElement).toHaveAttribute('aria-valuetext', 'Empty');
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
-      let value = toCalendarDateTime(today(getLocalTimeZone())).set({hour: 1, minute: 1});
+      let value = toCalendarDateTime(today(getLocalTimeZone()));
       expect(onChange).toHaveBeenCalledWith(value);
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
@@ -354,8 +381,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
-      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
-      expectPlaceholder(combobox, placeholder);
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
       triggerPress(button);
@@ -390,9 +416,7 @@ describe('DatePicker', function () {
       );
 
       let combobox = getAllByRole('group')[0];
-      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
-      let placeholder = formatter.format(toCalendarDateTime(today(getLocalTimeZone())).toDate(getLocalTimeZone()));
-      expectPlaceholder(combobox, placeholder);
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
       triggerPress(button);
@@ -402,17 +426,17 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
 
       let timeField = getAllByLabelText('Time')[0];
-      expectPlaceholder(timeField, '12:00 AM');
+      expectPlaceholder(timeField, '––:–– AM');
 
       let hour = within(timeField).getByLabelText('hour');
       expect(hour).toHaveAttribute('role', 'spinbutton');
-      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
+      expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
 
       act(() => hour.focus());
       fireEvent.keyDown(hour, {key: 'ArrowUp'});
       fireEvent.keyUp(hour, {key: 'ArrowUp'});
 
-      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
+      expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
 
       userEvent.click(document.body);
       act(() => jest.runAllTimers());
@@ -555,7 +579,7 @@ describe('DatePicker', function () {
       expect(field).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3, 2020 Help text');
+      expect(description).toBe('Selected Date: February 3, 2020 Help text');
 
       let segments = getAllByRole('spinbutton');
       expect(segments[0]).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
@@ -574,7 +598,7 @@ describe('DatePicker', function () {
       expect(field).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('February 3, 2020 Error message');
+      expect(description).toBe('Selected Date: February 3, 2020 Error message');
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
@@ -597,6 +621,18 @@ describe('DatePicker', function () {
       for (let segment of segments) {
         expect(segment).not.toHaveAttribute('aria-describedby');
       }
+    });
+
+    it('should include era for BC dates', function () {
+      let {getAllByRole} = render(<DatePicker label="Date" value={new CalendarDate('BC', 5, 2, 3)} />);
+      let group = getAllByRole('group')[0];
+      expect(group).toHaveAttribute('aria-describedby');
+
+      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(description).toBe('Selected Date: February 3, 5 BC');
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments[3]).toHaveTextContent('BC');
     });
   });
 
@@ -632,6 +668,49 @@ describe('DatePicker', function () {
       triggerPress(field);
       expect(segments[2]).toHaveFocus();
     });
+
+    it('should focus the previous segment when the era is removed', function () {
+      let {getByTestId, queryByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />);
+      let field = getByTestId('date-field');
+      let era = getByTestId('era');
+      expect(era).toBe(field.lastChild);
+
+      act(() => era.focus());
+      fireEvent.keyDown(era, {key: 'ArrowUp'});
+      fireEvent.keyUp(era, {key: 'ArrowUp'});
+
+      expect(queryByTestId('era')).toBeNull();
+      expect(document.activeElement).toBe(field.lastChild);
+    });
+
+    it('should focus the next segment when the era is removed and is the first segment', function () {
+      let {getByTestId, queryByTestId} = render(
+        <Provider theme={theme} locale="lv-LV">
+          <DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />
+        </Provider>
+      );
+      let field = getByTestId('date-field');
+      let era = getByTestId('era');
+      expect(era).toBe(field.firstChild);
+
+      act(() => era.focus());
+      fireEvent.keyDown(era, {key: 'ArrowUp'});
+      fireEvent.keyUp(era, {key: 'ArrowUp'});
+
+      expect(queryByTestId('era')).toBeNull();
+      expect(document.activeElement).toBe(field.firstChild);
+    });
+
+    it('does not try to shift focus when the entire datepicker is unmounted while focused', function () {
+      let {rerender, getByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />);
+      let era = getByTestId('era');
+
+      act(() => era.focus());
+
+      rerender(<div />);
+      expect(era).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(document.body);
+    });
   });
 
   describe('editing', function () {
@@ -640,7 +719,11 @@ describe('DatePicker', function () {
         let onChange = jest.fn();
 
         // Test controlled mode
-        let {getByLabelText, unmount} = render(<DatePicker label="Date" value={value} onChange={onChange} {...options.props} />);
+        let {getByLabelText, unmount} = render(
+          <Provider theme={theme} locale={options?.locale}>
+            <DatePicker label="Date" value={value} onChange={onChange} {...options.props} />
+          </Provider>
+        );
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -658,7 +741,11 @@ describe('DatePicker', function () {
 
         // Test uncontrolled mode (increment)
         onChange = jest.fn();
-        ({getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} {...options.props} />));
+        ({getByLabelText, unmount} = render(
+          <Provider theme={theme} locale={options?.locale}>
+            <DatePicker label="Date" defaultValue={value} onChange={onChange} {...options.props} />
+          </Provider>
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -671,7 +758,11 @@ describe('DatePicker', function () {
 
         // Test uncontrolled mode (decrement)
         onChange = jest.fn();
-        ({getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} {...options.props} />));
+        ({getByLabelText, unmount} = render(
+          <Provider theme={theme} locale={options?.locale}>
+            <DatePicker label="Date" defaultValue={value} onChange={onChange} {...options.props} />
+          </Provider>
+          ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -684,7 +775,11 @@ describe('DatePicker', function () {
 
         // Test read only mode (increment)
         onChange = jest.fn();
-        ({getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...options.props} />));
+        ({getByLabelText, unmount} = render(
+          <Provider theme={theme} locale={options?.locale}>
+            <DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...options.props} />
+          </Provider>
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -696,7 +791,11 @@ describe('DatePicker', function () {
 
         // Test read only mode (decrement)
         onChange = jest.fn();
-        ({getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...options.props} />));
+        ({getByLabelText, unmount} = render(
+          <Provider theme={theme} locale={options?.locale}>
+            <DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...options.props} />
+          </Provider>
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -837,13 +936,42 @@ describe('DatePicker', function () {
           testArrows('AM/PM', new CalendarDateTime(2019, 2, 3, 20), new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 8));
         });
       });
+
+      describe('era', function () {
+        it('should support using the arrow keys to increment and decrement the era', function () {
+          testArrows('era', new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 2, 3), new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), {locale: 'en-US-u-ca-japanese'});
+        });
+
+        it('should show and hide the era field as needed', function () {
+          let {queryByTestId} = render(<DatePicker label="Date" />);
+          let year = queryByTestId('year');
+          expect(queryByTestId('era')).toBeNull();
+
+          beforeInput(year, '1');
+          fireEvent.keyDown(year, {key: 'ArrowDown'});
+          fireEvent.keyUp(year, {key: 'ArrowDown'});
+
+          let era = queryByTestId('era');
+          expect(era).not.toBeNull();
+
+          fireEvent.keyDown(era, {key: 'ArrowDown'});
+          fireEvent.keyUp(era, {key: 'ArrowDown'});
+
+          expect(queryByTestId('era')).toBeNull();
+        });
+      });
     });
 
     describe('text input', function () {
       function testInput(label, value, keys, newValue, moved, props) {
         let onChange = jest.fn();
         // Test controlled mode
-        let {getByLabelText, getAllByRole, unmount} = render(<DatePicker label="Date" value={value} onChange={onChange} {...props} />);
+        let {getByLabelText, getAllByRole, unmount} = render(
+          <Provider theme={theme} locale={props?.locale}>
+            <DatePicker label="Date" value={value} onChange={onChange} {...props} />
+          </Provider>
+        );
+
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -877,7 +1005,11 @@ describe('DatePicker', function () {
 
         // Test uncontrolled mode
         onChange = jest.fn();
-        ({getByLabelText, getAllByRole, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} {...props} />));
+        ({getByLabelText, getAllByRole, unmount} = render(
+          <Provider theme={theme} locale={props?.locale}>
+            <DatePicker label="Date" defaultValue={value} onChange={onChange} {...props} />
+          </Provider>
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -910,7 +1042,11 @@ describe('DatePicker', function () {
 
         // Test read only mode
         onChange = jest.fn();
-        ({getByLabelText, getAllByRole, unmount} = render(<DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...props} />));
+        ({getByLabelText, getAllByRole, unmount} = render(
+          <Provider theme={theme} locale={props?.locale}>
+            <DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...props} />
+          </Provider>
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         act(() => {segment.focus();});
@@ -1027,6 +1163,14 @@ describe('DatePicker', function () {
 
       it('should support entering arabic digits', function () {
         testInput('year', new CalendarDate(2019, 2, 3), '٢٠٢٤', new CalendarDate(2024, 2, 3), false);
+      });
+
+      it('should support typing into the era segment', function () {
+        testInput('era', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), 'h', new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
+        testInput('era', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), 's', new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
+        testInput('era', new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), 'r', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
+        testInput('era', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), '0', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
+        testInput('era', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), '1', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
       });
     });
 
@@ -1168,22 +1312,20 @@ describe('DatePicker', function () {
   });
 
   describe('placeholder', function () {
-    it('should display a placeholder date if no value is provided', function () {
+    it('should display a placeholder if no value is provided', function () {
       let onChange = jest.fn();
       let {getAllByRole} = render(<DatePicker label="Date" onChange={onChange} />);
 
       let combobox = getAllByRole('group')[0];
-      let today = new Intl.DateTimeFormat('en-US').format(new Date());
-      expectPlaceholder(combobox, today);
+      expectPlaceholder(combobox, 'mm/dd/yyyy');
     });
 
-    it('should display a placeholder date if the value prop is null', function () {
+    it('should display a placeholder if the value prop is null', function () {
       let onChange = jest.fn();
       let {getAllByRole} = render(<DatePicker label="Date" onChange={onChange} value={null} />);
 
       let combobox = getAllByRole('group')[0];
-      let today = new Intl.DateTimeFormat('en-US').format(new Date());
-      expectPlaceholder(combobox, today);
+      expectPlaceholder(combobox, 'mm/dd/yyyy');
     });
 
     it('should use the placeholderValue prop if provided', function () {
@@ -1191,33 +1333,7 @@ describe('DatePicker', function () {
       let {getAllByRole} = render(<DatePicker label="Date" onChange={onChange} placeholderValue={new CalendarDate(1980, 1, 1)} />);
 
       let combobox = getAllByRole('group')[0];
-      expectPlaceholder(combobox, '1/1/1980');
-    });
-
-    it('should confirm placeholder value with the enter key', function () {
-      let onChange = jest.fn();
-      let {getAllByRole} = render(<DatePicker label="Date" onChange={onChange} />);
-
-      let combobox = getAllByRole('group')[0];
-      let todayStr = new Intl.DateTimeFormat('en-US').format(new Date());
-      expectPlaceholder(combobox, todayStr);
-
-      let segments = getAllByRole('spinbutton');
-      act(() => {segments[0].focus();});
-
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      expect(segments[1]).toHaveFocus();
-      expect(onChange).not.toHaveBeenCalled();
-
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      expect(segments[2]).toHaveFocus();
-      expect(onChange).not.toHaveBeenCalled();
-
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      expect(segments[2]).toHaveFocus();
-      expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith(today(getLocalTimeZone()));
-      expectPlaceholder(combobox, todayStr);
+      expectPlaceholder(combobox, 'mm/dd/yyyy');
     });
 
     it('should use arrow keys to modify placeholder (uncontrolled)', function () {
@@ -1226,7 +1342,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expectPlaceholder(combobox, formatter.format(new Date()));
+      expectPlaceholder(combobox, 'mm/dd/yyyy');
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1235,19 +1351,22 @@ describe('DatePicker', function () {
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
-      let value = today(getLocalTimeZone()).cycle('month', 1);
-      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+      let value = today(getLocalTimeZone());
+      let parts = formatter.formatToParts(value.toDate(getLocalTimeZone()));
+      let month = parts.find(p => p.type === 'month').value;
+      expectPlaceholder(combobox, `${month}/dd/yyyy`);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
-      value = value.cycle('day', 1);
-      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+      parts = formatter.formatToParts(value.toDate(getLocalTimeZone()));
+      month = parts.find(p => p.type === 'month').value;
+      let day = parts.find(p => p.type === 'day').value;
+      expectPlaceholder(combobox, `${month}/${day}/yyyy`);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       expect(onChange).toHaveBeenCalledTimes(1);
-      value = value.cycle('year', 1);
       expect(onChange).toHaveBeenCalledWith(value);
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
@@ -1258,7 +1377,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expectPlaceholder(combobox, formatter.format(new Date()));
+      expectPlaceholder(combobox, 'mm/dd/yyyy');
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1267,22 +1386,25 @@ describe('DatePicker', function () {
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
-      let value = today(getLocalTimeZone()).cycle('month', 1);
-      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+      let value = today(getLocalTimeZone());
+      let parts = formatter.formatToParts(value.toDate(getLocalTimeZone()));
+      let month = parts.find(p => p.type === 'month').value;
+      expectPlaceholder(combobox, `${month}/dd/yyyy`);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
-      value = value.cycle('day', 1);
-      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+      parts = formatter.formatToParts(value.toDate(getLocalTimeZone()));
+      month = parts.find(p => p.type === 'month').value;
+      let day = parts.find(p => p.type === 'day').value;
+      expectPlaceholder(combobox, `${month}/${day}/yyyy`);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange).toHaveBeenCalledWith(value.cycle('year', 1));
-      expectPlaceholder(combobox, formatter.format(new Date())); // controlled
+      expect(onChange).toHaveBeenCalledWith(value);
+      expectPlaceholder(combobox, 'mm/dd/yyyy'); // controlled
 
-      value = value.cycle('year', 1);
       rerender(<DatePicker label="Date" onChange={onChange} value={value} />);
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
@@ -1293,7 +1415,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expectPlaceholder(combobox, formatter.format(new Date()));
+      expectPlaceholder(combobox, 'mm/dd/yyyy');
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1302,13 +1424,18 @@ describe('DatePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       let value = today(getLocalTimeZone()).set({month: 4});
-      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+      let parts = formatter.formatToParts(value.toDate(getLocalTimeZone()));
+      let month = parts.find(p => p.type === 'month').value;
+      expectPlaceholder(combobox, `${month}/dd/yyyy`);
 
       beforeInput(document.activeElement, '5');
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       value = today(getLocalTimeZone()).set({month: 4, day: 5});
-      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+      parts = formatter.formatToParts(value.toDate(getLocalTimeZone()));
+      month = parts.find(p => p.type === 'month').value;
+      let day = parts.find(p => p.type === 'day').value;
+      expectPlaceholder(combobox, `${month}/${day}/yyyy`);
 
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -1330,7 +1457,7 @@ describe('DatePicker', function () {
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
-      expectPlaceholder(combobox, formatter.format(new Date()));
+      expectPlaceholder(combobox, 'mm/dd/yyyy');
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1339,32 +1466,36 @@ describe('DatePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       let value = today(getLocalTimeZone()).set({month: 4});
-      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+      let parts = formatter.formatToParts(value.toDate(getLocalTimeZone()));
+      let month = parts.find(p => p.type === 'month').value;
+      expectPlaceholder(combobox, `${month}/dd/yyyy`);
 
       beforeInput(document.activeElement, '5');
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
       value = today(getLocalTimeZone()).set({month: 4, day: 5});
-      expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
+      parts = formatter.formatToParts(value.toDate(getLocalTimeZone()));
+      month = parts.find(p => p.type === 'month').value;
+      let day = parts.find(p => p.type === 'day').value;
+      expectPlaceholder(combobox, `${month}/${day}/yyyy`);
 
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDate(2, 4, 5));
       expect(segments[2]).toHaveFocus();
-      expectPlaceholder(combobox, formatter.format(new Date())); // controlled
+      expectPlaceholder(combobox, 'mm/dd/yyyy'); // controlled
 
       value = new CalendarDate(2020, 4, 5);
       rerender(<DatePicker label="Date" onChange={onChange} value={value} />);
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
-    it('should confirm the placeholder on blur', function () {
+    it('should confirm the placeholder on blur and only AM/PM is un-entered', function () {
       let onChange = jest.fn();
-      let {getAllByRole} = render(<DatePicker label="Date" onChange={onChange} />);
+      let {getAllByRole} = render(<DatePicker label="Date" granularity="minute" onChange={onChange} />);
 
       let combobox = getAllByRole('group')[0];
-      let todayStr = new Intl.DateTimeFormat('en-US').format(new Date());
-      expectPlaceholder(combobox, todayStr);
+      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let segments = getAllByRole('spinbutton');
       act(() => {segments[0].focus();});
@@ -1379,7 +1510,35 @@ describe('DatePicker', function () {
 
       expect(segments[1]).toHaveFocus();
       act(() => {segments[1].blur();});
-      expect(onChange).toHaveBeenCalledWith(today(getLocalTimeZone()).set({month: 4}));
+      expect(onChange).not.toHaveBeenCalled();
+
+      act(() => {segments[1].focus();});
+      beforeInput(document.activeElement, '5');
+
+      expect(segments[2]).toHaveFocus();
+      act(() => {segments[2].blur();});
+      expect(onChange).not.toHaveBeenCalled();
+
+      act(() => {segments[2].focus();});
+      beforeInput(document.activeElement, '2022');
+
+      expect(segments[3]).toHaveFocus();
+      act(() => {segments[3].blur();});
+      expect(onChange).not.toHaveBeenCalled();
+
+      act(() => {segments[3].focus();});
+      beforeInput(document.activeElement, '5');
+
+      expect(segments[4]).toHaveFocus();
+      act(() => {segments[4].blur();});
+      expect(onChange).not.toHaveBeenCalled();
+
+      act(() => {segments[4].focus();});
+      beforeInput(document.activeElement, '45');
+
+      expect(segments[5]).toHaveFocus();
+      act(() => {segments[5].blur();});
+      expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2022, 4, 5, 5, 45));
     });
   });
 });

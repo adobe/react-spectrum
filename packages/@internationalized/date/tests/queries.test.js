@@ -43,6 +43,7 @@ describe('queries', function () {
       expect(isSameDay(new CalendarDate(2019, 2, 3), new CalendarDate(2020, 2, 3))).toBe(false);
       expect(isSameDay(new CalendarDate(2020, 3, 3), new CalendarDate(2020, 2, 3))).toBe(false);
       expect(isSameDay(new CalendarDate(2020, 2, 4), new CalendarDate(2020, 2, 3))).toBe(false);
+      expect(isSameDay(new CalendarDate('AD', 1, 1, 1), new CalendarDate('BC', 1, 1, 1))).toBe(false);
     });
 
     it('works with two dates in different calendars', function () {
@@ -296,6 +297,15 @@ describe('queries', function () {
     it('should return the maximum date', function () {
       expect(maxDate(new CalendarDate(2020, 2, 3), new CalendarDate(2020, 5, 3))).toEqual(new CalendarDate(2020, 5, 3));
       expect(maxDate(new CalendarDate(2020, 5, 3), new CalendarDate(2020, 2, 3))).toEqual(new CalendarDate(2020, 5, 3));
+    });
+  });
+
+  describe('compare', function () {
+    it('works with dates in different eras', function () {
+      let a = new CalendarDate('BC', 1, 1, 1);
+      let b = new CalendarDate('AD', 1, 1, 1);
+      expect(a.compare(b)).toBeLessThan(0);
+      expect(b.compare(a)).toBeGreaterThan(0);
     });
   });
 });

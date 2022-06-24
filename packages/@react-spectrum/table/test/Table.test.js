@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, typeText, within} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
@@ -23,8 +23,6 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
-import {HidingColumns} from '../stories/HidingColumns';
-import {installPointerEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -32,7 +30,6 @@ import {Switch} from '@react-spectrum/switch';
 import {TableWithBreadcrumbs} from '../stories/Table.stories';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let columns = [
@@ -111,16 +108,12 @@ describe('TableView', function () {
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterAll(function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
-  });
-
-  beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
@@ -1356,6 +1349,13 @@ describe('TableView', function () {
         </>
       );
 
+      it('should retain focus on the pressed child', function () {
+        let tree = renderFocusable();
+        let switchToPress = tree.getAllByRole('switch')[2];
+        act(() => triggerPress(switchToPress));
+        expect(document.activeElement).toBe(switchToPress);
+      });
+
       it('should marshall focus to the focusable element inside a cell', function () {
         let tree = renderFocusable();
         focusCell(tree, 'Baz 1');
@@ -2359,10 +2359,10 @@ describe('TableView', function () {
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
 
-      act(() => {
-        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
-        jest.runAllTimers();
-      });
+      // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+      act(() => jest.runAllTimers());
+      // Animation.
+      act(() => jest.runAllTimers());
       let row = tree.getAllByRole('row')[1];
       triggerPress(row);
       expect(announce).toHaveBeenLastCalledWith('File C selected.');
@@ -2382,10 +2382,10 @@ describe('TableView', function () {
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
 
-      act(() => {
-        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
-        jest.runAllTimers();
-      });
+      // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+      act(() => jest.runAllTimers());
+      // Animation.
+      act(() => jest.runAllTimers());
       let row = tree.getAllByRole('row')[1];
       triggerPress(row);
       expect(announce).toHaveBeenLastCalledWith('File C selected.');
@@ -2418,6 +2418,106 @@ describe('TableView', function () {
       expect(announce).toHaveBeenLastCalledWith('No items selected.');
     });
 
+    describe('onAction', function () {
+      installPointerEvent();
+
+      it('should trigger onAction when clicking rows with the mouse', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, onAction});
+
+        let rows = tree.getAllByRole('row');
+        userEvent.click(getCell(tree, 'Baz 10'), {pointerType: 'mouse'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('Foo 10');
+        checkRowSelection(rows.slice(1), false);
+
+        let checkbox = within(rows[1]).getByRole('checkbox');
+        userEvent.click(checkbox);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkRowSelection([rows[1]], true);
+
+        userEvent.click(getCell(tree, 'Baz 10'), {pointerType: 'mouse'});
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        checkRowSelection([rows[1], rows[10]], true);
+      });
+
+      it('should trigger onAction when clicking rows with touch', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, onAction});
+
+        let rows = tree.getAllByRole('row');
+        userEvent.click(getCell(tree, 'Baz 10'), {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('Foo 10');
+        checkRowSelection(rows.slice(1), false);
+
+        let checkbox = within(rows[1]).getByRole('checkbox');
+        userEvent.click(checkbox, {pointerType: 'touch'});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkRowSelection([rows[1]], true);
+
+        userEvent.click(getCell(tree, 'Baz 10'), {pointerType: 'touch'});
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        checkRowSelection([rows[1], rows[10]], true);
+      });
+
+      it('should support long press to enter selection mode on touch', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, onAction});
+        userEvent.click(document.body);
+
+        fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).not.toHaveBeenCalled();
+
+        act(() => jest.advanceTimersByTime(800));
+
+        checkSelection(onSelectionChange, ['Foo 5']);
+        expect(onAction).not.toHaveBeenCalled();
+
+        fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+
+        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
+
+        // Deselect all to exit selection mode
+        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+        onSelectionChange.mockReset();
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+
+        act(() => jest.runAllTimers());
+        checkSelection(onSelectionChange, []);
+        expect(onAction).not.toHaveBeenCalled();
+      });
+
+      it('should trigger onAction when pressing Enter', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, onAction});
+        let rows = tree.getAllByRole('row');
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'Enter'});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: 'Enter'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('Foo 10');
+        checkRowSelection(rows.slice(1), false);
+
+        onAction.mockReset();
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onAction).not.toHaveBeenCalled();
+        checkRowSelection([rows[10]], true);
+      });
+    });
+
     describe('selectionStyle highlight', function () {
       installPointerEvent();
 
@@ -2429,17 +2529,17 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        userEvent.click(getCell(tree, 'Baz 10'));
+        userEvent.click(getCell(tree, 'Baz 10'), {pointerType: 'mouse'});
         expect(announce).toHaveBeenLastCalledWith('Foo 10 selected.');
         expect(announce).toHaveBeenCalledTimes(1);
 
         onSelectionChange.mockReset();
-        userEvent.click(getCell(tree, 'Baz 20'), {shiftKey: true});
+        userEvent.click(getCell(tree, 'Baz 20'), {pointerType: 'mouse', shiftKey: true});
         expect(announce).toHaveBeenLastCalledWith('11 items selected.');
         expect(announce).toHaveBeenCalledTimes(2);
 
         onSelectionChange.mockReset();
-        userEvent.click(getCell(tree, 'Foo 5'));
+        userEvent.click(getCell(tree, 'Foo 5'), {pointerType: 'mouse'});
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected. 1 item selected.');
         expect(announce).toHaveBeenCalledTimes(3);
 
@@ -2452,7 +2552,7 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(6), false);
 
         onSelectionChange.mockReset();
-        userEvent.click(getCell(tree, 'Foo 10'), {shiftKey: true});
+        userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'mouse', shiftKey: true});
         expect(announce).toHaveBeenLastCalledWith('6 items selected.');
         expect(announce).toHaveBeenCalledTimes(4);
 
@@ -2474,13 +2574,13 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        userEvent.click(getCell(tree, 'Baz 10'));
+        userEvent.click(getCell(tree, 'Baz 10'), {pointerType: 'mouse'});
 
         onSelectionChange.mockReset();
-        userEvent.click(getCell(tree, 'Baz 20'), {shiftKey: true});
+        userEvent.click(getCell(tree, 'Baz 20'), {pointerType: 'mouse', shiftKey: true});
 
         onSelectionChange.mockReset();
-        userEvent.click(getCell(tree, 'Foo 5'), {metaKey: true});
+        userEvent.click(getCell(tree, 'Foo 5'), {pointerType: 'mouse', metaKey: true});
 
         checkSelection(onSelectionChange, [
           'Foo 5', 'Foo 10', 'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15',
@@ -2563,8 +2663,8 @@ describe('TableView', function () {
 
         // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
         let cell = getCell(tree, 'Foo 10');
-        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
         fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
         checkSelection(onSelectionChange, [
           'Foo 5', 'Foo 8', 'Foo 10'
@@ -2584,13 +2684,14 @@ describe('TableView', function () {
 
         // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
         let cell = getCell(tree, 'Foo 10');
-        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+        fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+        fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
         fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(2);
         expect(onAction).toHaveBeenCalledWith('Foo 10');
       });
+
       describe('with pointer events', () => {
         beforeEach(() => {
           window.ontouchstart = jest.fn();
@@ -2603,6 +2704,8 @@ describe('TableView', function () {
           let onSelectionChange = jest.fn();
           let onAction = jest.fn();
           let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+          act(() => {jest.runAllTimers();});
           userEvent.click(document.body);
 
           fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
@@ -2613,7 +2716,7 @@ describe('TableView', function () {
           expect(onAction).not.toHaveBeenCalled();
           expect(tree.queryByLabelText('Select All')).toBeNull();
 
-          act(() => jest.advanceTimersByTime(800));
+          act(() => {jest.advanceTimersByTime(800);});
 
           expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
           expect(announce).toHaveBeenCalledTimes(1);
@@ -2623,22 +2726,27 @@ describe('TableView', function () {
 
           fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
           onSelectionChange.mockReset();
+          act(() => {jest.runAllTimers();});
 
           userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+          act(() => {jest.runAllTimers();});
           expect(announce).toHaveBeenLastCalledWith('Foo 10 selected. 2 items selected.');
           expect(announce).toHaveBeenCalledTimes(2);
           checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
           // Deselect all to exit selection mode
           userEvent.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+          act(() => {jest.runAllTimers();});
           expect(announce).toHaveBeenLastCalledWith('Foo 10 not selected. 1 item selected.');
           expect(announce).toHaveBeenCalledTimes(3);
           onSelectionChange.mockReset();
+
           userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+          act(() => {jest.runAllTimers();});
           expect(announce).toHaveBeenLastCalledWith('Foo 5 not selected.');
           expect(announce).toHaveBeenCalledTimes(4);
 
-          act(() => jest.runAllTimers());
+          act(() => {jest.runAllTimers();});
           checkSelection(onSelectionChange, []);
           expect(onAction).not.toHaveBeenCalled();
           expect(tree.queryByLabelText('Select All')).toBeNull();
@@ -2661,7 +2769,7 @@ describe('TableView', function () {
         onSelectionChange.mockReset();
         fireEvent.keyDown(getCell(tree, 'Baz 5'), {key: 'Enter'});
         fireEvent.keyUp(getCell(tree, 'Baz 5'), {key: 'Enter'});
-        checkSelection(onSelectionChange, ['Foo 5']);
+        expect(onSelectionChange).not.toHaveBeenCalled();
         expect(announce).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledWith('Foo 5');
@@ -2672,7 +2780,7 @@ describe('TableView', function () {
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionMode: 'none', onAction});
 
-        userEvent.click(getCell(tree, 'Baz 10'));
+        userEvent.click(getCell(tree, 'Baz 10'), {pointerType: 'mouse'});
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -2683,7 +2791,7 @@ describe('TableView', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
-        userEvent.click(getCell(tree, 'Baz 5'));
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 5']);
@@ -2712,7 +2820,7 @@ describe('TableView', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
-        userEvent.click(getCell(tree, 'Baz 5'));
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 5']);
@@ -2736,7 +2844,7 @@ describe('TableView', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
-        userEvent.click(getCell(tree, 'Baz 5'));
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 5']);
@@ -2795,7 +2903,7 @@ describe('TableView', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
-        userEvent.click(getCell(tree, 'Baz 5'));
+        userEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 5']);
@@ -3161,9 +3269,6 @@ describe('TableView', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
 
-      // Need requestAnimationFrame to actually be async for this test to work.
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-
       triggerPress(menuItems[1]);
       act(() => jest.runAllTimers());
       expect(menu).not.toBeInTheDocument();
@@ -3286,7 +3391,7 @@ describe('TableView', function () {
 
       expect(dialog).not.toBeInTheDocument();
 
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
 
       let rowHeaders = within(rows[2]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Jessica');
@@ -3301,6 +3406,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
@@ -3329,6 +3435,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
@@ -3346,6 +3453,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', altKey: true});
@@ -3363,6 +3471,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
@@ -3375,9 +3484,6 @@ describe('TableView', function () {
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
       fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[1]);
-
-      // Need requestAnimationFrame to actually be async for this test to work.
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
 
       fireEvent.keyDown(document.activeElement, {key: 'Escape'});
       fireEvent.keyUp(document.activeElement, {key: 'Escape'});
@@ -3457,9 +3563,9 @@ describe('TableView', function () {
 
       expect(document.activeElement).toEqual(input);
 
+      fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+      fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
       act(() => {
-        fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
-        fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
         jest.runAllTimers();
       });
 
@@ -3617,14 +3723,17 @@ describe('TableView', function () {
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
 
       scrollView.scrollTop = 1500;
       fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
 
       scrollView.scrollTop = 2800;
       fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
 
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      expect(onLoadMore).toHaveBeenCalledTimes(3);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
@@ -3649,8 +3758,10 @@ describe('TableView', function () {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
+      // first loadMore triggered by onVisibleRectChange, other 3 by useLayoutEffect
+      // we can't get better results than that without mocking every single clientHeight/Width
+      // this is a good candidate for storybook interactions test
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(4);
     });
 
     it('should display an empty state when there are no items', function () {
@@ -3986,773 +4097,5 @@ describe('TableView', function () {
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'bar', direction: 'ascending'});
     });
-  });
-
-  describe('layout', function () {
-    describe('row heights', function () {
-      let renderTable = (props, scale) => render(
-        <TableView aria-label="Table" {...props}>
-          <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
-          </TableHeader>
-          <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
-          </TableBody>
-        </TableView>
-      , scale);
-
-      it('should layout rows with default height', function () {
-        let tree = renderTable();
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('34px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('41px');
-        expect(rows[2].style.top).toBe('41px');
-        expect(rows[2].style.height).toBe('41px');
-
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('40px');
-        }
-      });
-
-      it('should layout rows with default height in large scale', function () {
-        let tree = renderTable({}, 'large');
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('40px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('51px');
-        expect(rows[2].style.top).toBe('51px');
-        expect(rows[2].style.height).toBe('51px');
-
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('50px');
-        }
-      });
-
-      it('should layout rows with density="compact"', function () {
-        let tree = renderTable({density: 'compact'});
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('34px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('33px');
-        expect(rows[2].style.top).toBe('33px');
-        expect(rows[2].style.height).toBe('33px');
-
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('32px');
-        }
-      });
-
-      it('should layout rows with density="compact" in large scale', function () {
-        let tree = renderTable({density: 'compact'}, 'large');
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('40px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('41px');
-        expect(rows[2].style.top).toBe('41px');
-        expect(rows[2].style.height).toBe('41px');
-
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('40px');
-        }
-      });
-
-      it('should layout rows with density="spacious"', function () {
-        let tree = renderTable({density: 'spacious'});
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('34px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('49px');
-        expect(rows[2].style.top).toBe('49px');
-        expect(rows[2].style.height).toBe('49px');
-
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('48px');
-        }
-      });
-
-      it('should layout rows with density="spacious" in large scale', function () {
-        let tree = renderTable({density: 'spacious'}, 'large');
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('40px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('61px');
-        expect(rows[2].style.top).toBe('61px');
-        expect(rows[2].style.height).toBe('61px');
-
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('60px');
-        }
-      });
-
-      it('should support variable row heights with overflowMode="wrap"', function () {
-        let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
-          .mockImplementation(function () {
-            return this.textContent === 'Foo 1' ? 64 : 48;
-          });
-
-        let tree = renderTable({overflowMode: 'wrap'});
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('65px');
-        expect(rows[2].style.top).toBe('65px');
-        expect(rows[2].style.height).toBe('49px');
-
-        for (let cell of rows[1].childNodes) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('64px');
-        }
-
-        for (let cell of rows[2].childNodes) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('48px');
-        }
-
-        scrollHeight.mockRestore();
-      });
-
-      it('should support variable column header heights with overflowMode="wrap"', function () {
-        let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
-          .mockImplementation(function () {
-            return this.textContent === 'Tier Two Header B' ? 48 : 34;
-          });
-
-        let tree = render(
-          <TableView aria-label="Table" overflowMode="wrap">
-            <TableHeader columns={nestedColumns}>
-              {column => <Column childColumns={column.children}>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(5);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('34px');
-        expect(rows[1].style.top).toBe('34px');
-        expect(rows[1].style.height).toBe('48px');
-        expect(rows[2].style.top).toBe('82px');
-        expect(rows[2].style.height).toBe('34px');
-
-        for (let cell of rows[0].childNodes) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('34px');
-        }
-
-        for (let cell of rows[1].childNodes) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('48px');
-        }
-
-        for (let cell of rows[2].childNodes) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('34px');
-        }
-
-        scrollHeight.mockRestore();
-      });
-
-      // To test https://github.com/adobe/react-spectrum/issues/1885
-      it('should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled', function () {
-        function ControlledSelection(props) {
-          let [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-          return (
-            <TableView aria-label="Table" overflowMode="wrap" selectionMode={props.selectionMode} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
-              <TableHeader columns={columns}>
-                {column => <Column>{column.name}</Column>}
-              </TableHeader>
-              <TableBody items={items}>
-                {item =>
-                  (<Row key={item.foo}>
-                    {key => <Cell>{item[key]}</Cell>}
-                  </Row>)
-                }
-              </TableBody>
-            </TableView>
-          );
-        }
-
-        let tree = render(<ControlledSelection selectionMode="multiple" />);
-        let row = tree.getAllByRole('row')[2];
-        expect(row).toHaveAttribute('aria-selected', 'false');
-        userEvent.click(within(row).getByRole('checkbox'));
-        expect(row).toHaveAttribute('aria-selected', 'true');
-
-        // Without ListLayout fix, throws here with "TypeError: Cannot set property 'estimatedSize' of undefined"
-        rerender(tree, <ControlledSelection selectionMode="none" />);
-        act(() => jest.runAllTimers());
-        expect(tree.queryByRole('checkbox')).toBeNull();
-      });
-
-      it('should return the proper cell z-indexes for overflowMode="wrap"', function () {
-        let tree = renderTable({overflowMode: 'wrap', selectionMode: 'multiple'});
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        for (let row of rows) {
-          for (let [index, cell] of row.childNodes.entries()) {
-            if (index === 0) {
-              expect(cell.style.zIndex).toBe('2');
-            } else {
-              expect(cell.style.zIndex).toBe('1');
-            }
-          }
-        }
-      });
-    });
-
-    describe('column widths', function () {
-      it('should divide the available width by default if no defaultWidth is provided', function () {
-        let tree = render(
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('320px');
-          expect(row.childNodes[2].style.width).toBe('321px');
-          expect(row.childNodes[3].style.width).toBe('321px');
-        }
-      });
-
-      it('should divide the available width by default in large scale', function () {
-        let tree = render((
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        ), 'large');
-
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('48px');
-          expect(row.childNodes[1].style.width).toBe('317px');
-          expect(row.childNodes[2].style.width).toBe('317px');
-          expect(row.childNodes[3].style.width).toBe('318px');
-        }
-      });
-
-      it('should support explicitly sized columns', function () {
-        let tree = render(
-          <TableView aria-label="Table">
-            <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar" width={500}>Bar</Column>
-              <Column key="baz" width={300}>Baz</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('200px');
-          expect(row.childNodes[1].style.width).toBe('500px');
-          expect(row.childNodes[2].style.width).toBe('300px');
-        }
-      });
-
-      it('should divide remaining width among remaining columns', function () {
-        let tree = render(
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar">Bar</Column>
-              <Column key="baz">Baz</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('381px');
-          expect(row.childNodes[3].style.width).toBe('381px');
-        }
-      });
-
-      it('should support percentage widths', function () {
-        let tree = render(
-          <TableView aria-label="Table">
-            <TableHeader>
-              <Column key="foo" width="10%">Foo</Column>
-              <Column key="bar" width={500}>Bar</Column>
-              <Column key="baz">Baz</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('100px');
-          expect(row.childNodes[1].style.width).toBe('500px');
-          expect(row.childNodes[2].style.width).toBe('400px');
-        }
-      });
-
-      it('should support minWidth', function () {
-        let tree = render(
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar" minWidth={500}>Bar</Column>
-              <Column key="baz">Baz</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('262px');
-        }
-      });
-
-      it('should support maxWidth', function () {
-        let tree = render(
-          <TableView aria-label="Table">
-            <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar" maxWidth={300}>Bar</Column>
-              <Column key="baz">Baz</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('200px');
-          expect(row.childNodes[1].style.width).toBe('300px');
-          expect(row.childNodes[2].style.width).toBe('500px');
-        }
-      });
-
-      describe('bounded constraint on columns where dynamic columns exist before the bounded columns', () => {
-        it('should fulfill the constraints of the static columns and give remaining width to previously defined dynamic columns', () => {
-          let tree = render(
-            <TableView aria-label="Table">
-              <TableHeader>
-                <Column allowsResizing key="foo">Foo</Column>
-                <Column key="bar" maxWidth={200}>Bar</Column>
-                <Column key="baz" maxWidth={200}>Baz</Column>
-              </TableHeader>
-              <TableBody items={items}>
-                {item =>
-                  (<Row key={item.foo}>
-                    {key => <Cell>{item[key]}</Cell>}
-                  </Row>)
-                }
-              </TableBody>
-            </TableView>
-          );
-  
-          let rows = tree.getAllByRole('row');
-  
-          for (let row of rows) {
-            expect(row.childNodes[0].style.width).toBe('600px');
-            expect(row.childNodes[1].style.width).toBe('200px');
-            expect(row.childNodes[2].style.width).toBe('200px');
-          }
-        });
-      });
-
-      describe("mutiple columns are bounded but earlier columns are 'less bounded' than future columns", () => {
-        it("should satisfy the conditions of all columns but also allocate remaining space to the 'less bounded' previous columns", () => {
-          let tree = render(
-            <TableView aria-label="Table">
-              <TableHeader>
-                <Column allowsResizing key="foo" minWidth={100}>Foo</Column>
-                <Column key="bar" minWidth={500}>Bar</Column>
-                <Column key="baz" maxWidth={200}>Baz</Column>
-              </TableHeader>
-              <TableBody items={items}>
-                {item =>
-                  (<Row key={item.foo}>
-                    {key => <Cell>{item[key]}</Cell>}
-                  </Row>)
-                }
-              </TableBody>
-            </TableView>
-          );
-  
-          let rows = tree.getAllByRole('row');
-  
-          for (let row of rows) {
-            expect(row.childNodes[0].style.width).toBe('300px');
-            expect(row.childNodes[1].style.width).toBe('500px');
-            expect(row.childNodes[2].style.width).toBe('200px');
-          }
-        });
-      });
-
-      it('should compute the correct widths for tiered headings with selection', function () {
-        let tree = render(
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader columns={nestedColumns}>
-              {column => <Column childColumns={column.children}>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-
-        let rows = tree.getAllByRole('row');
-
-        expect(rows[0].childNodes[0].style.width).toBe('230px');
-        expect(rows[0].childNodes[1].style.width).toBe('770px');
-
-        expect(rows[1].childNodes[0].style.width).toBe('230px');
-        expect(rows[1].childNodes[1].style.width).toBe('384px');
-        expect(rows[1].childNodes[2].style.width).toBe('193px');
-        expect(rows[1].childNodes[3].style.width).toBe('193px');
-
-        for (let row of rows.slice(2)) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('192px');
-          expect(row.childNodes[2].style.width).toBe('192px');
-          expect(row.childNodes[3].style.width).toBe('192px');
-          expect(row.childNodes[4].style.width).toBe('193px');
-          expect(row.childNodes[5].style.width).toBe('193px');
-        }
-      });
-    });
-  });
-
-  describe('updating columns', function () {
-    it('should support removing columns', function () {
-      let tree = render(<HidingColumns />);
-
-      let checkbox = tree.getByLabelText('Net Budget');
-      expect(checkbox.checked).toBe(true);
-
-      let table = tree.getByRole('grid');
-      let columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(6);
-      expect(columns[1]).toHaveTextContent('Plan Name');
-      expect(columns[2]).toHaveTextContent('Audience Type');
-      expect(columns[3]).toHaveTextContent('Net Budget');
-      expect(columns[4]).toHaveTextContent('Target OTP');
-      expect(columns[5]).toHaveTextContent('Reach');
-
-      for (let row of within(table).getAllByRole('row').slice(1)) {
-        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
-        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
-      }
-
-      userEvent.click(checkbox);
-      expect(checkbox.checked).toBe(false);
-
-      act(() => jest.runAllTimers());
-
-      columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(5);
-      expect(columns[1]).toHaveTextContent('Plan Name');
-      expect(columns[2]).toHaveTextContent('Audience Type');
-      expect(columns[3]).toHaveTextContent('Target OTP');
-      expect(columns[4]).toHaveTextContent('Reach');
-
-      for (let row of within(table).getAllByRole('row').slice(1)) {
-        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
-        expect(within(row).getAllByRole('gridcell')).toHaveLength(4);
-      }
-    });
-
-    it('should support adding columns', function () {
-      let tree = render(<HidingColumns />);
-
-      let checkbox = tree.getByLabelText('Net Budget');
-      expect(checkbox.checked).toBe(true);
-
-      userEvent.click(checkbox);
-      expect(checkbox.checked).toBe(false);
-
-      act(() => jest.runAllTimers());
-
-      let table = tree.getByRole('grid');
-      let columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(5);
-
-      userEvent.click(checkbox);
-      expect(checkbox.checked).toBe(true);
-
-      act(() => jest.runAllTimers());
-
-      columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(6);
-      expect(columns[1]).toHaveTextContent('Plan Name');
-      expect(columns[2]).toHaveTextContent('Audience Type');
-      expect(columns[3]).toHaveTextContent('Net Budget');
-      expect(columns[4]).toHaveTextContent('Target OTP');
-      expect(columns[5]).toHaveTextContent('Reach');
-
-      for (let row of within(table).getAllByRole('row').slice(1)) {
-        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
-        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
-      }
-    });
-
-    it('should update the row widths when removing and adding columns', function () {
-      function compareWidths(row, b) {
-        let newWidth = row.childNodes[1].style.width;
-        expect(parseInt(newWidth, 10)).toBeGreaterThan(parseInt(b, 10));
-        return newWidth;
-      }
-
-      let tree = render(<HidingColumns />);
-      let table = tree.getByRole('grid');
-      let columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(6);
-
-      let rows = tree.getAllByRole('row');
-      let oldWidth = rows[1].childNodes[1].style.width;
-
-      let audienceCheckbox = tree.getByLabelText('Audience Type');
-      let budgetCheckbox = tree.getByLabelText('Net Budget');
-      let targetCheckbox = tree.getByLabelText('Target OTP');
-      let reachCheckbox = tree.getByLabelText('Reach');
-
-      userEvent.click(audienceCheckbox);
-      expect(audienceCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
-      oldWidth = compareWidths(rows[1], oldWidth);
-
-      userEvent.click(budgetCheckbox);
-      expect(budgetCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
-      oldWidth = compareWidths(rows[1], oldWidth);
-
-      userEvent.click(targetCheckbox);
-      expect(targetCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
-      oldWidth = compareWidths(rows[1], oldWidth);
-
-      // This previously failed, the first column wouldn't update its width
-      // when the 2nd to last column was removed
-      userEvent.click(reachCheckbox);
-      expect(reachCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
-      oldWidth = compareWidths(rows[1], oldWidth);
-      columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(2);
-
-      // Readd the column and check that the width decreases
-      userEvent.click(audienceCheckbox);
-      expect(audienceCheckbox.checked).toBe(true);
-      act(() => jest.runAllTimers());
-      expect(parseInt(rows[1].childNodes[1].style.width, 10)).toBeLessThan(parseInt(oldWidth, 10));
-    });
-  });
-
-  describe('headerless columns', function () {
-
-    let renderTable = (props, scale, showDivider = false) => render(
-      <TableView aria-label="Table" data-testid="test" {...props}>
-        <TableHeader>
-          <Column key="foo">Foo</Column>
-          <Column key="addAction" hideHeader showDivider={showDivider}>
-            Add Item
-          </Column>
-        </TableHeader>
-        <TableBody>
-          <Row>
-            <Cell>Foo 1</Cell>
-            <Cell>
-              <ActionButton isQuiet>
-                <Add />
-              </ActionButton>
-            </Cell>
-          </Row>
-        </TableBody>
-      </TableView>
-      , scale);
-
-    it('renders  table with headerless column with default scale', function () {
-      let {getByRole} = renderTable();
-      let grid = getByRole('grid');
-      expect(grid).toBeVisible();
-      expect(grid).toHaveAttribute('aria-label', 'Table');
-      expect(grid).toHaveAttribute('data-testid', 'test');
-
-      expect(grid).toHaveAttribute('aria-rowcount', '2');
-      expect(grid).toHaveAttribute('aria-colcount', '2');
-      let rowgroups = within(grid).getAllByRole('rowgroup');
-      expect(rowgroups).toHaveLength(2);
-
-      let headerRows = within(rowgroups[0]).getAllByRole('row');
-      expect(headerRows).toHaveLength(1);
-      expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1');
-
-      let headers = within(grid).getAllByRole('columnheader');
-      expect(headers).toHaveLength(2);
-      let className = headers[1].className;
-      expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
-      expect(headers[0]).toHaveTextContent('Foo');
-      // visually hidden syle
-      expect(headers[1].childNodes[0].style.clipPath).toBe('inset(50%)');
-      expect(headers[1].childNodes[0].style.width).toBe('1px');
-      expect(headers[1].childNodes[0].style.height).toBe('1px');
-      expect(headers[1]).not.toBeEmptyDOMElement();
-
-
-      let rows = within(rowgroups[1]).getAllByRole('row');
-      expect(rows).toHaveLength(1);
-      // The width of headerless column
-      expect(rows[0].childNodes[1].style.width).toBe('36px');
-      let rowheader = within(rows[0]).getByRole('rowheader');
-      expect(rowheader).toHaveTextContent('Foo 1');
-      let actionCell = within(rows[0]).getAllByRole('gridcell');
-      expect(actionCell).toHaveLength(1);
-      let buttons = within(actionCell[0]).getAllByRole('button');
-      expect(buttons).toHaveLength(1);
-      className = actionCell[0].className;
-      expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
-    });
-
-    it('renders table with headerless column with large scale', function () {
-      let {getByRole} = renderTable({}, 'large');
-      let grid = getByRole('grid');
-      expect(grid).toBeVisible();
-      expect(grid).toHaveAttribute('aria-label', 'Table');
-      expect(grid).toHaveAttribute('data-testid', 'test');
-      let rowgroups = within(grid).getAllByRole('rowgroup');
-      let rows = within(rowgroups[1]).getAllByRole('row');
-      expect(rows).toHaveLength(1);
-      // The width of headerless column
-      expect(rows[0].childNodes[1].style.width).toBe('44px');
-    });
-
-    it('renders table with headerless column and divider', function () {
-      let {getByRole} = renderTable({}, undefined, true);
-      let grid = getByRole('grid');
-      expect(grid).toBeVisible();
-      let rowgroups = within(grid).getAllByRole('rowgroup');
-      expect(rowgroups).toHaveLength(2);
-      let rows = within(rowgroups[1]).getAllByRole('row');
-      expect(rows).toHaveLength(1);
-      // The width of headerless column with divider
-      expect(rows[0].childNodes[1].style.width).toBe('37px');
-    });
-
-    it('renders table with headerless column with tooltip', function () {
-      let {getByRole} = renderTable({}, 'large');
-      let grid = getByRole('grid');
-      expect(grid).toBeVisible();
-      expect(grid).toHaveAttribute('aria-label', 'Table');
-      expect(grid).toHaveAttribute('data-testid', 'test');
-      let headers = within(grid).getAllByRole('columnheader');
-      let headerlessColumn = headers[1];
-      act(() => {
-        headerlessColumn.focus();
-      });
-      let tooltip = getByRole('tooltip');
-      expect(tooltip).toBeVisible();
-    });
-
   });
 });
