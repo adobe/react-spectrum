@@ -51,9 +51,13 @@ There is no standalone calendar element in HTML. `<input type="date">` is close,
 * **Accessible** – Calendar cells can be navigated and selected using the keyboard, and localized screen reader messages are included to announce when the selection and visible date range change.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `useCalendar`.
+
 ## Anatomy
 
-<Anatomy />
+<Anatomy
+  role="img"
+  aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
 
 A calendar consists of a grouping element containing one or more date grids (e.g. months), and a previous and next button for navigating between date ranges. Each calendar grid consists of cells containing button elements that can be pressed and navigated to using the arrow keys to select a date.
 

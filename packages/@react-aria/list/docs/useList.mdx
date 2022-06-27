@@ -1,0 +1,437 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/list';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
+import selectionDocs from 'docs:@react-stately/selection';
+import statelyDocs from 'docs:@react-stately/list';
+import focusDocs from 'docs:@react-aria/focus';
+import checkboxDocs from 'docs:@react-aria/checkbox';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-aria/list/package.json';
+import Anatomy from './anatomy.svg';
+
+---
+category: Collections
+keywords: [list, aria, grid]
+after_version: 3.0.0
+---
+
+# useList
+
+<PageDescription>{docs.exports.useList.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useList', 'useListItem', 'useListSelectionCheckbox']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/grid/'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useList} links={docs.links} />
+<FunctionAPI function={docs.exports.useListItem} links={docs.links} />
+<FunctionAPI function={docs.exports.useListSelectionCheckbox} links={docs.links} />
+
+## Features
+
+A list can be built using [&lt;ul&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul) or [&lt;ol&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol) HTML elements, but is very limited in functionality especially when it comes to user interactions.
+HTML lists are meant for static content, rather than lists with rich interactions like focusable elements within rows, keyboard navigation, row selection, etc.
+`useList` helps achieve accessible and interactive list components that can be styled as needed.
+
+* Exposed to assistive technology as a `grid` using ARIA
+* Keyboard navigation between rows and in-rows focusable elements via the arrow keys
+* Single, multiple, or no row selection via mouse, touch, or keyboard interactions
+* Support for disabled rows, which cannot be selected
+* Optional support for checkboxes in each row for selection
+* Support for both `toggle` and `replace` selection behaviors
+* Support for row actions via double click, <Keyboard>Enter</Keyboard> key, or tapping
+* Long press to enter selection mode on touch when there is both selection and row actions
+* Async loading and infinite scrolling
+* Typeahead to allow focusing rows by typing text
+* Automatic scrolling support during keyboard navigation
+* Labeling support for accessibility
+* Ensures that selections are announced using an ARIA live region
+* Virtualized scrolling support for performance with large lists
+
+## Anatomy
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a selection checkbox, a list item row, and a list item cell." />
+
+A list consists of a container element, with rows of data inside. The rows within a list may contain focusable elements or plain text content.
+If the list supports row selection, each row can optionally include a selection checkbox.
+
+The <TypeLink links={docs.links} type={docs.exports.useList} /> and <TypeLink links={docs.links} type={docs.exports.useListItem} /> hooks handle keyboard, mouse, and other interactions to support
+row selection, in list navigation, and overall focus behavior. Those hooks handle exposing the list and its contents to assistive technology using ARIA. <TypeLink links={docs.links} type={docs.exports.useListSelectionCheckbox} /> handles row selection and associating each checkbox with its respective rows
+for assistive technology. Each of these hooks returns props to be spread onto the appropriate HTML element.
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} />
+hook from `@react-stately/list`. The state object should be passed as an option to each of the above hooks where applicable.
+
+Note that an `aria-label` or `aria-labelledby` must be passed to the list to identify the element to assistive technology.
+
+## State management
+
+`useList` requires knowledge of the rows in the list in order to handle keyboard
+navigation and other interactions. It does this using
+the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
+interface, which is a generic interface to access sequential unique keyed data. You can
+implement this interface yourself, e.g. by using a prop to pass a list of item objects,
+but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} /> from
+`@react-stately/list` implements a JSX based interface for building collections instead.
+See [Collection Components](/react-stately/collections.html) for more information,
+and [Collection Interface](/react-stately/Collection.html) for internal details.
+
+See the examples in the [usage](#usage) section below for details on how to use these components.
+
+In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} />
+manages the state necessary for multiple selection and exposes
+a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
+which makes use of the collection to provide an interface to update the selection state.
+For more information, see [Selection](/react-stately/selection.html).
+
+## Example
+
+Lists are [collection components](../react-stately/collections.html) that include rows as child elements.
+In this example, we'll use the standard HTML unordered list elements along with hooks from React
+Aria for each child. You may also use other elements like `<div>` to render these components as appropriate.
+We'll walk through creating the list container and list item, then add some additional behavior such as selection.
+
+The <TypeLink links={docs.links} type={docs.exports.useList} /> hook will be used to render the outer most list element. It uses
+the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} /> hook to construct the list's collection of rows,
+and manage state such as the focused row and row selection. We'll use the collection to iterate through
+the rows of the List and render the relevant components, which we'll define below.
+
+You may notice the extra `<div>` with `gridCellProps` in our example. This is needed because we are following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), which does not allow rows without any child `gridcell` elements.
+
+You may also notice that we included an info button in the rows in our example. This is to highlight `useList`'s ability to handle interactive elements inside a row.
+This differs from [useListBox](useListBox.html), which is a selectable list with no support for interactive elements. If your list will not contain interactive elements,
+[useListBox](useListBox.html) may be a better choice due to better screen reader experience, especially on mobile devices.
+
+```tsx example export=true
+import {useListState} from '@react-stately/list';
+import {mergeProps} from '@react-aria/utils';
+import {useRef} from 'react';
+import {useFocusRing} from '@react-aria/focus';
+import {useButton} from '@react-aria/button';
+import {useList, useListItem} from '@react-aria/list';
+import { Item } from "@react-stately/collections";
+
+function List(props) {
+  let state = useListState(props);
+  let ref = useRef();
+  let { collection } = state;
+  let { gridProps } = useList(props, state, ref);
+
+  return (
+    <ul
+      {...gridProps}
+      ref={ref}
+      style={{
+        padding: 0,
+        margin: '5px 0',
+        listStyle: 'none',
+        border: '1px solid gray',
+        maxWidth: 400
+      }}
+    >
+      {[...collection].map((item) => (
+        <ListItem key={item.key} item={item} state={state} />
+      ))}
+    </ul>
+  );
+}
+
+function ListItem({ item, state }) {
+  let ref = React.useRef();
+
+  let {
+    rowProps,
+    gridCellProps,
+    isPressed,
+    isSelected,
+    isFocused,
+    isDisabled
+  } = useListItem(
+    {
+      node: item
+    },
+    state,
+    ref
+  );
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
+
+  let backgroundColor;
+  let color = "black";
+
+  if (isSelected) {
+    backgroundColor = "blueviolet";
+    color = "white";
+  } else if (isFocused) {
+    backgroundColor = "gray";
+  } else if (isDisabled) {
+    backgroundColor = "transparent";
+    color = "gray";
+  }
+
+  return (
+    <li
+      {...mergeProps(rowProps, focusProps)}
+      ref={ref}
+      style={{
+        background: isSelected
+          ? 'blueviolet'
+          : isPressed
+            ? 'var(--spectrum-global-color-gray-400)'
+            : item.index % 2
+              ? 'var(--spectrum-alias-highlight-hover)'
+              : 'none',
+        color: isSelected ? 'white' : null,
+        padding: '2px 5px',
+        outline: isFocusVisible ? '2px solid orange' : 'none'
+      }}
+    >
+      <div {...gridCellProps}>
+        {showCheckbox && <ListCheckbox item={item} state={state} />}
+        {item.rendered}
+      </div>
+    </li>
+  );
+}
+
+<List aria-label="Example List" selectionMode="multiple" selectionBehavior="replace">
+  <Item key="1" textValue="Charizard">
+    Charizard
+    <Button onPress={() => alert(`Info for Charizard...`)}>Info</Button>
+  </Item>
+  <Item key="2">Blastoise</Item>
+  <Item key="3">Venusaur</Item>
+  <Item key="4">Pikachu</Item>
+</List>
+```
+
+### Adding selection checkboxes
+
+Next, let's add support for selection checkboxes. For multiple selection, we'll want to add a checkbox to the row to allow the user to select rows.
+This is done using the <TypeLink links={docs.links} type={docs.exports.useListSelectionCheckbox} />
+hook. It is passed the `key` of the item it is contained within. When the user
+checks or unchecks the checkbox, the row will be added or removed from the List's selection.
+
+In this example, we pass the result of the `checkboxProps` into our checkbox defined below.
+It's likely you'll have a `Checkbox` component in your component library that uses these hooks already.
+See below for an example.
+```tsx example export=true render=false
+import {useListSelectionCheckbox} from '@react-aria/list';
+
+// Reuse the Checkbox from your component library. See below for details.
+import {Checkbox} from 'your-component-library';
+
+function ListCheckbox({ item, state }) {
+  let { checkboxProps } = useListSelectionCheckbox({ key: item.key }, state);
+
+  return <Checkbox {...checkboxProps} />;
+}
+```
+
+The following example shows how to enable multiple selection support using the List component we built above.
+It's as simple as setting the `selectionMode` prop to `"multiple"`.
+
+```tsx example
+<List aria-label="List with selection" selectionMode="multiple">
+  <Item key="1" textValue="Charizard">
+    Charizard
+    <Button onPress={() => alert(`Info for Charizard...`)}>Info</Button>
+  </Item>
+  <Item key="2">Blastoise</Item>
+  <Item key="3">Venusaur</Item>
+  <Item key="4">Pikachu</Item>
+</List>
+```
+
+And that's it! We now have a fully interactive List component that can support keyboard navigation, single or multiple selection.
+In addition, it is fully accessible for screen readers and other assistive technology. See below for more
+examples of how to use the List component that we've built.
+
+### Checkbox
+
+The `Checkbox` component is used in the above example for row selection. It is built using the [useCheckbox](useCheckbox.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useCheckbox} from '@react-aria/checkbox';
+import {useToggleState} from '@react-stately/toggle';
+
+function Checkbox(props) {
+  let inputRef = useRef(null);
+  let { inputProps } = useCheckbox(
+    props,
+    useToggleState(props),
+    inputRef
+  );
+  return <input {...inputProps} ref={inputRef} />;
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to show how rows can contain interactive elements. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = React.useRef();
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={{margin: '0 5px'}}>{props.children}</button>;
+}
+```
+
+</details>
+
+## Usage
+
+### Dynamic collections
+
+So far, our examples have shown static collections, where the data is hard coded.
+Dynamic collections, as shown below, can be used when the List data comes from an external data source such as an API, or updates over time.
+In the example below, the rows are provided to the List via a render function.
+
+```tsx example export=true
+function ExampleList(props) {
+  let rows = [
+    {id: 1, name: 'Games'},
+    {id: 2, name: 'Program Files'},
+    {id: 3, name: 'bootmgr'},
+    {id: 4, name: 'log.txt'}
+  ];
+
+  return (
+    <List aria-label="Example dynamic collection List" selectionMode="multiple" items={rows} {...props}>
+      {item => <Item>{item.name}</Item>}
+    </List>
+  );
+}
+```
+
+### Single selection
+
+By default, `useListState` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
+Note that the value of the selected keys must match the `key` prop of the row.
+
+The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with key equal to "2".
+A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
+
+```tsx example
+// Using the example above
+<ExampleList aria-label="List with single selection" selectionMode="single" selectionBehavior="replace" defaultSelectedKeys={[2]} />
+```
+
+### Multiple selection
+
+Multiple selection can be enabled by setting `selectionMode` to `multiple`.
+
+```tsx example
+// Using the example above
+<ExampleList aria-label="List with multiple selection" selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
+```
+
+### Disallow empty selection
+
+List also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the List selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+// Using the example above
+<ExampleList aria-label="List with disallowed empty selection" selectionMode="multiple" defaultSelectedKeys={[2]} disallowEmptySelection />
+```
+
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly.
+
+```tsx example export=true
+function PokemonList(props) {
+  let rows = [
+    {id: 1, name: 'Charizard'},
+    {id: 2, name: 'Blastoise'},
+    {id: 3, name: 'Venusaur'},
+    {id: 4, name: 'Pikachu'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+
+  return (
+    <List aria-label="List with controlled selection" items={rows} selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+      {item => <Item>{item.name}</Item>}
+    </List>
+  );
+}
+```
+
+### Disabled rows
+
+You can disable specific rows by providing an array of keys to `useListState` via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
+
+```tsx example
+// Using the same List as above
+<PokemonList aria-label="List with disabled rows" selectionMode="multiple" disabledKeys={[3]} />
+```
+
+### Selection behavior
+
+By default, `useList` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with a checkbox in each row as an explicit affordance for selection.
+
+When `selectionBehavior` is set to `"replace"`, clicking a row with the mouse replaces the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier keys may not be available.
+
+These selection styles implement the behaviors defined in [Aria Practices](https://w3c.github.io/aria-practices/#listbox_kbd_interaction).
+
+```tsx example
+<PokemonList aria-label="List with replace selection behavior" selectionMode="multiple" selectionBehavior="replace" />
+```
+
+### Row actions
+
+`useList` supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the list performs actions by default when clicking or tapping a row.
+Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the list is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
+be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
+
+This behavior is slightly different when `selectionBehavior="replace"`, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
+
+```tsx example
+<PokemonList aria-label="Checkbox selection list with row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
+<PokemonList aria-label="Highlight selection list with row actions" selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
+```
+
+## Internationalization
+
+`useList` handles some aspects of internationalization automatically.
+For example, type to select is implemented with an
+[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator)
+for internationalized string matching, and keyboard navigation is mirrored in right-to-left languages.
+You are responsible for localizing all text content within the List.
+
+### RTL
+
+In right-to-left languages, the list layout should be mirrored. The row contents should be ordered from right to left and the row's text alignment should be inverted. Ensure that your CSS accounts for this.

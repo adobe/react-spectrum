@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {ColorWheelProps} from '@react-types/color';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import {parseColor, useColorWheelState} from '@react-stately/color';
 import React, {useRef} from 'react';
 import {useColorWheel} from '../';
