@@ -224,8 +224,8 @@ governing permissions and limitations under the License.
     --spectrum-textfield-border-color-error: Highlight;
     --spectrum-textfield-border-color-hover: Highlight;
     --spectrum-textfield-border-color-key-focus: Highlight;
-    --spectrum-textfield-quiet-border-color: Canvas;
-    --spectrum-textfield-quiet-border-color-disabled: Canvas;
+    --spectrum-textfield-quiet-border-color: CanvasText;
+    --spectrum-textfield-quiet-border-color-disabled: GrayText;
     --spectrum-textfield-quiet-border-color-hover: Highlight;
     --spectrum-textfield-quiet-border-color-key-focus: Highlight;
     --spectrum-textfield-text-color-disabled: GrayText;
