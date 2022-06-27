@@ -356,7 +356,7 @@ governing permissions and limitations under the License.
     --spectrum-slider-fill-track-color: Highlight;
     --spectrum-slider-fill-track-color-disabled: GrayText;
     --spectrum-slider-handle-background-color: ButtonFace;
-    --spectrum-slider-handle-background-color-down: Highlight;
+    --spectrum-slider-handle-background-color-down: ButtonFace;
     --spectrum-slider-handle-background-color-key-focus: Highlight;
     --spectrum-slider-handle-border-color: ButtonText;
     --spectrum-slider-handle-border-color-disabled: GrayText;
