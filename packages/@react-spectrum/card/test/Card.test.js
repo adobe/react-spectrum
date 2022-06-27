@@ -11,11 +11,15 @@
  */
 
 import {Card} from '../src';
-import {Default, DefaultPreviewAlt, NoDescription} from '../stories/Card.stories';
-import {Quiet} from '../stories/QuietCard.stories';
+import {composeStories} from '@storybook/testing-react';
+import * as defaultStories from '../chromatic/Card.chromatic';
+import * as quietStories from '../chromatic/QuietCard.chromatic';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
+
+let {Default, DefaultPreviewAlt, NoDescription} = composeStories(defaultStories);
+let {Quiet} = composeStories(quietStories);
 
 describe('Card', function () {
   it('Default is labelled and described', function () {
