@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, waitFor} from '@react-spectrum/test-utils';
 import {Dialog} from '@react-spectrum/dialog';
 import {Popover} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 function PopoverWithDialog({children}) {
   return (

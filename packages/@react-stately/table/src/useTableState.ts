@@ -10,9 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-// import {AffectedColumnWidths} from './useTableColumnResizeState';
 import {CollectionBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
-// import {GridNode} from '@react-types/grid';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key, useMemo} from 'react';
@@ -29,24 +27,6 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   sortDescriptor: SortDescriptor,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
   sort(columnKey: Key, direction?: 'ascending' | 'descending'): void
-  // /** A map of all the column widths by key. */
-  // columnWidths: MutableRefObject<Map<Key, number>>,
-  // /** Boolean for if a column is being resized. */
-  // isResizingColumn: boolean,
-  // /** Getter for column width. */
-  // getColumnWidth(key: Key): number,
-  //   /** Getter for column min width. */
-  // getColumnMinWidth(key: Key): number,
-  //   /** Getter for column max widths. */
-  // getColumnMaxWidth(key: Key): number,
-  // /** Trigger a resize and recalc. */
-  // onColumnResize: (column: GridNode<T>, width: number) => void,
-  // /** Runs at the start of resizing. */
-  // onColumnResizeStart: () => void,
-  // /** Triggers the onColumnResizeEnd prop. */
-  // onColumnResizeEnd: () => void,
-  // /** Need to be able to set the table width so that it can be used to calculate the column widths, this will trigger a recalc. */
-  // setTableWidth: (width: number) => void
 }
 
 export interface CollectionBuilderContext<T> {
@@ -58,12 +38,6 @@ export interface CollectionBuilderContext<T> {
 export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean
-  // /** Function for determining the default width of columns. */
-  // getDefaultWidth?: (props) => string | number,
-  // /** Callback that is invoked during the entirety of the resize event. */
-  // onColumnResize?: (affectedColumnWidths: AffectedColumnWidths) => void,
-  // /** Callback that is invoked when the resize event is ended. */
-  // onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths) => void
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -91,9 +65,6 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
   );
   let {disabledKeys, selectionManager} = useGridState({...props, collection});
 
-  // const tableColumnResizeState = useTableColumnResizeState({columns: collection.columns, getDefaultWidth: props.getDefaultWidth, onColumnResize: props.onColumnResize, onColumnResizeEnd: props.onColumnResizeEnd});
-
-
   return {
     collection,
     disabledKeys,
@@ -108,6 +79,5 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
           : 'ascending')
       });
     }
-    // ...tableColumnResizeState
   };
 }

@@ -11,9 +11,8 @@
  */
 
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render, typeText} from '@react-spectrum/test-utils';
 import {TextArea} from '../';
-import {typeText} from '@react-spectrum/test-utils';
 
 let testId = 'test-id';
 let mockScrollHeight = 500;
