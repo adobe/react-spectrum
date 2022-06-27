@@ -12,8 +12,10 @@
 
 export {useBreadcrumbItem, useBreadcrumbs} from '@react-aria/breadcrumbs';
 export {useButton, useToggleButton} from '@react-aria/button';
+export {useCalendar, useCalendarCell, useCalendarGrid, useRangeCalendar} from '@react-aria/calendar';
 export {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
 export {useComboBox} from '@react-aria/combobox';
+export {useDateField, useDatePicker, useDateRangePicker, useDateSegment, useTimeField} from '@react-aria/datepicker';
 export {useDialog} from '@react-aria/dialog';
 export {FocusRing, FocusScope, useFocusManager, useFocusRing, useFocusable} from '@react-aria/focus';
 export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';

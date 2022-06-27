@@ -48,6 +48,15 @@ import {parseDate} from '@internationalized/date';
 let date = parseDate('2022-02-03');
 ```
 
+Today's date can be retrieved using the <TypeLink links={docs.links} type={docs.exports.today} /> function. This requires a time zone identifier to be provided, which is used to determine the local date. The <TypeLink links={docs.links} type={docs.exports.getLocalTimeZone} /> function can be used to retrieve the user's current time zone.
+
+```tsx
+import {today, getLocalTimeZone} from '@internationalized/date';
+
+let nyDate = today('America/New_York');
+let localDate = today(getLocalTimeZone());
+```
+
 Once you have a `CalendarDate` object, you can read its properties, or manipulate it as described in the [Manipulating dates](#manipulating-dates) section below. You can also convert it to an ISO 8601 string, native JavaScript `Date` object, or another representation. See the [Conversion](#conversion) section below for details.
 
 ```tsx
@@ -320,7 +329,7 @@ isWeekday(date, 'en-US'); // false
 isWeekday(date, 'he-IL'); // true
 
 isWeekend(date, 'en-US'); // true
-isWeekday(date, 'he-IL'); // false
+isWeekend(date, 'he-IL'); // false
 ```
 
 ### Weeks in month

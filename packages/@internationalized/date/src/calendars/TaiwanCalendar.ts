@@ -71,6 +71,10 @@ export class TaiwanCalendar extends GregorianCalendar {
   getDaysInMonth(date: AnyCalendarDate): number {
     return super.getDaysInMonth(toGregorian(date));
   }
+
+  getYearsInEra(date: AnyCalendarDate): number {
+    return date.era === 'before_minguo' ? 9999 : 9999 - TAIWAN_ERA_START;
+  }
 }
 
 function toGregorian(date: AnyCalendarDate) {

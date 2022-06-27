@@ -13,8 +13,7 @@
 import {ColorArea} from '../';
 import {XBlueYGreen as DefaultColorArea, XSaturationYBrightness, XSaturationYLightness} from '../stories/ColorArea.stories';
 import {defaultTheme} from '@adobe/react-spectrum';
-import {fireEvent, render} from '@testing-library/react';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {parseColor} from '@react-stately/color';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

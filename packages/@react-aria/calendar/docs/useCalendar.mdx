@@ -51,9 +51,13 @@ There is no standalone calendar element in HTML. `<input type="date">` is close,
 * **Accessible** – Calendar cells can be navigated and selected using the keyboard, and localized screen reader messages are included to announce when the selection and visible date range change.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `useCalendar`.
+
 ## Anatomy
 
-<Anatomy />
+<Anatomy
+  role="img"
+  aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
 
 A calendar consists of a grouping element containing one or more date grids (e.g. months), and a previous and next button for navigating between date ranges. Each calendar grid consists of cells containing button elements that can be pressed and navigated to using the arrow keys to select a date.
 
@@ -136,20 +140,19 @@ function Calendar(props) {
 
 The `CalendarGrid` component will be responsible for rendering an individual month. It is a separate component so that you can render more than one month at a time if you like. It's rendered as an HTML `<table>` element, and React Aria takes care of adding the proper ARIA roles and event handlers to make it behave as an ARIA grid. You can use the arrow keys to navigate between cells, and the <Keyboard>Enter</Keyboard> key to select a date.
 
+The `state.getDatesInWeek` function returns the dates in each week of the month. Note that this always includes 7 values, but some of them may be null, which indicates that the date doesn't exist within the calendar system. You should render a placeholder `<td>` element in this case so that the cells line up correctly.
+
 **Note**: this component is the same as the `CalendarGrid` component shown in the [useRangeCalendar](useRangeCalendar.html) docs, and you can reuse it between both `Calendar` and `RangeCalendar`.
 
 ```tsx example render=false export=true
 import {useCalendarGrid} from '@react-aria/calendar';
-import {startOfWeek, getWeeksInMonth} from '@internationalized/date';
+import {getWeeksInMonth} from '@internationalized/date';
 
 function CalendarGrid({state, ...props}) {
   let {locale} = useLocale();
   let {gridProps, headerProps, weekDays} = useCalendarGrid(props, state);
 
-  // Find the start date of the grid, which is the beginning
-  // of the week the month starts in. Also get the number of
-  // weeks in the month so we can render the proper number of rows.
-  let monthStart = startOfWeek(state.visibleRange.start, locale);
+  // Get the number of weeks in the month so we can render the proper number of rows.
   let weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale);
 
   return (
@@ -164,11 +167,13 @@ function CalendarGrid({state, ...props}) {
       <tbody>
         {[...new Array(weeksInMonth).keys()].map(weekIndex => (
           <tr key={weekIndex}>
-            {[...new Array(7).keys()].map(dayIndex => (
-              <CalendarCell
-                key={dayIndex}
-                state={state}
-                date={monthStart.add({weeks: weekIndex, days: dayIndex})} />
+            {state.getDatesInWeek(weekIndex).map((date, i) => (
+              date ? (
+                <CalendarCell
+                  key={i}
+                  state={state}
+                  date={date} />
+              ) : <td key={i} />
             ))}
           </tr>
         ))}
