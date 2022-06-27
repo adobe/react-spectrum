@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnResizeState} from '@react-stately/table';
+import {ColumnResizeState, TableState} from '@react-stately/table';
 import {focusSafely} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 import {HTMLAttributes, RefObject, useRef} from 'react';
@@ -26,12 +26,13 @@ interface ResizerProps<T> {
   column: GridNode<T>,
   tableRef: RefObject<HTMLElement>,
   showResizer: boolean,
+  onResizeEntered: () => void,
   onResizeDone: () => void,
   label: string
 }
 
-export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): ResizerAria {
-  let {column: item, showResizer, onResizeDone} = props;
+export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T> & ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): ResizerAria {
+  let {column: item, showResizer, onResizeEntered, onResizeDone} = props;
   const stateRef = useRef(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef(null);
@@ -103,7 +104,12 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnRes
       ...mergeProps(
         moveProps,
         {
+          onFocus: () => {
+            state.setDisableNavigation(true);
+            onResizeEntered();
+          },
           onBlur: () => {
+            state.setDisableNavigation(false);
             onResizeDone();
           },
           tabIndex: showResizer ? 0 : undefined

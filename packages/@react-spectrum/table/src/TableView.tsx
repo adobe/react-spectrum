@@ -113,7 +113,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
 
-  const columnState = useTableColumnResizeState({...props, columns: state.collection.columns, getDefaultWidth, onColumnResize: props.onColumnResize, onColumnResizeEnd: props.onColumnResizeEnd});
+  const columnState = useTableColumnResizeState({...props, getDefaultWidth}, state.collection);
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -460,7 +460,7 @@ function TableHeader({children, ...otherProps}) {
 function TableColumnHeader(props) {
   let {column} = props;
   let ref = useRef();
-  let {state, columnState} = useTableContext();
+  let {state} = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true
@@ -478,10 +478,7 @@ function TableColumnHeader(props) {
   if (columnProps.allowsResizing) {
     // if we allow resizing, override the usePress that useTableColumnHeader generates so that clicking brings up the menu
     // instead of sorting the column immediately
-    columnHeaderProps = {...columnHeaderProps, ...buttonProps};
-  }
-  if (columnState.isResizingColumn) {
-    delete columnHeaderProps.onKeyDownCapture; // see CardView where we also delete onKeyDownCapture
+    columnHeaderProps = mergeProps(columnHeaderProps, buttonProps);
   }
 
   const allProps = [columnHeaderProps, hoverProps];
@@ -554,33 +551,36 @@ function ResizableTableColumnHeader(props) {
   };
   let allowsSorting = column.props?.allowsSorting;
   let items = useMemo(() => {
-    let options = {
-      sortAscending: allowsSorting && {
+    let options = [
+      allowsSorting ? {
         label: formatMessage('sortAscending'),
         id: 'sort-asc'
-      },
-      sortDescending: allowsSorting && {
+      } : undefined,
+      allowsSorting ? {
         label: formatMessage('sortDescending'),
         id: 'sort-desc'
-      },
-      resize: {
+      } : undefined,
+      {
         label: formatMessage('resizeColumn'),
         id: 'resize'
       }
-    };
-    return Object.keys(options).reduce((acc, key) => {
-      if (options[key]) {
-        acc.push(options[key]);
-      }
-      return acc;
-    }, []);
+    ];
+    return options;
   }, [allowsSorting]);
+  // if we're resizing another column, then hover shouldn't show the resizer of a different column
+  let showResizer = isResizingAvailable || (isHovered && !columnState.isResizingColumn) || isResizing;
 
   return (
     <>
-      <MenuTrigger onOpenChange={(e) => {if (e) {setIsResizingAvailable(true);}}}>
+      <MenuTrigger onOpenChange={(e) => setIsResizingAvailable(e)}>
         <TableColumnHeader column={column} onHoverChange={setIsHovered}>
-          <Resizer ref={ref} tableRef={props.tableRef} column={column} showResizer={isResizingAvailable || isHovered || isResizing} onResizeDone={() => setIsResizingAvailable(false)} />
+          <Resizer
+            ref={ref}
+            tableRef={props.tableRef}
+            column={column}
+            showResizer={showResizer}
+            onResizeEntered={() => setIsResizingAvailable(true)}
+            onResizeDone={() => setIsResizingAvailable(false)} />
         </TableColumnHeader>
         <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
           {(item) => (

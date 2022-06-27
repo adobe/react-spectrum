@@ -44,7 +44,7 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
   let {node} = props;
   let allowsResizing = node.props.allowsResizing;
   let allowsSorting = node.props.allowsSorting;
-  let {gridCellProps} = useGridCell(props, state, ref);
+  let {gridCellProps} = useGridCell({...props, focusMode: node.props.isSelectionCell ? 'child' : 'cell'}, state, ref);
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
   let {pressProps} = usePress({

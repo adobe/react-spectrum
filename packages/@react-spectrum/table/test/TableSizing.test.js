@@ -15,6 +15,7 @@ import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {fireEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -618,6 +619,164 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[4].style.width).toBe('193px');
           expect(row.childNodes[5].style.width).toBe('193px');
         }
+      });
+    });
+  });
+
+  describe('resizing columns', function () {
+    describe('pointer', () => {
+      installPointerEvent();
+
+      it('dragging the resizer works', () => {
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column allowsResizing key="foo">Foo</Column>
+              <Column key="bar" maxWidth={200}>Bar</Column>
+              <Column key="baz" maxWidth={200}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        // trigger pointer modality
+        fireEvent.pointerMove(tree.container);
+        // TODO verify that separator isn't available
+        // expect(tree.getAllByRole('separator')).toHaveLength();
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('600px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        let resizableHeader = tree.getAllByRole('button')[0];
+
+        fireEvent.pointerEnter(resizableHeader);
+        expect(tree.getByRole('separator')).toBeVisible();
+        let resizer = tree.getByRole('separator');
+
+        fireEvent.pointerEnter(resizer);
+
+        // actual locations do not matter, the delta matters between events for the calculation of useMove
+        fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 600, pageY: 30});
+        fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 25});
+        fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('595px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        // actual locations do not matter, the delta matters between events for the calculation of useMove
+        fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
+        fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 620, pageY: 25});
+        fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('620px');
+          expect(row.childNodes[1].style.width).toBe('190px');
+          expect(row.childNodes[2].style.width).toBe('190px');
+        }
+
+        fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
+
+        // expect(tree.getByRole('separator')).not.toBeVisible();
+      });
+    });
+
+    describe('keyboard', () => {
+      // this test does not work yet, for some reason the blur created by moving focus to the resizer isn't closing the
+      // the menutrigger like it does in real life
+      it.skip('arrow keys the resizer works', async () => {
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column allowsResizing key="foo">Foo</Column>
+              <Column key="bar" maxWidth={200}>Bar</Column>
+              <Column key="baz" maxWidth={200}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        let resizableHeader = tree.getAllByRole('button')[0];
+        expect(document.activeElement).toBe(resizableHeader);
+        // TODO verify that separator isn't available
+        // expect(tree.getAllByRole('separator')).toHaveLength();
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('600px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
+        act(() => {jest.runAllTimers();});
+
+        let resizer = tree.getByRole('separator');
+
+        expect(document.activeElement).toBe(resizer);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('595px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('620px');
+          expect(row.childNodes[1].style.width).toBe('190px');
+          expect(row.childNodes[2].style.width).toBe('190px');
+        }
+
+        fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+        fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+
+        expect(document.activeElement).toBe(resizableHeader);
+
+        // expect(tree.getByRole('separator')).not.toBeVisible();
       });
     });
   });

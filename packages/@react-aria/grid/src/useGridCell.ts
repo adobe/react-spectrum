@@ -68,7 +68,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     let treeWalker = getFocusableTreeWalker(ref.current);
     if (focusMode === 'child') {
       // If focus is already on a focusable child within the cell, early return so we don't shift focus
-      // We may have non-grid cell contained interactive elements but that live next to a grid cell
       if (ref.current.contains(document.activeElement) && ref.current !== document.activeElement) {
         return;
       }
@@ -97,8 +96,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     onAction: onCellAction ? () => onCellAction(node.key) : onAction
   });
 
-  let onKeyDown = (e: ReactKeyboardEvent) => {
-    if (!e.currentTarget.contains(e.target as HTMLElement)) {
+  let onKeyDownCapture = (e: ReactKeyboardEvent) => {
+    if (!e.currentTarget.contains(e.target as HTMLElement) || state.disableNavigation) {
       return;
     }
 
@@ -226,7 +225,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(itemProps, {
     role: 'gridcell',
-    onKeyDownCapture: onKeyDown,
+    onKeyDownCapture,
     onFocus
   });
 

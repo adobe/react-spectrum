@@ -7,7 +7,8 @@ export interface GridState<T, C extends GridCollection<T>> {
   /** A set of keys for rows that are disabled. */
   disabledKeys: Set<Key>,
   /** A selection manager to read and update row selection state. */
-  selectionManager: SelectionManager
+  selectionManager: SelectionManager,
+  disableNavigation: boolean
 }
 
 interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps {
@@ -54,6 +55,7 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
   return {
     collection,
     disabledKeys,
+    disableNavigation: false,
     selectionManager: new SelectionManager(collection, selectionState)
   };
 }

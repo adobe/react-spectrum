@@ -11,6 +11,7 @@
  */
 
 import {getContentWidth, useTableColumnResizeState} from '../';
+import {GridNode} from '@react-types/grid';
 import {renderHook} from '@react-spectrum/test-utils';
 
 const createColumn = (key, columnProps) => ({
@@ -34,7 +35,7 @@ describe('useTableColumnResizeState', () => {
         createColumn('Weight', {allowsResizing: true, defaultWidth: 200})
       ];
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns}));
+      const {result} = renderHook(() => useTableColumnResizeState<GridNode<object>>({}, {columns}));
       expect(result.current.columnWidths.current).toEqual(new Map([['Name', 300], ['Age', 100], ['Weight', 200]]));
     });
 
@@ -45,7 +46,7 @@ describe('useTableColumnResizeState', () => {
         createColumn('Weight', {allowsResizing: true, defaultWidth: '33%'})
       ];
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth: 600}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth: 600}, {columns}));
       expect(result.current.columnWidths.current).toEqual(new Map([['Name', 300], ['Age', 96], ['Weight', 198]]));
     });
   });
@@ -58,7 +59,7 @@ describe('useTableColumnResizeState', () => {
         createColumn('Weight', {allowsResizing: true})
       ];
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth: 333}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth: 333}, {columns}));
       expect(result.current.columnWidths.current).toEqual(new Map([['Name', 111], ['Age', 111], ['Weight', 111]]));
     });
 
@@ -69,7 +70,7 @@ describe('useTableColumnResizeState', () => {
         createColumn('Weight', {allowsResizing: true, defaultWidth: '1fr'})
       ];
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth: 1000}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth: 1000}, {columns}));
       expect(result.current.columnWidths.current).toEqual(new Map([['Name', 250], ['Age', 500], ['Weight', 250]]));
     });
   });
@@ -82,7 +83,7 @@ describe('useTableColumnResizeState', () => {
         createColumn('Weight', {allowsResizing: true, defaultWidth: '1fr'})
       ];
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth: 1000}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth: 1000}, {columns}));
       expect(result.current.columnWidths.current).toEqual(new Map([['Name', 85], ['Age', 610], ['Weight', 305]]));
     });
 
@@ -93,7 +94,7 @@ describe('useTableColumnResizeState', () => {
         createColumn('Weight', {allowsResizing: true, defaultWidth: '1fr'})
       ];
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth: 1000}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth: 1000}, {columns}));
       expect(result.current.columnWidths.current).toEqual(new Map([['Name', 400], ['Age', 400], ['Weight', 200]]));
     });
 
@@ -106,7 +107,7 @@ describe('useTableColumnResizeState', () => {
 
       const tableWidth = 1000;
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth}, {columns}));
 
       const actualColumnWidths = getContentWidth(result.current.columnWidths.current);
 
@@ -123,7 +124,7 @@ describe('useTableColumnResizeState', () => {
 
       const tableWidth = 1000;
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth}, {columns}));
 
       const actualColumnWidths = getContentWidth(result.current.columnWidths.current);
 
@@ -140,7 +141,7 @@ describe('useTableColumnResizeState', () => {
 
       const tableWidth = 1000;
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth}, {columns}));
 
       expect(result.current.columnWidths.current).toEqual(new Map([['Name', 650], ['Age', 100], ['Weight', 250]]));
     });
@@ -164,7 +165,7 @@ describe('useTableColumnResizeState', () => {
 
       const tableWidth = 1000;
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth}, {columns}));
 
       expect(result.current.columnWidths.current).toEqual(new Map([['Name', 650], ['Age', 100], ['Weight', 250]]));
     });
@@ -178,7 +179,7 @@ describe('useTableColumnResizeState', () => {
 
       const tableWidth = 1000;
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth}, {columns}));
 
       expect(result.current.columnWidths.current).toEqual(new Map([['Name', 250], ['Age', 500], ['Weight', 250]]));
     });
@@ -192,7 +193,7 @@ describe('useTableColumnResizeState', () => {
 
       const tableWidth = 1000;
 
-      const {result} = renderHook(() => useTableColumnResizeState({columns, tableWidth}));
+      const {result} = renderHook(() => useTableColumnResizeState({tableWidth}, {columns}));
 
       expect(result.current.columnWidths.current).toEqual(new Map([['Name', 250], ['Age', 500], ['Weight', 250]]));
     });

@@ -13,16 +13,17 @@ interface ResizerProps<T> {
   column: GridNode<T>,
   tableRef: RefObject<HTMLElement>,
   showResizer: boolean,
-  onResizeDone: () => void
+  onResizeDone: () => void,
+  onResizeEntered: () => void
 }
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
   let {column, tableRef, showResizer} = props;
-  let {columnState} = useTableContext();
+  let {state, columnState} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
 
-  let {resizerProps} = useTableColumnResize({...props, label: formatMessage('columnResizer')}, columnState, ref);
+  let {resizerProps} = useTableColumnResize({...props, label: formatMessage('columnResizer')}, {...state, ...columnState}, ref);
 
   let style = {
     cursor: undefined,
