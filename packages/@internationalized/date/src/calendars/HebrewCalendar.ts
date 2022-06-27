@@ -181,6 +181,7 @@ export class HebrewCalendar implements Calendar {
   }
 
   getYearsInEra(): number {
+    // 6239 gregorian
     return 9999;
   }
 

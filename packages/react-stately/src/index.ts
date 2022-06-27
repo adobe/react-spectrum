@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+export type {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 export type {CheckboxGroupState} from '@react-stately/checkbox';
 export type {ComboBoxState} from '@react-stately/combobox';
+export type {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
 export type {ListData} from '@react-stately/data';
 export type {ListProps, ListState, SingleSelectListProps, SingleSelectListState} from '@react-stately/list';
 export type {MenuTriggerState} from '@react-stately/menu';
@@ -28,8 +30,10 @@ export type {ToggleState} from '@react-stately/toggle';
 export type {TooltipTriggerState} from '@react-stately/tooltip';
 export type {TreeProps, TreeState} from '@react-stately/tree';
 
+export {useCalendarState, useRangeCalendarState} from '@react-stately/calendar';
 export {useCheckboxGroupState} from '@react-stately/checkbox';
 export {useComboBoxState} from '@react-stately/combobox';
+export {useDateFieldState, useDatePickerState, useDateRangePickerState, useTimeFieldState} from '@react-stately/datepicker';
 export {Item, Section, useCollection} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 export {useListState, useSingleSelectListState} from '@react-stately/list';

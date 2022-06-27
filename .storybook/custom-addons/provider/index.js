@@ -1,12 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {ActionButton} from '@react-spectrum/button';
 import addons, { makeDecorator } from '@storybook/addons';
-import {Content} from '@react-spectrum/view';
 import {getQueryParams} from '@storybook/client-api';
 import {Provider} from '@react-spectrum/provider';
-import {Text} from '@react-spectrum/text';
 import {themes, defaultTheme} from '../../constants';
-import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 
 document.body.style.margin = '0';
 
@@ -48,14 +44,6 @@ function ProviderUpdater(props) {
     return (
       <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
         <main>
-          <div style={{position: 'absolute', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px'}}>
-            {props.context.parameters.note && (<DialogTrigger type="popover">
-              <ActionButton>Note</ActionButton>
-              <Dialog>
-                <Content><Text>{props.context.parameters.note}</Text></Content>
-              </Dialog>
-            </DialogTrigger>)}
-          </div>
           {storyReady && props.children}
         </main>
       </Provider>
@@ -63,14 +51,6 @@ function ProviderUpdater(props) {
   } else {
     return (
       <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
-        <div style={{position: 'absolute', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px'}}>
-          {props.context.parameters.note && (<DialogTrigger type="popover">
-            <ActionButton>Note</ActionButton>
-            <Dialog>
-              <Content><Text>{props.context.parameters.note}</Text></Content>
-            </Dialog>
-          </DialogTrigger>)}
-        </div>
         {storyReady && props.children}
       </Provider>
     );
