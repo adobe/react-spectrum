@@ -24,11 +24,11 @@ By default, JavaScript represents dates and times using the [Date](https://devel
 
 The `@internationalized/date` package includes the following object types:
 
-* [Calendar](https://react-specrum.adobe.com/internationalized/date/Calendar.html) – An interface which provides calendar conversion and metadata like number of days in month, and number of months in year. Many implementations are provided to support the most commonly used calendar systems.
-* [CalendarDate](https://react-specrum.adobe.com/internationalized/date/CalendarDate.html) – An immutable object that stores a date associated with a specific calendar system, without any time components.
-* [CalendarDateTime](https://react-specrum.adobe.com/internationalized/date/CalendarDateTime.html) – An immutable object that represents a date and time without a time zone, in a specific calendar system.
-* [ZonedDateTime](https://react-specrum.adobe.com/internationalized/date/ZonedDateTime.html) – An immutable object that represents a date and time in a specific time zone and calendar system.
-* [Time](https://react-specrum.adobe.com/internationalized/date/Time.html) – An immutable object that stores a clock time without any date components.
+* [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html) – An interface which provides calendar conversion and metadata like number of days in month, and number of months in year. Many implementations are provided to support the most commonly used calendar systems.
+* [CalendarDate](https://react-spectrum.adobe.com/internationalized/date/CalendarDate.html) – An immutable object that stores a date associated with a specific calendar system, without any time components.
+* [CalendarDateTime](https://react-spectrum.adobe.com/internationalized/date/CalendarDateTime.html) – An immutable object that represents a date and time without a time zone, in a specific calendar system.
+* [ZonedDateTime](https://react-spectrum.adobe.com/internationalized/date/ZonedDateTime.html) – An immutable object that represents a date and time in a specific time zone and calendar system.
+* [Time](https://react-spectrum.adobe.com/internationalized/date/Time.html) – An immutable object that stores a clock time without any date components.
 
 Each object includes methods to allow basic manipulation and conversion functionality, such as adding and subtracting durations, and formatting as an ISO 8601 string. Additional less commonly used functions can be imported from the `@internationalized/date` package, and passed a date object as a parameter. This includes functions to parse ISO 8601 strings, query properties such as day of week, convert between time zones and much more. See the documentation for each of the objects to learn more about the supported methods and functions.
 

@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
-// @ts-nocheck
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
@@ -9,9 +8,9 @@ import {useTableContext} from './TableView';
 
 
 function Resizer(props, ref) {
-  const {item} = props;
-  let {state} = useTableContext();
-  let {resizerProps} = useTableColumnResize(state, item, ref);
+  const {column} = props;
+  let {columnState} = useTableContext();
+  let {resizerProps} = useTableColumnResize({column}, columnState, ref);
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -21,10 +20,10 @@ function Resizer(props, ref) {
         role="separator"
         aria-orientation="vertical"
         aria-label="Resize column"
-        aria-labelledby={item.key}
-        aria-valuenow={state.getColumnWidth(item.key)}
-        aria-valuemin={state.getColumnMinWidth(item.key)}
-        aria-valuemax={state.getColumnMaxWidth(item.key)} />
+        aria-labelledby={column.key}
+        aria-valuenow={columnState.getColumnWidth(column.key)}
+        aria-valuemin={columnState.getColumnMinWidth(column.key)}
+        aria-valuemax={columnState.getColumnMaxWidth(column.key)} />
     </FocusRing>
   );
 }
