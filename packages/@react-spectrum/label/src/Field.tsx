@@ -46,7 +46,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     inputProps, 
     autoFocus,
     inputRef, 
-    // wrapperChildren,
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
@@ -98,10 +97,10 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         {hasHelpText && renderHelpText()}
       </Flex>
     );
-
-
-    let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
     
+    let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
+    let isInvalid = validationState === 'invalid';
+
     if (isReadOnly && readOnlyText || readOnlyText === '') {
 
       if (readOnlyText === '') {
@@ -117,7 +116,10 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
                 'spectrum-Textfield',
                 {
                   'spectrum-Textfield--readonly': isReadOnly,
-                  'spectrum-Textfield--multiline': multiLine
+                  // 'spectrum-Textfield--quiet': true,
+                  'spectrum-Textfield--multiline': multiLine,
+                  'spectrum-Textfield--valid': validationState === 'valid',
+                  'spectrum-Textfield--invalid': isInvalid
                 }
               )
             }>
@@ -139,8 +141,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
                 } />
             </FocusRing>
           </div>
-          {description}
-          {errorMessage}
+          {hasHelpText && renderHelpText()}
         </Flex>
       );
     }

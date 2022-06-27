@@ -149,16 +149,37 @@ storiesOf('TextArea', module)
   .add('in flex', () => renderInFlexRowAndBlock())
   .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}))
   .add(
-    'test read only: true, value: read only value',
+    'test readOnly, value: read only value',
     () => render({readOnlyText: 'Read only value', isReadOnly: true})
   )
   .add(
-    "test: isReadOnly: true, readOnlyText: ''",
+    'test: isReadOnly, no text',
     () => render({isReadOnly: true, readOnlyText: ''})
   )
-  .add('test: readOnly: true readOnlyText: very very long text',
+  .add('test: isReadOnly, long text',
   () => render({isReadOnly: true, readOnlyText: 'cats are actually the best animals. i know there is a lot of debate and im sure dog people will argue against this claim but i love cats so much'})
-  );
+  )
+  .add(
+    'test: isReadOnly, validationState: invalid, text',
+    () => render({isReadOnly: true, validationState: 'invalid', readOnlyText: 'text'})
+  )  
+  .add(
+    'test: isReadOnly, validationState: invalid, text, with error message',
+    () => render({errorMessage: 'Please enter a valid street address.', isReadOnly: true, validationState: 'invalid', readOnlyText: 'text'})
+  )
+  .add(
+    'test: isReadOnly, no text, validationState: invalid, with error message',
+    () => render({errorMessage: 'Please enter a valid street address.', isReadOnly: true, validationState: 'invalid', readOnlyText: ''})
+  )
+  .add(
+    'test: isReadOnly, description, text',
+    () => render({isReadOnly: true, description: 'add comment', readOnlyText: 'text'})
+  ) 
+  .add(
+    'test: isReadOnly, validationState: valid, description, text',
+    () => render({isReadOnly: true, validationState: 'valid', description: 'add comment', readOnlyText: 'text'})
+  ) 
+  ;
 
 function render(props = {}) {
   return (
