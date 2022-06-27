@@ -61,6 +61,15 @@ let date = parseAbsolute('2021-11-07T07:45:00Z', 'America/Los_Angeles');
 let date = parseAbsoluteToLocal('2021-11-07T07:45:00Z');
 ```
 
+The current time can be retrieved using the <TypeLink links={docs.links} type={docs.exports.now} /> function. This requires a time zone identifier to be provided, which is used to determine the local time. The <TypeLink links={docs.links} type={docs.exports.getLocalTimeZone} /> function can be used to retrieve the user's current time zone.
+
+```tsx
+import {now, getLocalTimeZone} from '@internationalized/date';
+
+let nyTime = now('America/New_York');
+let localTime = now(getLocalTimeZone());
+```
+
 Once you have a `ZonedDateTime` object, you can read its properties, or manipulate it as described in the [Manipulating dates](#manipulating-dates) section below. You can also convert it to an ISO 8601 string, native JavaScript `Date` object, or another representation. See the [Conversion](#conversion) section below for details.
 
 ```tsx
@@ -464,7 +473,7 @@ isWeekday(date, 'en-US'); // false
 isWeekday(date, 'he-IL'); // true
 
 isWeekend(date, 'en-US'); // true
-isWeekday(date, 'he-IL'); // false
+isWeekend(date, 'he-IL'); // false
 ```
 
 ### Weeks in month
