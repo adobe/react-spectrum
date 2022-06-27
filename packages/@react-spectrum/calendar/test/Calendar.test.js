@@ -14,9 +14,8 @@ jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
 import {Calendar} from '../';
 import {CalendarDate, isWeekend} from '@internationalized/date';
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/test-utils';
 import {useLocale} from '@react-aria/i18n';
 
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
