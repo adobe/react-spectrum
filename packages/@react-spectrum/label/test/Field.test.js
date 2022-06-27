@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
+import {act, render} from '@react-spectrum/test-utils';
 import {Field} from '../';
 import React from 'react';
 import {useField} from '@react-aria/label';
