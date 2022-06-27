@@ -14,7 +14,7 @@ import {Card} from '../src';
 import {Default, DefaultPreviewAlt, NoDescription} from '../stories/Card.stories';
 import {Quiet} from '../stories/QuietCard.stories';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('Card', function () {

@@ -29,7 +29,7 @@
 
 .react-spectrum-Table-cell--alignStart {
   text-align: start;
-  justify-content: start;
+  justify-content: flex-start;
 }
 
 .react-spectrum-Table-cell--alignCenter {

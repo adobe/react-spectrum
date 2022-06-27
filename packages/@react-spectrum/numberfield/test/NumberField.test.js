@@ -10,15 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, typeText, within} from '@react-spectrum/test-utils';
 import {chain} from '@react-aria/utils';
 import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
-import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 // for some reason hu-HU isn't supported in jsdom/node

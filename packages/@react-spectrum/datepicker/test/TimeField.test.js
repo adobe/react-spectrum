@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render as render_, within} from '@testing-library/react';
+import {act, render as render_, within} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';

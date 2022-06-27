@@ -1,7 +1,5 @@
-import {fireEvent, render, screen} from '@testing-library/react';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {fireEvent, installMouseEvent, installPointerEvent, render, renderHook, screen} from '@react-spectrum/test-utils';
 import * as React from 'react';
-import {renderHook} from '@react-spectrum/test-utils';
 import {useRef} from 'react';
 import {useSlider, useSliderThumb} from '../src';
 import {useSliderState} from '@react-stately/slider';

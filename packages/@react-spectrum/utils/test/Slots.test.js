@@ -11,9 +11,8 @@
  */
 
 import React, {useRef} from 'react';
-import {render} from '@testing-library/react';
+import {render, triggerPress} from '@react-spectrum/test-utils';
 import {SlotProvider, useSlotProps} from '../';
-import {triggerPress} from '@react-spectrum/test-utils';
 import {useId, useSlotId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 
