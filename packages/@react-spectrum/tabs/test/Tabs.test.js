@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let defaultItems = [

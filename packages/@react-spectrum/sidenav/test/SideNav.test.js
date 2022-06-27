@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, waitFor} from '@react-spectrum/test-utils';
 import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../src';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 let flatItems = [
   {name: 'Foo'},
