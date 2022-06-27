@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
+import {act, render, triggerPress} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Toast} from '../';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 let testId = 'test-id';
 

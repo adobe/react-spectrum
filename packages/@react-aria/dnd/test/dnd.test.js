@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {CUSTOM_DRAG_TYPE} from '../src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from './mocks';

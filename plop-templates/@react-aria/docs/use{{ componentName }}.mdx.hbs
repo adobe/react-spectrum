@@ -47,13 +47,14 @@ after_version: 3.0.0-alpha.0
 ## Anatomy/Usage
 
 *For hooks that are meant to be used with specific elements/components, include an Anatomy section detailing the props the hook returns. See useColorField.mdx for an example.*
-*If applicable, the anatomy diagram should be added as a local svg file, sourced from the Spectrum XD file (ask Devon for the file if you are unsure). Follow these steps after you obtain the XD file:*
-*1. Open the XD file and find the anatomy diagram. Select it by double clicking its artboard.*
-*2. Export it as an SVG via File -> Export -> Selected...*
-*3a. Manually remove any extraneous Spectrum-only elements and labels from the SVG.*
-*3b. Replace the colors in the SVG with their spectrum color variable equivalents. See docs.css .provider for a mapping of these colors.*
-*3c. Add a `title` and `desc` to the SVG summarizing the contents of the diagram. See any of existing anatomy.svg for an example. *
-<Anatomy />
+*If applicable, the anatomy diagram should be added as a local svg file, sourced from the Spectrum XD file (ask in the #spectrum-react room if you can't find one). Follow these steps after you obtain the XD file:*
+*1. Open the XD file and find the anatomy diagram. Update the diagrams to match the actual anatomy/names we use in React Aria. Spectrum often includes additional things, but we want to match the returned prop objects from the hooks so remove these extra elements.
+*2. After finishing the edits, select the diagram by double clicking its artboard. Export it as an SVG via File -> Export -> Selected...*
+*4. Update the fonts. the xd file might reference something like Adobe-Clean-It for italic, but in the svg it needs to always be font-family="Adobe-Clean" with font-style="italic" for example.*
+*5. Replace the colors in the SVG with their spectrum color variable equivalents. See docs.css .provider for a mapping of these colors (--anatomy--gray- prefixed vars). Choose the closest one if there isn't an exact match.*
+*6. Remove width and height specified on the svg element, and replace with a style attribute similar to the one in other anatomy diagrams, but change the max-height to match viewBox. That makes it responsive.*
+*7. Add an aria-label that describes what is in the anatomy diagram.*
+<Anatomy role="img" aria-label="DESCRIPTION HERE"  />
 
 *For hooks that are meant for more general use, include a Usage section instead detailing the props/params the hook accepts and returns. See useKeyboard.mdx for an example.*
 
