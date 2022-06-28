@@ -408,7 +408,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
         className
       )}
       style={style}
-      aria-hidden={!visible}>
+      aria-hidden={visible ? undefined : true}>
       <SlotProvider
         slots={{
           icon: {
