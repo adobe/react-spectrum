@@ -33,6 +33,14 @@ export interface DroppableOption {
 }
 
 /*
+FEEDBACK FROM MEETING
+- using `list` with the assumption that it comes from useListData or useAsyncList is possibly too restrictive (people will be using other ways to track their collection). Additionally, performing the list updates
+doesn't actually update the information on the server so handleDrop doesn't do enough
+- we also can't assume that the data will be serialized as JSON
+- attempt to do optimizations in useDropHooks instead
+*/
+
+/*
  Assumptions made:
 - user is using useListData, useAsyncList, or some kind of list state tracker with similar list manipulation utilities methods
 - user is interested in making a list droppable and/or reorderable, maybe both at the same time.

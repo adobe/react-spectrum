@@ -31,6 +31,13 @@ export interface DraggableOptions {
 }
 
 /*
+FEEDBACK FROM MEETING
+- using `list` with the assumption that it comes from useListData or useAsyncList is possibly too restrictive (people will be using other ways to track their collection). Additionally, performing the list updates
+doesn't actually update the information on the server so handleDrop doesn't do enough
+- users will probably have multiple drag types (at least plain/text) so we don't wanna only go with one
+*/
+
+/*
  Assumptions made:
 - user is using useListData, useAsyncList, or some kind of list state tracker with similar list manipulation utilities methods
 - user is only interested in returning one drag type per item

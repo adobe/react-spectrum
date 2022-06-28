@@ -29,6 +29,13 @@ export interface ReorderableOptions {
   // onMove or some kind of function that actually performs the list updates based on the dropped keys and the target.dropPosition?
   list: any
 }
+
+/*
+FEEDBACK FROM MEETING
+- it would be good to figure out how to make reorderable work with other hooks so we aren't just limited to the one (aka can do reorderable hook + droppable)
+*/
+
+
 /*
  Assumptions made:
 - user is using useListData, useAsyncList, or some kind of list state tracker with similar list manipulation utilities

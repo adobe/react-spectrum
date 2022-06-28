@@ -53,6 +53,13 @@ export interface DnDOptions {
 }
 
 /*
+FEEDBACK FROM MEETING
+- consider a single large hook that handles draggable and droppable so that we can track if a drag started and ended in the same collection via a internal state tracker set by drag start and cleared by drag end
+- only problem is that it may make the hook hard to use
+*/
+
+
+/*
  Assumptions made:
 - user is using useListData, useAsyncList, or some kind of list state tracker with similar list manipulation utilities methods
 - user is only interested in returning one drag type per item
