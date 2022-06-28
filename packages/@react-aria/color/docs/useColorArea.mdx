@@ -41,9 +41,9 @@ keywords: [color area, color picker, aria]
 The [&lt;input type="color"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color) HTML element
 can be used to build a color picker, however it is very inconsistent across browsers and operating systems and consists
 of a complete color picker rather than a color area. `useColorArea` helps achieve accessible and
-touch-friendly color area that can be styled as needed.
+touch-friendly color areas that can be styled as needed.
 
-* Support for adjusting two channels values of an HSL, HSB or RGB color value
+* Support for adjusting two-channel values of an HSL, HSB or RGB color value
 * Support for mouse, touch, and keyboard via the [useMove](useMove.html) hook
 * Multi-touch support
 * Pressing on the color area background moves the thumb to that position
@@ -85,7 +85,7 @@ channel.
 This example shows how to build a color area with a draggable thumb to adjust two color channel values of a color. Styling for
 the background gradient and positioning of the thumb are provided by `useColorArea` in the returned  prop for each element.
 The two `<input>` elements inside the thumb represent the color channel values to assistive technologies, and are hidden
-from view, within `useColorArea`, using the [useVisuallyHidden](useVisuallyHidden.html) hook. The thumb also uses the
+from view, within `useColorArea`, using the [useVisuallyHidden](VisuallyHidden.html#hook) hook. The thumb also uses the
 [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
@@ -557,8 +557,7 @@ which labels the visually hidden `<input>` elements for the two color channels, 
 the group containing them. If you wish to override this with a more specific label, an `aria-label` or
 `aria-labelledby` prop may be passed to further to identify the element to assistive technologies.
 For example, for a color area that adjusts a text color you might pass the `aria-label` prop,
-"Text color",  which `useColorArea` will return as the `aria-label` prop "Text color, Color picker"
-for each of the `<input>` elements, or on mobile devices, the group containing them. When a custom `aria-label`
+"Text color",  which `useColorArea` will return as the `aria-label` prop "Text color, Color picker". When a custom `aria-label`
 is provided, it should be localized accordingly.
 
 ### Role description
@@ -570,7 +569,7 @@ visually hidden `<input>` elements.
 ### Value formatting
 
 The `aria-valuetext` of each `<input>` element is formatted according to the user's locale automatically.
-It will include the localized color channel name and current value for each channel, with the channel name
+It includes the localized color channel name and current value for each channel, with the channel name
 and value that the `<input>` element controls coming before the channel name and value for the adjacent
 `<input>` element. For example, for an RGB color area where the `xChannel` is "blue", the `yChannel`
 is "green", when the current selected color is yellow (`rgb(255, 255, 0)`), the `<input>` representing the
