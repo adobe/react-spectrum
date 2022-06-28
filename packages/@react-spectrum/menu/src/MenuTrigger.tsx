@@ -93,7 +93,6 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
   let overlay;
   if (isMobile) {
-    console.log('mobile')
     overlay = (
       <Tray isOpen={state.isOpen} onClose={state.close}>
         {contents}

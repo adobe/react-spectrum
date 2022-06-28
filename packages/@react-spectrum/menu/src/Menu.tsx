@@ -16,7 +16,7 @@ import {MenuContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
 import {mergeProps, useSyncRef} from '@react-aria/utils';
-import React, {ReactElement, useContext} from 'react';
+import React, {ReactElement, useContext, useEffect} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
@@ -33,6 +33,13 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      props.onUnmount?.();
+    };
+  }, []);
 
   return (
     <ul

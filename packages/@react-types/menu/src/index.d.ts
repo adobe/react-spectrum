@@ -61,7 +61,10 @@ export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
 }
 
 export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {}
-export interface SpectrumMenuProps<T> extends AriaMenuProps<T>, StyleProps {}
+export interface SpectrumMenuProps<T> extends AriaMenuProps<T>, StyleProps {
+  /** Called when the component is unmounted, useful because Menu has a delayed animated removal. */
+  onUnmount?: () => void
+}
 
 export interface SpectrumActionMenuProps<T> extends CollectionBase<T>, MenuTriggerProps, StyleProps, DOMProps, AriaLabelingProps {
   /**

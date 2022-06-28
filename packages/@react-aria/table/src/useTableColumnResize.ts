@@ -105,12 +105,10 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
         moveProps,
         {
           onFocus: () => {
-            console.log('resizer got focus')
             state.setDisableNavigation(true);
             onResizeEntered();
           },
-          onBlur: (e) => {
-            console.log('resizer blurred for ', e.relatedTarget)
+          onBlur: () => {
             state.setDisableNavigation(false);
             onResizeDone();
           },

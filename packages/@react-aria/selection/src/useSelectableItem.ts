@@ -138,7 +138,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   useEffect(() => {
     let isFocused = key === manager.focusedKey;
     if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== ref.current) {
-      console.log('selectable item does not like losing focus')
       if (focus) {
         focus();
       } else {

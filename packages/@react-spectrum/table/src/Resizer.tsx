@@ -18,7 +18,7 @@ interface ResizerProps<T> {
 }
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
-  let {column, tableRef, showResizer} = props;
+  let {column, showResizer} = props;
   let {state, columnState} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
@@ -30,10 +30,6 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
     height: '100%',
     display: showResizer ? 'block' : 'none'
   };
-  // always be 100% height? never? only while dragging? only while focused?
-  if (showResizer && tableRef.current) {
-    style.height = `${tableRef.current.offsetHeight}px`;
-  }
   if (columnState.getColumnMinWidth(column.key) >= columnState.getColumnWidth(column.key)) {
     style.cursor = direction === 'rtl' ? 'e-resize' : 'w-resize';
   } else if (columnState.getColumnMaxWidth(column.key) <= columnState.getColumnWidth(column.key)) {

@@ -422,7 +422,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         style={{
           width: visibleRect.width,
           height: headerHeight,
-          overflow: 'visible',
+          overflow: 'hidden',
           position: 'relative',
           willChange: state.isScrolling ? 'scroll-position' : '',
           transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
@@ -529,6 +529,7 @@ function ResizableTableColumnHeader(props) {
   let {state, columnState} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
   let [isResizingAvailable, setIsResizingAvailable] = useState(false);
+  let shouldMoveFocus = useRef(false);
   let [isHovered, setIsHovered] = useState(false);
   let isResizing = columnState.getResizingColumn()?.key === column.key;
 
@@ -543,7 +544,7 @@ function ResizableTableColumnHeader(props) {
         setIsResizingAvailable(false);
         break;
       case 'resize':
-        focusSafely(ref.current);
+        shouldMoveFocus.current = true;
         break;
       default:
         setIsResizingAvailable(false);
@@ -568,7 +569,19 @@ function ResizableTableColumnHeader(props) {
     return options;
   }, [allowsSorting]);
   // if we're resizing another column, then hover shouldn't show the resizer of a different column
-  let showResizer = isResizingAvailable || (isHovered && !columnState.isResizingColumn) || isResizing;
+  let showResizer = isResizingAvailable || (isHovered && !columnState.isResizingColumn) || isResizing || shouldMoveFocus.current;
+
+  // discuss with devon how to get around FocusScope's contain (prevents us from leaving focus scope until unmount) + restore raf (which is why there are two here)
+  let onUnmount = useCallback(() => {
+    if (shouldMoveFocus.current) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          focusSafely(ref.current);
+          shouldMoveFocus.current = false;
+        });
+      });
+    }
+  }, [ref, shouldMoveFocus]);
 
   return (
     <>
@@ -582,7 +595,7 @@ function ResizableTableColumnHeader(props) {
             onResizeEntered={() => setIsResizingAvailable(true)}
             onResizeDone={() => setIsResizingAvailable(false)} />
         </TableColumnHeader>
-        <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
+        <Menu onAction={onMenuSelect} minWidth="size-2000" items={items} onUnmount={onUnmount}>
           {(item) => (
             <Item>
               {item.label}

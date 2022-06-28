@@ -626,6 +626,9 @@ describe('TableViewSizing', function () {
   describe('resizing columns', function () {
     describe('pointer', () => {
       installPointerEvent();
+      beforeEach(() => {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+      });
 
       it('dragging the resizer works', () => {
         let tree = render(
@@ -647,8 +650,7 @@ describe('TableViewSizing', function () {
 
         // trigger pointer modality
         fireEvent.pointerMove(tree.container);
-        // TODO verify that separator isn't available
-        // expect(tree.getAllByRole('separator')).toHaveLength();
+        expect(tree.queryByRole('separator')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -693,14 +695,16 @@ describe('TableViewSizing', function () {
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
 
-        // expect(tree.getByRole('separator')).not.toBeVisible();
+        expect(tree.queryByRole('separator')).toBeNull();
       });
     });
 
     describe('keyboard', () => {
-      // this test does not work yet, for some reason the blur created by moving focus to the resizer isn't closing the
-      // the menutrigger like it does in real life
-      it.only('arrow keys the resizer works', async () => {
+      beforeEach(() => {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+      });
+
+      it('arrow keys the resizer works', async () => {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader>
@@ -724,8 +728,7 @@ describe('TableViewSizing', function () {
 
         let resizableHeader = tree.getAllByRole('button')[0];
         expect(document.activeElement).toBe(resizableHeader);
-        // TODO verify that separator isn't available
-        // expect(tree.getAllByRole('separator')).toHaveLength();
+        expect(tree.queryByRole('separator')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -754,9 +757,9 @@ describe('TableViewSizing', function () {
 
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('595px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect(row.childNodes[0].style.width).toBe('620px');
+          expect(row.childNodes[1].style.width).toBe('190px');
+          expect(row.childNodes[2].style.width).toBe('190px');
         }
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
@@ -766,9 +769,9 @@ describe('TableViewSizing', function () {
 
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('620px');
-          expect(row.childNodes[1].style.width).toBe('190px');
-          expect(row.childNodes[2].style.width).toBe('190px');
+          expect(row.childNodes[0].style.width).toBe('600px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
         }
 
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
@@ -776,7 +779,7 @@ describe('TableViewSizing', function () {
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        // expect(tree.getByRole('separator')).not.toBeVisible();
+        expect(tree.queryByRole('separator')).toBeNull();
       });
     });
   });

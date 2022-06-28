@@ -316,7 +316,6 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
-        console.log('selectable collection does not like losing focus')
         // This prevents a flash of focus on the first/last element in the collection
         focusWithoutScrolling(element);
         scrollIntoView(scrollRef.current, element);
@@ -354,7 +353,6 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
       // If no default focus key is selected, focus the collection itself.
       if (focusedKey == null && !shouldUseVirtualFocus) {
-        console.log('auto focusing')
         focusSafely(ref.current);
       }
     }
