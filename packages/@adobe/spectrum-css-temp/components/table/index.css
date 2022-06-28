@@ -106,7 +106,6 @@ svg.spectrum-Table-sortedIcon {
     box-sizing: border-box;
     inline-size: 1px;
     block-size: 100%;
-    background-color: var(--spectrum-table-divider-border-color);
   }
 
   &:active,
@@ -114,7 +113,6 @@ svg.spectrum-Table-sortedIcon {
     outline: none;
     &::after {
       inline-size: 2px;
-      background-color: var(--spectrum-global-color-blue-400);
     }
   }
 }
