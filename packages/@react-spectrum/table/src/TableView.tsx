@@ -173,7 +173,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       return (
         <TableHeader
           key={reusableView.key}
-          style={{...style, zIndex: 1}}>
+          style={style}>
           {renderChildren(children)}
         </TableHeader>
       );
@@ -545,6 +545,7 @@ function ResizableTableColumnHeader(props) {
         break;
       case 'resize':
         shouldMoveFocus.current = true;
+        setIsResizingAvailable(true);
         break;
       default:
         setIsResizingAvailable(false);
@@ -585,7 +586,7 @@ function ResizableTableColumnHeader(props) {
 
   return (
     <>
-      <MenuTrigger onOpenChange={(e) => setIsResizingAvailable(e)}>
+      <MenuTrigger>
         <TableColumnHeader column={column} onHoverChange={setIsHovered}>
           <Resizer
             ref={ref}

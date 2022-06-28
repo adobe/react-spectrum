@@ -31,9 +31,9 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
     display: showResizer ? 'block' : 'none'
   };
   if (columnState.getColumnMinWidth(column.key) >= columnState.getColumnWidth(column.key)) {
-    style.cursor = direction === 'rtl' ? 'e-resize' : 'w-resize';
-  } else if (columnState.getColumnMaxWidth(column.key) <= columnState.getColumnWidth(column.key)) {
     style.cursor = direction === 'rtl' ? 'w-resize' : 'e-resize';
+  } else if (columnState.getColumnMaxWidth(column.key) <= columnState.getColumnWidth(column.key)) {
+    style.cursor = direction === 'rtl' ? 'e-resize' : 'w-resize';
   } else {
     style.cursor = 'col-resize';
   }

@@ -74,9 +74,9 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
         columnResizeWidthRef.current += deltaX;
         stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
         if (stateRef.current.getColumnMinWidth(item.key) >= stateRef.current.getColumnWidth(item.key)) {
-          document.body.style.setProperty('cursor', direction === 'rtl' ? 'e-resize' : 'w-resize');
-        } else if (stateRef.current.getColumnMaxWidth(item.key) <= stateRef.current.getColumnWidth(item.key)) {
           document.body.style.setProperty('cursor', direction === 'rtl' ? 'w-resize' : 'e-resize');
+        } else if (stateRef.current.getColumnMaxWidth(item.key) <= stateRef.current.getColumnWidth(item.key)) {
+          document.body.style.setProperty('cursor', direction === 'rtl' ? 'e-resize' : 'w-resize');
         } else {
           document.body.style.setProperty('cursor', 'col-resize');
         }
