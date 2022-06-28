@@ -700,7 +700,7 @@ describe('TableViewSizing', function () {
     describe('keyboard', () => {
       // this test does not work yet, for some reason the blur created by moving focus to the resizer isn't closing the
       // the menutrigger like it does in real life
-      it.skip('arrow keys the resizer works', async () => {
+      it.only('arrow keys the resizer works', async () => {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader>

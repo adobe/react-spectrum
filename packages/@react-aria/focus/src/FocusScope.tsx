@@ -289,6 +289,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       raf.current = requestAnimationFrame(() => {
         // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
         if (scopeRef === activeScope && !isElementInChildScope(document.activeElement, scopeRef)) {
+          console.log('we are containing focus')
           activeScope = scopeRef;
           focusedNode.current = e.target;
           focusedNode.current.focus();
@@ -463,6 +464,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scopeRef.current)) {
         requestAnimationFrame(() => {
           if (document.body.contains(nodeToRestore)) {
+            console.log('we are restoring focus')
             focusElement(nodeToRestore);
           }
         });
