@@ -18,6 +18,8 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/checkbox/package.json';
 import Anatomy from './checkboxgroup-anatomy.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import buttongroupPreview from 'url:./buttongroup-example.png';
 
 ---
 category: Forms
@@ -148,3 +150,11 @@ function Checkbox(props) {
 ## Styling
 
 See the [useCheckbox](useCheckbox.html#styling) docs for details on how to customize the styling of checkbox elements.
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/magical-bose-l7z36b?file=/src/ButtonGroup.js"
+  preview={buttongroupPreview}
+  title="Button Group"
+  description="A multi-selectable segmented ButtonGroup component." />
