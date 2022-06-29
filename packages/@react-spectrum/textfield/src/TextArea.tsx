@@ -46,7 +46,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       input.style.alignSelf = 'start';
-      // input.style.height = 'auto'; // remove this seems to fix the issue with the additional whitespace
+      // input.style.height = 'auto'; // removing this seems to fix the issue with the additional whitespace
       input.style.height = `${input.scrollHeight}px`;
       input.style.alignSelf = prevAlignment; 
     }

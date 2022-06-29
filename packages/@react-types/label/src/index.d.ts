@@ -43,5 +43,5 @@ export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelp
   multiLine?: boolean,
   inputProps?: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
   autoFocus?: boolean,
-  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>
 }
