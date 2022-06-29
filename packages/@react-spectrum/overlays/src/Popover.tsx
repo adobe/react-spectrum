@@ -127,6 +127,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
       } else if (arrowProps.style[offset] <= 0 || arrowProps.style[offset] + 2 > overlayCrossSize) {
         // trigger is too far off the page, hiding the arrow per Spectrum
         propsHideArrow = true;
+        ref.current.style.margin = '0';
       }
 
       if (propsHideArrow !== isHideArrow) {
