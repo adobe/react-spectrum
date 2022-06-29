@@ -332,7 +332,7 @@ describe('ColorWheel', () => {
     });
   });
 
-  it.only('thumb background color should not include alpha channel', () => {
+  it('thumb background color should not include alpha channel', () => {
     let defaultColor = parseColor('hsla(0, 100%, 50%, 0.5)');
     let {container: _container} = render(<ColorWheel defaultValue={defaultColor} />);
     /*
