@@ -158,13 +158,6 @@ governing permissions and limitations under the License.
       }
     }
 
-    &:disabled,
-    &.is-disabled {
-      background-color: var(--spectrum-textfield-quiet-background-color-disabled);
-      border-color:  var(--spectrum-textfield-quiet-border-color-disabled);
-    } 
-
-
     /* for regular focus ring */
 
     /* &:focus,

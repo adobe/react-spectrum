@@ -44,6 +44,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     isReadOnly,
     inputProps, 
     inputRef, 
+    autoFocus, 
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
@@ -54,8 +55,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
-  // let {hoverProps, isHovered} = useHover({isDisabled});
-
 
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(
@@ -97,8 +96,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     );
 
     // read only
+    console.log(readOnlyText);
     
-    if (isReadOnly && readOnlyText || readOnlyText === '') {
+    if (isReadOnly) {
       
       if (readOnlyText === '') {
         readOnlyText = '(None)';
@@ -117,7 +117,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
                 }
               )
             }>
-            <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput>
+            <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
               <ReadOnlyField
                 {...props} 
                 readOnlyText={readOnlyText}

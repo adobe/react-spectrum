@@ -63,6 +63,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
 
+  let inputValue = (value || value === '') ? value : defaultValue;
+
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
     ...createFocusableRef(domRef, inputRef),
@@ -145,7 +147,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       className: multiLine ? 'spectrum-Field-field--multiline' : ''
     }));
   }
-
+  
   return (
     <Field
       {...props}
@@ -154,7 +156,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       errorMessageProps={errorMessageProps}
       showErrorIcon={false}
       ref={domRef}
-      readOnlyText={value || defaultValue}>
+      readOnlyText={inputValue}>
       {textField}
     </Field>
   );

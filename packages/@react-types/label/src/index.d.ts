@@ -38,10 +38,9 @@ export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelp
   descriptionProps?: HTMLAttributes<HTMLElement>,
   errorMessageProps?: HTMLAttributes<HTMLElement>,
   wrapperClassName?: string,
-  readOnlyText?: string, // should this even be here??
+  readOnlyText?: string,
   isReadOnly?: boolean,
-  multiLine?: boolean,
   inputProps?: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
-  autoFocus?: boolean,
-  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  autoFocus?: boolean
 }

@@ -153,7 +153,9 @@ storiesOf('TextField', module)
   .add('test: readOnly, long text, defaultValue',
   () => render({isReadOnly: true, defaultValue: 'a much only piece of text to see what happens'})
   )
-  ;
+  .add('test: readOnly, no text, autofocus',
+  () => render({isReadOnly: true, value: '', autoFocus: true})
+  );
 
 function render(props = {}) {
   return (
