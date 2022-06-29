@@ -51,16 +51,10 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
   let currentMonth = state.visibleRange.start;
-  let era = undefined;
-  if (currentMonth.calendar.identifier !== 'gregory') {
-    era = 'long';
-  } else if (currentMonth.era === 'BC') {
-    era = 'short';
-  }
   let monthDateFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
-    era,
+    era: currentMonth.calendar.identifier === 'gregory' && currentMonth.era === 'BC' ? 'short' : undefined,
     calendar: currentMonth.calendar.identifier,
     timeZone: state.timeZone
   });

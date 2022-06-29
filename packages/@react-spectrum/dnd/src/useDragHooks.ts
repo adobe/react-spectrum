@@ -9,7 +9,9 @@ export interface DragHooks {
   DragPreview: typeof DragPreview
 }
 
-export function useDragHooks(options: DraggableCollectionProps): DragHooks {
+export interface DragHookOptions extends Omit<DraggableCollectionProps, 'preview'> {}
+
+export function useDragHooks(options: DragHookOptions): DragHooks {
   return useMemo(() => ({
     useDraggableCollectionState(props: DraggableCollectionOptions) {
       return useDraggableCollectionState({...props, ...options});

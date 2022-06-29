@@ -250,7 +250,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
             slots={{
               text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
               description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description'], ...descriptionProps},
-              icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
+              illustration: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-illustration']},
               image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
               actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
               actionGroup: {
