@@ -24,6 +24,7 @@ import {
   ValueBase
 } from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
+import {OverlayTriggerProps} from '@react-types/overlays';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 type MappedDateValue<T> =
@@ -33,14 +34,14 @@ type MappedDateValue<T> =
   never;
 
 export type Granularity = 'day' | 'hour' | 'minute' | 'second' | 'millisecond';
-interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps {
+interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps, OverlayTriggerProps {
   /** The minimum allowed date that a user may select. */
   minValue?: DateValue,
   /** The maximum allowed date that a user may select. */
   maxValue?: DateValue,
   /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
   isDateUnavailable?: (date: DateValue) => boolean,
-  /** A placeholder date to display when no value is selected. Defaults to today's date at midnight. */
+  /** A placeholder date that influences the format of the placeholder shown when no value is selected. Defaults to today's date at midnight. */
   placeholderValue?: T,
   /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
   hourCycle?: 12 | 24,
@@ -84,7 +85,12 @@ interface SpectrumDatePickerBase<T extends DateValue> extends AriaDatePickerBase
    * The maximum number of months to display at once in the calendar popover, if screen space permits.
    * @default 1
    */
-  maxVisibleMonths?: number
+  maxVisibleMonths?: number,
+  /**
+   * Whether the calendar popover should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean
 }
 
 export interface SpectrumDatePickerProps<T extends DateValue> extends DatePickerProps<T>, SpectrumDatePickerBase<T> {}
@@ -98,7 +104,7 @@ type MappedTimeValue<T> =
   T extends Time ? Time :
   never;
 
-export interface TimePickerProps<T extends TimeValue> extends InputBase, Validation, FocusableProps, LabelableProps, ValueBase<T, MappedTimeValue<T>> {
+export interface TimePickerProps<T extends TimeValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps, ValueBase<T, MappedTimeValue<T>> {
   /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
   hourCycle?: 12 | 24,
   /**
@@ -108,7 +114,10 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
   granularity?: 'hour' | 'minute' | 'second' | 'millisecond',
   /** Whether to hide the time zone abbreviation. */
   hideTimeZone?: boolean,
-  /** A placeholder time to display when no value is selected. Defaults to 12:00 or 00:00 depending on the hour cycle. */
+  /**
+   * A placeholder time that influences the format of the placeholder shown when no value is selected.
+   * Defaults to 12:00 AM or 00:00 depending on the hour cycle.
+   */
   placeholderValue?: T,
   /** The minimum allowed time that a user may select. */
   minValue?: TimeValue,

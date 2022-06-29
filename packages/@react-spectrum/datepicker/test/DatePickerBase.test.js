@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_} from '@testing-library/react';
+import {act, fireEvent, installPointerEvent, render as render_, triggerPress, within} from '@react-spectrum/test-utils';
 import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DatePicker, DateRangePicker} from '../';
-import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -66,7 +64,7 @@ describe('DatePickerBase', function () {
 
       let button = getAllByRole('button')[0];
       expect(button).toBeVisible();
-      expect(button).toHaveAttribute('tabindex', '-1');
+      expect(button).not.toHaveAttribute('tabindex');
     });
 
     it.each`
@@ -184,7 +182,30 @@ describe('DatePickerBase', function () {
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-label', 'July 2019');
-      expect(document.activeElement.getAttribute('aria-label').startsWith('Friday, July 5, 2019')).toBe(true);
+      expect(document.activeElement.getAttribute('aria-label').includes('Friday, July 5, 2019')).toBe(true);
+    });
+
+    it.each`
+      Name                   | Component
+      ${'DatePicker'}        | ${DatePicker}
+      ${'DateRangePicker'}   | ${DateRangePicker}
+    `('$Name should respond to provider props', ({Component}) => {
+      let {getAllByRole} = render(
+        <Provider theme={theme} isDisabled>
+          <Component label="Date" isDisabled />
+        </Provider>
+      );
+
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).toHaveAttribute('aria-disabled', 'true');
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveAttribute('aria-disabled', 'true');
+      }
+
+      let button = getAllByRole('button')[0];
+      expect(button).toHaveAttribute('disabled');
     });
   });
 
@@ -322,6 +343,31 @@ describe('DatePickerBase', function () {
       // Focuses the calendar date
       expect(document.activeElement.parentElement).toHaveAttribute('role', 'gridcell');
     });
+
+    it.each`
+      Name                   | Component          | props
+      ${'DatePicker'}        | ${DatePicker}      | ${{defaultValue: new CalendarDate(2021, 10, 3)}}
+      ${'DateRangePicker'}   | ${DateRangePicker} | ${{defaultValue: {start: new CalendarDate(2021, 10, 3), end: new CalendarDate(2021, 10, 4)}}}
+    `('$Name should pass validationState and errorMessage to calendar', ({Component, props}) => {
+      let {getAllByRole} = render(
+        <Provider theme={theme}>
+          <Component {...props} label="Date" errorMessage="Selected dates cannot include weekends." validationState="invalid" />
+        </Provider>
+      );
+
+      let button = getAllByRole('button')[0];
+      expect(button).toHaveAttribute('aria-haspopup', 'dialog');
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+      expect(button).not.toHaveAttribute('aria-controls');
+
+      triggerPress(button);
+
+      let dialog = getAllByRole('dialog')[0];
+      let grid = within(dialog).getByRole('grid');
+      let cell = within(grid).getAllByLabelText('selected', {exact: false})[0];
+      let description = cell.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ');
+      expect(description.startsWith('Selected dates cannot include weekends.')).toBe(true);
+    });
   });
 
   describe('focus management', function () {
@@ -335,12 +381,16 @@ describe('DatePickerBase', function () {
       let {getAllByRole} = render(<Component label="Date" />);
 
       let segments = getAllByRole('spinbutton');
+      let button = getAllByRole('button')[0];
       act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       }
+
+      expect(button).toHaveFocus();
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
 
       for (let i = segments.length - 1; i >= 0; i--) {
         expect(segments[i]).toHaveFocus();
@@ -360,12 +410,16 @@ describe('DatePickerBase', function () {
       );
 
       let segments = getAllByRole('spinbutton');
+      let button = getAllByRole('button')[0];
       act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
       }
+
+      expect(button).toHaveFocus();
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
 
       for (let i = segments.length - 1; i >= 0; i--) {
         expect(segments[i]).toHaveFocus();

@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "2D-Schieberegler",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Farbwähler",
+  "twoDimensionalSlider": "2D-Schieberegler"
 }

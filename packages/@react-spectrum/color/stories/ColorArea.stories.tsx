@@ -31,7 +31,7 @@ const Template: Story<SpectrumColorAreaProps> = (args) => (
 );
 
 function ColorAreaExample(props: SpectrumColorAreaProps) {
-  let {xChannel, yChannel, isDisabled} = props;
+  let {xChannel, yChannel, isDisabled, 'aria-label': ariaLabel} = props;
   let defaultValue = typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
   let [color, setColor] = useState(defaultValue || parseColor('#ff00ff'));
   let xyChannels = {xChannel, yChannel};
@@ -48,7 +48,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
   }
 
   return (
-    <div role="group" aria-label={`${colorSpace.toUpperCase()} Color Picker`}>
+    <div role="group" aria-label={`${ariaLabel ? `${ariaLabel} ` : ''}${colorSpace.toUpperCase()} Color Picker`}>
       <Flex gap="size-500" alignItems="start">
         <Flex direction="column" gap={isHue ? 0 : 'size-50'} alignItems="center">
           <ColorArea
@@ -100,7 +100,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
 
 export let XBlueYGreen = Template.bind({});
 XBlueYGreen.storyName = 'RGB xChannel="blue", yChannel="green"';
-XBlueYGreen.args = {xChannel: 'blue', yChannel: 'green', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
+XBlueYGreen.args = {defaultValue: '#0FF', xChannel: 'blue', yChannel: 'green', onChange: action('onChange'), onChangeEnd: action('onChangeEnd')};
 
 export let XGreenYBlue = Template.bind({});
 XGreenYBlue.storyName = 'RGB xChannel="green", yChannel="blue"';
@@ -108,19 +108,19 @@ XGreenYBlue.args = {...XBlueYGreen.args, xChannel: 'green', yChannel: 'blue'};
 
 export let XBlueYRed = Template.bind({});
 XBlueYRed.storyName = 'RGB xChannel="blue", yChannel="red"';
-XBlueYRed.args = {...XBlueYGreen.args, xChannel: 'blue', yChannel: 'red'};
+XBlueYRed.args = {...XBlueYGreen.args, defaultValue: '#F0F', xChannel: 'blue', yChannel: 'red'};
 
 export let XRedYBlue = Template.bind({});
 XRedYBlue.storyName = 'RGB xChannel="red", yChannel="blue"';
-XRedYBlue.args = {...XBlueYGreen.args, xChannel: 'red', yChannel: 'blue'};
+XRedYBlue.args = {...XBlueYGreen.args, defaultValue: '#F0F', xChannel: 'red', yChannel: 'blue'};
 
 export let XRedYGreen = Template.bind({});
 XRedYGreen.storyName = 'RGB xChannel="red", yChannel="green"';
-XRedYGreen.args = {...XBlueYGreen.args, xChannel: 'red', yChannel: 'green'};
+XRedYGreen.args = {...XBlueYGreen.args, defaultValue: '#FF0', xChannel: 'red', yChannel: 'green'};
 
 export let XGreenYRed = Template.bind({});
 XGreenYRed.storyName = 'RGB xChannel="green", yChannel="red"';
-XGreenYRed.args = {...XBlueYGreen.args, xChannel: 'green', yChannel: 'red'};
+XGreenYRed.args = {...XBlueYGreen.args, defaultValue: '#FF0', xChannel: 'green', yChannel: 'red'};
 
 export let XBlueYGreenisDisabled = Template.bind({});
 XBlueYGreenisDisabled.storyName = 'RGB xChannel="blue", yChannel="green", isDisabled';
@@ -129,7 +129,7 @@ XBlueYGreenisDisabled.args = {...XBlueYGreen.args, isDisabled: true};
 /* TODO: how do we visually label and how to do we aria-label */
 export let XBlueYGreenAriaLabelled = Template.bind({});
 XBlueYGreenAriaLabelled.storyName = 'RGB xChannel="blue", yChannel="green", aria-label="foo"';
-XBlueYGreenAriaLabelled.args = {...XBlueYGreen.args, label: undefined, ariaLabel: 'foo'};
+XBlueYGreenAriaLabelled.args = {...XBlueYGreen.args, label: undefined, 'aria-label': 'foo'};
 
 export let XBlueYGreenSize3000 = Template.bind({});
 XBlueYGreenSize3000.storyName = 'RGB xChannel="blue", yChannel="green", size="size-3000"';

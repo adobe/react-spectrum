@@ -23,16 +23,20 @@
     "esModuleInterop": true,
     // if 'target' is updated, this should be updated as well
     "lib": [
-      "es6",
+      "esnext",
       "dom",
-      "dom.iterable",
-      "es2016.array.include",
-      "es2017.object",
-      "es2017.intl",
-      "es2019.array",
-      "esnext.intl"
+      "dom.iterable"
     ],
-    "skipLibCheck": false
+    "skipLibCheck": false,
+    "strict": false,
+    "plugins": [
+      {
+        "name": "typescript-strict-plugin",
+        "paths": [
+          "./packages/@react-spectrum/button",
+        ]
+      }
+    ]
   },
   "include": [
     "packages"

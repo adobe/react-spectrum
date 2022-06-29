@@ -60,6 +60,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected contentSize: Size;
   collection: Collection<Node<T>>;
   disabledKeys: Set<Key> = new Set();
+  allowDisabledKeyFocus: boolean = false;
   isLoading: boolean;
   protected lastWidth: number;
   protected lastCollection: Collection<Node<T>>;
@@ -290,6 +291,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     let rect = new Rect(x, y, width - x, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+    // allow overflow so the focus ring/selection ring can extend outside to overlap with the adjacent items borders
+    layoutInfo.allowOverflow = true;
     layoutInfo.estimatedSize = isEstimated;
     return {
       layoutInfo
@@ -350,7 +353,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     key = collection.getKeyBefore(key);
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
+      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -364,12 +367,20 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     key = collection.getKeyAfter(key);
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
+      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
       key = collection.getKeyAfter(key);
     }
+  }
+
+  getKeyLeftOf(key: Key): Key {
+    return key;
+  }
+
+  getKeyRightOf(key: Key): Key {
+    return key;
   }
 
   getKeyPageAbove(key: Key) {
@@ -413,7 +424,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let key = collection.getFirstKey();
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
+      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 
@@ -426,7 +437,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let key = collection.getLastKey();
     while (key != null) {
       let item = collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(item.key)) {
+      if (item.type === 'item' && (this.allowDisabledKeyFocus || !this.disabledKeys.has(item.key))) {
         return key;
       }
 

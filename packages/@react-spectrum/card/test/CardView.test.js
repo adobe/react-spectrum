@@ -10,19 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
+import {composeStories} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';
-import {FalsyIds, falsyItems} from '../stories/GridCardView.stories';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Provider} from '@react-spectrum/provider';
 import React, {useMemo} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import * as stories from '../stories/GridCardView.stories';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {triggerPress} from '@react-spectrum/test-utils';
 import {useCollator} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
+
+let {falsyItems} = stories;
+let {FalsyIds} = composeStories(stories);
 
 let theme = {
   light: themeLight,
@@ -773,9 +776,8 @@ describe('CardView', function () {
     describe('keyboard nav', function () {
       it('should move focus via Arrow Down', function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
-        act(() => {
-          jest.runAllTimers();
-        });
+        act(() => jest.runAllTimers()); // relayout raf
+        act(() => jest.runAllTimers()); // update size
 
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[0]);
@@ -786,9 +788,9 @@ describe('CardView', function () {
         let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 18}px`;
         let expectedLeft = cardStyles.left;
 
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
         act(() => {
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
           jest.runAllTimers();
         });
 
@@ -800,9 +802,8 @@ describe('CardView', function () {
 
       it('should move focus via Arrow Up', function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
-        act(() => {
-          jest.runAllTimers();
-        });
+        act(() => jest.runAllTimers()); // relayout raf
+        act(() => jest.runAllTimers()); // update size
 
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[2]);
@@ -813,9 +814,9 @@ describe('CardView', function () {
         let expectedTop = cardStyles.top;
         let expectedLeft = cardStyles.left;
 
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
         act(() => {
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
           jest.runAllTimers();
         });
 
@@ -1185,9 +1186,9 @@ describe('CardView', function () {
       expect(cards).toBeTruthy();
       triggerPress(cards[1]);
 
+      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
       act(() => {
-        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
         jest.runAllTimers();
       });
 
@@ -1214,9 +1215,9 @@ describe('CardView', function () {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
       triggerPress(cards[1]);
 
+      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
       act(() => {
-        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
         jest.runAllTimers();
       });
 
@@ -1241,9 +1242,9 @@ describe('CardView', function () {
       expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
       expect(within(grid).getByText('Title 1')).toBeTruthy();
 
+      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
       act(() => {
-        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
         jest.runAllTimers();
       });
 
@@ -1272,5 +1273,34 @@ describe('CardView', function () {
       expect(within(gridCell).getByText('empty')).toBeTruthy();
       expect(row.parentNode.style.height).toBe(`${mockHeight}px`);
     });
+  });
+
+  // TODO: not testing waterfall layout because of aforementioned issue with the heights for each card being set to 0 for that layout
+  it.each`
+    Name                  | layout
+    ${'Grid layout'}      | ${GridLayout}
+    ${'Gallery layout'}   | ${GalleryLayout}
+  `('$Name CardView should only scroll an item into view when in keyboard modality', function ({layout}) {
+    let tree = render(<DynamicCardView layout={layout} />);
+    act(() => {
+      jest.runAllTimers();
+    });
+    let cards = tree.getAllByRole('gridcell');
+    expect(cards).toBeTruthy();
+    let grid = tree.getByRole('grid');
+    let initialScrollTop = grid.scrollTop;
+    triggerPress(cards[cards.length - 1]);
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(grid.scrollTop).toBe(initialScrollTop);
+
+    act(() => {
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+      jest.runAllTimers();
+    });
+
+    expect(grid.scrollTop).toBeGreaterThan(initialScrollTop);
   });
 });

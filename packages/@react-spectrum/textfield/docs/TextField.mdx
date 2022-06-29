@@ -63,14 +63,6 @@ function Example() {
     </Flex>
   );
 }
-
-```
-
-Placeholder text that describes the expected value or formatting for the TextField can be provided using the `placeholder` prop.
-Placeholder text will only appear when the TextField is empty, and should not be used as a substitute for labeling the component with a visible label.
-
-```tsx example
-<TextField placeholder="abc@adobe.com" label="Email" />
 ```
 
 ## Labeling
@@ -111,7 +103,6 @@ function Example() {
   return (
     <Flex direction="column" gap="size-150">
       <TextField
-        placeholder="Enter some text"
         onChange={setText}
         label="Your text" />
       <pre>Mirrored text: {text}</pre>
@@ -134,7 +125,6 @@ function Example() {
   return (
     <TextField
       validationState={isValid ? 'valid' : 'invalid'}
-      placeholder="Enter your email"
       value={value}
       onChange={setValue}
       label="Email"
@@ -154,7 +144,7 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Quiet)
 
 ```tsx example
-<TextField label="Email" placeholder="Email Address" isQuiet />
+<TextField label="Email" isQuiet />
 ```
 
 ### Disabled
@@ -162,7 +152,7 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Disabled)
 
 ```tsx example
-<TextField label="Email" placeholder="Email Address" isDisabled />
+<TextField label="Email" isDisabled />
 ```
 
 ### Read only

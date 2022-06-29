@@ -57,8 +57,16 @@ module.exports = new Transformer({
           });
         } else if (path.node.declaration) {
           if (t.isIdentifier(path.node.declaration.id)) {
-            asset.symbols.set(path.node.declaration.id.name, path.node.declaration.id.name);
-            exports[path.node.declaration.id.name] = processExport(path.get('declaration'));
+            let name = path.node.declaration.id.name;
+            asset.symbols.set(name, name);
+            let prev = exports[name];
+            let val = processExport(path.get('declaration'));
+            if (val) {
+              exports[name] = val;
+              if (!exports[name].description && prev?.description) {
+                exports[name].description = prev.description;
+              }
+            }
           } else {
             let identifiers = t.getBindingIdentifiers(path.node.declaration);
             for (let [index, id] of Object.keys(identifiers).entries()) {
@@ -188,7 +196,7 @@ module.exports = new Transformer({
         }, docs));
       }
 
-      if (path.isFunction()) {
+      if (path.isFunction() || path.isTSDeclareFunction()) {
         if (isReactComponent(path)) {
           let props = path.node.params[0];
           let docs = getJSDocs(path);
@@ -199,6 +207,9 @@ module.exports = new Transformer({
             props: props && props.typeAnnotation
               ? processExport(path.get('params.0.typeAnnotation.typeAnnotation'))
               : null,
+            typeParameters: path.node.typeParameters
+              ? path.get('typeParameters.params').map(p => processExport(p))
+              : [],
             description: docs.description || null
           });
         } else {
@@ -282,6 +293,10 @@ module.exports = new Transformer({
         for (let propertyPath of path.get('body.body')) {
           let property = processExport(propertyPath);
           if (property) {
+            let prev = properties[property.name];
+            if (!property.description && prev?.description) {
+              property.description = prev.description;
+            }
             properties[property.name] = property;
           } else {
             console.log('UNKNOWN PROPERTY interface declaration', propertyPath.node);
@@ -419,6 +434,10 @@ module.exports = new Transformer({
         return Object.assign(node, {type: 'unknown'});
       }
 
+      if (path.isTSNeverKeyword()) {
+        return Object.assign(node, {type: 'never'});
+      }
+
       if (path.isTSArrayType()) {
         return Object.assign(node, {
           type: 'array',
@@ -460,6 +479,7 @@ module.exports = new Transformer({
         return Object.assign(node, {
           type: 'typeParameter',
           name: path.node.name,
+          constraint: path.node.constraint ? processExport(path.get('constraint')) : null,
           default: path.node.default ? processExport(path.get('default')) : null
         });
       }
@@ -468,6 +488,23 @@ module.exports = new Transformer({
         return Object.assign(node, {
           type: 'tuple',
           elements: path.get('elementTypes').map(t => processExport(t))
+        });
+      }
+
+      if (path.isTSTypeOperator() && path.node.operator === 'keyof') {
+        return Object.assign(node, {
+          type: 'keyof',
+          keyof: processExport(path.get('typeAnnotation'))
+        });
+      }
+
+      if (path.isTSConditionalType()) {
+        return Object.assign(node, {
+          type: 'conditional',
+          checkType: processExport(path.get('checkType')),
+          extendsType: processExport(path.get('extendsType')),
+          trueType: processExport(path.get('trueType')),
+          falseType: processExport(path.get('falseType'))
         });
       }
 

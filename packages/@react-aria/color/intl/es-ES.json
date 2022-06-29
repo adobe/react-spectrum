@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "Control deslizante en 2D",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Selector de color",
+  "twoDimensionalSlider": "Regulador 2D"
 }

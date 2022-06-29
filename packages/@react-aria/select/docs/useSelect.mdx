@@ -38,7 +38,7 @@ keywords: [listbox, select, aria]
   packageData={packageData}
   componentNames={['useSelect']}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#Listbox'}
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/listbox/'}
   ]} />
 
 ## API
@@ -84,7 +84,7 @@ input via the `aria-describedby` attribute.
 `useSelect` returns props that you should spread onto the appropriate element:
 
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.links[docs.exports.useSelect.return.id].properties} />
+  <InterfaceType properties={docs.links[docs.exports.useSelect.return.base?.id ?? docs.exports.useSelect.return.id].properties} />
 </TypeContext.Provider>
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} />

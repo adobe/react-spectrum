@@ -15,8 +15,7 @@
 
 import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
-import {GregorianCalendar, gregorianToJulianDay, isLeapYear} from './GregorianCalendar';
-import {Mutable} from '../utils';
+import {fromExtendedYear, GregorianCalendar, gregorianToJulianDay, isLeapYear} from './GregorianCalendar';
 
 // Starts in 78 AD,
 const INDIAN_ERA_START = 78;
@@ -34,13 +33,13 @@ export class IndianCalendar extends GregorianCalendar {
 
   fromJulianDay(jd: number): CalendarDate {
     // Gregorian date for Julian day
-    let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
+    let date = super.fromJulianDay(jd);
 
     // Year in Saka era
     let indianYear = date.year - INDIAN_ERA_START;
 
     // Day number in Gregorian year (starting from 0)
-    let yDay = jd - gregorianToJulianDay(date.year, 1, 1);
+    let yDay = jd - gregorianToJulianDay(date.era, date.year, 1, 1);
 
     let leapMonth: number;
     if (yDay < INDIAN_YEAR_START) {
@@ -77,16 +76,17 @@ export class IndianCalendar extends GregorianCalendar {
   }
 
   toJulianDay(date: AnyCalendarDate) {
-    let year = date.year + INDIAN_ERA_START;
+    let extendedYear = date.year + INDIAN_ERA_START;
+    let [era, year] = fromExtendedYear(extendedYear);
 
     let leapMonth: number;
     let jd: number;
     if (isLeapYear(year)) {
       leapMonth = 31;
-      jd = gregorianToJulianDay(year, 3, 21);
+      jd = gregorianToJulianDay(era, year, 3, 21);
     } else {
       leapMonth = 30;
-      jd = gregorianToJulianDay(year, 3, 22);
+      jd = gregorianToJulianDay(era, year, 3, 22);
     }
 
     if (date.month === 1) {
@@ -116,10 +116,14 @@ export class IndianCalendar extends GregorianCalendar {
   }
 
   getYearsInEra(): number {
-    return 9999;
+    // 9999-12-31 gregorian is 9920-10-10 indian.
+    // Round down to 9919 for the last full year.
+    return 9919;
   }
 
   getEras() {
     return ['saka'];
   }
+
+  balanceDate() {}
 }

@@ -1,9 +1,5 @@
 {
   "calendar": "Takvim",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long} - {end, date, long}",
-  "date": "Tarih",
-  "dateRange": "Tarih Aralığı",
   "day": "gün",
   "dayPeriod": "ÖÖ/ÖS",
   "endDate": "Bitiş Tarihi",
@@ -12,8 +8,11 @@
   "minute": "dakika",
   "month": "ay",
   "second": "saniye",
+  "selectedDateDescription": "Seçilen Tarih: {date}",
+  "selectedRangeDescription": "Seçilen Aralık: {startDate} - {endDate}",
+  "selectedTimeDescription": "Seçilen Zaman: {time}",
   "startDate": "Başlangıç Tarihi",
-  "year": "yıl",
+  "timeZoneName": "saat dilimi",
   "weekday": "haftanın günü",
-  "timeZoneName": "saat dilimi"
+  "year": "yıl"
 }

@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "2D kliznik",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Odabir boje",
+  "twoDimensionalSlider": "2D klizač"
 }

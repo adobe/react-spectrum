@@ -220,6 +220,40 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'horizontal scrolling only',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" selectionMode="single" width={200} height={220} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items.slice(0, 3)}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'horizontal scrolling only flush bottom',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" selectionMode="single" width={200} height={174} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items.slice(0, 3)}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     'dynamic with disabled, single selection',
     () => (
       <TableView disabledKeys={['Foo 1', 'Foo 3']} aria-label="TableView with dynamic contents" selectionMode="single" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
@@ -240,6 +274,23 @@ storiesOf('TableView', module)
     'dynamic with disabled, multiple selection',
     () => (
       <TableView disabledKeys={['Foo 1', 'Foo 3']} aria-label="TableView with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'dynamic with disabled, multiple selection, highlight',
+    () => (
+      <TableView disabledKeys={['Foo 1', 'Foo 3']} aria-label="TableView with dynamic contents" selectionStyle="highlight" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -307,9 +358,9 @@ storiesOf('TableView', module)
   .add(
     'selectionStyle: highlight',
     () => (
-      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])}>
+      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column minWidth={200}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
@@ -324,9 +375,9 @@ storiesOf('TableView', module)
   .add(
     'selectionStyle: highlight, onAction',
     () => (
-      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column minWidth={200}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
@@ -341,9 +392,9 @@ storiesOf('TableView', module)
    .add(
     'selectionMode: none, onAction',
     () => (
-      <TableView aria-label="TableView with dynamic contents" width={500} height={400} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+      <TableView aria-label="TableView with dynamic contents" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
         <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
+          {column => <Column minWidth={200}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
@@ -355,6 +406,24 @@ storiesOf('TableView', module)
       </TableView>
      )
    )
+
+  .add(
+    'selectionStyle: checkbox, onAction',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" width={400} height={300} selectionMode="multiple" selectionStyle="checkbox" onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+        <TableHeader columns={columns}>
+          {column => <Column minWidth={200}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
   .add(
     // For testing https://github.com/adobe/react-spectrum/issues/1885
     'swap selection mode',
@@ -416,7 +485,8 @@ storiesOf('TableView', module)
     'focusable cells',
     () => (
       <Flex direction="column">
-        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <label htmlFor="focus-before">Focus before</label>
+        <input id="focus-before" />
         <TableView aria-label="TableView with focusable cells" selectionMode="multiple" width={450} height={200} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader>
             <Column key="foo">Foo</Column>
@@ -441,7 +511,8 @@ storiesOf('TableView', module)
             </Row>
           </TableBody>
         </TableView>
-        <input aria-label="Focusable after" placeholder="Focusable after" />
+        <label htmlFor="focus-after">Focus after</label>
+        <input id="focus-after" />
       </Flex>
     )
   )
@@ -449,7 +520,8 @@ storiesOf('TableView', module)
     'many columns and rows',
     () => (
       <>
-        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <label htmlFor="focus-before">Focus before</label>
+        <input id="focus-before" />
         <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader columns={manyColunns}>
             {column =>
@@ -464,7 +536,8 @@ storiesOf('TableView', module)
             }
           </TableBody>
         </TableView>
-        <input aria-label="Focusable after" placeholder="Focusable after" />
+        <label htmlFor="focus-after">Focus after</label>
+        <input id="focus-after" />
       </>
     ),
     {chromatic: {disable: true}}
@@ -824,7 +897,7 @@ storiesOf('TableView', module)
   .add(
     'isLoading more',
     () => (
-      <TableView aria-label="TableView loading more" width={700} height={200}>
+      <TableView aria-label="TableView loading more" width={700} height={200} selectionMode="multiple">
         <TableHeader columns={columns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
@@ -1050,7 +1123,8 @@ storiesOf('TableView', module)
     'allowsResizing, uncontrolled, dynamic widths',
     () => (
       <>
-        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <label htmlFor="focusable-before">Focusable before</label>
+        <input id="focusable-before" />
         <TableView aria-label="TableView with resizable columns" width={800} height={200}>
           <TableHeader>
             <Column allowsResizing defaultWidth="1fr">File Name</Column>
@@ -1073,7 +1147,8 @@ storiesOf('TableView', module)
             </Row>
           </TableBody>
         </TableView>
-        <input aria-label="Focusable after" placeholder="Focusable after" />
+        <label htmlFor="focusable-after">Focusable after</label>
+        <input id="focusable-after" />
       </>
     )
   )
@@ -1207,7 +1282,8 @@ storiesOf('TableView', module)
     'allowsResizing, many columns and rows',
     () => (
       <>
-        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <label htmlFor="focusable-before">Focusable before</label>
+        <input id="focusable-before" />
         <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader columns={manyColunns}>
             {column =>
@@ -1222,7 +1298,8 @@ storiesOf('TableView', module)
             }
           </TableBody>
         </TableView>
-        <input aria-label="Focusable after" placeholder="Focusable after" />
+        <label htmlFor="focusable-after">Focusable after</label>
+        <input id="focusable-after" />
       </>
     ),
     {chromatic: {disable: true}}
@@ -1427,7 +1504,6 @@ function ProjectListTable() {
         marginTop={'size-200'}
         width={'size-3600'}
         aria-label={'Search by name'}
-        placeholder={'Search by name'}
         value={filterText}
         onChange={(onChange)} />
       <View flexGrow={1} height={700} overflow="hidden">
@@ -1508,7 +1584,6 @@ function AsyncServerFilterTable(props) {
         marginTop={'size-200'}
         width={'size-3600'}
         aria-label={'Search by name'}
-        placeholder={'Search by name'}
         defaultValue={list.filterText}
         onChange={(onChange)} />
       <TableView

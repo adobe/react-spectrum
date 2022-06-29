@@ -23,7 +23,6 @@ import tailwindExample from 'url:./TimeField-tailwind.png';
 ---
 category: Date and Time
 keywords: [input, form, field, date, time]
-after_version: 3.0.0
 ---
 
 # useTimeField
@@ -49,9 +48,13 @@ A time field can be built using `<input type="time">`, but this is very limited 
 * **Touch friendly** – Time segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `useTimeField`.
+
 ## Anatomy
 
-<Anatomy />
+<Anatomy
+  role="img"
+  aria-label="Anatomy diagram of a time field component, which consists of a label, field, segments for each time unit." />
 
 A time field consists of a label, and a group of segments representing each unit of a time (e.g. hours, minutes, and seconds). Each segment is individually focusable and editable by the user, by typing or using the arrow keys to increment and decrement the value. This approach allows values to be formatted and parsed correctly regardless of the locale or time format, and offers an easy and error-free way to edit times using the keyboard.
 
@@ -190,7 +193,7 @@ The following examples show how to use the `TimeField` component created in the 
 
 ### Value
 
-A `TimeField` displays a placeholder value by default. An initial, uncontrolled value can be provided to the `TimeField` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+A `TimeField` displays a placeholder by default. An initial, uncontrolled value can be provided to the `TimeField` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
 
 Time values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date and time manipulation across calendars, time zones, and other localization concerns.
 
@@ -236,7 +239,7 @@ import {parseZonedDateTime} from '@internationalized/date';
   defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
 ```
 
-`useTimeField` displays times in the time zone included in the `ZoneDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+`useTimeField` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
 
 ```tsx example
 import {parseAbsoluteToLocal} from '@internationalized/date';
@@ -253,7 +256,7 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 
 ```tsx example
 import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@adobe/react-spectrum';
+import {useDateFormatter} from '@react-aria/i18n';
 
 function Example() {
   let [date, setDate] = React.useState(parseAbsoluteToLocal('2021-04-07T18:45:22Z'));
@@ -295,7 +298,7 @@ This example only accepts times between 9 AM and 5 PM.
 
 ### Placeholder value
 
-When no value is set, a placeholder value is shown. By default, this is midnight. However, this can be overridden by setting the `placeholderValue` prop to a more appropriate placeholder for your specific usecase.
+When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys. By default, the `placeholderValue` is midnight, but you can set it to a more appropriate value if needed.
 
 ```tsx example
 <TimeField label="Meeting time" placeholderValue={new Time(9)} />

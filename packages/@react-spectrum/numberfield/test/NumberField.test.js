@@ -10,15 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, typeText, within} from '@react-spectrum/test-utils';
 import {chain} from '@react-aria/utils';
 import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
-import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 // for some reason hu-HU isn't supported in jsdom/node
@@ -34,7 +32,7 @@ describe('NumberField', function () {
   let onKeyUpSpy = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
@@ -283,6 +281,17 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onBlurSpy).toHaveBeenCalledTimes(2); // blur spy is called after each blur
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name fires state change then blur', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, step: 5});
+    act(() => {textField.focus();});
+    typeText(textField, '3');
+    userEvent.tab();
+    expect(onChangeSpy.mock.invocationCallOrder[0]).toBeLessThan(onBlurSpy.mock.invocationCallOrder[0]);
   });
 
   it.each`
@@ -1259,7 +1268,9 @@ describe('NumberField', function () {
     act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(13);
-    act(() => {jest.advanceTimersByTime(3 * 60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(6);
     expect(onChangeSpy).toHaveBeenNthCalledWith(4, 14);
     expect(onChangeSpy).toHaveBeenNthCalledWith(5, 15);
@@ -1277,7 +1288,9 @@ describe('NumberField', function () {
     act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(13);
-    act(() => {jest.advanceTimersByTime(3 * 60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(6);
     expect(onChangeSpy).toHaveBeenNthCalledWith(4, 12);
     expect(onChangeSpy).toHaveBeenNthCalledWith(5, 11);
@@ -1292,7 +1305,10 @@ describe('NumberField', function () {
     fireEvent.mouseDown(incrementButton);
     // to get to 20, it'll take 11 (0ms), 12 (400ms), 13 (60ms) ... 20 (540ms) 22 (660ms)
     // we should never get to 21 or 22 though, but lets advance the time there to make sure
-    act(() => {jest.advanceTimersByTime(400 + (10 * 60));});
+    act(() => {jest.advanceTimersByTime(400);});
+    for (let i = 0; i < 10; i += 1) {
+      act(() => {jest.advanceTimersByTime(60);});
+    }
     expect(onChangeSpy).toHaveBeenCalledTimes(10);
     expect(onChangeSpy).toHaveBeenLastCalledWith(20);
     fireEvent.mouseUp(incrementButton);
@@ -1300,7 +1316,10 @@ describe('NumberField', function () {
     onChangeSpy.mockReset();
 
     fireEvent.mouseDown(decrementButton);
-    act(() => {jest.advanceTimersByTime(400 + (20 * 60));});
+    act(() => {jest.advanceTimersByTime(400);});
+    for (let i = 0; i < 20; i += 1) {
+      act(() => {jest.advanceTimersByTime(60);});
+    }
     expect(onChangeSpy).toHaveBeenCalledTimes(20);
     expect(onChangeSpy).toHaveBeenLastCalledWith(0);
     fireEvent.mouseUp(decrementButton);
@@ -1312,7 +1331,8 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     fireEvent.mouseDown(incrementButton);
     // it should start at 0
-    act(() => {jest.advanceTimersByTime(400 + 60);});
+    act(() => {jest.advanceTimersByTime(400);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(2);
     fireEvent.mouseUp(incrementButton);
@@ -1323,7 +1343,8 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     fireEvent.mouseDown(incrementButton);
-    act(() => {jest.advanceTimersByTime(400 + 60);});
+    act(() => {jest.advanceTimersByTime(400);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(22);
     fireEvent.mouseUp(incrementButton);
@@ -1335,7 +1356,8 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     fireEvent.mouseDown(decrementButton);
     // it should start at 0
-    act(() => {jest.advanceTimersByTime(400 + 60);});
+    act(() => {jest.advanceTimersByTime(400);});
+    act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(-2);
     fireEvent.mouseUp(decrementButton);

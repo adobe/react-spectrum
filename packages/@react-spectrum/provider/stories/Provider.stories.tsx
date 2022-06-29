@@ -99,7 +99,6 @@ storiesOf('Provider', module)
         <div>
           <TextField
             label="A text field"
-            placeholder="Something"
             width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}} />
         </div>
         <Button
@@ -192,7 +191,7 @@ function render(props = {}) {
         </RadioGroup>
         <SearchField label="Search" />
         <SearchWithin label="Search">
-          <SearchField placeholder="Search" />
+          <SearchField />
           <Picker name="favorite-color3" label="Favorite color searchwithin">
             <Item key="red">Red</Item>
             <Item key="orange">Orange</Item>
@@ -205,7 +204,6 @@ function render(props = {}) {
         <Switch isSelected>Dogs!</Switch>
         <TextField
           label="A text field"
-          placeholder="Something"
           marginTop="size-100"
           necessityIndicator="label"
           value="dummy value" />

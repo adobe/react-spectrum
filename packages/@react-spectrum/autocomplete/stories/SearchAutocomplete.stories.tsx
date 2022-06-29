@@ -166,9 +166,6 @@ validationStateInvalidIsQuiet.storyName = 'validationState: invalid, isQuiet';
 export const validationStateValidIsQuiet = (props) => <Default {...props} validationState="valid" isQuiet />;
 validationStateValidIsQuiet.storyName = 'validationState: valid, isQuiet';
 
-export const placeholder = (props) => <Default {...props} placeholder="Search for an item..." />;
-placeholder.storyName = 'placeholder';
-
 export const autoFocus = (props) => <Default {...props} autoFocus />;
 autoFocus.storyName = 'autoFocus: true';
 

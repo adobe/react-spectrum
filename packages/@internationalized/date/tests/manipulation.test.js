@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, HebrewCalendar, JapaneseCalendar, TaiwanCalendar} from '..';
+import {BuddhistCalendar, CalendarDate, CopticCalendar, EthiopicAmeteAlemCalendar, EthiopicCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar} from '..';
 
 describe('CalendarDate manipulation', function () {
   describe('add', function () {
@@ -106,6 +106,16 @@ describe('CalendarDate manipulation', function () {
       expect(date.add({years: 20})).toEqual(new CalendarDate(10, 9, 3));
     });
 
+    it('should constrain when hitting the maximum year', function () {
+      let date = new CalendarDate(9999, 12, 1);
+      expect(date.add({months: 1})).toEqual(new CalendarDate(9999, 12, 31));
+    });
+
+    it('should constrain when hitting the minimum year', function () {
+      let date = new CalendarDate('BC', 9999, 1, 12);
+      expect(date.subtract({months: 1})).toEqual(new CalendarDate('BC', 9999, 1, 1));
+    });
+
     describe('Japanese calendar', function () {
       it('should add years and rebalance era', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30);
@@ -120,6 +130,16 @@ describe('CalendarDate manipulation', function () {
       it('should add days and rebalance era', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30);
         expect(date.add({days: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 5, 1));
+      });
+
+      it('should contstrain when reaching begining of meiji era', function () {
+        let date = new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 10, 1);
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 8));
+      });
+
+      it('should constrain when reaching 7981 reiwa', function () {
+        let date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 7981, 12, 5);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 7981, 12, 31));
       });
     });
 
@@ -143,6 +163,16 @@ describe('CalendarDate manipulation', function () {
         let date = new CalendarDate(new TaiwanCalendar(), 'before_minguo', 1, 12, 31);
         expect(date.add({days: 1})).toEqual(new CalendarDate(new TaiwanCalendar(), 'minguo', 1, 1, 1));
       });
+
+      it('should constrain when reaching year 8088', function () {
+        let date = new CalendarDate(new TaiwanCalendar(), 8088, 12, 10);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new TaiwanCalendar(), 8088, 12, 31));
+      });
+
+      it('should constrain when reaching year 8088 before minguo', function () {
+        let date = new CalendarDate(new TaiwanCalendar(), 'before_minguo', 9999, 1, 10);
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new TaiwanCalendar(), 'before_minguo', 9999, 1, 1));
+      });
     });
 
     describe('Hebrew calendar', function () {
@@ -165,6 +195,114 @@ describe('CalendarDate manipulation', function () {
       it('should add years in a leap year', function () {
         let date = new CalendarDate(new HebrewCalendar(), 5782, 13, 1);
         expect(date.add({years: 1})).toEqual(new CalendarDate(new HebrewCalendar(), 5783, 12, 1));
+      });
+
+      it('should constrain when reaching year 1', function () {
+        let date = new CalendarDate(new HebrewCalendar(), 1, 1, 10);
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new HebrewCalendar(), 1, 1, 1));
+      });
+
+      it('should constrain when reaching year 9999', function () {
+        let date = new CalendarDate(new HebrewCalendar(), 9999, 12, 10);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new HebrewCalendar(), 9999, 12, 29));
+      });
+    });
+
+    describe('IndianCalendar', function () {
+      it('should constrain when reaching year 1', function () {
+        let date = new CalendarDate(new IndianCalendar(), 1, 1, 10);
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new IndianCalendar(), 1, 1, 1));
+      });
+
+      it('should constrain when reaching year 9919', function () {
+        let date = new CalendarDate(new IndianCalendar(), 9919, 12, 10);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new IndianCalendar(), 9919, 12, 31));
+      });
+    });
+
+    describe('PersianCalendar', function () {
+      it('should constrain when reaching year 1', function () {
+        let date = new CalendarDate(new PersianCalendar(), 1, 1, 10);
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new PersianCalendar(), 1, 1, 1));
+      });
+
+      it('should constrain when reaching year 9377', function () {
+        let date = new CalendarDate(new PersianCalendar(), 9377, 12, 10);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new PersianCalendar(), 9377, 12, 31));
+      });
+    });
+
+    describe('BuddhistCalendar', function () {
+      it('should constrain when reaching year 1', function () {
+        let date = new CalendarDate(new BuddhistCalendar(), 1, 1, 12);
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new BuddhistCalendar(), 1, 1, 1));
+      });
+
+      it('should constrain when reaching year 9999', function () {
+        let date = new CalendarDate(new BuddhistCalendar(), 9999, 12, 10);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new BuddhistCalendar(), 9999, 12, 31));
+      });
+    });
+
+    describe('CopticCalendar', function () {
+      it('should rebalance era when subtracting', function () {
+        let date = new CalendarDate(new CopticCalendar(), 1, 1, 12);
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new CopticCalendar(), 'BCE', 1, 13, 5));
+      });
+
+      it('should rebalance era when adding', function () {
+        let date = new CalendarDate(new CopticCalendar(), 'BCE', 1, 13, 5);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new CopticCalendar(), 1, 1, 5));
+      });
+
+      it('should constrain when reaching year 9715 CE', function () {
+        let date = new CalendarDate(new CopticCalendar(), 9715, 13, 2);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new CopticCalendar(), 9715, 13, 6));
+      });
+
+      it('should constrain when reaching year 9999 BCE', function () {
+        let date = new CalendarDate(new CopticCalendar(), 'BCE', 9999, 1, 5);
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new CopticCalendar(), 'BCE', 9999, 1, 1));
+      });
+    });
+
+    describe('EthiopicCalendar', function () {
+      it('should constrain when reaching year 9991 AM', function () {
+        let date = new CalendarDate(new EthiopicCalendar(), 9991, 13, 2);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new EthiopicCalendar(), 9991, 13, 6));
+      });
+
+      it('should constrain when reaching year 9999 AA', function () {
+        let date = new CalendarDate(new EthiopicCalendar(), 'AA', 9999, 13, 2);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new EthiopicCalendar(), 'AA', 9999, 13, 6));
+      });
+    });
+
+    describe('EthiopicAmeteAlemCalendar', function () {
+      it('should constrain when reaching year 9999 AA', function () {
+        let date = new CalendarDate(new EthiopicAmeteAlemCalendar(), 'AA', 9999, 13, 2);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new EthiopicAmeteAlemCalendar(), 'AA', 9999, 13, 6));
+      });
+    });
+
+    describe('IslamicCivilCalendar', function () {
+      it('should constrain when reaching year 9995', function () {
+        let date = new CalendarDate(new IslamicCivilCalendar(), 9995, 12, 2);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new IslamicCivilCalendar(), 9995, 12, 30));
+      });
+    });
+
+    describe('IslamicTabularCalendar', function () {
+      it('should constrain when reaching year 9995', function () {
+        let date = new CalendarDate(new IslamicTabularCalendar(), 9995, 12, 2);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new IslamicTabularCalendar(), 9995, 12, 30));
+      });
+    });
+
+    describe('IslamicUmalquraCalendar', function () {
+      it('should constrain when reaching year 9995', function () {
+        let date = new CalendarDate(new IslamicUmalquraCalendar(), 9995, 12, 2);
+        expect(date.add({months: 1})).toEqual(new CalendarDate(new IslamicUmalquraCalendar(), 9995, 12, 30));
       });
     });
   });
@@ -272,6 +410,14 @@ describe('CalendarDate manipulation', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 5, 1);
         expect(date.subtract({days: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30));
       });
+
+      it('should constrain when reaching the minimum supported era', function () {
+        let date = new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 10);
+        expect(date.subtract({months: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 10));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 10);
+        expect(date.subtract({years: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 10));
+      });
     });
 
     describe('Taiwan calendar', function () {
@@ -378,6 +524,9 @@ describe('CalendarDate manipulation', function () {
 
         date = new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 30);
         expect(date.set({day: 5})).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 25));
+
+        date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 12, 30);
+        expect(date.set({year: 1, month: 1, day: 1})).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 5, 1));
       });
     });
 

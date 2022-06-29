@@ -73,8 +73,10 @@ function Example() {
       <button onClick={() => setOpen(true)}>Open</button>
       {isOpen &&
         <FocusScope contain restoreFocus autoFocus>
-          <input aria-label="First input" placeholder="First input" />
-          <input aria-label="Second input" placeholder="Second input" />
+          <label htmlFor="first-input">First Input</label>
+          <input id="first-input" />
+          <label htmlFor="second-input">Second Input</label>
+          <input id="second-input" />
           <button onClick={() => setOpen(false)}>Close</button>
         </FocusScope>
       }
