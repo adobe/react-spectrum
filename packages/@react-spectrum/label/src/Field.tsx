@@ -95,10 +95,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       </Flex>
     );
 
-    // read only
-    console.log(readOnlyText);
-    
-    if (isReadOnly) {
+    // read only    
+    if (isReadOnly && readOnlyText || readOnlyText === '') {
       
       if (readOnlyText === '') {
         readOnlyText = '(None)';
