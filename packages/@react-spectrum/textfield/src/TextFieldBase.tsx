@@ -54,6 +54,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputRef,
     isLoading,
     loadingIndicator,
+    value,
     validationIconClassName
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -151,7 +152,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
       showErrorIcon={false}
-      ref={domRef}>
+      ref={domRef}
+      readOnlyText={value}>
       {textField}
     </Field>
   );

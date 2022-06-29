@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {FocusRing} from '@react-aria/focus'; 
@@ -20,11 +19,10 @@ import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
 import React, {RefObject} from 'react';
+import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css'; 
 import {useFormProps} from '@react-spectrum/form';
-import {useHover} from '@react-aria/interactions';
-
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   props = useFormProps(props);
@@ -45,7 +43,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     readOnlyText,
     isReadOnly,
     inputProps, 
-    autoFocus,
     inputRef, 
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
@@ -57,7 +54,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
-  let {hoverProps, isHovered} = useHover({isDisabled});
+  // let {hoverProps, isHovered} = useHover({isDisabled});
 
 
   if (label || hasHelpText) {
@@ -102,7 +99,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     // read only
     
     if (isReadOnly && readOnlyText || readOnlyText === '') {
-
+      
       if (readOnlyText === '') {
         readOnlyText = '(None)';
       }
@@ -120,26 +117,17 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
                 }
               )
             }>
-            <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
-              <textarea
-                {...mergeProps(inputProps, hoverProps)} 
-                ref={inputRef as any}
-                value={readOnlyText}
-                className={
-                  classNames(
-                    styles,
-                    'spectrum-Textfield-input',
-                    {
-                      'is-hovered': isHovered
-                    }
-                  )
-                } />
-            </FocusRing>
+            <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput>
+              <ReadOnlyField
+                {...props} 
+                readOnlyText={readOnlyText}
+                inputProps={inputProps} 
+                ref={inputRef as any} />            
+            </FocusRing> 
           </div>
         </Flex>
       );
     }
-
     return (
       <div
         {...styleProps}

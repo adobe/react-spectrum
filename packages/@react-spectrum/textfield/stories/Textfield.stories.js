@@ -142,16 +142,13 @@ storiesOf('TextField', module)
     () => render({icon: <Info />, validationState: 'invalid', width: '30px', labelPosition: 'side'})
   )
   .add('test: readOnly, text',
-    () => render({isReadOnly: true, readOnlyText: 'hello'})
+    () => render({isReadOnly: true, value: 'hello'})
   )
   .add('test: readOnly, no text',
-    () => render({isReadOnly: true, readOnlyText: ''})
+    () => render({isReadOnly: true, value: ''})
   )
   .add('test: readOnly, long text',
-  () => render({isReadOnly: true, readOnlyText: 'a much only piece of text to see what happens'})
-  )
-  .add('test: readOnly, autofocus',
-  () => render({autoFocus: true, isReadOnly: true, readOnlyText: 'a much longer piece of text to see what happens'})
+  () => render({isReadOnly: true, value: 'a much only piece of text to see what happens'})
   )
   ;
 

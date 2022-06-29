@@ -42,15 +42,8 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       input.style.height = 'auto';
       input.style.height = `${input.scrollHeight}px`;
       input.style.alignSelf = prevAlignment;
-    } else if (isReadOnly) { // this is basically the same as isQuiet except that input.style.height = 'auto' is not here which seems to fix the height issue
-      let input = inputRef.current;
-      let prevAlignment = input.style.alignSelf;
-      input.style.alignSelf = 'start';
-      // input.style.height = 'auto'; // removing this seems to fix the issue with the additional whitespace
-      input.style.height = `${input.scrollHeight}px`;
-      input.style.alignSelf = prevAlignment; 
-    }
-  }, [isQuiet, isReadOnly, inputRef]);
+    } 
+  }, [isQuiet, inputRef]);
 
   useLayoutEffect(() => {
     if (inputRef.current) {
