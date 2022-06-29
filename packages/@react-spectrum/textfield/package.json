@@ -37,7 +37,6 @@
     "@react-aria/interactions": "^3.9.1",
     "@react-aria/textfield": "^3.6.1",
     "@react-aria/utils": "^3.13.1",
-    "@react-spectrum/autocomplete": "3.0.0-alpha.8",
     "@react-spectrum/label": "^3.6.1",
     "@react-spectrum/utils": "^3.7.1",
     "@react-stately/utils": "^3.5.0",
