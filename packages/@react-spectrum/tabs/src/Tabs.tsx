@@ -256,7 +256,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.disabledKeys, state.selectedItem, state.selectedKey, props.children]);
 
-  let collapseStyle : React.CSSProperties = collapsed && orientation !== 'vertical' ? {visibility: 'hidden', position: 'absolute'} : {};
+  let collapseStyle : React.CSSProperties = collapsed && orientation !== 'vertical' ? {maxWidth: 'calc(100% + 1px)', overflow: 'hidden', visibility: 'hidden', position: 'absolute'} : {maxWidth: 'calc(100% + 1px)'};
   let stylePropsFinal = orientation === 'vertical' ? styleProps : {style: collapseStyle};
 
   if (collapsed && orientation !== 'vertical') {
