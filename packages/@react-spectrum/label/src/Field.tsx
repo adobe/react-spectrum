@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {FocusRing} from '@react-aria/focus'; 
@@ -23,6 +24,7 @@ import {SpectrumFieldProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css'; 
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
+
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   props = useFormProps(props);
@@ -42,7 +44,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     labelProps,
     readOnlyText,
     isReadOnly,
-    multiLine,
     inputProps, 
     autoFocus,
     inputRef, 
@@ -97,10 +98,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         {hasHelpText && renderHelpText()}
       </Flex>
     );
-    
-    let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
-    let isInvalid = validationState === 'invalid';
 
+    // read only
+    
     if (isReadOnly && readOnlyText || readOnlyText === '') {
 
       if (readOnlyText === '') {
@@ -116,32 +116,26 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
                 'spectrum-Textfield',
                 {
                   'spectrum-Textfield--readonly': isReadOnly,
-                  // 'spectrum-Textfield--quiet': true,
-                  'spectrum-Textfield--multiline': multiLine,
-                  'spectrum-Textfield--valid': validationState === 'valid',
-                  'spectrum-Textfield--invalid': isInvalid
+                  'spectrum-Textfield--valid': validationState === 'valid'
                 }
               )
             }>
             <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
-              <ElementType
+              <textarea
                 {...mergeProps(inputProps, hoverProps)} 
                 ref={inputRef as any}
-                rows={multiLine ? 1 : undefined}
                 value={readOnlyText}
                 className={
                   classNames(
                     styles,
                     'spectrum-Textfield-input',
                     {
-                    //   'spectrum-Textfield-inputIcon': icon,
                       'is-hovered': isHovered
                     }
                   )
                 } />
             </FocusRing>
           </div>
-          {hasHelpText && renderHelpText()}
         </Flex>
       );
     }

@@ -157,28 +157,8 @@ storiesOf('TextArea', module)
     () => render({isReadOnly: true, readOnlyText: ''})
   )
   .add('test: isReadOnly, long text',
-  () => render({isReadOnly: true, readOnlyText: 'cats are actually the best animals. i know there is a lot of debate and im sure dog people will argue against this claim but i love cats so much'})
+  () => render({isReadOnly: true, readOnlyText: 'i love cats so much! they are so cute even though they sometimes like to bite and scratch and hiss...but thats okay!'})
   )
-  .add(
-    'test: isReadOnly, validationState: invalid, text',
-    () => render({isReadOnly: true, validationState: 'invalid', readOnlyText: 'text'})
-  )  
-  .add(
-    'test: isReadOnly, validationState: invalid, text, with error message',
-    () => render({errorMessage: 'Please enter a valid street address.', isReadOnly: true, validationState: 'invalid', readOnlyText: 'text'})
-  )
-  .add(
-    'test: isReadOnly, no text, validationState: invalid, with error message',
-    () => render({errorMessage: 'Please enter a valid street address.', isReadOnly: true, validationState: 'invalid', readOnlyText: ''})
-  )
-  .add(
-    'test: isReadOnly, description, text',
-    () => render({isReadOnly: true, description: 'add comment', readOnlyText: 'text'})
-  ) 
-  .add(
-    'test: isReadOnly, validationState: valid, description, text',
-    () => render({isReadOnly: true, validationState: 'valid', description: 'add comment', readOnlyText: 'text'})
-  ) 
   ;
 
 function render(props = {}) {

@@ -132,9 +132,10 @@ governing permissions and limitations under the License.
 
   .spectrum-Textfield--readonly & {
     
-    /* for quiet border */
     background-color: var(--spectrum-textfield-quiet-background-color);
 
+    /* for quiet border */
+    
     &:hover {
       border-color: var(--spectrum-textfield-quiet-border-color-hover);
     }
@@ -161,7 +162,7 @@ governing permissions and limitations under the License.
     &.is-disabled {
       background-color: var(--spectrum-textfield-quiet-background-color-disabled);
       border-color:  var(--spectrum-textfield-quiet-border-color-disabled);
-    }
+    } 
 
 
     /* for regular focus ring */

@@ -153,15 +153,6 @@ storiesOf('TextField', module)
   .add('test: readOnly, autofocus',
   () => render({autoFocus: true, isReadOnly: true, readOnlyText: 'a much longer piece of text to see what happens'})
   )
-  .add('test: readOnly, description',
-  () => render({description: 'Please enter your street address', isReadOnly: true, readOnlyText: 'a much longer piece of text to see what happens'})
-  )
-  .add('test: readOnly, text, with error message',
-  () => render({errorMessage: 'Please enter a valid street address.', validationState: 'invalid', isReadOnly: true, readOnlyText: 'a much longer piece of text to see what happens'})
-  )
-  .add('test: readOnly, no text, with error message',
-  () => render({errorMessage: 'Please enter a valid street address.', validationState: 'invalid', isReadOnly: true, readOnlyText: ''})
-  )
   ;
 
 function render(props = {}) {

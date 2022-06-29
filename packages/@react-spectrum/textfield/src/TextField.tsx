@@ -10,16 +10,39 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {forwardRef, RefObject, useRef} from 'react';
+import React, {forwardRef, RefObject, useCallback, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
 function TextField(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
+  let {
+    isReadOnly = false
+  } = props;
 
   let inputRef = useRef<HTMLInputElement>();
+
+  // called only when isReadOnly to adjust the height to display all the text 
+  let onHeightChange = useCallback(() => {
+    if (isReadOnly) {
+      let input = inputRef.current;
+      let prevAlignment = input.style.alignSelf;
+      input.style.alignSelf = 'start';
+      // input.style.height = 'auto'; // again not really sure why this line of code is causing there to be extra whitespace 
+      input.style.height = `${input.scrollHeight}px`;
+      input.style.alignSelf = prevAlignment;
+    }
+  }, [isReadOnly, inputRef]);
+
+  useLayoutEffect(() => {
+    if (inputRef.current) {
+      onHeightChange();
+    }
+  }, [onHeightChange, inputRef]);
+
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField(props, inputRef);
 
   if (props.placeholder) {
