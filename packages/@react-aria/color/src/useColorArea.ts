@@ -44,8 +44,8 @@ interface ColorAreaAriaProps extends AriaColorAreaProps {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a color wheel component.
- * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
+ * Provides the behavior and accessibility implementation for a color area component.
+ * Color area allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
  */
 export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): ColorAreaAria {
   let {
