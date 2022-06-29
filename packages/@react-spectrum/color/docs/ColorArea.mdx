@@ -57,6 +57,9 @@ In the example below, the <TypeLink links={statelyDocs.links} type={statelyDocs.
 so that `value`'s type remains consistent.
 
 ```tsx example
+import {ColorArea} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
 import {parseColor} from '@react-stately/color';
 
 function Example() {
@@ -99,6 +102,10 @@ Note that like [ColorWheel](ColorWheel.html), ColorArea does not include an inte
 Use `aria-labelledby` to label the ColorArea using the IDREF assigned to a visible label.
 
 ```tsx example
+import {ColorArea} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
+
 <Flex gap="size-300" wrap alignItems="flex-end">
   <ColorArea
     aria-label="Background color"
@@ -149,6 +156,9 @@ as a parameter.
 The example below uses `onChange` and `onChangeEnd` to update two separate elements with the ColorArea's value.
 
 ```tsx example
+import {ColorArea} from '@react-spectrum/color';
+import {parseColor} from '@react-stately/color';
+
 function Example() {
   let [currentValue, setCurrentValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
   let [finalValue, setFinalValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
@@ -184,6 +194,11 @@ of both the ColorArea and ColorSlider are used to make the components controlled
 color is modified.
 
 ```tsx example
+import {ColorArea, ColorSlider} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
+import {parseColor} from '@react-stately/color';
+
 function Example() {
   let [color, setColor] = React.useState(parseColor('#ff00ff'));
   let [redChannel, greenChannel, blueChannel] = color.getColorChannels();
@@ -207,6 +222,12 @@ This example shows how to build a similar color picker to the one above, using H
 and a ColorWheel instead of a ColorSlider for the Hue channel.
 
 ```tsx example
+import {ColorArea, ColorSlider, ColorWheel} from '@react-spectrum/color';
+import {Flex, Grid} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
+import {parseColor} from '@react-stately/color';
+import {View} from '@react-spectrum/view';
+
 function Example() {
   let [color, setColor] = React.useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
   let [hueChannel, saturationChannel, lightnessChannel] = color.getColorChannels();
@@ -249,6 +270,12 @@ function Example() {
 This example shows how to build an HSBA color picker.
 
 ```tsx example
+import {ColorArea, ColorSlider, ColorWheel} from '@react-spectrum/color';
+import {Flex, Grid} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
+import {parseColor} from '@react-stately/color';
+import {View} from '@react-spectrum/view';
+
 function Example() {
   let [color, setColor] = React.useState(parseColor('hsba(0, 100%, 50%, 0.5)'));
   let [hueChannel, saturationChannel, brightnessChannel] = color.getColorChannels();
@@ -296,6 +323,8 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/color-area/#Disabled)
 
 ```tsx example
+import {ColorArea} from '@react-spectrum/color';
+
 <ColorArea defaultValue="#7f0000" isDisabled />
 ```
 
@@ -303,6 +332,9 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/color-area/#Width)
 
 ```tsx example
+import {ColorArea} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+
 <Flex direction="column" gap="size-300">
   <ColorArea defaultValue="#7f0000" size="size-3600" maxWidth="100%" />
 </Flex>

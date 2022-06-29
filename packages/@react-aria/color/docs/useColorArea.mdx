@@ -47,12 +47,13 @@ touch-friendly color areas that can be styled as needed.
 * Support for mouse, touch, and keyboard via the [useMove](useMove.html) hook
 * Multi-touch support
 * Pressing on the color area background moves the thumb to that position
-* Supports using the arrow keys, as well as page up/down, home, and end keys
+* Supports using the arrow keys, for changing value by step, as well as shift + arrow key, page up/down, home, and end keys, for changing the value by page step.
 * Support for disabling the color area
 * Prevents text selection while dragging
 * Exposed to assistive technology as a `2D slider` element via ARIA
 * Uses two hidden native input elements within a group to support touch screen readers
 * Automatic ARIA labeling using the localized channel names by default
+* Support for mirroring in RTL locales
 
 ## Anatomy
 
@@ -188,7 +189,7 @@ channel maps to the horizontal axis or `xChannel`, and the `saturation` color ch
 
 A color area can be made controlled using the `value` prop. The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} />
 function is used to parse the initial color from an RGB, HSL or HSB string, stored in state. The `onChange` prop
-is used to update the value in the state when the user drags the thumb. This is the more common usage, because it allows to adjust the third
+is used to update the value in the state when the user drags the thumb. This is the more common usage because it allows to adjust the third
 color channel using a separate control, like a color slider using the [useColorSlider](useColorSlider.html) hook or a color wheel using the
 [useColorWheel](useColorWheel.html) hook.
 
