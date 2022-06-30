@@ -626,11 +626,77 @@ describe('TableViewSizing', function () {
   describe('resizing columns', function () {
     describe('pointer', () => {
       installPointerEvent();
-      beforeEach(() => {
+
+      it('dragging the resizer works - desktop', () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column allowsResizing key="foo">Foo</Column>
+              <Column key="bar" maxWidth={200}>Bar</Column>
+              <Column key="baz" maxWidth={200}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        // trigger pointer modality
+        fireEvent.pointerMove(tree.container);
+        expect(tree.queryByRole('separator')).toBeNull();
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('600px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        let resizableHeader = tree.getAllByRole('button')[0];
+
+        fireEvent.pointerEnter(resizableHeader);
+        expect(tree.getByRole('separator')).toBeVisible();
+        let resizer = tree.getByRole('separator');
+
+        fireEvent.pointerEnter(resizer);
+
+        // actual locations do not matter, the delta matters between events for the calculation of useMove
+        fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 600, pageY: 30});
+        fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 25});
+        fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('595px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        // actual locations do not matter, the delta matters between events for the calculation of useMove
+        fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
+        fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 620, pageY: 25});
+        fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('620px');
+          expect(row.childNodes[1].style.width).toBe('190px');
+          expect(row.childNodes[2].style.width).toBe('190px');
+        }
+
+        fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
+
+        expect(tree.queryByRole('separator')).toBeNull();
       });
 
-      it('dragging the resizer works', () => {
+      it('dragging the resizer works - mobile', () => {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader>
@@ -699,12 +765,248 @@ describe('TableViewSizing', function () {
       });
     });
 
-    describe('keyboard', () => {
-      beforeEach(() => {
+    describe('touch', () => {
+      installPointerEvent();
+
+      it('dragging the resizer works - desktop', () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column allowsResizing key="foo">Foo</Column>
+              <Column key="bar" maxWidth={200}>Bar</Column>
+              <Column key="baz" maxWidth={200}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        fireEvent.pointerDown(document.body, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(document.body, {pointerType: 'touch', pointerId: 1});
+        act(() => {jest.runAllTimers();});
+
+        expect(tree.queryByRole('separator')).toBeNull();
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('600px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        let resizableHeader = tree.getAllByRole('button')[0];
+
+        fireEvent.pointerDown(resizableHeader, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(resizableHeader, {pointerType: 'touch', pointerId: 1});
+        act(() => {jest.runAllTimers();});
+
+        let resizeMenuItem = tree.getAllByRole('menuitem')[0];
+
+        fireEvent.pointerDown(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
+        act(() => {jest.runAllTimers();});
+
+        expect(tree.getByRole('separator')).toBeVisible();
+        let resizer = tree.getByRole('separator');
+
+        // actual locations do not matter, the delta matters between events for the calculation of useMove
+        fireEvent.pointerDown(resizer, {pointerType: 'touch', pointerId: 1, pageX: 600, pageY: 30});
+        fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 595, pageY: 25});
+        fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('595px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        // actual locations do not matter, the delta matters between events for the calculation of useMove
+        fireEvent.pointerDown(resizer, {pointerType: 'touch', pointerId: 1, pageX: 595, pageY: 30});
+        fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 620, pageY: 25});
+        fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('620px');
+          expect(row.childNodes[1].style.width).toBe('190px');
+          expect(row.childNodes[2].style.width).toBe('190px');
+        }
+
+        // tapping on the document.body doesn't cause a blur because the body isn't focusable, so just call blur
+        act(() => resizer.blur());
+        act(() => {jest.runAllTimers();});
+
+        expect(tree.queryByRole('separator')).toBeNull();
       });
 
-      it('arrow keys the resizer works', async () => {
+      it('dragging the resizer works - mobile', () => {
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column allowsResizing key="foo">Foo</Column>
+              <Column key="bar" maxWidth={200}>Bar</Column>
+              <Column key="baz" maxWidth={200}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        fireEvent.pointerDown(document.body, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(document.body, {pointerType: 'touch', pointerId: 1});
+        act(() => {jest.runAllTimers();});
+
+        expect(tree.queryByRole('separator')).toBeNull();
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('600px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        let resizableHeader = tree.getAllByRole('button')[0];
+
+        fireEvent.pointerDown(resizableHeader, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(resizableHeader, {pointerType: 'touch', pointerId: 1});
+        act(() => {jest.runAllTimers();});
+
+        let resizeMenuItem = tree.getAllByRole('menuitem')[0];
+
+        fireEvent.pointerDown(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
+        fireEvent.pointerUp(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
+        act(() => {jest.runAllTimers();});
+
+        let resizer = tree.getByRole('separator');
+        expect(resizer).toBeVisible();
+        expect(document.activeElement).toBe(resizer);
+
+        // actual locations do not matter, the delta matters between events for the calculation of useMove
+        fireEvent.pointerDown(resizer, {pointerType: 'touch', pointerId: 1, pageX: 600, pageY: 30});
+        fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 595, pageY: 25});
+        fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('595px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        // actual locations do not matter, the delta matters between events for the calculation of useMove
+        fireEvent.pointerDown(resizer, {pointerType: 'touch', pointerId: 1, pageX: 595, pageY: 30});
+        fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 620, pageY: 25});
+        fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('620px');
+          expect(row.childNodes[1].style.width).toBe('190px');
+          expect(row.childNodes[2].style.width).toBe('190px');
+        }
+
+        // tapping on the document.body doesn't cause a blur because the body isn't focusable, so just call blur
+        act(() => resizer.blur());
+        act(() => {jest.runAllTimers();});
+
+        expect(tree.queryByRole('separator')).toBeNull();
+      });
+    });
+
+    describe('keyboard', () => {
+      it('arrow keys the resizer works - desktop', async () => {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column allowsResizing key="foo">Foo</Column>
+              <Column key="bar" maxWidth={200}>Bar</Column>
+              <Column key="baz" maxWidth={200}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        let resizableHeader = tree.getAllByRole('button')[0];
+        expect(document.activeElement).toBe(resizableHeader);
+        expect(tree.queryByRole('separator')).toBeNull();
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('600px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
+        act(() => {jest.runAllTimers();});
+
+        let resizer = tree.getByRole('separator');
+
+        expect(document.activeElement).toBe(resizer);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('620px');
+          expect(row.childNodes[1].style.width).toBe('190px');
+          expect(row.childNodes[2].style.width).toBe('190px');
+        }
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('600px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
+        fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+        fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+
+        expect(document.activeElement).toBe(resizableHeader);
+
+        expect(tree.queryByRole('separator')).toBeNull();
+      });
+      it('arrow keys the resizer works - mobile', async () => {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader>

@@ -23,7 +23,7 @@ import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {Resizer} from './Resizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
@@ -528,8 +528,7 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef();
   let {state, columnState} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
-  let [isResizingAvailable, setIsResizingAvailable] = useState(false);
-  let shouldMoveFocus = useRef(false);
+  let [resizeMode, setResizeMode] = useState(false);
   let [isHovered, setIsHovered] = useState(false);
   let isResizing = columnState.getResizingColumn()?.key === column.key;
 
@@ -537,18 +536,17 @@ function ResizableTableColumnHeader(props) {
     switch (key) {
       case 'sort-asc':
         state.sort(column.key, 'ascending');
-        setIsResizingAvailable(false);
+        setResizeMode(false);
         break;
       case 'sort-desc':
         state.sort(column.key, 'descending');
-        setIsResizingAvailable(false);
+        setResizeMode(false);
         break;
       case 'resize':
-        shouldMoveFocus.current = true;
-        setIsResizingAvailable(true);
+        setResizeMode(true);
         break;
       default:
-        setIsResizingAvailable(false);
+        setResizeMode(false);
     }
   };
   let allowsSorting = column.props?.allowsSorting;
@@ -570,19 +568,13 @@ function ResizableTableColumnHeader(props) {
     return options;
   }, [allowsSorting]);
   // if we're resizing another column, then hover shouldn't show the resizer of a different column
-  let showResizer = isResizingAvailable || (isHovered && !columnState.isResizingColumn) || isResizing || shouldMoveFocus.current;
+  let showResizer = resizeMode || (isHovered && !columnState.isResizingColumn) || isResizing;
 
-  // discuss with devon how to get around FocusScope's contain (prevents us from leaving focus scope until unmount) + restore raf (which is why there are two here)
-  let onUnmount = useCallback(() => {
-    if (shouldMoveFocus.current) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          focusSafely(ref.current);
-          shouldMoveFocus.current = false;
-        });
-      });
+  useEffect(() => {
+    if (resizeMode) {
+      focusSafely(ref.current);
     }
-  }, [ref, shouldMoveFocus]);
+  }, [resizeMode]);
 
   return (
     <>
@@ -593,10 +585,10 @@ function ResizableTableColumnHeader(props) {
             tableRef={props.tableRef}
             column={column}
             showResizer={showResizer}
-            onResizeEntered={() => setIsResizingAvailable(true)}
-            onResizeDone={() => setIsResizingAvailable(false)} />
+            onResizeEntered={() => setResizeMode(true)}
+            onResizeDone={() => setResizeMode(false)} />
         </TableColumnHeader>
-        <Menu onAction={onMenuSelect} minWidth="size-2000" items={items} onUnmount={onUnmount}>
+        <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
           {(item) => (
             <Item>
               {item.label}
