@@ -158,11 +158,16 @@ governing permissions and limitations under the License.
     forced-color-adjust: none;
     --spectrum-calendar-button-icon-color: ButtonText;
     --spectrum-calendar-day-background-color-cap-selected: Highlight;
+    --spectrum-calendar-day-background-color-cap-invalid-selected: Highlight;
+    --spectrum-calendar-day-background-color-cap-invalid-selected-down: Highlight;
+    --spectrum-calendar-day-background-color-cap-invalid-selected-hover: Highlight;
     --spectrum-calendar-day-background-color-cap-selected-down: Highlight;
     --spectrum-calendar-day-background-color-cap-selected-hover: Highlight;
     --spectrum-calendar-day-background-color-disabled: ButtonFace;
     --spectrum-calendar-day-background-color-down: ButtonFace;
     --spectrum-calendar-day-background-color-hover: ButtonFace;
+    --spectrum-calendar-day-background-color-invalid-selected: Highlight;
+    --spectrum-calendar-day-background-color-selected-hover: Highlight;
     --spectrum-calendar-day-background-color-selected: Highlight;  
     --spectrum-calendar-day-border-color-key-focus: ButtonText;
     --spectrum-calendar-day-text-color-cap-selected: HighlightText;
