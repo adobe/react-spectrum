@@ -96,7 +96,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     );
 
     // read only    
-    if (isReadOnly && readOnlyText || readOnlyText === '') {
+    if (isReadOnly && (readOnlyText || readOnlyText === '')) {
       
       if (readOnlyText === '') {
         readOnlyText = '(None)';

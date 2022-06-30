@@ -63,7 +63,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
 
-  let inputValue = (value || value === '') ? value : defaultValue;
+  let inputValue = value ?? defaultValue ?? ''; 
 
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
