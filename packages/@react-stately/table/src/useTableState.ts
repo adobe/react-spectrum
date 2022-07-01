@@ -27,10 +27,10 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   sortDescriptor: SortDescriptor,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
   sort(columnKey: Key, direction?: 'ascending' | 'descending'): void,
-  /** Whether keyboard navigation is disabled, such as when you need to use the arrow keys to interact with an internal component. */
+  /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
   isKeyboardNavigationDisabled: boolean,
   /** Set whether keyboard navigation is disabled, such as when you need to use the arrow keys to interact with an internal component. */
-  setIsKeyboardNavigationDisabled: (val: boolean) => void
+  setKeyboardNavigationDisabled: (val: boolean) => void
 }
 
 export interface CollectionBuilderContext<T> {
@@ -54,7 +54,7 @@ const OPPOSITE_SORT_DIRECTION = {
  * of columns and rows from props. In addition, it tracks row selection and manages sort order changes.
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
-  let [isKeyboardNavigationDisabled, setIsKeyboardNavigationDisabled] = useState(false);
+  let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
   let {selectionMode = 'none'} = props;
 
   let context = useMemo(() => ({
@@ -77,7 +77,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
     sortDescriptor: props.sortDescriptor,
     isKeyboardNavigationDisabled,
-    setIsKeyboardNavigationDisabled,
+    setKeyboardNavigationDisabled,
     sort(columnKey: Key, direction?: 'ascending' | 'descending') {
       props.onSortChange({
         column: columnKey,

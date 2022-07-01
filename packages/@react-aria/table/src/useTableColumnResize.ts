@@ -103,11 +103,11 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
             // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
             // call instead during focus and blur
             stateRef.current.onColumnResizeStart(item);
-            state.setIsKeyboardNavigationDisabled(true);
+            state.setKeyboardNavigationDisabled(true);
           },
           onBlur: () => {
             stateRef.current.onColumnResizeEnd(item);
-            state.setIsKeyboardNavigationDisabled(false);
+            state.setKeyboardNavigationDisabled(false);
           },
           tabIndex: showResizer ? 0 : undefined
         },

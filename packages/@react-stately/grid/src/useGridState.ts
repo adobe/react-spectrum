@@ -8,7 +8,7 @@ export interface GridState<T, C extends GridCollection<T>> {
   disabledKeys: Set<Key>,
   /** A selection manager to read and update row selection state. */
   selectionManager: SelectionManager,
-  /** Whether keyboard navigation is disabled, such as when you need to use the arrow keys to interact with an internal component. */
+  /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
   isKeyboardNavigationDisabled: boolean
 }
 
