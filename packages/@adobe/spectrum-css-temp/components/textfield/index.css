@@ -44,6 +44,12 @@ governing permissions and limitations under the License.
     min-height: var(--spectrum-textfield-height);
     overflow-x: hidden;
   }
+
+  &.spectrum-Textfield--readonly .spectrum-Textfield-input {
+    height: var(--spectrum-textfield-height);
+    min-height: var(--spectrum-textfield-height);
+    overflow-x: hidden;
+  }
 }
 
 .spectrum-Textfield-input {
@@ -184,7 +190,7 @@ governing permissions and limitations under the License.
 
   .spectrum-Textfield--readonly & {
 
-    border-color: var(--spectrum-textfield-quiet-background-color);
+    border-color: var(--spectrum-textfield-quiet-background-color); 
 
     /* for quiet border */
     border-radius: var(--spectrum-textfield-quiet-border-radius);

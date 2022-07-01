@@ -149,17 +149,19 @@ storiesOf('TextArea', module)
   .add('in flex', () => renderInFlexRowAndBlock())
   .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}))
   .add(
-    'test readOnly, value: read only value',
+    'test: isReadOnly = true, value: read only value',
     () => render({isReadOnly: true, value: 'Read only value'})
   )
   .add(
-    'test: isReadOnly, no text',
+    'test: isReadOnly = true, value = ""',
     () => render({isReadOnly: true, value: ''})
   )
-  .add('test: isReadOnly, long text',
-  () => render({isReadOnly: true, value: 'i love cats so much! they are so cute even though they sometimes like to bite and scratch and hiss...but thats okay!'})
+  .add('test: isReadOnly = true, long text',
+  () => render({isReadOnly: true, value: 'foo  '.repeat(20)})
   )
-  ;
+  .add('test: isReadOnly = true, autoFocus = true, long text',
+  () => render({isReadOnly: true, autoFocus: true, value: 'foo  '.repeat(10)})
+  );
 
 function render(props = {}) {
   return (

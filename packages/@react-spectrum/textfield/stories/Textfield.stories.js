@@ -141,20 +141,20 @@ storiesOf('TextField', module)
   .add('custom width small, labelPosition: side',
     () => render({icon: <Info />, validationState: 'invalid', width: '30px', labelPosition: 'side'})
   )
-  .add('test: readOnly, text',
-    () => render({isReadOnly: true, value: 'hello'})
+  .add('test: isReadOnly = true, value = this is read only',
+    () => render({isReadOnly: true, value: 'this is read only'})
   )
-  .add('test: readOnly, no text',
+  .add('test: isReadOnly, value = "" ',
     () => render({isReadOnly: true, value: ''})
   )
-  .add('test: readOnly, long text',
-  () => render({isReadOnly: true, value: 'a much only piece of text to see what happens'})
+  .add('test: isReadOnly, long text',
+  () => render({isReadOnly: true, value: 'foo  '.repeat(10)})
   )
-  .add('test: readOnly, long text, defaultValue',
-  () => render({isReadOnly: true, defaultValue: 'a much only piece of text to see what happens'})
+  .add('test: isReadOnly, defaultValue',
+  () => render({isReadOnly: true, defaultValue: 'foo  '.repeat(10)})
   )
-  .add('test: readOnly, no text, autofocus',
-  () => render({isReadOnly: true, value: '', autoFocus: true})
+  .add('test: isReadOnly, autoFocus = true, value = autofocus',
+  () => render({isReadOnly: true, value: 'autofocus', autoFocus: true})
   );
 
 function render(props = {}) {

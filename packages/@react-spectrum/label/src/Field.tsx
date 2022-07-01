@@ -12,7 +12,6 @@
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
-import {FocusRing} from '@react-aria/focus'; 
 import {HelpText} from './HelpText';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
@@ -44,7 +43,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     isReadOnly,
     inputProps, 
     inputRef, 
-    autoFocus, 
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
@@ -110,18 +108,15 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
                 styles,
                 'spectrum-Textfield',
                 {
-                  'spectrum-Textfield--readonly': isReadOnly,
-                  'spectrum-Textfield--valid': validationState === 'valid'
+                  'spectrum-Textfield--readonly': isReadOnly
                 }
               )
             }>
-            <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
-              <ReadOnlyField
-                {...props} 
-                readOnlyText={readOnlyText}
-                inputProps={inputProps} 
-                ref={inputRef as any} />            
-            </FocusRing> 
+            <ReadOnlyField
+              {...props} 
+              readOnlyText={readOnlyText}
+              inputProps={inputProps} 
+              ref={inputRef as any} />            
           </div>
         </Flex>
       );
