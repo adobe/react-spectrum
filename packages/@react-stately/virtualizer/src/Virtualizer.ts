@@ -255,7 +255,7 @@ export class Virtualizer<T extends object, V, W> {
 
     if (setsNotEqual) {
       this._persistedKeys = persistedKeys;
-      this.updateSubviews();
+      // this.updateSubviews();
     }
   }
 
@@ -698,6 +698,12 @@ export class Virtualizer<T extends object, V, W> {
         map.set(currentPersistedKey, persistedKeysMap.get(currentPersistedKey));
         currentPersistedKey = persistedKeyIterator.next().value;
       }
+    }
+
+    // there are cases where we have layoutInfos (loader, placeholder, etc.) that aren't in the
+    // collection annd we need to make sure we persist those.
+    if (map.size !== (new Map([...layoutInfosMap, ...persistedKeysMap])).size) {
+      map = new Map([...layoutInfosMap, ...persistedKeysMap]);
     }
 
     return map;
