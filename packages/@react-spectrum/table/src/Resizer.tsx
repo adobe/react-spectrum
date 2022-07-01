@@ -25,7 +25,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
   let style = {
     cursor: undefined,
     height: '100%',
-    display: showResizer ? 'block' : 'none',
+    display: showResizer ? undefined : 'none',
     touchAction: 'none'
   };
   if (columnState.getColumnMinWidth(column.key) >= columnState.getColumnWidth(column.key)) {

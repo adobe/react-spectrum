@@ -101,7 +101,6 @@ svg.spectrum-Table-sortedIcon {
 
   &::after {
     content: "";
-    position: absolute;
     display: block;
     box-sizing: border-box;
     inline-size: 1px;

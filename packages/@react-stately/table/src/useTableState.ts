@@ -29,7 +29,7 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   sort(columnKey: Key, direction?: 'ascending' | 'descending'): void,
   /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
   isKeyboardNavigationDisabled: boolean,
-  /** Set whether keyboard navigation is disabled, such as when you need to use the arrow keys to interact with an internal component. */
+  /** Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
   setKeyboardNavigationDisabled: (val: boolean) => void
 }
 
