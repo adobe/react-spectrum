@@ -240,7 +240,23 @@ export class Virtualizer<T extends object, V, W> {
    * This is to prevent these views from being reused by the virtualizer.
    */
   set persistedKeys(persistedKeys: Set<Key>) {
-    this._persistedKeys = persistedKeys;
+    let setsNotEqual = false;
+
+    if (this._persistedKeys.size !== persistedKeys.size) {
+      setsNotEqual = true;
+    } else {
+      for (var existingKey of this._persistedKeys) {
+        if (!persistedKeys.has(existingKey)) {
+          setsNotEqual = true;
+          break;
+        }
+      }
+    }
+
+    if (setsNotEqual) {
+      this._persistedKeys = persistedKeys;
+      this.updateSubviews();
+    }
   }
 
   /**
@@ -634,13 +650,15 @@ export class Virtualizer<T extends object, V, W> {
   private _getLayoutInfoMap(rect: Rect, copy = false) {
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
     let map = new Map;
+    let layoutInfosMap = new Map;
+    let persistedKeysMap = new Map;
 
     for (let layoutInfo of layoutInfos) {
       if (copy) {
         layoutInfo = layoutInfo.copy();
       }
 
-      map.set(layoutInfo.key, layoutInfo);
+      layoutInfosMap.set(layoutInfo.key, layoutInfo);
     }
 
     // Views that are outside of the viewable rectangle that we don't
@@ -656,7 +674,7 @@ export class Virtualizer<T extends object, V, W> {
             layoutInfo = layoutInfo.copy();
           }
 
-          map.set(layoutInfo.key, layoutInfo);
+          persistedKeysMap.set(layoutInfo.key, layoutInfo);
 
           // Assuming that any item with a parent is a subitem and we need to
           // persist the parent layout, no parentKey is null
@@ -664,6 +682,21 @@ export class Virtualizer<T extends object, V, W> {
         } else {
           key = null; // if there is no layoutInfo make sure the key is null to exit
         }
+      }
+    }
+
+    // Merge layoutInfos and persistedKeys together in order of this._collection
+    let layoutInfosIterator = layoutInfosMap.keys();
+    let currentLayoutInfosKey = layoutInfosIterator.next().value;
+    let persistedKeyIterator = persistedKeysMap.keys();
+    let currentPersistedKey = persistedKeyIterator.next().value;
+    for (let collectionKey of this._collection.getKeys()) {
+      if (currentLayoutInfosKey && currentLayoutInfosKey === collectionKey) {
+        map.set(currentLayoutInfosKey, layoutInfosMap.get(currentLayoutInfosKey));
+        currentLayoutInfosKey = layoutInfosIterator.next().value;
+      } else if (currentPersistedKey && currentPersistedKey === collectionKey) {
+        map.set(currentPersistedKey, persistedKeysMap.get(currentPersistedKey));
+        currentPersistedKey = persistedKeyIterator.next().value;
       }
     }
 
