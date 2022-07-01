@@ -283,23 +283,14 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-InputGroup {
-    &:focus-ring,
-    &:hover:not(.spectrum-InputGroup--invalid):not(.is-focused):not(.is-disabled),
-    &.is-focused
-     {
+    &:focus-ring
+    {
       &:not(.spectrum-InputGroup--quiet) {
         outline:2px solid Highlight;
       }
       &.spectrum-InputGroup--quiet {
         box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
       }   
-    }
-  }
-  .spectrum-InputGroup {
-    &.is-focused {
-      &:not(.spectrum-InputGroup--quiet):not(.spectrum-InputGroup--invalid):not(.is-disabled) {
-        outline:2px solid Highlight;
-      }
     }
   }
 }
