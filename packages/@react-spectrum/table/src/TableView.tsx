@@ -31,7 +31,6 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
@@ -317,7 +316,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
               'spectrum-Table--quiet': isQuiet,
               'spectrum-Table--wrap': props.overflowMode === 'wrap',
               'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
-              'spectrum-Table--resizingColumn': columnState.isResizingColumn,
               'spectrum-Table--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
               'spectrum-Table--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible
             },
@@ -459,14 +457,12 @@ function TableHeader({children, ...otherProps}) {
 
 function TableColumnHeader(props) {
   let {column} = props;
-  let ref = useRef();
+  let ref = useRef<HTMLDivElement>(null);
   let {state} = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true
   }, state, ref);
-
-  let {buttonProps} = useButton({...props, elementType: 'div'}, ref);
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
@@ -475,14 +471,8 @@ function TableColumnHeader(props) {
   }
 
   let {hoverProps, isHovered} = useHover(props);
-  if (columnProps.allowsResizing) {
-    // if we allow resizing, override the usePress that useTableColumnHeader generates so that clicking brings up the menu
-    // instead of sorting the column immediately
-    columnHeaderProps = mergeProps(columnHeaderProps, buttonProps);
-  }
 
   const allProps = [columnHeaderProps, hoverProps];
-
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -528,25 +518,19 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef();
   let {state, columnState} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
-  let [resizeMode, setResizeMode] = useState(false);
   let [isHovered, setIsHovered] = useState(false);
-  let isResizing = columnState.getResizingColumn()?.key === column.key;
 
   const onMenuSelect = (key) => {
     switch (key) {
       case 'sort-asc':
         state.sort(column.key, 'ascending');
-        setResizeMode(false);
         break;
       case 'sort-desc':
         state.sort(column.key, 'descending');
-        setResizeMode(false);
         break;
       case 'resize':
-        setResizeMode(true);
+        columnState.onColumnResizeStart(column);
         break;
-      default:
-        setResizeMode(false);
     }
   };
   let allowsSorting = column.props?.allowsSorting;
@@ -568,13 +552,13 @@ function ResizableTableColumnHeader(props) {
     return options;
   }, [allowsSorting]);
   // if we're resizing another column, then hover shouldn't show the resizer of a different column
-  let showResizer = resizeMode || (isHovered && !columnState.isResizingColumn) || isResizing;
+  let showResizer = (isHovered && !columnState.currentlyResizingColumn) || columnState.currentlyResizingColumn === column.key;
 
   useEffect(() => {
-    if (resizeMode) {
+    if (columnState.currentlyResizingColumn === column.key) {
       focusSafely(ref.current);
     }
-  }, [resizeMode]);
+  }, [columnState.currentlyResizingColumn, column.key]);
 
   return (
     <>
@@ -582,11 +566,8 @@ function ResizableTableColumnHeader(props) {
         <TableColumnHeader column={column} onHoverChange={setIsHovered}>
           <Resizer
             ref={ref}
-            tableRef={props.tableRef}
             column={column}
-            showResizer={showResizer}
-            onResizeEntered={() => setResizeMode(true)}
-            onResizeDone={() => setResizeMode(false)} />
+            showResizer={showResizer} />
         </TableColumnHeader>
         <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
           {(item) => (

@@ -24,15 +24,12 @@ interface ResizerAria {
 
 interface ResizerProps<T> {
   column: GridNode<T>,
-  tableRef: RefObject<HTMLElement>,
   showResizer: boolean,
-  onResizeEntered: () => void,
-  onResizeDone: () => void,
   label: string
 }
 
 export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T> & ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): ResizerAria {
-  let {column: item, showResizer, onResizeEntered, onResizeDone} = props;
+  let {column: item, showResizer} = props;
   const stateRef = useRef(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef(null);
@@ -47,18 +44,17 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
       }
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
         // switch focus back to the column header on escape
-        const columnHeader = ref.current.parentElement as HTMLElement;
-        if (columnHeader) {
-          focusSafely(columnHeader);
-        }
+        focusSafely(ref.current.closest('[role="columnheader"]'));
       }
     }
   });
 
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
-    onMoveStart() {
-      stateRef.current.onColumnResizeStart(item);
+    onMoveStart({pointerType}) {
+      if (pointerType !== 'keyboard') {
+        stateRef.current.onColumnResizeStart(item);
+      }
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
       cursor.current = document.body.style.cursor;
     },
@@ -82,8 +78,10 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
         }
       }
     },
-    onMoveEnd() {
-      stateRef.current.onColumnResizeEnd(item);
+    onMoveEnd({pointerType}) {
+      if (pointerType !== 'keyboard') {
+        stateRef.current.onColumnResizeEnd(item);
+      }
       columnResizeWidthRef.current = 0;
       document.body.style.cursor = cursor.current;
     }
@@ -105,12 +103,14 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
         moveProps,
         {
           onFocus: () => {
-            state.setDisableNavigation(true);
-            onResizeEntered();
+            // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
+            // call instead during focus and blur
+            stateRef.current.onColumnResizeStart(item);
+            state.setIsKeyboardNavigationDisabled(true);
           },
           onBlur: () => {
-            state.setDisableNavigation(false);
-            onResizeDone();
+            stateRef.current.onColumnResizeEnd(item);
+            state.setIsKeyboardNavigationDisabled(false);
           },
           tabIndex: showResizer ? 0 : undefined
         },

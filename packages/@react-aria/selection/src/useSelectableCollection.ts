@@ -79,7 +79,8 @@ interface SelectableCollectionOptions {
    * If not provided, defaults to the collection ref.
    */
   scrollRef?: RefObject<HTMLElement>,
-  disableNavigation?: boolean
+  /** Whether keyboard navigation is disabled, such as when you need to use the arrow keys to interact with an internal component. */
+  isKeyboardNavigationDisabled?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -106,7 +107,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     isVirtualized,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
-    disableNavigation
+    isKeyboardNavigationDisabled
   } = options;
   let {direction} = useLocale();
 
@@ -137,7 +138,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
     switch (e.key) {
       case 'ArrowDown': {
-        if (delegate.getKeyBelow && !disableNavigation) {
+        if (delegate.getKeyBelow && !isKeyboardNavigationDisabled) {
           e.preventDefault();
           let nextKey = manager.focusedKey != null
               ? delegate.getKeyBelow(manager.focusedKey)
@@ -150,7 +151,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowUp': {
-        if (delegate.getKeyAbove && !disableNavigation) {
+        if (delegate.getKeyAbove && !isKeyboardNavigationDisabled) {
           e.preventDefault();
           let nextKey = manager.focusedKey != null
               ? delegate.getKeyAbove(manager.focusedKey)
@@ -163,7 +164,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowLeft': {
-        if (delegate.getKeyLeftOf && !disableNavigation) {
+        if (delegate.getKeyLeftOf && !isKeyboardNavigationDisabled) {
           e.preventDefault();
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
           navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
@@ -171,7 +172,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'ArrowRight': {
-        if (delegate.getKeyRightOf && !disableNavigation) {
+        if (delegate.getKeyRightOf && !isKeyboardNavigationDisabled) {
           e.preventDefault();
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
           navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
@@ -179,7 +180,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       }
       case 'Home':
-        if (delegate.getFirstKey && !disableNavigation) {
+        if (delegate.getFirstKey && !isKeyboardNavigationDisabled) {
           e.preventDefault();
           let firstKey = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(firstKey);
@@ -191,7 +192,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'End':
-        if (delegate.getLastKey && !disableNavigation) {
+        if (delegate.getLastKey && !isKeyboardNavigationDisabled) {
           e.preventDefault();
           let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(lastKey);
@@ -203,14 +204,14 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'PageDown':
-        if (delegate.getKeyPageBelow && !disableNavigation) {
+        if (delegate.getKeyPageBelow && !isKeyboardNavigationDisabled) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
           navigateToKey(nextKey);
         }
         break;
       case 'PageUp':
-        if (delegate.getKeyPageAbove && !disableNavigation) {
+        if (delegate.getKeyPageAbove && !isKeyboardNavigationDisabled) {
           e.preventDefault();
           let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
           navigateToKey(nextKey);
@@ -218,14 +219,14 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       case 'a':
         // disabled navigation also means disabling selection i think, otherwise trying to type 'a' into a textfield would be disastrous
-        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true && !disableNavigation) {
+        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true && !isKeyboardNavigationDisabled) {
           e.preventDefault();
           manager.selectAll();
         }
         break;
       case 'Escape':
         // disabled navigation also means disabling selection i think, similar reason to case 'a' but trying to exit out of a resizer
-        if (!disableNavigation) {
+        if (!isKeyboardNavigationDisabled) {
           e.preventDefault();
           if (!disallowEmptySelection) {
             manager.clearSelection();
@@ -233,7 +234,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'Tab': {
-        // the one thing that disabledNavigation probably shouldn't affect, the tab key
+        if (isKeyboardNavigationDisabled && delegate.getKeyRightOf && delegate.getKeyLeftOf) {
+          e.preventDefault();
+          let nextKey = delegate.getKeyRightOf(manager.focusedKey);
+          navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
+        }
         if (!allowsTabNavigation) {
           // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
           // However, collections should be treated as a single tab stop, with arrow key navigation internally.

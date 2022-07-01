@@ -96,7 +96,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     keyboardDelegate: delegate,
     isVirtualized,
     scrollRef,
-    disableNavigation: state.disableNavigation
+    isKeyboardNavigationDisabled: state.isKeyboardNavigationDisabled
   });
 
   let id = useId();

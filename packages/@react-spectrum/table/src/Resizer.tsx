@@ -11,10 +11,7 @@ import {useTableContext} from './TableView';
 
 interface ResizerProps<T> {
   column: GridNode<T>,
-  tableRef: RefObject<HTMLElement>,
-  showResizer: boolean,
-  onResizeDone: () => void,
-  onResizeEntered: () => void
+  showResizer: boolean
 }
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
@@ -28,7 +25,8 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
   let style = {
     cursor: undefined,
     height: '100%',
-    display: showResizer ? 'block' : 'none'
+    display: showResizer ? 'block' : 'none',
+    touchAction: 'none'
   };
   if (columnState.getColumnMinWidth(column.key) >= columnState.getColumnWidth(column.key)) {
     style.cursor = direction === 'rtl' ? 'w-resize' : 'e-resize';

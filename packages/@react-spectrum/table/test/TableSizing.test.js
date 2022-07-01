@@ -658,7 +658,7 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('200px');
         }
 
-        let resizableHeader = tree.getAllByRole('button')[0];
+        let resizableHeader = tree.getAllByRole('columnheader')[0];
 
         fireEvent.pointerEnter(resizableHeader);
         expect(tree.getByRole('separator')).toBeVisible();
@@ -726,7 +726,7 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('200px');
         }
 
-        let resizableHeader = tree.getAllByRole('button')[0];
+        let resizableHeader = tree.getAllByRole('columnheader')[0];
 
         fireEvent.pointerEnter(resizableHeader);
         expect(tree.getByRole('separator')).toBeVisible();
@@ -801,7 +801,7 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('200px');
         }
 
-        let resizableHeader = tree.getAllByRole('button')[0];
+        let resizableHeader = tree.getAllByRole('columnheader')[0];
 
         fireEvent.pointerDown(resizableHeader, {pointerType: 'touch', pointerId: 1});
         fireEvent.pointerUp(resizableHeader, {pointerType: 'touch', pointerId: 1});
@@ -879,7 +879,7 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('200px');
         }
 
-        let resizableHeader = tree.getAllByRole('button')[0];
+        let resizableHeader = tree.getAllByRole('columnheader')[0];
 
         fireEvent.pointerDown(resizableHeader, {pointerType: 'touch', pointerId: 1});
         fireEvent.pointerUp(resizableHeader, {pointerType: 'touch', pointerId: 1});
@@ -951,7 +951,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
-        let resizableHeader = tree.getAllByRole('button')[0];
+        let resizableHeader = tree.getAllByRole('columnheader')[0];
         expect(document.activeElement).toBe(resizableHeader);
         expect(tree.queryByRole('separator')).toBeNull();
 
@@ -1028,7 +1028,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
-        let resizableHeader = tree.getAllByRole('button')[0];
+        let resizableHeader = tree.getAllByRole('columnheader')[0];
         expect(document.activeElement).toBe(resizableHeader);
         expect(tree.queryByRole('separator')).toBeNull();
 
