@@ -1083,6 +1083,145 @@ describe('TableViewSizing', function () {
 
         expect(tree.queryByRole('separator')).toBeNull();
       });
+      it('can exit resize via Enter', async () => {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column allowsResizing key="foo">Foo</Column>
+              <Column key="bar" maxWidth={200}>Bar</Column>
+              <Column key="baz" maxWidth={200}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        expect(document.activeElement).toBe(resizableHeader);
+        expect(tree.queryByRole('separator')).toBeNull();
+
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
+        act(() => {jest.runAllTimers();});
+
+        let resizer = tree.getByRole('separator');
+
+        expect(document.activeElement).toBe(resizer);
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        expect(document.activeElement).toBe(resizableHeader);
+
+        expect(tree.queryByRole('separator')).toBeNull();
+      });
+      it('can exit resize via Tab', async () => {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column allowsResizing key="foo">Foo</Column>
+              <Column key="bar" maxWidth={200}>Bar</Column>
+              <Column key="baz" maxWidth={200}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        expect(document.activeElement).toBe(resizableHeader);
+        expect(tree.queryByRole('separator')).toBeNull();
+
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
+        act(() => {jest.runAllTimers();});
+
+        let resizer = tree.getByRole('separator');
+
+        expect(document.activeElement).toBe(resizer);
+
+        userEvent.tab();
+
+        expect(document.activeElement).toBe(resizableHeader);
+
+        expect(tree.queryByRole('separator')).toBeNull();
+      });
+      it('can exit resize via shift Tab', async () => {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column allowsResizing key="foo">Foo</Column>
+              <Column key="bar" maxWidth={200}>Bar</Column>
+              <Column key="baz" maxWidth={200}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        expect(document.activeElement).toBe(resizableHeader);
+        expect(tree.queryByRole('separator')).toBeNull();
+
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
+        act(() => {jest.runAllTimers();});
+
+        let resizer = tree.getByRole('separator');
+
+        expect(document.activeElement).toBe(resizer);
+
+        userEvent.tab({shift: true});
+
+        expect(document.activeElement).toBe(resizableHeader);
+
+        expect(tree.queryByRole('separator')).toBeNull();
+      });
     });
   });
 
