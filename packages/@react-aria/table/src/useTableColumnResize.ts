@@ -38,12 +38,9 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
   let {direction} = useLocale();
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
-      if (e.key === 'Tab') {
-        // useKeyboard stops propagation by default. We want to continue propagation for tab so focus leaves the table
-        e.continuePropagation();
-      }
-      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
-        // switch focus back to the column header on escape
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
+        e.preventDefault();
+        // switch focus back to the column header on anything that ends edit mode
         focusSafely(ref.current.closest('[role="columnheader"]'));
       }
     }

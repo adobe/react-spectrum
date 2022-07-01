@@ -95,8 +95,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     selectionManager: state.selectionManager,
     keyboardDelegate: delegate,
     isVirtualized,
-    scrollRef,
-    isKeyboardNavigationDisabled: state.isKeyboardNavigationDisabled
+    scrollRef
   });
 
   let id = useId();
@@ -115,7 +114,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    collectionProps,
+    state.isKeyboardNavigationDisabled ? {} : collectionProps,
     descriptionProps
   );
 
