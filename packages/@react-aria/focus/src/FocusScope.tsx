@@ -491,8 +491,6 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
           // loop backwards through the nodes within the nodeToRestoreArray,
           while (index >= 0) {
             let node = nodeToRestoreArray[index];
-
-            // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
             if (document.body.contains(node)) {
               // to focus the last node that remains in the DOM.
               focusElement(node);
