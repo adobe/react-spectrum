@@ -14,6 +14,8 @@ import docs from 'docs:@react-aria/meter';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/meter/package.json';
 import Anatomy from './anatomy.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import circularPreview from 'url:./circular-example.png';
 
 ---
 category: Status
@@ -116,6 +118,14 @@ function Meter(props) {
   value={250}
   maxValue={1000} />
 ```
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/lucid-jackson-xj8pok?file=/src/App.js"
+  preview={circularPreview}
+  title="Circular Gauge"
+  description="A circular meter built with SVG." />
 
 ## Internationalization
 

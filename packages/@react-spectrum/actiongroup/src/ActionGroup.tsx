@@ -271,6 +271,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
   isDisabled = isDisabled || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {hoverProps, isHovered} = useHover({isDisabled});
+  let domProps = filterDOMProps(item.props);
 
   if (onAction && !isDisabled) {
     buttonProps = mergeProps(buttonProps, {
@@ -294,7 +295,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
         // Use a PressResponder to send DOM props through.
         // ActionButton doesn't allow overriding the role by default.
       }
-      <PressResponder {...mergeProps(buttonProps, hoverProps)}>
+      <PressResponder {...mergeProps(buttonProps, hoverProps, domProps)}>
         <ClearSlots>
           <SlotProvider
             slots={{
