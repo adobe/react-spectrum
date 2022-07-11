@@ -85,9 +85,9 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
   });
 
   let ariaProps = {
-    role: 'separator',
+    role: 'slider',
     'aria-label': props.label,
-    'aria-orientation': 'vertical',
+    'aria-orientation': 'horizontal',
     'aria-labelledby': item.key,
     'aria-valuenow': stateRef.current.getColumnWidth(item.key),
     'aria-valuemin': stateRef.current.getColumnMinWidth(item.key),
