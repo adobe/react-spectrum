@@ -648,7 +648,7 @@ describe('TableViewSizing', function () {
 
         // trigger pointer modality
         fireEvent.pointerMove(tree.container);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -661,8 +661,8 @@ describe('TableViewSizing', function () {
         let resizableHeader = tree.getAllByRole('columnheader')[0];
 
         fireEvent.pointerEnter(resizableHeader);
-        expect(tree.getByRole('separator')).toBeVisible();
-        let resizer = tree.getByRole('separator');
+        expect(tree.getByRole('slider')).toBeVisible();
+        let resizer = tree.getByRole('slider');
 
         fireEvent.pointerEnter(resizer);
 
@@ -693,7 +693,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
 
       it('dragging the resizer works - mobile', () => {
@@ -716,7 +716,7 @@ describe('TableViewSizing', function () {
 
         // trigger pointer modality
         fireEvent.pointerMove(tree.container);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -729,8 +729,8 @@ describe('TableViewSizing', function () {
         let resizableHeader = tree.getAllByRole('columnheader')[0];
 
         fireEvent.pointerEnter(resizableHeader);
-        expect(tree.getByRole('separator')).toBeVisible();
-        let resizer = tree.getByRole('separator');
+        expect(tree.getByRole('slider')).toBeVisible();
+        let resizer = tree.getByRole('slider');
 
         fireEvent.pointerEnter(resizer);
 
@@ -761,7 +761,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
     });
 
@@ -791,7 +791,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(document.body, {pointerType: 'touch', pointerId: 1});
         act(() => {jest.runAllTimers();});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -813,8 +813,8 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
         act(() => {jest.runAllTimers();});
 
-        expect(tree.getByRole('separator')).toBeVisible();
-        let resizer = tree.getByRole('separator');
+        expect(tree.getByRole('slider')).toBeVisible();
+        let resizer = tree.getByRole('slider');
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'touch', pointerId: 1, pageX: 600, pageY: 30});
@@ -844,7 +844,7 @@ describe('TableViewSizing', function () {
         act(() => resizer.blur());
         act(() => {jest.runAllTimers();});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
 
       it('dragging the resizer works - mobile', () => {
@@ -869,7 +869,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(document.body, {pointerType: 'touch', pointerId: 1});
         act(() => {jest.runAllTimers();});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -891,7 +891,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
         expect(resizer).toBeVisible();
         expect(document.activeElement).toBe(resizer);
 
@@ -923,7 +923,7 @@ describe('TableViewSizing', function () {
         act(() => resizer.blur());
         act(() => {jest.runAllTimers();});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
     });
 
@@ -953,7 +953,7 @@ describe('TableViewSizing', function () {
 
         let resizableHeader = tree.getAllByRole('columnheader')[0];
         expect(document.activeElement).toBe(resizableHeader);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -971,7 +971,7 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
 
         expect(document.activeElement).toBe(resizer);
 
@@ -1004,7 +1004,7 @@ describe('TableViewSizing', function () {
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
       it('arrow keys the resizer works - mobile', async () => {
         let tree = render(
@@ -1030,7 +1030,7 @@ describe('TableViewSizing', function () {
 
         let resizableHeader = tree.getAllByRole('columnheader')[0];
         expect(document.activeElement).toBe(resizableHeader);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -1048,7 +1048,7 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
 
         expect(document.activeElement).toBe(resizer);
 
@@ -1081,7 +1081,7 @@ describe('TableViewSizing', function () {
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via Enter', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
@@ -1108,7 +1108,7 @@ describe('TableViewSizing', function () {
 
         let resizableHeader = tree.getAllByRole('columnheader')[0];
         expect(document.activeElement).toBe(resizableHeader);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -1119,7 +1119,7 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
 
         expect(document.activeElement).toBe(resizer);
 
@@ -1128,7 +1128,7 @@ describe('TableViewSizing', function () {
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via Tab', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
@@ -1155,7 +1155,7 @@ describe('TableViewSizing', function () {
 
         let resizableHeader = tree.getAllByRole('columnheader')[0];
         expect(document.activeElement).toBe(resizableHeader);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -1166,7 +1166,7 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
 
         expect(document.activeElement).toBe(resizer);
 
@@ -1174,7 +1174,7 @@ describe('TableViewSizing', function () {
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via shift Tab', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
@@ -1201,7 +1201,7 @@ describe('TableViewSizing', function () {
 
         let resizableHeader = tree.getAllByRole('columnheader')[0];
         expect(document.activeElement).toBe(resizableHeader);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -1212,7 +1212,7 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
 
         expect(document.activeElement).toBe(resizer);
 
@@ -1220,7 +1220,7 @@ describe('TableViewSizing', function () {
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
     });
   });

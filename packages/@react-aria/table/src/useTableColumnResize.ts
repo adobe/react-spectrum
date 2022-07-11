@@ -14,9 +14,11 @@ import {ColumnResizeState, TableState} from '@react-stately/table';
 import {focusSafely} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 import {HTMLAttributes, RefObject, useRef} from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {useKeyboard, useMove} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 interface ResizerAria {
   resizerProps: HTMLAttributes<HTMLElement>
@@ -34,6 +36,7 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef(null);
   stateRef.current = state;
+  const formatMessage = useMessageFormatter(intlMessages);
 
   let {direction} = useLocale();
   let {keyboardProps} = useKeyboard({
@@ -89,7 +92,8 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
     'aria-label': props.label,
     'aria-orientation': 'horizontal',
     'aria-labelledby': item.key,
-    'aria-valuenow': stateRef.current.getColumnWidth(item.key),
+    'aria-valuenow': Math.floor(stateRef.current.getColumnWidth(item.key)),
+    'aria-valuetext': formatMessage('columnSize', {value: Math.floor(stateRef.current.getColumnWidth(item.key))}),
     'aria-valuemin': stateRef.current.getColumnMinWidth(item.key),
     'aria-valuemax': stateRef.current.getColumnMaxWidth(item.key)
   };
