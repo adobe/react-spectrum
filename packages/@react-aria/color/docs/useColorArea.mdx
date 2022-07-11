@@ -92,7 +92,6 @@ from view, within `useColorArea`, using the [useVisuallyHidden](VisuallyHidden.h
 [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
-import {mergeProps} from '@react-aria/utils';
 import {useColorArea} from '@react-aria/color';
 import {useColorAreaState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';
@@ -209,12 +208,26 @@ function Example() {
   return (
     <>
       <label id="hsb-label-id-1">x: {color.getChannelName(xChannel, 'en-US')}, y: {color.getChannelName(yChannel, 'en-US')}</label>
-      <ColorArea
-        aria-labelledby="hsb-label-id-1"
-        value={color}
-        onChange={setColor}
-        xChannel={xChannel}
-        yChannel={yChannel} />
+      <div style={{display: 'flex', flexWrap: 'wrap'}}>
+        <div style={{marginRight: '2rem'}}>
+          <ColorArea
+            aria-labelledby="hsb-label-id-1"
+            value={color}
+            onChange={setColor}
+            xChannel={xChannel}
+            yChannel={yChannel} />
+        </div>
+        <div
+          role="img"
+          aria-label={`color swatch: ${color.toString('hsl')}`}
+          style={{
+            backgroundColor: color.toString('css'),
+            forcedColorAdjust: 'none',
+            height: 96,
+            marginRight: '2rem',
+            width: 96
+          }}></div>
+      </div>
       <label>
         {color.getChannelName(zChannel, 'en-US')}<br/>
         <input
@@ -241,17 +254,32 @@ prop is called as the user drags.
 ```tsx example
 function Example() {
   let [color, setColor] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  let [swatchColor, setSwatchColor] = React.useState(color);
   let [hueChannel, saturationChannel, lightnessChannel] = color.getColorChannels();
   return (
     <>
       <label id="slh-label-id-2">x: {color.getChannelName(saturationChannel, 'en-US')}, y: {color.getChannelName(lightnessChannel, 'en-US')}</label>
-      <ColorArea
-        aria-labelledby="slh-label-id-2"
-        value={color}
-        onChange={setColor}
-        onChangeEnd={setColor}
-        xChannel={saturationChannel}
-        yChannel={lightnessChannel} />
+      <div style={{display: 'flex', flexWrap: 'wrap'}}>
+        <div style={{marginRight: '2rem'}}>
+          <ColorArea
+            aria-labelledby="slh-label-id-2"
+            value={color}
+            onChange={setColor}
+            onChangeEnd={setSwatchColor}
+            xChannel={saturationChannel}
+            yChannel={lightnessChannel} />
+        </div>
+        <div
+          role="img"
+          aria-label={`color swatch: ${swatchColor.toString('hsl')}`}
+          style={{
+            backgroundColor: swatchColor.toString('css'),
+            forcedColorAdjust: 'none',
+            height: 96,
+            marginRight: '2rem',
+            width: 96
+          }}></div>
+      </div>
       <label>
         {color.getChannelName(hueChannel, 'en-US')}
         <br />
@@ -260,14 +288,16 @@ function Example() {
           min={color.getChannelRange(hueChannel).minValue}
           max={color.getChannelRange(hueChannel).maxValue}
           value={color.getChannelValue(hueChannel)}
-          onChange={(e) =>
-            setColor(color.withChannelValue(hueChannel, e.target.value))}
+          onChange={(e) => {
+            setColor(color.withChannelValue(hueChannel, e.target.value));
+            setSwatchColor(color);
+          }}
           style={{
             width: 192
           }}
         />
       </label>
-      <p>Current color value: {color.toString('hsl')}</p>
+      <p>Current color value: {swatchColor.toString('hsl')}</p>
     </>
   );
 }
