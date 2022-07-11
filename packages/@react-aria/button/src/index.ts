@@ -9,6 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-export * from './useButton';
-export * from './useToggleButton';
+export type {ButtonAria} from './useButton';
+export {useButton} from './useButton';
+export {useToggleButton} from './useToggleButton';
