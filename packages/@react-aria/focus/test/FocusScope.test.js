@@ -18,11 +18,7 @@ import userEvent from '@testing-library/user-event';
 
 describe('FocusScope', function () {
   beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-  });
-
-  afterEach(() => {
-    window.requestAnimationFrame.mockRestore();
+    jest.useFakeTimers();
   });
 
   describe('focus containment', function () {
@@ -234,9 +230,11 @@ describe('FocusScope', function () {
 
       userEvent.tab();
       fireEvent.focusIn(input2);
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(input2);
 
       act(() => {input2.blur();});
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(input2);
 
       act(() => {outside.focus();});
@@ -263,9 +261,11 @@ describe('FocusScope', function () {
 
       userEvent.tab();
       fireEvent.focusIn(input2);
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(input2);
 
       act(() => {input2.blur();});
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(input2);
       fireEvent.focusOut(input2);
       expect(document.activeElement).toBe(input2);
@@ -327,6 +327,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input1);
 
       rerender(<Test />);
+      act(() => {jest.runAllTimers();});
 
       expect(document.activeElement).toBe(outside);
     });
@@ -358,6 +359,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input2);
 
       rerender(<Test />);
+      act(() => {jest.runAllTimers();});
 
       expect(document.activeElement).toBe(outside);
     });
@@ -454,6 +456,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(dynamic);
 
       rerender(<Test />);
+      act(() => {jest.runAllTimers();});
 
       expect(document.activeElement).toBe(outside);
     });
@@ -1068,14 +1071,19 @@ describe('FocusScope', function () {
       let child2 = getByTestId('child2');
       let child3 = getByTestId('child3');
 
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child1);
       userEvent.tab();
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child2);
       userEvent.tab();
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child3);
       userEvent.tab();
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child1);
       userEvent.tab({shift: true});
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child3);
     });
 

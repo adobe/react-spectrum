@@ -513,6 +513,19 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('data-testid', 'test');
   });
 
+  it('ActionGroup Item allows custom props', function () {
+    let {getAllByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup>
+          <Item data-testid="test">Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let item = getAllByRole('button')[0];
+    expect(item).toHaveAttribute('data-testid', 'test');
+  });
+
   it('fires onAction when a button is pressed', function () {
     let onAction = jest.fn();
     let tree = render(
