@@ -10,27 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-export type LocalizedStrings = {
-  [lang: string]: {
-    [key: string]: string
-  }
+import type {MessageFormatter} from './MessageFormatter';
+
+export type Message = string | ((formatter: MessageFormatter<any, any>, args: object) => string);
+export type LocalizedStrings<K extends string, T extends Message> = {
+  [lang: string]: Record<K, T>
 };
 
 /**
  * Stores a mapping of localized strings. Can be used to find the
  * closest available string for a given locale.
  */
-export class MessageDictionary {
-  private messages: LocalizedStrings;
+export class MessageDictionary<K extends string = string, T extends Message = string> {
+  private messages: LocalizedStrings<K, T>;
   private defaultLocale: string;
 
-  constructor(messages: LocalizedStrings, defaultLocale: string = 'en-US') {
+  constructor(messages: LocalizedStrings<K, T>, defaultLocale: string = 'en-US') {
     // Clone messages so we don't modify the original object.
     this.messages = {...messages};
     this.defaultLocale = defaultLocale;
   }
 
-  getStringForLocale(key: string, locale: string) {
+  getStringForLocale(key: K, locale: string): T {
     let strings = this.messages[locale];
     if (!strings) {
       strings = getStringsForLocale(locale, this.messages, this.defaultLocale);
@@ -46,7 +47,7 @@ export class MessageDictionary {
   }
 }
 
-function getStringsForLocale(locale: string, strings: LocalizedStrings, defaultLocale = 'en-US') {
+function getStringsForLocale<K extends string, T extends Message>(locale: string, strings: LocalizedStrings<K, T>, defaultLocale = 'en-US') {
   // If there is an exact match, use it.
   if (strings[locale]) {
     return strings[locale];

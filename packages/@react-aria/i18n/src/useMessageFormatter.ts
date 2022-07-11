@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {LocalizedStrings, MessageDictionary, MessageFormatter} from '@internationalized/message';
+import {LocalizedStrings, Message, MessageDictionary, MessageFormatter} from '@internationalized/message';
 import {useCallback, useMemo} from 'react';
 import {useLocale} from './context';
 
-export type FormatMessage = (key: string, variables?: {[key: string]: any}) => string;
+export type FormatMessage<K extends string = string> = (key: K, variables?: Record<string, string | number | boolean>) => string;
 
 const cache = new WeakMap();
-function getCachedDictionary(strings: LocalizedStrings) {
+function getCachedDictionary<K extends string, T extends Message>(strings: LocalizedStrings<K, T>): MessageDictionary<K, T> {
   let dictionary = cache.get(strings);
   if (!dictionary) {
     dictionary = new MessageDictionary(strings);
@@ -32,7 +32,7 @@ function getCachedDictionary(strings: LocalizedStrings) {
  * Automatically updates when the locale changes, and handles caching of messages for performance.
  * @param strings - A mapping of languages to strings by key.
  */
-export function useMessageFormatter(strings: LocalizedStrings): FormatMessage {
+export function useMessageFormatter<K extends string, T extends Message>(strings: LocalizedStrings<K, T>): FormatMessage<K> {
   let {locale} = useLocale();
   let dictionary = useMemo(() => getCachedDictionary(strings), [strings]);
   let formatter = useMemo(() => new MessageFormatter(locale, dictionary), [locale, dictionary]);

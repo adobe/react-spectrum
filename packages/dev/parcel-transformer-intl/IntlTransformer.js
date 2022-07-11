@@ -10,11 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-export type {FormatMessage} from './useMessageFormatter';
+const {Transformer} = require('@parcel/plugin');
+const compile = require('./compileMessage');
 
-export {I18nProvider, useLocale} from './context';
-export {useMessageFormatter} from './useMessageFormatter';
-export {useDateFormatter} from './useDateFormatter';
-export {useNumberFormatter} from './useNumberFormatter';
-export {useCollator} from './useCollator';
-export {useFilter} from './useFilter';
+module.exports = new Transformer({
+  async transform({asset, options}) {
+    let code = await asset.getCode();
+    let json = JSON.parse(code);
+
+    let res = 'module.exports = {';
+    for (let key in json) {
+      res += '  ' + JSON.stringify(key) + ': ' + compile(json[key]) + ',\n';
+    }
+
+    res += '}';
+    asset.type = 'js';
+    asset.setCode(res);
+    return [asset];
+  }
+});

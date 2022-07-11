@@ -38,11 +38,11 @@ export function useDisplayNames(): DisplayNames {
 
 class DisplayNamesPolyfill implements DisplayNames {
   private locale: string;
-  private dictionary: MessageDictionary;
+  private dictionary: MessageDictionary<Field, string>;
 
   constructor(locale: string) {
     this.locale = locale;
-    this.dictionary = new MessageDictionary(intlMessages);
+    this.dictionary = new MessageDictionary<Field, string>(intlMessages);
   }
 
   of(field: Field): string {
