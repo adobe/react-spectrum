@@ -15,7 +15,6 @@ import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
 import {Content, View} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
-import Folder from '@spectrum-icons/workflow/Folder';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
@@ -25,6 +24,7 @@ import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
+import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 let states = [
   {isQuiet: true},
@@ -88,6 +88,26 @@ const renderActions = (
     </ActionMenu>
   </>
 );
+
+function IllustrationContainer(props) {
+  props = useSlotProps(props, 'illustration');
+  let {styleProps} = useStyleProps(props);
+  return (
+    <div {...styleProps}>
+      {props.children}
+    </div>
+  );
+}
+
+function Folder() {
+  return (
+    <IllustrationContainer>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95.23 67" height="110">
+        <path fill="var(--spectrum-global-color-gray-600)" d="M94.47,27a4.45,4.45,0,0,0-3.72-2H20.34a5.45,5.45,0,0,0-5.05,3.37L3.12,57.68V3.88A.89.89,0,0,1,4,3H23.21a2.51,2.51,0,0,1,1.69.66l9.7,8.94a1.56,1.56,0,0,0,1,.4h40a1.5,1.5,0,0,1,1.5,1.5v6a1.5,1.5,0,0,0,3,0v-6a4.51,4.51,0,0,0-4.5-4.5H36.21L26.93,1.46A5.48,5.48,0,0,0,23.21,0H4A3.88,3.88,0,0,0,.12,3.88v61h0A1.51,1.51,0,0,0,1.5,67H79a1.49,1.49,0,0,0,1.38-.92L94.89,31.19A4.45,4.45,0,0,0,94.47,27ZM92.12,30,78,64H3.75L18.06,29.52A2.46,2.46,0,0,1,20.34,28H90.75a1.48,1.48,0,0,1,1.37,2Z" />
+      </svg>
+    </IllustrationContainer>
+  );
+}
 
 const Template = (): Story => ({combos, ...args}) => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
