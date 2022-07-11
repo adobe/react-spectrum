@@ -21,6 +21,7 @@ exports.compileMessage = compileMessage;
 
 function compileParts(parts, inline = false, pluralValue = '') {
   let hasArgs = false;
+  let usesFormatter = false;
   let res = '`';
   for (let part of parts) {
     if (part.type !== TYPE.literal) {
@@ -41,13 +42,16 @@ function compileParts(parts, inline = false, pluralValue = '') {
           + ', ' + compileOptions(part.options, pluralValue)
           + (part.pluralType !== 'cardinal' ? ', "ordinal"' : '')
           + ')}';
+        usesFormatter = true;
         break;
       }
       case TYPE.select:
         res += '${formatter.select(' + compileOptions(part.options, pluralValue) + ', args.' + part.value + ')}';
+        usesFormatter = true;
         break;
       case TYPE.pound:
         res += '${formatter.number(' + pluralValue + ')}';
+        usesFormatter = true;
         break;
       default:
         throw new Error('Unsupported message type: ' + part.type);
@@ -57,7 +61,7 @@ function compileParts(parts, inline = false, pluralValue = '') {
   res += '`';
 
   if (hasArgs) {
-    res = (inline ? '() => ' : '(formatter, args) => ') + res;
+    res = (inline ? '() => ' : '(args' + (usesFormatter ? ', formatter' : '') + ') => ') + res;
   }
 
   return res;

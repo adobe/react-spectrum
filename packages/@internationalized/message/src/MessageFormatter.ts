@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Message, MessageDictionary} from './MessageDictionary';
+import {Message, MessageDictionary, Variables} from './MessageDictionary';
 
-export type Variables = Record<string, string | number | boolean> | undefined;
 type InternalMessage = string | (() => string);
 
 const pluralRulesCache = new Map<string, Intl.PluralRules>();
@@ -37,7 +36,7 @@ export class MessageFormatter<K extends string = string, T extends Message = str
     }
 
     if (typeof message === 'function') {
-      return message(this, variables);
+      return message(variables, this);
     }
 
     return message;

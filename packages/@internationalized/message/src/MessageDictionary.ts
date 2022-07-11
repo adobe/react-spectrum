@@ -12,7 +12,8 @@
 
 import type {MessageFormatter} from './MessageFormatter';
 
-export type Message = string | ((formatter: MessageFormatter<any, any>, args: object) => string);
+export type Variables = Record<string, string | number | boolean> | undefined;
+export type Message = string | ((args: Variables, formatter: MessageFormatter<any, any>) => string);
 export type LocalizedStrings<K extends string, T extends Message> = {
   [lang: string]: Record<K, T>
 };
