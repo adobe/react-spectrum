@@ -96,8 +96,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     onAction: onCellAction ? () => onCellAction(node.key) : onAction
   });
 
-  let onKeyDown = (e: ReactKeyboardEvent) => {
-    if (!e.currentTarget.contains(e.target as HTMLElement)) {
+  let onKeyDownCapture = (e: ReactKeyboardEvent) => {
+    if (!e.currentTarget.contains(e.target as HTMLElement) || state.isKeyboardNavigationDisabled) {
       return;
     }
 
@@ -225,7 +225,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(itemProps, {
     role: 'gridcell',
-    onKeyDownCapture: onKeyDown,
+    onKeyDownCapture,
     onFocus
   });
 

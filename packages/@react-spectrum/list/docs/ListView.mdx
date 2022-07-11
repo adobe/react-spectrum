@@ -258,7 +258,7 @@ function PokemonList(props) {
     {id: 4, name: 'Pikachu'}
   ];
 
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+  let [selectedKeys, setSelectedKeys] = React.useState(props.defaultSelectedKeys || new Set([2]));
 
   return (
     <ListView items={rows} maxWidth="size-6000" aria-label="ListView with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
@@ -293,11 +293,33 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 ### Disabled rows
 
-You can disable specific rows by providing an array of keys to ListView via the `disabledKeys` prop. This will prevent rows from being selectable, as shown in the example below.
+You can disable specific rows by providing an array of keys to ListView via the `disabledKeys` prop. This will disable all interactions on disabled rows, unless the `disabledBehavior` prop is used to change this behavior.
 
 ```tsx example
 // Using the same list as above
 <PokemonList disabledKeys={[3]} aria-label="ListView with disabled rows" />
+```
+
+If you set the `disabledBehavior` prop to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
+```tsx example
+<Flex wrap gap="size-300">
+  <PokemonList
+    disabledKeys={[3]}
+    defaultSelectedKeys={[]}
+    disabledBehavior="all"
+    aria-label="ListView with all interaction disabled for disabled rows" 
+    width="size-2400"
+    onAction={key => alert(`Opening item ${key}...`)}
+  />
+  <PokemonList
+    disabledKeys={[3]}
+    defaultSelectedKeys={[]}
+    disabledBehavior="selection"
+    aria-label="ListView with selection disabled for disabled rows"
+    width="size-2400"
+    onAction={key => alert(`Opening item ${key}...`)}
+  />
+</Flex>
 ```
 
 ### Highlight selection

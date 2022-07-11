@@ -32,7 +32,7 @@ describe('NumberField', function () {
   let onKeyUpSpy = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
@@ -281,6 +281,17 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onBlurSpy).toHaveBeenCalledTimes(2); // blur spy is called after each blur
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name fires state change then blur', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, step: 5});
+    act(() => {textField.focus();});
+    typeText(textField, '3');
+    userEvent.tab();
+    expect(onChangeSpy.mock.invocationCallOrder[0]).toBeLessThan(onBlurSpy.mock.invocationCallOrder[0]);
   });
 
   it.each`
