@@ -8,6 +8,6 @@
   },
   "dependencies": {
     "@parcel/plugin": "^2.1.1",
-    "@formatjs/icu-messageformat-parser": "2.0.19"
+    "@internationalized/message-compiler": "^1.0.0"
   }
 }

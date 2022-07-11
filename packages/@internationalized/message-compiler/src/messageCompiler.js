@@ -1,11 +1,23 @@
 const {parse, TYPE} = require('@formatjs/icu-messageformat-parser');
 
-function compile(message) {
+function compileMessages(messages) {
+  let res = 'module.exports = {';
+  for (let key in messages) {
+    res += '  ' + JSON.stringify(key) + ': ' + compileMessage(messages[key]) + ',\n';
+  }
+
+  res += '}';
+  return res;
+}
+
+exports.compileMessages = compileMessages;
+
+function compileMessage(message) {
   let parts = parse(message);
   return compileParts(parts);
 }
 
-module.exports = compile;
+exports.compileMessage = compileMessage;
 
 function compileParts(parts, inline = false, pluralValue = '') {
   let hasArgs = false;
@@ -14,7 +26,7 @@ function compileParts(parts, inline = false, pluralValue = '') {
     if (part.type !== TYPE.literal) {
       hasArgs = true;
     }
-    
+
     switch (part.type) {
       case TYPE.literal:
         res += escape(part.value);
@@ -24,7 +36,7 @@ function compileParts(parts, inline = false, pluralValue = '') {
         break;
       case TYPE.plural: {
         let pluralValue = 'args.' + part.value + (part.offset ? ' - ' + part.offset : '');
-        res += '${formatter.plural(' 
+        res += '${formatter.plural('
           + pluralValue
           + ', ' + compileOptions(part.options, pluralValue)
           + (part.pluralType !== 'cardinal' ? ', "ordinal"' : '')

@@ -1,0 +1,23 @@
+{
+  "name": "@internationalized/message-compiler",
+  "version": "1.0.0",
+  "description": "ICU message compiler for @internationalized/message",
+  "license": "Apache-2.0",
+  "private": true,
+  "main": "src/messageCompiler.js",
+  "types": "src/messageCompiler.d.ts",
+  "files": [
+    "src"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@formatjs/icu-messageformat-parser": "2.0.19"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

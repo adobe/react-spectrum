@@ -125,7 +125,7 @@ module.exports = {
   // resetModules: false,
 
   // A path to a custom resolver
-  resolver: '<rootDir>/packages/dev/parcel-transformer-intl/jestResolver.js',
+  resolver: '<rootDir>/lib/jestResolver.js',
 
   // Automatically restore mock state between every test
   // restoreMocks: false,

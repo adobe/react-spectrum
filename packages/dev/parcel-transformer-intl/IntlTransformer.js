@@ -11,19 +11,13 @@
  */
 
 const {Transformer} = require('@parcel/plugin');
-const compile = require('./compileMessage');
+const {compileMessages} = require('@internationalized/message-compiler');
 
 module.exports = new Transformer({
-  async transform({asset, options}) {
+  async transform({asset}) {
     let code = await asset.getCode();
     let json = JSON.parse(code);
-
-    let res = 'module.exports = {';
-    for (let key in json) {
-      res += '  ' + JSON.stringify(key) + ': ' + compile(json[key]) + ',\n';
-    }
-
-    res += '}';
+    let res = compileMessages(json);
     asset.type = 'js';
     asset.setCode(res);
     return [asset];
