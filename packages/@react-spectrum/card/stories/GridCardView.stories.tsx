@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Card, CardView, GridLayout} from '../';
+import {ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
 import {getImageFullData} from './utils';
@@ -23,7 +24,6 @@ import {Image} from '@react-spectrum/image';
 import React, {Key, useMemo, useState} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
-import {Story} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
 import {useCollator} from '@react-aria/i18n';
@@ -72,13 +72,26 @@ function renderEmptyState() {
   );
 }
 
-const StoryFn = ({storyFn}) => storyFn();
-
 export default {
   title: 'CardView/Grid layout',
+  component: CardView,
   excludeStories: ['NoCards', 'CustomLayout', 'falsyItems'],
-  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
-};
+  args: {
+    'aria-label': 'Test CardView'
+  },
+  argTypes: {
+    layout: {
+      table: {
+        disable: true
+      }
+    },
+    selectionMode: {
+      control: 'radio',
+      defaultValue: 'multiple',
+      options: ['none', 'single', 'multiple']
+    }
+  }
+} as ComponentStoryObj<typeof CardView>;
 
 let onSelectionChange = action('onSelectionChange');
 let actions = {
@@ -86,110 +99,111 @@ let actions = {
 };
 
 // TODO add stories for Layouts with non-default options passed in
-const DynamicTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <DynamicCardView {...args} />;
-export const DynamicCards = DynamicTemplate().bind({});
-DynamicCards.args = {
-  items: items,
-  'aria-label': 'Test CardView',
-  selectionMode: 'multiple'
-};
-DynamicCards.storyName = 'default Grid layout with initialized layout';
-
-const StaticTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <StaticCardView {...args} />;
-export const StaticCards = StaticTemplate().bind({});
-StaticCards.args = {
-  'aria-label': 'Test CardView',
-  selectionMode: 'multiple'
-};
-StaticCards.storyName = 'static card';
-
-export const DefaultGridConstructor = DynamicTemplate().bind({});
-DefaultGridConstructor.args = {...DynamicCards.args, layout: GridLayout};
-DefaultGridConstructor.storyName = 'default Grid layout w/ layout constructor';
-
-export const HorizontalGrid = DynamicTemplate().bind({});
-HorizontalGrid.args = {...DynamicCards.args, cardOrientation: 'horizontal'};
-HorizontalGrid.storyName = ' Grid layout with horizontal cards, initialized layout';
-
-export const HorizontalGridConstructor = DynamicTemplate().bind({});
-HorizontalGridConstructor.args = {...DynamicCards.args, cardOrientation: 'horizontal', layout: GridLayout};
-HorizontalGridConstructor.storyName = ' Grid layout with horizontal cards, layout constructor';
-
-const FalsyTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <CardViewIdKeys {...args} />;
-export const FalsyIds = FalsyTemplate().bind({});
-FalsyIds.args = {
-  items: falsyItems,
-  'aria-label': 'Test CardView',
-  selectionMode: 'multiple'
-};
-FalsyIds.storyName = 'falsy ids';
-
-export const DisabledKeys = DynamicTemplate().bind({});
-DisabledKeys.args = {...DynamicCards.args, disabledKeys: ['Joe 2', 'Bob 4']};
-DisabledKeys.storyName = 'disabled keys, Joe2, Bob 4';
-
-export const NoSelection = DynamicTemplate().bind({});
-NoSelection.args = {...DynamicCards.args, selectionMode: 'none'};
-NoSelection.storyName = 'no selection allowed';
-
-export const SingleSelection = DynamicTemplate().bind({});
-SingleSelection.args = {...DynamicCards.args, selectionMode: 'single'};
-SingleSelection.storyName = 'single selection only';
-
-const ControlledTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <ControlledCardView {...args} />;
-export const ControlledCards = ControlledTemplate().bind({});
-ControlledCards.args = {
-  'aria-label': 'Test CardView',
-  selectionMode: 'multiple',
-  items: items
-};
-ControlledCards.storyName = 'selected keys, controlled';
-
-const NoCardsTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <NoItemCardView {...args} />;
-export const NoCards = NoCardsTemplate().bind({});
-NoCards.args = {
-  'aria-label': 'Test CardView'
+export const DynamicCards: DynamicCardViewStory = {
+  render: (args) => <DynamicCardView {...args} />,
+  args: {
+    items: items
+  },
+  name: 'default Grid layout with initialized layout'
 };
 
-export const IsLoadingNoHeightGrid = NoCardsTemplate().bind({});
-IsLoadingNoHeightGrid.args = {...NoCards.args, width: '800px', loadingState: 'loading'};
-IsLoadingNoHeightGrid.storyName = 'loadingState = loading, no height';
-
-export const IsLoadingHeightGrid =  NoCardsTemplate().bind({});
-IsLoadingHeightGrid.args = {...NoCards.args, width: '800px', height: '800px', loadingState: 'loading'};
-IsLoadingHeightGrid.storyName = 'loadingState = loading, set height';
-
-export const LoadingMoreGrid = DynamicTemplate().bind({});
-LoadingMoreGrid.args = {...DynamicCards.args, loadingState: 'loadingMore'};
-LoadingMoreGrid.storyName = 'loadingState = loadingMore';
-
-export const FilteringGrid = DynamicTemplate().bind({});
-FilteringGrid.args = {...DynamicCards.args, loadingState: 'filtering'};
-FilteringGrid.storyName = 'loadingState = filtering';
-
-export const EmptyWithHeightGrid = NoCardsTemplate().bind({});
-EmptyWithHeightGrid.args = {...NoCards.args, width: '800px', height: '800px', renderEmptyState};
-EmptyWithHeightGrid.storyName = 'empty, set height';
-
-const AsyncCardsTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <AsyncLoadingCardView {...args} />;
-export const AsyncLoading = AsyncCardsTemplate().bind({});
-AsyncLoading.args = {
-  'aria-label': 'Test CardView',
-  selectionMode: 'multiple',
-  items: items
+export const StaticCards: StaticCardViewStory = {
+  render: (args) => <StaticCardView {...args} />,
+  name: 'static card'
 };
-AsyncLoading.storyName = 'Async loading';
 
-const CustomLayoutTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <CustomLayout {...args} />;
-export const CustomLayoutOptions = CustomLayoutTemplate().bind({});
-CustomLayoutOptions.args = {
-  'aria-label': 'Test CardView',
-  selectionMode: 'multiple',
-  items: items,
-  layoutOptions: {maxColumns: 2, margin: 150, minSpace: new Size(10, 10), itemPadding: 400}
+export const DefaultGridConstructor: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {...DynamicCards.args, layout: GridLayout},
+  name: 'default Grid layout w/ layout constructor'
 };
-CustomLayoutOptions.storyName = 'Custom layout options';
 
+export const HorizontalGrid: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {...DynamicCards.args, cardOrientation: 'horizontal'},
+  name: 'Grid layout with horizontal cards, initialized layout'
+};
+
+export const HorizontalGridConstructor: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {...DynamicCards.args, cardOrientation: 'horizontal', layout: GridLayout},
+  name: 'Grid layout with horizontal cards, layout constructor'
+};
+
+export const FalsyIds: CardViewIdKeysStory = {
+  render: (args) => <CardViewIdKeys {...args} />,
+  args: {
+    items: falsyItems
+  },
+  name: 'falsy ids'
+};
+
+export const DisabledKeys: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {...DynamicCards.args, disabledKeys: ['Joe 2', 'Bob 4']},
+  name: 'disabled keys, Joe2, Bob 4'
+};
+
+export const ControlledCards: ControlledCardViewStory = {
+  render: (args) => <ControlledCardView {...args} />,
+  args: {
+    items: items
+  },
+  name: 'selected keys, controlled'
+};
+
+export const NoCards: NoItemCardViewStory = {
+  render: (args) => <NoItemCardView {...args} />
+};
+
+export const IsLoadingNoHeightGrid: DynamicCardViewStory = {
+  ...NoCards,
+  args: {...NoCards.args, width: '800px', loadingState: 'loading'},
+  name: 'loadingState = loading, no height'
+};
+
+export const IsLoadingHeightGrid: DynamicCardViewStory = {
+  ...NoCards,
+  args: {...NoCards.args, width: '800px', height: '800px', loadingState: 'loading'},
+  name: 'loadingState = loading, set height'
+};
+
+export const LoadingMoreGrid: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {...DynamicCards.args, loadingState: 'loadingMore'},
+  name: 'loadingState = loadingMore'
+};
+
+export const FilteringGrid: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {...DynamicCards.args, loadingState: 'filtering'},
+  name: 'loadingState = filtering'
+};
+
+export const EmptyWithHeightGrid: DynamicCardViewStory = {
+  ...NoCards,
+  args: {...NoCards.args, width: '800px', height: '800px', renderEmptyState},
+  name: 'empty, set height'
+};
+
+export const AsyncLoading: AsyncLoadingCardViewStory = {
+  render: (args) => <AsyncLoadingCardView {...args} />,
+  args: {
+    items: items
+  },
+  name: 'Async loading'
+};
+
+export const CustomLayoutOptions: CustomLayoutStory = {
+  render: (args) => <CustomLayout {...args} />,
+  args: {
+    items: items,
+    layoutOptions: {maxColumns: 2, margin: 150, minSpace: new Size(10, 10), itemPadding: 400}
+  },
+  name: 'Custom layout options'
+};
+
+export type CardViewIdKeysStory = ComponentStoryObj<typeof CardViewIdKeys>;
 function CardViewIdKeys(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -223,6 +237,7 @@ function CardViewIdKeys(props: SpectrumCardViewProps<object>) {
   );
 }
 
+export type DynamicCardViewStory = ComponentStoryObj<typeof DynamicCardView>;
 function DynamicCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -269,6 +284,7 @@ function DynamicCardView(props: SpectrumCardViewProps<object>) {
   );
 }
 
+export type ControlledCardViewStory = ComponentStoryObj<typeof ControlledCardView>;
 function ControlledCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -317,6 +333,7 @@ function ControlledCardView(props: SpectrumCardViewProps<object>) {
   );
 }
 
+export type NoItemCardViewStory = ComponentStoryObj<typeof NoItemCardView>;
 function NoItemCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -350,6 +367,7 @@ function NoItemCardView(props: SpectrumCardViewProps<object>) {
   );
 }
 
+export type StaticCardViewStory = ComponentStoryObj<typeof StaticCardView>;
 function StaticCardView(props: SpectrumCardViewProps<object>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -403,6 +421,7 @@ function StaticCardView(props: SpectrumCardViewProps<object>) {
   );
 }
 
+export type AsyncLoadingCardViewStory = ComponentStoryObj<typeof AsyncLoadingCardView>;
 function AsyncLoadingCardView(props: SpectrumCardViewProps<object>) {
   interface StarWarsChar {
     name: string,
@@ -460,7 +479,7 @@ function AsyncLoadingCardView(props: SpectrumCardViewProps<object>) {
 interface LayoutOptions {
   layoutOptions?: GridLayoutOptions
 }
-
+export type CustomLayoutStory = ComponentStoryObj<typeof CustomLayout>;
 export function CustomLayout(props: SpectrumCardViewProps<object> & LayoutOptions) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -508,3 +527,4 @@ export function CustomLayout(props: SpectrumCardViewProps<object> & LayoutOption
     </div>
   );
 }
+

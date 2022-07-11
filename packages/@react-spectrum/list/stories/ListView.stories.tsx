@@ -13,7 +13,6 @@ import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
 import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import {Flex} from '@react-spectrum/layout';
-import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
@@ -25,6 +24,7 @@ import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 const parameters = {
   args: {
@@ -94,6 +94,7 @@ const items: any = [
 
 // taken from https://random.dog/
 const itemsWithThumbs = [
+  {key: '0', title: 'folder of good bois', illustration: <Folder />},
   {key: '1', title: 'swimmer', url: 'https://random.dog/b2fe2172-cf11-43f4-9c7f-29bd19601712.jpg'},
   {key: '2', title: 'chocolate', url: 'https://random.dog/2032518a-eec8-4102-9d48-3dca5a26eb23.png'},
   {key: '3', title: 'good boi', url: 'https://random.dog/191091b2-7d69-47af-9f52-6605063f1a47.jpg'},
@@ -101,8 +102,29 @@ const itemsWithThumbs = [
   {key: '5', title: 'cold boi', url: 'https://random.dog/093a41da-e2c0-4535-a366-9ef3f2013f73.jpg'},
   {key: '6', title: 'pilot', url: 'https://random.dog/09f8ecf4-c22b-49f4-af24-29fb5c8dbb2d.jpg'},
   {key: '7', title: 'nerd', url: 'https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg'},
-  {key: '8', title: 'audiophile', url: 'https://random.dog/32367-2062-4347.jpg'}
+  {key: '8', title: 'audiophile', url: 'https://random.dog/32367-2062-4347.jpg'},
+  {key: '9', title: 'folder of great bois', illustration: <Folder />}
 ];
+
+function IllustrationContainer(props) {
+  props = useSlotProps(props, 'illustration');
+  let {styleProps} = useStyleProps(props);
+  return (
+    <div {...styleProps}>
+      {props.children}
+    </div>
+  );
+}
+
+function Folder() {
+  return (
+    <IllustrationContainer>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95.23 67" height="110">
+        <path fill="var(--spectrum-global-color-gray-600)" d="M94.47,27a4.45,4.45,0,0,0-3.72-2H20.34a5.45,5.45,0,0,0-5.05,3.37L3.12,57.68V3.88A.89.89,0,0,1,4,3H23.21a2.51,2.51,0,0,1,1.69.66l9.7,8.94a1.56,1.56,0,0,0,1,.4h40a1.5,1.5,0,0,1,1.5,1.5v6a1.5,1.5,0,0,0,3,0v-6a4.51,4.51,0,0,0-4.5-4.5H36.21L26.93,1.46A5.48,5.48,0,0,0,23.21,0H4A3.88,3.88,0,0,0,.12,3.88v61h0A1.51,1.51,0,0,0,1.5,67H79a1.49,1.49,0,0,0,1.38-.92L94.89,31.19A4.45,4.45,0,0,0,94.47,27ZM92.12,30,78,64H3.75L18.06,29.52A2.46,2.46,0,0,1,20.34,28H90.75a1.48,1.48,0,0,1,1.37,2Z" />
+      </svg>
+    </IllustrationContainer>
+  );
+}
 
 function renderEmptyState() {
   return (
@@ -220,7 +242,14 @@ storiesOf('ListView', module)
   .add('with emphasized ActionBar', args => <ActionBarExample isEmphasized {...args} />)
   .add('thumbnails', args => (
     <ListView width="250px" items={itemsWithThumbs} aria-label="ListView with thumbnails" {...args}>
-      {(item: any) => <Item textValue={item.title}><Image src={item.url} alt="" /><Text>{item.title}</Text><Text slot="description">JPG</Text></Item>}
+      {(item: any) => (
+        <Item textValue={item.title}>
+          {item.url && <Image src={item.url} alt="" />}
+          {item.illustration}
+          <Text>{item.title}</Text>
+          {item.url && <Text slot="description">JPG</Text>}
+        </Item>
+      )}
     </ListView>
   ))
   .add('long text', args => (
