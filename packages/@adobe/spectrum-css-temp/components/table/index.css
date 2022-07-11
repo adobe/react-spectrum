@@ -65,7 +65,6 @@ svg.spectrum-Table-sortedIcon {
   text-transform: uppercase;
   padding: var(--spectrum-table-header-padding-y) var(--spectrum-table-header-padding-x);
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
-  cursor: default;
   outline: 0;
   border-radius: var(--spectrum-table-header-border-radius);
 
@@ -89,13 +88,6 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
-.spectrum-Table--resizingColumn {
-  .spectrum-Table-row,
-  .spectrum-Table-headCell {
-    cursor: col-resize;
-  }
-}
-
 .spectrum-Table-columnResizer {
   display: flex;
   justify-content: flex-end;
@@ -105,24 +97,21 @@ svg.spectrum-Table-sortedIcon {
   inset-inline-end: 0px;
   inline-size: 10px;
   block-size: 100%;
-  cursor: col-resize;
   user-select: none;
 
   &::after {
     content: "";
-    position: absolute;
     display: block;
     box-sizing: border-box;
     inline-size: 1px;
     block-size: 100%;
-    background-color: var(--spectrum-table-divider-border-color);
   }
 
   &:active,
   &:focus {
+    outline: none;
     &::after {
       inline-size: 2px;
-      background-color: var(--spectrum-global-color-blue-400);
     }
   }
 }

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnResizeState} from '@react-stately/table';
-import {focusSafely, useFocusable} from '@react-aria/focus';
+import {ColumnResizeState, TableState} from '@react-stately/table';
+import {focusSafely} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 import {HTMLAttributes, RefObject, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
@@ -23,41 +23,37 @@ interface ResizerAria {
 }
 
 interface ResizerProps<T> {
-  column: GridNode<T>
+  column: GridNode<T>,
+  showResizer: boolean,
+  label: string
 }
 
-export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): ResizerAria {
-  let {column: item} = props;
+export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T> & ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): ResizerAria {
+  let {column: item, showResizer} = props;
   const stateRef = useRef(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef(null);
   stateRef.current = state;
 
   let {direction} = useLocale();
-  let {focusableProps} = useFocusable({excludeFromTabOrder: true}, ref);
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
-      if (e.key === 'Tab') {
-        // useKeyboard stops propagation by default. We want to continue propagation for tab so focus leaves the table
-        e.continuePropagation();
-      }
-      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
-        // switch focus back to the column header on escape
-        const columnHeader = ref.current.previousSibling as HTMLElement;
-        if (columnHeader) {
-          focusSafely(columnHeader);
-        }
+      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
+        e.preventDefault();
+        // switch focus back to the column header on anything that ends edit mode
+        focusSafely(ref.current.closest('[role="columnheader"]'));
       }
     }
   });
 
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
-    onMoveStart() {
-      stateRef.current.onColumnResizeStart();
+    onMoveStart({pointerType}) {
+      if (pointerType !== 'keyboard') {
+        stateRef.current.onColumnResizeStart(item);
+      }
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
       cursor.current = document.body.style.cursor;
-      document.body.style.setProperty('cursor', 'col-resize');
     },
     onMove({deltaX, pointerType}) {
       if (direction === 'rtl') {
@@ -70,18 +66,54 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: ColumnRes
         }
         columnResizeWidthRef.current += deltaX;
         stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
+        if (stateRef.current.getColumnMinWidth(item.key) >= stateRef.current.getColumnWidth(item.key)) {
+          document.body.style.setProperty('cursor', direction === 'rtl' ? 'w-resize' : 'e-resize');
+        } else if (stateRef.current.getColumnMaxWidth(item.key) <= stateRef.current.getColumnWidth(item.key)) {
+          document.body.style.setProperty('cursor', direction === 'rtl' ? 'e-resize' : 'w-resize');
+        } else {
+          document.body.style.setProperty('cursor', 'col-resize');
+        }
       }
     },
-    onMoveEnd() {
-      stateRef.current.onColumnResizeEnd();
+    onMoveEnd({pointerType}) {
+      if (pointerType !== 'keyboard') {
+        stateRef.current.onColumnResizeEnd(item);
+      }
       columnResizeWidthRef.current = 0;
       document.body.style.cursor = cursor.current;
     }
   });
 
+  let ariaProps = {
+    role: 'separator',
+    'aria-label': props.label,
+    'aria-orientation': 'vertical',
+    'aria-labelledby': item.key,
+    'aria-valuenow': stateRef.current.getColumnWidth(item.key),
+    'aria-valuemin': stateRef.current.getColumnMinWidth(item.key),
+    'aria-valuemax': stateRef.current.getColumnMaxWidth(item.key)
+  };
+
   return {
     resizerProps: {
-      ...mergeProps(moveProps, focusableProps, keyboardProps)
+      ...mergeProps(
+        moveProps,
+        {
+          onFocus: () => {
+            // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
+            // call instead during focus and blur
+            stateRef.current.onColumnResizeStart(item);
+            state.setKeyboardNavigationDisabled(true);
+          },
+          onBlur: () => {
+            stateRef.current.onColumnResizeEnd(item);
+            state.setKeyboardNavigationDisabled(false);
+          },
+          tabIndex: showResizer ? 0 : undefined
+        },
+        keyboardProps,
+        ariaProps
+      )
     }
   };
 }
