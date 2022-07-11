@@ -331,4 +331,25 @@ describe('ColorWheel', () => {
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
     });
   });
+
+  it('thumb background color should not include alpha channel', () => {
+    let defaultColor = parseColor('hsla(0, 100%, 50%, 0.5)');
+    let {container: _container} = render(<ColorWheel defaultValue={defaultColor} />);
+    /*
+     Current DOM structure for ColorWheel, starting at the container:
+
+     div
+       div.spectrum-ColorWheel
+         div.spectrum-ColorWheel-gradient
+         div.spectrum-ColorWheel-handle
+             div.spectrum-ColorHandle-color
+             svg.spectrum-ColorLoupe
+               ...
+             input.spectrum-ColorWheel-slider
+    */
+    let handleColorElement = _container.firstChild.firstChild.nextSibling.firstChild as HTMLElement;
+    let thumbColor = parseColor(handleColorElement.style.backgroundColor);
+    expect(defaultColor.getChannelValue('alpha')).toEqual(0.5);
+    expect(thumbColor.getChannelValue('alpha')).toEqual(1);
+  });
 });
