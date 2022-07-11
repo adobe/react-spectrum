@@ -18,6 +18,8 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/checkbox/package.json';
 import Anatomy from './checkbox-anatomy.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import tailwindPreview from 'url:./tailwind-example.png';
 
 ---
 category: Forms
@@ -164,6 +166,14 @@ function Checkbox(props) {
 
 <Checkbox>Foo</Checkbox>
 ```
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/bold-river-0v44z6?file=/src/Checkbox.tsx"
+  preview={tailwindPreview}
+  title="Tailwind CSS"
+  description="An animated Checkbox built with Tailwind and React Aria." />
 
 ## Internationalization
 

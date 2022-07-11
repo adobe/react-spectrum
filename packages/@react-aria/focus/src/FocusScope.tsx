@@ -236,6 +236,11 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
   useLayoutEffect(() => {
     let scope = scopeRef.current;
     if (!contain) {
+      // if contain was changed, then we should cancel any ongoing waits to pull focus back into containment
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+        raf.current = null;
+      }
       return;
     }
 
@@ -310,7 +315,11 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
-    return () => cancelAnimationFrame(raf.current);
+    return () => {
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
   }, [raf]);
 }
 
@@ -462,7 +471,8 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
 
       if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scopeRef.current)) {
         requestAnimationFrame(() => {
-          if (document.body.contains(nodeToRestore)) {
+          // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
+          if (document.body.contains(nodeToRestore) && document.activeElement === document.body) {
             focusElement(nodeToRestore);
           }
         });

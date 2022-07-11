@@ -70,7 +70,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     validationState,
     label,
     formatOptions,
-    onBlur,
+    onBlur = () => {},
     onFocus,
     onFocusChange,
     onKeyDown,
@@ -204,8 +204,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   let inputProps = mergeProps(
     spinButtonProps,
-    textFieldProps,
     focusProps,
+    textFieldProps,
     {
       // override the spinbutton role, we can't focus a spin button with VO
       role: null,
