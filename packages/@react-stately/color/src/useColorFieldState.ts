@@ -152,7 +152,7 @@ export function useColorFieldState(
   let incrementToMax = () => safelySetColorValue(MAX_COLOR);
   let decrementToMin = () => safelySetColorValue(MIN_COLOR);
 
-  let validate = (value: string) => value === '' || !!value.match(/^#?[0-9a-f]{0,6}$/i)?.[0];
+  let validate = (value: string) => value === '' || !!value.match(/^#?[0-9a-f]{0,8}$/i)?.[0];
 
   return {
     validate,
