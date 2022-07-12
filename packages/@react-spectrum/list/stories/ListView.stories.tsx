@@ -864,11 +864,7 @@ export function DragBetweenListsExample(props) {
       });
     },
     onDragStart: action('dragStart'),
-    onDragEnd: () => {
-      console.log('drag end')
-      // // let dragSession = DragManager;
-      // console.log('dragsession', dragSession)
-    }
+    onDragEnd: action('dragEnd')
   });
 
   // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
@@ -876,16 +872,11 @@ export function DragBetweenListsExample(props) {
 
   let dropHooks = useDropHooks({
     onDrop: async e => {
-      console.log('onDrop 1')
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
         for (let item of e.items) {
           if (item.kind === 'text') {
             let key;
-            await new Promise(resolve => setTimeout(() => {
-              console.log('resolving');
-              resolve()
-            }, 1000));
             if (item.types.has(dragType)) {
               key = JSON.parse(await item.getText(dragType));
               keys.push(key);
@@ -898,9 +889,8 @@ export function DragBetweenListsExample(props) {
           }
         }
 
-        console.log('onDrop 2');
         onDropAction(e);
-        // onMove(keys, e.target);
+        onMove(keys, e.target);
       }
     },
     getDropOperation(target) {
