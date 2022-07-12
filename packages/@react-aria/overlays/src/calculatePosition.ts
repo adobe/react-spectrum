@@ -403,18 +403,22 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
 }
 
 function getOffset(node: Element): Offset {
-  let box: Offset = node.getBoundingClientRect();
+  let {top, left, width, height} = node.getBoundingClientRect();
   let {scrollTop, scrollLeft, clientTop, clientLeft} = document.documentElement;
-  box.top += scrollTop - clientTop;
-  box.left += scrollLeft - clientLeft;
-  return box;
+  return {
+    top: top + scrollTop - clientTop,
+    left: left + scrollLeft - clientLeft,
+    width,
+    height
+  };
 }
 
 function getPosition(node: Element, parent: Element): Offset {
   let style = window.getComputedStyle(node);
   let offset: Offset;
   if (style.position === 'fixed') {
-    offset = node.getBoundingClientRect();
+    let {top, left, width, height} = node.getBoundingClientRect();
+    offset = {top, left, width, height};
   } else {
     offset = getOffset(node);
     let parentOffset = getOffset(parent);
