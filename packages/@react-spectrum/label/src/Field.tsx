@@ -46,7 +46,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     isReadOnly,
     inputProps, 
     inputRef, 
-    icon,
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
@@ -109,7 +108,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
             {...props} 
             readOnlyText={readOnlyText}
             inputProps={inputProps} 
-            icon={icon}
             ref={inputRef as RefObject<HTMLTextAreaElement>} />            
         </Flex>
       );

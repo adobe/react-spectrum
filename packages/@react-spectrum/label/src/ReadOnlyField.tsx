@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus'; 
 import {mergeProps} from '@react-aria/utils';
-import React, {cloneElement, RefObject, useCallback} from 'react';
+import React, {RefObject, useCallback} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
@@ -27,30 +27,16 @@ function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLTextAreaEle
     isDisabled,
     readOnlyText,
     inputProps,
-    autoFocus,
-    icon
+    autoFocus
   } = props;
   
   let {hoverProps, isHovered} = useHover({isDisabled});
-
-  if (icon) {
-    let UNSAFE_className = classNames(
-      styles,
-      icon.props && icon.props.UNSAFE_className,
-      'spectrum-Textfield-icon'
-    );
-
-    icon = cloneElement(icon, {
-      UNSAFE_className,
-      size: 'S'
-    });
-  }
 
   let onHeightChange = useCallback(() => {
     let input = ref.current;
     let prevAlignment = input.style.alignSelf;
     input.style.alignSelf = 'start';
-    input.style.height = 'auto'; // gotta figure out this height stuff :(
+    input.style.height = 'auto'; 
     input.style.height = `${input.scrollHeight}px`;
     input.style.alignSelf = prevAlignment;
   }, [ref]);
@@ -76,6 +62,7 @@ function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLTextAreaEle
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>        
         <textarea
           {...mergeProps(inputProps, hoverProps)} 
+          rows={1}
           ref={ref}
           value={readOnlyText}
           className={
@@ -83,7 +70,6 @@ function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLTextAreaEle
               styles,
               'spectrum-Textfield-input',
               {
-                // 'spectrum-Textfield-inputIcon': icon,
                 'is-hovered': isHovered
               }
             )

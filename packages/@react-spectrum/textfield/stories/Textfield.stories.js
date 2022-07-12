@@ -16,8 +16,57 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '../';
 
+const parameters = {
+  args: {
+    isReadOnly: true,
+    isQuiet: false,
+    isRequired: false,
+    isDisabled: false,
+    validationState: 'invalid',
+    description: '',
+    errorMessage: '',
+    value: ''
+  },
+  argTypes: {
+    isQuiet: {
+      control: {type: 'boolean'}
+    },
+    isRequired: {
+      control: {type: 'boolean'}
+    },
+    isDisabled: {
+      control: {type: 'boolean'}
+    },
+    validationState: {
+      control: {
+        type: 'radio',
+        options: ['invalid', 'valid']
+      }
+    },
+    description: {
+      control: {
+        type: 'radio',
+        options: ['', 'Please enter a street address']
+      }
+    },
+    errorMessage: {
+      control: {
+        type: 'radio',
+        options: ['', 'please enter a valid street address']
+      }
+    },
+    value: {
+      control: {
+        type: 'radio',
+        options: ['', 'foo  '.repeat(10)]
+      }
+    }
+  }
+};
+
 storiesOf('TextField', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
+  .addParameters(parameters)
   .add(
     'Default',
     () => render()
@@ -156,27 +205,19 @@ storiesOf('TextField', module)
   .add('test: isReadOnly, autoFocus = true, value = autofocus',
   () => render({isReadOnly: true, value: 'autofocus', autoFocus: true})
   )
-  .add('test: isReadOnly, validationState = invalid, value = invalid',
-  () => render({isReadOnly: true, validationState: 'invalid', value: 'invalid'})
-  )
-  .add('test: isReadOnly, validationState = valid, value = valid ',
-  () => render({isReadOnly: true, validationState: 'valid', value: 'valid'})
-  )
-  .add('test: isReadOnly, with description, value = description',
-  () => render({isReadOnly: true, description: 'Please enter your street address.', value: 'description'})
-  )
-  .add('test: isReadOnly, with errorMessage, value = error message',
-  () => render({isReadOnly: true, errorMessage: 'Please enter your street address.', value: 'description'})
-  )
   .add('test: isReadOnly, with icon, value = icon',
   () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
   )
-  .add('test: isReadOnly, with icon, value = icon',
-  () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
-  )
-  .add('test: isReadOnly, isRequired, value = icon',
-  () => render({isReadOnly: true, isRequired: true,  value: 'icon'})
-  )
+  .add('test: isReadOnly, with controls', 
+    args => (   
+      <TextField
+        label="Street address"
+        onChange={action('change')}
+        onFocus={action('focus')}
+        onBlur={action('blur')}
+        UNSAFE_className="custom_classname"
+        {...args} />
+  ))
   ;
 
 function render(props = {}) {
