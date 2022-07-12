@@ -34,7 +34,7 @@ export interface SpectrumLabelProps extends SpectrumLabelPropsBase, HTMLAttribut
 export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps {
   children: ReactElement,
   label?: ReactNode,
-  labelProps: HTMLAttributes<HTMLElement>, 
+  labelProps: HTMLAttributes<HTMLElement>,
   descriptionProps?: HTMLAttributes<HTMLElement>,
   errorMessageProps?: HTMLAttributes<HTMLElement>,
   wrapperClassName?: string,
@@ -42,5 +42,6 @@ export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelp
   isReadOnly?: boolean,
   inputProps?: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  icon?: ReactElement // do we need this actually
 }

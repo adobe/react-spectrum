@@ -33,7 +33,8 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, P
   errorMessageProps?: HTMLAttributes<HTMLElement>,
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   loadingIndicator?: ReactElement,
-  isLoading?: boolean
+  isLoading?: boolean,
+  readOnlyText?: string
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
@@ -54,17 +55,14 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputRef,
     isLoading,
     loadingIndicator,
-    value,
-    defaultValue,
-    validationIconClassName
+    validationIconClassName,
+    readOnlyText
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
-
-  let inputValue = value ?? defaultValue ?? ''; 
-
+  
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
     ...createFocusableRef(domRef, inputRef),
@@ -156,7 +154,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       errorMessageProps={errorMessageProps}
       showErrorIcon={false}
       ref={domRef}
-      readOnlyText={inputValue}>
+      readOnlyText={readOnlyText}
+      inputProps={inputProps}>
       {textField}
     </Field>
   );

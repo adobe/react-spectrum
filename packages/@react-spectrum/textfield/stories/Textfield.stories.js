@@ -148,14 +148,36 @@ storiesOf('TextField', module)
     () => render({isReadOnly: true, value: ''})
   )
   .add('test: isReadOnly, long text',
-  () => render({isReadOnly: true, value: 'foo  '.repeat(10)})
+  () => render({isReadOnly: true, value: 'foo  '.repeat(50)})
   )
   .add('test: isReadOnly, defaultValue',
   () => render({isReadOnly: true, defaultValue: 'foo  '.repeat(10)})
   )
   .add('test: isReadOnly, autoFocus = true, value = autofocus',
   () => render({isReadOnly: true, value: 'autofocus', autoFocus: true})
-  );
+  )
+  .add('test: isReadOnly, validationState = invalid, value = invalid',
+  () => render({isReadOnly: true, validationState: 'invalid', value: 'invalid'})
+  )
+  .add('test: isReadOnly, validationState = valid, value = valid ',
+  () => render({isReadOnly: true, validationState: 'valid', value: 'valid'})
+  )
+  .add('test: isReadOnly, with description, value = description',
+  () => render({isReadOnly: true, description: 'Please enter your street address.', value: 'description'})
+  )
+  .add('test: isReadOnly, with errorMessage, value = error message',
+  () => render({isReadOnly: true, errorMessage: 'Please enter your street address.', value: 'description'})
+  )
+  .add('test: isReadOnly, with icon, value = icon',
+  () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
+  )
+  .add('test: isReadOnly, with icon, value = icon',
+  () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
+  )
+  .add('test: isReadOnly, isRequired, value = icon',
+  () => render({isReadOnly: true, isRequired: true,  value: 'icon'})
+  )
+  ;
 
 function render(props = {}) {
   return (

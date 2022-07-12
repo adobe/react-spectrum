@@ -161,7 +161,32 @@ storiesOf('TextArea', module)
   )
   .add('test: isReadOnly = true, autoFocus = true, long text',
   () => render({isReadOnly: true, autoFocus: true, value: 'foo  '.repeat(10)})
-  );
+  )
+  .add('test: isReadOnly = true, autoFocus = true, long text',
+  () => render({isReadOnly: true, autoFocus: true, value: 'foo  '.repeat(10)})
+  )
+  .add('test: isReadOnly, validationState = invalid, value = invalid',
+  () => render({isReadOnly: true, validationState: 'invalid', value: 'invalid'})
+  )
+  .add('test: isReadOnly, validationState = valid, value = valid ',
+  () => render({isReadOnly: true, validationState: 'valid', value: 'valid'})
+  )
+  .add('test: isReadOnly, with description, value = description',
+  () => render({isReadOnly: true, description: 'Please enter your street address.', value: 'description'})
+  )
+  .add('test: isReadOnly, with errorMessage, value = error message',
+  () => render({isReadOnly: true, errorMessage: 'Please enter your street address.', value: 'description'})
+  )
+  .add('test: isReadOnly, with icon, value = icon',
+  () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
+  )
+  .add('test: isReadOnly, with icon, value = icon',
+  () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
+  )
+  .add('test: isReadOnly, isRequired, value = icon',
+  () => render({isReadOnly: true, isRequired: true,  value: 'icon'})
+  )
+  ;
 
 function render(props = {}) {
   return (
@@ -180,6 +205,7 @@ function ControlledTextArea(props) {
   return (
     <>
       <TextArea label="megatron" value={value} onChange={setValue} {...props} isQuiet />
+      <TextArea label="megatron" value={value} onChange={setValue} {...props} isReadOnly />
       <Button variant="primary" onPress={() => setValue('decepticons are evil transformers and should be kicked out of earth')}>Set Text</Button>
     </>
   );

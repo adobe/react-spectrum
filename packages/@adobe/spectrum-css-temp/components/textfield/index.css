@@ -39,12 +39,7 @@ governing permissions and limitations under the License.
     resize: vertical;
   }
 
-  &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input {
-    height: var(--spectrum-textfield-height);
-    min-height: var(--spectrum-textfield-height);
-    overflow-x: hidden;
-  }
-
+  &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input,
   &.spectrum-Textfield--readonly .spectrum-Textfield-input {
     height: var(--spectrum-textfield-height);
     min-height: var(--spectrum-textfield-height);
@@ -176,23 +171,6 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield--quiet & {
-    border-radius: var(--spectrum-textfield-quiet-border-radius);
-    border-width: 0 0 var(--spectrum-textfield-quiet-border-size) 0;
-
-    /* removes the side padding to align the text properly */
-    padding-inline-start: var(--spectrum-textfield-quiet-padding-x);
-    padding-inline-end: var(--spectrum-textfield-quiet-padding-x);
-
-    /* Treat all quiet inputs and textareas the same */
-    resize: none;
-    overflow-y: hidden;
-  }
-
-  .spectrum-Textfield--readonly & {
-
-    border-color: var(--spectrum-textfield-quiet-background-color); 
-
-    /* for quiet border */
     border-radius: var(--spectrum-textfield-quiet-border-radius);
     border-width: 0 0 var(--spectrum-textfield-quiet-border-size) 0;
 

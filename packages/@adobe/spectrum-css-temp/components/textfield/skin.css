@@ -131,52 +131,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield--readonly & {
-    
-    background-color: var(--spectrum-textfield-quiet-background-color);
-
-    /* for quiet border */
-    
-    &:hover {
-      border-color: var(--spectrum-textfield-quiet-border-color-hover);
-    }
-
-    &:active {
-      border-color: var(--spectrum-textfield-quiet-border-color-down);
-    }
-
-    &:focus,
-    &.is-focused {
-      border-width: 0 0 var(--spectrum-textfield-quiet-border-size) 0;
-      border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
-    }
-
-    &:focus-ring {
-      &:not(:active) {
-        border-width: 0 0 var(--spectrum-textfield-quiet-border-size) 0;
-        box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-key-focus);
-      }
-    }
-
-    &:disabled,
-    &.is-disabled {
-      background-color: var(--spectrum-textfield-quiet-background-color-disabled);
-      border-color:  var(--spectrum-textfield-quiet-border-color-disabled);
-    } 
-
-    /* for regular focus ring */
-
-    /* &:focus,
-    &.is-focused {
-      border: var(--spectrum-textfield-border-size) solid;
-      border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
-    }
-
-    &:focus-ring {
-      &:not(:active) {
-        border: var(--spectrum-textfield-border-size) solid;
-        border-color: var(--spectrum-textfield-border-color-key-focus);
-      }
-    } */
+    border-color: var(--spectrum-textfield-quiet-background-color); 
   }
 
 

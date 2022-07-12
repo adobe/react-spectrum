@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus'; 
 import {mergeProps} from '@react-aria/utils';
-import React, {RefObject, useCallback} from 'react';
+import React, {cloneElement, RefObject, useCallback} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
@@ -21,21 +21,36 @@ import {useHover} from '@react-aria/interactions';
 import {useLayoutEffect} from '@react-aria/utils';
 
 
-function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLInputElement | HTMLTextAreaElement>) {
+function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLTextAreaElement>) {
   props = useFormProps(props);
   let {
     isDisabled,
     readOnlyText,
     inputProps,
-    autoFocus
+    autoFocus,
+    icon
   } = props;
-
+  
   let {hoverProps, isHovered} = useHover({isDisabled});
+
+  if (icon) {
+    let UNSAFE_className = classNames(
+      styles,
+      icon.props && icon.props.UNSAFE_className,
+      'spectrum-Textfield-icon'
+    );
+
+    icon = cloneElement(icon, {
+      UNSAFE_className,
+      size: 'S'
+    });
+  }
 
   let onHeightChange = useCallback(() => {
     let input = ref.current;
     let prevAlignment = input.style.alignSelf;
     input.style.alignSelf = 'start';
+    input.style.height = 'auto'; // gotta figure out this height stuff :(
     input.style.height = `${input.scrollHeight}px`;
     input.style.alignSelf = prevAlignment;
   }, [ref]);
@@ -44,24 +59,37 @@ function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLInputElemen
     if (ref.current) {
       onHeightChange();
     }
-  }, [onHeightChange, ref]);
+  }, [onHeightChange, readOnlyText, ref]);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>        
-      <textarea
-        {...mergeProps(inputProps, hoverProps)} 
-        ref={ref as any}
-        value={readOnlyText}
-        className={
-          classNames(
-            styles,
-            'spectrum-Textfield-input',
-            {
-              'is-hovered': isHovered
-            }
-          )
-      } />
-    </FocusRing> 
+    <div
+      className={
+        classNames(
+          styles,
+          'spectrum-Textfield',
+          {
+            'spectrum-Textfield--quiet': true,
+            'spectrum-Textfield--readonly': true
+          }
+        )
+      }>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>        
+        <textarea
+          {...mergeProps(inputProps, hoverProps)} 
+          ref={ref}
+          value={readOnlyText}
+          className={
+            classNames(
+              styles,
+              'spectrum-Textfield-input',
+              {
+                // 'spectrum-Textfield-inputIcon': icon,
+                'is-hovered': isHovered
+              }
+            )
+        } />
+      </FocusRing> 
+    </div>
   );
 }
 
