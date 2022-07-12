@@ -243,7 +243,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Slider-handle {
   position: absolute;
-  inset-inline-start: 0;
   inset-block-start: calc(var(--spectrum-slider-height) / 2);
   z-index: 2;
 

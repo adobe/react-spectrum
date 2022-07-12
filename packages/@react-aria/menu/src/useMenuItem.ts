@@ -45,13 +45,13 @@ interface MenuItemAria {
 interface AriaMenuItemProps {
   /**
    * Whether the menu item is disabled.
-   * @deprecated
+   * @deprecated - pass disabledKeys to useTreeState instead.
    */
   isDisabled?: boolean,
 
   /**
    * Whether the menu item is selected.
-   * @deprecated
+   * @deprecated - pass selectedKeys to useTreeState instead.
    */
   isSelected?: boolean,
 
