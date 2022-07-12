@@ -82,8 +82,10 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
   };
 
+  // Only contain focus while the menu is open. There is a fade out transition during which we may try to move focus.
+  // If we contain, then focus will be pulled back into the menu.
   let contents = (
-    <FocusScope restoreFocus contain={isMobile}>
+    <FocusScope restoreFocus contain={isMobile && state.isOpen}>
       <DismissButton onDismiss={state.close} />
       {menu}
       <DismissButton onDismiss={state.close} />

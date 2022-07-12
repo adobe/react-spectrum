@@ -3,5 +3,6 @@
   "loadingMore": "جارٍ تحميل المزيد...",
   "sortAscending": "Sort Ascending",
   "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Resize column",
+  "columnResizer": "Column resizer"
 }
