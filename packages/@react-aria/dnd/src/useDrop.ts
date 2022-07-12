@@ -171,13 +171,9 @@ export function useDrop(options: DropOptions): DropResult {
         dropOperation
       };
 
-      // Wait a frame to dispatch the drop event so that we ensure the dragend event fires first.
-      // Otherwise, if onDrop removes the original dragged element from the DOM, dragend will never be fired.
-      // This behavior is consistent across browsers, but see this issue for details:
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=460801
-      setTimeout(() => {
-        options.onDrop(event);
-      }, 0);
+      // We want onDrop to fire before onDragEnd so that we can properly track if a drop operation is a reorder operation by checking the droppable collection's
+      // drag status and thus prevent the onDragEnd from removing the original item from the list
+      options.onDrop(event);
     }
 
     if (typeof options.onDropExit === 'function') {

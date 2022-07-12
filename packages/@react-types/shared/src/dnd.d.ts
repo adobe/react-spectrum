@@ -18,6 +18,7 @@ export interface DragDropEvent {
   y: number
 }
 
+// TODO: introduce another drop operation for reorder?
 export type DropOperation = 'copy' | 'link' | 'move' | 'cancel';
 
 export interface DragItem {
@@ -155,8 +156,11 @@ export interface DraggableCollectionProps {
   onDragStart?: (e: DraggableCollectionStartEvent) => void,
   /** Handler that is called when the dragged element is moved. */
   onDragMove?: (e: DraggableCollectionMoveEvent) => void,
+  // TODO: adding isInternalDrop is fine for useDnDHooks but doesn't feel correct for cases where the user is just using the aria hooks themselves
+  // Might be an idea to have the DragManager track the current dragged collection and give all the drag and drop handlers a reference to the
+  // DragManager or the collection being dragged. Would need to figure out how to pass that to the handlers though...
   /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
-  onDragEnd?: (e: DraggableCollectionEndEvent) => void,
+  onDragEnd?: (e: DraggableCollectionEndEvent, isInternalDrop: boolean) => void,
   /** A function that returns the items being dragged. */
   getItems: (keys: Set<Key>) => DragItem[],
   /** The ref of the element that will be rendered as the drag preview while dragging. */

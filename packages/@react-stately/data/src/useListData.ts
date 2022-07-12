@@ -119,9 +119,7 @@ export interface ListData<T> {
    * @param key - The key of the item to update.
    * @param newValue - The new value for the item.
    */
-  update(key: Key, newValue: T): void,
-  // TODO: document, essentially a passthrough so that we can get the key in code that uses the listData
-  getKey: (item: T) => Key
+  update(key: Key, newValue: T): void
 }
 
 export interface ListState<T> {
@@ -309,8 +307,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
           ]
         };
       });
-    },
-    getKey
+    }
   };
 }
 

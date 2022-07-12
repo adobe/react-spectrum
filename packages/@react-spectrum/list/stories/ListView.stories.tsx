@@ -24,8 +24,7 @@ import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
-import {useDnDHooks, useDraggable, useDroppable, useReorderable} from '@react-spectrum/dnd';
-import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useDnDHooks, useDragHooks, useDropHooks} from '@react-spectrum/dnd';
 
 const parameters = {
   args: {
@@ -400,16 +399,7 @@ storiesOf('ListView/Drag and Drop', module)
       </Flex>
     ), {description: {data: 'Folders are non-draggable.'}}
   ).add(
-    'reorderable test',
-    () => <ReorderableList />
-  ).add(
-    'Draggable list, droppable list, only files',
-    () => <DragIntoListExample />
-  ).add(
-    'Draggable list, droppable list, prevent folder drag',
-    () => <DragIntoListPreventFolderDrag />
-  ).add(
-    'drag between two lists, complex',
+    'drag between two lists, complex, new hook',
     () => <DragBetweenListsComplex />
   );
 
@@ -874,7 +864,11 @@ export function DragBetweenListsExample(props) {
       });
     },
     onDragStart: action('dragStart'),
-    onDragEnd: action('dragEnd')
+    onDragEnd: () => {
+      console.log('drag end')
+      // // let dragSession = DragManager;
+      // console.log('dragsession', dragSession)
+    }
   });
 
   // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
@@ -882,11 +876,16 @@ export function DragBetweenListsExample(props) {
 
   let dropHooks = useDropHooks({
     onDrop: async e => {
+      console.log('onDrop 1')
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
         for (let item of e.items) {
           if (item.kind === 'text') {
             let key;
+            await new Promise(resolve => setTimeout(() => {
+              console.log('resolving');
+              resolve()
+            }, 1000));
             if (item.types.has(dragType)) {
               key = JSON.parse(await item.getText(dragType));
               keys.push(key);
@@ -898,8 +897,10 @@ export function DragBetweenListsExample(props) {
             }
           }
         }
+
+        console.log('onDrop 2');
         onDropAction(e);
-        onMove(keys, e.target);
+        // onMove(keys, e.target);
       }
     },
     getDropOperation(target) {
@@ -1204,238 +1205,6 @@ function ActionBarExample(props?) {
   );
 }
 
-function ReorderableList() {
-  let list = useListData({
-    initialItems: [
-      {blah: '1', type: 'file', name: 'Adobe Photoshop'},
-      {blah: '2', type: 'file', name: 'Adobe XD'},
-      {blah: '3', type: 'folder', name: 'Documents', childNodes: []},
-      {blah: '4', type: 'file', name: 'Adobe InDesign'},
-      {blah: '5', type: 'folder', name: 'Utilities', childNodes: []},
-      {blah: '6', type: 'file', name: 'Adobe AfterEffects'}
-    ],
-    getKey: (item) => item.blah
-  });
-
-  let getDragType = (key) => {
-    let item = list.getItem(key);
-    return `adobe-${item.type}`;
-  };
-
-  let acceptedDragTypes = ['adobe-file', 'adobe-folder'];
-  // let acceptedDragTypes = ['adobe-file'];
-  // let acceptedDragTypes = ['adobe-folder'];
-
-  let {dragHooks, dropHooks} = useReorderable({
-    getDragType,
-    acceptedDragTypes,
-    list
-  });
-
-  // let {dragHooks} = useDraggable({
-  //   getDragType,
-  //   list
-  // });
-
-  // let {dropHooks} = useDroppable({
-  //   acceptedDragTypes,
-  //   list
-  // });
-
-  return (
-    <ListView
-      aria-label="Reorderable ListView"
-      selectionMode="multiple"
-      width="size-3600"
-      height="size-3600"
-      items={list.items}
-      dragHooks={dragHooks}
-      dropHooks={dropHooks}
-      disabledKeys={['2']}
-      disabledBehavior="selection">
-      {item => (
-        <Item key={item.blah} textValue={item.name} hasChildItems={item.type === 'folder'}>
-          <Text>{item.name}</Text>
-          {item.type === 'folder' &&
-            <>
-              <Folder />
-              <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
-            </>
-          }
-        </Item>
-      )}
-    </ListView>
-  );
-}
-
-function DragIntoListPreventFolderDrag() {
-  let sourceList = useListData({
-    initialItems: [
-      {id: '1', type: 'file', name: 'Adobe Photoshop'},
-      {id: '2', type: 'file', name: 'Adobe XD'},
-      {id: '3', type: 'folder', name: 'Documents'},
-      {id: '4', type: 'file', name: 'Adobe InDesign'},
-      {id: '5', type: 'folder', name: 'Utilities'},
-      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
-    ]
-  });
-
-  let targetList = useListData({
-    initialItems: [
-      {id: '7', type: 'folder', name: 'Pictures', childNodes: []},
-      {id: '8', type: 'file', name: 'Adobe Fresco'},
-      {id: '9', type: 'folder', name: 'Apps', childNodes: []}
-    ]
-  });
-
-  // let {dragHooks} = useDnDHooks({
-  //   allowsDrag: true,
-  //   getDragType: (key) => {
-  //     let item = sourceList.getItem(key);
-  //     return `list-1-adobe-${item.type}`;
-  //   },
-  //   list: sourceList,
-  //   getAllowedDropOperations: () => ['move']
-  // });
-
-  // let {dropHooks} = useDnDHooks({
-  //   allowsDrop: true,
-  //   acceptedDragTypes: ['list-1-adobe-file'],
-  //   list: targetList
-  // });
-
-  let {dragHooks} = useDraggable({
-    getDragType: (key) => {
-      let item = sourceList.getItem(key);
-      return `list-1-adobe-${item.type}`;
-    },
-    list: sourceList,
-    getAllowedDropOperations: () => ['move']
-  });
-
-  let {dropHooks} = useDroppable({
-    acceptedDragTypes: ['list-1-adobe-file'],
-    list: targetList
-  });
-
-
-  return (
-    <Flex wrap gap="size-300">
-      <ListView
-        aria-label="Draggable ListView in drag into list files only example"
-        selectionMode="multiple"
-        width="size-3600"
-        height="size-3600"
-        items={sourceList.items}
-        dragHooks={dragHooks}>
-        {item => (
-          <Item textValue={item.name}>
-            {item.type === 'folder' && <Folder />}
-            <Text>{item.name}</Text>
-          </Item>
-        )}
-      </ListView>
-      <ListView
-        aria-label="Droppable ListView in drag into list files only example"
-        width="size-3600"
-        height="size-3600"
-        items={targetList.items}
-        dropHooks={dropHooks}>
-        {item => (
-          <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
-            <Text>{item.name}</Text>
-            {item.type === 'folder' &&
-              <>
-                <Folder />
-                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
-              </>
-            }
-          </Item>
-        )}
-      </ListView>
-    </Flex>
-  );
-}
-
-function DragIntoListExample() {
-  let sourceList = useListData({
-    initialItems: [
-      {id: '1', type: 'file', name: 'Adobe Photoshop'},
-      {id: '2', type: 'file', name: 'Adobe XD'},
-      {id: '3', type: 'file', name: 'Adobe InDesign'},
-      {id: '4', type: 'file', name: 'Adobe AfterEffects'}
-    ]
-  });
-
-  let targetList = useListData({
-    initialItems: [
-      {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
-      {id: '6', type: 'file', name: 'Adobe Fresco'},
-      {id: '7', type: 'file', name: 'Adobe Connect'},
-      {id: '8', type: 'file', name: 'Adobe Lightroom'}
-    ]
-  });
-
-
-  // let {dragHooks} = useDnDHooks({
-  //   allowsDrag: true,
-  //   getDragType: () => 'list-1-adobe-file',
-  //   list: sourceList,
-  //   // Known bug that this option doesn't actually do anything, already filed
-  //   getAllowedDropOperations: () => ['copy']
-  // });
-
-  // let {dropHooks} = useDnDHooks({
-  //   allowsDrop: true,
-  //   acceptedDragTypes: ['list-1-adobe-file'],
-  //   list: targetList
-  // });
-
-
-  let {dragHooks} = useDraggable({
-    getDragType: () => 'list-1-adobe-file',
-    list: sourceList,
-    // Known bug that this option doesn't actually do anything, already filed
-    getAllowedDropOperations: () => ['copy']
-  });
-
-  let {dropHooks} = useDroppable({
-    acceptedDragTypes: ['list-1-adobe-file'],
-    list: targetList
-  });
-
-  return (
-    <Flex wrap gap="size-300">
-      <ListView
-        aria-label="Draggable ListView in drag into list example"
-        selectionMode="multiple"
-        width="size-3600"
-        height="size-2400"
-        items={sourceList.items}
-        dragHooks={dragHooks}>
-        {item => (
-          <Item textValue={item.name}>
-            <Text>{item.name}</Text>
-          </Item>
-        )}
-      </ListView>
-      <ListView
-        aria-label="Droppable ListView in drag into list example"
-        width="size-3600"
-        height="size-2400"
-        items={targetList.items}
-        dropHooks={dropHooks}>
-        {item => (
-          <Item textValue={item.name}>
-            <Text>{item.name}</Text>
-          </Item>
-        )}
-      </ListView>
-    </Flex>
-  );
-}
-
-
 function DragBetweenListsComplex() {
   let list1 = useListData({
     initialItems: [
@@ -1461,64 +1230,131 @@ function DragBetweenListsComplex() {
     getKey: (item) => item.identifier
   });
 
-  // let {dragHooks: dragHooksList1, dropHooks: dropHooksList1} = useDnDHooks({
-  //   allowsDrag: true,
-  //   allowsDrop: true,
-  //   getDragType: (key) => {
-  //     let item = list1.getItem(key);
-  //     return `list-1-adobe-${item.type}`;
-  //   },
-  //   // Disallow reordering
-  //   acceptedDragTypes: ['list-2-adobe-file', 'list-2-adobe-folder'],
-  //   list: list1,
-  //   rootDropOrder: 'prepend'
-  // });
-
-  // let {dragHooks: dragHooksList2, dropHooks: dropHooksList2} = useDnDHooks({
-  //   allowsDrag: true,
-  //   allowsDrop: true,
-  //   getDragType: (key) => {
-  //     let item = list2.getItem(key);
-  //     return `list-2-adobe-${item.type}`;
-  //   },
-  //   acceptedDragTypes: ['list-1-adobe-file', 'list-2-adobe-file', 'list-1-adobe-folder', 'list-2-adobe-folder'],
-  //   list: list2,
-  //   allowedDropPositions: ['root', 'between']
-  // });
-
-
-  let {dragHooks: dragHooksList1} = useDraggable({
-    getDragType: (key) => {
+  // List 1 should allow on item drops and external drops, but disallow reordering
+  // TODO: remove the reordering specific logic below for the other funcs,
+  let {dragHooks: dragHooksList1, dropHooks: dropHooksList1} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
-      return `list-1-adobe-${item.type}`;
+      let dragType = `list-1-adobe-${item.type}`;
+      return {
+        [`${dragType}`]: JSON.stringify(item)
+      };
+    }),
+    onInsert: (items, targetKey, dropPosition, isInternalDrop) => {
+      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
+      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+      let processedItems = items.map(item => JSON.parse(item));
+      if (isInternalDrop) {
+        let keysToMove = processedItems.map(item => item.identifier);
+        if (dropPosition === 'before') {
+          list1.moveBefore(targetKey, keysToMove);
+        } else if (dropPosition === 'after') {
+          list1.moveAfter(targetKey, keysToMove);
+        }
+      } else {
+        if (dropPosition === 'before') {
+          list1.insertBefore(targetKey, ...processedItems);
+        } else if (dropPosition === 'after') {
+          list1.insertAfter(targetKey, ...processedItems);
+        }
+      }
     },
-    list: list1
-  });
-
-  let {dropHooks: dropHooksList1} = useDroppable({
+    onRootDrop: (items, isInternalDrop) => {
+      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
+      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+      let processedItems = items.map(item => JSON.parse(item));
+      if (isInternalDrop) {
+        let keysToMove = processedItems.map(item => item.identifier);
+        let lastKey = list1.items.slice(-1)[0].identifier;
+        list1.moveAfter(lastKey, keysToMove);
+      } else {
+        list1.append(...processedItems);
+      }
+    },
+    onItemDrop: (items, targetKey) => {
+      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
+      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+      let processedItems = items.map(item => JSON.parse(item));
+      let targetItem = list1.getItem(targetKey);
+      if (targetItem.childNodes) {
+        list1.update(targetKey, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+      }
+    },
     // Disallow reordering
     acceptedDragTypes: ['list-2-adobe-file', 'list-2-adobe-folder'],
-    list: list1,
-    rootDropOrder: 'prepend'
-  });
-
-  let {dragHooks: dragHooksList2} = useDraggable({
-    getDragType: (key) => {
-      let item = list2.getItem(key);
-      return `list-2-adobe-${item.type}`;
+    onDragStart: action('dragStartList1'),
+    onDragEnd: (e, isInternalDrop) => {
+      if (e.dropOperation === 'move' && !isInternalDrop) {
+        list1.remove(...e.keys);
+      }
+      action('dragEndList1')(e, isInternalDrop);
     },
-    list: list2
+    getAllowedDropOperations: () => ['move']
+    // onDrop: () => ()
   });
 
-  let {dropHooks: dropHooksList2} = useDroppable({
+  // List 2 should allow reordering and external drops, but disallow on item drops
+  // TODO: remove the on item drop specific logic below for the other funcs,
+  let {dragHooks: dragHooksList2, dropHooks: dropHooksList2} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list2.getItem(key);
+      let dragType = `list-2-adobe-${item.type}`;
+      return {
+        [`${dragType}`]: JSON.stringify(item)
+      };
+    }),
+    onInsert: (items, targetKey, dropPosition, isInternalDrop) => {
+      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
+      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+      let processedItems = items.map(item => JSON.parse(item));
+      if (isInternalDrop) {
+        let keysToMove = processedItems.map(item => item.identifier);
+        if (dropPosition === 'before') {
+          list2.moveBefore(targetKey, keysToMove);
+        } else if (dropPosition === 'after') {
+          list2.moveAfter(targetKey, keysToMove);
+        }
+      } else {
+        if (dropPosition === 'before') {
+          list2.insertBefore(targetKey, ...processedItems);
+        } else if (dropPosition === 'after') {
+          list2.insertAfter(targetKey, ...processedItems);
+        }
+      }
+    },
+    onRootDrop: (items, isInternalDrop) => {
+      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
+      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+      let processedItems = items.map(item => JSON.parse(item));
+      if (isInternalDrop) {
+        let keysToMove = processedItems.map(item => item.identifier);
+        let lastKey = list2.items.slice(-1)[0].identifier;
+        list2.moveAfter(lastKey, keysToMove);
+      } else {
+        list2.append(...processedItems);
+      }
+    },
+    // onItemDrop: (items, targetKey) => {
+    //   // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
+    //   // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+    //   let processedItems = items.map(item => JSON.parse(item));
+    //   let targetItem = list2.getItem(targetKey);
+    //   if (targetItem.childNodes) {
+    //     list2.update(targetKey, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+    //   }
+    // },
     acceptedDragTypes: ['list-1-adobe-file', 'list-2-adobe-file', 'list-1-adobe-folder', 'list-2-adobe-folder'],
-    list: list2,
-    allowedDropPositions: ['root', 'between']
+    onDragStart: action('dragStartList2'),
+    onDragEnd: (e, isInternalDrop) => {
+      if (e.dropOperation === 'move' && !isInternalDrop) {
+        list2.remove(...e.keys);
+      }
+      action('dragEndList2')(e, isInternalDrop);
+    },
+    getAllowedDropOperations: () => ['move']
+    // onDrop: () => ()
   });
 
-  // TODO: reorder is broken because stuff gets removed before handle drop happens (different behavior in mouse and keyboard)
-  // TODO: root order is broken, debug
-  // TODO: test dropping on folder
 
   return (
     <Flex wrap gap="size-300">

@@ -11,6 +11,7 @@ export interface DragHooks {
 
 export interface DragHookOptions extends Omit<DraggableCollectionProps, 'preview'> {}
 
+// TODO: remove this hook if we decide to go with useDnDHooks instead
 export function useDragHooks(options: DragHookOptions): DragHooks {
   return useMemo(() => ({
     useDraggableCollectionState(props: DraggableCollectionOptions) {
