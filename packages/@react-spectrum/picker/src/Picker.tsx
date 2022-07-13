@@ -261,6 +261,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   ) : '';
 
   return (
+    // there is an issue with the types (have to resolve that somehow)
     <Field
       {...props}
       ref={domRef}
@@ -270,7 +271,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       errorMessageProps={errorMessageProps}
       showErrorIcon={false}
       includeNecessityIndicatorInAccessibilityName
-      elementType="span">
+      elementType="span"
+      readOnlyText={contents}>
       {picker}
     </Field>
   );
