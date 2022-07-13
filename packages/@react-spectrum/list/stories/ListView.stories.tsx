@@ -1230,9 +1230,10 @@ function DragBetweenListsComplex() {
         [`${dragType}`]: JSON.stringify(item)
       };
     }),
-    onInsert: (items, targetKey, dropPosition, isInternalDrop) => {
+    onInsert: (items, dropOperation, targetKey, dropPosition, isInternalDrop) => {
       // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
       // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+      // items
       let processedItems = items.map(item => JSON.parse(item));
       if (isInternalDrop) {
         let keysToMove = processedItems.map(item => item.identifier);
@@ -1249,9 +1250,10 @@ function DragBetweenListsComplex() {
         }
       }
     },
-    onRootDrop: (items, isInternalDrop) => {
+    onRootDrop: (items, dropOperation, isInternalDrop) => {
       // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
       // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+      // items
       let processedItems = items.map(item => JSON.parse(item));
       if (isInternalDrop) {
         let keysToMove = processedItems.map(item => item.identifier);
@@ -1261,9 +1263,9 @@ function DragBetweenListsComplex() {
         list1.append(...processedItems);
       }
     },
-    onItemDrop: (items, targetKey) => {
+    onItemDrop: (items, dropOperation, targetKey) => {
       // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
       let processedItems = items.map(item => JSON.parse(item));
       let targetItem = list1.getItem(targetKey);
       if (targetItem.childNodes) {
@@ -1279,7 +1281,8 @@ function DragBetweenListsComplex() {
       }
       action('dragEndList1')(e, isInternalDrop);
     },
-    getAllowedDropOperations: () => ['move']
+    getAllowedDropOperations: () => ['move'],
+    isValidDropTarget: (key) => !!list1.getItem(key).childNodes
     // onDrop: () => ()
   });
 
@@ -1293,10 +1296,11 @@ function DragBetweenListsComplex() {
         [`${dragType}`]: JSON.stringify(item)
       };
     }),
-    onInsert: (items, targetKey, dropPosition, isInternalDrop) => {
+    onInsert: (items, dropOperation, targetKey, dropPosition, isInternalDrop) => {
       // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
       let processedItems = items.map(item => JSON.parse(item));
+      console.log('dropOperation', dropOperation)
       if (isInternalDrop) {
         let keysToMove = processedItems.map(item => item.identifier);
         if (dropPosition === 'before') {
@@ -1312,9 +1316,9 @@ function DragBetweenListsComplex() {
         }
       }
     },
-    onRootDrop: (items, isInternalDrop) => {
+    onRootDrop: (items, dropOperation, isInternalDrop) => {
       // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
       let processedItems = items.map(item => JSON.parse(item));
       if (isInternalDrop) {
         let keysToMove = processedItems.map(item => item.identifier);
@@ -1324,9 +1328,9 @@ function DragBetweenListsComplex() {
         list2.append(...processedItems);
       }
     },
-    // onItemDrop: (items, targetKey) => {
+    // onItemDrop: (items, dropOperation, targetKey) => {
     //   // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-    //   // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+    //   // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
     //   let processedItems = items.map(item => JSON.parse(item));
     //   let targetItem = list2.getItem(targetKey);
     //   if (targetItem.childNodes) {
