@@ -66,7 +66,6 @@ const parameters = {
 
 storiesOf('TextField', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
-  .addParameters(parameters)
   .add(
     'Default',
     () => render()
@@ -217,7 +216,7 @@ storiesOf('TextField', module)
         onBlur={action('blur')}
         UNSAFE_className="custom_classname"
         {...args} />
-  ))
+  ), parameters)
   ;
 
 function render(props = {}) {

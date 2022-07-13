@@ -70,7 +70,6 @@ const parameters = {
 
 storiesOf('TextArea', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
-  .addParameters(parameters)
   .add(
     'Default',
     () => render()
@@ -221,8 +220,8 @@ storiesOf('TextArea', module)
   .add('test: isReadOnly, with icon, value = icon',
   () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
   )
-  .add('test: isReadOnly, with controls', 
-    args => (   
+  .add('test: isReadOnly, with controls',
+    (args) => (   
       <TextArea
         label="Comments"
         onChange={action('change')}
@@ -230,8 +229,7 @@ storiesOf('TextArea', module)
         onBlur={action('blur')}
         UNSAFE_className="custom_classname"
         {...args} />
-  ))
-  ;
+    ), parameters);
 
 function render(props = {}) {
   return (
