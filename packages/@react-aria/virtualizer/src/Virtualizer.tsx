@@ -146,10 +146,10 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
 
   // Tell the virtualizer to persist the focusedKey and prevent it from being reused.
-  // This is to provent the FocusRing from setting focused to the ListView when a
+  // This is to prevent the FocusRing from setting focus to the ListView when a
   // focused ListViewItem is scrolled out of the Virtualizer visible rectangle.
-  let focusedKeySet = useMemo(() => (
-    new Set([focusedKey])
+  let focusedKeySet = useMemo((): Set<Key> => (
+    focusedKey ? new Set([focusedKey]) : new Set()
   ), [focusedKey]);
 
   virtualizer.persistedKeys = focusedKeySet;

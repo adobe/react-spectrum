@@ -29,6 +29,7 @@ import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 import {Transaction} from './Transaction';
+import { MappedItems } from '@react-spectrum/autocomplete/stories/SearchAutocomplete.stories';
 
 /**
  * The CollectionView class renders a scrollable collection of data using customizable layouts,
@@ -255,7 +256,7 @@ export class Virtualizer<T extends object, V, W> {
 
     if (setsNotEqual) {
       this._persistedKeys = persistedKeys;
-      // this.updateSubviews();
+      this.updateSubviews();
     }
   }
 
@@ -679,6 +680,11 @@ export class Virtualizer<T extends object, V, W> {
           // Assuming that any item with a parent is a subitem and we need to
           // persist the parent layout, no parentKey is null
           key = layoutInfo.parentKey;
+
+          // For things that use sections we don't want the parentKeys
+          if (layoutInfo.parentKey?.toString().charAt(0) === '$') {
+            key = null;
+          }
         } else {
           key = null; // if there is no layoutInfo make sure the key is null to exit
         }
@@ -693,7 +699,10 @@ export class Virtualizer<T extends object, V, W> {
     for (let collectionKey of this._collection.getKeys()) {
       if (currentLayoutInfosKey && currentLayoutInfosKey === collectionKey) {
         map.set(currentLayoutInfosKey, layoutInfosMap.get(currentLayoutInfosKey));
-        currentLayoutInfosKey = layoutInfosIterator.next().value;
+        // Pickers have keys that don't exist in the collection so try to get past it
+        do {
+          currentLayoutInfosKey = layoutInfosIterator.next().value;
+        } while (currentLayoutInfosKey && !this._collection.getItem(currentLayoutInfosKey));
       } else if (currentPersistedKey && currentPersistedKey === collectionKey) {
         map.set(currentPersistedKey, persistedKeysMap.get(currentPersistedKey));
         currentPersistedKey = persistedKeyIterator.next().value;
