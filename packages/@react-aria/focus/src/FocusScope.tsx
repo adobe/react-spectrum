@@ -66,7 +66,7 @@ interface IFocusContext {
   focusManager: FocusManager
 }
 
-const FocusContext = React.createContext<IFocusContext>(null);
+export const FocusContext = React.createContext<IFocusContext>(null);
 
 let activeScope: ScopeRef = null;
 let scopes: Map<ScopeRef, ScopeRef | null> = new Map();

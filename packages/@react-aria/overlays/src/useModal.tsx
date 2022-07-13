@@ -18,14 +18,14 @@ interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode
 }
 
-interface ModalContext {
-  parent: ModalContext | null,
+interface IModalContext {
+  parent: IModalContext | null,
   modalCount: number,
   addModal: () => void,
   removeModal: () => void
 }
 
-const Context = React.createContext<ModalContext | null>(null);
+export const ModalContext = React.createContext<IModalContext | null>(null);
 
 /**
  * Each ModalProvider tracks how many modals are open in its subtree. On mount, the modals
@@ -37,7 +37,7 @@ const Context = React.createContext<ModalContext | null>(null);
  */
 export function ModalProvider(props: ModalProviderProps) {
   let {children} = props;
-  let parent = useContext(Context);
+  let parent = useContext(ModalContext);
   let [modalCount, setModalCount] = useState(0);
   let context = useMemo(() => ({
     parent,
@@ -57,9 +57,9 @@ export function ModalProvider(props: ModalProviderProps) {
   }), [parent, modalCount]);
 
   return (
-    <Context.Provider value={context}>
+    <ModalContext.Provider value={context}>
       {children}
-    </Context.Provider>
+    </ModalContext.Provider>
   );
 }
 
@@ -75,7 +75,7 @@ interface ModalProviderAria {
  * modals are open.
  */
 export function useModalProvider(): ModalProviderAria {
-  let context = useContext(Context);
+  let context = useContext(ModalContext);
   return {
     modalProviderProps: {
       'aria-hidden': context && context.modalCount > 0 ? true : null
@@ -162,7 +162,7 @@ interface ModalAria {
  */
 export function useModal(options?: ModalOptions): ModalAria {
   // Add aria-hidden to all parent providers on mount, and restore on unmount.
-  let context = useContext(Context);
+  let context = useContext(ModalContext);
   if (!context) {
     throw new Error('Modal is not contained within a provider');
   }
