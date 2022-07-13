@@ -18,7 +18,7 @@ export interface TagGroupProps<T> extends CollectionBase<T>, MultipleSelection {
   disabledKeys?: Iterable<Key>,
   isDisabled?: boolean,
   isRemovable?: boolean,
-  onRemove?: (items: any[]) => void
+  onRemove?: (item: any) => void
 }
 
 export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, StyleProps {}
