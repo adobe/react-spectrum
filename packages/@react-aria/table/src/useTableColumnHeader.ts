@@ -91,3 +91,50 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
     }
   };
 }
+
+/**
+ * Provides the behavior and accessibility implementation for a column header in a table.
+ * @param props - Props for the column header.
+ * @param state - State of the table, as returned by `useTableState`.
+ * @param ref - The ref attached to the column header element.
+ */
+export function useInteractiveTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>): ColumnHeaderAria {
+  let {node} = props;
+  let allowsSorting = node.props.allowsSorting;
+  // the selection cell column header needs to focus the checkbox within it but the other columns should focus the cell so that focus doesn't land on the resizer
+  let {gridCellProps} = useGridCell({...props, focusMode: node.props.isSelectionCell || node.props.allowsResizing || node.props.allowsSorting ? 'child' : 'cell'}, state, ref);
+
+
+  // Needed to pick up the focusable context, enabling things like Tooltips for example
+  let {focusableProps} = useFocusable({}, ref);
+
+  let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
+  let isSortedColumn = state.sortDescriptor?.column === node.key;
+  let sortDirection = state.sortDescriptor?.direction;
+  // aria-sort not supported in Android Talkback
+  if (node.props.allowsSorting && !isAndroid()) {
+    ariaSort = isSortedColumn ? sortDirection : 'none';
+  }
+
+  let formatMessage = useMessageFormatter(intlMessages);
+  let sortDescription;
+  if (allowsSorting) {
+    sortDescription = `${formatMessage('sortable')}`;
+    // Android Talkback doesn't support aria-sort so we add sort order details to the aria-described by here
+    if (isSortedColumn && sortDirection && isAndroid()) {
+      sortDescription = `${sortDescription}, ${formatMessage(sortDirection)}`;
+    }
+  }
+
+  let descriptionProps = useDescription(sortDescription);
+
+  return {
+    columnHeaderProps: {
+      ...mergeProps(gridCellProps, focusableProps, descriptionProps),
+      role: 'columnheader',
+      id: getColumnHeaderId(state, node.key),
+      'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,
+      'aria-sort': ariaSort
+    }
+  };
+}
