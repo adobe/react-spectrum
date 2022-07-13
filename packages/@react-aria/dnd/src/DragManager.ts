@@ -14,6 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -69,8 +70,10 @@ export function beginDragging(target: DragTarget, formatMessage: (key: string) =
   dragSession = new DragSession(target, formatMessage);
   requestAnimationFrame(() => {
     dragSession.setup();
-
-    if (getDragModality() === 'keyboard') {
+    if (
+      getDragModality() === 'keyboard' ||
+      (getDragModality() === 'touch' && getInteractionModality() === 'virtual')
+    ) {
       dragSession.next();
     }
   });
@@ -153,7 +156,6 @@ class DragSession {
   currentDropItem: DroppableItem;
   dropOperation: DropOperation;
   private mutationObserver: MutationObserver;
-  private mutationImmediate: NodeJS.Immediate;
   private restoreAriaHidden: () => void;
   private formatMessage: (key: string) => string;
   private isVirtualClick: boolean;
@@ -204,9 +206,6 @@ class DragSession {
 
     this.mutationObserver.disconnect();
     this.restoreAriaHidden();
-    if (this.mutationImmediate) {
-      clearImmediate(this.mutationImmediate);
-    }
   }
 
   onKeyDown(e: KeyboardEvent) {

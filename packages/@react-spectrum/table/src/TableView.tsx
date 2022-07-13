@@ -14,6 +14,7 @@ import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {ColumnResizeState, TableState, useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
@@ -22,17 +23,14 @@ import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {Resizer} from './Resizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
-import {TableState, useTableState} from '@react-stately/table';
-import {TableView_DEPRECATED} from './TableView_DEPRECATED';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
@@ -81,7 +79,8 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
 
 interface TableContextValue<T> {
   state: TableState<T>,
-  layout: TableLayout<T>
+  layout: TableLayout<T>,
+  columnState: ColumnResizeState<T>
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -95,6 +94,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let {styleProps} = useStyleProps(props);
 
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
+  let {direction} = useLocale();
   let {scale} = useProvider();
 
   const getDefaultWidth = useCallback(({hideHeader, isSelectionCell, showDivider}) => {
@@ -109,9 +109,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
-    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle',
-    getDefaultWidth
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
+
+  const columnState = useTableColumnResizeState({...props, getDefaultWidth}, state.collection);
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -141,9 +142,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }),
     [props.overflowMode, scale, density]
   );
-  let {direction} = useLocale();
   layout.collection = state.collection;
-  layout.getColumnWidth = state.getColumnWidth;
+  layout.getColumnWidth = columnState.getColumnWidth;
 
   let {gridProps} = useTable({
     ...props,
@@ -259,7 +259,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         }
 
         if (item.props.allowsResizing) {
-          return <ResizableTableColumnHeader item={item} state={state} />;
+          return <ResizableTableColumnHeader tableRef={domRef} column={item} />;
         }
 
         return (
@@ -303,7 +303,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }, []);
 
   return (
-    <TableContext.Provider value={{state, layout}}>
+    <TableContext.Provider value={{state, layout, columnState}}>
       <TableVirtualizer
         {...gridProps}
         {...styleProps}
@@ -316,7 +316,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
               'spectrum-Table--quiet': isQuiet,
               'spectrum-Table--wrap': props.overflowMode === 'wrap',
               'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
-              'spectrum-Table--resizingColumn': state.isResizingColumn,
               'spectrum-Table--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
               'spectrum-Table--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible
             },
@@ -331,11 +330,11 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         focusedKey={state.selectionManager.focusedKey}
         renderView={renderView}
         renderWrapper={renderWrapper}
-        setTableWidth={state.setTableWidth}
+        setTableWidth={columnState.setTableWidth}
         onVisibleRectChange={onVisibleRectChange}
         domRef={domRef}
         bodyRef={bodyRef}
-        getColumnWidth={state.getColumnWidth} />
+        getColumnWidth={columnState.getColumnWidth} />
     </TableContext.Provider>
   );
 }
@@ -391,10 +390,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   }, [bodyRef]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
-    // setting the table width will recalculate column widths which we only want to do once the virtualizer is done initializing
-    if (state.virtualizer.contentSize.height > 0) {
-      setTableWidth(rect.width);
-    }
+    setTableWidth(rect.width);
 
     state.setVisibleRect(rect);
 
@@ -461,14 +457,12 @@ function TableHeader({children, ...otherProps}) {
 
 function TableColumnHeader(props) {
   let {column} = props;
-  let ref = useRef();
+  let ref = useRef<HTMLDivElement>(null);
   let {state} = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true
   }, state, ref);
-
-  let {buttonProps} = useButton({...props, elementType: 'div'}, ref);
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
@@ -476,13 +470,9 @@ function TableColumnHeader(props) {
     throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
   }
 
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover(props);
 
   const allProps = [columnHeaderProps, hoverProps];
-  if (columnProps.allowsResizing) {
-    allProps.push(buttonProps);
-  }
-
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -517,53 +507,76 @@ function TableColumnHeader(props) {
         {columnProps.allowsSorting &&
           <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
         }
+        {props.children}
       </div>
     </FocusRing>
   );
 }
 
-function ResizableTableColumnHeader({item, state}) {
+function ResizableTableColumnHeader(props) {
+  let {column} = props;
   let ref = useRef();
+  let {state, columnState} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
+  let [isHovered, setIsHovered] = useState(false);
 
   const onMenuSelect = (key) => {
     switch (key) {
       case 'sort-asc':
-        state.sort(item.key, 'ascending');
+        state.sort(column.key, 'ascending');
         break;
       case 'sort-desc':
-        state.sort(item.key, 'descending');
+        state.sort(column.key, 'descending');
         break;
       case 'resize':
-        // focusResizer, needs timeout so that it happens after the animation timeout for menu close
-        setTimeout(() => {
-          focusSafely(ref.current);
-        }, 360);
+        columnState.onColumnResizeStart(column);
         break;
     }
   };
+  let allowsSorting = column.props?.allowsSorting;
+  let items = useMemo(() => {
+    let options = [
+      allowsSorting ? {
+        label: formatMessage('sortAscending'),
+        id: 'sort-asc'
+      } : undefined,
+      allowsSorting ? {
+        label: formatMessage('sortDescending'),
+        id: 'sort-desc'
+      } : undefined,
+      {
+        label: formatMessage('resizeColumn'),
+        id: 'resize'
+      }
+    ];
+    return options;
+  }, [allowsSorting]);
+  // if we're resizing another column, then hover shouldn't show the resizer of a different column
+  let showResizer = (isHovered && !columnState.currentlyResizingColumn) || columnState.currentlyResizingColumn === column.key;
+
+  useEffect(() => {
+    if (columnState.currentlyResizingColumn === column.key) {
+      focusSafely(ref.current);
+    }
+  }, [columnState.currentlyResizingColumn, column.key]);
 
   return (
     <>
       <MenuTrigger>
-        <TableColumnHeader column={item} />
-        <Menu onAction={onMenuSelect} minWidth="size-2000">
-          {item.props?.allowsSorting &&
-            <Item key="sort-asc">
-              {formatMessage('sortAscending')}
+        <TableColumnHeader column={column} onHoverChange={setIsHovered}>
+          <Resizer
+            ref={ref}
+            column={column}
+            showResizer={showResizer} />
+        </TableColumnHeader>
+        <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
+          {(item) => (
+            <Item>
+              {item.label}
             </Item>
-          }
-          {item.props?.allowsSorting &&
-            <Item key="sort-desc">
-              {formatMessage('sortDescending')}
-            </Item>
-          }
-          <Item key="resize">
-            {formatMessage('resizeColumn')}
-          </Item>
+          )}
         </Menu>
       </MenuTrigger>
-      <Resizer ref={ref} item={item} />
     </>
   );
 }
@@ -815,27 +828,4 @@ function CenteredWrapper({children}) {
  */
 const _TableView = React.forwardRef(TableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
-/*
-  When ready to remove this feature flag, you can remove this whole section of code, delete the _DEPRECATED files, and just replace the export with the _TableView above.
-*/
-function FeatureFlaggedTableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let state = useTableState({
-    ...props
-  });
-
-  const someColumnsAllowResizing = state.collection.columns.some(c => c.props?.allowsResizing);
-
-  if (someColumnsAllowResizing) {
-    return <_TableView {...props} ref={ref} />;
-  } else {
-    return <TableView_DEPRECATED {...props} ref={ref} />;
-  }
-}
-
-/**
- * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
- */
-const _FeatureFlaggedTableView = React.forwardRef(FeatureFlaggedTableView) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-
-
-export {_FeatureFlaggedTableView as TableView};
+export {_TableView as TableView};

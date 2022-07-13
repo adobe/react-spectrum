@@ -9,14 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, render} from '@testing-library/react';
+import {act, render, triggerPress, typeText} from '@react-spectrum/test-utils';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '../src';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress, typeText} from '@react-spectrum/test-utils';
 
 let defaultProps = {
   label: 'Test'

@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {CUSTOM_DRAG_TYPE} from '../src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from './mocks';
@@ -2355,7 +2355,7 @@ describe('useDrag and useDrop', function () {
 
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
-      expect(document.activeElement).toBe(draggable);
+      expect(document.activeElement).toBe(droppable);
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Double tap to cancel drag.');
       expect(announce).toHaveBeenCalledWith('Started dragging. Navigate to a drop target, then double tap to drop.');
