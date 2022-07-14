@@ -11,6 +11,7 @@
  */
 
 import {clamp, snapValueToStep} from '@react-aria/utils';
+import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
@@ -136,14 +137,20 @@ export interface SliderState {
   /**
    * The page size for the slider, used to do a bigger step.
    */
-  readonly pageSize: number
+  readonly pageSize: number,
+
+  /** The orientation of the slider. */
+  readonly orientation: Orientation,
+
+  /** Whether the slider is disabled. */
+  readonly isDisabled: boolean
 }
 
 const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP_VALUE = 1;
 
-interface SliderStateOptions extends SliderProps {
+interface SliderStateOptions<T> extends SliderProps<T> {
   numberFormatter: Intl.NumberFormat
 }
 
@@ -153,13 +160,14 @@ interface SliderStateOptions extends SliderProps {
  * of any thumbs.
  * @param props
  */
-export function useSliderState(props: SliderStateOptions): SliderState {
+export function useSliderState<T extends number | number[]>(props: SliderStateOptions<T>): SliderState {
   const {
-    isDisabled,
+    isDisabled = false,
     minValue = DEFAULT_MIN_VALUE,
     maxValue = DEFAULT_MAX_VALUE,
     numberFormatter: formatter,
-    step = DEFAULT_STEP_VALUE
+    step = DEFAULT_STEP_VALUE,
+    orientation = 'horizontal'
   } = props;
 
   // Page step should be at least equal to step and always a multiple of the step.
@@ -169,10 +177,15 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     return Math.max(calcPageSize, step);
   }, [step, maxValue, minValue]);
 
+  let value = useMemo(() => convertValue(props.value), [props.value]);
+  let defaultValue = useMemo(() => convertValue(props.defaultValue) ?? [minValue], [props.defaultValue, minValue]);
+  let onChange = createOnChange(props.value, props.defaultValue, props.onChange);
+  let onChangeEnd = createOnChange(props.value, props.defaultValue, props.onChangeEnd);
+
   const [values, setValues] = useControlledState<number[]>(
-    props.value as any,
-    props.defaultValue ?? [minValue] as any,
-    props.onChange as any
+    value,
+    defaultValue,
+    onChange
   );
   const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
@@ -225,8 +238,8 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     setDraggings(isDraggingsRef.current);
 
     // Call onChangeEnd if no handles are dragging.
-    if (props.onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
-      props.onChangeEnd(valuesRef.current);
+    if (onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
+      onChangeEnd(valuesRef.current);
     }
   }
 
@@ -278,7 +291,9 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     incrementThumb,
     decrementThumb,
     step,
-    pageSize
+    pageSize,
+    orientation,
+    isDisabled
   };
 }
 
@@ -288,4 +303,22 @@ function replaceIndex<T>(array: T[], index: number, value: T) {
   }
 
   return [...array.slice(0, index), value, ...array.slice(index + 1)];
+}
+
+function convertValue(value: number | number[]) {
+  if (value == null) {
+    return undefined;
+  }
+
+  return Array.isArray(value) ? value : [value];
+}
+
+function createOnChange(value, defaultValue, onChange) {
+  return (newValue: number[]) => {
+    if (typeof value === 'number' || typeof defaultValue === 'number') {
+      onChange?.(newValue[0]);
+    } else {
+      onChange?.(newValue);
+    }
+  };
 }
