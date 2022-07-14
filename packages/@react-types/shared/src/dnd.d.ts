@@ -160,7 +160,7 @@ export interface DraggableCollectionProps {
   // Might be an idea to have the DragManager track the current dragged collection and give all the drag and drop handlers a reference to the
   // DragManager or the collection being dragged. Would need to figure out how to pass that to the handlers though...
   /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
-  onDragEnd?: (e: DraggableCollectionEndEvent, isInternalDrop: boolean) => void,
+  onDragEnd?: (e: DraggableCollectionEndEvent, dropTarget: DropTarget, isInternalDrop: boolean) => void,
   /** A function that returns the items being dragged. */
   getItems: (keys: Set<Key>) => DragItem[],
   /** The ref of the element that will be rendered as the drag preview while dragging. */

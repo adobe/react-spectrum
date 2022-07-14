@@ -123,6 +123,7 @@ export function useDnDHooks(options: DnDOptions): DnDHooks {
   } = options;
   let isDragging = useRef(false);
   let isInternalDropRef = useRef(false);
+  let lastDropTarget = useRef(null);
 
   let dragHooks = useMemo(() => ({
     useDraggableCollectionState(props: DraggableCollectionOptions) {
@@ -142,9 +143,10 @@ export function useDnDHooks(options: DnDOptions): DnDHooks {
             // need to provide isInternalDropRef to the onDragend args so users can prevent a list.remove or something similar
             // Perhaps add 'reorder' or 'internal' as a new DropOperation? Not sure which makes the most sense, but perhaps adding it as a DropEvent type is
             // weird since it isn't in the native dnd api as a dropEffect
-            options.onDragEnd(e, isInternalDropRef.current);
+            options.onDragEnd(e, lastDropTarget.current, isInternalDropRef.current);
           }
           isInternalDropRef.current = false;
+          lastDropTarget.current = null;
         }
       });
     },
@@ -157,7 +159,7 @@ export function useDnDHooks(options: DnDOptions): DnDHooks {
     // Track if this is an internal drop in a separate var from the isInternalDrop ref since the 2nd half of onDrop might happen after onDragEnd due to its async nature
     let isInternalDrop = isDragging.current;
     isInternalDropRef.current = isDragging.current;
-
+    lastDropTarget.current = e.target;
 
     // TODO: perhaps user provided onDrop should just be chained with the below? That way user wouldn't have to reimplement the for loop.
     if (onDropProp) {

@@ -1220,7 +1220,7 @@ function DragBetweenListsComplex() {
     getKey: (item) => item.identifier
   });
 
-  // List 1 should allow on item drops and external drops, but disallow reordering
+  // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
   // TODO: remove the reordering specific logic below for the other funcs,
   let {dragHooks: dragHooksList1, dropHooks: dropHooksList1} = useDnDHooks({
     getItems: (keys) => [...keys].map(key => {
@@ -1275,7 +1275,7 @@ function DragBetweenListsComplex() {
     // Disallow reordering
     acceptedDragTypes: ['list-2-adobe-file', 'list-2-adobe-folder'],
     onDragStart: action('dragStartList1'),
-    onDragEnd: (e, isInternalDrop) => {
+    onDragEnd: (e, _, isInternalDrop) => {
       if (e.dropOperation === 'move' && !isInternalDrop) {
         list1.remove(...e.keys);
       }
@@ -1300,7 +1300,6 @@ function DragBetweenListsComplex() {
       // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
       // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
       let processedItems = items.map(item => JSON.parse(item));
-      console.log('dropOperation', dropOperation)
       if (isInternalDrop) {
         let keysToMove = processedItems.map(item => item.identifier);
         if (dropPosition === 'before') {
@@ -1328,19 +1327,24 @@ function DragBetweenListsComplex() {
         list2.append(...processedItems);
       }
     },
-    // onItemDrop: (items, dropOperation, targetKey) => {
-    //   // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-    //   // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
-    //   let processedItems = items.map(item => JSON.parse(item));
-    //   let targetItem = list2.getItem(targetKey);
-    //   if (targetItem.childNodes) {
-    //     list2.update(targetKey, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-    //   }
-    // },
+    onItemDrop: (items, dropOperation, targetKey) => {
+      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
+      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
+      let processedItems = items.map(item => JSON.parse(item));
+      let targetItem = list2.getItem(targetKey);
+      if (targetItem.childNodes) {
+        list2.update(targetKey, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+        // TODO: problem is that onDragEnd doesn't fire in this case since the original items are removed https://bugzilla.mozilla.org/show_bug.cgi?id=460801
+        // if (isInternalDrop && dropOperation === 'move') {
+        //   let keysToRemove = processedItems.map(item => item.identifier);
+        //   list2.remove(...keysToRemove);
+        // }
+      }
+    },
     acceptedDragTypes: ['list-1-adobe-file', 'list-2-adobe-file', 'list-1-adobe-folder', 'list-2-adobe-folder'],
     onDragStart: action('dragStartList2'),
-    onDragEnd: (e, isInternalDrop) => {
-      if (e.dropOperation === 'move' && !isInternalDrop) {
+    onDragEnd: (e, dropTarget, isInternalDrop) => {
+      if (e.dropOperation === 'move' && (!isInternalDrop || (dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list2.getItem(dropTarget.key).childNodes))) {
         list2.remove(...e.keys);
       }
       action('dragEndList2')(e, isInternalDrop);

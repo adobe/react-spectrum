@@ -19,7 +19,7 @@ import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
-import {useDroppableCollectionId} from './utils';
+import {getDraggedCollection,setDroppedCollection, useDroppableCollectionId} from './utils';
 
 export interface DroppableCollectionOptions extends DroppableCollectionProps {
   keyboardDelegate: KeyboardDelegate,
@@ -98,6 +98,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
     },
     onDrop(e) {
+      console.log('in onDrop, dragged collection', getDraggedCollection());
+      // TODO also track the droptarget
+      setDroppedCollection(state.collection);
       if (state.target && typeof props.onDrop === 'function') {
         onDrop(e, state.target);
       }
@@ -402,6 +405,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         }
       },
       onDrop(e, target) {
+        console.log('other ondrop, draggedCollection', getDraggedCollection());
+        setDroppedCollection(state.collection);
         if (localState.state.target && typeof localState.props.onDrop === 'function') {
           onDrop(e, target || localState.state.target);
         }

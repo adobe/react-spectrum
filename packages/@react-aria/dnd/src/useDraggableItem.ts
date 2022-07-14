@@ -15,8 +15,10 @@ import {DraggableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, Key} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {getDraggedCollection, getDroppedCollection, setDraggedCollection, setDroppedCollection} from './utils';
 import {useDrag} from './useDrag';
 import {useMessageFormatter} from '@react-aria/i18n';
+
 
 export interface DraggableItemProps {
   key: Key
@@ -35,13 +37,20 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     },
     preview: state.preview,
     onDragStart(e) {
+      console.log('in dragstart, dragged and dropped collection', getDraggedCollection(), getDroppedCollection());
+      // TODO only need to set once, this will trigger on every single one
+      setDraggedCollection(state.collection);
       state.startDrag(props.key, e);
     },
     onDragMove(e) {
       state.moveDrag(e);
     },
     onDragEnd(e) {
+      console.log('in dragend, dragged and dropped collection', getDraggedCollection(), getDroppedCollection());
+      console.log('is equal', getDraggedCollection() === getDroppedCollection())
+      setDraggedCollection(null);
       state.endDrag(e);
+      setDroppedCollection(null);
     }
   });
 

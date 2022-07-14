@@ -33,6 +33,8 @@ export interface DraggableCollectionState {
   endDrag(event: DragEndEvent): void
 }
 
+// TODO: perhaps track draggingCollection in state and share it with useDroppalbeCollectionState? useDroppableColelctionState doesn't has onDrop though.
+// Should it be added?
 export function useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState {
   let {
     getItems,
