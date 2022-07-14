@@ -23,7 +23,7 @@ import intlMessages from '../intl/*.json';
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DatePickerAria {
   /** Props for the date picker's visible label element, if any. */
@@ -51,7 +51,7 @@ export interface DatePickerAria {
 export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<HTMLElement>): DatePickerAria {
   let buttonId = useId();
   let dialogId = useId();
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
@@ -64,7 +64,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
 
   let {locale} = useLocale();
   let date = state.formatValue(locale, {month: 'long'});
-  let description = date ? formatMessage('selectedDateDescription', {date}) : '';
+  let description = date ? stringFormatter.format('selectedDateDescription', {date}) : '';
   let descProps = useDescription(description);
   let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
   let domProps = filterDOMProps(props);
@@ -107,7 +107,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       ...descProps,
       id: buttonId,
       'aria-haspopup': 'dialog',
-      'aria-label': formatMessage('calendar'),
+      'aria-label': stringFormatter.format('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,
       'aria-describedby': ariaDescribedBy,
       onPress: () => state.setOpen(true)

@@ -17,8 +17,8 @@ import intlMessages from '../intl/*.json';
 import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
 import {mergeProps, useId} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useLongPress} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuTriggerAriaProps {
@@ -89,10 +89,10 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     }
   };
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {longPressProps} = useLongPress({
     isDisabled: isDisabled || trigger !== 'longPress',
-    accessibilityDescription: formatMessage('longPressMessage'),
+    accessibilityDescription: stringFormatter.format('longPressMessage'),
     onLongPressStart() {
       state.close();
     },

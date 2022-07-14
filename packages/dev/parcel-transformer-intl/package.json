@@ -8,6 +8,6 @@
   },
   "dependencies": {
     "@parcel/plugin": "^2.1.1",
-    "@internationalized/message-compiler": "^1.0.0"
+    "@internationalized/string-compiler": "^1.0.0"
   }
 }

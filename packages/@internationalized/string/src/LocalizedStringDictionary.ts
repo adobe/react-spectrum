@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2022 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,31 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-export type LocalizedStrings = {
-  [lang: string]: {
-    [key: string]: string
-  }
+import type {LocalizedString} from './LocalizedStringFormatter';
+
+export type LocalizedStrings<K extends string, T extends LocalizedString> = {
+  [lang: string]: Record<K, T>
 };
 
 /**
  * Stores a mapping of localized strings. Can be used to find the
  * closest available string for a given locale.
  */
-export class MessageDictionary {
-  private messages: LocalizedStrings;
+export class LocalizedStringDictionary<K extends string = string, T extends LocalizedString = string> {
+  private strings: LocalizedStrings<K, T>;
   private defaultLocale: string;
 
-  constructor(messages: LocalizedStrings, defaultLocale: string = 'en-US') {
+  constructor(messages: LocalizedStrings<K, T>, defaultLocale: string = 'en-US') {
     // Clone messages so we don't modify the original object.
-    this.messages = {...messages};
+    this.strings = {...messages};
     this.defaultLocale = defaultLocale;
   }
 
-  getStringForLocale(key: string, locale: string) {
-    let strings = this.messages[locale];
+  /** Returns a localized string for the given key and locale. */
+  getStringForLocale(key: K, locale: string): T {
+    let strings = this.strings[locale];
     if (!strings) {
-      strings = getStringsForLocale(locale, this.messages, this.defaultLocale);
-      this.messages[locale] = strings;
+      strings = getStringsForLocale(locale, this.strings, this.defaultLocale);
+      this.strings[locale] = strings;
     }
 
     let string = strings[key];
@@ -46,7 +47,7 @@ export class MessageDictionary {
   }
 }
 
-function getStringsForLocale(locale: string, strings: LocalizedStrings, defaultLocale = 'en-US') {
+function getStringsForLocale<K extends string, T extends LocalizedString>(locale: string, strings: LocalizedStrings<K, T>, defaultLocale = 'en-US') {
   // If there is an exact match, use it.
   if (strings[locale]) {
     return strings[locale];

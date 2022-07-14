@@ -20,7 +20,7 @@ import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from '
 import {HTMLAttributes, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CalendarAria {
   /** Props for the calendar grouping element. */
@@ -36,7 +36,7 @@ export interface CalendarAria {
 }
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarState | RangeCalendarState): CalendarAria {
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let domProps = filterDOMProps(props);
 
   let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);
@@ -97,14 +97,14 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     }),
     nextButtonProps: {
       onPress: () => state.focusNextPage(),
-      'aria-label': formatMessage('next'),
+      'aria-label': stringFormatter.format('next'),
       isDisabled: nextDisabled,
       onFocus: () => nextFocused.current = true,
       onBlur: () => nextFocused.current = false
     },
     prevButtonProps: {
       onPress: () => state.focusPreviousPage(),
-      'aria-label': formatMessage('previous'),
+      'aria-label': stringFormatter.format('previous'),
       isDisabled: previousDisabled,
       onFocus: () => previousFocused.current = true,
       onBlur: () => previousFocused.current = false

@@ -10,67 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
-import {Message, MessageDictionary, Variables} from './MessageDictionary';
-
-type InternalMessage = string | (() => string);
-
-const pluralRulesCache = new Map<string, Intl.PluralRules>();
-const numberFormatCache = new Map<string, Intl.NumberFormat>();
+import {FormatXMLElementFn, PrimitiveType} from 'intl-messageformat/src/formatters';
+import IntlMessageFormat from 'intl-messageformat';
+import {MessageDictionary} from './MessageDictionary';
 
 /**
  * Formats ICU Message strings to create localized strings from a MessageDictionary.
  */
-export class MessageFormatter<K extends string = string, T extends Message = string> {
+export class MessageFormatter {
   private locale: string;
-  private messages: MessageDictionary<K, T>;
+  private messages: MessageDictionary;
+  private cache: {[key: string]: IntlMessageFormat};
 
-  constructor(locale: string, messages: MessageDictionary<K, T>) {
+  constructor(locale: string, messages: MessageDictionary) {
     this.locale = locale;
     this.messages = messages;
+    this.cache = {};
   }
 
-  format(key: K, variables: Variables): string {
-    let message = this.messages.getStringForLocale(key, this.locale);
+  format<T = void>(key: string, variables: Record<string, PrimitiveType | T | FormatXMLElementFn<T, string | T | (string | T)[]>> | undefined) {
+    let message = this.cache[key];
     if (!message) {
-      throw new Error(`Could not find intl message ${key} in ${this.locale} locale`);
+      let msg = this.messages.getStringForLocale(key, this.locale);
+      if (!msg) {
+        throw new Error(`Could not find intl message ${key} in ${this.locale} locale`);
+      }
+
+      message = new IntlMessageFormat(msg, this.locale);
+      this.cache[key] = message;
+    }
+    let varCopy: Record<string, PrimitiveType | T | FormatXMLElementFn<T, string | T | (string | T)[]>> | undefined;
+    if (variables) {
+      varCopy = Object.keys(variables).reduce((acc, key) => {
+        acc[key] = variables[key] == null ? false : variables[key];
+        return acc;
+      }, {});
     }
 
-    if (typeof message === 'function') {
-      return message(variables, this);
-    }
-
-    return message;
-  }
-
-  protected plural(count: number, options: Record<string, InternalMessage>, type: Intl.PluralRuleType = 'cardinal') {
-    let opt = options['=' + count];
-    if (opt) {
-      return typeof opt === 'function' ? opt() : opt;
-    }
-
-    let key = this.locale + ':' + type;
-    let pluralRules = pluralRulesCache.get(key);
-    if (!pluralRules) {
-      pluralRules = new Intl.PluralRules(this.locale, {type});
-      pluralRulesCache.set(key, pluralRules);
-    }
-
-    let selected = pluralRules.select(count);
-    opt = options[selected] || options.other;
-    return typeof opt === 'function' ? opt() : opt;
-  }
-
-  protected number(value: number) {
-    let numberFormat = numberFormatCache.get(this.locale);
-    if (!numberFormat) {
-      numberFormat = new Intl.NumberFormat(this.locale);
-      numberFormatCache.set(this.locale, numberFormat);
-    }
-    return numberFormat.format(value);
-  }
-
-  protected select(options: Record<string, InternalMessage>, value: string) {
-    let opt = options[value] || options.other;
-    return typeof opt === 'function' ? opt() : opt;
+    return message.format(varCopy);
   }
 }

@@ -1,11 +1,10 @@
 {
-  "name": "@internationalized/message-compiler",
-  "version": "1.0.0",
-  "description": "ICU message compiler for @internationalized/message",
+  "name": "@internationalized/string-compiler",
+  "version": "3.0.0",
+  "description": "Localized string compiler for @internationalized/string",
   "license": "Apache-2.0",
-  "private": true,
-  "main": "src/messageCompiler.js",
-  "types": "src/messageCompiler.d.ts",
+  "main": "src/stringCompiler.js",
+  "types": "src/stringCompiler.d.ts",
   "files": [
     "src"
   ],
