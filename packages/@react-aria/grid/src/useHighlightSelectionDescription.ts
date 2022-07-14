@@ -16,8 +16,8 @@ import intlMessages from '../intl/*.json';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useDescription} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
-import {useMemo} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useMemo} from 'react';
 
 interface UseHighlightSelectionDescriptionProps {
   selectionManager: MultipleSelectionManager,
