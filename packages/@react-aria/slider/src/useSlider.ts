@@ -204,7 +204,11 @@ export function useSlider(
         }
         onDownTrack(e, e.pointerId, e.clientX, e.clientY);
       },
-      onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
+      onTouchStart(e: React.TouchEvent<HTMLElement>) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); },
+      style: {
+        position: 'relative',
+        touchAction: 'none'
+      }
     }, moveProps),
     outputProps: {
       htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
