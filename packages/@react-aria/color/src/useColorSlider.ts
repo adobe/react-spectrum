@@ -99,16 +99,25 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     }
   };
 
+  let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'};
+
   return {
     trackProps: {
       ...mergeProps(groupProps, trackProps),
       style: {
         ...trackProps.style,
+        ...forcedColorAdjustNoneStyle,
         background: generateBackground()
       }
     },
     inputProps,
-    thumbProps,
+    thumbProps: {
+      ...thumbProps,
+      style: {
+        ...thumbProps.style,
+        ...forcedColorAdjustNoneStyle
+      }
+    },
     labelProps,
     outputProps
   };
