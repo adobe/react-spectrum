@@ -61,7 +61,8 @@ export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTrig
     triggerProps: {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': isOpen,
-      'aria-controls': isOpen ? overlayId : null
+      'aria-controls': isOpen ? overlayId : null,
+      onPress: state.toggle
     },
     overlayProps: {
       id: overlayId

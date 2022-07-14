@@ -26,7 +26,7 @@ interface BreadcrumbsAria {
  * Provides the behavior and accessibility implementation for a breadcrumbs component.
  * Breadcrumbs display a heirarchy of links to the current page or resource in an application.
  */
-export function useBreadcrumbs<T>(props: AriaBreadcrumbsProps<T>): BreadcrumbsAria {
+export function useBreadcrumbs(props: AriaBreadcrumbsProps): BreadcrumbsAria {
   let {
     'aria-label': ariaLabel,
     ...otherProps
