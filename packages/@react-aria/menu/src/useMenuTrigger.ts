@@ -11,12 +11,13 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {HTMLAttributes, RefObject} from 'react';
+import {AriaMenuOptions} from './useMenu';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
-import {mergeProps, useId} from '@react-aria/utils';
+import {RefObject} from 'react';
+import {useId} from '@react-aria/utils';
 import {useLongPress} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';
@@ -30,12 +31,12 @@ interface MenuTriggerAriaProps {
   trigger?: MenuTriggerType
 }
 
-interface MenuTriggerAria {
+interface MenuTriggerAria<T> {
   /** Props for the menu trigger element. */
   menuTriggerProps: AriaButtonProps,
 
   /** Props for the menu. */
-  menuProps: HTMLAttributes<HTMLElement>
+  menuProps: AriaMenuOptions<T>
 }
 
 /**
@@ -43,7 +44,7 @@ interface MenuTriggerAria {
  * @param props - Props for the menu trigger.
  * @param state - State for the menu trigger.
  */
-export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<HTMLElement>): MenuTriggerAria {
+export function useMenuTrigger<T>(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<HTMLElement>): MenuTriggerAria<T> {
   let {
     type = 'menu' as MenuTriggerAriaProps['type'],
     isDisabled,
@@ -117,17 +118,18 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     }
   };
 
-  triggerProps = mergeProps(triggerProps, trigger === 'press' ? pressProps : longPressProps);
-
   return {
     menuTriggerProps: {
       ...triggerProps,
+      ...(trigger === 'press' ? pressProps : longPressProps),
       id: menuTriggerId,
       onKeyDown
     },
     menuProps: {
       ...overlayProps,
-      'aria-labelledby': menuTriggerId
+      'aria-labelledby': menuTriggerId,
+      autoFocus: state.focusStrategy,
+      onClose: state.close
     }
   };
 }
