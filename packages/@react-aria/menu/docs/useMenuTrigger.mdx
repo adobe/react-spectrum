@@ -61,7 +61,7 @@ the implementation of the button and popup menu respectively.
 `useMenuTrigger` returns props that you should spread onto the appropriate element:
 
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.links[docs.exports.useMenuTrigger.return.id].properties} />
+  <InterfaceType properties={docs.links[(docs.exports.useMenuTrigger.return.base ?? docs.exports.useMenuTrigger.return).id].properties} />
 </TypeContext.Provider>
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useMenuTriggerState} />
