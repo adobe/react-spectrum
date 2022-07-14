@@ -46,11 +46,11 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     ...otherProps,
     // Unused except in getThumbValueLabel, which is overridden below. null to appease TypeScript.
     numberFormatter: null,
-    value: [color.getChannelValue(channel)],
-    onChange([v]) {
+    value: color.getChannelValue(channel),
+    onChange(v) {
       setColor(color.withChannelValue(channel, v));
     },
-    onChangeEnd([v]) {
+    onChangeEnd(v) {
       // onChange will have already been called with the right value, this is just to trigger onChangeEnd
       if (props.onChangeEnd) {
         props.onChangeEnd(color.withChannelValue(channel, v));
