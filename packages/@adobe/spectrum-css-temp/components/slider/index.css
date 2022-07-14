@@ -243,7 +243,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Slider-handle {
   position: absolute;
-  inset-inline-start: 0;
   inset-block-start: calc(var(--spectrum-slider-height) / 2);
   z-index: 2;
 
@@ -252,9 +251,6 @@ governing permissions and limitations under the License.
 
   inline-size: var(--spectrum-slider-handle-width);
   block-size: var(--spectrum-slider-handle-height);
-
-  margin-block: var(--spectrum-slider-handle-margin-top) 0;
-  margin-inline: calc(var(--spectrum-slider-handle-width) / -2) 0;
 
   border-width: var(--spectrum-slider-handle-border-size);
   border-style: solid;
