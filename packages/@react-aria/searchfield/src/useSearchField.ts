@@ -47,6 +47,7 @@ export function useSearchField(
   let formatMessage = useMessageFormatter(intlMessages);
   let {
     isDisabled,
+    isReadOnly,
     onSubmit = () => {},
     onClear,
     type = 'search'
@@ -59,7 +60,7 @@ export function useSearchField(
       e.preventDefault();
     }
 
-    if (isDisabled) {
+    if (isDisabled || isReadOnly) {
       return;
     }
 
@@ -109,6 +110,7 @@ export function useSearchField(
       excludeFromTabOrder: true,
       // @ts-ignore
       preventFocusOnPress: true,
+      isDisabled: isDisabled || isReadOnly,
       onPress: onClearButtonClick,
       onPressStart
     },

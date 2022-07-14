@@ -68,7 +68,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(state.collection, state.disabledKeys, null, collator), [keyboardDelegate, state.collection, state.disabledKeys, collator]);
 
-  let {menuTriggerProps, menuProps} = useMenuTrigger(
+  let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
     {
       isDisabled,
       type: 'listbox'
@@ -137,6 +137,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
+      isDisabled,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
       onKeyUp: props.onKeyUp,
       'aria-labelledby': [
@@ -196,7 +197,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         if (props.onFocusChange) {
           props.onFocusChange(false);
         }
-        
+
         state.setFocused(false);
       },
       'aria-labelledby': [
