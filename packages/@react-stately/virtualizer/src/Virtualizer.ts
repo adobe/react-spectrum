@@ -29,7 +29,6 @@ import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 import {Transaction} from './Transaction';
-import { MappedItems } from '@react-spectrum/autocomplete/stories/SearchAutocomplete.stories';
 
 /**
  * The CollectionView class renders a scrollable collection of data using customizable layouts,
@@ -666,6 +665,9 @@ export class Virtualizer<T extends object, V, W> {
     // want to be reused by Virtualizer.
     for (let persistKey of this._persistedKeys) {
       let key = persistKey;
+      console.log('this._persistedKeys, persistKey', this._persistedKeys, persistKey);
+
+      let keyMap = new Map;
 
       while (key) {
         let layoutInfo = this.layout.getLayoutInfo(key);
@@ -675,44 +677,93 @@ export class Virtualizer<T extends object, V, W> {
             layoutInfo = layoutInfo.copy();
           }
 
-          persistedKeysMap.set(layoutInfo.key, layoutInfo);
+          keyMap.set(layoutInfo.key, layoutInfo);
 
           // Assuming that any item with a parent is a subitem and we need to
           // persist the parent layout, no parentKey is null
           key = layoutInfo.parentKey;
 
+          /*if (key) {
+            console.log('key, this.layout.getLayoutInfo(key)', key, this.layout.getLayoutInfo(key));
+          }
+
+          // We don't want parents that are rowgroups or sections
+          let keyType = this.layout.getLayoutInfo(key)?.type;
+          // if (keyType === 'section' || keyType === 'rowgroup') {
           // For things that use sections we don't want the parentKeys
+          console.log('layoutInfo.parentKey?.toString().charAt(0) === \'$\'', layoutInfo.parentKey?.toString().charAt(0) === '$');
+          console.log('keyType === \'section\' || keyType === \'rowgroup\'', keyType === 'section' || keyType === 'rowgroup');*/
           if (layoutInfo.parentKey?.toString().charAt(0) === '$') {
+            console.log('key', key);
             key = null;
           }
         } else {
           key = null; // if there is no layoutInfo make sure the key is null to exit
         }
       }
+
+      // reverse order because parent keys should be before children to mirror collection
+      if (keyMap.size > 1) {
+        console.log('reverse persisted key and parents', keyMap);
+        keyMap = new Map(Array.from(keyMap).reverse());
+      }
+
+      persistedKeysMap = new Map([...persistedKeysMap, ...keyMap]);
     }
 
-    // Merge layoutInfos and persistedKeys together in order of this._collection
+    // Setup iterators to merge layoutInfos and persistedKeys together in order of this._collection
     let layoutInfosIterator = layoutInfosMap.keys();
     let currentLayoutInfosKey = layoutInfosIterator.next().value;
+    // console.log('layoutInfosMap.get(currentLayoutInfosKey)', layoutInfosMap.get(currentLayoutInfosKey));
     let persistedKeyIterator = persistedKeysMap.keys();
     let currentPersistedKey = persistedKeyIterator.next().value;
+
+    // merge any layoutInfos at the start that don't match any collection keys 
+    // when a layoutInfo isn't in the collection, but it is a valid so add it.
+    // console.log('!this._collection.getItem(currentLayoutInfosKey)', !this._collection.getItem(currentLayoutInfosKey));
+    while (currentLayoutInfosKey && !this._collection.getItem(currentLayoutInfosKey)) {
+      // console.log('added before', currentLayoutInfosKey);
+      map.set(currentLayoutInfosKey, layoutInfosMap.get(currentLayoutInfosKey));
+      currentLayoutInfosKey = layoutInfosIterator.next().value;
+    };
+
+    // Iterate this._collection and add persistedKeys or layoutInfos
     for (let collectionKey of this._collection.getKeys()) {
-      if (currentLayoutInfosKey && currentLayoutInfosKey === collectionKey) {
+      // console.log('collectionKey, currentLayoutInfosKey', collectionKey, currentLayoutInfosKey);
+      if (currentPersistedKey === collectionKey) {
+        // console.log('added persistedKey', currentPersistedKey);
+        map.set(currentPersistedKey, persistedKeysMap.get(currentPersistedKey));
+        // if the persistedKey and currentLayoutInfosKey are the same also advance currentLayoutInfosKey
+        if (currentPersistedKey === currentLayoutInfosKey) {
+          currentLayoutInfosKey = layoutInfosIterator.next().value;
+        }
+        currentPersistedKey = persistedKeyIterator.next().value;
+      } else if (currentLayoutInfosKey !== undefined) {
+        // if it isn't a persisted check assume it matches the collection key
+        // or it is a layout that isn't in the collection
+        // console.log('added layoutinfo', currentLayoutInfosKey);
         map.set(currentLayoutInfosKey, layoutInfosMap.get(currentLayoutInfosKey));
         // Pickers have keys that don't exist in the collection so try to get past it
         do {
           currentLayoutInfosKey = layoutInfosIterator.next().value;
-        } while (currentLayoutInfosKey && !this._collection.getItem(currentLayoutInfosKey));
-      } else if (currentPersistedKey && currentPersistedKey === collectionKey) {
-        map.set(currentPersistedKey, persistedKeysMap.get(currentPersistedKey));
-        currentPersistedKey = persistedKeyIterator.next().value;
+          // when a layoutInfo isn't in the collection, but it is a valid so add it.
+          if (currentLayoutInfosKey && (currentLayoutInfosKey === collectionKey || !this._collection.getItem(currentLayoutInfosKey))) {
+            // console.log('added match/non-match', currentLayoutInfosKey);
+            map.set(currentLayoutInfosKey, layoutInfosMap.get(currentLayoutInfosKey));
+          }
+          // console.log('layoutInfosMap.get(currentLayoutInfosKey)', layoutInfosMap.get(currentLayoutInfosKey));
+        } while (currentLayoutInfosKey && (currentLayoutInfosKey === collectionKey || !this._collection.getItem(currentLayoutInfosKey)));
       }
     }
 
     // there are cases where we have layoutInfos (loader, placeholder, etc.) that aren't in the
     // collection annd we need to make sure we persist those.
-    if (map.size !== (new Map([...layoutInfosMap, ...persistedKeysMap])).size) {
-      map = new Map([...layoutInfosMap, ...persistedKeysMap]);
+    let mergedMap = new Map([...layoutInfosMap, ...persistedKeysMap]);
+    if (map.size !== mergedMap.size) {
+      // console.log('map, layoutInfosMap, persistedKeysMap, map.size, mergedMap.size, layoutInfosMap.size, persistedKeysMap.size', map, layoutInfosMap, persistedKeysMap, map.size, mergedMap.size, layoutInfosMap.size, persistedKeysMap.size);
+      map.set('loader', layoutInfosMap.get('loader'));
+
+      // map = mergedMap;
     }
 
     return map;
