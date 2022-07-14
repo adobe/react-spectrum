@@ -285,7 +285,7 @@ tbody.spectrum-Table-body {
   }
 
   &:active,
-  &:focus {
+  &:focus-ring {
     &::after {
       background-color: var(--spectrum-global-color-blue-400);
     }

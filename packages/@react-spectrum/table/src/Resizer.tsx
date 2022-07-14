@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 import {classNames} from '@react-spectrum/utils';
+import {FocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -11,7 +12,8 @@ import {useTableContext} from './TableView';
 
 interface ResizerProps<T> {
   column: GridNode<T>,
-  showResizer: boolean
+  showResizer: boolean,
+  triggerRef: RefObject<HTMLDivElement>
 }
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
@@ -36,11 +38,13 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
     style.cursor = 'col-resize';
   }
   return (
-    <div
-      ref={ref}
-      {...resizerProps}
-      style={style}
-      className={classNames(styles, 'spectrum-Table-columnResizer')} />
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        ref={ref}
+        {...resizerProps}
+        style={style}
+        className={classNames(styles, 'spectrum-Table-columnResizer')} />
+    </FocusRing>
   );
 }
 

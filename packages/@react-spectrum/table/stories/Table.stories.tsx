@@ -1361,6 +1361,25 @@ storiesOf('TableView', module)
     () => (
       <HidingColumnsAllowsResizing />
     )
+  )
+  .add(
+    'what',
+    () => (
+      <TableView aria-label="Table">
+        <TableHeader>
+          <Column allowsResizing key="foo">Foo</Column>
+          <Column key="bar" maxWidth={200}>Bar</Column>
+          <Column key="baz" maxWidth={200}>Baz</Column>
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
   );
 
 function AsyncLoadingExample(props) {

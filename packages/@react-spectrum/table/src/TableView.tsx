@@ -16,7 +16,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColumnResizeState, TableState, useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {DOMRef, FocusableRef} from '@react-types/shared';
-import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
+import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -82,7 +82,8 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
 interface TableContextValue<T> {
   state: TableState<T>,
   layout: TableLayout<T>,
-  columnState: ColumnResizeState<T>
+  columnState: ColumnResizeState<T>,
+  headerRowHovered: boolean
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -153,6 +154,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     layout,
     onRowAction: onAction
   }, state, domRef);
+  let [headerRowHovered, setHeaderRowHovered] = useState(false);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
   type View = ReusableView<GridNode<T>, unknown>;
@@ -195,6 +197,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     if (reusableView.viewType === 'headerrow') {
       return (
         <TableHeaderRow
+          onHoverChange={setHeaderRowHovered}
           key={reusableView.key}
           style={style}
           item={reusableView.content}>
@@ -305,7 +308,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }, []);
 
   return (
-    <TableContext.Provider value={{state, layout, columnState}}>
+    <TableContext.Provider value={{state, layout, columnState, headerRowHovered}}>
       <TableVirtualizer
         {...gridProps}
         {...styleProps}
@@ -527,14 +530,14 @@ let TableColumnHeaderButton = React.forwardRef(_TableColumnHeaderButton);
 function ResizableTableColumnHeader(props) {
   let {column} = props;
   let ref = useRef(null);
+  let triggerRef = useRef(null);
   let resizingRef = useRef(null);
-  let {state, columnState} = useTableContext();
+  let {state, columnState, headerRowHovered} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
   let {columnHeaderProps} = useInteractiveTableColumnHeader({
     node: column,
     isVirtualized: true
   }, state, ref);
-
   let {hoverProps, isHovered} = useHover(props);
 
   const allProps = [columnHeaderProps, hoverProps];
@@ -576,12 +579,13 @@ function ResizableTableColumnHeader(props) {
     ];
     return options;
   }, [allowsSorting]);
-  // if we're resizing another column, then hover shouldn't show the resizer of a different column
-  let showResizer = (isHovered && !columnState.currentlyResizingColumn) || columnState.currentlyResizingColumn === column.key;
+
+  let showResizer = headerRowHovered || columnState.currentlyResizingColumn === column.key;
 
   useEffect(() => {
     if (columnState.currentlyResizingColumn === column.key) {
-      focusSafely(resizingRef.current);
+      // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
+      resizingRef.current.focus();
     }
   }, [columnState.currentlyResizingColumn, column.key]);
 
@@ -613,7 +617,7 @@ function ResizableTableColumnHeader(props) {
           )
         }>
         <MenuTrigger>
-          <TableColumnHeaderButton>
+          <TableColumnHeaderButton ref={triggerRef}>
             {columnProps.hideHeader ?
               <VisuallyHidden>{column.rendered}</VisuallyHidden> :
               column.rendered
@@ -633,7 +637,8 @@ function ResizableTableColumnHeader(props) {
         <Resizer
           ref={resizingRef}
           column={column}
-          showResizer={showResizer} />
+          showResizer={showResizer}
+          triggerRef={triggerRef} />
       </div>
     </FocusRing>
   );
@@ -765,13 +770,14 @@ function TableRow({item, children, hasActions, ...otherProps}) {
   );
 }
 
-function TableHeaderRow({item, children, style}) {
+function TableHeaderRow({item, children, style, ...props}) {
   let {state} = useTableContext();
   let ref = useRef();
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
+  let {hoverProps} = useHover(props);
 
   return (
-    <div {...rowProps} ref={ref} style={style}>
+    <div {...mergeProps(rowProps, hoverProps)} ref={ref} style={style}>
       {children}
     </div>
   );

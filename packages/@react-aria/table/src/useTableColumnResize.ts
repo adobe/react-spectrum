@@ -27,11 +27,13 @@ interface ResizerAria {
 interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
-  label: string
+  label: string,
+  triggerRef: RefObject<HTMLDivElement>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T> & ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): ResizerAria {
-  let {column: item, showResizer} = props;
+  let {column: item, showResizer, triggerRef} = props;
   const stateRef = useRef(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef(null);
@@ -44,17 +46,14 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
         e.preventDefault();
         // switch focus back to the column header on anything that ends edit mode
-        focusSafely(ref.current.closest('[role="columnheader"]'));
+        focusSafely(triggerRef.current);
       }
     }
   });
 
   const columnResizeWidthRef = useRef(null);
   const {moveProps} = useMove({
-    onMoveStart({pointerType}) {
-      if (pointerType !== 'keyboard') {
-        stateRef.current.onColumnResizeStart(item);
-      }
+    onMoveStart() {
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
       cursor.current = document.body.style.cursor;
     },
@@ -78,10 +77,7 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
         }
       }
     },
-    onMoveEnd({pointerType}) {
-      if (pointerType !== 'keyboard') {
-        stateRef.current.onColumnResizeEnd(item);
-      }
+    onMoveEnd() {
       columnResizeWidthRef.current = 0;
       document.body.style.cursor = cursor.current;
     }

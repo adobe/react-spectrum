@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+
 jest.mock('@react-aria/live-announcer');
 import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
-import {fireEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {fireEvent, installPointerEvent, triggerTouch} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {setInteractionModality} from '@react-aria/interactions';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -769,6 +771,7 @@ describe('TableViewSizing', function () {
       installPointerEvent();
 
       it('dragging the resizer works - desktop', () => {
+        setInteractionModality('pointer');
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let tree = render(
           <TableView aria-label="Table">
@@ -787,8 +790,7 @@ describe('TableViewSizing', function () {
           </TableView>
         );
 
-        fireEvent.pointerDown(document.body, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(document.body, {pointerType: 'touch', pointerId: 1});
+        triggerTouch(document.body);
         act(() => {jest.runAllTimers();});
 
         expect(tree.queryByRole('slider')).toBeNull();
@@ -804,14 +806,12 @@ describe('TableViewSizing', function () {
         let header = tree.getAllByRole('columnheader')[0];
         let resizableHeader = within(header).getByRole('button');
 
-        fireEvent.pointerDown(resizableHeader, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(resizableHeader, {pointerType: 'touch', pointerId: 1});
+        triggerTouch(resizableHeader);
         act(() => {jest.runAllTimers();});
 
         let resizeMenuItem = tree.getAllByRole('menuitem')[0];
 
-        fireEvent.pointerDown(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
+        triggerTouch(resizeMenuItem);
         act(() => {jest.runAllTimers();});
 
         expect(tree.getByRole('slider')).toBeVisible();
@@ -849,6 +849,7 @@ describe('TableViewSizing', function () {
       });
 
       it('dragging the resizer works - mobile', () => {
+        setInteractionModality('pointer');
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader>
@@ -1004,7 +1005,6 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
-        act(() => {jest.runAllTimers();});
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1083,7 +1083,6 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
-        act(() => {jest.runAllTimers();});
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1132,7 +1131,6 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1180,7 +1178,6 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizer);
 
         userEvent.tab();
-        act(() => {jest.runAllTimers();});
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1228,7 +1225,6 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizer);
 
         userEvent.tab({shift: true});
-        act(() => {jest.runAllTimers();});
 
         expect(document.activeElement).toBe(resizableHeader);
 
