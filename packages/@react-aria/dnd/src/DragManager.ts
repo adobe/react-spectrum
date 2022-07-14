@@ -14,6 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -77,7 +78,10 @@ export function beginDragging(target: DragTarget, formatMessage: (key: string) =
       return;
     }
 
-    if (getDragModality() === 'keyboard') {
+    if (
+      getDragModality() === 'keyboard' ||
+      (getDragModality() === 'touch' && getInteractionModality() === 'virtual')
+    ) {
       dragSession.next();
     }
   });
