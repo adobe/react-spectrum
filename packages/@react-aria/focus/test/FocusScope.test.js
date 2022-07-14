@@ -662,6 +662,8 @@ describe('FocusScope', function () {
         </FocusScope>
       );
 
+      act(() => {jest.runAllTimers();});
+
       let input1 = getByTestId('input1');
       expect(document.activeElement).toBe(input1);
     });
