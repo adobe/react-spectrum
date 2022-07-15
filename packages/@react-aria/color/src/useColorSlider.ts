@@ -99,30 +99,16 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     }
   };
 
-  let thumbPosition = state.getThumbPercent(0);
-  if (orientation === 'vertical' || direction === 'rtl') {
-    thumbPosition = 1 - thumbPosition;
-  }
-
   return {
     trackProps: {
       ...mergeProps(groupProps, trackProps),
       style: {
-        position: 'relative',
-        touchAction: 'none',
+        ...trackProps.style,
         background: generateBackground()
       }
     },
     inputProps,
-    thumbProps: {
-      ...thumbProps,
-      style: {
-        touchAction: 'none',
-        position: 'absolute',
-        [orientation === 'vertical' ? 'top' : 'left']: `${thumbPosition * 100}%`,
-        transform: 'translate(-50%, -50%)'
-      }
-    },
+    thumbProps,
     labelProps,
     outputProps
   };
