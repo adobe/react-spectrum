@@ -134,7 +134,6 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-textfield-quiet-background-color); 
   }
 
-
   .spectrum-Textfield.spectrum-Textfield--invalid & {
     border-color: var(--spectrum-textfield-border-color-error);
 
@@ -153,7 +152,6 @@ governing permissions and limitations under the License.
       }
     }
   }
-
 }
 
 .spectrum-Textfield-icon {

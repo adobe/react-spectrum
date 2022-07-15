@@ -18,7 +18,6 @@ import {useTextField} from '@react-aria/textfield';
 
 function TextField(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
-
   let inputText = props.value ?? props.defaultValue ?? ''; 
   let inputRef = useRef<HTMLInputElement>();
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField(props, inputRef);

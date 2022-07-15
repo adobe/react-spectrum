@@ -42,6 +42,5 @@ export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelp
   isReadOnly?: boolean,
   inputProps?: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
-  autoFocus?: boolean,
-  icon?: ReactElement // do we need this actually
+  autoFocus?: boolean
 }

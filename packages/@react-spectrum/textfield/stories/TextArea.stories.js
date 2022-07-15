@@ -25,11 +25,11 @@ const parameters = {
     isQuiet: false,
     isRequired: false,
     isDisabled: false,
-    validationState: 'invalid',
+    autoFocus: true,
+    validationState: '',
     description: '',
     errorMessage: '',
-    value: '',
-    icon: <Info />
+    value: ''
   },
   argTypes: {
     isQuiet: {
@@ -41,10 +41,13 @@ const parameters = {
     isDisabled: {
       control: {type: 'boolean'}
     },
+    autoFocus: {
+      control: {type: 'boolean'}
+    },
     validationState: {
       control: {
         type: 'radio',
-        options: ['invalid', 'valid']
+        options: ['', 'invalid', 'valid', '']
       }
     },
     description: {
@@ -62,7 +65,7 @@ const parameters = {
     value: {
       control: {
         type: 'radio',
-        options: ['', 'foo  '.repeat(10)]
+        options: ['', 'foo  '.repeat(20)]
       }
     }
   }
@@ -197,29 +200,6 @@ storiesOf('TextArea', module)
   )
   .add('in flex', () => renderInFlexRowAndBlock())
   .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}))
-  .add(
-    'test: isReadOnly = true, value: read only value',
-    () => render({isReadOnly: true, value: 'Read only value'})
-  )
-  .add(
-    'test: isReadOnly = true, value = ""',
-    () => render({isReadOnly: true, value: ''})
-  )
-  .add('test: isReadOnly = true, long text',
-  () => render({isReadOnly: true, value: 'foo  '.repeat(20)})
-  )
-  .add('test: isReadOnly = true, autoFocus = true, long text',
-  () => render({isReadOnly: true, autoFocus: true, value: 'foo  '.repeat(10)})
-  )
-  .add('test: isReadOnly = true, autoFocus = true, long text',
-  () => render({isReadOnly: true, autoFocus: true, value: 'foo  '.repeat(10)})
-  )
-  .add('test: isReadOnly, with icon, value = icon',
-  () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
-  )
-  .add('test: isReadOnly, with icon, value = icon',
-  () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
-  )
   .add('test: isReadOnly, with controls',
     (args) => (   
       <TextArea
@@ -229,7 +209,14 @@ storiesOf('TextArea', module)
         onBlur={action('blur')}
         UNSAFE_className="custom_classname"
         {...args} />
-    ), parameters);
+    ), parameters
+  )
+  .add('test: isReadOnly, defaultValue',
+    () => render({isReadOnly: true, defaultValue: 'foo  '.repeat(10)})
+  )
+  .add('test: isReadOnly, with icon, value = icon',
+    () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
+  );
 
 function render(props = {}) {
   return (

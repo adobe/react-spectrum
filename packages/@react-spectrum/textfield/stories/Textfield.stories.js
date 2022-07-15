@@ -22,7 +22,8 @@ const parameters = {
     isQuiet: false,
     isRequired: false,
     isDisabled: false,
-    validationState: 'invalid',
+    autofocus: false,
+    validationState: '',
     description: '',
     errorMessage: '',
     value: ''
@@ -37,10 +38,13 @@ const parameters = {
     isDisabled: {
       control: {type: 'boolean'}
     },
+    autofocus: {
+      control: {type: 'boolean'}
+    },
     validationState: {
       control: {
         type: 'radio',
-        options: ['invalid', 'valid']
+        options: ['', 'invalid', 'valid']
       }
     },
     description: {
@@ -189,26 +193,8 @@ storiesOf('TextField', module)
   .add('custom width small, labelPosition: side',
     () => render({icon: <Info />, validationState: 'invalid', width: '30px', labelPosition: 'side'})
   )
-  .add('test: isReadOnly = true, value = this is read only',
-    () => render({isReadOnly: true, value: 'this is read only'})
-  )
-  .add('test: isReadOnly, value = "" ',
-    () => render({isReadOnly: true, value: ''})
-  )
-  .add('test: isReadOnly, long text',
-  () => render({isReadOnly: true, value: 'foo  '.repeat(50)})
-  )
-  .add('test: isReadOnly, defaultValue',
-  () => render({isReadOnly: true, defaultValue: 'foo  '.repeat(10)})
-  )
-  .add('test: isReadOnly, autoFocus = true, value = autofocus',
-  () => render({isReadOnly: true, value: 'autofocus', autoFocus: true})
-  )
-  .add('test: isReadOnly, with icon, value = icon',
-  () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
-  )
   .add('test: isReadOnly, with controls', 
-    args => (   
+    (args) => (   
       <TextField
         label="Street address"
         onChange={action('change')}
@@ -216,8 +202,14 @@ storiesOf('TextField', module)
         onBlur={action('blur')}
         UNSAFE_className="custom_classname"
         {...args} />
-  ), parameters)
-  ;
+    ), parameters
+  )
+  .add('test: isReadOnly, defaultValue',
+    () => render({isReadOnly: true, defaultValue: 'foo  '.repeat(10)})
+  )
+  .add('test: isReadOnly, with icon, value = icon',
+    () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
+  );
 
 function render(props = {}) {
   return (
