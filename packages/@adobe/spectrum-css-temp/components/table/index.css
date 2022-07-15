@@ -117,7 +117,7 @@ svg.spectrum-Table-sortedIcon {
   }
 
   &:active,
-  &:focus {
+  &.focus-ring {
     outline: none;
     &::after {
       inline-size: 2px;

@@ -534,9 +534,10 @@ function ResizableTableColumnHeader(props) {
   let resizingRef = useRef(null);
   let {state, columnState, headerRowHovered} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
-  let {columnHeaderProps} = useInteractiveTableColumnHeader({
+  let {columnHeaderProps} = useTableColumnHeader({
     node: column,
-    isVirtualized: true
+    isVirtualized: true,
+    hasMenu: true
   }, state, ref);
   let {hoverProps, isHovered} = useHover(props);
 
@@ -580,14 +581,14 @@ function ResizableTableColumnHeader(props) {
     return options;
   }, [allowsSorting]);
 
-  let showResizer = headerRowHovered || columnState.currentlyResizingColumn === column.key;
-
   useEffect(() => {
     if (columnState.currentlyResizingColumn === column.key) {
       // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
       resizingRef.current.focus();
     }
   }, [columnState.currentlyResizingColumn, column.key]);
+
+  let showResizer = headerRowHovered || columnState.currentlyResizingColumn != null;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

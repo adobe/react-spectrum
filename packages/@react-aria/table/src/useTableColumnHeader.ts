@@ -26,7 +26,9 @@ interface ColumnHeaderProps {
   /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
   node: GridNode<unknown>,
   /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is contained in a virtual scroller. */
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  /** Whether the column has a menu in the header, this changes interactions with the header. */
+  hasMenu?: boolean
 }
 
 interface ColumnHeaderAria {
@@ -42,24 +44,26 @@ interface ColumnHeaderAria {
  */
 export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>): ColumnHeaderAria {
   let {node} = props;
-  let allowsResizing = node.props.allowsResizing;
   let allowsSorting = node.props.allowsSorting;
   // the selection cell column header needs to focus the checkbox within it but the other columns should focus the cell so that focus doesn't land on the resizer
-  let {gridCellProps} = useGridCell({...props, focusMode: node.props.isSelectionCell || node.props.allowsResizing || node.props.allowsSorting ? 'child' : 'cell'}, state, ref);
+  let {gridCellProps} = useGridCell({...props, focusMode: node.props.isSelectionCell || props.hasMenu || node.props.allowsSorting ? 'child' : 'cell'}, state, ref);
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
 
   let {pressProps} = usePress({
-    // Disabled for allowsResizing because if resizing is allowed, a menu trigger is added to the column header.
-    isDisabled: (!(allowsSorting || allowsResizing)) || isSelectionCellDisabled,
+    isDisabled: !allowsSorting || isSelectionCellDisabled,
     onPress() {
-      !allowsResizing && state.sort(node.key);
+      state.sort(node.key);
     },
     ref
   });
 
   // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);
+
+  if (props.hasMenu) {
+    pressProps = {};
+  }
 
   let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
   let isSortedColumn = state.sortDescriptor?.column === node.key;
@@ -84,53 +88,6 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
   return {
     columnHeaderProps: {
       ...mergeProps(gridCellProps, pressProps, focusableProps, descriptionProps),
-      role: 'columnheader',
-      id: getColumnHeaderId(state, node.key),
-      'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,
-      'aria-sort': ariaSort
-    }
-  };
-}
-
-/**
- * Provides the behavior and accessibility implementation for a column header in a table.
- * @param props - Props for the column header.
- * @param state - State of the table, as returned by `useTableState`.
- * @param ref - The ref attached to the column header element.
- */
-export function useInteractiveTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>): ColumnHeaderAria {
-  let {node} = props;
-  let allowsSorting = node.props.allowsSorting;
-  // the selection cell column header needs to focus the checkbox within it but the other columns should focus the cell so that focus doesn't land on the resizer
-  let {gridCellProps} = useGridCell({...props, focusMode: node.props.isSelectionCell || node.props.allowsResizing || node.props.allowsSorting ? 'child' : 'cell'}, state, ref);
-
-
-  // Needed to pick up the focusable context, enabling things like Tooltips for example
-  let {focusableProps} = useFocusable({}, ref);
-
-  let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
-  let isSortedColumn = state.sortDescriptor?.column === node.key;
-  let sortDirection = state.sortDescriptor?.direction;
-  // aria-sort not supported in Android Talkback
-  if (node.props.allowsSorting && !isAndroid()) {
-    ariaSort = isSortedColumn ? sortDirection : 'none';
-  }
-
-  let formatMessage = useMessageFormatter(intlMessages);
-  let sortDescription;
-  if (allowsSorting) {
-    sortDescription = `${formatMessage('sortable')}`;
-    // Android Talkback doesn't support aria-sort so we add sort order details to the aria-described by here
-    if (isSortedColumn && sortDirection && isAndroid()) {
-      sortDescription = `${sortDescription}, ${formatMessage(sortDirection)}`;
-    }
-  }
-
-  let descriptionProps = useDescription(sortDescription);
-
-  return {
-    columnHeaderProps: {
-      ...mergeProps(gridCellProps, focusableProps, descriptionProps),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
       'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,

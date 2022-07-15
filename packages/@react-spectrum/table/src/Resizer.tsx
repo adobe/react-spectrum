@@ -9,6 +9,7 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext} from './TableView';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface ResizerProps<T> {
   column: GridNode<T>,
@@ -16,13 +17,13 @@ interface ResizerProps<T> {
   triggerRef: RefObject<HTMLDivElement>
 }
 
-function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
+function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
   let {state, columnState} = useTableContext();
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
 
-  let {resizerProps} = useTableColumnResize({...props, label: formatMessage('columnResizer')}, {...state, ...columnState}, ref);
+  let {inputProps, resizerProps} = useTableColumnResize({...props, label: formatMessage('columnResizer')}, {...state, ...columnState}, ref);
 
   let style = {
     cursor: undefined,
@@ -39,15 +40,19 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
   }
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <input
-        ref={ref}
-        {...resizerProps}
-        // tabIndex={0}
-        type="range"
-        step={10}
+    <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        role="presentation"
         style={style}
-        className={classNames(styles, 'spectrum-Table-columnResizer')} />
+        className={classNames(styles, 'spectrum-Table-columnResizer')}
+        {...resizerProps}>
+        <VisuallyHidden>
+          <input
+            ref={ref}
+            type="range"
+            {...inputProps} />
+        </VisuallyHidden>
+      </div>
     </FocusRing>
   );
 }
