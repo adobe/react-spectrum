@@ -68,15 +68,16 @@ export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | '
    * TODO: need better typing for the "items" since it won't be an Array<string> for FileItem/DirectoryItems
    * DropOperation added to each of the below handlers so the user can do different things if the dropOperation is a move/copy/link operation (link operation in particular would probably need different logic)
    */
-  onInsert?: (items: Array<string>, dropOperation: DropOperation, targetKey: Key, dropPosition: DropPosition, isInternalDrop: boolean) => void,
+  onInsert?: (items: Array<string>, dropOperation: DropOperation, targetKey: Key, dropPosition: DropPosition) => void,
   /**
    * Handler called when external items are dropped on the droppable collection's root.
    */
-  onRootDrop?: (items: Array<string>,  dropOperation: DropOperation, isInternalDrop: boolean) => void,
+  onRootDrop?: (items: Array<string>, dropOperation: DropOperation) => void,
   /**
    * Handler called when items are dropped "on" a droppable collection's item.
    */
   onItemDrop?: (items: Array<string>, dropOperation: DropOperation, targetKey: Key) => void,
+  onReorder?: (items: Array<string>, targetKey: Key, dropPosition: DropPosition) => void,
   /**
    * The drag item types that the droppable collection accepts.
    * TODO: this assumes that the dragged items are Text/File items. Directory items don't have types and will need to be handled separately
@@ -115,6 +116,7 @@ and compare it to if the collection is being dropped via onDrop to figure out if
 export function useDnDHooks(options: DnDOptions): DnDHooks {
   let {
     onInsert,
+    onReorder,
     onRootDrop,
     onItemDrop,
     acceptedDragTypes = 'all',
@@ -195,14 +197,16 @@ export function useDnDHooks(options: DnDOptions): DnDHooks {
       }
 
       if (target.type === 'root') {
-        onRootDrop(dataList, dropOperation, isInternalDrop);
+        onRootDrop(dataList, dropOperation);
       } else if (target.dropPosition === 'on') {
         onItemDrop(dataList, dropOperation, target.key);
+      } else if (isInternalDrop) {
+        onReorder(dataList, target.key, target.dropPosition);
       } else {
-        onInsert(dataList, dropOperation, target.key, target.dropPosition, isInternalDrop);
+        onInsert(dataList, dropOperation, target.key, target.dropPosition);
       }
     }
-  }, [onDropProp, acceptedDragTypes, onRootDrop, onItemDrop, onInsert]);
+  }, [onDropProp, acceptedDragTypes, onRootDrop, onItemDrop, onInsert, onReorder]);
 
   // Default getDropOperation function if one isn't provided
   // TODO: do we really want this? Maybe overkill, just have user provide this?
@@ -210,11 +214,12 @@ export function useDnDHooks(options: DnDOptions): DnDHooks {
     let typesSet = types.types ? types.types : types;
     let draggedTypes = [...typesSet.values()];
     if (
-      // TODO: check the acceptedDragTypes logic
       (acceptedDragTypes === 'all' || draggedTypes.every(type => acceptedDragTypes.includes(type))) &&
       (
-        onInsert && target.type === 'item' && (target.dropPosition === 'before' || target.dropPosition === 'after') ||
-        onRootDrop && target.type === 'root' ||
+        onInsert && target.type === 'item' && !isDragging.current && (target.dropPosition === 'before' || target.dropPosition === 'after') ||
+        onReorder && target.type === 'item' && isDragging.current && (target.dropPosition === 'before' || target.dropPosition === 'after') ||
+        // Feedback was that internal root drop was weird so preventing that from happening
+        onRootDrop && target.type === 'root' && !isDragging.current ||
         // TODO: how to detect if it is a drop on a folder? Perhaps we have an option that the user provides to control this (e.g. droppableItems)?
         onItemDrop && target.type === 'item' && target.dropPosition === 'on' && (!isValidDropTarget || isValidDropTarget(target.key))
       )
@@ -225,12 +230,12 @@ export function useDnDHooks(options: DnDOptions): DnDHooks {
     }
 
     return 'cancel';
-  }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop]);
+  }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, isValidDropTarget, onReorder]);
 
 
   let dropHooks = useMemo(() => ({
     useDroppableCollectionState(props) {
-      return useDroppableCollectionState({getDropOperation, ...props, ...options, onDrop});
+      return useDroppableCollectionState({getDropOperation, ...props, ...options});
     },
     useDroppableItem,
     useDroppableCollection(props, state, ref) {
