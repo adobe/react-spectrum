@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {ChangeEvent, HTMLAttributes, RefObject, useRef} from 'react';
 import {ColumnResizeState, TableState} from '@react-stately/table';
 import {focusSafely} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
-import {HTMLAttributes, RefObject, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
@@ -84,14 +84,30 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
   });
 
   let ariaProps = {
-    role: 'slider',
     'aria-label': props.label,
     'aria-orientation': 'horizontal',
     'aria-labelledby': item.key,
     'aria-valuenow': Math.floor(stateRef.current.getColumnWidth(item.key)),
     'aria-valuetext': formatMessage('columnSize', {value: Math.floor(stateRef.current.getColumnWidth(item.key))}),
     'aria-valuemin': stateRef.current.getColumnMinWidth(item.key),
-    'aria-valuemax': stateRef.current.getColumnMaxWidth(item.key)
+    'aria-valuemax': 10000,
+    min: stateRef.current.getColumnMinWidth(item.key),
+    max: 10000,
+    value: stateRef.current.getColumnWidth(item.key)
+  };
+
+
+  let onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let currentWidth = stateRef.current.getColumnWidth(item.key);
+    let nextValue = parseFloat(e.target.value);
+
+    if (nextValue > currentWidth) {
+      nextValue = currentWidth + 10;
+    } else {
+      nextValue = currentWidth - 10;
+
+    }
+    stateRef.current.onColumnResize(item, nextValue);
   };
 
   return {
@@ -112,7 +128,8 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
           tabIndex: showResizer ? 0 : undefined
         },
         keyboardProps,
-        ariaProps
+        ariaProps,
+        {onChange}
       )
     }
   };

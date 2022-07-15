@@ -37,11 +37,15 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
   } else {
     style.cursor = 'col-resize';
   }
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div
+      <input
         ref={ref}
         {...resizerProps}
+        // tabIndex={0}
+        type="range"
+        step={10}
         style={style}
         className={classNames(styles, 'spectrum-Table-columnResizer')} />
     </FocusRing>
