@@ -14,16 +14,16 @@ export function getContentWidth(widths: Map<Key, number>): number {
 // numbers and percents are considered static. *fr units or a lack of units are considered dynamic.
 export function isStatic(width: number | string): boolean {
   return width != null && (!isNaN(width as number) || (String(width)).match(/^(\d+)(?=%$)/) !== null);
-} 
+}
 
 function parseFractionalUnit(width: string): number {
   if (!width) {
     return 1;
-  } 
+  }
   let match = width.match(/^(\d+)(?=fr$)/);
       // if width is the incorrect format, just deafult it to a 1fr
   if (!match) {
-    console.warn(`width: ${width} is not a supported format, width should be a number (ex. 150), percentage (ex. '50%') or fr unit (ex. '2fr')`, 
+    console.warn(`width: ${width} is not a supported format, width should be a number (ex. 150), percentage (ex. '50%') or fr unit (ex. '2fr')`,
         'defaulting to \'1fr\'');
     return 1;
   }
@@ -40,12 +40,12 @@ export function parseStaticWidth(width: number | string, tableWidth: number): nu
   }
   return width;
 }
-    
-    
+
+
 export function getMaxWidth(maxWidth: number | string, tableWidth: number): number {
   return maxWidth != null
         ? parseStaticWidth(maxWidth, tableWidth)
-        : Infinity;
+        : Number.MAX_SAFE_INTEGER;
 }
 
 export function getMinWidth(minWidth: number | string, tableWidth: number): number {
@@ -59,7 +59,7 @@ function mapDynamicColumns<T>(dynamicColumns: GridNode<T>[], availableSpace: num
         (sum, column) => sum + parseFractionalUnit(column.props.defaultWidth),
         0
       );
-    
+
   let columns = dynamicColumns.map((column, index) => {
     const targetWidth =
           (parseFractionalUnit(column.props.defaultWidth) * availableSpace) / fractions;
@@ -71,10 +71,10 @@ function mapDynamicColumns<T>(dynamicColumns: GridNode<T>[], availableSpace: num
     return {
       ...column,
       index,
-      delta 
+      delta
     };
   });
-    
+
   return columns;
 }
 
@@ -98,14 +98,14 @@ function findDynamicColumnWidths<T>(dynamicColumns: mappedColumn<T>[], available
   });
 
   return columns;
-}  
-    
+}
+
 export function getDynamicColumnWidths<T>(dynamicColumns: GridNode<T>[], availableSpace: number, tableWidth: number) {
   let columns = mapDynamicColumns(dynamicColumns, availableSpace, tableWidth);
-    
+
   columns.sort((a, b) => b.delta - a.delta);
   columns = findDynamicColumnWidths(columns, availableSpace, tableWidth);
   columns.sort((a, b) => a.index - b.index);
-    
+
   return columns;
 }
