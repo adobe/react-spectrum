@@ -13,13 +13,13 @@
 import {ColumnResizeState, TableState} from '@react-stately/table';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners, useId} from '@react-aria/utils';
+import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, HTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {getColumnHeaderId} from './utils';
 
 interface ResizerAria {
   inputProps: HTMLAttributes<HTMLInputElement>,
