@@ -694,6 +694,7 @@ describe('TableViewSizing', function () {
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
+        act(() => {jest.runAllTimers();});
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
@@ -762,6 +763,7 @@ describe('TableViewSizing', function () {
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
+        act(() => {jest.runAllTimers();});
 
         expect(tree.queryByRole('slider')).toBeNull();
       });

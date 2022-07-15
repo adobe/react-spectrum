@@ -27,14 +27,13 @@ interface ResizerAria {
 
 interface ResizerProps<T> {
   column: GridNode<T>,
-  showResizer: boolean,
   label: string,
   triggerRef: RefObject<HTMLDivElement>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T> & ColumnResizeState<T>, ref: RefObject<HTMLInputElement>): ResizerAria {
-  let {column: item, showResizer, triggerRef} = props;
+  let {column: item, triggerRef} = props;
   const stateRef = useRef(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef(null);
@@ -120,18 +119,30 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
     stateRef.current.onColumnResize(item, nextValue);
   };
 
-  let onDown = (id?: number) => {
+  let onDown = () => {
     focusInput();
-    addGlobalListener(window, 'mouseup', onUp, false);
+    addGlobalListener(window, 'mouseup', onPointerUp, false);
     addGlobalListener(window, 'touchend', onUp, false);
-    addGlobalListener(window, 'pointerup', onUp, false);
+    addGlobalListener(window, 'pointerup', onPointerUp, false);
   };
 
-  let onUp = (e) => {
-    focusInput();
-    removeGlobalListener(window, 'mouseup', onUp, false);
+  let onPointerUp = (e) => {
+    // don't hide the resizer for touch since it's harder to bring back
+    if (e.pointerType === 'touch') {
+      focusInput();
+    } else {
+      focusSafely(triggerRef.current);
+    }
+    removeGlobalListener(window, 'mouseup', onPointerUp, false);
     removeGlobalListener(window, 'touchend', onUp, false);
-    removeGlobalListener(window, 'pointerup', onUp, false);
+    removeGlobalListener(window, 'pointerup', onPointerUp, false);
+  };
+
+  let onUp = () => {
+    focusInput();
+    removeGlobalListener(window, 'mouseup', onPointerUp, false);
+    removeGlobalListener(window, 'touchend', onUp, false);
+    removeGlobalListener(window, 'pointerup', onPointerUp, false);
   };
 
   return {
@@ -149,9 +160,9 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
           if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
             return;
           }
-          onDown(e.pointerId);
+          onDown();
         },
-        onTouchStart: (e: React.TouchEvent<HTMLElement>) => {onDown(e.changedTouches[0].identifier);}
+        onTouchStart: () => {onDown();}
       }
     ),
     inputProps: mergeProps(

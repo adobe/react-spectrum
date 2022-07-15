@@ -33,8 +33,10 @@ import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {usePress} from '@react-aria/interactions';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {
-  useInteractiveTableColumnHeader,
   useTable,
   useTableCell,
   useTableColumnHeader,
@@ -44,9 +46,6 @@ import {
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
 } from '@react-aria/table';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
-import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
