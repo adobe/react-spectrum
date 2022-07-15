@@ -23,7 +23,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let formatMessage = useMessageFormatter(intlMessages);
   let {direction} = useLocale();
 
-  let {inputProps, resizerProps} = useTableColumnResize({...props, label: formatMessage('columnResizer')}, {...state, ...columnState}, ref);
+  let {inputProps, resizerProps} = useTableColumnResize({...props, label: formatMessage('columnResizer')}, state, columnState, ref);
 
   let style = {
     cursor: undefined,

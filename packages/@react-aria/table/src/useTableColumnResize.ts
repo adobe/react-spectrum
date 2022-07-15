@@ -12,13 +12,14 @@
 
 import {ColumnResizeState, TableState} from '@react-stately/table';
 import {focusSafely} from '@react-aria/focus';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useGlobalListeners, useId} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, HTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {getColumnHeaderId} from './utils';
 
 interface ResizerAria {
   inputProps: HTMLAttributes<HTMLInputElement>,
@@ -32,14 +33,15 @@ interface ResizerProps<T> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T> & ColumnResizeState<T>, ref: RefObject<HTMLInputElement>): ResizerAria {
+export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T>, columnState: ColumnResizeState<T>, ref: RefObject<HTMLInputElement>): ResizerAria {
   let {column: item, triggerRef} = props;
-  const stateRef = useRef(null);
+  const stateRef = useRef<ColumnResizeState<T>>(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
-  const cursor = useRef(null);
-  stateRef.current = state;
+  const cursor = useRef<string | null>(null);
+  stateRef.current = columnState;
   const formatMessage = useMessageFormatter(intlMessages);
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
+  let id = useId();
 
   let {direction} = useLocale();
   let {keyboardProps} = useKeyboard({
@@ -52,7 +54,7 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
     }
   });
 
-  const columnResizeWidthRef = useRef(null);
+  const columnResizeWidthRef = useRef<number>(0);
   const {moveProps} = useMove({
     onMoveStart() {
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
@@ -93,7 +95,7 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
   let ariaProps = {
     'aria-label': props.label,
     'aria-orientation': 'horizontal' as 'horizontal',
-    'aria-labelledby': 'none',
+    'aria-labelledby': `${id} ${getColumnHeaderId(state, item.key)}`,
     'aria-valuetext': formatMessage('columnSize', {value}),
     min,
     max,
@@ -167,6 +169,7 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
     ),
     inputProps: mergeProps(
       {
+        id,
         onFocus: () => {
           // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
           // call instead during focus and blur
