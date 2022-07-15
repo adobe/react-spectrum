@@ -11,9 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {Flex} from '@react-spectrum/layout';
 import {FocusRing} from '@react-aria/focus'; 
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useCallback} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
@@ -49,36 +47,34 @@ function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLTextAreaEle
   }, [onHeightChange, readOnlyText, ref]);
 
   return (
-    <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
-      <div
-        className={
-          classNames(
-            styles,
-            'spectrum-Textfield',
-            {
-              'spectrum-Textfield--quiet': true,
-              'spectrum-Textfield--readonly': true
-            }
-          )
-        }>
-        <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>        
-          <textarea
-            {...mergeProps(inputProps, hoverProps)} 
-            rows={1}
-            ref={ref}
-            value={readOnlyText}
-            className={
-              classNames(
-                styles,
-                'spectrum-Textfield-input',
-                {
-                  'is-hovered': isHovered
-                }
-              )
-          } />
-        </FocusRing> 
-      </div>
-    </Flex>
+    <div
+      className={
+        classNames(
+          styles,
+          'spectrum-Textfield',
+          {
+            'spectrum-Textfield--quiet': true,
+            'spectrum-Textfield--readonly': true
+          }
+        )
+      }>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>        
+        <textarea
+          {...mergeProps(inputProps, hoverProps)} 
+          rows={1}
+          ref={ref}
+          value={readOnlyText}
+          className={
+            classNames(
+              styles,
+              'spectrum-Textfield-input',
+              {
+                'is-hovered': isHovered
+              }
+            )
+        } />
+      </FocusRing> 
+    </div>
   );
 }
 
