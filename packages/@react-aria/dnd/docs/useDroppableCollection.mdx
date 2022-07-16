@@ -1,0 +1,404 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/dnd';
+import sharedDocs from 'docs:@react-types/shared';
+import selectionDocs from 'docs:@react-aria/selection';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-aria/dnd/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Keyboard} from '@react-spectrum/text';
+
+---
+category: Drag and Drop
+keywords: [drag, drop, dnd, drag and drop, aria, accessibility]
+---
+
+# useDroppableCollection
+
+<PageDescription>{docs.exports.useDroppableCollection.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useDroppableCollection', 'useDroppableItem', 'useDropIndicator']} />
+
+## API
+
+<FunctionAPI function={docs.exports.useDroppableCollection} links={docs.links} />
+<FunctionAPI function={docs.exports.useDroppableItem} links={docs.links} />
+<FunctionAPI function={docs.exports.useDropIndicator} links={docs.links} />
+
+## Introduction
+
+Collection components built with hooks such as [useListBox](useListBox.html), [useTable](useTable.html), and [useGridList](useGridList.html) can support drag and drop interactions. Users can drop data on the collection as a whole, on individual items, insert new items between existing ones, or reorder items.
+
+React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets. A droppable collection is treated as a single drop target, so that users can easily tab past it to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a _drop position_, such as on an item, or between items. These are represented using <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DropTarget.id]} /> objects.
+
+The keyboard interactions used within a collection may differ depending on the type or layout. For example, in a grid the <Keyboard>ArrowLeft</Keyboard> and <Keyboard>ArrowRight</Keyboard> may also be used, whereas they may not within a list. In general, the keyboard interactions used during drag and drop match those used when navigating the collection normally.
+
+### Implementation
+
+The <TypeLink links={docs.links} type={docs.exports.useDroppableCollection} /> hook implements drop interactions within any [collection component](../react-stately/Collections.html). The props it returns should be combined with those from the collection component you're using, such as `useListBox`. The <TypeLink links={docs.links} type={docs.exports.useDroppableItem} /> hook should be added to each individual item within the collection, combining props from the relevant hook (e.g. `useOption`).
+
+To support dropping between items, the <TypeLink links={docs.links} type={docs.exports.useDropIndicator} /> hook can be used to add additional elements between each item, for example, rendering a line when a user drags between two items. These elements must be implemented according to the relevant ARIA pattern. For example, within a listbox, drop indicators must be implemented using `role="option"`, and within a grid, they must use `role="row"` and `role="gridcell"` to ensure the accessibility tree is valid.
+
+Interactions like keyboard navigation, and drop target positioning may differ depending on the component and layout of items. These are implemented using the <TypeLink links={sharedDocs.links} type={sharedDocs.exports.KeyboardDelegate} /> and <TypeLink links={sharedDocs.links} type={sharedDocs.exports.DropTargetDelegate} /> interfaces, provided to `useDroppableCollection`. In most cases, you can use a default implementation provided by React Aria such as <TypeLink links={selectionDocs.links} type={selectionDocs.exports.ListKeyboardDelegate} /> and <TypeLink links={docs.links} type={docs.exports.ListDropTargetDelegate} />, but you may also provide your own if you need to customize the behavior.
+
+## Example
+
+```tsx example
+import {useListBox, useOption} from '@react-aria/listbox';
+import {useListState} from '@react-stately/list';
+import {Item} from '@react-stately/collections';
+import {useFocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
+import {useDroppableCollectionState} from '@react-stately/dnd';
+import {useDroppableCollection, useDroppableItem, ListDropTargetDelegate} from '@react-aria/dnd';
+import {ListKeyboardDelegate} from '@react-aria/selection';
+
+function ListBox(props) {
+  // See useListBox docs for more details.
+  let state = useListState(props);
+  let ref = React.useRef();
+  let { listBoxProps } = useListBox(props, state, ref);
+
+  let dropState = useDroppableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    getDropOperation: props.getDropOperation,
+  });
+
+  let {collectionProps} = useDroppableCollection({
+    keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
+    onDrop: props.onDrop
+  }, dropState, ref);
+
+  return (
+    <ul
+      {...mergeProps(listBoxProps, collectionProps)}
+      ref={ref}>
+      {[...state.collection].map((item) => (
+        <Option
+          key={item.key}
+          item={item}
+          state={state}
+          dropState={dropState}
+        />
+      ))}
+    </ul>
+  );
+}
+
+function Option({ item, state, dropState }) {
+  let ref = React.useRef();
+  let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
+  let { isFocusVisible, focusProps } = useFocusRing();
+
+  let {dropProps, isDropTarget} = useDroppableItem({
+    target: {type: 'item', key: item.key, dropPosition: 'on'}
+  }, dropState, ref);
+
+  return (
+    <li
+      {...mergeProps(optionProps, dropProps, focusProps)}
+      ref={ref}
+      className={`option ${isFocusVisible ? 'focus-visible' : ''} ${isDropTarget ? 'drop-target' : ''}`}>
+      {item.rendered}
+    </li>
+  );
+}
+
+<Draggable>Octopus</Draggable>
+<ListBox aria-label="Categories" selectionMode="single" getDropOperation={target => target.dropPosition === 'on' ? 'copy' : 'cancel'}>
+  <Item>Animals</Item>
+  <Item>People</Item>
+  <Item>Plants</Item>
+</ListBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.draggable {
+  display: inline-block;
+  vertical-align: top;
+  border: 1px solid gray;
+  padding: 5px 10px;
+  margin-right: 20px;
+}
+
+.draggable.dragging {
+  opacity: 0.5;
+}
+
+[role=listbox] {
+  padding: 0;
+  margin: 5px 0;
+  list-style: none;
+  border: 1px solid gray;
+  max-width: 250px;
+  outline: none;
+}
+
+[role=listbox].drop-target {
+  border-color: var(--blue);
+  outline: 1px solid var(--blue);
+}
+
+.option {
+  padding: 2px 5px;
+  outline: none;
+}
+
+.option[aria-selected=true] {
+  background: blueviolet;
+  color: white;
+}
+
+.option.focus-visible {
+  outline: 2px solid orange;
+}
+
+.option.drop-target {
+  outline: 2px solid var(--blue);
+}
+
+.drop-indicator {
+  width: 100%;
+  margin-left: 0;
+  height: 2px;
+  margin-bottom: -2px;
+  outline: none;
+  background: transparent;
+}
+
+.drop-indicator.drop-target {
+  background: var(--blue);
+}
+```
+
+</details>
+
+
+### Draggable
+
+The `Draggable` component used above is defined below. See [useDrag](useDrag.html) for more details and documentation.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example render=false export=true
+import {useDrag} from '@react-aria/dnd';
+import {mergeProps} from '@react-aria/utils';
+import {useButton} from '@react-aria/button';
+
+function Draggable({children}) {
+  let {dragProps, dragButtonProps, isDragging} = useDrag({
+    getItems() {
+      return [{
+        'text/plain': children,
+        'my-app-custom-type': JSON.stringify({message: children})
+      }];
+    }
+  });
+
+  let ref = React.useRef();
+  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
+
+  return (
+    <div {...mergeProps(dragProps, buttonProps)} ref={ref} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+      <span aria-hidden="true">≡</span>{' '}
+      {children}
+    </div>
+  );
+}
+```
+
+</details>
+
+## Dropping between items
+
+```tsx example export=true render=false
+import {useDropIndicator} from '@react-aria/dnd';
+
+///- begin collapse -///
+function ListBox(props) {
+  // See useListBox docs for more details.
+  let state = useListState(props);
+  let ref = React.useRef();
+  let { listBoxProps } = useListBox(props, state, ref);
+
+  let dropState = useDroppableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    getDropOperation: props.getDropOperation,
+  });
+
+  let {collectionProps} = useDroppableCollection({
+    keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
+    onDrop: props.onDrop
+  }, dropState, ref);
+
+  return (
+    <ul
+      {...mergeProps(listBoxProps, collectionProps)}
+      ref={ref}>
+      {[...state.collection].map((item) => (
+        <Option
+          key={item.key}
+          item={item}
+          state={state}
+          dropState={dropState}
+        />
+      ))}
+    </ul>
+  );
+}
+///- end collapse -///
+
+function Option({ item, state, dropState }) {
+  let ref = React.useRef();
+  let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
+  let { isFocusVisible, focusProps } = useFocusRing();
+
+  let {dropProps, isDropTarget} = useDroppableItem({
+    target: {type: 'item', key: item.key, dropPosition: 'on'}
+  }, dropState, ref);
+
+  return (
+    <>
+     <DropIndicator
+        target={{type: 'item', key: item.key, dropPosition: 'before'}}
+        dropState={dropState} />
+      <li
+        {...mergeProps(optionProps, dropProps, focusProps)}
+        ref={ref}
+        className={`option ${isFocusVisible ? 'focus-visible' : ''} ${isDropTarget ? 'drop-target' : ''}`}>
+        {item.rendered}
+      </li>
+      {state.collection.getKeyAfter(item.key) == null &&
+        <DropIndicator
+          target={{type: 'item', key: item.key, dropPosition: 'after'}}
+          dropState={dropState} />
+      }
+    </>
+  );
+}
+
+function DropIndicator(props) {
+  let ref = React.useRef();
+  let {dropIndicatorProps, isHidden, isDropTarget} = useDropIndicator(props, props.dropState, ref);
+  if (isHidden) {
+    return null;
+  }
+
+  let className = props.target.type === 'item'
+    ? `drop-indicator ${isDropTarget ? 'drop-target' : ''}`
+    : '';
+
+  return (
+    <li
+      {...dropIndicatorProps}
+      role="option"
+      ref={ref}
+      className={className} />
+  );
+}
+```
+
+
+```tsx example
+import {useListData} from '@react-stately/data';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Cat'},
+      {id: 2, name: 'Dog'},
+      {id: 3, name: 'Kangaroo'}
+    ]
+  });
+
+  let onDrop = async e => {
+    let name = await e.items[0].getText('text/plain');
+    let item = {id: list.items.length + 1, name};
+    if (e.target.dropPosition === 'before') {
+      list.insertBefore(e.target.key, item);
+    } else if (e.target.dropPosition === 'after') {
+      list.insertAfter(e.target.key, item);
+    }
+  };
+
+  return (
+    <>
+      <Draggable>Octopus</Draggable>
+      <ListBox aria-label="Favorite animals" selectionMode="single" items={list.items} getDropOperation={target => target.type === 'item' && target.dropPosition !== 'on' ? 'copy' : 'cancel'} onDrop={onDrop}>
+        {item => <Item>{item.name}</Item>}
+      </ListBox>
+    </>
+  );
+}
+```
+
+## Dropping on the root
+
+```tsx example
+function ListBox(props) {
+  ///- begin collapse -///
+  let state = useListState(props);
+  let ref = React.useRef();
+  let { listBoxProps } = useListBox(props, state, ref);
+
+  let dropState = useDroppableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    getDropOperation: props.getDropOperation,
+  });
+
+  let {collectionProps} = useDroppableCollection({
+    keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
+    onDrop: props.onDrop
+  }, dropState, ref);
+  ///- end collapse -///
+  // ...
+
+  let isDropTarget = dropState.isDropTarget({type: 'root'});
+
+  return (
+    <ul
+      {...mergeProps(listBoxProps, collectionProps)}
+      ref={ref}
+      className={isDropTarget ? 'drop-target' : ''}>
+      <DropIndicator target={{type: 'root'}} dropState={dropState} />
+      {[...state.collection].map((item) => (
+        <Option
+          key={item.key}
+          item={item}
+          state={state}
+          dropState={dropState}
+        />
+      ))}
+    </ul>
+  );
+}
+
+<Draggable>budget.xls</Draggable>
+<ListBox aria-label="Files" selectionMode="single" getDropOperation={target => target.type === 'root' || (target.key === 'documents' && target.dropPosition === 'on') ? 'copy' : 'cancel'}>
+  <Item key="documents">Documents</Item>
+  <Item>proposal.doc</Item>
+  <Item>presentation.ppt</Item>
+</ListBox>
+```
