@@ -18,5 +18,6 @@ export * from './useDropIndicator';
 export * from './useDraggableItem';
 export * from './useClipboard';
 export {DragPreview} from './DragPreview';
+export {ListDropTargetDelegate} from './ListDropTargetDelegate';
 
 export type {DragPreviewProps} from './DragPreview';
