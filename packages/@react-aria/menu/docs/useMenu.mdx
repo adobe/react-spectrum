@@ -110,7 +110,7 @@ items or sections of items. We'll go through each component one by one.
 ### MenuButton
 
 We'll start with the `MenuButton` component, which is what will trigger our menu to appear. This uses
-the <TypeLink links={docs.links} type={docs.exports.useMenuTrigger} /> along with <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useMenuTriggerState} />.
+the <TypeLink links={docs.links} type={docs.exports.useMenuTrigger} /> and <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useMenuTriggerState} /> hooks.
 The `Popover` and `Button` components used in this example are independent, and can be shared by many other components.
 The code is available below, and documentation is available on the corresponding pages.
 
@@ -154,7 +154,7 @@ function MenuButton(props) {
 ### Menu
 
 Next, let's implement the `Menu` component. This will appear inside the `Popover` when the user presses the button.
-It is built using the <TypeLink links={menuDocs.links} type={menuDocs.exports.useMenu} /> and <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} />.
+It is built using the <TypeLink links={menuDocs.links} type={menuDocs.exports.useMenu} /> and <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} /> hooks.
 For each item in the collection in state, we render either a `MenuItem` or `MenuSection` (defined [below](#sections)) according to the item's `type` property.
 
 ```tsx example export=true render=false
