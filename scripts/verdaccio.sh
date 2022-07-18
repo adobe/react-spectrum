@@ -35,7 +35,7 @@ function cleanup {
 trap cleanup ERR EXIT
 
 # Generate dists for the packages
-yarn parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-optimize --log-level error
+yarn parcel build packages/@adobe/react-spectrum/ packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-optimize --log-level error
 
 # Start verdaccio and send it to the background
 yarn verdaccio --listen $port &>${output}&
@@ -79,14 +79,14 @@ then
   mkdir -p $verdaccio_path
   mv dist/production/docs $verdaccio_path
 
+  #install packages in test app
+  cd examples/rsp-cra-18
+  yarn install
+
   # Build test app and move to dist folder
-  cd ../
-  git clone https://$GITHUB_TOKEN@github.com/LFDanLu/rsp-cra-verdaccio-test.git
-  cd rsp-cra-verdaccio-test
-  npm install
-  npm run-script build
-  mv build ../react-spectrum/$verdaccio_path
-  cd ../react-spectrum
+  yarn run build
+  mv build ../../$verdaccio_path
+  cd ../..
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"
