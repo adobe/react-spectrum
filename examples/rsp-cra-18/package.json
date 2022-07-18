@@ -2,6 +2,7 @@
   "name": "rsp-cra-18",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@adobe/react-spectrum": "latest",
     "@spectrum-icons/workflow": "^4.0.0",
