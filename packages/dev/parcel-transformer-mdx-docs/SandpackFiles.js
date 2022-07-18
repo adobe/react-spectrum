@@ -196,7 +196,7 @@ ReactDOM.render(
         },
         entry: "/index.js",
         main: "/index.html",
-        environment: "parcel",
+        environment: "create-react-app",
       }}>
       <CustomSandpack indexFiles={{light: \`${getIndexFile(componentName, 'light')}\`, dark: \`${getIndexFile(componentName, 'dark')}\` }} />
     </SandpackProvider>
