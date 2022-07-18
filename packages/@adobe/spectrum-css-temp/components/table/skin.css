@@ -149,11 +149,11 @@ tbody.spectrum-Table-body {
   }
 
   /* Alternative to border on rows. Using box shadow since they don't take room unlike border which would cause wiggles
-   * in the hightlight case and displace the sticky indicator. Also allows for a nicer bottom curved border to match the container,
+   * in the highlight case and displace the sticky indicator. Also allows for a nicer bottom curved border to match the container,
    * the bottom border curved corners were cut off when using borders.
    */
 
-  /* Box shadow for bottom border for non-selected rows that aren't immediatly above a selected row. Can't omit the bottom border for last row unlike listview
+  /* Box shadow for bottom border for non-selected rows that aren't immediately above a selected row. Can't omit the bottom border for last row unlike listview
    * due to how table rows always reserve 1px for the bottom border (results in a white gap on hover otherwise).
    */
   &:after {
@@ -169,7 +169,7 @@ tbody.spectrum-Table-body {
     pointer-events: none;
   }
 
-  /* Box shadow for bottom border for non-selected row that is immediatly above a selected row. */
+  /* Box shadow for bottom border for non-selected row that is immediately above a selected row. */
   &.is-next-selected {
     &:after {
       box-shadow: inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
@@ -280,6 +280,19 @@ tbody.spectrum-Table-body {
     .spectrum-Table-row .spectrum-Table-cell:last-child {
       border-left: none;
       border-right: none;
+    }
+  }
+}
+
+.spectrum-Table-columnResizer {
+  &::after {
+    background-color: var(--spectrum-table-divider-border-color);
+  }
+
+  &:active,
+  &:focus {
+    &::after {
+      background-color: var(--spectrum-global-color-blue-400);
     }
   }
 }

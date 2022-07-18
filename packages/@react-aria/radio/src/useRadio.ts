@@ -20,7 +20,11 @@ import {usePress} from '@react-aria/interactions';
 
 interface RadioAria {
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLElement>
+  inputProps: InputHTMLAttributes<HTMLElement>,
+  /** Whether the radio is disabled. */
+  isDisabled: boolean,
+  /** Whether the radio is currently selected. */
+  isSelected: boolean
 }
 
 /**
@@ -77,6 +81,8 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       checked,
       value,
       onChange
-    })
+    }),
+    isDisabled,
+    isSelected: checked
   };
 }

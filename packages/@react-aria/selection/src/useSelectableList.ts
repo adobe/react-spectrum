@@ -98,7 +98,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     shouldFocusWrap,
     isVirtualized,
     disallowEmptySelection,
-    selectOnFocus = false,
+    selectOnFocus = selectionManager.selectionBehavior === 'replace',
     disallowTypeAhead,
     shouldUseVirtualFocus,
     allowsTabNavigation
