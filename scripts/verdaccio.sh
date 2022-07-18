@@ -84,7 +84,7 @@ then
   yarn install
 
   # Build test app and move to dist folder
-  yarn run build
+  yarn build
   mv build ../../$verdaccio_path
   cd ../..
 else
