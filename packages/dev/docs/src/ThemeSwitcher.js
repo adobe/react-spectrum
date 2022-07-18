@@ -39,11 +39,11 @@ function useCurrentColorScheme() {
   return colorScheme;
 }
 
-export function ThemeProvider({children, colorScheme: colorSchemeProp, UNSAFE_className}) {
+export function ThemeProvider({children, colorScheme: colorSchemeProp, UNSAFE_className, UNSAFE_style}) {
   let colorScheme = useCurrentColorScheme();
 
   return (
-    <Provider theme={theme} colorScheme={colorSchemeProp || colorScheme} UNSAFE_className={UNSAFE_className}>
+    <Provider theme={theme} colorScheme={colorSchemeProp || colorScheme} UNSAFE_className={UNSAFE_className} UNSAFE_style={UNSAFE_style}>
       {children}
     </Provider>
   );
@@ -53,9 +53,9 @@ export function Snippet({children}) {
   return <ThemeProvider UNSAFE_className={styles.snippet}>{children}</ThemeProvider>;
 }
 
-export function Example({children, colorScheme}) {
+export function Example({children, colorScheme, UNSAFE_style}) {
   return (
-    <ThemeProvider colorScheme={colorScheme} UNSAFE_className={styles.example}>
+    <ThemeProvider colorScheme={colorScheme} UNSAFE_className={styles.example} UNSAFE_style={UNSAFE_style}>
       <ErrorBoundary>
         {children}
       </ErrorBoundary>
