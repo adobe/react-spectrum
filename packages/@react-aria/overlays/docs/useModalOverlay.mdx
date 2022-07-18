@@ -1,0 +1,208 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/overlays';
+import focusDocs from 'docs:@react-aria/focus';
+import dialogDocs from 'docs:@react-aria/dialog';
+import statelyDocs from 'docs:@react-stately/overlays';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-aria/overlays/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+category: Overlays
+keywords: [overlays, dialog, modal, aria]
+---
+
+# useModalOverlay
+
+<PageDescription>{docs.exports.useModalOverlay.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useModalOverlay']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/dialogmodal/'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useModalOverlay} links={docs.links} />
+
+## Features
+
+The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element can be used to build modal overlays. However, it is not yet widely supported across browsers, and can be difficult to style and customize. `useModalOverlay`, helps achieve accessible modal overlays that can be styled as needed.
+
+* Hides content behind the modal from assistive technology while open
+* Prevents scrolling the page behind the modal
+* Contains focus inside the modal, preventing the user from tabbing outside
+* Restores focus to the triggering element on unmount
+* Optionally handles closing the modal when interacting outside and pressing the <Keyboard>Escape</Keyboard> key
+
+**Note**: `useModalOverlay` only handles the overlay itself. It should be combined
+with [useDialog](useDialog.html) to create fully accessible modal dialogs. Other overlays
+such as menus may also be placed in a modal overlay.
+
+## Anatomy
+
+A modal overlay consists of an overlay container element, and an underlay. The overlay may contain a [dialog](useDialog.html), or another element such as a [menu](useMenu.html) or [listbox](useListBox.html) when used within a component such as a [select](useSelect.html) or [combobox](useComboBox.html). The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
+
+`useModalOverlay` returns props that you should spread onto the overlay and underlay elements:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useModalOverlay.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useOverlayTriggerState} />
+hook in `@react-stately/overlays`. The state object should be passed as an argument to `useModalOverlay`.
+
+## Example
+
+This example shows how to build a typical modal dialog, by combining `useModalOverlay` with [useDialog](useDialog.html). The `Dialog` component used in this example can also be reused within a [popover](usePopover.html) or other types of overlays.
+
+The `ModalTrigger` component uses the <TypeLink links={docs.links} type={docs.exports.useOverlayTrigger} /> hook to show the modal when a button is clicked. A close function is passed to the children, allowing the button within the dialog to close it.
+
+The modal is rendered in a React [Portal](https://reactjs.org/docs/portals.html) at the end of the document body, which ensures it is not clipped by other elements. This is handled by the <TypeLink links={docs.links} type={docs.exports.OverlayContainer} /> component, which also ensures that content outside the top-most modal is hidden from assistive technologies in combination with the <TypeLink links={docs.links} type={docs.exports.OverlayProvider} /> wrapping the whole application.
+
+**Note:** `useModalOverlay` only hides content within parent `OverlayProvider` components. However, if you have additional content in your application outside any `OverlayProvider`, then you should use the `@react-aria/aria-modal-polyfill` package to ensure that this content is hidden while modals are open as well. See the [watchModals docs](../react-aria/watchModals.html) for more information.
+
+```tsx example
+import {useOverlayTriggerState} from '@react-stately/overlays';
+import {
+  useOverlayTrigger,
+  useModalOverlay,
+  OverlayProvider,
+  OverlayContainer
+} from '@react-aria/overlays';
+
+// Reuse the Dialog and Button from your component library. See below for details.
+import {Dialog, Button} from 'your-component-library';
+
+function Modal({state, children, ...props}) {
+  let ref = React.useRef();
+  let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        zIndex: 100,
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        background: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      {...underlayProps}>
+      <div
+        {...modalProps}
+        ref={ref}
+        style={{
+          background: 'var(--page-background)',
+          border: '1px solid gray'
+        }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function ModalTrigger({label, children, ...props}) {
+  let state = useOverlayTriggerState(props);
+  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state);
+
+  return <>
+    <Button {...triggerProps}>Open Dialog</Button>
+    {state.isOpen &&
+      <OverlayContainer>
+        <Modal state={state}>
+          {React.cloneElement(children(state.close), overlayProps)}
+        </Modal>
+      </OverlayContainer>
+    }
+  </>;
+}
+
+// Application must be wrapped in an OverlayProvider so that it can be
+// hidden from screen readers when a modal opens.
+<OverlayProvider>
+  <ModalTrigger label="Open Dialog">
+    {close =>
+      <Dialog title="Enter your name">
+        <form style={{display: 'flex', flexDirection: 'column'}}>
+          <label htmlFor="first-name">First Name:</label>
+          <input id="first-name" />
+          <label htmlFor="last-name">Last Name:</label>
+          <input id="last-name" />
+          <Button
+            onPress={close}
+            style={{marginTop: 10}}>
+            Submit
+          </Button>
+        </form>
+      </Dialog>
+    }
+  </ModalTrigger>
+</OverlayProvider>
+```
+
+### Dialog
+
+The `Dialog` component is rendered within the `ModalOverlay` component. It is built using the [useDialog](useDialog.html) hook, and can also be used in other overlay containers such as [popovers](usePopover.html).
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useDialog} from '@react-aria/dialog';
+
+function Dialog({title, children, ...props}) {
+  let ref = React.useRef();
+  let {dialogProps, titleProps} = useDialog(props, ref);
+
+  return (
+    <div {...dialogProps} ref={ref} style={{padding: 30}}>
+      {title && 
+        <h3 {...titleProps} style={{marginTop: 0}}>
+          {title}
+        </h3>
+      }
+      {children}
+    </div>
+  );
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to toggle the popover. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+}
+```
+
+</details>

@@ -1,0 +1,203 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/overlays';
+import focusDocs from 'docs:@react-aria/focus';
+import dialogDocs from 'docs:@react-aria/dialog';
+import statelyDocs from 'docs:@react-stately/overlays';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-aria/overlays/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+category: Overlays
+keywords: [overlays, dialog, modal, aria]
+---
+
+# usePopover
+
+<PageDescription>{docs.exports.usePopover.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['usePopover']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/dialogmodal/'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.usePopover} links={docs.links} />
+
+## Features
+
+There is no built in way to create popovers in
+HTML. <TypeLink links={docs.links} type={docs.exports.usePopover} />,
+helps achieve accessible popovers that can be styled as needed.
+
+* Exposes overlay trigger and connects trigger to overlay with ARIA
+* Positions the overlay relative to the trigger
+* Hides content behind the overlay from assistive technology while open
+* Handles closing the overlay when interacting outside and pressing the <Keyboard>Escape</Keyboard> key
+* Restores focus to the triggering element on unmount
+
+**Note**: `usePopover` only handles the overlay itself. It should be combined
+with [useDialog](useDialog.html) to create fully accessible popovers. Other overlays
+such as menus may also be placed in a popover.
+
+## Anatomy
+
+A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger. The overlay may contain a [dialog](useDialog.html), or another element such as a [menu](useMenu.html) or [listbox](useListBox.html) when used within a component such as a [select](useSelect.html) or [combobox](useComboBox.html).
+
+`usePopover` returns props that you should spread onto the trigger element and
+the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.usePopover.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useOverlayTriggerState} />
+hook in `@react-stately/overlays`. The state object should be passed as an argument to `usePopover`.
+
+## Example
+
+This example shows how to build a typical popover overlay that is positioned relative to
+a trigger button. The content of the popover is a dialog, built
+with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />. The `Dialog` component used in this example can also be reused within a [modal](useModalOverlay.html) or other types of overlays.
+
+The popover can be closed by clicking or interacting outside the popover, or by pressing the <Keyboard>Escape</Keyboard> key. Content outside the popover is hidden from screen readers,
+which improves the experience for screen reader users by ensuring that they don't
+navigate out of context. This is especially important when the popover is rendered
+into a portal at the end of the document, and the content just before it is
+unrelated to the original trigger.
+
+To allow screen reader users to more easily dismiss the popover even without a keyboard available, a visually hidden &lt;<TypeLink links={docs.links} type={docs.exports.DismissButton} />&gt; is added at the start and end of the popover.
+
+The popover is rendered in a React [Portal](https://reactjs.org/docs/portals.html) at the end of the document body, which ensures it is not clipped by other elements. This is handled by the <TypeLink links={docs.links} type={docs.exports.OverlayContainer} /> component, which also ensures that content outside the top-most overlay is hidden from assistive technologies in combination with the <TypeLink links={docs.links} type={docs.exports.OverlayProvider} /> wrapping the whole application.
+
+**Note:** `usePopover` only hides content within parent `OverlayProvider` components. However, if you have additional
+content in your application outside any `OverlayProvider`, then you should use the `@react-aria/aria-modal-polyfill`
+package to ensure that this content is hidden while modals are open as well. See the
+[watchModals docs](../react-aria/watchModals.html) for more information.
+
+```tsx example
+import {useOverlayTriggerState} from '@react-stately/overlays';
+import {
+  usePopover,
+  useOverlayTrigger,
+  OverlayProvider,
+  OverlayContainer,
+  DismissButton
+} from '@react-aria/overlays';
+
+// Reuse the Button and Dialog from your component library. See below for details.
+import {Button, Dialog} from 'your-component-library';
+
+function Popover({children, state, ...props}) {
+  let popoverRef = React.useRef();
+  let {popoverProps} = usePopover({
+    ...props,
+    popoverRef
+  }, state);
+
+  return (
+    <div
+      {...popoverProps}
+      ref={popoverRef}
+      style={{
+        ...popoverProps.style,
+        background: 'var(--page-background)',
+        border: '1px solid gray'
+      }}>
+      <DismissButton onDismiss={state.close} />
+      {children}
+      <DismissButton onDismiss={state.close} />
+    </div>
+  );
+}
+
+function PopoverTrigger({label, children, ...props}) {
+  let ref = React.useRef();
+  let state = useOverlayTriggerState(props);
+  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, ref);
+
+  return <>
+    <Button {...triggerProps} buttonRef={ref}>{label}</Button>
+    {state.isOpen &&
+      <OverlayContainer>
+        <Popover triggerRef={ref} state={state}>
+          {React.cloneElement(children, overlayProps)}
+        </Popover>
+      </OverlayContainer>
+    }
+  </>;
+}
+
+// Application must be wrapped in an OverlayProvider so that it can be
+// hidden from screen readers when an overlay opens.
+<OverlayProvider>
+  <PopoverTrigger label="Open Popover">
+    <Dialog title="Popover title">
+      This is the content of the popover.
+    </Dialog>
+  </PopoverTrigger>
+</OverlayProvider>
+```
+
+### Dialog
+
+The `Dialog` component is rendered within the `Popover` component. It is built using the [useDialog](useDialog.html) hook, and can also be used in other overlay containers such as [modals](useModalOverlay.html).
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useDialog} from '@react-aria/dialog';
+
+function Dialog({title, children, ...props}) {
+  let ref = React.useRef();
+  let {dialogProps, titleProps} = useDialog(props, ref);
+
+  return (
+    <div {...dialogProps} ref={ref} style={{padding: 30}}>
+      {title && 
+        <h3 {...titleProps} style={{marginTop: 0}}>
+          {title}
+        </h3>
+      }
+      {children}
+    </div>
+  );
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to toggle the popover. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+}
+```
+
+</details>
