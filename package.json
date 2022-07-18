@@ -63,7 +63,7 @@
     "@babel/preset-typescript": "^7.12.7",
     "@babel/register": "^7.12.10",
     "@babel/runtime": "^7.12.5",
-    "@codesandbox/sandpack-react": "^0.15.0",
+    "@codesandbox/sandpack-react": "^1.2.4",
     "@octokit/rest": "*",
     "@parcel/bundler-experimental": "^2.2.1",
     "@parcel/optimizer-css": "^2.2.1",
