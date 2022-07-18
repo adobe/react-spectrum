@@ -216,6 +216,7 @@ export class TableCollection<T> extends GridCollection<T> {
     for (let node of nodes) {
       visit(node);
     }
+
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
 

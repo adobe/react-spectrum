@@ -1,9 +1,5 @@
 {
   "calendar": "日曆",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long}至 {end, date, long}",
-  "date": "日期",
-  "dateRange": "日期範圍",
   "day": "日",
   "dayPeriod": "上午/下午",
   "endDate": "結束日期",
@@ -12,8 +8,11 @@
   "minute": "分钟",
   "month": "月",
   "second": "秒",
+  "selectedDateDescription": "選定的日期：{date}",
+  "selectedRangeDescription": "選定的範圍：{startDate} 至 {endDate}",
+  "selectedTimeDescription": "選定的時間：{time}",
   "startDate": "開始日期",
-  "year": "年",
+  "timeZoneName": "时区",
   "weekday": "工作日",
-  "timeZoneName": "时区"
+  "year": "年"
 }

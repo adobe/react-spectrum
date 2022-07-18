@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragStartEvent, Node} from '@react-types/shared';
-import {Key, useState} from 'react';
+import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, Node} from '@react-types/shared';
+import {Key, RefObject, useRef, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
-interface DraggableCollectionOptions extends DraggableCollectionProps {
+export interface DraggableCollectionOptions extends DraggableCollectionProps {
   collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager
 }
@@ -22,24 +22,37 @@ interface DraggableCollectionOptions extends DraggableCollectionProps {
 export interface DraggableCollectionState {
   collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager,
+  draggedKey: Key | null,
+  draggingKeys: Set<Key>,
   isDragging(key: Key): boolean,
   getKeysForDrag(key: Key): Set<Key>,
   getItems(key: Key): DragItem[],
-  renderPreview(key: Key): JSX.Element,
+  preview?: RefObject<DragPreviewRenderer>,
   startDrag(key: Key, event: DragStartEvent): void,
   moveDrag(event: DragMoveEvent): void,
   endDrag(event: DragEndEvent): void
 }
 
 export function useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState {
-  let [draggingKeys, setDraggingKeys] = useState(new Set<Key>());
+  let {
+    getItems,
+    collection,
+    selectionManager,
+    onDragStart,
+    onDragMove,
+    onDragEnd,
+    preview
+  } = props;
+  let [, setDragging] = useState(false);
+  let draggingKeys = useRef(new Set<Key>());
+  let draggedKey = useRef(null);
   let getKeys = (key: Key) => {
     // The clicked item is always added to the drag. If it is selected, then all of the
     // other selected items are also dragged. If it is not selected, the only the clicked
     // item is dragged. This matches native macOS behavior.
     let keys = new Set(
-      props.selectionManager.isSelected(key)
-        ? props.selectionManager.selectedKeys
+      selectionManager.isSelected(key)
+        ? new Set([...selectionManager.selectedKeys].filter(key => !!collection.getItem(key)))
         : []
     );
 
@@ -48,50 +61,53 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
   };
 
   return {
-    collection: props.collection,
-    selectionManager: props.selectionManager,
+    collection,
+    selectionManager,
+    get draggedKey() {
+      return draggedKey.current;
+    },
+    get draggingKeys() {
+      return draggingKeys.current;
+    },
     isDragging(key) {
-      return draggingKeys.has(key);
+      return draggingKeys.current.has(key);
     },
     getKeysForDrag: getKeys,
     getItems(key) {
-      return props.getItems(getKeys(key));
+      return getItems(getKeys(key));
     },
-    renderPreview(key) {
-      if (typeof props.renderPreview === 'function') {
-        return props.renderPreview(getKeys(key), key);
-      }
-
-      return null;
-    },
+    preview,
     startDrag(key, event) {
+      setDragging(true);
       let keys = getKeys(key);
-      setDraggingKeys(keys);
-
-      if (typeof props.onDragStart === 'function') {
-        props.onDragStart({
+      draggingKeys.current = keys;
+      draggedKey.current = key;
+      if (typeof onDragStart === 'function') {
+        onDragStart({
           ...event,
           keys
         });
       }
     },
     moveDrag(event) {
-      if (typeof props.onDragMove === 'function') {
-        props.onDragMove({
+      if (typeof onDragMove === 'function') {
+        onDragMove({
           ...event,
-          keys: draggingKeys
+          keys: draggingKeys.current
         });
       }
     },
     endDrag(event) {
-      if (typeof props.onDragEnd === 'function') {
-        props.onDragEnd({
+      if (typeof onDragEnd === 'function') {
+        onDragEnd({
           ...event,
-          keys: draggingKeys
+          keys: draggingKeys.current
         });
       }
 
-      setDraggingKeys(new Set());
+      setDragging(false);
+      draggingKeys.current = new Set();
+      draggedKey.current = null;
     }
   };
 }

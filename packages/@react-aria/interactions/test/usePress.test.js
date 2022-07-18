@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -21,9 +20,9 @@ import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
 function Example(props) {
-  let {elementType: ElementType = 'div', style, ...otherProps} = props;
+  let {elementType: ElementType = 'div', style, draggable, ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...pressProps} style={style} tabIndex="0">test</ElementType>;
+  return <ElementType {...pressProps} style={style} tabIndex="0" draggable={draggable}>test</ElementType>;
 }
 
 function pointerEvent(type, opts) {
@@ -507,11 +506,24 @@ describe('usePress', function () {
       expect(allowDefault).toBe(false);
     });
 
-    it('should not prevent default when in a draggable container', function () {
+    it('should still prevent default when pressing on a non draggable + pressable item in a draggable container', function () {
       let res = render(
         <div draggable="true">
           <Example />
         </div>
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(allowDefault).toBe(false);
+
+      allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+    it('should not prevent default when pressing on a draggable item', function () {
+      let res = render(
+        <Example draggable="true" />
       );
 
       let el = res.getByText('test');
@@ -594,8 +606,8 @@ describe('usePress', function () {
       let el = res.getByText('test');
       // Android TalkBack will occasionally fire a pointer down event with "width: 1, height: 1" instead of "width: 0, height: 0".
       // Make sure we can still determine that this is a virtual event by checking the pressure, detail, and height/width.
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
       expect(events).toEqual([]);
 
       // Virtual pointer event sets pointerType and onClick handles the rest
@@ -1036,11 +1048,22 @@ describe('usePress', function () {
       expect(allowDefault).toBe(false);
     });
 
-    it('should not prevent default when in a draggable container', function () {
+    it('should still prevent default when pressing on a non draggable + pressable item in a draggable container', function () {
       let res = render(
         <div draggable="true">
           <Example />
         </div>
+      );
+
+      let el = res.getByText('test');
+      let allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+
+    it('should not prevent default when pressing on a draggable item', function () {
+      let res = render(
+        <Example draggable="true" />
       );
 
       let el = res.getByText('test');
@@ -2603,9 +2626,9 @@ describe('usePress', function () {
       // Ensure we close any dialogs before unmounting to avoid warning.
       let dialog = document.querySelector('[role="dialog"]');
       if (dialog) {
+        fireEvent.keyDown(dialog, {key: 'Escape'});
+        fireEvent.keyUp(dialog, {key: 'Escape'});
         act(() => {
-          fireEvent.keyDown(dialog, {key: 'Escape'});
-          fireEvent.keyUp(dialog, {key: 'Escape'});
           jest.runAllTimers();
         });
       }

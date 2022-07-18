@@ -18,7 +18,11 @@ import {useSelectableItem} from '@react-aria/selection';
 
 interface TabAria {
   /** Props for the tab element. */
-  tabProps: HTMLAttributes<HTMLElement>
+  tabProps: HTMLAttributes<HTMLElement>,
+  /** Whether the tab is currently selected. */
+  isSelected: boolean,
+  /** Whether the tab is disabled. */
+  isDisabled: boolean
 }
 
 /**
@@ -56,7 +60,9 @@ export function useTab<T>(
       'aria-controls': isSelected ? tabPanelId : undefined,
       tabIndex: isDisabled ? undefined : tabIndex,
       role: 'tab'
-    }
+    },
+    isSelected,
+    isDisabled
   };
 }
 

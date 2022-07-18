@@ -47,7 +47,8 @@ let rows = [
 
 const Template: Story<SpectrumTableProps<any>> = (args) => (
   <>
-    <input aria-label="Focusable before" placeholder="Focusable before" />
+    <label htmlFor="focusable-before">Focusable before</label>
+    <input id="focusable-before" />
     <Table aria-label="Table with selection" selectionMode="multiple" {...args}>
       <TableHeader columns={columns}>
         {column => (
@@ -64,13 +65,15 @@ const Template: Story<SpectrumTableProps<any>> = (args) => (
         )}
       </TableBody>
     </Table>
-    <input aria-label="Focusable after" placeholder="Focusable after" />
+    <label htmlFor="focus-after">Focusable after</label>
+    <input id="focus-after" />
   </>
 );
 
 const TemplateBackwardsCompat: Story<SpectrumTableProps<any>> = (args) => (
   <>
-    <input aria-label="Focusable before" placeholder="Focusable before" />
+    <label htmlFor="focusable-before">Focusable before</label>
+    <input id="focusable-before" />
     <BackwardCompatTable aria-label="Table with selection" selectionMode="multiple" {...args}>
       <TableHeader columns={columns}>
         {column => (
@@ -87,7 +90,10 @@ const TemplateBackwardsCompat: Story<SpectrumTableProps<any>> = (args) => (
         )}
       </TableBody>
     </BackwardCompatTable>
-    <input aria-label="Focusable after" placeholder="Focusable after" />
+    <label htmlFor="focusable-after">
+      Focusable after
+    </label>
+    <input id="focusable-after" />
   </>
 );
 

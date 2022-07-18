@@ -14,6 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -69,8 +70,10 @@ export function beginDragging(target: DragTarget, formatMessage: (key: string) =
   dragSession = new DragSession(target, formatMessage);
   requestAnimationFrame(() => {
     dragSession.setup();
-
-    if (getDragModality() === 'keyboard') {
+    if (
+      getDragModality() === 'keyboard' ||
+      (getDragModality() === 'touch' && getInteractionModality() === 'virtual')
+    ) {
       dragSession.next();
     }
   });
@@ -99,6 +102,16 @@ function endDragging() {
   for (let cb of subscriptions) {
     cb();
   }
+}
+
+export function isValidDropTarget(element: Element): boolean {
+  for (let target of dropTargets.keys()) {
+    if (target.contains(element)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 const CANCELED_EVENTS = [
@@ -143,9 +156,10 @@ class DragSession {
   currentDropItem: DroppableItem;
   dropOperation: DropOperation;
   private mutationObserver: MutationObserver;
-  private mutationImmediate: NodeJS.Immediate;
   private restoreAriaHidden: () => void;
   private formatMessage: (key: string) => string;
+  private isVirtualClick: boolean;
+  private initialFocused: boolean;
 
   constructor(target: DragTarget, formatMessage: (key: string) => string) {
     this.dragTarget = target;
@@ -155,7 +169,9 @@ class DragSession {
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.onClick = this.onClick.bind(this);
+    this.onPointerDown = this.onPointerDown.bind(this);
     this.cancelEvent = this.cancelEvent.bind(this);
+    this.initialFocused = false;
   }
 
   setup() {
@@ -163,6 +179,7 @@ class DragSession {
     window.addEventListener('focus', this.onFocus, true);
     window.addEventListener('blur', this.onBlur, true);
     document.addEventListener('click', this.onClick, true);
+    document.addEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
       document.addEventListener(event, this.cancelEvent, true);
@@ -181,6 +198,7 @@ class DragSession {
     window.removeEventListener('focus', this.onFocus, true);
     window.removeEventListener('blur', this.onBlur, true);
     document.removeEventListener('click', this.onClick, true);
+    document.removeEventListener('pointerdown', this.onPointerDown, true);
 
     for (let event of CANCELED_EVENTS) {
       document.removeEventListener(event, this.cancelEvent, true);
@@ -188,9 +206,6 @@ class DragSession {
 
     this.mutationObserver.disconnect();
     this.restoreAriaHidden();
-    if (this.mutationImmediate) {
-      clearImmediate(this.mutationImmediate);
-    }
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -266,25 +281,34 @@ class DragSession {
 
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
+    if (e.detail === 0 || this.isVirtualClick) {
+      if (e.target === this.dragTarget.element) {
+        this.cancel();
+        return;
+      }
 
-    if (e.detail !== 0) {
-      return;
-    }
-
-    if (e.target === this.dragTarget.element) {
-      this.cancel();
-      return;
-    }
-
-    let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
-    if (dropTarget) {
-      let item = dropItems.get(e.target as HTMLElement);
-      this.setCurrentDropTarget(dropTarget, item);
-      this.drop(item);
+      let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+      if (dropTarget) {
+        let item = dropItems.get(e.target as HTMLElement);
+        this.setCurrentDropTarget(dropTarget, item);
+        this.drop(item);
+      }
     }
   }
 
+  onPointerDown(e: PointerEvent) {
+    // Android Talkback double tap has e.detail = 1 for onClick. Detect the virtual click in onPointerDown before onClick fires
+    // so we can properly perform cancel and drop operations.
+    this.cancelEvent(e);
+    this.isVirtualClick = isVirtualPointerEvent(e);
+  }
+
   cancelEvent(e: Event) {
+    // Allow focusin and focusout on the drag target so focus ring works properly.
+    if ((e.type === 'focusin' || e.type === 'focusout') && e.target === this.dragTarget?.element) {
+      return;
+    }
+
     // Allow default for events that might cancel a click event
     if (!CLICK_EVENTS.includes(e.type)) {
       e.preventDefault();
@@ -423,6 +447,13 @@ class DragSession {
 
       item?.element.focus();
       this.currentDropItem = item;
+
+      // Annouce first drop target after drag start announcement finishes.
+      // Otherwise, it will never get announced because drag start announcement is assertive.
+      if (!this.initialFocused) {
+        announce(item?.element.getAttribute('aria-label'), 'polite');
+        this.initialFocused = true;
+      }
     }
   }
 
@@ -438,6 +469,12 @@ class DragSession {
         y: rect.y + (rect.height / 2),
         dropOperation: this.dropOperation
       });
+    }
+
+    // Blur and re-focus the drop target so that the focus ring appears.
+    if (this.currentDropTarget) {
+      this.currentDropTarget.element.blur();
+      this.currentDropTarget.element.focus();
     }
 
     this.setCurrentDropTarget(null);
@@ -516,4 +553,20 @@ function findValidDropTargets(options: DragTarget) {
 
     return true;
   });
+}
+
+function isVirtualPointerEvent(event: PointerEvent) {
+  // If the pointer size is zero, then we assume it's from a screen reader.
+  // Android TalkBack double tap will sometimes return a event with width and height of 1
+  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
+  // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
+  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
+  return (
+    (event.width === 0 && event.height === 0) ||
+    (event.width === 1 &&
+      event.height === 1 &&
+      event.pressure === 0 &&
+      event.detail === 0
+    )
+  );
 }

@@ -12,7 +12,7 @@
 
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {TabListProps} from '@react-types/tabs';
-import {useEffect} from 'react';
+import {useRef} from 'react';
 
 
 export interface TabListState<T> extends SingleSelectListState<T> {}
@@ -27,18 +27,34 @@ export function useTabListState<T extends object>(props: TabListProps<T>): TabLi
     suppressTextValueWarning: true
   });
 
-  useEffect(() => {
-    // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
-    let selectedKey = state.selectedKey;
-    if (state.selectionManager.isEmpty || !state.collection.getItem(selectedKey)) {
-      selectedKey = state.collection.getFirstKey();
-      state.selectionManager.replaceSelection(selectedKey);
-    }
+  let {
+    selectionManager,
+    collection,
+    selectedKey: currentSelectedKey
+  } = state;
 
-    if (state.selectionManager.focusedKey == null) {
-      state.selectionManager.setFocusedKey(selectedKey);
+  let lastSelectedKey = useRef(currentSelectedKey);
+  // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
+  let selectedKey = currentSelectedKey;
+  if (selectionManager.isEmpty || !collection.getItem(selectedKey)) {
+    selectedKey = collection.getFirstKey();
+    // loop over tabs until we find one that isn't disabled and select that
+    while (state.disabledKeys.has(selectedKey) && selectedKey !== collection.getLastKey()) {
+      selectedKey = collection.getKeyAfter(selectedKey);
     }
-  }, [state.selectionManager, state.selectedKey, state.collection]);
+    // if this check is true, then every item is disabled, it makes more sense to default to the first key than the last
+    if (state.disabledKeys.has(selectedKey) && selectedKey === collection.getLastKey()) {
+      selectedKey = collection.getFirstKey();
+    }
+    // directly set selection because replace/toggle selection won't consider disabled keys
+    selectionManager.setSelectedKeys([selectedKey]);
+  }
+
+  // If the tablist doesn't have focus and the selected key changes or if there isn't a focused key yet, change focused key to the selected key if it exists.
+  if (selectionManager.focusedKey == null || (!selectionManager.isFocused && selectedKey !== lastSelectedKey.current)) {
+    selectionManager.setFocusedKey(selectedKey);
+  }
+  lastSelectedKey.current = selectedKey;
 
   return state;
 }

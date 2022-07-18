@@ -1,0 +1,6 @@
+{
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorNameAndValue": "{name}: {value}",
+  "colorPicker": "Палитра цветов",
+  "twoDimensionalSlider": "Ползунок 2D"
+}

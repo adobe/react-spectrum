@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps, TextInputBase, Validation} from '@react-types/shared';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
@@ -38,7 +38,11 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelectio
   * The interaction required to display the ComboBox menu.
   * @default 'input'
   */
-  menuTrigger?: MenuTriggerAction
+  menuTrigger?: MenuTriggerAction,
+  /**
+   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  name?: string
 }
 
 export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps {
@@ -46,7 +50,7 @@ export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps {
   shouldFocusWrap?: boolean
 }
 
-export interface SpectrumComboBoxProps<T> extends Omit<AriaComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<AriaComboBoxProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
    * @default 'input'

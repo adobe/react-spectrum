@@ -70,13 +70,14 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     validationState,
     label,
     formatOptions,
-    onBlur,
+    onBlur = () => {},
     onFocus,
     onFocusChange,
     onKeyDown,
     onKeyUp,
     description,
-    errorMessage
+    errorMessage,
+    ...otherProps
   } = props;
 
   let {
@@ -175,6 +176,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let domProps = filterDOMProps(props);
 
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
+    ...otherProps,
     ...domProps,
     label,
     autoFocus,
@@ -183,6 +185,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     isRequired,
     validationState,
     value: state.inputValue,
+    defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
     'aria-label': props['aria-label'] || null,
     'aria-labelledby': props['aria-labelledby'] || null,
@@ -201,8 +204,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   let inputProps = mergeProps(
     spinButtonProps,
-    textFieldProps,
     focusProps,
+    textFieldProps,
     {
       // override the spinbutton role, we can't focus a spin button with VO
       role: null,

@@ -10,55 +10,142 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
+import {ActionGroup} from '@react-spectrum/actiongroup';
+import {ActionMenu} from '@react-spectrum/menu';
+import Add from '@spectrum-icons/workflow/Add';
 import {Content, View} from '@react-spectrum/view';
-import {Flex} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/text';
+import Delete from '@spectrum-icons/workflow/Delete';
+import {generatePowerset} from '@react-spectrum/story-utils';
+import {Grid, repeat} from '@react-spectrum/layout';
+import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Image} from '@react-spectrum/image';
+import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
+import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-let flatOptions = [
-  {name: 'row 1'},
-  {name: 'row 2'},
-  {name: 'row 3'}
+let states = [
+  {isQuiet: true},
+  {selectionMode: 'multiple'},
+  {density: ['compact', 'spacious']},
+  {selectionStyle: 'highlight'},
+  {overflowMode: 'wrap'}
 ];
 
-let withButtons = [
-  {name: 'row 1', button: 'Button 1'},
-  {name: 'row 2', button: 'Button 2'},
-  {name: 'row 3', button: 'Button 3'}
-];
+let combinations = generatePowerset(states);
+let chunkSize = Math.ceil(combinations.length / 3);
+
+function shortName(key, value) {
+  let returnVal = '';
+  switch (key) {
+    case 'isQuiet':
+      returnVal = 'quiet';
+      break;
+    case 'selectionMode':
+      returnVal = `sm: ${value === undefined ? 'none' : value}`;
+      break;
+    case 'density':
+      returnVal = `den: ${value === undefined ? 'regular' : value}`;
+      break;
+    case 'selectionStyle':
+      returnVal = 'highlight';
+      break;
+  }
+  return returnVal;
+}
 
 const meta: Meta = {
   title: 'ListView',
   component: ListView,
   parameters: {
+    chromaticProvider: {colorSchemes: ['light', 'dark'], locales: ['en-US'], scales: ['medium', 'large'], disableAnimations: true},
     // noticed a small shifting before final layout, delaying so chromatic doesn't hit that
-    chromatic: {delay: 600}
+    chromatic: {delay: 10000}
   }
 };
 
 export default meta;
 
-const Template = (): Story => (args) => (
-  <ListView {...args} width="size-3400" items={flatOptions}>
-    {(item) => <Item key={item.name}>{item.name}</Item>}
-  </ListView>
+const renderActions = (
+  <>
+    <ActionGroup buttonLabelBehavior="hide">
+      <Item key="info">
+        <Info />
+        <Text>Info</Text>
+      </Item>
+    </ActionGroup>
+    <ActionMenu>
+      <Item key="add">
+        <Add />
+        <Text>Add</Text>
+      </Item>
+      <Item key="delete">
+        <Delete />
+        <Text>Delete</Text>
+      </Item>
+    </ActionMenu>
+  </>
 );
 
-const TemplateWithButtons = (): Story => (args) => (
-  <ListView {...args} width="size-3400" items={withButtons}>
-    {(item) => (
-      <Item key={item.name}>
-        <Flex alignItems="center">
-          <View flexGrow={1}>{item.name}</View>
-          <ActionButton>{item.button}</ActionButton>
-        </Flex>
-      </Item>
-    )}
-  </ListView>
+function IllustrationContainer(props) {
+  props = useSlotProps(props, 'illustration');
+  let {styleProps} = useStyleProps(props);
+  return (
+    <div {...styleProps}>
+      {props.children}
+    </div>
+  );
+}
+
+function Folder() {
+  return (
+    <IllustrationContainer>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95.23 67" height="110">
+        <path fill="var(--spectrum-global-color-gray-600)" d="M94.47,27a4.45,4.45,0,0,0-3.72-2H20.34a5.45,5.45,0,0,0-5.05,3.37L3.12,57.68V3.88A.89.89,0,0,1,4,3H23.21a2.51,2.51,0,0,1,1.69.66l9.7,8.94a1.56,1.56,0,0,0,1,.4h40a1.5,1.5,0,0,1,1.5,1.5v6a1.5,1.5,0,0,0,3,0v-6a4.51,4.51,0,0,0-4.5-4.5H36.21L26.93,1.46A5.48,5.48,0,0,0,23.21,0H4A3.88,3.88,0,0,0,.12,3.88v61h0A1.51,1.51,0,0,0,1.5,67H79a1.49,1.49,0,0,0,1.38-.92L94.89,31.19A4.45,4.45,0,0,0,94.47,27ZM92.12,30,78,64H3.75L18.06,29.52A2.46,2.46,0,0,1,20.34,28H90.75a1.48,1.48,0,0,1,1.37,2Z" />
+      </svg>
+    </IllustrationContainer>
+  );
+}
+
+const Template = (): Story => ({combos, ...args}) => (
+  <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
+    {combos.map(c => {
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      if (!key) {
+        key = 'empty';
+      }
+      return (
+        <View flexGrow={1} maxWidth="size-5000" maxHeight={700} id={key}>
+          <ListView aria-label={key} width="size-3600" height="100%" selectedKeys={['a', 'd']} disabledKeys={['c']} {...args} {...c}>
+            <Item key="a" textValue="Utilities" hasChildItems>
+              <Folder />
+              <Text>Utilities</Text>
+              <Text slot="description">16 items</Text>
+              {renderActions}
+            </Item>
+            <Item key="b" textValue="long example 1">
+              <Image src="https://random.dog/191091b2-7d69-47af-9f52-6605063f1a47.jpg" />
+              <Text>multi word content that is very long</Text>
+              <Text slot="description">long description that is multiple words</Text>
+              {renderActions}
+            </Item>
+            <Item key="c" textValue="long example 2">
+              <Text>multi word content that is very very long </Text>
+              <Text slot="description">singledescriptionthatisonewordblah</Text>
+              {renderActions}
+            </Item>
+            <Item key="d" textValue="long example 3">
+              <Text>supercalifragilisticexpialidocious</Text>
+              <Text slot="description">long description that is multiple words</Text>
+              {renderActions}
+            </Item>
+          </ListView>
+        </View>
+      );
+    })}
+  </Grid>
 );
 
 function renderEmptyState() {
@@ -80,10 +167,16 @@ const TemplateEmptyState = (): Story => () => (
 );
 
 export const Default = Template().bind({});
-Default.storyName = 'default';
+Default.storyName = 'all visual option combos 1 of 3';
+Default.args = {combos: combinations.slice(0, chunkSize)};
 
-export const WithButtons = TemplateWithButtons().bind({});
-WithButtons.storyName = 'with buttons';
+export const ComboPt2 = Template().bind({});
+ComboPt2.args = {combos: combinations.slice(chunkSize, chunkSize * 2)};
+ComboPt2.storyName = 'all visual option combos 2 of 3';
+
+export const ComboPt3 = Template().bind({});
+ComboPt3.args = {combos: combinations.slice(chunkSize * 2, chunkSize * 3)};
+ComboPt3.storyName = 'all visual option combos 3 of 3';
 
 export const Empty = TemplateEmptyState().bind({});
 Empty.storyName = 'empty state';

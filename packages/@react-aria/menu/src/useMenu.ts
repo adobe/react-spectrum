@@ -12,7 +12,7 @@
 
 import {AriaMenuProps} from '@react-types/menu';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, Key, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
@@ -22,7 +22,7 @@ interface MenuAria {
   menuProps: HTMLAttributes<HTMLElement>
 }
 
-interface AriaMenuOptions<T> extends AriaMenuProps<T> {
+export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
   /** Whether the menu uses virtual scrolling. */
   isVirtualized?: boolean,
 
@@ -32,6 +32,13 @@ interface AriaMenuOptions<T> extends AriaMenuProps<T> {
    */
   keyboardDelegate?: KeyboardDelegate
 }
+
+interface MenuData {
+  onClose?: () => void,
+  onAction?: (key: Key) => void
+}
+
+export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
 
 /**
  * Provides the behavior and accessibility implementation for a menu component.
@@ -57,6 +64,11 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     shouldFocusWrap
+  });
+
+  menuData.set(state, {
+    onClose: props.onClose,
+    onAction: props.onAction
   });
 
   return {

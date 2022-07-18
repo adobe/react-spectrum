@@ -11,20 +11,18 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Example} from '../stories/Example';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('ActionBar', () => {
   beforeAll(() => {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 500);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -97,6 +95,7 @@ describe('ActionBar', () => {
     act(() => clearButton.focus());
     triggerPress(clearButton);
     act(() => jest.runAllTimers());
+    act(() => jest.runAllTimers());
 
     expect(tree.queryByRole('toolbar')).toBeNull();
     expect(document.activeElement).toBe(checkbox);
@@ -119,6 +118,7 @@ describe('ActionBar', () => {
 
     fireEvent.keyDown(document.activeElement, {key: 'Escape'});
     fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+    act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
 
     expect(tree.queryByRole('toolbar')).toBeNull();

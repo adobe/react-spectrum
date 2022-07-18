@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
@@ -23,8 +23,8 @@ import React from 'react';
 import {states} from './data';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Virtualizer} from '../../../@react-stately/virtualizer/src/Virtualizer';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -403,6 +403,36 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(listbox);
     });
+
+    it('scrolls the selected item into view on menu open', function () {
+      let scrollToSpy = jest.fn();
+      let virtualizerMock = jest.spyOn(Virtualizer.prototype, 'scrollToItem').mockImplementationOnce(scrollToSpy);
+      // Mock scroll height so that the picker heights actually have a value
+      let scrollHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 500);
+      let {getByRole, queryByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" selectedKey="four">
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+            <Item key="four">Four</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(queryByRole('listbox')).toBeNull();
+      let picker = getByRole('button');
+      triggerPress(picker);
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      act(() => jest.runAllTimers());
+      expect(scrollToSpy.mock.calls[0][0]).toBe('four');
+
+      virtualizerMock.mockReset();
+      scrollHeightSpy.mockReset();
+    });
   });
 
   describe('closing', function () {
@@ -440,6 +470,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -512,6 +544,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -589,6 +623,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -706,6 +742,8 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 
@@ -789,7 +827,7 @@ describe('Picker', function () {
       );
 
       let label = getAllByText('Test')[0];
-      label.click();
+      act(() => label.click());
 
       let picker = getByRole('button');
       expect(document.activeElement).toBe(picker);
@@ -1003,6 +1041,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
@@ -1038,6 +1078,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Empty');
 
@@ -1053,6 +1095,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Zero');
 
@@ -1068,10 +1112,11 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('False');
     });
-
 
     it('can select items with the Space key', function () {
       let {getByRole} = render(
@@ -1113,6 +1158,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
@@ -1156,6 +1203,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
@@ -1199,6 +1248,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
@@ -1257,6 +1308,8 @@ describe('Picker', function () {
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(4);
       expect(queryByRole('listbox')).toBeNull();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
@@ -1299,6 +1352,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
@@ -1341,6 +1396,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('One');
     });
@@ -1386,6 +1443,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
@@ -1475,6 +1534,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Cut');
       expect(getAllByRole('img', {hidden: true})).toHaveLength(2);
@@ -1506,6 +1567,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Puppy');
       expect(getAllByRole('img', {hidden: true})).toHaveLength(2);
@@ -1554,6 +1617,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
 
@@ -1601,6 +1666,8 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
+      // run restore focus rAF
+      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Two');
     });
@@ -1944,7 +2011,8 @@ describe('Picker', function () {
     beforeEach(() => {
       focusSpies = {
         onFocus: jest.fn(),
-        onBlur: jest.fn()
+        onBlur: jest.fn(),
+        onFocusChange: jest.fn()
       };
     });
 
@@ -1963,6 +2031,7 @@ describe('Picker', function () {
       let picker = getByRole('button');
       expect(document.activeElement).toBe(picker);
       expect(focusSpies.onFocus).toHaveBeenCalled();
+      expect(focusSpies.onFocusChange).toHaveBeenCalledWith(true);
     });
 
     it('calls onBlur and onFocus for the closed Picker', function () {
@@ -1983,14 +2052,22 @@ describe('Picker', function () {
       let picker = getByTestId('picker');
       expect(document.activeElement).toBe(picker);
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(1, true);
 
       userEvent.tab();
       expect(document.activeElement).toBe(afterBtn);
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenCalledTimes(2);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(2, false);
+
       userEvent.tab({shift: true});
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(3, true);
+
       userEvent.tab({shift: true});
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(4, false);
       expect(document.activeElement).toBe(beforeBtn);
     });
 
@@ -2027,6 +2104,10 @@ describe('Picker', function () {
 
       userEvent.tab({shift: true});
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(2);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(1, true);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(2, false);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(3, true);
+
       fireEvent.keyDown(picker, {key: 'ArrowDown'});
       fireEvent.keyUp(picker, {key: 'ArrowDown'});
       act(() => jest.runAllTimers());
@@ -2037,6 +2118,8 @@ describe('Picker', function () {
       userEvent.tab({shift: true});
       act(() => jest.runAllTimers());
       expect(focusSpies.onBlur).toHaveBeenCalledTimes(2);
+      expect(focusSpies.onFocusChange).toHaveBeenNthCalledWith(4, false);
+
       expect(document.activeElement).toBe(beforeBtn);
     });
 
@@ -2056,7 +2139,8 @@ describe('Picker', function () {
       );
       let picker = getByTestId('picker');
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(1);
-
+      expect(focusSpies.onFocusChange).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenCalledWith(true);
       fireEvent.keyDown(picker, {key: 'ArrowDown'});
       fireEvent.keyUp(picker, {key: 'ArrowDown'});
       act(() => jest.runAllTimers());
@@ -2068,6 +2152,9 @@ describe('Picker', function () {
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       expect(focusSpies.onFocus).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenCalledTimes(1);
+      expect(focusSpies.onFocusChange).toHaveBeenCalledWith(true);
+
       expect(focusSpies.onBlur).not.toHaveBeenCalled();
       expect(otherButtonFocus).not.toHaveBeenCalled();
     });

@@ -15,7 +15,8 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {FocusEvent, HTMLAttributes, useRef} from 'react';
+import {FocusEvent, HTMLAttributes, useCallback, useRef} from 'react';
+import {useSyntheticBlurEvent} from './utils';
 
 interface FocusWithinProps {
   /** Whether the focus within events should be disabled. */
@@ -37,49 +38,62 @@ interface FocusWithinResult {
  * Handles focus events for the target and its descendants.
  */
 export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
+  let {
+    isDisabled,
+    onBlurWithin,
+    onFocusWithin,
+    onFocusWithinChange
+  } = props;
   let state = useRef({
     isFocusWithin: false
-  }).current;
+  });
 
-  if (props.isDisabled) {
-    return {focusWithinProps: {}};
-  }
-
-  let onFocus = (e: FocusEvent) => {
-    if (!state.isFocusWithin) {
-      if (props.onFocusWithin) {
-        props.onFocusWithin(e);
-      }
-
-      if (props.onFocusWithinChange) {
-        props.onFocusWithinChange(true);
-      }
-
-      state.isFocusWithin = true;
-    }
-  };
-
-  let onBlur = (e: FocusEvent) => {
+  let onBlur = useCallback((e: FocusEvent) => {
     // We don't want to trigger onBlurWithin and then immediately onFocusWithin again
     // when moving focus inside the element. Only trigger if the currentTarget doesn't
     // include the relatedTarget (where focus is moving).
-    if (state.isFocusWithin && !e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
-      if (props.onBlurWithin) {
-        props.onBlurWithin(e);
+    if (state.current.isFocusWithin && !(e.currentTarget as Element).contains(e.relatedTarget as Element)) {
+      state.current.isFocusWithin = false;
+
+      if (onBlurWithin) {
+        onBlurWithin(e);
       }
 
-      if (props.onFocusWithinChange) {
-        props.onFocusWithinChange(false);
+      if (onFocusWithinChange) {
+        onFocusWithinChange(false);
       }
-
-      state.isFocusWithin = false;
     }
-  };
+  }, [onBlurWithin, onFocusWithinChange, state]);
+
+  let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
+  let onFocus = useCallback((e: FocusEvent) => {
+    if (!state.current.isFocusWithin) {
+      if (onFocusWithin) {
+        onFocusWithin(e);
+      }
+
+      if (onFocusWithinChange) {
+        onFocusWithinChange(true);
+      }
+
+      state.current.isFocusWithin = true;
+      onSyntheticFocus(e);
+    }
+  }, [onFocusWithin, onFocusWithinChange, onSyntheticFocus]);
+
+  if (isDisabled) {
+    return {
+      focusWithinProps: {
+        onFocus: null,
+        onBlur: null
+      }
+    };
+  }
 
   return {
     focusWithinProps: {
-      onFocus: onFocus,
-      onBlur: onBlur
+      onFocus,
+      onBlur
     }
   };
 }

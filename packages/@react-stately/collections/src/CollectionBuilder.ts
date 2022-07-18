@@ -188,6 +188,10 @@ export class CollectionBuilder<T extends object> {
         for (let child of partialNode.childNodes()) {
           // Ensure child keys are globally unique by prepending the parent node's key
           if (child.key != null) {
+            // TODO: Remove this line entirely and enforce that users always provide unique keys.
+            // Currently this line will have issues when a parent has a key `a` and a child with key `bc`
+            // but another parent has key `ab` and its child has a key `c`. The combined keys would result in both
+            // children having a key of `abc`.
             child.key = `${node.key}${child.key}`;
           }
 

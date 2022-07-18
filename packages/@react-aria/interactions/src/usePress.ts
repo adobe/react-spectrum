@@ -321,7 +321,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on pointer down and handle focusing the pressable element ourselves.
-        if (shouldPreventDefault(e.target as Element)) {
+        if (shouldPreventDefault(e.currentTarget as HTMLElement)) {
           e.preventDefault();
         }
 
@@ -359,7 +359,7 @@ export function usePress(props: PressHookProps): PressResult {
           // Chrome and Firefox on touch Windows devices require mouse down events
           // to be canceled in addition to pointer events, or an extra asynchronous
           // focus event will be fired.
-          if (shouldPreventDefault(e.target as Element)) {
+          if (shouldPreventDefault(e.currentTarget as HTMLElement)) {
             e.preventDefault();
           }
 
@@ -443,7 +443,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on mouse down and handle focusing the pressable element ourselves.
-        if (shouldPreventDefault(e.target as Element)) {
+        if (shouldPreventDefault(e.currentTarget as HTMLElement)) {
           e.preventDefault();
         }
 
@@ -764,9 +764,9 @@ function isOverTarget(point: EventPoint, target: HTMLElement) {
   return areRectanglesOverlapping(rect, pointRect);
 }
 
-function shouldPreventDefault(target: Element) {
-  // We cannot prevent default if the target is inside a draggable element.
-  return !target.closest('[draggable="true"]');
+function shouldPreventDefault(target: HTMLElement) {
+  // We cannot prevent default if the target is a draggable element.
+  return !target.draggable;
 }
 
 function shouldPreventDefaultKeyboard(target: Element) {
@@ -778,13 +778,15 @@ function isVirtualPointerEvent(event: PointerEvent) {
   // Android TalkBack double tap will sometimes return a event with width and height of 1
   // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
   // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
-  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
+  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216. event.pointerType === 'mouse' is to distingush
+  // Talkback double tap from Windows Firefox touch screen press
   return (
     (event.width === 0 && event.height === 0) ||
     (event.width === 1 &&
       event.height === 1 &&
       event.pressure === 0 &&
-      event.detail === 0
+      event.detail === 0 &&
+      event.pointerType === 'mouse'
     )
   );
 }

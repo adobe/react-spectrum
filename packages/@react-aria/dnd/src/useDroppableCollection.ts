@@ -21,12 +21,12 @@ import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 import {useDroppableCollectionId} from './utils';
 
-interface DroppableCollectionOptions extends DroppableCollectionProps {
+export interface DroppableCollectionOptions extends DroppableCollectionProps {
   keyboardDelegate: KeyboardDelegate,
   getDropTargetFromPoint: (x: number, y: number) => DropTarget | null
 }
 
-interface DroppableCollectionResult {
+export interface DroppableCollectionResult {
   collectionProps: HTMLAttributes<HTMLElement>
 }
 
@@ -34,7 +34,7 @@ interface DroppingState {
   collection: Collection<Node<unknown>>,
   focusedKey: Key,
   selectedKeys: Set<Key>,
-  timeout: NodeJS.Timeout
+  timeout: ReturnType<typeof setTimeout>
 }
 
 const DROP_POSITIONS: DropPosition[] = ['before', 'on', 'after'];
@@ -66,11 +66,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         localState.dropOperation = 'cancel';
         localState.nextTarget = null;
         return 'cancel';
-      }
-
-      if (state.isDropTarget(target)) {
-        localState.nextTarget = target;
-        return localState.dropOperation;
       }
 
       localState.dropOperation = state.getDropOperation(target, types, allowedOperations);

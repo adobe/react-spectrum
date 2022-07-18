@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {ColorWheel} from '../';
 import {ControlledHSL} from '../stories/ColorWheel.stories';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import {parseColor} from '@react-stately/color';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -34,11 +33,6 @@ describe('ColorWheel', () => {
   let onChangeSpy = jest.fn();
   let onChangeEndSpy = jest.fn();
 
-  afterEach(() => {
-    onChangeSpy.mockClear();
-    onChangeEndSpy.mockClear();
-  });
-
   beforeAll(() => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
     // @ts-ignore
@@ -50,6 +44,8 @@ describe('ColorWheel', () => {
   afterEach(() => {
     // for restoreTextSelection
     jest.runAllTimers();
+    onChangeSpy.mockClear();
+    onChangeEndSpy.mockClear();
   });
 
   it('sets input props', () => {
@@ -161,18 +157,44 @@ describe('ColorWheel', () => {
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 359).toString('hsla'));
     });
 
-    it('respects step', () => {
+    it('respects page steps', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={45} />);
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
-      fireEvent.keyDown(slider, {key: 'Right'});
+      fireEvent.keyDown(slider, {key: 'PageUp'});
+      fireEvent.keyUp(slider, {key: 'PageUp'});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 45).toString('hsla'));
-      fireEvent.keyDown(slider, {key: 'Left'});
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
+      fireEvent.keyDown(slider, {key: 'PageDown'});
+      fireEvent.keyUp(slider, {key: 'PageDown'});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+    });
+
+    it('respects page steps from shift arrow', () => {
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
+      let slider = getByRole('slider');
+      act(() => {slider.focus();});
+
+      fireEvent.keyDown(slider, {key: 'Right', shiftKey: true});
+      fireEvent.keyUp(slider, {key: 'Right', shiftKey: true});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
+      fireEvent.keyDown(slider, {key: 'Left', shiftKey: true});
+      fireEvent.keyUp(slider, {key: 'Left', shiftKey: true});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
     });
   });
 
@@ -245,23 +267,6 @@ describe('ColorWheel', () => {
       expect(document.activeElement).not.toBe(slider);
     });
 
-    it('dragging the thumb respects the step', () => {
-      let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
-      let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
-      let thumb = slider.parentElement;
-      container.getBoundingClientRect = getBoundingClientRect;
-
-      start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-      expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 120).toString('hsla'));
-      end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    });
-
     it('clicking and dragging on the track works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
@@ -307,24 +312,6 @@ describe('ColorWheel', () => {
       expect(document.activeElement).not.toBe(slider);
     });
 
-    it('clicking and dragging on the track respects the step', () => {
-      let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
-      let slider = getByRole('slider');
-      let thumb = slider.parentElement;
-      let container = _container.firstChild.firstChild as HTMLElement;
-      container.getBoundingClientRect = getBoundingClientRect;
-
-      start(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 120).toString('hsla'));
-      move(thumb, {pageX: CENTER, pageY: CENTER - THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(2);
-      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 240).toString('hsla'));
-      end(thumb, {pageX: CENTER, pageY: CENTER - THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(2);
-    });
-
     it('clicking on the track works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ControlledHSL defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
@@ -343,5 +330,26 @@ describe('ColorWheel', () => {
       expect(document.activeElement).toBe(slider);
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('thumb background color should not include alpha channel', () => {
+    let defaultColor = parseColor('hsla(0, 100%, 50%, 0.5)');
+    let {container: _container} = render(<ColorWheel defaultValue={defaultColor} />);
+    /*
+     Current DOM structure for ColorWheel, starting at the container:
+
+     div
+       div.spectrum-ColorWheel
+         div.spectrum-ColorWheel-gradient
+         div.spectrum-ColorWheel-handle
+             div.spectrum-ColorHandle-color
+             svg.spectrum-ColorLoupe
+               ...
+             input.spectrum-ColorWheel-slider
+    */
+    let handleColorElement = _container.firstChild.firstChild.nextSibling.firstChild as HTMLElement;
+    let thumbColor = parseColor(handleColorElement.style.backgroundColor);
+    expect(defaultColor.getChannelValue('alpha')).toEqual(0.5);
+    expect(thumbColor.getChannelValue('alpha')).toEqual(1);
   });
 });

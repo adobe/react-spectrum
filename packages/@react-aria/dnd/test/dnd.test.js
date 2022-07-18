@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {CUSTOM_DRAG_TYPE} from '../src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from './mocks';
@@ -19,6 +19,20 @@ import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../src/utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    altKey: false,
+    button: opts.button || 0,
+    width: 1,
+    height: 1
+  }, opts);
+  return evt;
+}
 
 describe('useDrag and useDrop', function () {
   beforeEach(() => {
@@ -2041,6 +2055,65 @@ describe('useDrag and useDrop', function () {
       expect(announce).toHaveBeenCalledWith('Drop canceled.');
     });
 
+    it('should support clicking the original drag target to cancel drag (virtual pointer event)', () => {
+      let tree = render(<>
+        <Draggable />
+        <Droppable />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+
+      fireEvent.focus(draggable);
+      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent.click(draggable);
+      act(() => jest.runAllTimers());
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+      expect(draggable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Click to cancel drag.');
+
+      // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
+      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent.click(draggable, {detail: 1});
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      expect(draggable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
+
+      expect(announce).toHaveBeenCalledWith('Drop canceled.');
+    });
+
+    it('should support double tapping the drop target to complete drag (virtual pointer event)', () => {
+      let onDrop = jest.fn();
+      let tree = render(<>
+        <Draggable />
+        <Droppable onDrop={onDrop} />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let droppable = tree.getByText('Drop here');
+
+      fireEvent.focus(draggable);
+      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent.click(draggable);
+      act(() => jest.runAllTimers());
+      expect(draggable).toHaveAttribute('data-dragging', 'true');
+
+
+      // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
+      fireEvent.focus(droppable);
+      fireEvent(droppable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent(droppable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent.click(droppable, {detail: 1});
+      expect(draggable).toHaveAttribute('data-dragging', 'false');
+      expect(draggable).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
+
+      expect(announce).toHaveBeenCalledWith('Drop complete.');
+      expect(onDrop).toHaveBeenCalledTimes(1);
+    });
+
     it('should handle when a drop target is added', () => {
       let setShowTarget2;
       let Test = () => {
@@ -2282,7 +2355,7 @@ describe('useDrag and useDrop', function () {
 
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
-      expect(document.activeElement).toBe(draggable);
+      expect(document.activeElement).toBe(droppable);
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Double tap to cancel drag.');
       expect(announce).toHaveBeenCalledWith('Started dragging. Navigate to a drop target, then double tap to drop.');
