@@ -112,7 +112,7 @@ html, body {
   .example {
     background-color: var(--spectrum-global-color-gray-100);
   }
-  .article pre  {
+  .article pre, div:global(.cm-editor), div:global(.cm-activeLine) {
     --hljs-background:  #212121; /* between gray-100 and gray-200 */
     background-color: var(--hljs-background);
   }
@@ -425,6 +425,10 @@ footer li:last-child:after {
 
 div:global(.sp-preview-container) {
   display: block;
+  background: none;
+}
+
+div:global(.sp-layout) {
   background: none;
 }
 

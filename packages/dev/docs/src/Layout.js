@@ -15,6 +15,7 @@ import clsx from 'clsx';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
+import {getSandpackCssText} from '@codesandbox/sandpack-react';
 import heroImageAria from 'url:../pages/assets/ReactAria_976x445_2x.png';
 import heroImageHome from 'url:../pages/assets/ReactSpectrumHome_976x445_2x.png';
 import heroImageInternationalized from 'url:../pages/assets/internationalized@2x.png?as=webp&width=1952';
@@ -206,6 +207,9 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
               }
             }
           )}} />
+        <style
+          dangerouslySetInnerHTML={{__html: getSandpackCssText()}}
+          id="sandpack" />
       </head>
       <body>
         {children}
