@@ -69,5 +69,6 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
   /** Width of the menu. */
   menuWidth?: DimensionValue,
   /** Whether the element should receive focus on render. */
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  isReadOnly?: boolean
 }

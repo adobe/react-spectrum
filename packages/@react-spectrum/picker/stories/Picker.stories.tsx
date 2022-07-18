@@ -567,7 +567,27 @@ storiesOf('Picker', module)
         </Picker>
       </View>
     </View>
-  ));
+  ))
+  .add(
+    'isReadOnly',
+    () => (
+      <Picker isReadOnly label="Test" onSelectionChange={action('selectionChange')}>
+        <Item key="100">One hundred</Item>
+        <Item key="2012">Two thousand and twelve</Item>
+        <Item key="3">Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isReadOnly, selectedKey',
+    () => (
+      <Picker label="Test" isReadOnly selectedKey="One" onSelectionChange={action('selectionChange')}>
+        <Item key="One">One</Item>
+        <Item key="Two">Two</Item>
+        <Item key="Three">Three</Item>
+      </Picker>
+    )
+  );
 
 function AsyncLoadingExample() {
   interface Pokemon {

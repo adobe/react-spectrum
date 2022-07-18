@@ -43,8 +43,6 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
 
-// initialize commit (please delete this later i beg of you) DELETE
-
 function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'picker');
   props = useProviderProps(props);
@@ -183,10 +181,11 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     );
   }
 
+  let inputText = state.selectedItem ? state.selectedItem.textValue : '';
   let contents = state.selectedItem ? state.selectedItem.rendered : placeholder;
   if (typeof contents === 'string') {
     contents = <Text>{contents}</Text>;
-  }
+  } 
 
   let picker = (
     <div
@@ -272,7 +271,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       showErrorIcon={false}
       includeNecessityIndicatorInAccessibilityName
       elementType="span"
-      readOnlyText={contents}>
+      readOnlyText={typeof contents === 'string' ? contents : inputText}>
       {picker}
     </Field>
   );
