@@ -44,15 +44,18 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
   let {node} = props;
   let allowsResizing = node.props.allowsResizing;
   let allowsSorting = node.props.allowsSorting;
-  let {gridCellProps} = useGridCell(props, state, ref);
+  // the selection cell column header needs to focus the checkbox within it but the other columns should focus the cell so that focus doesn't land on the resizer
+  let {gridCellProps} = useGridCell({...props, focusMode: node.props.isSelectionCell || node.props.allowsResizing || node.props.allowsSorting ? 'child' : 'cell'}, state, ref);
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
+
   let {pressProps} = usePress({
     // Disabled for allowsResizing because if resizing is allowed, a menu trigger is added to the column header.
-    isDisabled: !allowsSorting || isSelectionCellDisabled || allowsResizing,
+    isDisabled: (!(allowsSorting || allowsResizing)) || isSelectionCellDisabled,
     onPress() {
-      state.sort(node.key);
-    }
+      !allowsResizing && state.sort(node.key);
+    },
+    ref
   });
 
   // Needed to pick up the focusable context, enabling things like Tooltips for example

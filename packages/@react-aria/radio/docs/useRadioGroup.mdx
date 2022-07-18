@@ -18,6 +18,10 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/radio/package.json';
 import Anatomy from './anatomy.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import buttongroupPreview from 'url:./buttongroup-example.png';
+import cardPreview from 'url:./card-example.png';
+import swatchPreview from 'url:./swatch-example.png';
 
 ---
 category: Forms
@@ -215,6 +219,26 @@ function Radio(props) {
   <Radio value="cats">Cats</Radio>
 </RadioGroup>
 ```
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/bold-wood-pxm478?file=/src/SwatchGroup.tsx"
+  preview={swatchPreview}
+  title="Swatch Group"
+  description="A color swatch picker built with Tailwind CSS." />
+
+<ExampleCard
+  url="https://codesandbox.io/s/recursing-night-pu6w2g?file=/src/CardGroup.tsx"
+  preview={cardPreview}
+  title="Selectable Cards"
+  description="A selectable card group built with Styled Components." />
+
+<ExampleCard
+  url="https://codesandbox.io/s/epic-faraday-qoiy0l?file=/src/ButtonGroup.js"
+  preview={buttongroupPreview}
+  title="Button Group"
+  description="A single-selectable segmented button group." />
 
 ## Internationalization
 
