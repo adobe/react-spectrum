@@ -14,7 +14,7 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
-import {RefObject, useEffect} from 'react';
+import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 
 export interface DialogAria {
   /** Props for the dialog container element. */
@@ -33,6 +33,8 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
   let titleId = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
 
+  let isRefocusing = useRef(false);
+
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
     if (ref.current && !ref.current.contains(document.activeElement)) {
@@ -43,8 +45,10 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       // is to wait for half a second, then blur and re-focus the dialog.
       let timeout = setTimeout(() => {
         if (document.activeElement === ref.current) {
+          isRefocusing.current = true;
           ref.current.blur();
           focusSafely(ref.current);
+          isRefocusing.current = false;
         }
       }, 500);
 
@@ -53,6 +57,11 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       };
     }
   }, [ref]);
+
+  useFocusScope({
+    contain: true,
+    restoreFocus: true
+  }, ref);
 
   // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
   // on mount when inside an iframe, no matter which element we programmatically focus.
@@ -64,7 +73,15 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       ...filterDOMProps(props, {labelable: true}),
       role,
       tabIndex: -1,
-      'aria-labelledby': props['aria-labelledby'] || titleId
+      'aria-labelledby': props['aria-labelledby'] || titleId,
+      // Prevent blur events from reaching useOverlay, which may cause
+      // popovers to close. Since focus is contained within the dialog,
+      // we don't want this to occur due to the above useEffect.
+      onBlur: e => {
+        if (isRefocusing.current) {
+          e.stopPropagation();
+        }
+      }
     },
     titleProps: {
       id: titleId
