@@ -423,6 +423,11 @@ footer li:last-child:after {
   margin-bottom: var(--spectrum-global-dimension-size-150);
 }
 
+div:global(.sp-preview-container) {
+  display: block;
+  background: none;
+}
+
 .snippet {
   background: none;
 }

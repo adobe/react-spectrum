@@ -44,8 +44,8 @@ const indexHtml = `<!DOCTYPE html>
           min-height: 100vh;
         }
         #root > div {
-          padding: 20px;
-          min-height: calc(100vh - 40px);
+          padding: 40px;
+          min-height: calc(100vh - 80px);
         }
       </style>
     <div id="root"></div>
