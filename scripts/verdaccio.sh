@@ -85,7 +85,11 @@ then
 
   # Build test app and move to dist folder
   yarn build
+  du -c build/ > size.txt
+  mkdir -p ../../$verdaccio_path/size
+  mv size.txt ../../$verdaccio_path/size
   mv build ../../$verdaccio_path
+
   cd ../..
 else
   # Wait for user input to do cleanup

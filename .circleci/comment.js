@@ -10,6 +10,7 @@ async function run() {
   let pr;
   // If we aren't running on a PR commit, double check if this is a branch created for a fork. If so, we'll need to
   // comment the build link on the fork.
+  // TODO restore to old logic
   if (true) {
     try {
       const commit = await octokit.git.getCommit({
