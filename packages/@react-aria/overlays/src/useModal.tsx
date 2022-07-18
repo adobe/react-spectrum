@@ -12,7 +12,6 @@
 
 import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {useIsSSR} from '@react-aria/ssr';
 
 interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode
@@ -123,8 +122,7 @@ interface OverlayContainerProps extends ModalProviderProps {
  * be accessible at once.
  */
 export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal {
-  let isSSR = useIsSSR();
-  let {portalContainer = isSSR ? null : document.body, ...rest} = props;
+  let {portalContainer = typeof document !== 'undefined' ? document.body : null, ...rest} = props;
 
   React.useEffect(() => {
     if (portalContainer?.closest('[data-overlay-container]')) {
