@@ -257,6 +257,11 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   });
 
   let {minValue, maxValue, step} = state.value.getChannelRange('hue');
+
+  let forcedColorAdjustNoneStyle = {
+    forcedColorAdjust: 'none'
+  };
+
   return {
     trackProps: {
       ...trackInteractions,
@@ -283,7 +288,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
             hsl(360, 100%, 50%)
           )
         `,
-        clipPath: `path(evenodd, "${circlePath(outerRadius, outerRadius, outerRadius)} ${circlePath(outerRadius, outerRadius, innerRadius)}")`
+        clipPath: `path(evenodd, "${circlePath(outerRadius, outerRadius, outerRadius)} ${circlePath(outerRadius, outerRadius, innerRadius)}")`,
+        ...forcedColorAdjustNoneStyle
       }
     },
     thumbProps: {
@@ -293,7 +299,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
         left: '50%',
         top: '50%',
         transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
-        touchAction: 'none'
+        touchAction: 'none',
+        ...forcedColorAdjustNoneStyle
       }
     },
     inputProps: mergeProps(

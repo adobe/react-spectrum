@@ -12,7 +12,7 @@
 
 import {AriaColorSliderProps} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
-import {HTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
@@ -32,7 +32,7 @@ interface ColorSliderAria {
   /** Props for the thumb element. */
   thumbProps: HTMLAttributes<HTMLElement>,
   /** Props for the visually hidden range input element. */
-  inputProps: HTMLAttributes<HTMLElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the output element, displaying the value of the color slider. */
   outputProps: HTMLAttributes<HTMLElement>
 }
@@ -99,17 +99,14 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     }
   };
 
-  let thumbPosition = state.getThumbPercent(0);
-  if (orientation === 'vertical' || direction === 'rtl') {
-    thumbPosition = 1 - thumbPosition;
-  }
+  let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'};
 
   return {
     trackProps: {
       ...mergeProps(groupProps, trackProps),
       style: {
-        position: 'relative',
-        touchAction: 'none',
+        ...trackProps.style,
+        ...forcedColorAdjustNoneStyle,
         background: generateBackground()
       }
     },
@@ -117,10 +114,8 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     thumbProps: {
       ...thumbProps,
       style: {
-        touchAction: 'none',
-        position: 'absolute',
-        [orientation === 'vertical' ? 'top' : 'left']: `${thumbPosition * 100}%`,
-        transform: 'translate(-50%, -50%)'
+        ...thumbProps.style,
+        ...forcedColorAdjustNoneStyle
       }
     },
     labelProps,
