@@ -83,7 +83,7 @@ then
   cd examples/rsp-cra-18
   yarn install
 
-  # Build test app and move to dist folder
+  # Build test app and move to dist folder. Store the size of the build in a text file
   yarn build
   du -c build/ > size.txt
   mkdir -p ../../$verdaccio_path/size
