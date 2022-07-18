@@ -117,6 +117,10 @@ function CustomSandpack(props) {
         theme={{
           colors: {
             surface1: 'var(--hljs-background)',
+            surface2: 'var(--hljs-background)',
+            surface3: 'var(--hljs-background)',
+            clickable: 'var(--hljs-color)',
+            base: 'var(--hljs-color)',
             activeBackground: 'var(--hljs-background)',
             hover: 'var(--hljs-color)'
           },
