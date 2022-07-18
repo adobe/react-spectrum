@@ -52,6 +52,51 @@ let withSection = [
   ]}
 ];
 
+const parameters = {
+  args: {
+    isReadOnly: true,
+    isQuiet: false,
+    isRequired: false,
+    isDisabled: false,
+    autoFocus: true,
+    validationState: '',
+    description: '',
+    errorMessage: '',
+  },
+  argTypes: {
+    isQuiet: {
+      control: {type: 'boolean'}
+    },
+    isRequired: {
+      control: {type: 'boolean'}
+    },
+    isDisabled: {
+      control: {type: 'boolean'}
+    },
+    autoFocus: {
+      control: {type: 'boolean'}
+    },
+    validationState: {
+      control: {
+        type: 'radio',
+        options: ['', 'invalid', 'valid', '']
+      }
+    },
+    description: {
+      control: {
+        type: 'radio',
+        options: ['', 'Please enter a street address']
+      }
+    },
+    errorMessage: {
+      control: {
+        type: 'radio',
+        options: ['', 'please enter a valid street address']
+      }
+    }
+  }
+};
+
 storiesOf('Picker', module)
   .add(
     'default',
@@ -570,23 +615,59 @@ storiesOf('Picker', module)
   ))
   .add(
     'isReadOnly',
-    () => (
-      <Picker isReadOnly label="Test" onSelectionChange={action('selectionChange')}>
+    (args) => (
+      <Picker isReadOnly label="Test" onSelectionChange={action('selectionChange')} {...args}>
         <Item key="100">One hundred</Item>
         <Item key="2012">Two thousand and twelve</Item>
         <Item key="3">Three</Item>
       </Picker>
-    )
+    ), parameters
   )
   .add(
     'isReadOnly, selectedKey',
     () => (
-      <Picker label="Test" isReadOnly selectedKey="One" onSelectionChange={action('selectionChange')}>
+      <Picker autoFocus label="Test" isReadOnly selectedKey="One" onSelectionChange={action('selectionChange')}>
         <Item key="One">One</Item>
         <Item key="Two">Two</Item>
         <Item key="Three">Three</Item>
       </Picker>
     )
+  )
+  .add(
+    'isReadOnly, complex items',
+    (args) => (
+      <Picker label="Test" selectedKey="Copy" onSelectionChange={action('selectionChange')} {...args}>
+        <Section title="Section 1">
+          <Item key="Copy" textValue="Copy">
+            <Copy />
+            <Text>Copy</Text>
+          </Item>
+          <Item key="Cut" textValue="Cut">
+            <Cut />
+            <Text>Cut</Text>
+          </Item>
+          <Item key="Paste" textValue="Paste">
+            <Paste />
+            <Text>Paste</Text>
+          </Item>
+        </Section>
+        <Section title="Section 2">
+          <Item key="Puppy" textValue="Puppy">
+            <AlignLeft />
+            <Text>Puppy</Text>
+            <Text slot="description">Puppy description super long as well geez</Text>
+          </Item>
+          <Item key="Doggo" textValue="Doggo with really really really long long long text">
+            <AlignCenter />
+            <Text>Doggo with really really really long long long text</Text>
+          </Item>
+          <Item key="Floof" textValue="Floof">
+            <AlignRight />
+            <Text>Floof</Text>
+          </Item>
+        </Section>
+      </Picker>
+    ), parameters
   );
 
 function AsyncLoadingExample() {
