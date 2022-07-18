@@ -138,29 +138,38 @@ function CustomSandpack(props) {
           style={{display: 'block', background: 'none', border: 'none'}}
           actionsChildren={
             <ButtonGroup>
-              <ActionButton
-                isQuiet
-                aria-label="Copy example code"
-                onPress={() => {
-                  navigator.clipboard.writeText(code.trim());
-                }}
-              >
-                <Copy size="S" />
-              </ActionButton>
-              <ActionButton
-                isQuiet
-                aria-label="Refresh example"
-                onPress={() => refresh()}
-              >
-                <Refresh size="S" />
-              </ActionButton>
-              <ActionButton
-                isQuiet
-                aria-label="Open example in CodeSandbox"
-                onPress={() => openInCodeSandboxButtonRef.current.firstChild.click()}
-              >
-                <LinkOut size="S" />
-              </ActionButton>
+              <TooltipTrigger>
+                <ActionButton
+                  isQuiet
+                  aria-label="Copy example code"
+                  onPress={() => {
+                    navigator.clipboard.writeText(code.trim());
+                  }}
+                >
+                  <Copy size="S" />
+                </ActionButton>
+                <Tooltip>Copy code</Tooltip>
+              </TooltipTrigger>
+              <TooltipTrigger>
+                <ActionButton
+                  isQuiet
+                  aria-label="Refresh example"
+                  onPress={() => refresh()}
+                >
+                  <Refresh size="S" />
+                </ActionButton>
+                <Tooltip>Refresh</Tooltip>
+              </TooltipTrigger>
+              <TooltipTrigger>
+                <ActionButton
+                  isQuiet
+                  aria-label="Open example in CodeSandbox"
+                  onPress={() => openInCodeSandboxButtonRef.current.firstChild.click()}
+                >
+                  <LinkOut size="S" />
+                </ActionButton>
+                <Tooltip>Open in CodeSandbox</Tooltip>
+              </TooltipTrigger>
             </ButtonGroup>
           }
           showRefreshButton={false}
@@ -531,7 +540,7 @@ ${shouldImportSandpack ?
 import Copy from '@spectrum-icons/workflow/Copy';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
-import {ActionButton, ButtonGroup} from '@adobe/react-spectrum';` : ''}
+import {ActionButton, ButtonGroup, Tooltip, TooltipTrigger} from '@adobe/react-spectrum';` : ''}
 ${exampleCode.join('\n')}
 export default {};
 `;
