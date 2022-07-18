@@ -69,7 +69,6 @@ interface IFocusContext {
 const FocusContext = React.createContext<IFocusContext>(null);
 
 let activeScope: ScopeRef = null;
-let scopes: Map<ScopeRef, ScopeRef | null> = new Map();
 
 // This is a hacky DOM-based implementation of a FocusScope until this RFC lands in React:
 // https://github.com/reactjs/rfcs/pull/109
@@ -89,7 +88,7 @@ export function FocusScope(props: FocusScopeProps) {
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);
   let ctx = useContext(FocusContext);
-  let parentScope = ctx?.scopeRef;
+  let parentScope = ctx?.scopeRef ?? null;
 
   useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
@@ -103,20 +102,27 @@ export function FocusScope(props: FocusScopeProps) {
     scopeRef.current = nodes;
   }, [children, parentScope]);
 
+  // add to the focus scope tree in render order because useEffects/useLayoutEffects run children first whereas render runs parent first
+  // which matters when constructing a tree
+  if (focusScopeTree.getNode(parentScope) && !focusScopeTree.getNode(scopeRef)) {
+    focusScopeTree.addNode(scopeRef, parentScope);
+  }
+
   useLayoutEffect(() => {
-    scopes.set(scopeRef, parentScope);
-    return () => {
-      // Restore the active scope on unmount if this scope or a descendant scope is active.
-      // Parent effect cleanups run before children, so we need to check if the
-      // parent scope actually still exists before restoring the active scope to it.
-      if (
-        (scopeRef === activeScope || isAncestorScope(scopeRef, activeScope)) &&
-        (!parentScope || scopes.has(parentScope))
-      ) {
-        activeScope = parentScope;
-      }
-      scopes.delete(scopeRef);
-    };
+    if (scopeRef && (parentScope || parentScope == null)) {
+      return () => {
+        // Restore the active scope on unmount if this scope or a descendant scope is active.
+        // Parent effect cleanups run before children, so we need to check if the
+        // parent scope actually still exists before restoring the active scope to it.
+        if (
+          (scopeRef === activeScope || isAncestorScope(scopeRef, activeScope)) &&
+          (!parentScope || focusScopeTree.getNode(parentScope))
+        ) {
+          activeScope = parentScope;
+        }
+        focusScopeTree.removeNode(scopeRef);
+      };
+    }
   }, [scopeRef, parentScope]);
 
   useFocusContainment(scopeRef, contain);
@@ -324,7 +330,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
 }
 
 function isElementInAnyScope(element: Element) {
-  for (let scope of scopes.keys()) {
+  for (let {data: scope} of focusScopeTree.traverseInOrderDF()) {
     if (isElementInScope(element, scope.current)) {
       return true;
     }
@@ -339,7 +345,7 @@ function isElementInScope(element: Element, scope: HTMLElement[]) {
 function isElementInChildScope(element: Element, scope: ScopeRef) {
   // node.contains in isElementInScope covers child scopes that are also DOM children,
   // but does not cover child scopes in portals.
-  for (let s of scopes.keys()) {
+  for (let {data: s} of focusScopeTree.traverseInOrderDF()) {
     if ((s === scope || isAncestorScope(scope, s)) && isElementInScope(element, s.current)) {
       return true;
     }
@@ -349,16 +355,16 @@ function isElementInChildScope(element: Element, scope: ScopeRef) {
 }
 
 function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
-  let parent = scopes.get(scope);
+  let parent = focusScopeTree.getNode(scope)?.parent;
   if (!parent) {
     return false;
   }
 
-  if (parent === ancestor) {
+  if (parent.data === ancestor) {
     return true;
   }
 
-  return isAncestorScope(ancestor, parent);
+  return isAncestorScope(ancestor, parent.data);
 }
 
 function focusElement(element: HTMLElement | null, scroll = false) {
@@ -610,3 +616,77 @@ function last(walker: TreeWalker) {
   } while (last);
   return next;
 }
+
+
+class Tree {
+  private root: Node;
+  private fastMap = new Map<ScopeRef, Node>();
+
+  constructor() {
+    this.root = new Node({data: null});
+    this.fastMap.set(null, this.root);
+  }
+
+  getNode(data: ScopeRef) {
+    return this.fastMap.get(data);
+  }
+
+  addNode(data: ScopeRef, parent: ScopeRef) {
+    let parentNode = this.fastMap.get(parent ?? null);
+    let node = new Node({data});
+    parentNode.addChild(node);
+    node.parent = parentNode;
+    this.fastMap.set(data, node);
+  }
+
+  removeNode(data: ScopeRef) {
+    let node = this.fastMap.get(data);
+    let parentNode = node.parent;
+    let children = node.children;
+    parentNode.removeChild(node);
+    if (children.length > 0) {
+      children.forEach(child => parentNode.addChild(child));
+    }
+  }
+
+  * traverseInOrderDF(node: Node = this.root): Generator<Node> {
+    if (node.data != null) {
+      yield node;
+    }
+    if (node.children.length > 0) {
+      for (let child of node.children) {
+        yield* this.traverseInOrderDF(child);
+      }
+    }
+  }
+}
+
+class Node {
+  private _data: ScopeRef;
+  private _parent: Node;
+  private _children: Node[] = [];
+
+  constructor(props: {data: ScopeRef}) {
+    this._data = props.data;
+  }
+  get data() {
+    return this._data;
+  }
+  set parent(node: Node) {
+    this._parent = node;
+  }
+  get parent(): Node {
+    return this._parent;
+  }
+  addChild(node: Node) {
+    this._children.push(node);
+  }
+  removeChild(node: Node) {
+    this._children.splice(this.children.indexOf(node), 1);
+  }
+  get children(): Node[] {
+    return this._children;
+  }
+}
+
+let focusScopeTree = new Tree();
