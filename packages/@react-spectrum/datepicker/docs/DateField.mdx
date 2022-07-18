@@ -23,7 +23,6 @@ import {Flex} from '@react-spectrum/layout';
 ---
 category: Date and Time
 keywords: [input, form, field, date, time]
-after_version: 3.0.0
 ---
 
 # DateField
@@ -43,7 +42,7 @@ after_version: 3.0.0
 
 ## Value
 
-A `DateField` displays a placeholder date by default. An initial, uncontrolled value can be provided to the `DateField` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+A `DateField` displays a placeholder by default. An initial, uncontrolled value can be provided to the `DateField` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
 
 Date values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns. `DateField` supports values of the following types:
 
@@ -89,7 +88,7 @@ import {parseZonedDateTime} from '@internationalized/date';
   defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
 ```
 
-`DateField` displays times in the time zone included in the `ZoneDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+`DateField` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
 
 ```tsx example
 import {parseAbsoluteToLocal} from '@internationalized/date';
@@ -298,7 +297,7 @@ Both a description and an error message can be supplied to a DateField. The desc
 
 ### Placeholder value
 
-When no value is set, a placeholder value is shown. By default, this is today's date at midnight. However, this can be overridden by setting the `placeholderValue` prop to a more appropriate placeholder for your specific usecase.
+When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.
 
 ```tsx example
 import {CalendarDate} from '@internationalized/date';

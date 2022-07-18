@@ -24,7 +24,6 @@ import chakraExample from 'url:./DateRangePicker-chakra.png';
 ---
 category: Date and Time
 keywords: [input, form, field, date, time]
-after_version: 3.0.0
 ---
 
 # useDateRangePicker
@@ -50,9 +49,13 @@ A date range picker can be built using two separate `<input type="date">` elemen
 * **Touch friendly** – Date segments are editable using an easy to use numeric keypad, date ranges can be selected by dragging over dates in the calendar using a touch screen, and all interactions are accessible using touch-based screen readers.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `useDateRangePicker`.
+
 ## Anatomy
 
-<Anatomy />
+<Anatomy
+  role="img"
+  aria-label="Anatomy diagram of an expanded date range picker component, which consists of a labelled group containing a start date field, an end date field, and a button that toggles a popover dialog containing a range calendar." />
 
 A date range picker consists of a label, and group containing two [date fields](useDateField.html) and a button. Clicking the button opens a popup containing a [range calendar](useRangeCalendar.html). The date fields include segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date range.
 
@@ -96,7 +99,7 @@ function DateRangePicker(props) {
   return (
     <div style={{position: 'relative'}}>
       <span {...labelProps}>{props.label}</span>
-      <div {...groupProps} ref={ref} style={{display: 'flex', maxWidth: '100%'}}>
+      <div {...groupProps} ref={ref} style={{display: 'flex'}}>
         <div className="field">
           <DateField {...startFieldProps} />
           <span style={{padding: '0 4px'}}>–</span>
@@ -265,6 +268,8 @@ function DateSegment({segment, state}) {
   border-radius: 2px;
   border: 1px solid var(--gray);
   background: var(--spectrum-global-color-gray-50);
+  max-width: 100%;
+  overflow: auto;
 }
 
 .field:focus-within {
@@ -309,7 +314,6 @@ The `RangeCalendar` component implements the month grid shown within the `DateRa
 ```tsx example export=true render=false
 import {useRangeCalendarState} from '@react-stately/calendar';
 import {useRangeCalendar, useCalendarGrid, useCalendarCell} from '@react-aria/calendar';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {createCalendar, startOfWeek, getWeeksInMonth} from '@internationalized/date';
 
 function RangeCalendar(props) {
@@ -326,8 +330,8 @@ function RangeCalendar(props) {
   return (
     <div {...calendarProps} ref={ref} className="calendar">
       <div className="header">
-        <Button {...prevButtonProps}>&lt;</Button>
         <h2>{title}</h2>
+        <Button {...prevButtonProps}>&lt;</Button>
         <Button {...nextButtonProps}>&gt;</Button>
       </div>
       <CalendarGrid state={state} />
@@ -335,39 +339,32 @@ function RangeCalendar(props) {
   );
 }
 
-function CalendarGrid({state}) {
+function CalendarGrid({state, ...props}) {
   let {locale} = useLocale();
-  let {gridProps, weekDays} = useCalendarGrid({}, state);
+  let {gridProps, headerProps, weekDays} = useCalendarGrid(props, state);
 
-  let monthStart = startOfWeek(state.visibleRange.start, locale);
+  // Get the number of weeks in the month so we can render the proper number of rows.
   let weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale);
 
   return (
     <table {...gridProps}>
-      <thead>
+      <thead {...headerProps}>
         <tr>
-          {weekDays.map((day, index) => {
-            return (
-              <th key={index}>
-                {/* Make sure screen readers read the full day name,
-                  but we show an abbreviation visually. */}
-                <VisuallyHidden>{day.long}</VisuallyHidden>
-                <span aria-hidden="true">
-                  {day.narrow}
-                </span>
-              </th>
-            );
-          })}
+          {weekDays.map((day, index) =>
+            <th key={index}>{day}</th>
+          )}
         </tr>
       </thead>
       <tbody>
         {[...new Array(weeksInMonth).keys()].map(weekIndex => (
           <tr key={weekIndex}>
-            {[...new Array(7).keys()].map(dayIndex => (
-              <CalendarCell
-                key={dayIndex}
-                state={state}
-                date={monthStart.add({weeks: weekIndex, days: dayIndex})} />
+            {state.getDatesInWeek(weekIndex).map((date, i) => (
+              date ? (
+                <CalendarCell
+                  key={i}
+                  state={state}
+                  date={date} />
+              ) : <td key={i} />
             ))}
           </tr>
         ))}
@@ -413,12 +410,13 @@ function CalendarCell({state, date}) {
 .header {
   display: flex;
   align-items: center;
+  gap: 4px;
+  margin: 0 8px;
 }
 
 .header h2 {
   flex: 1;
   margin: 0;
-  text-align: center;
 }
 
 .calendar table {
@@ -547,7 +545,7 @@ import {parseZonedDateTime} from '@internationalized/date';
   }} />
 ```
 
-`useDateRangePicker` displays times in the time zone included in the `ZoneDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+`useDateRangePicker` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
 
 ```tsx example
 import {parseAbsoluteToLocal} from '@internationalized/date';
@@ -657,7 +655,7 @@ This example includes multiple unavailable date ranges, e.g. dates when a rental
 
 ```tsx example
 import {today} from '@internationalized/date';
-import {useLocale} from '@adobe/react-spectrum';
+import {useLocale} from '@react-aria/i18n';
 
 function Example() {
   let now = today(getLocalTimeZone());
@@ -698,6 +696,16 @@ function Example() {
 
   return <DateRangePicker label="Time off request" isDateUnavailable={date => isWeekend(date, locale)} allowsNonContiguousRanges />
 }
+```
+
+### Placeholder value
+
+When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys, as well as the default month shown in the calendar popover. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.
+
+```tsx example
+import {CalendarDate} from '@internationalized/date';
+
+<DateRangePicker label="Date range" placeholderValue={new CalendarDate(1980, 1, 1)} />
 ```
 
 ### Hide time zone

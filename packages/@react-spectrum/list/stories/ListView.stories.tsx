@@ -1,43 +1,130 @@
 import {action} from '@storybook/addon-actions';
+import {ActionBar, ActionBarContainer} from '../../actionbar';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
-import {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
+import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
-import {Content, View} from '@react-spectrum/view';
+import {Breadcrumbs} from '@react-spectrum/breadcrumbs';
+import {chain} from '@react-aria/utils';
+import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
+import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import {Flex} from '@react-spectrum/layout';
-import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {Link} from '@react-spectrum/link';
-import MoreSmall from '@spectrum-icons/workflow/MoreSmall';
+import {ItemDropTarget} from '@react-types/shared';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {useAsyncList} from '@react-stately/data';
-import {useDragHooks} from '@react-spectrum/dnd';
+import {useAsyncList, useListData} from '@react-stately/data';
+import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-const items = [
-  {key: 'a', textValue: 'Item a', isDraggable: true},
-  {key: 'b', textValue: 'Item b', isDraggable: true},
-  {key: 'c', textValue: 'Item c', isDraggable: false},
-  {key: 'd', textValue: 'Item d', isDraggable: true},
-  {key: 'e', textValue: 'Item e', isDraggable: false},
-  {key: 'f', textValue: 'Item f', isDraggable: true},
-  {key: 'g', textValue: 'Item g', isDraggable: true},
-  {key: 'h', textValue: 'Item h', isDraggable: true},
-  {key: 'i', textValue: 'Item i', isDraggable: true},
-  {key: 'j', textValue: 'Item j', isDraggable: true},
-  {key: 'k', textValue: 'Item k', isDraggable: true},
-  {key: 'l', textValue: 'Item l', isDraggable: true},
-  {key: 'm', textValue: 'Item m', isDraggable: false},
-  {key: 'n', textValue: 'Item n', isDraggable: true}
+const parameters = {
+  args: {
+    isQuiet: false,
+    density: 'regular',
+    selectionMode: 'multiple',
+    selectionStyle: 'checkbox',
+    overflowMode: 'truncate'
+  },
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'radio',
+        options: ['none', 'single', 'multiple']
+      }
+    },
+    selectionStyle: {
+      control: {
+        type: 'radio',
+        options: ['checkbox', 'highlight']
+      }
+    },
+    isQuiet: {
+      control: {type: 'boolean'}
+    },
+    density: {
+      control: {
+        type: 'select',
+        options: ['compact', 'regular', 'spacious']
+      }
+    },
+    overflowMode: {
+      control: {
+        type: 'radio',
+        options: ['truncate', 'wrap']
+      }
+    }
+  }
+};
+
+const items: any = [
+  {key: 'a', name: 'Adobe Photoshop', type: 'file'},
+  {key: 'b', name: 'Adobe XD', type: 'file'},
+  {key: 'c', name: 'Documents', type: 'folder', children: [
+    {key: 1, name: 'Sales Pitch'},
+    {key: 2, name: 'Demo'},
+    {key: 3, name: 'Taxes'}
+  ]},
+  {key: 'd', name: 'Adobe InDesign', type: 'file'},
+  {key: 'e', name: 'Utilities', type: 'folder', children: [
+    {key: 1, name: 'Activity Monitor'}
+  ]},
+  {key: 'f', name: 'Adobe AfterEffects', type: 'file'},
+  {key: 'g', name: 'Adobe Illustrator', type: 'file'},
+  {key: 'h', name: 'Adobe Lightroom', type: 'file'},
+  {key: 'i', name: 'Adobe Premiere Pro', type: 'file'},
+  {key: 'j', name: 'Adobe Fresco', type: 'file'},
+  {key: 'k', name: 'Adobe Dreamweaver', type: 'file'},
+  {key: 'l', name: 'Adobe Connect', type: 'file'},
+  {key: 'm', name: 'Pictures', type: 'folder', children: [
+    {key: 1, name: 'Yosemite'},
+    {key: 2, name: 'Jackson Hole'},
+    {key: 3, name: 'Crater Lake'}
+  ]},
+  {key: 'n', name: 'Adobe Acrobat', type: 'file'}
 ];
+
+// taken from https://random.dog/
+const itemsWithThumbs = [
+  {key: '0', title: 'folder of good bois', illustration: <Folder />},
+  {key: '1', title: 'swimmer', url: 'https://random.dog/b2fe2172-cf11-43f4-9c7f-29bd19601712.jpg'},
+  {key: '2', title: 'chocolate', url: 'https://random.dog/2032518a-eec8-4102-9d48-3dca5a26eb23.png'},
+  {key: '3', title: 'good boi', url: 'https://random.dog/191091b2-7d69-47af-9f52-6605063f1a47.jpg'},
+  {key: '4', title: 'polar bear', url: 'https://random.dog/c22c077e-a009-486f-834c-a19edcc36a17.jpg'},
+  {key: '5', title: 'cold boi', url: 'https://random.dog/093a41da-e2c0-4535-a366-9ef3f2013f73.jpg'},
+  {key: '6', title: 'pilot', url: 'https://random.dog/09f8ecf4-c22b-49f4-af24-29fb5c8dbb2d.jpg'},
+  {key: '7', title: 'nerd', url: 'https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg'},
+  {key: '8', title: 'audiophile', url: 'https://random.dog/32367-2062-4347.jpg'},
+  {key: '9', title: 'folder of great bois', illustration: <Folder />}
+];
+
+function IllustrationContainer(props) {
+  props = useSlotProps(props, 'illustration');
+  let {styleProps} = useStyleProps(props);
+  return (
+    <div {...styleProps}>
+      {props.children}
+    </div>
+  );
+}
+
+function Folder() {
+  return (
+    <IllustrationContainer>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95.23 67">
+        <path fill="var(--spectrum-global-color-gray-600)" d="M94.47,27a4.45,4.45,0,0,0-3.72-2H20.34a5.45,5.45,0,0,0-5.05,3.37L3.12,57.68V3.88A.89.89,0,0,1,4,3H23.21a2.51,2.51,0,0,1,1.69.66l9.7,8.94a1.56,1.56,0,0,0,1,.4h40a1.5,1.5,0,0,1,1.5,1.5v6a1.5,1.5,0,0,0,3,0v-6a4.51,4.51,0,0,0-4.5-4.5H36.21L26.93,1.46A5.48,5.48,0,0,0,23.21,0H4A3.88,3.88,0,0,0,.12,3.88v61h0A1.51,1.51,0,0,0,1.5,67H79a1.49,1.49,0,0,0,1.38-.92L94.89,31.19A4.45,4.45,0,0,0,94.47,27ZM92.12,30,78,64H3.75L18.06,29.52A2.46,2.46,0,0,1,20.34,28H90.75a1.48,1.48,0,0,1,1.37,2Z" />
+      </svg>
+    </IllustrationContainer>
+  );
+}
 
 function renderEmptyState() {
   return (
@@ -51,128 +138,137 @@ function renderEmptyState() {
   );
 }
 
+let decorator = (storyFn, context) => {
+  let omittedStories = ['draggable rows', 'dynamic items + renderEmptyState'];
+  return  window.screen.width <= 700 || omittedStories.some(omittedName => context.name.includes(omittedName)) ?
+  storyFn() :
+  (
+    <>
+      <span style={{paddingInline: '10px'}}>
+        <label htmlFor="focus-before">Focus before</label>
+        <input id="focus-before" />
+      </span>
+      {storyFn()}
+      <span style={{paddingInline: '10px'}}>
+        <label htmlFor="focus-after">Focus after</label>
+        <input id="focus-after" />
+      </span>
+    </>
+  );
+};
+
 storiesOf('ListView', module)
-  .add('default', () => (
-    <ListView width="250px">
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+  .addDecorator(decorator)
+  .addParameters(parameters)
+  .add('default', args => (
+    <ListView width="250px" aria-label="default ListView" {...args}>
+      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   ))
-  .add('isQuiet', () => (
-    <ListView width="250px" isQuiet>
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
-    </ListView>
-  ))
-  .add('with buttons', () => (
-    <ListView width="300px">
-      <Item textValue="row 1">
-        <Content>row 1</Content>
-        <ActionButton>Button 1</ActionButton>
-      </Item>
-      <Item textValue="row 2">
-        <Content>row 2</Content>
-        <ActionButton>Button 1</ActionButton>
-      </Item>
-      <Item textValue="row 3">
-        <Content>row 3</Content>
-        <ActionButton>Button 1</ActionButton>
-      </Item>
-    </ListView>
-  ))
-  .add('dynamic items', () => (
-    <ListView items={items} width="300px" height="250px">
-      {(item) => (
-        <Item key={item.key} textValue={item.textValue}>
-          <Content>
-            <Flex alignItems="center" gap="10px">
-              <View flexGrow={1}>Item {item.key}</View> {/* TODO */}
-              <ActionButton><Add /></ActionButton>
-              <MenuTrigger>
-                <ActionButton><MoreSmall /></ActionButton>
-                <Menu>
-                  <Item>
-                    <Edit />
-                    <Text>Edit</Text>
-                  </Item>
-                  <Item>
-                    <Delete />
-                    <Text>Delete</Text>
-                  </Item>
-                </Menu>
-              </MenuTrigger>
-            </Flex>
-          </Content>
+  .add('dynamic items', args => (
+    <ListView aria-label="Dynamic items" items={items} width="300px" height="250px" {...args}>
+      {(item: any) => (
+        <Item key={item.key} textValue={item.name}>
+          <Text>
+            {item.name}
+          </Text>
+          <ActionGroup buttonLabelBehavior="hide">
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
         </Item>
         )}
     </ListView>
     )
   )
-  .add('falsy ids as keys', () => (
-    <FalsyIds />
+  .add('dynamic items - small viewport', args => (
+    <ListView aria-label="small view port listview" items={items} width="100px" height="250px" {...args}>
+      {(item: any) => (
+        <Item key={item.key} textValue={item.name}>
+          <Text>
+            {item.name}
+          </Text>
+          <ActionGroup buttonLabelBehavior="hide">
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </Item>
+      )}
+    </ListView>
+    )
+  )
+  .add('falsy ids as keys', args => (
+    <FalsyIds {...args} />
   ))
-  .add('empty list', () => (
-    <ListView width="300px" height="300px" renderEmptyState={renderEmptyState}>
+  .add('empty list', args => (
+    <ListView aria-label="empty ListView" width="300px" height="300px" renderEmptyState={renderEmptyState} {...args}>
       {[]}
     </ListView>
   ))
-  .add('loading', () => (
-    <ListView width="300px" height="300px" loadingState="loading">
+  .add('loading', args => (
+    <ListView aria-label="loading ListView" width="300px" height="300px" loadingState="loading" {...args}>
       {[]}
     </ListView>
   ))
-  .add('loadingMore', () => (
-    <ListView width="300px" height="300px" loadingState="loadingMore">
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+  .add('loadingMore', args => (
+    <ListView aria-label="loading more ListView" width="300px" height="300px" loadingState="loadingMore" {...args}>
+      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   ))
-  .add('async listview loading', () => (
-    <AsyncList />
+  .add('async listview loading', args => (
+    <AsyncList {...args} />
   ))
-  .add('density: compact', () => (
-    <ListView width="250px" density="compact">
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+  .add('async listview loading with actions', args => (
+    <AsyncList withActions {...args} />
+  ))
+  .add('dynamic items + renderEmptyState', args => (<EmptyTest {...args} />))
+  .add('with ActionBar', args => <ActionBarExample {...args} />)
+  .add('with emphasized ActionBar', args => <ActionBarExample isEmphasized {...args} />)
+  .add('thumbnails', args => (
+    <ListView width="250px" items={itemsWithThumbs} aria-label="ListView with thumbnails" {...args}>
+      {(item: any) => (
+        <Item textValue={item.title}>
+          {item.url && <Image src={item.url} alt="" />}
+          {item.illustration}
+          <Text>{item.title}</Text>
+          {item.url && <Text slot="description">JPG</Text>}
+        </Item>
+      )}
     </ListView>
   ))
-  .add('density: spacious', () => (
-    <ListView width="250px" density="spacious">
-      <Item textValue="row 1">row 1</Item>
-      <Item textValue="row 2">row 2</Item>
-      <Item textValue="row 3">row 3</Item>
+  .add('long text', args => (
+    <ListView width="250px" {...args}>
+      <Item textValue="Homeward Bound: The Incredible Journey">Homeward Bound: The Incredible Journey</Item>
+      <Item textValue="Monsters University">
+        <Text>Monsters University</Text>
+        <Text slot="description">As a first grader, Mike Wazowski begins to dream of becoming a Scarer</Text>
+      </Item>
     </ListView>
-  ))
-  .add('selection: none', () => (
-    <Example selectionMode="none" />
-  ))
-  .add('selection: single, checkbox', () => (
-    <Example selectionMode="single" />
-  ))
-  .add('selection: single, checkbox, disabled', () => (
-    <Example selectionMode="single" disabledKeys={['row1']} />
-  ))
-  .add('selection: single, checkbox, isQuiet', () => (
-    <Example selectionMode="single" isQuiet />
-  ))
-  .add('selection: multiple, checkbox', () => (
-    <Example selectionMode="multiple" />
-  ))
-  .add('selection: multiple, checkbox, isQuiet', () => (
-    <Example selectionMode="multiple" isQuiet />
-  ))
-  .add('parent link example', () => (
-    <Example2 selectionMode="multiple" />
-  ))
-  .add('actions: ActionButton', () =>
-    renderActionsExample(props => <ActionButton {...props}><Copy /></ActionButton>))
-  .add('actions: ActionGroup', () =>
-    renderActionsExample(props => (
-      <ActionGroup buttonLabelBehavior="hide" {...props}>
+  ));
+
+storiesOf('ListView/Actions', module)
+  .addParameters(parameters)
+  .add('ActionButton', (args) =>
+    renderActionsExample(props => <ActionButton {...props}><Copy /></ActionButton>, args))
+  .add('ActionGroup', args =>
+    renderActionsExample(() => (
+      <ActionGroup buttonLabelBehavior="hide" onAction={action('actionGroupAction')}>
         <Item key="add">
           <Add />
           <Text>Add</Text>
@@ -182,10 +278,10 @@ storiesOf('ListView', module)
           <Text>Delete</Text>
         </Item>
       </ActionGroup>
-    )))
-  .add('actions: ActionMenu', () =>
-    renderActionsExample(props => (
-      <ActionMenu {...props}>
+    ), args))
+  .add('ActionMenu', args =>
+    renderActionsExample(() => (
+      <ActionMenu onAction={action('actionMenuAction')}>
         <Item key="add">
           <Add />
           <Text>Add</Text>
@@ -195,17 +291,17 @@ storiesOf('ListView', module)
           <Text>Delete</Text>
         </Item>
       </ActionMenu>
-    )))
-  .add('actions: ActionGroup + ActionMenu', () =>
-    renderActionsExample(props => (
+    ), args))
+  .add('ActionGroup + ActionMenu', args =>
+    renderActionsExample(() => (
       <>
-        <ActionGroup buttonLabelBehavior="hide" {...props} slot="actionGroup">
+        <ActionGroup buttonLabelBehavior="hide" onAction={action('actionGroupAction')}>
           <Item key="info">
             <Info />
             <Text>Info</Text>
           </Item>
         </ActionGroup>
-        <ActionMenu {...props} slot="actionMenu">
+        <ActionMenu onAction={action('actionMenuACtion')}>
           <Item key="add">
             <Add />
             <Text>Add</Text>
@@ -216,97 +312,215 @@ storiesOf('ListView', module)
           </Item>
         </ActionMenu>
       </>
-    )))
-  .add('dynamic items + renderEmptyState', () => (<EmptyTest />))
-  .add('selectionStyle: highlight', () => (
-    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
-      {item => <Item>{item.name}</Item>}
+    ), args));
+
+storiesOf('ListView/Selection', module)
+  .addParameters(parameters)
+  .add('default', args => (
+    <ListView aria-label="default selection ListView" width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} {...args}>
+      {(item: any) => (
+        <Item textValue={item.name}>
+          {item.type === 'folder' ? <Folder /> : null}
+          <Text>{item.name}</Text>
+        </Item>
+      )}
     </ListView>
   ))
-  .add('selectionStyle: highlight, onAction', () => (
-    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionStyle="highlight" selectionMode="multiple" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
-      {item => <Item>{item.name}</Item>}
+  .add('disable folders', args => (
+    <ListView aria-label="disabled folders ListView" width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} disabledKeys={['c', 'e', 'm']} {...args}>
+      {(item: any) => (
+        <Item textValue={item.name}>
+          {item.type === 'folder' ? <Folder /> : null}
+          <Text>{item.name}</Text>
+        </Item>
+      )}
     </ListView>
   ))
-  .add('selectionMode: none, onAction', () => (
-    <ListView width="250px" height={400} onSelectionChange={action('onSelectionChange')} selectionMode="none" items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))} onAction={action('onAction')}>
-      {item => <Item>{item.name}</Item>}
+  .add('disable folder selection', args => (
+    <ListView aria-label="disabled folder selection ListView" width="250px" height={400} onSelectionChange={action('onSelectionChange')} items={items} disabledKeys={['c', 'e', 'm']} disabledBehavior="selection" {...args}>
+      {(item: any) => (
+        <Item textValue={item.name}>
+          {item.type === 'folder' ? <Folder /> : null}
+          <Text>{item.name}</Text>
+          <ActionMenu>
+            <Item key="add">
+              <Add />
+              <Text>Add</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionMenu>
+        </Item>
+      )}
     </ListView>
   ))
+  .add('onAction', args => (
+    <NavigationExample {...args} />
+  ))
+  .add('onAction, disable folder selection', args => (
+    <NavigationExample disabledType="folder" disabledBehavior="selection" {...args} />
+  ))
+  .add('onAction, disable folder selection, with row actions', args => (
+    <NavigationExample disabledType="folder" disabledBehavior="selection" showActions {...args} />
+  ))
+  .add('onAction, disable files', args => (
+    <NavigationExample disabledType="file" {...args} />
+  ))
+  .add('onAction, disable files, with row actions', args => (
+    <NavigationExample disabledType="file" showActions {...args} />
+  ));
+
+storiesOf('ListView/Drag and Drop', module)
+  .addParameters(parameters)
   .add(
-    'draggable rows',
-    () => (
+    'Drag out of list',
+    args => (
       <Flex direction="row" wrap alignItems="center">
         <input />
         <Droppable />
-        <DragExample dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+        <DragExample
+          dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+          listViewProps={args} />
       </Flex>
     )
+  )
+  .add(
+    'Drag within list (Reorder)',
+    args => (
+      <Flex direction="row" wrap alignItems="center">
+        <ReorderExample {...args} disabledKeys={['1']} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
+      </Flex>
+    )
+  )
+  .add(
+    'Drag into folder',
+    args => (
+      <Flex direction="row" wrap alignItems="center">
+        <DragIntoItemExample listViewProps={args} />
+      </Flex>
+    )
+  )
+  .add(
+    'Drag between lists',
+    args => (
+      <Flex direction="row" wrap alignItems="center">
+        <DragBetweenListsExample {...args} />
+      </Flex>
+    )
+  )
+  .add(
+    'Drag between lists (Root only)',
+    args => (
+      <Flex direction="row" wrap alignItems="center">
+        <DragBetweenListsRootOnlyExample listViewProps={args} />
+      </Flex>
+    ), {description: {data: 'Folders are non-draggable.'}}
+  )
+  .add(
+    'draggable rows, onAction',
+    args => (
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExample listViewProps={{onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      </Flex>
+    ), {description: {data: 'Folders are non-draggable.'}}
   );
-
-function Example(props?) {
-  return (
-    <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
-      <Item key="folder1" hasChildItems>
-        <Content>folder 1</Content>
-      </Item>
-      <Item key="row1" textValue="row 1">
-        <Content>row 1</Content>
-      </Item>
-      <Item key="row2" textValue="row 2">
-        <Content>row 2</Content>
-      </Item>
-      <Item key="row3" textValue="row 3">
-        <Content>row 3</Content>
-      </Item>
-    </ListView>
-  );
-}
-
-function Example2(props?) {
-  return (
-    <ListView width="250px" onSelectionChange={action('onSelectionChange')} {...props}>
-      <Item key="folder1" hasChildItems>
-        <Link>folder 1</Link>
-      </Item>
-      <Item textValue="row 1">
-        <Content>row 1</Content>
-      </Item>
-      <Item textValue="row 2">
-        <Content>row 2</Content>
-      </Item>
-      <Item textValue="row 3">
-        <Content>row 3</Content>
-      </Item>
-    </ListView>
-  );
-}
 
 function renderActionsExample(renderActions, props?) {
   return (
-    <ListView width="300px" selectionMode="single" {...props} onSelectionChange={keys => console.log('sel', keys)}>
-      <Item key="a" textValue="folder 1" hasChildItems>
+    <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={action('onSelectionChange')} aria-label="render actions ListView">
+      <Item key="a" textValue="Utilities" hasChildItems>
         <Folder />
-        <Link>folder 1</Link>
-        <Text slot="description">description for folder 1</Text>
+        <Text>Utilities</Text>
+        <Text slot="description">16 items</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
-      <Item key="b" textValue="row 1">
-        <Text>row 1</Text>
-        <Text slot="description">description for row 1</Text>
+      <Item key="b" textValue="Adobe Photoshop">
+        <Text>Adobe Photoshop</Text>
+        <Text slot="description">Application</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
-      <Item key="c" textValue="row 2">
-        <Text>row 2</Text>
-        <Text slot="description">description for row 2</Text>
+      <Item key="c" textValue="Adobe Illustrator">
+        <Text>Adobe Illustrator</Text>
+        <Text slot="description">Application</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
-      <Item key="d" textValue="row 3">
-        <Text>row 3</Text>
-        <Text slot="description">description for row 3</Text>
+      <Item key="d" textValue="Adobe XD">
+        <Text>Adobe XD</Text>
+        <Text slot="description">Application</Text>
         {renderActions({onPress: action('actionPress')})}
       </Item>
     </ListView>
+  );
+}
+
+function NavigationExample(props) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
+  let [breadcrumbs, setBreadcrumbs] = useState([
+    {
+      key: 'root',
+      name: 'Root',
+      type: 'folder',
+      children: items
+    }
+  ]);
+
+  let {name, children} = breadcrumbs[breadcrumbs.length - 1];
+
+  let onAction = key => {
+    let item = children.find(item => item.key === key);
+    if (item.type === 'folder') {
+      setBreadcrumbs([...breadcrumbs, item]);
+      setSelectedKeys(new Set());
+    }
+  };
+
+  let onBreadcrumbAction = key => {
+    let index = breadcrumbs.findIndex(item => item.key === key);
+    setBreadcrumbs(breadcrumbs.slice(0, index + 1));
+    setSelectedKeys(new Set());
+  };
+
+  return (
+    <div>
+      <Breadcrumbs onAction={onBreadcrumbAction}>
+        {breadcrumbs.map(item => <Item key={item.key}>{item.name}</Item>)}
+      </Breadcrumbs>
+      <ListView
+        aria-label={name}
+        width="250px"
+        height={400}
+        onSelectionChange={chain(setSelectedKeys, action('onSelectionChange'))}
+        selectionMode="multiple"
+        selectionStyle="checkbox"
+        selectedKeys={selectedKeys}
+        items={children}
+        disabledKeys={props.disabledType ? children.filter(item => item.type === props.disabledType).map(item => item.key) : null}
+        onAction={chain(onAction, action('onAction'))}
+        {...props}>
+        {(item: any) => (
+          <Item hasChildItems={item.type === 'folder'} textValue={item.name}>
+            {item.type === 'folder' ? <Folder /> : null}
+            <Text>{item.name}</Text>
+            {props.showActions &&
+              <ActionMenu>
+                <Item key="add">
+                  <Add />
+                  <Text>Add</Text>
+                </Item>
+                <Item key="delete">
+                  <Delete />
+                  <Text>Delete</Text>
+                </Item>
+              </ActionMenu>
+            }
+          </Item>
+        )}
+      </ListView>
+    </div>
   );
 }
 
@@ -334,11 +548,11 @@ function EmptyTest() {
     <div>
       <Flex direction="row">
         <div {...divProps}>
-          <ListView items={items} width="250px" height={hasDivProps ? null : '500px'} renderEmptyState={renderEmpty}>
+          <ListView aria-label="render empty state ListView" items={items} width="250px" height={hasDivProps ? null : '500px'} renderEmptyState={renderEmpty}>
             {
               item => (
                 <Item key={item.key}>
-                  <Content>{item.name}</Content>
+                  {item.name}
                 </Item>
               )
             }
@@ -382,17 +596,11 @@ export function DragExample(props?) {
   let getItems = (keys) => [...keys].map(key => {
     let item = items.find(item => item.key === key);
     return {
-      'text/plain': item.textValue
+      'text/plain': item.name
     };
   });
 
-  let allowsDraggingItem = (key) => {
-    let item = items.find(item => item.key === key);
-    return item.isDraggable;
-  };
-
   let dragHooks = useDragHooks({
-    allowsDraggingItem,
     getItems,
     ...dragHookOptions
   });
@@ -407,33 +615,520 @@ export function DragExample(props?) {
       dragHooks={dragHooks}
       {...listViewProps}>
       {(item: any) => (
-        <Item key={item.key} textValue={item.textValue}>
-          <Content>
-            <Flex alignItems="center" gap="10px">
-              <View flexGrow={1}>Item {item.key}</View>
-              <ActionButton><Add /></ActionButton>
-              <MenuTrigger>
-                <ActionButton><MoreSmall /></ActionButton>
-                <Menu>
-                  <Item textValue="Edit">
-                    <Edit />
-                    <Text>Edit</Text>
-                  </Item>
-                  <Item textValue="Delete">
-                    <Delete />
-                    <Text>Delete</Text>
-                  </Item>
-                </Menu>
-              </MenuTrigger>
-            </Flex>
-          </Content>
+        <Item key={item.key} textValue={item.name} hasChildItems={item.type === 'folder'}>
+          {item.type === 'folder' && <Folder />}
+          {item.key === 'a' && <FileTxt />}
+          <Text>
+            {item.name}
+          </Text>
+          {item.key === 'b' && <Text slot="description">Beta</Text>}
+          <ActionMenu
+            onAction={action('onAction')}>
+            <Item key="edit" textValue="Edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionMenu>
         </Item>
       )}
     </ListView>
   );
 }
 
-function AsyncList() {
+let itemList1 = [
+  {id: '1', type: 'item', textValue: 'Item One'},
+  {id: '2', type: 'item', textValue: 'Item Two'},
+  {id: '3', type: 'item', textValue: 'Item Three'},
+  {id: '4', type: 'item', textValue: 'Item Four'},
+  {id: '5', type: 'item', textValue: 'Item Five'},
+  {id: '6', type: 'item', textValue: 'Item Six'}
+];
+
+let itemList2 = [
+  {id: '7', type: 'item', textValue: 'Item Seven'},
+  {id: '8', type: 'item', textValue: 'Item Eight'},
+  {id: '9', type: 'item', textValue: 'Item Nine'},
+  {id: '10', type: 'item', textValue: 'Item Ten'},
+  {id: '11', type: 'item', textValue: 'Item Eleven'},
+  {id: '12', type: 'item', textValue: 'Item Twelve'}
+];
+
+export function ReorderExample(props) {
+  let {onDrop, onDragStart, onDragEnd, disabledKeys = ['2'], ...otherprops} = props;
+  let list = useListData({
+    initialItems: props.items || itemList1
+  });
+
+  // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+
+  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+    if (target.dropPosition === 'before') {
+      list.moveBefore(target.key, keys);
+    } else {
+      list.moveAfter(target.key, keys);
+    }
+  };
+
+  let dragHooks = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          [dragType]: key,
+          'text/plain': key
+        };
+      });
+    },
+    onDragStart: onDragStart,
+    onDragEnd: onDragEnd
+  });
+
+  let dropHooks = useDropHooks({
+    async onDrop(e) {
+      if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text') {
+            let key;
+            if (item.types.has(dragType)) {
+              key = JSON.parse(await item.getText(dragType));
+              keys.push(key);
+            } else if (item.types.has('text/plain')) {
+              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+              // Multiple drag items are contained in a single string so we need to split them out
+              key = await item.getText('text/plain');
+              keys = key.split('\n').map(val => val.replaceAll('"', ''));
+            }
+          }
+        }
+        onDrop(e);
+        onMove(keys, e.target);
+      }
+    },
+    getDropOperation(target) {
+      if (target.type === 'root' || target.dropPosition === 'on') {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+
+  return (
+    <ListView
+      aria-label="reorderable list view"
+      selectionMode="multiple"
+      width="300px"
+      items={list.items}
+      disabledKeys={disabledKeys}
+      dragHooks={dragHooks}
+      dropHooks={dropHooks}
+      {...otherprops}>
+      {(item: any) => (
+        <Item>
+          {item.textValue}
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+export function DragIntoItemExample(props) {
+  let {
+    listViewProps = {},
+    dragHookOptions = {},
+    dropHookOptions = {}
+  } = props;
+  let {onDragStart, onDragEnd} = dragHookOptions;
+  let {onDrop} = dropHookOptions;
+  let onDropAction = chain(action('onDrop'), onDrop);
+
+  let list = useListData({
+    initialItems: [
+      {id: '0', type: 'folder', textValue: 'Folder 1', childNodes: []},
+      {id: '1', type: 'item', textValue: 'One'},
+      {id: '2', type: 'item', textValue: 'Two'},
+      {id: '3', type: 'item', textValue: 'Three'},
+      {id: '4', type: 'item', textValue: 'Four'},
+      {id: '5', type: 'item', textValue: 'Five'},
+      {id: '6', type: 'item', textValue: 'Six'},
+      {id: '7', type: 'folder', textValue: 'Folder disabled', childNodes: []},
+      {id: '8', type: 'folder', textValue: 'Folder 2', childNodes: []}
+    ]
+  });
+  let disabledKeys: React.Key[] = ['2', '7'];
+
+  // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+
+  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+    let folderItem = list.getItem(target.key);
+    let draggedItems = keys.map((key) => list.getItem(key));
+    list.update(target.key, {...folderItem, childNodes: [...folderItem.childNodes, ...draggedItems]});
+    list.remove(...keys);
+  };
+
+  let dragHooks = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          [dragType]: key,
+          'text/plain': key
+        };
+      });
+    },
+    onDragStart: chain(action('dragStart'), onDragStart),
+    onDragEnd: chain(action('dragEnd'), onDragEnd)
+  });
+
+  let dropHooks = useDropHooks({
+    onDrop: async e => {
+      if (e.target.type !== 'root' && e.target.dropPosition === 'on') {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text') {
+            let key;
+            if (item.types.has(dragType)) {
+              key = JSON.parse(await item.getText(dragType));
+              keys.push(key);
+            } else if (item.types.has('text/plain')) {
+              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+              // Multiple drag items are contained in a single string so we need to split them out
+              key = await item.getText('text/plain');
+              keys = key.split('\n').map(val => val.replaceAll('"', ''));
+            }
+          }
+        }
+        onDropAction(e);
+        if (!keys.includes(e.target.key)) {
+          onMove(keys, e.target);
+        }
+      }
+    },
+    getDropOperation(target) {
+      if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes || disabledKeys.includes(target.key)) {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+  return (
+    <ListView
+      aria-label="Drop into list view item example"
+      selectionMode="multiple"
+      width="300px"
+      items={list.items}
+      disabledKeys={disabledKeys}
+      dragHooks={dragHooks}
+      dropHooks={dropHooks}
+      {...listViewProps}>
+      {(item: any) => (
+        <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
+          <Text>{item.type === 'folder' ? `${item.textValue} (Drop items here)` : `Item ${item.textValue}`}</Text>
+          {item.type === 'folder' &&
+            <>
+              <Folder />
+              <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+            </>
+          }
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+export function DragBetweenListsExample(props) {
+  let onDropAction = action('onDrop');
+
+  let list1 = useListData({
+    initialItems: props.items1 || itemList1
+  });
+
+  let list2 = useListData({
+    initialItems: props.items2 || itemList2
+  });
+
+  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+    let sourceList = list1.getItem(keys[0]) ? list1 : list2;
+    let destinationList = list1.getItem(target.key) ? list1 : list2;
+
+    if (sourceList === destinationList) {
+        // Handle dragging within same list
+      if (target.dropPosition === 'before') {
+        sourceList.moveBefore(target.key, keys);
+      } else {
+        sourceList.moveAfter(target.key, keys);
+      }
+    } else {
+      // Handle dragging between lists
+      if (target.dropPosition === 'before') {
+        destinationList.insertBefore(target.key, ...keys.map(key => sourceList.getItem(key)));
+      } else {
+        destinationList.insertAfter(target.key, ...keys.map(key => sourceList.getItem(key)));
+      }
+      sourceList.remove(...keys);
+    }
+  };
+
+  let dragHooks = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          [dragType]: key,
+          'text/plain': key
+        };
+      });
+    },
+    onDragStart: action('dragStart'),
+    onDragEnd: action('dragEnd')
+  });
+
+  // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+
+  let dropHooks = useDropHooks({
+    onDrop: async e => {
+      if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text') {
+            let key;
+            if (item.types.has(dragType)) {
+              key = JSON.parse(await item.getText(dragType));
+              keys.push(key);
+            } else if (item.types.has('text/plain')) {
+              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+              // Multiple drag items are contained in a single string so we need to split them out
+              key = await item.getText('text/plain');
+              keys = key.split('\n').map(val => val.replaceAll('"', ''));
+            }
+          }
+        }
+        onDropAction(e);
+        onMove(keys, e.target);
+      }
+    },
+    getDropOperation(target) {
+      if (target.type === 'root' || target.dropPosition === 'on') {
+        return 'cancel';
+      }
+
+      return 'move';
+    }
+  });
+
+  return (
+    <>
+      <Flex direction="column" margin="size-100">
+        <Text alignSelf="center">List 1</Text>
+        <ListView
+          aria-label="First list view"
+          selectionMode="multiple"
+          width="300px"
+          items={list1.items}
+          disabledKeys={['2']}
+          dragHooks={dragHooks}
+          dropHooks={dropHooks}
+          {...props}>
+          {(item: any) => (
+            <Item>
+              {item.textValue}
+            </Item>
+        )}
+        </ListView>
+      </Flex>
+      <Flex direction="column" margin="size-100">
+        <Text alignSelf="center">List 2</Text>
+        <ListView
+          aria-label="Second list view"
+          selectionMode="multiple"
+          width="300px"
+          items={list2.items}
+          disabledKeys={['2']}
+          dragHooks={dragHooks}
+          dropHooks={dropHooks}
+          {...props}>
+          {(item: any) => (
+            <Item>
+              {item.textValue}
+            </Item>
+        )}
+        </ListView>
+      </Flex>
+    </>
+  );
+}
+
+export function DragBetweenListsRootOnlyExample(props) {
+  let {
+    listViewProps = {},
+    dragHookOptions = {},
+    dropHookOptions = {}
+  } = props;
+  let {onDragStart, onDragEnd} = dragHookOptions;
+  let {onDrop} = dropHookOptions;
+  let onDropAction = chain(action('onDrop'), onDrop);
+
+  let list1 = useListData({
+    initialItems: props.items1 || itemList1
+  });
+
+  let list2 = useListData({
+    initialItems: props.items2 || itemList2
+  });
+
+  let onMove = (keys: React.Key[], destinationList) => {
+    let sourceList = list1.getItem(keys[0]) ? list1 : list2;
+
+    let items = keys.map(key => sourceList.getItem(key));
+    sourceList.remove(...keys);
+    destinationList.append(...items);
+  };
+
+  let dragHooksFirst = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          'list1': key,
+          'text/plain': key
+        };
+      });
+    },
+    onDragStart: chain(action('dragStart'), onDragStart),
+    onDragEnd: chain(action('dragEnd'), onDragEnd)
+  });
+
+  let dragHooksSecond = useDragHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          'list2': key,
+          'text/plain': key
+        };
+      });
+    },
+    onDragStart: chain(action('dragStart'), onDragStart),
+    onDragEnd: chain(action('dragEnd'), onDragEnd)
+  });
+
+  let dropHooksFirst = useDropHooks({
+    onDrop: async e => {
+      if (e.target.type === 'root') {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text') {
+            let key;
+            if (item.types.has('list2')) {
+              key = JSON.parse(await item.getText('list2'));
+              keys.push(key);
+            } else if (item.types.has('text/plain')) {
+              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+              // Multiple drag items are contained in a single string so we need to split them out
+              key = await item.getText('text/plain');
+              keys = key.split('\n').map(val => val.replaceAll('"', ''));
+            }
+          }
+        }
+        onDropAction(e);
+        onMove(keys, list1);
+      }
+    },
+    getDropOperation(target, types) {
+      if (target.type === 'root' && (types.has('list2') || types.has('text/plain'))) {
+        return 'move';
+      }
+
+      return 'cancel';
+    }
+  });
+
+  let dropHooksSecond = useDropHooks({
+    onDrop: async e => {
+      if (e.target.type === 'root') {
+        let keys = [];
+        for (let item of e.items) {
+          if (item.kind === 'text') {
+            let key;
+            if (item.types.has('list1')) {
+              key = JSON.parse(await item.getText('list1'));
+              keys.push(key);
+            } else if (item.types.has('text/plain')) {
+              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+              // Multiple drag items are contained in a single string so we need to split them out
+              key = await item.getText('text/plain');
+              keys = key.split('\n').map(val => val.replaceAll('"', ''));
+            }
+          }
+        }
+        onDropAction(e);
+        onMove(keys, list2);
+      }
+    },
+    getDropOperation(target, types) {
+      if (target.type === 'root' && (types.has('list1') || types.has('text/plain'))) {
+        return 'move';
+      }
+
+      return 'cancel';
+    }
+  });
+
+  return (
+    <>
+      <Flex direction="column" margin="size-100">
+        <Text alignSelf="center">List 1</Text>
+        <ListView
+          aria-label="First list view"
+          selectionMode="multiple"
+          width="300px"
+          items={list1.items}
+          disabledKeys={['2']}
+          dragHooks={dragHooksFirst}
+          dropHooks={dropHooksFirst}
+          {...listViewProps}>
+          {(item: any) => (
+            <Item>
+              {item.textValue}
+            </Item>
+        )}
+        </ListView>
+      </Flex>
+      <Flex direction="column" margin="size-100">
+        <Text alignSelf="center">List 2</Text>
+        <ListView
+          aria-label="Second list view"
+          selectionMode="multiple"
+          width="300px"
+          items={list2.items}
+          disabledKeys={['2']}
+          dragHooks={dragHooksSecond}
+          dropHooks={dropHooksSecond}
+          {...listViewProps}>
+          {(item: any) => (
+            <Item>
+              {item.textValue}
+            </Item>
+        )}
+        </ListView>
+      </Flex>
+    </>
+  );
+}
+
+
+function AsyncList(props) {
   interface StarWarsChar {
     name: string,
     url: string
@@ -455,6 +1150,7 @@ function AsyncList() {
       };
     }
   });
+
   return (
     <ListView
       selectionMode="multiple"
@@ -463,23 +1159,63 @@ function AsyncList() {
       height="size-3000"
       items={list.items}
       loadingState={list.loadingState}
-      onLoadMore={list.loadMore}>
-      {(item) => (
-        <Item key={item.name} textValue={item.name}>{item.name}</Item>
-      )}
+      onLoadMore={list.loadMore}
+      {...props}>
+      {(item: any) => {
+        if (props.withActions) {
+          return <Item key={item.name} textValue={item.name}><Text>{item.name}</Text><ActionButton>Edit</ActionButton></Item>;
+        }
+        return <Item key={item.name} textValue={item.name}>{item.name}</Item>;
+      }}
     </ListView>
   );
 }
 
-function FalsyIds() {
+function FalsyIds(props) {
   let items = [
     {id: 1, name: 'key=1'},
     {id: 0, name: 'key=0'}
   ];
 
   return (
-    <ListView width="250px" height={400} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={items} onAction={action('onAction')}>
-      {item => <Item>{item.name}</Item>}
+    <ListView aria-label="falsy id ListView" width="250px" height={400} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={items} onAction={action('onAction')} {...props}>
+      {(item: any) => <Item>{item.name}</Item>}
     </ListView>
+  );
+}
+
+function ActionBarExample(props?) {
+  let list = useListData({
+    initialItems: [
+      {key: 0, name: 'Adobe Photoshop'},
+      {key: 1, name: 'Adobe Illustrator'},
+      {key: 2, name: 'Adobe XD'}
+    ],
+    initialSelectedKeys: [0]
+  });
+  return (
+    <ActionBarContainer height={300}>
+      <ListView {...props} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} items={list.items} width="250px" aria-label="Action Bar ListView">
+        {(item: any) => <Item>{item.name}</Item>}
+      </ListView>
+      <ActionBar
+        selectedItemCount={list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size}
+        onAction={action('onAction')}
+        onClearSelection={() => list.setSelectedKeys(new Set([]))}
+        {...props}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
   );
 }

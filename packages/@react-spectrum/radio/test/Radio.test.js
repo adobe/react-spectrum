@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
@@ -480,11 +480,14 @@ describe('Radios', function () {
     });
 
     it('RadioGroup roving tabIndex for autoFocus', async () => {
+      jest.useFakeTimers();
       let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, [{}, {autoFocus: true}, {}]);
       let radios = getAllByRole('radio');
+      act(() => {jest.runAllTimers();});
       expect(radios[0]).toHaveAttribute('tabIndex', '-1');
       expect(radios[1]).toHaveAttribute('tabIndex', '0');
       expect(radios[2]).toHaveAttribute('tabIndex', '-1');
+      jest.useRealTimers();
     });
 
     it.each`

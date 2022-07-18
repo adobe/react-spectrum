@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {Link} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -103,10 +103,12 @@ describe('Link', function () {
   });
 
   it('supports autofocus', () => {
+    jest.useFakeTimers();
     let {getByRole} = render(<Link autoFocus>Click me</Link>);
-
+    act(() => {jest.runAllTimers();});
     let link = getByRole('link');
     expect(document.activeElement).toBe(link);
+    jest.useRealTimers();
   });
 
   it('supports a wrapping tooltip trigger', () => {

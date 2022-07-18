@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "Повзунок 2D",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Палітра кольорів",
+  "twoDimensionalSlider": "Повзунок 2D"
 }

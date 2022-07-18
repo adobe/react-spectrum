@@ -44,7 +44,7 @@ interface AriaPositionProps extends PositionProps {
   /** Handler that is called when the overlay should close. */
   onClose?: () => void,
   /**
-   * The maxHeight specified for the overlay element. 
+   * The maxHeight specified for the overlay element.
    * By default, it will take all space up to the current viewport height.
    */
   maxHeight?: number
@@ -140,7 +140,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.
   let isResizing = useRef(false);
   useLayoutEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
     let onResize = () => {
       isResizing.current = true;
       clearTimeout(timeout);

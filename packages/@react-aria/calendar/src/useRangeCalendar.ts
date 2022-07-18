@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarAria} from './types';
+import {CalendarAria, useCalendarBase} from './useCalendarBase';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from '@react-stately/calendar';
 import {RefObject, useRef} from 'react';
-import {useCalendarBase} from './useCalendarBase';
-import {useEvent, useId} from '@react-aria/utils';
+import {useEvent} from '@react-aria/utils';
 
 /**
  * Provides the behavior and accessibility implementation for a range calendar component.
@@ -23,8 +22,6 @@ import {useEvent, useId} from '@react-aria/utils';
  */
 export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<HTMLElement>): CalendarAria {
   let res = useCalendarBase(props, state);
-  res.nextButtonProps.id = useId();
-  res.prevButtonProps.id = useId();
 
   // We need to ignore virtual pointer events from VoiceOver due to these bugs.
   // https://bugs.webkit.org/show_bug.cgi?id=222627
@@ -33,7 +30,8 @@ export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<
   // We need to match that here otherwise this will fire before the press event in
   // useCalendarCell, causing range selection to not work properly.
   let isVirtualClick = useRef(false);
-  useEvent(useRef(window), 'pointerdown', e => {
+  let windowRef = useRef(typeof window !== 'undefined' ? window : null);
+  useEvent(windowRef, 'pointerdown', e => {
     isVirtualClick.current = e.width === 0 && e.height === 0;
   });
 
@@ -53,16 +51,23 @@ export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<
     let target = e.target as HTMLElement;
     let body = document.getElementById(res.calendarProps.id);
     if (
-      (!body.contains(target) || !target.closest('[role="button"]')) &&
-      !document.getElementById(res.nextButtonProps.id)?.contains(target) &&
-      !document.getElementById(res.prevButtonProps.id)?.contains(target)
+      body &&
+      body.contains(document.activeElement) &&
+      (!body.contains(target) || !target.closest('button, [role="button"]'))
     ) {
       state.selectFocusedDate();
     }
   };
 
-  useEvent(useRef(window), 'pointerup', endDragging);
-  useEvent(useRef(window), 'pointercancel', endDragging);
+  useEvent(windowRef, 'pointerup', endDragging);
+  useEvent(windowRef, 'pointercancel', endDragging);
+
+  // Also stop range selection on blur, e.g. tabbing away from the calendar.
+  res.calendarProps.onBlur = e => {
+    if ((!e.relatedTarget || !ref.current.contains(e.relatedTarget)) && state.anchorDate) {
+      state.selectFocusedDate();
+    }
+  };
 
   // Prevent touch scrolling while dragging
   useEvent(ref, 'touchmove', e => {

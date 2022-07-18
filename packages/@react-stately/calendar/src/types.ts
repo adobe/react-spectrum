@@ -12,17 +12,23 @@
 
 import {CalendarDate} from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
-import {RangeValue} from '@react-types/shared';
+import {RangeValue, ValidationState} from '@react-types/shared';
 
-export interface CalendarStateBase {
+interface CalendarStateBase {
   /** Whether the calendar is disabled. */
   readonly isDisabled: boolean,
   /** Whether the calendar is in a read only state. */
   readonly isReadOnly: boolean,
   /** The date range that is currently visible in the calendar. */
   readonly visibleRange: RangeValue<CalendarDate>,
+  /** The minimum allowed date that a user may select. */
+  readonly minValue?: DateValue,
+  /** The maximum allowed date that a user may select. */
+  readonly maxValue?: DateValue,
   /** The time zone of the dates currently being displayed. */
   readonly timeZone: string,
+  /** The current validation state of the selected value. */
+  readonly validationState: ValidationState,
   /** The currently focused date. */
   readonly focusedDate: CalendarDate,
   /** Sets the focused date. */
@@ -39,22 +45,26 @@ export interface CalendarStateBase {
   focusNextPage(): void,
   /** Moves focus to the previous page of dates, e.g. the previous month if one month is visible. */
   focusPreviousPage(): void,
-  /** Moves focus to the start of the current page of dates, e.g. the start of the first visible month. */
-  focusPageStart(): void,
-  /** Moves focus to the end of the current page of dates, e.g. the end of the last visible month. */
-  focusPageEnd(): void,
+  /** Moves focus to the start of the current section of dates, e.g. the start of the current month. */
+  focusSectionStart(): void,
+  /** Moves focus to the end of the current section of dates, e.g. the end of the current month month. */
+  focusSectionEnd(): void,
   /**
-   * Moves focus to the next larger section of dates based on what is currently displayed.
-   * If days are displayed, then moves to the next visible range. If weeks are displayed, then
-   * moves to the next month. If months or years are displayed, moves to the next year.
+   * Moves focus to the next section of dates based on what is currently displayed.
+   * By default, focus is moved by one of the currently displayed unit. For example, if
+   * one or more months are displayed, then focus is moved forward by one month.
+   * If the `larger` option is `true`, the focus is moved by the next larger unit than
+   * the one displayed. For example, if months are displayed, then focus moves to the next year.
    */
-  focusNextSection(): void,
+  focusNextSection(larger?: boolean): void,
   /**
-   * Moves focus to the previous larger section of dates based on what is currently displayed.
-   * If days are displayed, then moves to the previous visible range. If weeks are displayed, then
-   * moves to the previous month. If months or years are displayed, moves to the previous year.
+   * Moves focus to the previous section of dates based on what is currently displayed.
+   * By default, focus is moved by one of the currently displayed unit. For example, if
+   * one or more months are displayed, then focus is moved backward by one month.
+   * If the `larger` option is `true`, the focus is moved by the next larger unit than
+   * the one displayed. For example, if months are displayed, then focus moves to the previous year.
    */
-  focusPreviousSection(): void,
+  focusPreviousSection(larger?: boolean): void,
   /** Selects the currently focused date. */
   selectFocusedDate(): void,
   /** Selects the given date. */
@@ -76,7 +86,12 @@ export interface CalendarStateBase {
   /** Returns whether the previous visible date range is allowed to be selected according to the `minValue` prop. */
   isPreviousVisibleRangeInvalid(): boolean,
   /** Returns whether the next visible date range is allowed to be selected according to the `maxValue` prop. */
-  isNextVisibleRangeInvalid(): boolean
+  isNextVisibleRangeInvalid(): boolean,
+  /**
+   * Returns an array of dates in the week index counted from the provided start date, or the first visible date if not given.
+   * The returned array always has 7 elements, but may include null if the date does not exist according to the calendar system.
+   */
+  getDatesInWeek(weekIndex: number, startDate?: CalendarDate): Array<CalendarDate | null>
 }
 
 export interface CalendarState extends CalendarStateBase {

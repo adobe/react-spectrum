@@ -17,6 +17,7 @@ import {DOMRef, DOMRefValue, Node} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
@@ -185,7 +186,7 @@ function InternalCard(props) {
   let cellRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedRef = useUnwrapDOMRef(cellRef);
 
-  let {rowProps} = useGridRow({
+  let {rowProps: gridRowProps} = useGridRow({
     node: item,
     isVirtualized: true
   }, state, rowRef);
@@ -195,6 +196,20 @@ function InternalCard(props) {
     focusMode: 'cell'
   }, state, unwrappedRef);
 
+  // Prevent space key from scrolling the CardView if triggered on a disabled item or on a Card in a selectionMode="none" CardView.
+  let allowsInteraction = state.selectionManager.selectionMode !== 'none';
+  let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
+
+  let onKeyDown = (e) => {
+    if (e.key === ' ' && isDisabled) {
+      e.preventDefault();
+    }
+  };
+
+  let rowProps = mergeProps(
+    gridRowProps,
+    {onKeyDown}
+  );
 
   if (layoutType === 'grid' || layoutType === 'gallery') {
     isQuiet = true;

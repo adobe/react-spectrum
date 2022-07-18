@@ -13,9 +13,8 @@
 import {Button} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render, waitFor} from '@testing-library/react';
+import {render, triggerPress, waitFor} from '@react-spectrum/test-utils';
 import {ToastContainer, ToastProvider, useToastProvider} from '../';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 function RenderToastButton(props = {}) {
   let toastContext = useToastProvider();

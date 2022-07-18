@@ -12,26 +12,29 @@
 
 import {
   AsyncLoading,
+  AsyncLoadingCardViewStory,
+  CardViewIdKeysStory,
   ControlledCards,
+  ControlledCardViewStory,
   CustomLayout,
   DisabledKeys,
   DynamicCards,
+  DynamicCardViewStory,
   EmptyWithHeightGrid,
   FalsyIds,
   FilteringGrid,
   IsLoadingHeightGrid,
   IsLoadingNoHeightGrid,
   LoadingMoreGrid,
-  NoSelection,
-  SingleSelection,
-  StaticCards
+  StaticCards,
+  StaticCardViewStory
 } from './GridCardView.stories';
-import {GalleryLayout} from '../';
+import {CardView, GalleryLayout} from '../';
+import {ComponentStoryObj} from '@storybook/react';
 import {GalleryLayoutOptions} from '../src/GalleryLayout';
 import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
-import {Story} from '@storybook/react';
 import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
@@ -76,72 +79,151 @@ let itemsNoThinImages = [
   {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 21, title: 'Bob 5'}
 ];
 
-const StoryFn = ({storyFn}) => storyFn();
-
 export default {
   title: 'CardView/Gallery layout',
-  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
+  component: CardView,
+  args: {
+    'aria-label': 'Test CardView'
+  },
+  argTypes: {
+    layout: {
+      table: {
+        disable: true
+      }
+    },
+    selectionMode: {
+      control: 'radio',
+      defaultValue: 'multiple',
+      options: ['none', 'single', 'multiple']
+    }
+  }
 };
 
-export const DefaultGalleryStatic = () => <StaticCards {...StaticCards.args} layout={GalleryLayout} />;
-DefaultGalleryStatic.storyName = StaticCards.storyName;
-
-export const FalsyIdGallery = () => <FalsyIds {...FalsyIds.args} layout={GalleryLayout} />;
-FalsyIdGallery.storyName = FalsyIds.storyName;
-
-export const DefaultGalleryNoThinImages = () => <DynamicCards {...DynamicCards.args} layout={GalleryLayout} items={itemsNoThinImages} />;
-DefaultGalleryNoThinImages.storyName = 'dynamic cards, no thin images';
-
-export const DefaultGalleryLowVariance = () => <DynamicCards {...DynamicCards.args} layout={GalleryLayout} items={itemsLowVariance} />;
-DefaultGalleryLowVariance.storyName = 'dynamic cards, low variance in aspect ratios';
-
-export const DefaultGallery = () => <DynamicCards {...DynamicCards.args} layout={GalleryLayout} />;
-DefaultGallery.storyName = 'dynamic cards, high variance in aspect ratios';
-
-export const DisabledKeysGallery = () => <DisabledKeys {...DisabledKeys.args} layout={GalleryLayout} items={itemsLowVariance} />;
-DisabledKeysGallery.storyName = DisabledKeys.storyName;
-
-export const NoSelectionGallery = () => <NoSelection {...NoSelection.args} layout={GalleryLayout} items={itemsLowVariance} />;
-NoSelectionGallery.storyName = NoSelection.storyName;
-
-export const SingleSelectionGallery = () => <SingleSelection {...SingleSelection.args} layout={GalleryLayout} items={itemsLowVariance} />;
-SingleSelectionGallery.storyName = SingleSelection.storyName;
-
-export const SelectedKeys = () => <ControlledCards {...ControlledCards.args} layout={GalleryLayout} items={itemsLowVariance} />;
-SelectedKeys.storyName = ControlledCards.storyName;
-
-export const IsLoadingNoHeightGallery = () => <IsLoadingNoHeightGrid {...IsLoadingNoHeightGrid.args} layout={GalleryLayout} />;
-IsLoadingNoHeightGallery.storyName = IsLoadingNoHeightGrid.storyName;
-
-export const IsLoadingHeightGallery = () => <IsLoadingHeightGrid {...IsLoadingHeightGrid.args} layout={GalleryLayout} />;
-IsLoadingHeightGallery.storyName = IsLoadingHeightGrid.storyName;
-
-export const LoadingMoreGallery = () => <LoadingMoreGrid {...LoadingMoreGrid.args} layout={GalleryLayout} />;
-LoadingMoreGallery.storyName = LoadingMoreGrid.storyName;
-
-export const FilteringGallery = () => <FilteringGrid {...FilteringGrid.args} layout={GalleryLayout} />;
-FilteringGallery.storyName = FilteringGrid.storyName;
-
-export const EmptyWithHeightGallery = () => <EmptyWithHeightGrid {...EmptyWithHeightGrid.args} layout={GalleryLayout} />;
-EmptyWithHeightGallery.storyName = EmptyWithHeightGrid.storyName;
-
-export const AsyncLoadingGallery = () => <AsyncLoading {...AsyncLoading.args} layout={GalleryLayout} />;
-AsyncLoadingGallery.storyName = AsyncLoading.storyName;
-
-const CustomLayoutTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <CustomGalleryLayout {...args} />;
-export const CustomLayoutOptions = CustomLayoutTemplate().bind({});
-CustomLayoutOptions.args = {
-  'aria-label': 'Test CardView',
-  selectionMode: 'multiple',
-  items: itemsLowVariance,
-  layoutOptions: {idealRowHeight: 400, itemSpacing: new Size(10, 10), itemPadding: 78, minItemSize: new Size(150, 400)}
+export const DefaultGalleryStatic: StaticCardViewStory = {
+  ...StaticCards,
+  args: {
+    ...StaticCards.args,
+    layout: GalleryLayout
+  }
 };
-CustomLayoutOptions.storyName = 'Custom layout options';
+
+export const FalsyIdGallery: CardViewIdKeysStory = {
+  ...FalsyIds,
+  args: {
+    ...FalsyIds.args,
+    layout: GalleryLayout
+  }
+};
+
+export const DefaultGalleryNoThinImages: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {
+    ...DynamicCards.args,
+    layout: GalleryLayout,
+    items: itemsNoThinImages
+  },
+  name: 'dynamic cards, no thin images'
+};
+
+export const DefaultGalleryLowVariance: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {
+    ...DynamicCards.args,
+    layout: GalleryLayout,
+    items: itemsLowVariance
+  },
+  name: 'dynamic cards, low variance in aspect ratios'
+};
+
+export const DefaultGallery: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {
+    ...DynamicCards.args,
+    layout: GalleryLayout
+  },
+  name: 'dynamic cards, high variance in aspect ratios'
+};
+
+export const DisabledKeysGallery: DynamicCardViewStory = {
+  ...DisabledKeys,
+  args: {
+    ...DisabledKeys.args,
+    layout: GalleryLayout,
+    items: itemsLowVariance
+  }
+};
+
+export const SelectedKeys: ControlledCardViewStory = {
+  ...ControlledCards,
+  args: {
+    ...ControlledCards.args,
+    layout: GalleryLayout,
+    items: itemsLowVariance
+  }
+};
+
+export const IsLoadingNoHeightGallery: DynamicCardViewStory = {
+  ...IsLoadingNoHeightGrid,
+  args: {
+    ...IsLoadingNoHeightGrid.args,
+    layout: GalleryLayout
+  }
+};
+
+export const IsLoadingHeightGallery: DynamicCardViewStory = {
+  ...IsLoadingHeightGrid,
+  args: {
+    ...IsLoadingHeightGrid.args,
+    layout: GalleryLayout
+  }
+};
+
+export const LoadingMoreGallery: DynamicCardViewStory = {
+  ...LoadingMoreGrid,
+  args: {
+    ...LoadingMoreGrid.args,
+    layout: GalleryLayout
+  }
+};
+
+export const FilteringGallery: DynamicCardViewStory = {
+  ...FilteringGrid,
+  args: {
+    ...FilteringGrid.args,
+    layout: GalleryLayout
+  }
+};
+
+export const EmptyWithHeightGallery: DynamicCardViewStory = {
+  ...EmptyWithHeightGrid,
+  args: {
+    ...EmptyWithHeightGrid.args,
+    layout: GalleryLayout
+  }
+};
+
+export const AsyncLoadingGallery: AsyncLoadingCardViewStory = {
+  ...AsyncLoading,
+  args: {
+    ...AsyncLoading.args,
+    layout: GalleryLayout
+  }
+};
+
+export const CustomLayoutOptions: CustomGalleryLayoutStory = {
+  render: (args) => <CustomGalleryLayout {...args} />,
+  args: {
+    selectionMode: 'multiple',
+    items: itemsLowVariance,
+    layoutOptions: {idealRowHeight: 400, itemSpacing: new Size(10, 10), itemPadding: 78, minItemSize: new Size(150, 400)}
+  },
+  name: 'Custom layout options'
+};
 
 interface LayoutOptions {
   layoutOptions?: GalleryLayoutOptions
 }
-
+type CustomGalleryLayoutStory = ComponentStoryObj<typeof CustomGalleryLayout>;
 function CustomGalleryLayout(props: SpectrumCardViewProps<object> & LayoutOptions) {
   let {
     layoutOptions,

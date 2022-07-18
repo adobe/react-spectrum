@@ -44,7 +44,9 @@ interface FocusManagerOptions {
   /** Whether to only include tabbable elements, or all focusable elements. */
   tabbable?: boolean,
   /** Whether focus should wrap around when it reaches the end of the scope. */
-  wrap?: boolean
+  wrap?: boolean,
+  /** A callback that determines whether the given element is focused. */
+  accept?: (node: Element) => boolean
 }
 
 export interface FocusManager {
@@ -145,10 +147,10 @@ function createFocusManagerForScope(scopeRef: React.RefObject<HTMLElement[]>): F
   return {
     focusNext(opts: FocusManagerOptions = {}) {
       let scope = scopeRef.current;
-      let {from, tabbable, wrap} = opts;
+      let {from, tabbable, wrap, accept} = opts;
       let node = from || document.activeElement;
       let sentinel = scope[0].previousElementSibling;
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable, accept}, scope);
       walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
       let nextNode = walker.nextNode() as HTMLElement;
       if (!nextNode && wrap) {
@@ -162,10 +164,10 @@ function createFocusManagerForScope(scopeRef: React.RefObject<HTMLElement[]>): F
     },
     focusPrevious(opts: FocusManagerOptions = {}) {
       let scope = scopeRef.current;
-      let {from, tabbable, wrap} = opts;
+      let {from, tabbable, wrap, accept} = opts;
       let node = from || document.activeElement;
       let sentinel = scope[scope.length - 1].nextElementSibling;
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable, accept}, scope);
       walker.currentNode = isElementInScope(node, scope) ? node : sentinel;
       let previousNode = walker.previousNode() as HTMLElement;
       if (!previousNode && wrap) {
@@ -179,8 +181,8 @@ function createFocusManagerForScope(scopeRef: React.RefObject<HTMLElement[]>): F
     },
     focusFirst(opts = {}) {
       let scope = scopeRef.current;
-      let {tabbable} = opts;
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+      let {tabbable, accept} = opts;
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable, accept}, scope);
       walker.currentNode = scope[0].previousElementSibling;
       let nextNode = walker.nextNode() as HTMLElement;
       if (nextNode) {
@@ -190,8 +192,8 @@ function createFocusManagerForScope(scopeRef: React.RefObject<HTMLElement[]>): F
     },
     focusLast(opts = {}) {
       let scope = scopeRef.current;
-      let {tabbable} = opts;
-      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
+      let {tabbable, accept} = opts;
+      let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable, accept}, scope);
       walker.currentNode = scope[scope.length - 1].nextElementSibling;
       let previousNode = walker.previousNode() as HTMLElement;
       if (previousNode) {
@@ -234,6 +236,11 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
   useLayoutEffect(() => {
     let scope = scopeRef.current;
     if (!contain) {
+      // if contain was changed, then we should cancel any ongoing waits to pull focus back into containment
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+        raf.current = null;
+      }
       return;
     }
 
@@ -308,7 +315,11 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
-    return () => cancelAnimationFrame(raf.current);
+    return () => {
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
   }, [raf]);
 }
 
@@ -460,7 +471,8 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
 
       if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scopeRef.current)) {
         requestAnimationFrame(() => {
-          if (document.body.contains(nodeToRestore)) {
+          // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
+          if (document.body.contains(nodeToRestore) && document.activeElement === document.body) {
             focusElement(nodeToRestore);
           }
         });
@@ -487,7 +499,9 @@ export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOpt
 
         if ((node as HTMLElement).matches(selector)
           && isElementVisible(node as HTMLElement)
-          && (!scope || isElementInScope(node as HTMLElement, scope))) {
+          && (!scope || isElementInScope(node as HTMLElement, scope))
+          && (!opts?.accept || opts.accept(node as Element))
+        ) {
           return NodeFilter.FILTER_ACCEPT;
         }
 
@@ -506,13 +520,16 @@ export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOpt
 /**
  * Creates a FocusManager object that can be used to move focus within an element.
  */
-export function createFocusManager(ref: RefObject<HTMLElement>): FocusManager {
+export function createFocusManager(ref: RefObject<HTMLElement>, defaultOptions: FocusManagerOptions = {}): FocusManager {
   return {
     focusNext(opts: FocusManagerOptions = {}) {
       let root = ref.current;
-      let {from, tabbable, wrap} = opts;
+      if (!root) {
+        return;
+      }
+      let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || document.activeElement;
-      let walker = getFocusableTreeWalker(root, {tabbable});
+      let walker = getFocusableTreeWalker(root, {tabbable, accept});
       if (root.contains(node)) {
         walker.currentNode = node;
       }
@@ -526,11 +543,14 @@ export function createFocusManager(ref: RefObject<HTMLElement>): FocusManager {
       }
       return nextNode;
     },
-    focusPrevious(opts: FocusManagerOptions = {}) {
+    focusPrevious(opts: FocusManagerOptions = defaultOptions) {
       let root = ref.current;
-      let {from, tabbable, wrap} = opts;
+      if (!root) {
+        return;
+      }
+      let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || document.activeElement;
-      let walker = getFocusableTreeWalker(root, {tabbable});
+      let walker = getFocusableTreeWalker(root, {tabbable, accept});
       if (root.contains(node)) {
         walker.currentNode = node;
       } else {
@@ -550,20 +570,26 @@ export function createFocusManager(ref: RefObject<HTMLElement>): FocusManager {
       }
       return previousNode;
     },
-    focusFirst(opts = {}) {
+    focusFirst(opts = defaultOptions) {
       let root = ref.current;
-      let {tabbable} = opts;
-      let walker = getFocusableTreeWalker(root, {tabbable});
+      if (!root) {
+        return;
+      }
+      let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept} = opts;
+      let walker = getFocusableTreeWalker(root, {tabbable, accept});
       let nextNode = walker.nextNode() as HTMLElement;
       if (nextNode) {
         focusElement(nextNode, true);
       }
       return nextNode;
     },
-    focusLast(opts = {}) {
+    focusLast(opts = defaultOptions) {
       let root = ref.current;
-      let {tabbable} = opts;
-      let walker = getFocusableTreeWalker(root, {tabbable});
+      if (!root) {
+        return;
+      }
+      let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept} = opts;
+      let walker = getFocusableTreeWalker(root, {tabbable, accept});
       let next = last(walker);
       if (next) {
         focusElement(next, true);

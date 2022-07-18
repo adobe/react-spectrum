@@ -62,7 +62,7 @@ function DynamicCardView(props: SpectrumCardViewProps<object>) {
     <CardView {...props} items={items} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
       {(item: any) => (
         <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
-          <Image src={item.src} />
+          <Image src={item.src} data-chromatic="ignore" />
           <Heading>{item.title}</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>

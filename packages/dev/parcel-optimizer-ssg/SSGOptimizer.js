@@ -40,7 +40,7 @@ module.exports = new Optimizer({
         pages.push({
           url: urlJoin(b.target.publicUrl, rename(b)),
           name: rename(b),
-          title: meta.title,
+          title: meta.navigationTitle ?? meta.title,
           category: meta.category,
           description: meta.description,
           keywords: meta.keywords,

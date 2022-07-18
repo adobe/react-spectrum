@@ -38,28 +38,13 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let {direction} = useLocale();
   let listState = useListState(props);
   let gridCollection = useMemo(() => new GridCollection({
-    columnCount: isRemovable ? 2 : 1,
+    columnCount: 1, // unused, but required for grid collections
     items: [...listState.collection].map(item => {
       let childNodes = [{
         ...item,
         index: 0,
         type: 'cell'
       }];
-
-      // add column of clear buttons if removable
-      if (isRemovable) {
-        childNodes.push({
-          key: `remove-${item.key}`,
-          type: 'cell',
-          index: 1,
-          value: null,
-          level: 0,
-          rendered: null,
-          textValue: item.textValue, // TODO localize?
-          hasChildNodes: false,
-          childNodes: []
-        });
-      }
 
       return {
         type: 'item',
@@ -87,7 +72,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
   // Don't want the grid to be focusable or accessible via keyboard
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {tabIndex, ...otherGridProps} = gridProps;
+  let {tabIndex, role, ...otherGridProps} = gridProps;
   return (
     <div
       {...mergeProps(styleProps, tagGroupProps, otherGridProps)}
@@ -101,6 +86,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           styleProps.className
         )
       }
+      role={state.collection.size ? 'grid' : null}
       ref={domRef}>
       {[...gridCollection].map(item => (
         <Tag

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
@@ -22,7 +22,6 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 
@@ -47,9 +46,9 @@ describe('DialogTrigger', function () {
     // Ensure we close any dialogs before unmounting to avoid warning.
     let dialog = document.querySelector('[role="dialog"]');
     if (dialog) {
+      fireEvent.keyDown(dialog, {key: 'Escape'});
+      fireEvent.keyUp(dialog, {key: 'Escape'});
       act(() => {
-        fireEvent.keyDown(dialog, {key: 'Escape'});
-        fireEvent.keyUp(dialog, {key: 'Escape'});
         jest.runAllTimers();
       });
     }
@@ -313,6 +312,11 @@ describe('DialogTrigger', function () {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
 
+    // now that it's been unmounted, run the raf callback
+    act(() => {
+      jest.runAllTimers();
+    });
+
     expect(document.activeElement).toBe(button);
   });
 
@@ -352,6 +356,11 @@ describe('DialogTrigger', function () {
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
+
+    // now that it's been unmounted, run the raf callback
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(document.activeElement).toBe(button);
     expect(onOpenChange).toHaveBeenCalledTimes(2);
@@ -758,8 +767,8 @@ describe('DialogTrigger', function () {
 
     // Close the dialog by clicking the button inside
     button = within(dialog).getByRole('button');
+    triggerPress(button);
     act(() => {
-      triggerPress(button);
       jest.runAllTimers();
     });
 
@@ -784,16 +793,16 @@ describe('DialogTrigger', function () {
 
     let button = getByRole('button');
 
+    triggerPress(button);
     act(() => {
-      triggerPress(button);
       jest.runAllTimers();
     });
 
     let menu = getByRole('menu');
     let menuitem = within(menu).getByRole('menuitem');
 
+    triggerPress(menuitem);
     act(() => {
-      triggerPress(menuitem);
       jest.runAllTimers();
     });
 

@@ -10,14 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid} from './utils';
+import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {
   Calendar,
   CalendarDate,
   DateDuration,
   DateFormatter,
+  endOfMonth,
+  endOfWeek,
+  getDayOfWeek,
   GregorianCalendar,
   isSameDay,
+  startOfMonth,
+  startOfWeek,
   toCalendar,
   toCalendarDate,
   today
@@ -27,7 +32,7 @@ import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
 
-interface CalendarStateOptions extends CalendarProps<DateValue> {
+export interface CalendarStateOptions extends CalendarProps<DateValue> {
   /** The locale to display and edit the value according to. */
   locale: string,
   /**
@@ -59,7 +64,8 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     visibleDuration = {months: 1},
     minValue,
     maxValue,
-    selectionAlignment
+    selectionAlignment,
+    isDateUnavailable
   } = props;
 
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
@@ -95,7 +101,15 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
   });
   let [isFocused, setFocused] = useState(props.autoFocus || false);
 
-  let endDate = useMemo(() => startDate.add(visibleDuration).subtract({days: 1}), [startDate, visibleDuration]);
+  let endDate = useMemo(() => {
+    let duration = {...visibleDuration};
+    if (duration.days) {
+      duration.days--;
+    } else {
+      duration.days = -1;
+    }
+    return startDate.add(duration);
+  }, [startDate, visibleDuration]);
 
   // Reset focused date and visible range when calendar changes.
   let lastCalendarIdentifier = useRef(calendar.identifier);
@@ -111,7 +125,7 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     setFocusedDate(constrainValue(focusedDate, minValue, maxValue));
   } else if (focusedDate.compare(startDate) < 0) {
     setStartDate(alignEnd(focusedDate, visibleDuration, locale, minValue, maxValue));
-  } else if (focusedDate.compare(startDate.add(visibleDuration)) >= 0) {
+  } else if (focusedDate.compare(endDate) > 0) {
     setStartDate(alignStart(focusedDate, visibleDuration, locale, minValue, maxValue));
   }
 
@@ -123,6 +137,12 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
   function setValue(newValue: CalendarDate) {
     if (!props.isDisabled && !props.isReadOnly) {
+      newValue = constrainValue(newValue, minValue, maxValue);
+      newValue = previousAvailableDate(newValue, startDate, isDateUnavailable);
+      if (!newValue) {
+        return;
+      }
+
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, value?.calendar || new GregorianCalendar());
@@ -136,6 +156,19 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     }
   }
 
+  let isUnavailable = useMemo(() => {
+    if (!calendarDateValue) {
+      return false;
+    }
+
+    if (isDateUnavailable && isDateUnavailable(calendarDateValue)) {
+      return true;
+    }
+
+    return isInvalid(calendarDateValue, minValue, maxValue);
+  }, [calendarDateValue, isDateUnavailable, minValue, maxValue]);
+  let validationState = props.validationState || (isUnavailable ? 'invalid' : null);
+
   return {
     isDisabled: props.isDisabled,
     isReadOnly: props.isReadOnly,
@@ -145,8 +178,11 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
       start: startDate,
       end: endDate
     },
+    minValue,
+    maxValue,
     focusedDate,
     timeZone,
+    validationState,
     setFocusedDate(date) {
       focusCell(date);
       setFocused(true);
@@ -174,20 +210,49 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
     focusNextPage() {
       let start = startDate.add(visibleDuration);
       setFocusedDate(constrainValue(focusedDate.add(visibleDuration), minValue, maxValue));
-      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
+      setStartDate(
+        alignStart(
+          constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue),
+          visibleDuration,
+          locale
+        )
+      );
     },
     focusPreviousPage() {
       let start = startDate.subtract(visibleDuration);
       setFocusedDate(constrainValue(focusedDate.subtract(visibleDuration), minValue, maxValue));
-      setStartDate(constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue));
+      setStartDate(
+        alignStart(
+          constrainStart(focusedDate, start, visibleDuration, locale, minValue, maxValue),
+          visibleDuration,
+          locale
+        )
+      );
     },
-    focusPageStart() {
-      focusCell(startDate);
+    focusSectionStart() {
+      if (visibleDuration.days) {
+        focusCell(startDate);
+      } else if (visibleDuration.weeks) {
+        focusCell(startOfWeek(focusedDate, locale));
+      } else if (visibleDuration.months || visibleDuration.years) {
+        focusCell(startOfMonth(focusedDate));
+      }
     },
-    focusPageEnd() {
-      focusCell(endDate);
+    focusSectionEnd() {
+      if (visibleDuration.days) {
+        focusCell(endDate);
+      } else if (visibleDuration.weeks) {
+        focusCell(endOfWeek(focusedDate, locale));
+      } else if (visibleDuration.months || visibleDuration.years) {
+        focusCell(endOfMonth(focusedDate));
+      }
     },
-    focusNextSection() {
+    focusNextSection(larger) {
+      if (!larger && !visibleDuration.days) {
+        focusCell(focusedDate.add(unitDuration(visibleDuration)));
+        return;
+      }
+
       if (visibleDuration.days) {
         this.focusNextPage();
       } else if (visibleDuration.weeks) {
@@ -196,7 +261,12 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
         focusCell(focusedDate.add({years: 1}));
       }
     },
-    focusPreviousSection() {
+    focusPreviousSection(larger) {
+      if (!larger && !visibleDuration.days) {
+        focusCell(focusedDate.subtract(unitDuration(visibleDuration)));
+        return;
+      }
+
       if (visibleDuration.days) {
         this.focusPreviousPage();
       } else if (visibleDuration.weeks) {
@@ -229,10 +299,53 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
       return props.isDateUnavailable && props.isDateUnavailable(date);
     },
     isPreviousVisibleRangeInvalid() {
-      return this.isInvalid(startDate.subtract({days: 1}), minValue, maxValue);
+      let prev = startDate.subtract({days: 1});
+      return isSameDay(prev, startDate) || this.isInvalid(prev, minValue, maxValue);
     },
     isNextVisibleRangeInvalid() {
-      return this.isInvalid(endDate.add({days: 1}), minValue, maxValue);
+      // Adding may return the same date if we reached the end of time
+      // according to the calendar system (e.g. 9999-12-31).
+      let next = endDate.add({days: 1});
+      return isSameDay(next, endDate) || this.isInvalid(next, minValue, maxValue);
+    },
+    getDatesInWeek(weekIndex, from = startDate) {
+      // let date = startOfWeek(from, locale);
+      let date = from.add({weeks: weekIndex});
+      let dates = [];
+
+      date = startOfWeek(date, locale);
+
+      // startOfWeek will clamp dates within the calendar system's valid range, which may
+      // start in the middle of a week. In this case, add null placeholders.
+      let dayOfWeek = getDayOfWeek(date, locale);
+      for (let i = 0; i < dayOfWeek; i++) {
+        dates.push(null);
+      }
+
+      while (dates.length < 7) {
+        dates.push(date);
+        let nextDate = date.add({days: 1});
+        if (isSameDay(date, nextDate)) {
+          // If the next day is the same, we have hit the end of the calendar system.
+          break;
+        }
+        date = nextDate;
+      }
+
+      // Add null placeholders if at the end of the calendar system.
+      while (dates.length < 7) {
+        dates.push(null);
+      }
+
+      return dates;
     }
   };
+}
+
+function unitDuration(duration: DateDuration) {
+  let unit = {...duration};
+  for (let key in duration) {
+    unit[key] = 1;
+  }
+  return unit;
 }

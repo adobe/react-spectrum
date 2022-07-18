@@ -12,5 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Calendar';
-export * from './RangeCalendar';
+export {Calendar} from './Calendar';
+export {RangeCalendar} from './RangeCalendar';

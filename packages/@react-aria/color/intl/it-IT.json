@@ -1,5 +1,6 @@
 {
-  "twoDimensionalSlider": "Dispositivo di scorrimento 2D",
+  "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
-  "x/y": "{x} / {y}"
+  "colorPicker": "Selettore colore",
+  "twoDimensionalSlider": "Cursore 2D"
 }

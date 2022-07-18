@@ -42,6 +42,9 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject
 
   if (isCurrent) {
     itemProps['aria-current'] = ariaCurrent || 'page';
+    // isCurrent sets isDisabled === true for the current item,
+    // so we have to restore the tabIndex in order to support autoFocus.
+    itemProps.tabIndex = props.autoFocus ? -1 : undefined;
   }
 
   return {
