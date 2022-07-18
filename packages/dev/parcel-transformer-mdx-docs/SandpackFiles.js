@@ -57,8 +57,7 @@ root.render(
 );
 `;
 
-const getExampleFile = (exampleCode, imports) => `import React from "react";
-${formatImports(imports)}
+const getExampleFile = (exampleCode, imports) => `${formatImports(imports)}
 
 export default function Example() {
   return (
@@ -67,8 +66,7 @@ export default function Example() {
 }
 `;
 
-const getNamedExampleFile = (exampleCode, imports) => `import React from "react";
-${formatImports(imports)}
+const getNamedExampleFile = (exampleCode, imports) => `${formatImports(imports)}
 
 export default ${formatExampleCode(exampleCode)}
 `;
