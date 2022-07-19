@@ -92,7 +92,7 @@ then
 
   cd ../..
   mkdir -p $verdaccio_path/publish-stats
-  mv publish.txt ../../$verdaccio_path/publish-stats
+  mv publish.txt $verdaccio_path/publish-stats
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"
