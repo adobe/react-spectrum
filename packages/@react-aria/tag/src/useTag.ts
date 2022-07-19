@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent} from 'react';
+import {ButtonHTMLAttributes, KeyboardEvent} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {GridState} from '@react-stately/grid';
 // @ts-ignore
@@ -21,9 +22,9 @@ import {useMessageFormatter} from '@react-aria/i18n';
 
 
 export interface TagAria {
-  labelProps: HTMLAttributes<HTMLElement>,
-  tagProps: HTMLAttributes<HTMLElement>,
-  tagRowProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
+  tagProps: DOMAttributes,
+  tagRowProps: DOMAttributes,
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
 }
 
@@ -55,7 +56,7 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
     focusMode: 'cell'
   }, state, tagRef);
 
-  function onKeyDown(e: KeyboardEvent<HTMLElement>) {
+  function onKeyDown(e: KeyboardEvent<Element>) {
     if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
       onRemove(children, e);
       e.preventDefault();

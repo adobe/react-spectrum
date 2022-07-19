@@ -11,8 +11,8 @@
  */
 
 import {chain, filterDOMProps, mergeProps} from '@react-aria/utils';
-import {DOMProps} from '@react-types/shared';
-import {HTMLAttributes, ImgHTMLAttributes} from 'react';
+import {DOMAttributes, DOMProps} from '@react-types/shared';
+import {ImgHTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
@@ -23,7 +23,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 interface ToastAriaProps extends ToastProps {}
 
 interface ToastAria {
-  toastProps: HTMLAttributes<HTMLElement>,
+  toastProps: DOMAttributes,
   iconProps: ImgHTMLAttributes<HTMLElement>,
   actionButtonProps: PressProps,
   closeButtonProps: DOMProps & PressProps

@@ -19,6 +19,7 @@ import {
   RefObject
 } from 'react';
 import {AriaButtonProps} from '@react-types/button';
+import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
@@ -38,7 +39,7 @@ export function useButton(props: AriaButtonProps<'a'>, ref: RefObject<HTMLAnchor
 export function useButton(props: AriaButtonProps<'div'>, ref: RefObject<HTMLDivElement>): ButtonAria<HTMLAttributes<HTMLDivElement>>;
 export function useButton(props: AriaButtonProps<'input'>, ref: RefObject<HTMLInputElement>): ButtonAria<InputHTMLAttributes<HTMLInputElement>>;
 export function useButton(props: AriaButtonProps<'span'>, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
-export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<HTMLElement>): ButtonAria<HTMLAttributes<HTMLElement>>;
+export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<Element>): ButtonAria<DOMAttributes>;
 /**
  * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
  * focus behavior, and ARIA props for both native button elements and custom element types.
