@@ -106,10 +106,10 @@ export function useSlider(
   let onDownTrack = (e: React.UIEvent, id: number, clientX: number, clientY: number) => {
     // We only trigger track-dragging if the user clicks on the track itself and nothing is currently being dragged.
     if (trackRef.current && !props.isDisabled && state.values.every((_, i) => !state.isThumbDragging(i))) {
-      let {height, width} = trackRef.current.getBoundingClientRect();
+      let {height, width, top, left} = trackRef.current.getBoundingClientRect();
       let size = isVertical ? height : width;
       // Find the closest thumb
-      const trackPosition = trackRef.current.getBoundingClientRect()[isVertical ? 'top' : 'left'];
+      const trackPosition = isVertical ? top : left;
       const clickPosition = isVertical ? clientY : clientX;
       const offset = clickPosition - trackPosition;
       let percent = offset / size;
