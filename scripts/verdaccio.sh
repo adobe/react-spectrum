@@ -63,7 +63,7 @@ then
 fi
 
 # Publish packages to verdaccio
-yarn lerna publish from-package --registry $registry --yes
+yarn lerna publish from-package --registry $registry --yes | tee publish.txt
 
 npm set registry $registry
 
@@ -84,13 +84,15 @@ then
   yarn install
 
   # Build test app and move to dist folder. Store the size of the build in a text file
-  yarn build
-  du -c build/ > size.txt
-  mkdir -p ../../$verdaccio_path/size
-  mv size.txt ../../$verdaccio_path/size
+  yarn build | tee build-stats.txt
+  du -c build/ | tee -a build-stats.txt
+  mkdir -p ../../$verdaccio_path/app-size
+  mv build-stats.txt ../../$verdaccio_path/app-size
   mv build ../../$verdaccio_path
 
   cd ../..
+  mkdir -p $verdaccio_path/publish-stats
+  mv publish.txt ../../$verdaccio_path/publish-stats
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"

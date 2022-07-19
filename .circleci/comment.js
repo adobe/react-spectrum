@@ -10,7 +10,7 @@ async function run() {
   let pr;
   // If we aren't running on a PR commit, double check if this is a branch created for a fork. If so, we'll need to
   // comment the build link on the fork.
-  if (!process.env.CIRCLE_PULL_REQUEST) {
+  if (true) {
     try {
       const commit = await octokit.git.getCommit({
         owner: 'adobe',
@@ -48,7 +48,8 @@ async function run() {
           commit_sha: process.env.CIRCLE_SHA1,
           body: `Verdaccio builds:
       [Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/build/index.html)
-      [Test App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/size/size.txt)
+      [Test App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/app-size/build-stats.txt)
+      [Publish stats](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/publish.txt)
       [Docs](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/docs/index.html)`
         });
       }
