@@ -182,3 +182,23 @@
   padding: 0 var(--spectrum-calendar-day-padding);
   box-sizing: border-box;
 }
+
+@media (forced-colors:active) {
+  .react-spectrum-DatePicker-cell:focus {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .react-spectrum-DatePicker-cell.is-read-only {
+    color: ButtonText;
+    &:focus {
+      color: HighlightText;
+    }
+  }
+  .react-spectrum-DatePicker-cell.is-placeholder {
+    color: ButtonText;
+    &:focus {
+      color: HighlightText;
+    }
+  }
+}
