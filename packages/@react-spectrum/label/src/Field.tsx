@@ -24,7 +24,6 @@ import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useTextField} from '@react-aria/textfield';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   props = useFormProps(props);
@@ -60,13 +59,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
   let defaultInputRef = useRef<HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
-
-  // creates inputProps if component does not pass it to <Field>
-  let {inputProps} = useTextField({
-    ...props,
-    inputElementType: 'textarea'
-  }, inputRef as RefObject<HTMLTextAreaElement>);
-  readOnlyInputProps = readOnlyInputProps || inputProps;
 
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(
