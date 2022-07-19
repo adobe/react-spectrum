@@ -63,7 +63,7 @@ then
 fi
 
 # Publish packages to verdaccio
-yarn lerna publish from-package --registry $registry --yes | tee publish.txt
+yarn lerna publish from-package --registry $registry --yes 2>&1 | tee output.log
 
 npm set registry $registry
 
