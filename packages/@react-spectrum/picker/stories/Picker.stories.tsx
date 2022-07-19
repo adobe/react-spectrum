@@ -61,7 +61,7 @@ const parameters = {
     autoFocus: true,
     validationState: '',
     description: '',
-    errorMessage: '',
+    errorMessage: ''
   },
   argTypes: {
     isQuiet: {
@@ -626,7 +626,17 @@ storiesOf('Picker', module)
   .add(
     'isReadOnly, selectedKey',
     () => (
-      <Picker autoFocus label="Test" isReadOnly selectedKey="One" onSelectionChange={action('selectionChange')}>
+      <Picker label="Test" isReadOnly selectedKey="One" onSelectionChange={action('selectionChange')}>
+        <Item key="One">One</Item>
+        <Item key="Two">Two</Item>
+        <Item key="Three">Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isReadOnly, ref',
+    () => (
+      <Picker label="Test" isReadOnly selectedKey="One" ref={React.createRef()} onSelectionChange={action('selectionChange')}>
         <Item key="One">One</Item>
         <Item key="Two">Two</Item>
         <Item key="Three">Three</Item>

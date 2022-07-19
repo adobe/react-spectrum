@@ -19,11 +19,12 @@ import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import React, {RefObject, useRef} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 import {useMessageFormatter} from '@react-aria/i18n';
+// import {useTextField} from '@react-aria/textfield';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   props = useFormProps(props);
@@ -57,6 +58,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
   let formatMessage = useMessageFormatter(intlMessages);
   let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
+  let defaultInputRef = useRef<HTMLTextAreaElement>(null);
+  inputRef = inputRef || defaultInputRef;
 
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(

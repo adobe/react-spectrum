@@ -19,17 +19,23 @@ import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useTextField} from '@react-aria/textfield';
 
 function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLTextAreaElement>) {
   props = useFormProps(props);
   let {
     isDisabled,
     readOnlyText,
-    inputProps,
+    // textProps,
     autoFocus    
   } = props;
-  delete inputProps.defaultValue;
   let {hoverProps, isHovered} = useHover({isDisabled});
+
+  let {inputProps} = useTextField({
+    ...props,
+    inputElementType: 'textarea'
+  }, ref);
+  delete inputProps.defaultValue;
 
   let onHeightChange = useCallback(() => {
     let input = ref.current;
@@ -63,6 +69,7 @@ function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLTextAreaEle
           {...mergeProps(inputProps, hoverProps)} 
           rows={1}
           ref={ref}
+          autoFocus={autoFocus}
           value={readOnlyText}
           className={
             classNames(
