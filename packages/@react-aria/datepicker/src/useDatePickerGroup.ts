@@ -1,12 +1,12 @@
 import {createFocusManager, getFocusableTreeWalker} from '@react-aria/focus';
 import {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
-import {KeyboardEvent} from '@react-types/shared';
+import {FocusableElement, KeyboardEvent} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {RefObject, useMemo} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
-export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<HTMLElement>, disableArrowNavigation?: boolean) {
+export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element>, disableArrowNavigation?: boolean) {
   let {direction} = useLocale();
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
@@ -47,18 +47,18 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
   // Focus the first placeholder segment from the end on mouse down/touch up in the field.
   let focusLast = () => {
     // Try to find the segment prior to the element that was clicked on.
-    let target = window.event?.target as HTMLElement;
+    let target = window.event?.target as FocusableElement;
     let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
     if (target) {
       walker.currentNode = target;
-      target = walker.previousNode() as HTMLElement;
+      target = walker.previousNode() as FocusableElement;
     }
 
     // If no target found, find the last element from the end.
     if (!target) {
-      let last: HTMLElement;
+      let last: FocusableElement;
       do {
-        last = walker.lastChild() as HTMLElement;
+        last = walker.lastChild() as FocusableElement;
         if (last) {
           target = last;
         }
@@ -67,7 +67,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
 
     // Now go backwards until we find an element that is not a placeholder.
     while (target?.hasAttribute('data-placeholder')) {
-      let prev = walker.previousNode() as HTMLElement;
+      let prev = walker.previousNode() as FocusableElement;
       if (prev && prev.hasAttribute('data-placeholder')) {
         target = prev;
       } else {

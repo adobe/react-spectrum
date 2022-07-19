@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, KeyboardDelegate} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
+import {Key, RefObject, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
@@ -52,7 +52,7 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
 
 export interface GridAria {
   /** Props for the grid element. */
-  gridProps: HTMLAttributes<HTMLElement>
+  gridProps: DOMAttributes
 }
 
 /**
@@ -107,7 +107,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
-  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(
+  let gridProps: DOMAttributes = mergeProps(
     domProps,
     {
       role: 'grid',

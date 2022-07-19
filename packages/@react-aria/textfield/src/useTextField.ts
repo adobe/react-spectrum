@@ -15,10 +15,10 @@ import {
   ChangeEvent,
   DOMFactory,
   HTMLAttributes,
-  LabelHTMLAttributes,
   ReactDOM,
   RefObject
 } from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
@@ -88,11 +88,11 @@ export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultEle
   /** Props for the input element. */
   inputProps: TextFieldInputProps<T>,
   /** Props for the text field's visible label element, if any. */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: DOMAttributes,
   /** Props for the text field's description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
   /** Props for the text field's error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>
+  errorMessageProps: DOMAttributes
 }
 
 /**

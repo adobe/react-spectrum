@@ -11,9 +11,9 @@
  */
 
 import {chain} from '@react-aria/utils';
-import {DragItem, DropItem} from '@react-types/shared';
-import {HTMLAttributes, useEffect, useRef} from 'react';
+import {DOMAttributes, DragItem, DropItem} from '@react-types/shared';
 import {readFromDataTransfer, writeToDataTransfer} from './utils';
+import {useEffect, useRef} from 'react';
 import {useFocus} from '@react-aria/interactions';
 
 interface ClipboardProps {
@@ -24,7 +24,7 @@ interface ClipboardProps {
 }
 
 interface ClipboardResult {
-  clipboardProps: HTMLAttributes<HTMLElement>
+  clipboardProps: DOMAttributes
 }
 
 const globalEvents = new Map();

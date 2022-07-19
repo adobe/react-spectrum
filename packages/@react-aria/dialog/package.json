@@ -24,7 +24,8 @@
     "@react-aria/focus": "^3.6.1",
     "@react-aria/utils": "^3.13.1",
     "@react-stately/overlays": "^3.3.1",
-    "@react-types/dialog": "^3.4.1"
+    "@react-types/dialog": "^3.4.1",
+    "@react-types/shared": "^3.13.1"
   },
   "publishConfig": {
     "access": "public"
