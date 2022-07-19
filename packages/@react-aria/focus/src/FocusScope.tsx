@@ -330,23 +330,18 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
 }
 
 function isElementInAnyScope(element: Element) {
-  for (let {data: scope} of focusScopeTree.traverseInOrderDF()) {
-    if (isElementInScope(element, scope.current)) {
-      return true;
-    }
-  }
-  return false;
+  return isElementInChildScope(element);
 }
 
 function isElementInScope(element: Element, scope: HTMLElement[]) {
   return scope.some(node => node.contains(element));
 }
 
-function isElementInChildScope(element: Element, scope: ScopeRef) {
+function isElementInChildScope(element: Element, scope: ScopeRef = null) {
   // node.contains in isElementInScope covers child scopes that are also DOM children,
   // but does not cover child scopes in portals.
-  for (let {data: s} of focusScopeTree.traverseInOrderDF()) {
-    if ((s === scope || isAncestorScope(scope, s)) && isElementInScope(element, s.current)) {
+  for (let {data: s} of focusScopeTree.traverseInOrderDF(focusScopeTree.getNode(scope))) {
+    if (isElementInScope(element, s.current)) {
       return true;
     }
   }
@@ -356,15 +351,13 @@ function isElementInChildScope(element: Element, scope: ScopeRef) {
 
 function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
   let parent = focusScopeTree.getNode(scope)?.parent;
-  if (!parent) {
-    return false;
+  while (parent) {
+    if (parent.data === ancestor) {
+      return true;
+    }
+    parent = parent.parent;
   }
-
-  if (parent.data === ancestor) {
-    return true;
-  }
-
-  return isAncestorScope(ancestor, parent.data);
+  return false;
 }
 
 function focusElement(element: HTMLElement | null, scroll = false) {
@@ -680,6 +673,7 @@ class Node {
   }
   addChild(node: Node) {
     this._children.push(node);
+    node.parent = this;
   }
   removeChild(node: Node) {
     this._children.splice(this.children.indexOf(node), 1);
