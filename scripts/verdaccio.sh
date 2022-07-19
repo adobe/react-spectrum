@@ -85,7 +85,7 @@ then
 
   # Build test app and move to dist folder. Store the size of the build in a text file
   yarn build | tee build-stats.txt
-  du -c build/ | tee -a build-stats.txt
+  du -ha build/ | tee -a build-stats.txt
   mkdir -p ../../$verdaccio_path/app-size
   mv build-stats.txt ../../$verdaccio_path/app-size
   mv build ../../$verdaccio_path
