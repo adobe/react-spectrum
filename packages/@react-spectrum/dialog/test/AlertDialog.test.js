@@ -13,7 +13,7 @@
 import {AlertDialog} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render, triggerPress} from '@react-spectrum/test-utils';
+import {fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {theme} from '@react-spectrum/theme-default';
 
 describe('AlertDialog', function () {
@@ -170,5 +170,22 @@ describe('AlertDialog', function () {
 
     let button = getByText('secondary').closest('button');
     expect(document.activeElement).toBe(button);
+  });
+
+  it('allowsKeyboardConfirmation enabled', function () {
+    let onPrimaryAction = jest.fn();
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" allowsKeyboardConfirmation title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction}>
+          Content body
+        </AlertDialog>
+      </Provider>
+    );
+
+    let dialog = getByRole('alertdialog');
+    expect(document.activeElement).toBe(dialog);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+    expect(onPrimaryAction).toHaveBeenCalledTimes(1);
   });
 });

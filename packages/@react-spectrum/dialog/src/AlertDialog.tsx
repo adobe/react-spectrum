@@ -17,7 +17,7 @@ import {chain} from '@react-aria/utils';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
-import {DialogContext, DialogContextValue} from './context';
+import {AlertDialogContext, DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/text';
@@ -47,6 +47,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     title,
     isPrimaryActionDisabled,
     isSecondaryActionDisabled,
+    allowsKeyboardConfirmation,
     onCancel = () => {},
     onPrimaryAction = () => {},
     onSecondaryAction = () => {},
@@ -64,49 +65,60 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     }
   }
 
+  let onKeyDown = (e) => {
+    if (e.key === 'Enter' && allowsKeyboardConfirmation) {
+      e.stopPropagation();
+      e.preventDefault();
+      onPrimaryAction();
+      onClose();
+    }
+  };
+
   return (
-    <Dialog
-      UNSAFE_style={styleProps.style}
-      UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
-      isHidden={styleProps.hidden}
-      size="M"
-      role="alertdialog"
-      ref={ref}>
-      <Heading>{title}</Heading>
-      {(variant === 'error' || variant === 'warning') &&
-        <AlertMedium
-          slot="typeIcon"
-          aria-label={formatMessage('alert')} />
-      }
-      <Divider />
-      <Content>{children}</Content>
-      <ButtonGroup align="end">
-        {cancelLabel &&
-          <Button
-            variant="secondary"
-            onPress={() => chain(onClose(), onCancel())}
-            autoFocus={autoFocusButton === 'cancel'}>
-            {cancelLabel}
-          </Button>
+    <AlertDialogContext.Provider value={{onKeyDown}}>
+      <Dialog
+        UNSAFE_style={styleProps.style}
+        UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
+        isHidden={styleProps.hidden}
+        size="M"
+        role="alertdialog"
+        ref={ref}>
+        <Heading>{title}</Heading>
+        {(variant === 'error' || variant === 'warning') &&
+          <AlertMedium
+            slot="typeIcon"
+            aria-label={formatMessage('alert')} />
         }
-        {secondaryActionLabel &&
+        <Divider />
+        <Content>{children}</Content>
+        <ButtonGroup align="end">
+          {cancelLabel &&
+            <Button
+              variant="secondary"
+              onPress={() => chain(onClose(), onCancel())}
+              autoFocus={autoFocusButton === 'cancel'}>
+              {cancelLabel}
+            </Button>
+          }
+          {secondaryActionLabel &&
+            <Button
+              variant="secondary"
+              onPress={() => chain(onClose(), onSecondaryAction())}
+              isDisabled={isSecondaryActionDisabled}
+              autoFocus={autoFocusButton === 'secondary'}>
+              {secondaryActionLabel}
+            </Button>
+          }
           <Button
-            variant="secondary"
-            onPress={() => chain(onClose(), onSecondaryAction())}
-            isDisabled={isSecondaryActionDisabled}
-            autoFocus={autoFocusButton === 'secondary'}>
-            {secondaryActionLabel}
+            variant={confirmVariant}
+            onPress={() => chain(onClose(), onPrimaryAction())}
+            isDisabled={isPrimaryActionDisabled}
+            autoFocus={autoFocusButton === 'primary'}>
+            {primaryActionLabel}
           </Button>
-        }
-        <Button
-          variant={confirmVariant}
-          onPress={() => chain(onClose(), onPrimaryAction())}
-          isDisabled={isPrimaryActionDisabled}
-          autoFocus={autoFocusButton === 'primary'}>
-          {primaryActionLabel}
-        </Button>
-      </ButtonGroup>
-    </Dialog>
+        </ButtonGroup>
+      </Dialog>
+    </AlertDialogContext.Provider>
   );
 }
 

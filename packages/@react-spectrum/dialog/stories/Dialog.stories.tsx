@@ -234,6 +234,21 @@ storiesOf('Dialog/Alert', module)
       onCancel: action('cancel'),
       autoFocusButton: 'cancel'
     })
+  )
+  .add(
+    'allowsKeyboardConfirmation',
+    () => renderAlert({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel',
+      secondaryActionLabel: 'Secondary button',
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
+      onCancel: action('cancel'),
+      allowsKeyboardConfirmation: true
+    })
   );
 
 function render({width = 'auto', isDismissable = undefined, ...props}) {
