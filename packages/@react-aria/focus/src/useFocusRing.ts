@@ -1,5 +1,6 @@
-import {HTMLAttributes, useCallback, useState} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {isFocusVisible, useFocus, useFocusVisibleListener, useFocusWithin} from '@react-aria/interactions';
+import {useCallback, useState} from 'react';
 import {useRef} from 'react';
 
 interface FocusRingProps {
@@ -26,7 +27,7 @@ interface FocusRingAria {
   isFocusVisible: boolean,
 
   /** Props to apply to the container element with the focus ring. */
-  focusProps: HTMLAttributes<HTMLElement>
+  focusProps: DOMAttributes
 }
 
 /**

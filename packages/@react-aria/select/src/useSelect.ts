@@ -14,8 +14,8 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
 import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {FocusEvent, HTMLAttributes, RefObject, useMemo} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, KeyboardDelegate} from '@react-types/shared';
+import {FocusEvent, RefObject, useMemo} from 'react';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -33,22 +33,22 @@ interface AriaSelectOptions<T> extends AriaSelectProps<T> {
 
 interface SelectAria<T> {
   /** Props for the label element. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
 
   /** Props for the popup trigger element. */
   triggerProps: AriaButtonProps,
 
   /** Props for the element representing the selected value. */
-  valueProps: HTMLAttributes<HTMLElement>,
+  valueProps: DOMAttributes,
 
   /** Props for the popup. */
   menuProps: AriaListBoxOptions<T>,
 
   /** Props for the select's description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
 
   /** Props for the select's error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -57,7 +57,7 @@ interface SelectAria<T> {
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */
-export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria<T> {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<FocusableElement>): SelectAria<T> {
   let {
     keyboardDelegate,
     isDisabled

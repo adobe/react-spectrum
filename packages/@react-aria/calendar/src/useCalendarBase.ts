@@ -14,23 +14,24 @@ import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
+import {DOMAttributes} from '@react-types/shared';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
-import {HTMLAttributes, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useRef} from 'react';
 
 export interface CalendarAria {
   /** Props for the calendar grouping element. */
-  calendarProps: HTMLAttributes<HTMLElement>,
+  calendarProps: DOMAttributes,
   /** Props for the next button. */
   nextButtonProps: AriaButtonProps,
   /** Props for the previous button. */
   prevButtonProps: AriaButtonProps,
   /** Props for the error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>,
+  errorMessageProps: DOMAttributes,
   /** A description of the visible date range, for use in the calendar title. */
   title: string
 }

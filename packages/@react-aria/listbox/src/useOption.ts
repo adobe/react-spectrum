@@ -10,23 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
-import {HTMLAttributes, Key, RefObject} from 'react';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {isMac, isWebKit, mergeProps, useSlotId} from '@react-aria/utils';
+import {Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface OptionAria {
   /** Props for the option element. */
-  optionProps: HTMLAttributes<HTMLElement>,
+  optionProps: DOMAttributes,
 
   /** Props for the main text element inside the option. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
 
   /** Props for the description text element inside the option, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
 
   /** Whether the option is currently focused. */
   isFocused: boolean,
@@ -88,7 +89,7 @@ interface AriaOptionProps {
  * @param props - Props for the option.
  * @param state - State for the listbox, as returned by `useListState`.
  */
-export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<HTMLElement>): OptionAria {
+export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<FocusableElement>): OptionAria {
   let {
     key
   } = props;

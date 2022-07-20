@@ -16,10 +16,11 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
+import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {RefObject, useMemo} from 'react';
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
@@ -27,17 +28,17 @@ import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 export interface DatePickerAria {
   /** Props for the date picker's visible label element, if any. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
   /** Props for the grouping element containing the date field and button. */
-  groupProps: HTMLAttributes<HTMLElement>,
+  groupProps: DOMAttributes,
   /** Props for the date field. */
   fieldProps: AriaDatePickerProps<DateValue>,
   /** Props for the popover trigger button. */
   buttonProps: AriaButtonProps,
   /** Props for the description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
   /** Props for the error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>,
+  errorMessageProps: DOMAttributes,
   /** Props for the popover dialog. */
   dialogProps: AriaDialogProps,
   /** Props for the calendar within the popover dialog. */
@@ -48,7 +49,7 @@ export interface DatePickerAria {
  * Provides the behavior and accessibility implementation for a date picker component.
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<HTMLElement>): DatePickerAria {
+export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<Element>): DatePickerAria {
   let buttonId = useId();
   let dialogId = useId();
   let formatMessage = useMessageFormatter(intlMessages);
