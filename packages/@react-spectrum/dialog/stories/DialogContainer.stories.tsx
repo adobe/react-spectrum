@@ -39,7 +39,8 @@ storiesOf('DialogContainer', module)
   .add(
     'isKeyboardDismissDisabled',
     () => <MenuExample isKeyboardDismissDisabled />
-  )  .add(
+  )
+  .add(
   'Nested Dialog Containers',
   () => <NestedDialogContainerExample />
-)
+  );

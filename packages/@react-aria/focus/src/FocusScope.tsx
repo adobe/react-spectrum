@@ -694,7 +694,7 @@ class Tree {
   clone(): Tree {
     let newTree = new Tree();
     for (let node of this.traversePreOrderDF()) {
-      newTree.addNode(node.scopeRef, node.parent.scopeRef, node.nodeToRestore);
+      newTree.addTreeNode(node.scopeRef, node.parent.scopeRef, node.nodeToRestore);
     }
     return newTree;
   }

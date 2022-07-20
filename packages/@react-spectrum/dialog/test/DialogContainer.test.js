@@ -172,7 +172,7 @@ describe('DialogContainer', function () {
   });
 
   it('should be able to have dialogs open dialogs and still restore focus', function () {
-    let {getByRole, debug} = render(
+    let {getByRole} = render(
       <Provider theme={theme}>
         <NestedDialogContainerExample />
       </Provider>
