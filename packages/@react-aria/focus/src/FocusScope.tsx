@@ -400,7 +400,7 @@ function useAutoFocus(scopeRef: RefObject<Element[]>, autoFocus: boolean) {
 }
 
 // An array to create a stack of nodeToRestore elements.
-let nodeToRestoreArray: Element[] = [];
+let nodeToRestoreArray: FocusableElement[] = [];
 
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
