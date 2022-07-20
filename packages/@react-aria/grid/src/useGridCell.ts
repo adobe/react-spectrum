@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {GridCollection} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import {mergeProps} from '@react-aria/utils';
-import {Node as RSNode} from '@react-types/shared';
+import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -40,7 +40,7 @@ interface GridCellProps {
 
 interface GridCellAria {
   /** Props for the grid cell element. */
-  gridCellProps: HTMLAttributes<HTMLElement>,
+  gridCellProps: DOMAttributes,
   /** Whether the cell is currently in a pressed state. */
   isPressed: boolean
 }
@@ -50,7 +50,7 @@ interface GridCellAria {
  * @param props - Props for the cell.
  * @param state - State of the parent grid, as returned by `useGridState`.
  */
-export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>, ref: RefObject<HTMLElement>): GridCellAria {
+export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>, ref: RefObject<FocusableElement>): GridCellAria {
   let {
     node,
     isVirtualized,
@@ -74,7 +74,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
       let focusable = state.selectionManager.childFocusStrategy === 'last'
         ? last(treeWalker)
-        : treeWalker.firstChild() as HTMLElement;
+        : treeWalker.firstChild() as FocusableElement;
       if (focusable) {
         focusSafely(focusable);
         return;
@@ -97,7 +97,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    if (!e.currentTarget.contains(e.target as HTMLElement) || state.isKeyboardNavigationDisabled) {
+    if (!e.currentTarget.contains(e.target as Element) || state.isKeyboardNavigationDisabled) {
       return;
     }
 
@@ -108,8 +108,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       case 'ArrowLeft': {
         // Find the next focusable element within the cell.
         let focusable = direction === 'rtl'
-          ? walker.nextNode() as HTMLElement
-          : walker.previousNode() as HTMLElement;
+          ? walker.nextNode() as FocusableElement
+          : walker.previousNode() as FocusableElement;
 
         // Don't focus the cell itself if focusMode is "child"
         if (focusMode === 'child' && focusable === ref.current) {
@@ -138,7 +138,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           } else {
             walker.currentNode = ref.current;
             focusable = direction === 'rtl'
-              ? walker.firstChild() as HTMLElement
+              ? walker.firstChild() as FocusableElement
               : last(walker);
             if (focusable) {
               focusSafely(focusable);
@@ -149,8 +149,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
       case 'ArrowRight': {
         let focusable = direction === 'rtl'
-          ? walker.previousNode() as HTMLElement
-          : walker.nextNode() as HTMLElement;
+          ? walker.previousNode() as FocusableElement
+          : walker.nextNode() as FocusableElement;
 
         if (focusMode === 'child' && focusable === ref.current) {
           focusable = null;
@@ -174,7 +174,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
             walker.currentNode = ref.current;
             focusable = direction === 'rtl'
               ? last(walker)
-              : walker.firstChild() as HTMLElement;
+              : walker.firstChild() as FocusableElement;
             if (focusable) {
               focusSafely(focusable);
             }
@@ -187,7 +187,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         // Prevent this event from reaching cell children, e.g. menu buttons. We want arrow keys to navigate
         // to the cell above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && ref.current.contains(e.target as HTMLElement)) {
+        if (!e.altKey && ref.current.contains(e.target as Element)) {
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement.dispatchEvent(
@@ -223,7 +223,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     });
   };
 
-  let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(itemProps, {
+  let gridCellProps: DOMAttributes = mergeProps(itemProps, {
     role: 'gridcell',
     onKeyDownCapture,
     onFocus
@@ -240,10 +240,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 }
 
 function last(walker: TreeWalker) {
-  let next: HTMLElement;
-  let last: HTMLElement;
+  let next: FocusableElement;
+  let last: FocusableElement;
   do {
-    last = walker.lastChild() as HTMLElement;
+    last = walker.lastChild() as FocusableElement;
     if (last) {
       next = last;
     }
