@@ -639,7 +639,7 @@ class Tree {
     return this.fastMap.get(data);
   }
 
-  addNode(scopeRef: ScopeRef, parent: ScopeRef, nodeToRestore?: HTMLElement) {
+  addNode(scopeRef: ScopeRef, parent: ScopeRef, nodeToRestore?: FocusableElement) {
     let parentNode = this.fastMap.get(parent ?? null);
     let node = new Node({scopeRef});
     parentNode.addChild(node);
@@ -687,7 +687,7 @@ class Tree {
 
 class Node {
   private _scopeRef: ScopeRef;
-  private _nodeToRestore: HTMLElement;
+  private _nodeToRestore: FocusableElement;
   private _parent: Node;
   private _children: Node[] = [];
 
@@ -697,10 +697,10 @@ class Node {
   get scopeRef() {
     return this._scopeRef;
   }
-  get nodeToRestore() {
+  get nodeToRestore(): FocusableElement {
     return this._nodeToRestore;
   }
-  set nodeToRestore(node: HTMLElement) {
+  set nodeToRestore(node: FocusableElement) {
     this._nodeToRestore = node;
   }
   set parent(node: Node) {
