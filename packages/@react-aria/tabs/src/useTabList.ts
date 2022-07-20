@@ -11,8 +11,9 @@
 */
 
 import {AriaTabListProps} from '@react-types/tabs';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {mergeProps, useId, useLabels} from '@react-aria/utils';
+import {RefObject, useMemo} from 'react';
 import {TabListState} from '@react-stately/tabs';
 import {tabsIds} from './utils';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
@@ -21,7 +22,7 @@ import {useSelectableCollection} from '@react-aria/selection';
 
 interface TabListAria {
   /** Props for the tablist container. */
-  tabListProps: HTMLAttributes<HTMLElement>
+  tabListProps: DOMAttributes
 }
 
 
