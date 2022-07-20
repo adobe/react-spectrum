@@ -42,6 +42,7 @@ import {Text} from '@react-spectrum/text';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
+import {useTextField} from '@react-aria/textfield';
 
 function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'picker');
@@ -60,7 +61,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     labelPosition = 'top' as LabelPosition,
     menuWidth,
     name,
-    autoFocus
+    autoFocus,
+    isReadOnly
   } = props;
 
   let state = useSelectState(props);
@@ -71,6 +73,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
   let listboxRef = useRef();
+  let inputRef = useRef<HTMLTextAreaElement>(null);  
 
   // We create the listbox layout in Picker and pass it to ListBoxBase below
   // so that the layout information can be cached even while the listbox is not mounted.
@@ -93,6 +96,12 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   });
 
   let {hoverProps, isHovered} = useHover({isDisabled});
+
+  let {labelProps: readOnlyLabelProps, inputProps} = useTextField({
+    ...props,
+    inputElementType: 'textarea'
+  }, inputRef);
+  labelProps = isReadOnly ? readOnlyLabelProps : labelProps;
 
   // Update position once the ListBox has rendered. This ensures that
   // it flips properly when it doesn't fit in the available space.
@@ -181,7 +190,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     );
   }
 
-  let inputText = state.selectedItem ? state.selectedItem.textValue : '';
+  let textValue = state.selectedItem ? state.selectedItem.textValue : '';
   let contents = state.selectedItem ? state.selectedItem.rendered : placeholder;
   if (typeof contents === 'string') {
     contents = <Text>{contents}</Text>;
@@ -260,7 +269,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   ) : '';
 
   return (
-    // there is an issue with the types (have to resolve that somehow)
     <Field
       {...props}
       ref={domRef}
@@ -271,7 +279,9 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       showErrorIcon={false}
       includeNecessityIndicatorInAccessibilityName
       elementType="span"
-      readOnlyText={typeof contents === 'string' ? contents : inputText}>
+      readOnlyText={typeof contents === 'string' ? contents : textValue}
+      inputProps={inputProps}
+      inputRef={inputRef}>
       {picker}
     </Field>
   );
