@@ -15,8 +15,6 @@ import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
-// import {FocusScope, useFocusScope} from 'react-events/focus-scope';
-// export {FocusScope};
 
 interface FocusScopeProps {
   /** The contents of the focus scope. */
@@ -72,8 +70,6 @@ let activeScope: ScopeRef = null;
 
 // This is a hacky DOM-based implementation of a FocusScope until this RFC lands in React:
 // https://github.com/reactjs/rfcs/pull/109
-// For now, it relies on the DOM tree order rather than the React tree order, and is probably
-// less optimized for performance.
 
 /**
  * A FocusScope manages focus for its descendants. It supports containing focus inside
@@ -88,6 +84,7 @@ export function FocusScope(props: FocusScopeProps) {
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);
   let ctx = useContext(FocusContext);
+  // if there is no scopeRef on the context, then the parent is the focusScopeTree's root, represented by null
   let parentScope = ctx?.scopeRef ?? null;
 
   useLayoutEffect(() => {
@@ -473,11 +470,12 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
 
       if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scopeRef.current)) {
         // freeze the focusScopeTree so it persists after the raf, otherwise during unmount nodes are removed from it
-        let cloneTree = focusScopeTree.clone();
+        let clonedTree = focusScopeTree.clone();
         requestAnimationFrame(() => {
           // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
           if (document.activeElement === document.body) {
-            let node = cloneTree.getNode(scopeRef);
+            // look up the tree starting with our scope to find a nodeToRestore still in the DOM
+            let node = clonedTree.getNode(scopeRef);
             while (node) {
               if (node.nodeToRestore && document.body.contains(node.nodeToRestore)) {
                 focusElement(node.nodeToRestore);
