@@ -108,6 +108,11 @@ export function FocusScope(props: FocusScopeProps) {
     focusScopeTree.addNode(scopeRef, parentScope);
   }
 
+  useFocusContainment(scopeRef, contain);
+  useRestoreFocus(scopeRef, restoreFocus, contain);
+  useAutoFocus(scopeRef, autoFocus);
+
+  // this layout effect needs to run last so that focusScopeTree cleanup happens at the last moment possible
   useLayoutEffect(() => {
     if (scopeRef && (parentScope || parentScope == null)) {
       return () => {
@@ -124,10 +129,6 @@ export function FocusScope(props: FocusScopeProps) {
       };
     }
   }, [scopeRef, parentScope]);
-
-  useFocusContainment(scopeRef, contain);
-  useRestoreFocus(scopeRef, restoreFocus, contain);
-  useAutoFocus(scopeRef, autoFocus);
 
   let focusManager = createFocusManagerForScope(scopeRef);
 
@@ -340,7 +341,7 @@ function isElementInScope(element: Element, scope: HTMLElement[]) {
 function isElementInChildScope(element: Element, scope: ScopeRef = null) {
   // node.contains in isElementInScope covers child scopes that are also DOM children,
   // but does not cover child scopes in portals.
-  for (let {data: s} of focusScopeTree.traverseInOrderDF(focusScopeTree.getNode(scope))) {
+  for (let {scopeRef: s} of focusScopeTree.traversePreOrderDF(focusScopeTree.getNode(scope))) {
     if (isElementInScope(element, s.current)) {
       return true;
     }
@@ -352,7 +353,7 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null) {
 function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
   let parent = focusScopeTree.getNode(scope)?.parent;
   while (parent) {
-    if (parent.data === ancestor) {
+    if (parent.scopeRef === ancestor) {
       return true;
     }
     parent = parent.parent;
@@ -403,6 +404,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
     let nodeToRestore = nodeToRestoreRef.current;
+    focusScopeTree.getNode(scopeRef).nodeToRestore = nodeToRestore;
     if (!restoreFocus) {
       return;
     }
@@ -430,6 +432,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
 
       if (!document.body.contains(nodeToRestore) || nodeToRestore === document.body) {
         nodeToRestore = null;
+        focusScopeTree.getNode(scopeRef).nodeToRestore = null;
       }
 
       // If there is no next element, or it is outside the current scope, move focus to the
@@ -469,10 +472,19 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
 
       if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scopeRef.current)) {
+        // freeze the focusScopeTree so it persists after the raf, otherwise during unmount nodes are removed from it
+        let cloneTree = focusScopeTree.clone();
         requestAnimationFrame(() => {
           // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
-          if (document.body.contains(nodeToRestore) && document.activeElement === document.body) {
-            focusElement(nodeToRestore);
+          if (document.activeElement === document.body) {
+            let node = cloneTree.getNode(scopeRef);
+            while (node) {
+              if (node.nodeToRestore && document.body.contains(node.nodeToRestore)) {
+                focusElement(node.nodeToRestore);
+                return;
+              }
+              node = node.parent;
+            }
           }
         });
       }
@@ -616,54 +628,81 @@ class Tree {
   private fastMap = new Map<ScopeRef, Node>();
 
   constructor() {
-    this.root = new Node({data: null});
+    this.root = new Node({scopeRef: null});
     this.fastMap.set(null, this.root);
+  }
+
+  get size() {
+    return this.fastMap.size;
   }
 
   getNode(data: ScopeRef) {
     return this.fastMap.get(data);
   }
 
-  addNode(data: ScopeRef, parent: ScopeRef) {
+  addNode(scopeRef: ScopeRef, parent: ScopeRef, nodeToRestore?: HTMLElement) {
     let parentNode = this.fastMap.get(parent ?? null);
-    let node = new Node({data});
+    let node = new Node({scopeRef});
     parentNode.addChild(node);
     node.parent = parentNode;
-    this.fastMap.set(data, node);
+    this.fastMap.set(scopeRef, node);
+    if (nodeToRestore) {
+      node.nodeToRestore = nodeToRestore;
+    }
   }
 
-  removeNode(data: ScopeRef) {
-    let node = this.fastMap.get(data);
+  removeNode(scopeRef: ScopeRef) {
+    // never remove the root
+    if (scopeRef === null) {
+      return;
+    }
+    let node = this.fastMap.get(scopeRef);
     let parentNode = node.parent;
     let children = node.children;
     parentNode.removeChild(node);
     if (children.length > 0) {
       children.forEach(child => parentNode.addChild(child));
     }
+    this.fastMap.delete(node.scopeRef);
   }
 
-  * traverseInOrderDF(node: Node = this.root): Generator<Node> {
-    if (node.data != null) {
+  * traversePreOrderDF(node: Node = this.root): Generator<Node> {
+    if (node.scopeRef != null) {
       yield node;
     }
     if (node.children.length > 0) {
       for (let child of node.children) {
-        yield* this.traverseInOrderDF(child);
+        yield* this.traversePreOrderDF(child);
       }
     }
+  }
+
+  clone(): Tree {
+    let newTree = new Tree();
+    for (let node of this.traversePreOrderDF()) {
+      newTree.addNode(node.scopeRef, node.parent.scopeRef, node.nodeToRestore);
+    }
+    return newTree;
   }
 }
 
 class Node {
-  private _data: ScopeRef;
+  private _scopeRef: ScopeRef;
   private _parent: Node;
   private _children: Node[] = [];
+  private _nodeToRestore: HTMLElement;
 
-  constructor(props: {data: ScopeRef}) {
-    this._data = props.data;
+  constructor(props: {scopeRef: ScopeRef}) {
+    this._scopeRef = props.scopeRef;
   }
-  get data() {
-    return this._data;
+  get scopeRef() {
+    return this._scopeRef;
+  }
+  get nodeToRestore() {
+    return this._nodeToRestore;
+  }
+  set nodeToRestore(node: HTMLElement) {
+    this._nodeToRestore = node;
   }
   set parent(node: Node) {
     this._parent = node;
@@ -677,10 +716,11 @@ class Node {
   }
   removeChild(node: Node) {
     this._children.splice(this.children.indexOf(node), 1);
+    node.parent = undefined;
   }
   get children(): Node[] {
     return this._children;
   }
 }
 
-let focusScopeTree = new Tree();
+export let focusScopeTree = new Tree();

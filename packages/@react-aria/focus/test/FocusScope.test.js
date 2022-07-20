@@ -12,8 +12,10 @@
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {FocusScope, useFocusManager} from '../';
+import {focusScopeTree} from '../src/FocusScope';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
 
 describe('FocusScope', function () {
@@ -598,6 +600,47 @@ describe('FocusScope', function () {
       userEvent.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
+
+    it.each`
+      contain  | isPortaled
+      ${false} | ${false}
+      ${true}  | ${false}
+      ${false} | ${true}
+      ${true}  | ${true}
+    `('contain=$contain, isPortaled=$isPortaled should restore focus to previous nodeToRestore when the nodeToRestore for the unmounting scope in no longer in the DOM',
+      function ({contain, isPortaled}) {
+        expect(focusScopeTree.size).toBe(1);
+        let {getAllByText, getAllByRole} = render(<StorybookExample contain={contain} isPortaled={isPortaled} />);
+        expect(focusScopeTree.size).toBe(1);
+        act(() => {getAllByText('Open dialog')[0].focus();});
+        fireEvent.click(document.activeElement);
+        act(() => {jest.runAllTimers();});
+        expect(document.activeElement).toBe(getAllByRole('textbox')[2]);
+        act(() => {getAllByText('Open dialog')[1].focus();});
+        fireEvent.click(document.activeElement);
+        act(() => {jest.runAllTimers();});
+        expect(document.activeElement).toBe(getAllByRole('textbox')[5]);
+        act(() => {getAllByText('Open dialog')[2].focus();});
+        fireEvent.click(document.activeElement);
+        act(() => {jest.runAllTimers();});
+        expect(document.activeElement).toBe(getAllByRole('textbox')[8]);
+        expect(focusScopeTree.size).toBe(4);
+        if (!contain) {
+          act(() => {
+            getAllByText('close')[1].focus();
+          });
+          fireEvent.click(document.activeElement);
+        } else {
+          fireEvent.click(getAllByText('close')[1]);
+        }
+        act(() => {jest.runAllTimers();});
+        expect(document.activeElement).toBe(getAllByText('Open dialog')[1]);
+        act(() => {getAllByText('close')[0].focus();});
+        fireEvent.click(document.activeElement);
+        act(() => {jest.runAllTimers();});
+        expect(document.activeElement).toBe(getAllByText('Open dialog')[0]);
+        expect(focusScopeTree.size).toBe(1);
+      });
   });
 
   describe('auto focus', function () {
@@ -610,6 +653,7 @@ describe('FocusScope', function () {
           <input data-testid="input3" />
         </FocusScope>
       );
+      act(() => {jest.runAllTimers();});
 
       let input1 = getByTestId('input1');
       expect(document.activeElement).toBe(input1);
