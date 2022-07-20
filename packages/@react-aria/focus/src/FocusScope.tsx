@@ -686,9 +686,9 @@ class Tree {
 
 class Node {
   private _scopeRef: ScopeRef;
+  private _nodeToRestore: HTMLElement;
   private _parent: Node;
   private _children: Node[] = [];
-  private _nodeToRestore: HTMLElement;
 
   constructor(props: {scopeRef: ScopeRef}) {
     this._scopeRef = props.scopeRef;
