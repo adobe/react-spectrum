@@ -5,7 +5,7 @@ import {Dialog, DialogContainer, useDialogContainer} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import React from 'react';
+import React, {useRef} from 'react';
 
 export function DialogContainerExample(props) {
   let [isOpen, setOpen] = React.useState(false);
@@ -58,5 +58,38 @@ function ExampleDialog(props) {
         </ButtonGroup>
       }
     </Dialog>
+  );
+}
+
+export function NestedDialogContainerExample() {
+  let [dialog, setDialog] = React.useState(null);
+  let triggerRef = useRef();
+  let dismiss = () => setDialog(null);
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton aria-label="Actions" ref={triggerRef}>Open menu</ActionButton>
+        <Menu onAction={setDialog}>
+          <Item key="doThis">Do this…</Item>
+          <Item key="doThat">Do that…</Item>
+        </Menu>
+      </MenuTrigger>
+      <DialogContainer onDismiss={dismiss}>
+        {dialog !== null &&
+          <Dialog
+            onDismiss={dismiss}
+            isDismissable>
+            <Heading>{dialog === 'doThis' ? 'This' : 'That' }</Heading>
+            <Divider />
+            <Content>
+              <ActionButton
+                onPress={() => setDialog(dialog === 'doThis' ? 'doThat' : 'doThis')}
+                autoFocus>{dialog === 'doThis' ? 'Do that' : 'Do this' }</ActionButton>
+            </Content>
+          </Dialog>
+        }
+      </DialogContainer>
+    </>
   );
 }
