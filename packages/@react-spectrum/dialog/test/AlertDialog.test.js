@@ -11,9 +11,9 @@
  */
 
 import {AlertDialog} from '../';
+import {fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {theme} from '@react-spectrum/theme-default';
 
 describe('AlertDialog', function () {
