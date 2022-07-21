@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+import {AlertDialogContext, DialogContext, DialogContextValue} from './context';
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
@@ -17,7 +17,6 @@ import {chain} from '@react-aria/utils';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
-import {AlertDialogContext, DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/text';
