@@ -9,7 +9,7 @@ import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 
-interface SliderThumbAria {
+export interface SliderThumbAria {
   /** Props for the root thumb element; handles the dragging motion. */
   thumbProps: DOMAttributes,
 
@@ -27,7 +27,7 @@ interface SliderThumbAria {
   isDisabled: boolean
 }
 
-interface SliderThumbOptions extends AriaSliderThumbProps {
+export interface AriaSliderThumbOptions extends AriaSliderThumbProps {
   /** A ref to the track element. */
   trackRef: RefObject<Element>,
   /** A ref to the thumb input element. */
@@ -41,7 +41,7 @@ interface SliderThumbOptions extends AriaSliderThumbProps {
  * @param state Slider state, created via `useSliderState`.
  */
 export function useSliderThumb(
-  opts: SliderThumbOptions,
+  opts: AriaSliderThumbOptions,
   state: SliderState
 ): SliderThumbAria {
   let {

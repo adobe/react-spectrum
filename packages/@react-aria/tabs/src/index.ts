@@ -12,3 +12,7 @@
 export {useTab} from './useTab';
 export {useTabPanel} from './useTabPanel';
 export {useTabList} from './useTabList';
+export type {AriaTabListProps, AriaTabPanelProps, AriaTabProps} from '@react-types/tabs';
+export type {TabAria} from './useTab';
+export type {TabPanelAria} from './useTabPanel';
+export type {TabListAria} from './useTabList';

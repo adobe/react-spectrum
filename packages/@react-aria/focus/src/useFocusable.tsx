@@ -16,12 +16,12 @@ import {mergeProps, useSyncRef} from '@react-aria/utils';
 import React, {MutableRefObject, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
-interface FocusableOptions extends FocusableProps, FocusableDOMProps {
+export interface FocusableOptions extends FocusableProps, FocusableDOMProps {
   /** Whether focus should be disabled. */
   isDisabled?: boolean
 }
 
-interface FocusableProviderProps extends DOMAttributes {
+export interface FocusableProviderProps extends DOMAttributes {
   /** The child element to provide DOM props to. */
   children?: ReactNode
 }
@@ -61,7 +61,7 @@ function FocusableProvider(props: FocusableProviderProps, ref: RefObject<Focusab
 let _FocusableProvider = React.forwardRef(FocusableProvider);
 export {_FocusableProvider as FocusableProvider};
 
-interface FocusableAria {
+export interface FocusableAria {
   /** Props for the focusable element. */
   focusableProps: DOMAttributes
 }

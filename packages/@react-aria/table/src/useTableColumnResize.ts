@@ -19,17 +19,17 @@ import {RefObject, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
-interface ResizerAria {
+export interface TableColumnResizeAria {
   resizerProps: DOMAttributes
 }
 
-interface ResizerProps<T> {
+export interface AriaTableColumnResizeProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
   label: string
 }
 
-export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T> & ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): ResizerAria {
+export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T> & ColumnResizeState<T>, ref: RefObject<HTMLDivElement>): TableColumnResizeAria {
   let {column: item, showResizer} = props;
   const stateRef = useRef(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing

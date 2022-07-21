@@ -19,7 +19,7 @@ import {mergeProps, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
-interface MenuItemAria {
+export interface MenuItemAria {
   /** Props for the menu item element. */
   menuItemProps: DOMAttributes,
 
@@ -42,7 +42,7 @@ interface MenuItemAria {
   isDisabled: boolean
 }
 
-interface AriaMenuItemProps {
+export interface AriaMenuItemProps {
   /**
    * Whether the menu item is disabled.
    * @deprecated - pass disabledKeys to useTreeState instead.

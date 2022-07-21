@@ -17,7 +17,7 @@ import {RefObject} from 'react';
 import {TabListState} from '@react-stately/tabs';
 import {useSelectableItem} from '@react-aria/selection';
 
-interface TabAria {
+export interface TabAria {
   /** Props for the tab element. */
   tabProps: DOMAttributes,
   /** Whether the tab is currently selected. */

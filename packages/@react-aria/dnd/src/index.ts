@@ -15,6 +15,9 @@ export type {DroppableItemOptions, DroppableItemResult} from './useDroppableItem
 export type {DropIndicatorProps, DropIndicatorAria} from './useDropIndicator';
 export type {DraggableItemProps, DraggableItemResult} from './useDraggableItem';
 export type {DragPreviewProps} from './DragPreview';
+export type {DragOptions, DragResult} from './useDrag';
+export type {DropOptions, DropResult} from './useDrop';
+export type {ClipboardProps, ClipboardResult} from './useClipboard';
 
 export {useDrag} from './useDrag';
 export {useDrop} from './useDrop';
