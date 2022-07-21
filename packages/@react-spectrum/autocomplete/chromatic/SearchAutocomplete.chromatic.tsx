@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import Filter from '@spectrum-icons/workflow/Filter';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '../';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
-import Filter from '@spectrum-icons/workflow/Filter';
 
 // Skipping focus styles because don't have a way of applying it via classnames
 // No controlled open state also means no menu
