@@ -10,15 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Pressable';
-export * from './PressResponder';
-export * from './useFocus';
-export * from './useFocusVisible';
-export * from './useFocusWithin';
-export * from './useHover';
-export * from './useInteractOutside';
-export * from './useKeyboard';
-export * from './useMove';
-export * from './usePress';
-export * from './useScrollWheel';
-export * from './useLongPress';
+export type {HoverProps} from './useHover';
+export type {KeyboardProps} from './useKeyboard';
+export type {PressProps, PressHookProps, PressResult} from './usePress';
+export type {ScrollWheelProps} from './useScrollWheel';
+
+export {Pressable} from './Pressable';
+export {PressResponder} from './PressResponder';
+export {useFocus} from './useFocus';
+export {
+  isFocusVisible,
+  getInteractionModality,
+  setInteractionModality,
+  useInteractionModality,
+  useFocusVisible,
+  useFocusVisibleListener
+} from './useFocusVisible';
+export {useFocusWithin} from './useFocusWithin';
+export {useHover} from './useHover';
+export {useInteractOutside} from './useInteractOutside';
+export {useKeyboard} from './useKeyboard';
+export {useMove} from './useMove';
+export {usePress} from './usePress';
+export {useScrollWheel} from './useScrollWheel';
+export {useLongPress} from './useLongPress';

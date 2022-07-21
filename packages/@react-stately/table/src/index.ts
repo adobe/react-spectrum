@@ -10,12 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTableColumnResizeState';
-export * from './utils';
-export * from './useTableState';
-export * from './TableHeader';
-export * from './TableBody';
-export * from './Column';
-export * from './Row';
-export * from './Cell';
+export type {AffectedColumnWidth, AffectedColumnWidths, ColumnResizeState, ColumnResizeStateProps} from './useTableColumnResizeState';
+export type {TableState, CollectionBuilderContext, TableStateProps} from './useTableState';
+
+export {useTableColumnResizeState} from './useTableColumnResizeState';
+export {getContentWidth, isStatic, parseStaticWidth, getMaxWidth, getMinWidth, getDynamicColumnWidths} from './utils';
+export {useTableState} from './useTableState';
+export {TableHeader} from './TableHeader';
+export {TableBody} from './TableBody';
+export {Column} from './Column';
+export {Row} from './Row';
+export {Cell} from './Cell';
 export {Section} from '@react-stately/collections';

@@ -9,28 +9,27 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-export * from './useId';
-export * from './chain';
-export * from './mergeProps';
-export * from './mergeRefs';
-export * from './filterDOMProps';
-export * from './focusWithoutScrolling';
-export * from './getOffset';
-export * from './number';
-export * from './runAfterTransition';
-export * from './useDrag1D';
-export * from './useGlobalListeners';
-export * from './useLabels';
-export * from './useObjectRef';
-export * from './useUpdateEffect';
-export * from './useLayoutEffect';
-export * from './useResizeObserver';
-export * from './useSyncRef';
-export * from './getScrollParent';
-export * from './useViewportSize';
-export * from './useDescription';
-export * from './platform';
-export * from './useEvent';
-export * from './useValueEffect';
-export * from './scrollIntoView';
+export {useId, mergeIds, useSlotId} from './useId';
+export {chain} from './chain';
+export {mergeProps} from './mergeProps';
+export {mergeRefs} from './mergeRefs';
+export {filterDOMProps} from './filterDOMProps';
+export {focusWithoutScrolling} from './focusWithoutScrolling';
+export {getOffset} from './getOffset';
+export {runAfterTransition} from './runAfterTransition';
+export {useDrag1D} from './useDrag1D';
+export {useGlobalListeners} from './useGlobalListeners';
+export {useLabels} from './useLabels';
+export {useObjectRef} from './useObjectRef';
+export {useUpdateEffect} from './useUpdateEffect';
+export {useLayoutEffect} from './useLayoutEffect';
+export {useResizeObserver} from './useResizeObserver';
+export {useSyncRef} from './useSyncRef';
+export {getScrollParent} from './getScrollParent';
+export {useViewportSize} from './useViewportSize';
+export {useDescription} from './useDescription';
+export {isMac, isIPhone, isIPad, isIOS, isAppleDevice, isWebKit, isChrome, isAndroid} from './platform';
+export {useEvent} from './useEvent';
+export {useValueEffect} from './useValueEffect';
+export {scrollIntoView} from './scrollIntoView';
+export {clamp, snapValueToStep} from '@react-stately/utils';

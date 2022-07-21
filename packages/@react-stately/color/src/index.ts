@@ -10,8 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+export type {ColorAreaState} from './useColorAreaState';
+export type {ColorSliderState} from './useColorSliderState';
+export type {ColorWheelState} from './useColorWheelState';
+export type {ColorFieldState} from './useColorFieldState';
+
 export {parseColor} from './Color';
-export * from './useColorAreaState';
-export * from './useColorSliderState';
-export * from './useColorWheelState';
-export * from './useColorFieldState';
+export {useColorAreaState} from './useColorAreaState';
+export {useColorSliderState} from './useColorSliderState';
+export {useColorWheelState} from './useColorWheelState';
+export {useColorFieldState} from './useColorFieldState';
