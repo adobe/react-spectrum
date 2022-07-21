@@ -22,26 +22,25 @@ async function compareBuildAppSize() {
 
   if (commit) {
     // Attempt to pull stats from last publish commit. If they don't exist, pull from a hardcoded commit (fallback until these records are generated for a first publish w/ this script)
-    let lastBuildStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/app-size/${currentAppStatsFile}`;
+    let lastAppStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/publish-stats/${currentAppStatsFile}`;
     let lastPublishStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/publish-stats/${currentPublishStatsFile}`;
-    let lastBuildStatPath = path.join(__dirname, '..', lastAppStatsFile);
+    let lastAppStatPath = path.join(__dirname, '..', lastAppStatsFile);
     let lastPublishStatPath = path.join(__dirname, '..', lastPublishStatsFile);
-    await download(lastBuildStatUrl, lastBuildStatPath);
+    await download(lastAppStatUrl, lastAppStatPath);
     await download(lastPublishStatUrl, lastPublishStatPath);
 
-    if (!fs.existsSync(lastBuildStatPath)) {
+    if (!fs.existsSync(lastAppStatPath)) {
       // TODO: placeholder until we get some real stats. Hardcoded URL pointing to a commit with actual data
       await download(
-        `https://reactspectrum.blob.core.windows.net/reactspectrum/1063dc7832a5d65b98c278f9ea93eec8fa9a0fb9/verdaccio/app-size/${currentAppStatsFile}`,
-        lastBuildStatPath);
+        `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentAppStatsFile}`,
+        lastAppStatPath);
     }
 
     if (!fs.existsSync(lastPublishStatPath)) {
       await download(
-        `https://reactspectrum.blob.core.windows.net/reactspectrum/1063dc7832a5d65b98c278f9ea93eec8fa9a0fb9/verdaccio/publish-stats/${currentPublishStatsFile}`,
+        `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentPublishStatsFile}`,
         lastPublishStatPath);
     }
-
 
     // Extract the built example app size from the current commit and the last publish commit data
     let lastAppStats = fs.readFileSync(lastAppStatsFile, 'utf8');
@@ -54,7 +53,8 @@ async function compareBuildAppSize() {
     let lastPackageStats = JSON.parse(fs.readFileSync(lastPublishStatsFile));
     let currentPackageStats = JSON.parse(fs.readFileSync(currentPublishStatsFile));
     let stream = fs.createWriteStream('size-diff.txt', {flags: 'a'});
-    stream.write('\n Published package size differences in kB (old, new, diff)');
+    stream.write('\n');
+    stream.write('\nPublished package size differences from last publish in kB (old, new, diff). Packages with size differences less than .01kB are omitted.');
     for (let pkg of Object.keys(currentPackageStats)) {
       // For each package grab the size from the last and current package stats data
       let currentSize = pkg in currentPackageStats && currentPackageStats[pkg];
@@ -63,7 +63,10 @@ async function compareBuildAppSize() {
         lastSize = 0;
       }
 
-      stream.write(`\n ${pkg}: ${lastSize}kB ${currentSize}kB ${currentSize - lastSize}kB`);
+      let diff = (currentSize - lastSize).toFixed(2);
+      if (Math.abs(diff) > 0) {
+        stream.write(`\n${pkg}: ${lastSize}kB   ${currentSize}kB   ${diff}kB`);
+      }
     }
 
     stream.end();
