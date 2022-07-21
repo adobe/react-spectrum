@@ -9,9 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 export {createFocusManager, getFocusableTreeWalker, FocusScope, useFocusManager} from './FocusScope';
 export type {FocusManager} from './FocusScope';
-export * from './FocusRing';
-export * from './useFocusable';
-export * from './useFocusRing';
-export * from './focusSafely';
+export {FocusRing} from './FocusRing';
+export {FocusableProvider, useFocusable} from './useFocusable';
+export {useFocusRing} from './useFocusRing';
+export {focusSafely} from './focusSafely';

@@ -12,4 +12,4 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Provider';
+export {Provider, useProvider, useProviderProps} from './Provider';

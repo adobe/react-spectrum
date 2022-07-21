@@ -12,5 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Icon';
-export * from './UIIcon';
+export type {IconPropsWithoutChildren} from './Icon';
+export type {UIIconPropsWithoutChildren} from './UIIcon';
+export {Icon} from './Icon';
+export {UIIcon} from './UIIcon';
