@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import Filter from '@spectrum-icons/workflow/Filter';
 import {generatePowerset} from '../../story-utils';
 import {Grid, repeat} from '../../layout';
 import {Item, Picker} from '@react-spectrum/picker';
@@ -18,8 +17,6 @@ import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '../';
-import {SpectrumPickerProps} from '@react-types/select';
-import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 
 let states = [
@@ -62,7 +59,7 @@ const meta: Meta<SpectrumSearchWithinProps> = {
 
 export default meta;
 
-const Template: Story<SpectrumSearchWithinProps> = (args: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps:SpectrumSearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) => (
+const Template: Story<SpectrumSearchWithinProps> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k)).join(' ');
@@ -72,8 +69,8 @@ const Template: Story<SpectrumSearchWithinProps> = (args: Omit<SpectrumSearchWit
 
       return (
         <SearchWithin key={key} {...args} {...c} label={args['aria-label'] ? undefined : key}>
-          <SearchField placeholder="Search" {...searchFieldProps} />
-          <Picker defaultSelectedKey="all" {...pickerProps}>
+          <SearchField placeholder="Search" />
+          <Picker defaultSelectedKey="all">
             {items.map((item) => <Item key={item.id}>{item.name}</Item>)}
           </Picker>
         </SearchWithin>
@@ -83,7 +80,7 @@ const Template: Story<SpectrumSearchWithinProps> = (args: Omit<SpectrumSearchWit
 );
 
 // Chromatic can't handle the size of the side label story so removed some extraneous props that don't matter for side label case.
-const TemplateSideLabel: Story<SpectrumSearchWithinProps> = (args: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps:SpectrumSearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) => (
+const TemplateSideLabel: Story<SpectrumSearchWithinProps> = (args) => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k)).join(' ');
@@ -93,8 +90,8 @@ const TemplateSideLabel: Story<SpectrumSearchWithinProps> = (args: Omit<Spectrum
 
       return (
         <SearchWithin key={key} {...args} {...c} label={args['aria-label'] ? undefined : key}>
-          <SearchField placeholder="Search" {...searchFieldProps} />
-          <Picker defaultSelectedKey="all" {...pickerProps}>
+          <SearchField placeholder="Search" />
+          <Picker defaultSelectedKey="all">
             {items.map((item) => <Item key={item.id}>{item.name}</Item>)}
           </Picker>
         </SearchWithin>
@@ -119,12 +116,3 @@ export const PropCustomWidth = Template.bind({});
 PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 300};
 
-export const PropIconFilter = Template.bind({});
-PropDefaults.storyName = 'icon: Filter';
-PropDefaults.args = {...PropDefaults.args};
-PropDefaults.searchFieldProps = {icon: <Filter />};
-
-export const PropIconNull = Template.bind({});
-PropDefaults.storyName = 'icon: null';
-PropDefaults.args = {...PropDefaults.args};
-PropDefaults.searchFieldProps = {icon: null};
