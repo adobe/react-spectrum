@@ -87,18 +87,19 @@ then
   yarn build | tee build-stats.txt
   du -ka build/ | tee -a build-stats.txt
   mkdir -p ../../$verdaccio_path/publish-stats
-  mv build-stats.txt ../../$verdaccio_path/publish-stats
+  mv build-stats.txt ../../
   mv build ../../$verdaccio_path
 
   cd ../..
 
-  # Get the tarball size of each published package. Store into folder for azure.
+  # Get the tarball size of each published package.
   node scripts/verdaccioPkgSize.js
-  mv publish.json $verdaccio_path/publish-stats
 
-  # Compare the size of the built app and the published packages. Store into folder for azure.
+  # Compare the size of the built app and the published packages.
   node scripts/compareSize.js
-  mv stats-diff.txt $verdaccio_path/publish-stats
+
+  # Store into folder for azure.
+  mv stats-diff.txt build-stats.txt publish.json $verdaccio_path/publish-stats
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"
