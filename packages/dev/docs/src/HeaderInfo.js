@@ -29,8 +29,12 @@ export function HeaderInfo(props) {
 
   let preRelease = packageData.version.match(/(alpha)|(beta)|(rc)/);
   let importName = packageData.name;
-  if (importName.startsWith('@react-spectrum') && process.env.DOCS_ENV === 'production' && !preRelease) {
-    importName = '@adobe/react-spectrum';
+  if (!preRelease) {
+    if (importName.startsWith('@react-spectrum')) {
+      importName = '@adobe/react-spectrum';
+    } else if (/^(@react-aria|@react-stately)/.test(importName)) {
+      importName = importName.split('/')[0].slice(1);
+    }
   }
 
   return (
